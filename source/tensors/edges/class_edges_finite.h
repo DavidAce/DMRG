@@ -1,5 +1,6 @@
 #pragma once
 #include <complex>
+#include <config/enums.h>
 #include <list>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -10,16 +11,28 @@ class class_env_var;
 class class_edges_finite {
     public:
     using Scalar = std::complex<double>;
+    std::list<size_t> active_sites;
 
     private:
-    size_t iter      = 0;
-    size_t step      = 0;
-    int    direction = 1;
+//    size_t iter      = 0;
+//    size_t step      = 0;
+//    int    direction = 1;
 
     std::list<std::unique_ptr<class_env_ene>> eneL;
     std::list<std::unique_ptr<class_env_ene>> eneR;
     std::list<std::unique_ptr<class_env_var>> varL;
     std::list<std::unique_ptr<class_env_var>> varR;
+    public:
+
+    class_edges_finite();
+    ~class_edges_finite(); // Read comment on implementation
+    class_edges_finite (class_edges_finite &&other) noexcept;                  // default move ctor
+    class_edges_finite  &operator=(class_edges_finite &&other) noexcept ;      // default move assign
+    class_edges_finite (const class_edges_finite &other);                      // copy ctor
+    class_edges_finite  &operator=(const class_edges_finite &other);           // copy assign
+
+    void initialize(size_t model_size);
+
 
     [[nodiscard]] const class_env_ene &get_eneL(size_t pos) const;
     [[nodiscard]] const class_env_ene &get_eneR(size_t pos) const;
@@ -29,10 +42,6 @@ class class_edges_finite {
     [[nodiscard]] class_env_var &      get_varR(size_t pos);
     [[nodiscard]] class_env_var &      get_varL(size_t pos);
     [[nodiscard]] class_env_ene &      get_eneR(size_t pos);
-
-    public:
-
-    std::list<size_t> active_sites;
 
     void                 assert_validity() const;
     [[nodiscard]] size_t get_length() const;

@@ -2,10 +2,9 @@
 // Created by david on 2019-06-24.
 //
 #include "class_algorithm_infinite.h"
+#include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
 #include <math/nmspc_math.h>
-#include <tensors/edges/class_edges_infinite.h>
-#include <tensors/model/class_model_infinite.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
@@ -177,17 +176,17 @@ void class_algorithm_infinite::reset_to_initial_state() {
     clear_saturation_status();
 }
 
-void class_algorithm_infinite::reset_to_random_product_state(const std::string &parity) {
-    tools::log->trace("Resetting MPS to random product state");
+void class_algorithm_infinite::reset_to_random_product_state(const std::string &axis) {
+    tools::log->trace("Resetting to random product state");
     status.iter = 0;
 
     // Randomize state
-    *tensors.state = tools::infinite::mps::set_random_state(*tensors.state, parity);
+    *tensors.state = tools::infinite::mps::set_random_state(*tensors.state, axis);
     clear_saturation_status();
 }
 
-void class_algorithm_infinite::reset_to_random_current_state([[maybe_unused]] std::optional<double> chi_lim) {
-    tools::log->critical("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
+void class_algorithm_infinite::reset_to_random_current_state([[maybe_unused]] std::optional<long> chi_lim) {
+    tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
     throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
 }
 
@@ -223,18 +222,18 @@ void class_algorithm_infinite::clear_saturation_status() {
     status.variance_mom_has_converged = false;
 
     status.chi_lim_has_reached_chi_max = false;
-    status.algorithm_has_to_stop      = false;
+    status.algorithm_has_to_stop       = false;
 }
 
-void class_algorithm_infinite::enlarge_environment() {
-    tools::log->trace("Enlarging environment");
-    tensors.state->enlarge_environment(0);
-}
-
-void class_algorithm_infinite::swap() {
-    tools::log->trace("Swap AB sites on state");
-    tensors.state->swap_AB();
-}
+// void class_algorithm_infinite::enlarge_environment() {
+//    tools::log->trace("Enlarging environment");
+//    tensors.insert_site_pair();
+//}
+//
+// void class_algorithm_infinite::swap() {
+//    tools::log->trace("Swap AB sites on state");
+//    tensors.state->enlarge();
+//}
 
 void class_algorithm_infinite::check_convergence_variance_mpo(double threshold, double slope_threshold) {
     // Based on the the slope of the variance
@@ -248,7 +247,7 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold, 
         check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::infinite::measure::energy_variance_per_site_mpo(tensors), status.iter, 1, slope_threshold);
     //    if(report.has_computed) V_mpo_slope  = report.slopes.back(); //TODO: Fix this, changed slope calculation, back is not relevant
     if(report.has_computed) {
-        V_mpo_slope = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
+        V_mpo_slope                       = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
         status.variance_mpo_has_saturated = V_mpo_slope < slope_threshold;
         status.variance_mpo_saturated_for = (size_t) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
         status.variance_mpo_has_converged = tools::infinite::measure::energy_variance_per_site_mpo(tensors) < threshold;
@@ -267,7 +266,7 @@ void class_algorithm_infinite::check_convergence_variance_ham(double threshold, 
         V_ham_vec, X_ham_vec, tools::infinite::measure::energy_variance_per_site_ham(tensors), status.iter, 1, slope_threshold);
     //    if(report.has_computed) V_ham_slope  = report.slopes.back();//TODO: Fix this, changed slope calculation, back is not relevant
     if(report.has_computed) {
-        V_ham_slope = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
+        V_ham_slope                       = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
         status.variance_ham_has_saturated = V_ham_slope < slope_threshold;
         status.variance_ham_has_converged = tools::infinite::measure::energy_variance_per_site_ham(tensors) < threshold;
     }
@@ -284,7 +283,7 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold, 
         //            B_mom_vec,
         V_mom_vec, X_mom_vec, tools::infinite::measure::energy_variance_per_site_mom(tensors), status.iter, 1, slope_threshold);
     if(report.has_computed) {
-        V_mom_slope = report.slope; // TODO: Fix this, slopes.back() not relevant anymore
+        V_mom_slope                       = report.slope; // TODO: Fix this, slopes.back() not relevant anymore
         status.variance_mom_has_saturated = V_mom_slope < slope_threshold;
         status.variance_mom_has_converged = tools::infinite::measure::energy_variance_per_site_mom(tensors) < threshold;
     }
@@ -300,7 +299,7 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
         //            BS_vec,
         S_vec, XS_vec, tools::infinite::measure::entanglement_entropy(*tensors.state), status.iter, 1, slope_threshold);
     if(report.has_computed) {
-        S_slope = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
+        S_slope                           = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
         status.entanglement_has_saturated = S_slope < slope_threshold;
         status.entanglement_has_converged = status.entanglement_has_saturated;
     }
@@ -365,7 +364,6 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     tools::infinite::io::h5dset::write_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
     tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
 
-
     // The main results have now been written. Next we append data to tables
     // Some storage reasons should not do this however. Like projection.
     // Also we can avoid repeated entries by only allowing fresh step numbers.
@@ -373,14 +371,12 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     static size_t last_step_written = 0;
     if(status.step == last_step_written and last_step_written > 0) return;
 
-
     tools::infinite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, tensors, status);
     tools::infinite::io::h5table::write_sim_status(*h5pp_file, table_prefix, storage_level, status);
     tools::infinite::io::h5table::write_profiling(*h5pp_file, table_prefix, storage_level, status);
     tools::infinite::io::h5table::write_mem_usage(*h5pp_file, table_prefix, storage_level, status);
     last_step_written = status.step;
 }
-
 
 void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
     if(not h5pp_file) return;
@@ -397,7 +393,6 @@ void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
     }
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 }
-
 
 void class_algorithm_infinite::print_status_update() {
     if(math::mod(status.iter, print_freq()) != 0) {

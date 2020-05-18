@@ -6,8 +6,6 @@
 #include "class_ising_sdual.h"
 #include "class_ising_tf_rf.h"
 #include "class_mpo_base.h"
-#include "class_mpo_parameters.h"
-#include <math/nmspc_math.h>
 
 std::unique_ptr<class_mpo_base> class_mpo_factory::create_mpo(size_t position, ModelType model_type) {
     switch(model_type){

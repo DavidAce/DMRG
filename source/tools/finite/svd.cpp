@@ -83,8 +83,8 @@
 //    tools::common::profile::t_svd->tic();
 //    while (active_sites.size() >= 2){
 //        size_t site = active_sites.front();
-//        long dim0 = state.get_mps(site).spin_dim();
-//        long dim1 = V.dimension(0) / state.get_mps(site).spin_dim();
+//        long dim0 = state.get_mps_site(site).spin_dim();
+//        long dim1 = V.dimension(0) / state.get_mps_site(site).spin_dim();
 //        long dim2 = V.dimension(1);
 //        long dim3 = V.dimension(2);
 //        theta4 = V
@@ -93,34 +93,34 @@
 //        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4, chi_lim);
 //
 //        state.set_truncation_error(site, SVD.get_truncation_error());
-//        state.get_mps(site).set_M(U);
-//        state.get_mps(site).unset_LC();
+//        state.get_mps_site(site).set_M(U);
+//        state.get_mps_site(site).unset_LC();
 //
 //
 //        if (not Eigen::Map<VectorType>(U.data(),U.size()).allFinite() )
 //            throw std::runtime_error("L_U has nan's or inf's");
 //
-//        Eigen::Tensor<Scalar,2> leftID = state.get_mps(site).get_M()
-//                .contract(state.get_mps(site).get_M().conjugate(), Textra::idx({0,1},{0,1}) );
+//        Eigen::Tensor<Scalar,2> leftID = state.get_mps_site(site).get_M()
+//                .contract(state.get_mps_site(site).get_M().conjugate(), Textra::idx({0,1},{0,1}) );
 //        if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12.", site));
 //
 //
 //
 //        if(active_sites.size() >= 3){
 //            Eigen::Tensor<Scalar,3> temp = Textra::asDiagonal(S).contract(V, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-//            state.get_mps(site + 1).set_L(S);
+//            state.get_mps_site(site + 1).set_L(S);
 //            V = temp;
 //            if(state.ENV_L. back().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV_L while truncating  left to right {} != {}",state.ENV_L. front().get_position() , site));
 //            if(state.ENV2_L.back().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV2_L while truncating  left to right{} != {}",state.ENV2_L.front().get_position() , site));
 //
-//            state.ENV_L .emplace_back(state.ENV_L .back().enlarge(state.get_mps(site), state.get_MPO(site)));
-//            state.ENV2_L.emplace_back(state.ENV2_L.back().enlarge(state.get_mps(site), state.get_MPO(site)));
+//            state.ENV_L .emplace_back(state.ENV_L .back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
+//            state.ENV2_L.emplace_back(state.ENV2_L.back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //        } else{
 //            //Always set LC on the last "A" matrix
-//            state.get_mps(site).set_LC(S);
+//            state.get_mps_site(site).set_LC(S);
 //        }
 //        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
-//                          state.get_mps(site).get_chiR());
+//                          state.get_mps_site(site).get_chiR());
 //        active_sites.pop_front();
 //    }
 //
@@ -128,23 +128,23 @@
 //    size_t site = active_sites.front();
 ////    Eigen::Tensor<Scalar,3> V_L = V.contract(Textra::asDiagonalInversed(state.get_L(site+1)), Textra::idx({2},{0}));
 ////    state.get_G(site) = V_L;
-//    state.get_mps(site).set_M(V);
+//    state.get_mps_site(site).set_M(V);
 //
 //    if (not Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1 >>(V.data(),V.size()).allFinite() )
 //        throw std::runtime_error("V_L has nan's or inf's");
 //
 //
-//    Eigen::Tensor<Scalar,2> rightID = state.get_mps(site).get_M()
-//            .contract(state.get_mps(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
+//    Eigen::Tensor<Scalar,2> rightID = state.get_mps_site(site).get_M()
+//            .contract(state.get_mps_site(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
 //    if(not Textra::TensorMatrixMap(rightID).isIdentity(1e-12)) {
-//        std::cout << "L site   : \n" << state.get_mps(site).get_L() << std::endl;
-//        std::cout << "L site+1 : \n" << state.get_mps(site + 1).get_L() << std::endl;
+//        std::cout << "L site   : \n" << state.get_mps_site(site).get_L() << std::endl;
+//        std::cout << "L site+1 : \n" << state.get_mps_site(site + 1).get_L() << std::endl;
 //
 //        std::cout << "rightID: \n" << rightID << std::endl;
 //        throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
 //    }
 //    tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
-//                      state.get_mps(site).get_chiR());
+//                      state.get_mps_site(site).get_chiR());
 //    tools::common::profile::t_svd->toc();
 //
 //
@@ -172,8 +172,8 @@
 //    tools::common::profile::t_svd->tic();
 //    while (reverse_active_sites.size() >= 2){
 //        size_t site = reverse_active_sites.front();
-//        long dim0 = U.dimension(0) / state.get_mps(site).spin_dim();
-//        long dim1 = state.get_mps(site).spin_dim();
+//        long dim0 = U.dimension(0) / state.get_mps_site(site).spin_dim();
+//        long dim1 = state.get_mps_site(site).spin_dim();
 //        long dim2 = U.dimension(1);
 //        long dim3 = U.dimension(2);
 //        theta4 = U
@@ -192,52 +192,52 @@
 //
 //
 //        state.set_truncation_error(site-1,SVD.get_truncation_error());
-//        state.get_mps(site).set_M(V);
-//        state.get_mps(site).unset_LC();
+//        state.get_mps_site(site).set_M(V);
+//        state.get_mps_site(site).unset_LC();
 //
 //
 //
 //        if(reverse_active_sites.size() >= 3){
 //            Eigen::Tensor<Scalar,3> temp =  U.contract(Textra::asDiagonal(S), Textra::idx({2},{0}));
 //            U = temp;
-//            state.get_mps(site - 1).set_L(S);
+//            state.get_mps_site(site - 1).set_L(S);
 //
 //            if(state.ENV_R. front().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV_R while truncating right to left {} != {}", state.ENV_R. front().get_position() , site));
 //            if(state.ENV2_R.front().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV2_R while truncating right to left {} != {}",state.ENV2_R.front().get_position() , site));
 ////            class_environment     R  = state.ENV_R.front();
 ////            class_environment_var R2 = state.ENV2_R.front();
-////            R.enlarge (state.get_mps(site), state.get_mpo(site));
-////            R2.enlarge(state.get_mps(site), state.get_mpo(site));
-//            state.ENV_R .emplace_front(state.ENV_R .front().enlarge(state.get_mps(site), state.get_MPO(site)));
-//            state.ENV2_R.emplace_front(state.ENV2_R.front().enlarge(state.get_mps(site), state.get_MPO(site)));
+////            R.enlarge (state.get_mps_site(site), state.get_2site_tensor(site));
+////            R2.enlarge(state.get_mps_site(site), state.get_2site_tensor(site));
+//            state.ENV_R .emplace_front(state.ENV_R .front().enlarge(state.get_mps_site(site), state.get_MPO(site)));
+//            state.ENV2_R.emplace_front(state.ENV2_R.front().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //
 //        }else{
-//            state.get_mps(site - 1).set_LC(S);
+//            state.get_mps_site(site - 1).set_LC(S);
 //        }
 //        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
-//                          state.get_mps(site).get_chiR());
+//                          state.get_mps_site(site).get_chiR());
 //        reverse_active_sites.pop_front();
 //
 //        if (not Eigen::Map<VectorType>(V.data(),V.size()).allFinite() )
 //            throw std::runtime_error("V_L has nan's or inf's");
 //
-//        Eigen::Tensor<Scalar,2> rightID = state.get_mps(site).get_M()
-//                .contract(state.get_mps(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
+//        Eigen::Tensor<Scalar,2> rightID = state.get_mps_site(site).get_M()
+//                .contract(state.get_mps_site(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
 //        if(not Textra::TensorMatrixMap(rightID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
 //
 //    }
 //    size_t site = reverse_active_sites.front();
 ////    Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 ////    state.get_G(site) = L_U;
-//    state.get_mps(site).set_M(U);
+//    state.get_mps_site(site).set_M(U);
 //    if (not Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1 >>(U.data(),U.size()).allFinite() )
 //        throw std::runtime_error("L_U has nan's or inf's");
 //
-//    Eigen::Tensor<Scalar,2> leftID = state.get_mps(site).get_M_bare()
-//            .contract(state.get_mps(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
+//    Eigen::Tensor<Scalar,2> leftID = state.get_mps_site(site).get_M_bare()
+//            .contract(state.get_mps_site(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
 //    if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
 //    tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
-//                      state.get_mps(site).get_chiR());
+//                      state.get_mps_site(site).get_chiR());
 //    tools::common::profile::t_svd->toc();
 //
 //}

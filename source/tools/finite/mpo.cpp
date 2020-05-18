@@ -14,21 +14,6 @@
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 
-void tools::finite::mpo::initialize(class_model_finite &model, ModelType model_type, size_t num_sites) {
-    tools::log->trace("Initializing mpo with {} sites", num_sites);
-    if(num_sites < 2) throw std::logic_error("Tried to initialize MPO with less than 2 sites");
-    if(num_sites > 2048) throw std::logic_error("Tried to initialize MPO with more than 2048 sites");
-    if(not model.MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
-
-//    state.MPO_L.clear();
-//    state.MPO_R.clear();
-    // Generate MPO
-    model.model_type = model_type;
-    for(size_t site = 0; site < num_sites; site++) {
-        model.MPO.emplace_back(class_mpo_factory::create_mpo(site, model_type));
-    }
-    if(model.MPO.size() != num_sites) throw std::logic_error("Initialized MPO with wrong size");
-}
 
 void tools::finite::mpo::randomize(class_model_finite &model) {
     tools::log->trace("Setting random fields in MPO's");
@@ -71,7 +56,7 @@ void tools::finite::mpo::damp_hamiltonian(class_model_finite &model, double coup
 void tools::finite::mpo::reduce_mpo_energy(class_model_finite & model, double site_energy) {
 //    if(model.active_sites.empty() and state.active_sites.empty()){}
 //    if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites)) throw std::runtime_error(fmt::format("Active sites not equal: state {} | model {} | edges {}",state.active_sites, model.active_sites, edges.active_sites));
-//    const auto mps                              = state.get_multisite_mps();
+//    const auto mps                              = state.get_multisite_tensor();
 //    double     energy_per_site_before           = tools::finite::measure::energy_per_site(mps,model,edges);
     double     energy_per_site_reduced_before   = model.get_energy_per_site_reduced();
 //    double energy_per_site_minus_reduced_before = tools::finite::measure::energy_minus_energy_reduced(mps, model, edges) / static_cast<double>(state.get_length());

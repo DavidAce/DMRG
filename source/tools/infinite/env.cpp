@@ -2,16 +2,21 @@
 // Created by david on 2019-10-24.
 //
 
-#include <tensors/state/class_environment.h>
+#include "env.h"
 #include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_state_infinite.h>
-#include <tools/infinite/env.h>
-//#include <tensors/state/class_mps_site.h>
-//#include <tensors/model/class_model_base.h>
+#include <tensors/model/class_model_infinite.h>
+#include <tensors/edges/class_edges_infinite.h>
+#include <tensors/edges/class_env_ene.h>
+#include <tensors/edges/class_env_var.h>
 
-void tools::infinite::env::initialize(class_state_infinite &state) {
-    state.Lblock  = std::make_unique<class_environment>("L", *state.MPS->MPS_A, *state.HA);
-    state.Rblock  = std::make_unique<class_environment>("R", *state.MPS->MPS_B, *state.HB);
-    state.Lblock2 = std::make_unique<class_environment_var>("L", *state.MPS->MPS_A, *state.HA);
-    state.Rblock2 = std::make_unique<class_environment_var>("R", *state.MPS->MPS_B, *state.HB);
+
+void tools::infinite::env::enlarge_edges(const class_state_infinite & state, const class_model_infinite & model, class_edges_infinite & edges){
+    const auto & ene = edges.get_ene();
+    ene.L = ene.L.enlarge(state.get_mps_siteA(), model.get_mpo_siteA());
+    ene.R = ene.R.enlarge(state.get_mps_siteB(), model.get_mpo_siteB());
+
+    const auto & var = edges.get_var();
+    var.L = var.L.enlarge(state.get_mps_siteA(), model.get_mpo_siteA());
+    var.R = var.R.enlarge(state.get_mps_siteB(), model.get_mpo_siteB());
 }

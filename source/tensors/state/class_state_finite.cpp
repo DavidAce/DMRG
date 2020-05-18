@@ -3,88 +3,116 @@
 //
 
 #include "class_state_finite.h"
+#include <config/nmspc_settings.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
-// We need to make a destructor manually for the enclosing class "class_state_finite"
-// that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
-// own default deleter.
-// This allows us to forward declare the abstract base class "class_model_base"
+
+class_state_finite::class_state_finite() = default; // Can't initialize lists since we don't know the model size yet
+
+
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_state_finite::~class_state_finite() = default;
+class_state_finite::~class_state_finite()                                   = default;            // default dtor
+class_state_finite::class_state_finite(class_state_finite &&other) noexcept = default;            // default move ctor
+class_state_finite &class_state_finite::operator=(class_state_finite &&other) noexcept = default; // default move assign
 
-class_state_finite::class_state_finite(const class_state_finite &other) { *this = other; }
+/* clang-format off */
+class_state_finite::class_state_finite(const class_state_finite &other):
+    iter(other.iter),
+    step(other.step),
+    direction(other.direction),
+    chi_lim(other.chi_lim),
+    chi_max(other.chi_max),
+    cache(other.cache),
+    site_update_tags(other.site_update_tags),
+    active_sites(other.active_sites),
+    measurements(other.measurements),
+    lowest_recorded_variance(other.lowest_recorded_variance)
+{
+    mps_sites.clear();
+    for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(mps));
+}
+/* clang-format on */
 
 class_state_finite &class_state_finite::operator=(const class_state_finite &other) {
     // check for self-assignment
-    if(&other == this) return *this;
-
-    // Copy all data members
-    this->iter       = other.iter;
-    this->step       = other.step;
-    this->direction  = other.direction;
-    this->chi_lim    = other.chi_lim;
-    this->chi_max    = other.chi_max;
-    this->MPS        = other.MPS;
-//    this->MPS_R      = other.MPS_R;
-//    this->ENV_L      = other.ENV_L;
-//    this->ENV_R      = other.ENV_R;
-//    this->ENV2_L     = other.ENV2_L;
-//    this->ENV2_R     = other.ENV2_R;
-//
-    this->active_sites       = other.active_sites;
-    this->truncation_error   = other.truncation_error;
-    this->truncated_variance = other.truncated_variance;
-    this->measurements       = other.measurements;
-    this->site_update_tags   = other.site_update_tags;
-    this->cache              = other.cache;
-
-    // The MPO's are special and the whole point of doing this manually
-//    this->MPO_L.clear();
-//    this->MPO_R.clear();
-//    for(auto &mpo : other.MPO_L) this->MPO_L.emplace_back(mpo->clone());
-//    for(auto &mpo : other.MPO_R) this->MPO_R.emplace_back(mpo->clone());
+    if(this != &other) {
+        iter = other.iter;
+        step = other.step;
+        direction = other.direction;
+        chi_lim = other.chi_lim;
+        chi_max = other.chi_max;
+        cache = other.cache;
+        site_update_tags = other.site_update_tags;
+        active_sites = other.active_sites;
+        measurements = other.measurements;
+        lowest_recorded_variance = other.lowest_recorded_variance;
+        mps_sites.clear();
+        for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(mps));
+    }
     return *this;
 }
 
-//void class_state_finite::do_all_measurements() {
-//    using namespace tools::finite;
-//    measurements.length                        = measure::length(*this);
-//    measurements.bond_dimension_current        = measure::bond_dimension_current(*this);
-//    measurements.bond_dimension_midchain       = measure::bond_dimension_midchain(*this);
-//    measurements.bond_dimensions               = measure::bond_dimensions(*this);
-//    measurements.norm                          = measure::norm(*this);
-//    measurements.energy                        = measure::energy(*this); // This number is needed for variance calculation!
-//    measurements.energy_per_site               = measure::energy_per_site(*this);
-//    measurements.energy_variance               = measure::energy_variance(*this);
-//    measurements.energy_variance_per_site      = measure::energy_variance_per_site(*this);
-//    measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(*this);
-//    measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(*this);
-//    measurements.entanglement_entropies        = measure::entanglement_entropies(*this);
-//    measurements.spin_components               = measure::spin_components(*this);
-//}
+
+void class_state_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
+    tools::log->info("Initializing state with {} sites at position {}", model_size, position);
+    if(model_size < 2) throw std::logic_error("Tried to initialize state with less than 2 sites");
+    if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
+    if(position >= model_size) throw std::logic_error("Tried to initialize state at a position larger than the number of sites");
+
+    size_t spin_dim = 2;
+    switch(model_type){
+        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim;break;
+        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim;break;
+        default: spin_dim = 2;
+    }
+
+    mps_sites.clear();
+
+    // Generate a simple state with all spins equal
+    Eigen::Tensor<Scalar, 3> M(static_cast<long>(spin_dim), 1, 1);
+    Eigen::Tensor<Scalar, 1> L(1);
+    M(0, 0, 0) = 0;
+    M(1, 0, 0) = 1;
+    L(0)       = 1;
+    for(size_t site = 0; site < model_size; site++) {
+        mps_sites.emplace_back(class_mps_site(M, L, site));
+        if(site == position) mps_sites.back().set_LC(L);
+    }
+    if(mps_sites.size() != model_size) throw std::logic_error("Initialized state with wrong size");
+    if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
+    if(get_position() != position) throw std::logic_error("Initialized state at the wrong position");
+    site_update_tags = std::vector<bool>(model_size, false);
+}
+
 
 void class_state_finite::set_positions() {
     size_t pos = 0;
-    for(auto &mps : MPS) mps.set_position(pos++);
+    for(auto &mps : mps_sites) mps.set_position(pos++);
 }
 
-size_t class_state_finite::get_length() const { return MPS.size(); }
+size_t class_state_finite::get_length() const { return mps_sites.size(); }
 size_t class_state_finite::get_position() const {
-    size_t pos = 0;
-    bool found_center = false;
-    for(auto &mps: MPS)
+    size_t pos          = 0;
+    bool   found_center = false;
+    for(auto &mps : mps_sites)
         if(mps.isCenter() and not found_center) {
-            pos = mps.get_position();
+            pos          = mps.get_position();
             found_center = true;
-        } else if (mps.isCenter() and found_center)
-                throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps.get_position()));
-    if(not found_center)
-        throw std::logic_error("Could not find center");
+        } else if(mps.isCenter() and found_center)
+            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps.get_position()));
+    if(not found_center) throw std::logic_error("Could not find center");
     return pos;
 }
 
@@ -129,12 +157,12 @@ void class_state_finite::flip_direction() { direction *= -1; }
 
 Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
     Eigen::DSizes<long, 3> dimensions;
-    auto pos = get_position();
-    const auto & mpsL = get_mps(pos);
-    const auto & mpsR = get_mps(pos+1);
-    dimensions[1] = mpsL.get_chiL();
-    dimensions[2] = mpsR.get_chiR();
-    dimensions[0] = mpsL.spin_dim() * mpsR.spin_dim();
+    auto                   pos  = get_position();
+    const auto &           mpsL = get_mps_site(pos);
+    const auto &           mpsR = get_mps_site(pos + 1);
+    dimensions[1]               = mpsL.get_chiL();
+    dimensions[2]               = mpsR.get_chiR();
+    dimensions[0]               = mpsL.spin_dim() * mpsR.spin_dim();
     return dimensions;
 }
 
@@ -143,8 +171,12 @@ size_t class_state_finite::size_2site() const {
     return static_cast<size_t>(dims[0] * dims[1] * dims[2]);
 }
 
-bool class_state_finite::position_is_the_middle() const { return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0) and direction == 1; }
-bool class_state_finite::position_is_the_middle_any_direction() const { return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0); }
+bool class_state_finite::position_is_the_middle() const {
+    return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0) and direction == 1;
+}
+bool class_state_finite::position_is_the_middle_any_direction() const {
+    return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0);
+}
 
 bool class_state_finite::position_is_left_edge() const { return get_position() == 0 and direction == -1; }
 
@@ -156,75 +188,68 @@ bool class_state_finite::position_is_at(size_t pos) const { return get_position(
 
 bool class_state_finite::is_real() const {
     bool mps_real = true;
-    for(auto &mps : MPS) mps_real = mps_real and mps. is_real();
+    for(auto &mps : mps_sites) mps_real = mps_real and mps.is_real();
     return mps_real;
 }
 
 bool class_state_finite::has_nan() const {
-    for(auto &mps : MPS)
-        if(mps.hasNaN()) return true;
+    for(auto &mps : mps_sites)
+        if(mps.has_nan()) return true;
     return false;
 }
 
 void class_state_finite::assert_validity() const {
-    for(auto &mps : MPS) mps.assert_validity();
+    for(auto &mps : mps_sites) mps.assert_validity();
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain_bond() const {
     size_t center_pos = (get_length() - 1) / 2;
-    if(get_position() < center_pos) return get_mps(center_pos).get_L();
-    if(get_position() > center_pos) return get_mps(center_pos + 1).get_L();
+    if(get_position() < center_pos) return get_mps_site(center_pos).get_L();
+    if(get_position() > center_pos) return get_mps_site(center_pos + 1).get_L();
     if(get_position() == center_pos)
-        return get_mps(center_pos).get_LC();
+        return get_mps_site(center_pos).get_LC();
     else
         throw std::logic_error("No valid position to find midchain_bond");
 }
 
-const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::current_bond() const {
-    return get_mps(get_position()).get_LC();
-}
+const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::current_bond() const { return get_mps_site(get_position()).get_LC(); }
 
-const class_mps_site &class_state_finite::get_mps(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_mps(pos): pos out of range: {}", pos));
-    auto mps_it = std::next(MPS.begin(), static_cast<long>(pos));
-    if(mps_it->get_position() != pos) throw std::range_error(fmt::format("get_mps(pos): mismatch pos {} != mps pos {}", pos, mps_it->get_position()));
+const class_mps_site &class_state_finite::get_mps_site(size_t pos) const {
+    if(pos >= get_length()) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
+    auto mps_it = std::next(mps_sites.begin(), static_cast<long>(pos));
+    if(mps_it->get_position() != pos) throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_it->get_position()));
     return *mps_it;
 }
 
-class_mps_site &class_state_finite::get_mps(size_t pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps(pos)); }
+class_mps_site &class_state_finite::get_mps_site(size_t pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps_site(pos)); }
 
-const class_mps_site &class_state_finite::get_mps() const {
-    return get_mps(get_position());
-}
+const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_site(get_position()); }
 
-class_mps_site &class_state_finite::get_mps() {
-    return get_mps(get_position());
-}
-
+class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
 //
-//const class_mpo_base &class_state_finite::get_mpo(size_t pos) const {
-//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_mpo(pos) pos out of range: {}", pos));
+// const class_mpo_base &class_state_finite::get_2site_tensor(size_t pos) const {
+//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
 //    if(pos <= MPO_L.back()->get_position()) {
 //        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
 //        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_mpo(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//            throw std::range_error(fmt::format("get_2site_tensor(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
 //        return *mpo_it;
 //    } else {
 //        if(pos < MPO_R.front()->get_position())
-//            throw std::range_error(fmt::format("get_mps(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
+//            throw std::range_error(fmt::format("get_mps_site(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
 //        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
 //        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_mpo(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//            throw std::range_error(fmt::format("get_2site_tensor(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
 //        return *mpo_it;
 //    }
 //}
 //
-//class_mpo_base &class_state_finite::get_mpo(size_t pos) {
-//    return const_cast<class_mpo_base &>(static_cast<const class_state_finite &>(*this).get_mpo(pos));
+// class_mpo_base &class_state_finite::get_2site_tensor(size_t pos) {
+//    return const_cast<class_mpo_base &>(static_cast<const class_state_finite &>(*this).get_2site_tensor(pos));
 //}
 //
-//const class_environment &class_state_finite::get_ENVL(size_t pos) const {
+// const class_environment &class_state_finite::get_ENVL(size_t pos) const {
 //    if(pos > ENV_L.back().get_position()) throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}", pos));
 //    if(pos >= ENV_L.size()) throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}", pos));
 //    auto env_it = std::next(ENV_L.begin(), static_cast<long>(pos));
@@ -233,7 +258,7 @@ class_mps_site &class_state_finite::get_mps() {
 //    return *env_it;
 //}
 //
-//const class_environment &class_state_finite::get_ENVR(size_t pos) const {
+// const class_environment &class_state_finite::get_ENVR(size_t pos) const {
 //    if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}", pos));
 //    if(pos >= ENV_L.size() + ENV_R.size()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
 //    auto env_it = std::next(ENV_R.begin(), static_cast<long>(pos - ENV_R.front().get_position()));
@@ -242,7 +267,7 @@ class_mps_site &class_state_finite::get_mps() {
 //    return *env_it;
 //}
 //
-//const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
+// const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
 //    if(pos > ENV2_L.back().get_position()) throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}", pos));
 //    if(pos >= ENV2_L.size()) throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}", pos));
 //    auto env2_it = std::next(ENV2_L.begin(), static_cast<long>(pos));
@@ -251,7 +276,7 @@ class_mps_site &class_state_finite::get_mps() {
 //    return *env2_it;
 //}
 //
-//const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
+// const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
 //    if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
 //    if(pos >= ENV2_L.size() + ENV2_R.size()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
 //    auto env2_it = std::next(ENV2_R.begin(), static_cast<long>(pos - ENV2_R.front().get_position()));
@@ -262,7 +287,7 @@ class_mps_site &class_state_finite::get_mps() {
 //
 //// For reduced energy MPO's
 //
-//bool class_state_finite::is_reduced() const {
+// bool class_state_finite::is_reduced() const {
 //    bool reduced = MPO_L.front()->is_reduced();
 //    for(auto &mpo : MPO_L)
 //        if(reduced != mpo->is_reduced()) {
@@ -277,9 +302,9 @@ class_mps_site &class_state_finite::get_mps() {
 //    return reduced;
 //}
 //
-//double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
+// double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
 //
-//double class_state_finite::get_energy_per_site_reduced() const {
+// double class_state_finite::get_energy_per_site_reduced() const {
 //    // Check that all energies are the same
 //    double e_reduced = MPO_L.front()->get_reduced_energy();
 //    for(auto &mpo : MPO_L) {
@@ -295,9 +320,9 @@ class_mps_site &class_state_finite::get_mps() {
 //    return e_reduced;
 //}
 //
-//void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
+// void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
 //
-//void class_state_finite::set_reduced_energy_per_site(double site_energy) {
+// void class_state_finite::set_reduced_energy_per_site(double site_energy) {
 //    if(get_energy_per_site_reduced() == site_energy) return;
 //    clear_measurements();
 //    cache.multimpo = {};
@@ -306,22 +331,23 @@ class_mps_site &class_state_finite::get_mps() {
 //    tools::finite::mps::rebuild_edges(*this);
 //}
 //
-//void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
+// void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
 //    tools::finite::mpo::perturb_hamiltonian(*this, coupling_ptb, field_ptb, perturbMode);
 //}
 //
-//void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp); }
+// void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp);
+// }
 //
-//bool class_state_finite::is_perturbed() const {
+// bool class_state_finite::is_perturbed() const {
 //    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_mpo(pos).is_perturbed()) return true;
+//        if(get_2site_tensor(pos).is_perturbed()) return true;
 //    }
 //    return false;
 //}
 //
-//bool class_state_finite::is_damped() const {
+// bool class_state_finite::is_damped() const {
 //    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_mpo(pos).is_damped()) return true;
+//        if(get_2site_tensor(pos).is_damped()) return true;
 //    }
 //    return false;
 //}
@@ -340,8 +366,8 @@ Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return to
 
 size_t class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
-const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_mps() const {
-    if(cache.multisite_mps) return cache.multisite_mps.value();
+const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_tensor() const {
+    if(cache.multisite_tensor) return cache.multisite_tensor.value();
     tools::log->trace("Contracting multi theta");
     if(active_sites.empty()) {
         throw std::runtime_error("No active sites on which to build multitheta");
@@ -351,12 +377,12 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
     bool                     first = true;
     for(auto &site : active_sites) {
         if(first) {
-            multitheta = get_mps(site).get_M();
+            multitheta = get_mps_site(site).get_M();
             first      = false;
             continue;
         }
-        if(site != get_mps(site).get_position()) throw std::runtime_error("Site mismatch in get_multisite_mps");
-        auto M     = get_mps(site).get_M();
+        if(site != get_mps_site(site).get_position()) throw std::runtime_error("Site mismatch in get_multisite_tensor");
+        auto M     = get_mps_site(site).get_M();
         long dim0  = multitheta.dimension(0) * M.dimension(0);
         long dim1  = multitheta.dimension(1);
         long dim2  = M.dimension(2);
@@ -365,11 +391,11 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
     }
     //    auto & L = get_L(active_sites.back()+1);
     //    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
-    cache.multisite_mps = temp;
-    return cache.multisite_mps.value();
+    cache.multisite_tensor = temp;
+    return cache.multisite_tensor.value();
 }
 
-//const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
+// const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
 //    if(cache.multimpo) return cache.multimpo.value();
 //    tools::common::profile::t_mpo->tic();
 //    tools::log->trace("Contracting multi mpo");
@@ -380,11 +406,11 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
 //    bool                     first = true;
 //    for(auto &site : active_sites) {
 //        if(first) {
-//            multimpo = get_mpo(site).MPO();
+//            multimpo = get_2site_tensor(site).MPO();
 //            first    = false;
 //            continue;
 //        }
-//        auto &                   mpo  = get_mpo(site).MPO();
+//        auto &                   mpo  = get_2site_tensor(site).MPO();
 //        long                     dim0 = multimpo.dimension(0);
 //        long                     dim1 = mpo.dimension(1);
 //        long                     dim2 = multimpo.dimension(2) * mpo.dimension(2);
@@ -398,15 +424,17 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
 //    return cache.multimpo.value();
 //}
 
-//std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>> class_state_finite::get_multienv() const {
+// std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>> class_state_finite::get_multienv() const {
 //    return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
 //}
 //
-//std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> class_state_finite::get_multienv2() const {
+// std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> class_state_finite::get_multienv2() const
+// {
 //    return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
 //}
 
-void class_state_finite::set_truncation_error(size_t left_site, double error)
+
+void class_state_finite::set_truncation_error(size_t pos, double error)
 /*! The truncation error vector has length + 1 elements, as many as there are bond matrices.
  *  Obviously, the edge matrices are always 1, so we expect these to have truncation_error = 0.
  *  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
@@ -417,6 +445,7 @@ void class_state_finite::set_truncation_error(size_t left_site, double error)
         tools::log->debug("Resizing truncation_error container to size: {}", get_length() + 1);
         truncation_error = std::vector<double>(get_length() + 1, 0.0);
     }
+    get_mps_site(pos).set_truncation_error(error);
     truncation_error[left_site + 1] = error;
 }
 
@@ -470,8 +499,8 @@ size_t class_state_finite::num_sites_truncated(double threshold) const {
 }
 
 size_t class_state_finite::num_bonds_at_limit() const {
-    auto   bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto   bonds_at_lim = (size_t) std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= (size_t) get_chi_lim(); });
+    auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
+    auto bonds_at_lim = (size_t) std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= (size_t) get_chi_lim(); });
     return bonds_at_lim;
 }
 
@@ -481,9 +510,7 @@ void class_state_finite::clear_measurements() const { measurements = state_measu
 
 void class_state_finite::clear_cache() const { cache = Cache(); }
 
-void class_state_finite::do_all_measurements() const {
-    tools::finite::measure::do_all_measurements(*this);
-}
+void class_state_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 
 void class_state_finite::tag_active_sites_have_been_updated(bool tag) const {
     if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");

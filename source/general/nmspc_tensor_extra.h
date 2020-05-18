@@ -5,11 +5,11 @@
 #pragma once
 #include <general/nmspc_tensor_omp.h>
 #include <general/nmspc_sfinae.h>
-#include <Eigen/Core>
+#include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <iomanip>
+//#include <iomanip>
 #include <iostream>
-#include <iterator>
+//#include <iterator>
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -319,7 +319,6 @@ namespace Textra {
         using Scalar = typename Derived::Scalar;
         if constexpr (sfinae::is_specialization<Scalar, std::complex>::value){
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
-//            std::cout <<"imag sum " << name << " :" << std::fixed << std::setprecision(16)<< imag_sum << std::endl;
             return imag_sum < threshold;
         }else{
             return true;
@@ -335,7 +334,7 @@ namespace Textra {
 
     template<typename Derived>
     bool hasNaN(const Eigen::EigenBase<Derived> &obj,[[maybe_unused]]const std::string &name = "") {
-        return obj.derived(). has_nan();
+        return obj.derived().hasNaN();
     }
 
 
@@ -401,49 +400,49 @@ namespace Textra {
 //std::cout overloads for dimension() and array objects //
 //******************************************************//
 
-    template <typename T, int L>
-    std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {
-        if ( !v.empty() ) {
-            out << "[ ";
-            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
-
-
-    template <typename T, int L>
-    std::ostream& operator<< (std::ostream& out, const Eigen::array<T,L>& v) {
-        if ( !v.empty() ) {
-            out << "[ ";
-            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
-
-
-/*! \brief Prints the content of a list nicely */
-    template<typename T>
-    std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
-        if (!v.empty()) {
-            out << "[ ";
-            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
-
-/*! \brief Prints the content of a list nicely */
-    template<typename T>
-    std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
-        if (!v.empty()) {
-            out << "[ ";
-            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
+//    template <typename T, int L>
+//    std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {
+//        if ( !v.empty() ) {
+//            out << "[ ";
+//            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+//            out << "]";
+//        }
+//        return out;
+//    }
+//
+//
+//    template <typename T, int L>
+//    std::ostream& operator<< (std::ostream& out, const Eigen::array<T,L>& v) {
+//        if ( !v.empty() ) {
+//            out << "[ ";
+//            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+//            out << "]";
+//        }
+//        return out;
+//    }
+//
+//
+///*! \brief Prints the content of a list nicely */
+//    template<typename T>
+//    std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
+//        if (!v.empty()) {
+//            out << "[ ";
+//            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+//            out << "]";
+//        }
+//        return out;
+//    }
+//
+///*! \brief Prints the content of a list nicely */
+//    template<typename T>
+//    std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
+//        if (!v.empty()) {
+//            out << "[ ";
+//            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+//            out << "]";
+//        }
+//        return out;
+//    }
 
 }
 

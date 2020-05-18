@@ -9,15 +9,28 @@ class class_mpo_base;
 class class_model_finite {
     public:
     using Scalar = std::complex<double>;
-    ModelType model_type = ModelType::ising_tf_rf;
 
-    class_model_finite() = default;
-    ~class_model_finite();
-    class_model_finite(const class_model_finite &other);
-    class_model_finite &operator=(const class_model_finite &other);
+    private:
+    struct Cache {
+        std::optional<Eigen::Tensor<Scalar, 4>> multisite_tensor = std::nullopt;
+        std::optional<std::list<size_t>>        cached_sites     = std::nullopt;
+    };
+    mutable Cache cache;
 
+    public:
     std::list<std::unique_ptr<class_mpo_base>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<size_t>                          active_sites;
+    ModelType                                  model_type = ModelType::ising_tf_rf;
 
+    public:
+    class_model_finite();
+    ~class_model_finite();                                              // Read comment on implementation
+    class_model_finite(class_model_finite &&other) noexcept;            // default move ctor
+    class_model_finite &operator=(class_model_finite &&other) noexcept; // default move assign
+    class_model_finite(const class_model_finite &other);                // copy ctor
+    class_model_finite &operator=(const class_model_finite &other);     // copy assign
+
+    void                  initialize(ModelType model_type_, size_t num_sites);
     size_t                get_length() const;
     bool                  is_real() const;
     bool                  has_nan() const;
@@ -38,17 +51,8 @@ class class_model_finite {
     void damp_hamiltonian(double coupling_damp, double field_damp);
 
     // For multisite
-    std::list<size_t>               active_sites;
     Eigen::DSizes<long, 4>          active_dimensions() const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
 
-    private:
-    struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo = std::nullopt;
-        std::optional<std::list<size_t>>        cached_sites  = std::nullopt;
-    };
-
-    public:
-    mutable Cache cache;
-    void          clear_cache() const;
+    void clear_cache() const;
 };

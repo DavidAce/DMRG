@@ -99,7 +99,7 @@ namespace settings {
             inline double       h_tran     = 1;                 /*!< Transverse field strength */
             inline double       h_mean     = 0;                 /*!< Random field mean of distribution */
             inline double       h_stdv     = 0;                 /*!< Random field standard deviation. In distribution this is N(h_mean,h_stdv) or U(h_mean-h_stdv,h_mean+h_stdv) */
-            inline size_t       spin_dim   = 2;                 /*!< Spin dimension */
+            inline long         spin_dim   = 2;                 /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
         }
 
@@ -111,7 +111,7 @@ namespace settings {
             inline double       h_stdv        = 1;              /*!< Standard deviation for the log-normal distribution defining transverse magnetic field */
             inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
             inline bool         parity_sep    = false;          /*!< Separation of +-X parity sectors */
-            inline size_t       spin_dim      = 2;              /*!< Spin dimension */
+            inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */
         }
     }
@@ -126,7 +126,7 @@ namespace settings {
         inline bool         project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
         inline bool         randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool         randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
-        inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
+        inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize_state spinors in x,y or z  */
         inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
         inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
     }

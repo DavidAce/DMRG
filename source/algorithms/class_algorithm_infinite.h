@@ -28,14 +28,14 @@ public:
     virtual void run_postprocessing();
 
 
-    void enlarge_environment();
-    void swap();
+//    void enlarge_environment();
+//    void swap();
     void run()                                                                                          final;
     void run_old()                                                                                      final;
     void update_truncation_limit()                                                                      final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                   final;
-    void reset_to_random_product_state(const std::string & parity_sector = "random")                    final;
-    void reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                    final;
+    void reset_to_random_product_state(const std::string &axis = "random")                              final;
+    void reset_to_random_current_state(std::optional<long> chi_lim = std::nullopt)                      final;
     void reset_to_initial_state()                                                                       final;
     void clear_saturation_status()                                                                      override;
     void write_to_file      (StorageReason storage_reason = StorageReason::CHECKPOINT)                  final;

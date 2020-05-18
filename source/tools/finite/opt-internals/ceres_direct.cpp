@@ -15,7 +15,7 @@
 Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors,
                                                                                                      const class_algorithm_status &status, OptType optType,
                                                                                                      OptMode optMode, OptSpace optSpace) {
-    return ceres_direct_optimization(tensors, tensors.state->get_multisite_mps(), status, optType, optMode, optSpace);
+    return ceres_direct_optimization(tensors, tensors.state->get_multisite_tensor(), status, optType, optMode, optSpace);
 }
 
 Eigen::Tensor<class_state_finite::Scalar, 3>
@@ -28,7 +28,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt->tic();
     using Scalar                    = std::complex<double>;
-    auto &        theta_old         = state.get_multisite_mps();
+    auto &        theta_old         = state.get_multisite_tensor();
     auto          theta_old_vec     = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(theta_old.data(), theta_old.size());
     auto          theta_initial_vec = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(theta_initial.data(), theta_initial.size());
     class_tic_toc t_local(true, 5, "");

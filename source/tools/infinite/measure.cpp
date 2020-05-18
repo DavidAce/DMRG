@@ -64,7 +64,7 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 //        MPS_evolved->MPS_B->set_G(V_L);
 //
 //        if (&Op != &Op_vec.back()) {
-//            MPS_evolved->swap_AB();
+//            MPS_evolved->enlarge();
 //        }
 //    }
 ////    t_temp2->toc();
@@ -443,7 +443,7 @@ double tools::infinite::measure::energy_minus_energy_reduced(const state_or_mps_
         return tools::infinite::measure::energy_minus_energy_reduced(state.get_mps(), model, edges);
     } else {
         tools::log->trace("Measuring energy mpo");
-        const auto &mpo = model.get_mpo();
+        const auto &mpo = model.get_2site_tensor();
         const auto &env = edges.get_ene_blk();
         tools::common::profile::t_ene->tic();
         double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
@@ -508,7 +508,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         else
             energy = tools::infinite::measure::energy_mpo(state, model, edges);
         double E2 = energy * energy;
-        const auto &mpo = model.get_mpo();
+        const auto &mpo = model.get_2site_tensor();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
         tools::common::profile::t_ene->tic();

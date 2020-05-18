@@ -124,7 +124,7 @@ tools::common::views::get_theta(const class_state_finite & state, Scalar norm)
  */
 {
     auto pos = state.get_position();
-    return state.get_mps(pos).get_M().contract(state.get_mps(pos+1).get_M(), Textra::idx({2},{1})) /norm;
+    return state.get_mps_site(pos).get_M().contract(state.get_mps_site(pos + 1).get_M(), Textra::idx({2},{1})) /norm;
 }
 
 

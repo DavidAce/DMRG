@@ -65,12 +65,12 @@ void tools::finite::debug::check_integrity(const class_state_finite & state){
 //            throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
 //
 //        for(size_t pos = 0; pos < state.get_length(); pos++){
-//            if(state.get_mps(pos).get_L().size() == 0)
+//            if(state.get_mps_site(pos).get_L().size() == 0)
 //                throw std::runtime_error(fmt::format("Bond dimension is zero at position {}", pos));
-//            if(pos != state.get_mps(pos).get_position())
-//                throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps(pos).get_position()));
-//            if(state.get_mps(pos).isCenter()){
-//                if(state.get_mps(pos).get_LC().size() == 0)
+//            if(pos != state.get_mps_site(pos).get_position())
+//                throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps_site(pos).get_position()));
+//            if(state.get_mps_site(pos).isCenter()){
+//                if(state.get_mps_site(pos).get_LC().size() == 0)
 //                    throw std::runtime_error(fmt::format("Center bond dimension is zero at position {}", pos));
 //                if(pos != state.MPS_L.back().get_position())
 //                    throw std::runtime_error(fmt::format("Center position mismatch {} != {}", pos, state.MPS_L.back().get_position()));
@@ -84,10 +84,10 @@ void tools::finite::debug::check_integrity(const class_state_finite & state){
 //        using VectorType = const Eigen::Matrix<class_state_finite::Scalar,Eigen::Dynamic,1>;
 //        for (size_t pos = 1; pos < state.get_length(); pos++){
 //
-//            auto & mps_left = state.get_mps(pos - 1);
-//            auto & mps_here = state.get_mps(pos);
-//            auto & mpo_left = state.get_mpo(pos-1);
-//            auto & mpo_here = state.get_mpo(pos);
+//            auto & mps_left = state.get_mps_site(pos - 1);
+//            auto & mps_here = state.get_mps_site(pos);
+//            auto & mpo_left = state.get_2site_tensor(pos-1);
+//            auto & mpo_here = state.get_2site_tensor(pos);
 //
 //            // Check for validity
 //            if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {
@@ -303,12 +303,12 @@ void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //            throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
 //
 //        for(size_t pos = 0; pos < state.get_length(); pos++){
-//            if(state.get_mps(pos).get_L().size() == 0)
+//            if(state.get_mps_site(pos).get_L().size() == 0)
 //                throw std::runtime_error(fmt::format("Bond dimension is zero at position {}", pos));
-//            if(pos != state.get_mps(pos).get_position())
-//                throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps(pos).get_position()));
-//            if(state.get_mps(pos).isCenter()){
-//                if(state.get_mps(pos).get_LC().size() == 0)
+//            if(pos != state.get_mps_site(pos).get_position())
+//                throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps_site(pos).get_position()));
+//            if(state.get_mps_site(pos).isCenter()){
+//                if(state.get_mps_site(pos).get_LC().size() == 0)
 //                    throw std::runtime_error(fmt::format("Center bond dimension is zero at position {}", pos));
 //                if(pos != state.MPS_L.back().get_position())
 //                    throw std::runtime_error(fmt::format("Center position mismatch {} != {}", pos, state.MPS_L.back().get_position()));
@@ -322,10 +322,10 @@ void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //        using VectorType = const Eigen::Matrix<class_state_finite::Scalar,Eigen::Dynamic,1>;
 //        for (size_t pos = 1; pos < state.get_length(); pos++){
 //
-//            auto & mps_left = state.get_mps(pos - 1);
-//            auto & mps_here = state.get_mps(pos);
-//            auto & mpo_left = state.get_mpo(pos-1);
-//            auto & mpo_here = state.get_mpo(pos);
+//            auto & mps_left = state.get_mps_site(pos - 1);
+//            auto & mps_here = state.get_mps_site(pos);
+//            auto & mpo_left = state.get_2site_tensor(pos-1);
+//            auto & mpo_here = state.get_2site_tensor(pos);
 //
 //            // Check for validity
 //            if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {
@@ -522,12 +522,12 @@ void tools::finite::debug::check_integrity(const class_state_finite &state, cons
 //        throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
 //
 //    for(size_t pos = 0; pos < state.get_length(); pos++){
-//        if(state.get_mps(pos).get_L().size() == 0)
+//        if(state.get_mps_site(pos).get_L().size() == 0)
 //            throw std::runtime_error(fmt::format("Bond dimension is zero at position {}", pos));
-//        if(pos != state.get_mps(pos).get_position())
-//            throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps(pos).get_position()));
-//        if(state.get_mps(pos).isCenter()){
-//            if(state.get_mps(pos).get_LC().size() == 0)
+//        if(pos != state.get_mps_site(pos).get_position())
+//            throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_mps_site(pos).get_position()));
+//        if(state.get_mps_site(pos).isCenter()){
+//            if(state.get_mps_site(pos).get_LC().size() == 0)
 //                throw std::runtime_error(fmt::format("Center bond dimension is zero at position {}", pos));
 //            if(pos != state.MPS_L.back().get_position())
 //                throw std::runtime_error(fmt::format("Center position mismatch {} != {}", pos, state.MPS_L.back().get_position()));
@@ -541,10 +541,10 @@ void tools::finite::debug::check_integrity(const class_state_finite &state, cons
 //    using VectorType = const Eigen::Matrix<class_state_finite::Scalar,Eigen::Dynamic,1>;
 //    for (size_t pos = 1; pos < state.get_length(); pos++){
 //
-//        auto & mps_left = state.get_mps(pos - 1);
-//        auto & mps_here = state.get_mps(pos);
-//        auto & mpo_left = state.get_mpo(pos-1);
-//        auto & mpo_here = state.get_mpo(pos);
+//        auto & mps_left = state.get_mps_site(pos - 1);
+//        auto & mps_here = state.get_mps_site(pos);
+//        auto & mpo_left = state.get_2site_tensor(pos-1);
+//        auto & mpo_here = state.get_2site_tensor(pos);
 //
 //        // Check for validity
 //        if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {

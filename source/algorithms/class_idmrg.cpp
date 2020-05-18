@@ -60,9 +60,8 @@ void class_idmrg::run_simulation() {
         if (status.algorithm_has_succeeded)             {stop_reason = StopReason::SUCCEEDED; break;}
         if (status.algorithm_has_to_stop)               {stop_reason = StopReason::SATURATED; break;}
 
-        enlarge_environment();
         update_bond_dimension_limit();
-        swap();
+        tensors.enlarge();
         status.iter++;
         status.step++;
     }
@@ -76,9 +75,8 @@ void class_idmrg::single_iDMRG_step(){
  */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
     tools::common::profile::t_sim->tic();
-    Eigen::Tensor<Scalar,3> theta = tools::infinite::opt::find_ground_state(tensors,ritz);
-    tools::infinite::opt::truncate_theta(theta, *tensors.state);
-    tensors.state->clear_measurements();
+    Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
+    tensors.update_mps(twosite_tensor);
     tools::common::profile::t_sim->toc();
     status.wall_time = tools::common::profile::t_tot->get_age();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();

@@ -14,7 +14,56 @@ using namespace Textra;
 
 using Scalar = class_mps_2site::Scalar;
 
-class_mps_2site::class_mps_2site(const class_mps_2site &other) : swapped(other.swapped), MPS_A(copy_unique(other.MPS_A)), MPS_B(copy_unique(other.MPS_B)) {}
+class_mps_2site::class_mps_2site()
+    : MPS_A(std::make_unique<class_mps_site>()),
+      MPS_B(std::make_unique<class_mps_site>())
+{
+    tools::log->trace("Constructing 2site mps");
+}
+
+
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_mps_2site::~class_mps_2site() = default;                                                    // default dtor
+class_mps_2site::class_mps_2site(class_mps_2site &&other)  noexcept = default;               // default move ctor
+class_mps_2site &class_mps_2site::operator=(class_mps_2site &&other) noexcept = default;     // default move assign
+
+class_mps_2site::class_mps_2site(const class_mps_2site &other):
+    MPS_A(std::make_unique<class_mps_site>(*other.MPS_A)),
+    MPS_B(std::make_unique<class_mps_site>(*other.MPS_B)),
+    swapped(other.swapped)
+{}
+
+class_mps_2site &class_mps_2site::operator=(const class_mps_2site &other) {
+    // check for self-assignment
+    if(this != &other) {
+        MPS_A = std::make_unique<class_mps_site>(*other.MPS_A);
+        MPS_B = std::make_unique<class_mps_site>(*other.MPS_B);
+        swapped = other.swapped;
+    }
+    return *this;
+}
+
+
+void class_mps_2site::initialize(long spin_dim) {
+    tools::log->trace("Initializing 2site mps");
+    Eigen::Tensor<Scalar, 3> M(spin_dim, 1, 1);
+    Eigen::Tensor<Scalar, 1> L(1);
+    // Default is a product state, spins pointing up in z.
+    M.setZero();
+    M(0, 0, 0) = 1;
+    L.setConstant(1.0);
+    MPS_A = std::make_unique<class_mps_site>(M, L, 0);
+    MPS_B = std::make_unique<class_mps_site>(M, L, 1);
+    MPS_A->set_LC(L);
+}
 
 void class_mps_2site::assert_validity() const {
     MPS_A->assert_validity();
@@ -22,9 +71,9 @@ void class_mps_2site::assert_validity() const {
 }
 bool class_mps_2site::is_real() const { return MPS_A->is_real() and MPS_B->is_real(); }
 bool class_mps_2site::has_nan() const { return MPS_A->has_nan() or MPS_B->has_nan(); }
+long class_mps_2site::chiC() const { return MPS_A->get_LC().dimension(0); }
 long class_mps_2site::chiA() const { return MPS_A->get_L().dimension(0); }
 long class_mps_2site::chiB() const { return MPS_B->get_L().dimension(0); }
-long class_mps_2site::chiC() const { return MPS_A->get_LC().dimension(0); }
 long class_mps_2site::spin_dim_A() const { return MPS_A->spin_dim(); }
 long class_mps_2site::spin_dim_B() const { return MPS_B->spin_dim(); }
 
@@ -40,6 +89,15 @@ Eigen::Tensor<Scalar, 3> class_mps_2site::GB() const { return MPS_B->get_M_bare(
 Eigen::Tensor<Scalar, 2> class_mps_2site::LA() const { return Textra::asDiagonal(MPS_A->get_L()); }
 Eigen::Tensor<Scalar, 2> class_mps_2site::LB() const { return Textra::asDiagonal(MPS_B->get_L()); }
 
+void class_mps_2site::set_mps(const class_mps_site & mpsA, const class_mps_site & mpsB){
+    if(not mpsA.isCenter())
+        throw std::runtime_error("Given mps for site A is not a center");
+    MPS_A = std::make_unique<class_mps_site>(mpsA);
+    MPS_B = std::make_unique<class_mps_site>(mpsB);
+}
+
+
+
 void class_mps_2site::set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB) {
     MPS_A->set_M(MA);
     MPS_A->set_LC(LC);
@@ -53,7 +111,7 @@ void class_mps_2site::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::T
     MPS_B->set_mps(MB, LB);
 }
 
-Eigen::DSizes<long, 3> class_mps_2site::dimensions() const { return Eigen::DSizes<long, 3>{spin_dim_A()*spin_dim_B(), chiA(), chiB()}; }
+Eigen::DSizes<long, 3> class_mps_2site::dimensions() const { return Eigen::DSizes<long, 3>{spin_dim_A() * spin_dim_B(), chiA(), chiB()}; }
 
 void class_mps_2site::swap_AB() {
     tools::log->trace("Swapping AB");
@@ -74,18 +132,35 @@ void class_mps_2site::swap_AB() {
     MPS_B->set_position(position_right);
 }
 
-Eigen::Tensor<class_mps_2site::Scalar, 3> class_mps_2site::get_mps(Scalar norm) const
+const class_mps_site &class_mps_2site::get_mps_siteA() const { return *MPS_A; }
+const class_mps_site &class_mps_2site::get_mps_siteB() const { return *MPS_B; }
+class_mps_site &      class_mps_2site::get_mps_siteA() { return *MPS_A; }
+class_mps_site &      class_mps_2site::get_mps_siteB() { return *MPS_B; }
+
+void class_mps_2site::set_positions(size_t posA, size_t posB) {
+    MPS_A->set_position(posA);
+    MPS_B->set_position(posB);
+}
+void class_mps_2site::set_positionA(size_t pos) { MPS_A->set_position(pos); }
+void class_mps_2site::set_positionB(size_t pos) { MPS_B->set_position(pos); }
+
+std::pair<size_t, size_t> class_mps_2site::get_positions() const { return std::make_pair(MPS_A->get_position(), MPS_B->get_position()); }
+size_t                    class_mps_2site::get_positionA() const { return MPS_A->get_position(); }
+size_t                    class_mps_2site::get_positionB() const { return MPS_B->get_position(); }
+
+Eigen::Tensor<class_mps_2site::Scalar, 3> class_mps_2site::get_2site_tensor(Scalar norm) const
 /*!
- * Returns a two-site MPS
+ * Returns a two-site tensor
      @verbatim
-        1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
                      |                 |
                      0                 2
-       Becomes
+       which in our notation is simply A * B  (because A = LA * GA * LC and B = GB * LB),
+       becomes
 
-        1--[ mps ]--2
-              |
-              0
+        1--[ 2site_tensor ]--2
+                  |
+                  0
 
      @endverbatim
  */

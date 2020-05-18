@@ -34,8 +34,8 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              chi_quench_steps     = 0;     /*!< Number of steps left doing chi-quenching */
     size_t              num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
     size_t              max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
-    size_t              chi_lim_quench_ahead = 32;    /*!< Bond dimension during a quench */
-    size_t              chi_lim_quench_trail = 32;    /*!< Bond dimension during a quench */
+    long                chi_lim_quench_ahead = 32;    /*!< Bond dimension during a quench */
+    long                chi_lim_quench_trail = 32;    /*!< Bond dimension during a quench */
     size_t              num_perturbations    = 0;     /*!< Number of perturbation trials done */
     size_t              max_perturbations    = 2;     /*!< Maximum number of perturbation trials allowed */
     size_t              perturbation_steps   = 0;     /*!< Number of steps left doing perturbation of MPOs */
@@ -59,8 +59,8 @@ class class_algorithm_finite : public class_algorithm_base {
     void         run() final;
     void         run_old() final;
     void         clear_saturation_status() override;
-    void         reset_to_random_product_state(const std::string &parity_sector = "random") final;
-    void         reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt) final;
+    void         reset_to_random_product_state(const std::string &axis = "random") final;
+    void         reset_to_random_current_state(std::optional<long> chi_lim = std::nullopt) final;
     void         reset_to_initial_state() final;
     void         write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
     void         copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT) final;

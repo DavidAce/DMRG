@@ -50,8 +50,8 @@ class class_algorithm_base {
     virtual long   chi_init()                                                                                    = 0;
     virtual void   print_status_update()                                                                         = 0;
     virtual void   print_status_full()                                                                           = 0;
-    virtual void   reset_to_random_product_state(const std::string &parity = "random")                           = 0;
-    virtual void   reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                   = 0;
+    virtual void   reset_to_random_product_state(const std::string &axis = "random")                             = 0;
+    virtual void   reset_to_random_current_state(std::optional<long> chi_lim = std::nullopt)                     = 0;
     virtual void   reset_to_initial_state()                                                                      = 0;
     virtual void   clear_saturation_status()                                                                     = 0;
     virtual void   update_truncation_limit()                                                                     = 0;

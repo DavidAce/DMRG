@@ -35,7 +35,7 @@ bool class_mpo_base:: has_nan() const {
     return (Textra::hasNaN(mpo_internal, "MPO"));
 }
 
-void class_mpo_base::assertValidity() const {
+void class_mpo_base::assert_validity() const {
     for(auto &param : get_parameters())
         if(param.second.type() == typeid(double))
             if(std::isnan(std::any_cast<double>(param.second))) {

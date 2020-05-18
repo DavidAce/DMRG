@@ -23,8 +23,8 @@ class_itebd::class_itebd(std::shared_ptr<h5pp::File> h5ppFile_)
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
-    h_evn = tensors.model->HA->single_site_hamiltonian(0,2,SX,SY, SZ);
-    h_odd = tensors.model->HB->single_site_hamiltonian(1,2,SX,SY, SZ);
+    h_evn = tensors.model->get_mpo_siteA().single_site_hamiltonian(0,2,SX,SY, SZ);
+    h_odd = tensors.model->get_mpo_siteB().single_site_hamiltonian(1,2,SX,SY, SZ);
 }
 
 void class_itebd::run_preprocessing() {
@@ -61,8 +61,8 @@ void class_itebd::single_TEBD_step(){
  */
     tools::common::profile::t_sim->tic();
     for (auto &U: unitary_time_evolving_operators){
-        Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_state(*tensors.state,U);
-        tools::infinite::opt::truncate_theta(theta, *tensors.state);
+        Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state,U);
+        tensors.update_mps(twosite_tensor);
         if (&U != &unitary_time_evolving_operators.back()) {
             tensors.state->swap_AB();        }
     }

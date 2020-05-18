@@ -19,7 +19,7 @@
 ////    optType = OptType::CPLX;
 //    switch(optType){
 //        case OptType::REAL: {
-//            Eigen::Tensor<double,3> theta  = state.get_multisite_mps().real();
+//            Eigen::Tensor<double,3> theta  = state.get_multisite_tensor().real();
 //            Eigen::Tensor<double,4> mpo   = state.get_multimpo().real();
 //            Eigen::Tensor<double,4> env2L = state.get_ENV2L(state.active_sites.front()).block.real();
 //            Eigen::Tensor<double,4> env2R = state.get_ENV2R(state.active_sites.back()).block.real();

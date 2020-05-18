@@ -8,6 +8,34 @@
 
 using Scalar = class_mps_site::Scalar;
 
+class_mps_site::class_mps_site() = default;
+class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error)
+    : M(M_), L(L_), position(pos), truncation_error(error){}
+
+
+
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_mps_site::~class_mps_site() = default;                                              // default dtor
+class_mps_site::class_mps_site(class_mps_site &&other)  noexcept = default;               // default move ctor
+class_mps_site &class_mps_site::operator=(class_mps_site &&other) noexcept = default;     // default move assign
+class_mps_site::class_mps_site(const class_mps_site &other) = default;
+class_mps_site &class_mps_site::operator=(const class_mps_site &other) = default;
+
+
+
+
+
+
+
+
 bool class_mps_site::isCenter() const {
     if(LC.has_value()) {
         if(LC.value().dimension(0) != M.dimension(2))
@@ -15,6 +43,10 @@ bool class_mps_site::isCenter() const {
     }
     return LC.has_value();
 }
+
+
+
+
 
 bool class_mps_site::is_real() const { return Textra::isReal(M, "M"); }
 bool class_mps_site::has_nan() const { return Textra::hasNaN(M, "M"); }
@@ -101,6 +133,9 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
 
 void class_mps_site::set_truncation_error(double error) { truncation_error = error; }
 void class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
+double class_mps_site::get_truncation_error(){return truncation_error;}
+double class_mps_site::get_truncation_error_LC(){return truncation_error_LC;}
+
 
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
     long mpoDimL = mpo.dimension(0);

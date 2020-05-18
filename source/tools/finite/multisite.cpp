@@ -20,11 +20,11 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state
         throw std::runtime_error(fmt::format("Active site list is not strictly increasing: {}", active_sites.value()));
     if(active_sites.value().size() < 2)
         throw std::runtime_error(fmt::format("Active site list must have 2 or more items: {}", active_sites.value()));
-    dimensions[1] = state.get_mps(active_sites.value().front()).get_M().dimension(1);
-    dimensions[2] = state.get_mps(active_sites.value().back()) .get_M().dimension(2);
+    dimensions[1] = state.get_mps_site(active_sites.value().front()).get_M().dimension(1);
+    dimensions[2] = state.get_mps_site(active_sites.value().back()) .get_M().dimension(2);
     dimensions[0] = 1;
     for (auto & site : active_sites.value()){
-        dimensions[0] *= state.get_mps(site).get_M().dimension(0);
+        dimensions[0] *= state.get_mps_site(site).get_M().dimension(0);
     }
     return dimensions;
 }

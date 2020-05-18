@@ -9,15 +9,16 @@
 #include <tensors/class_tensors_finite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tensors/model/class_model_finite.h>
-#include <tensors/edges/class_edges_finite.h>
+//#include <tensors/edges/class_edges_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
-    : class_algorithm_base(std::move(h5ppFile_), algo_type), tensors(settings::model::model_type,settings::model::model_size,0) {
+    : class_algorithm_base(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
+    tensors.initialize(settings::model::model_type,settings::model::model_size,0);
     tools::finite::mpo::randomize(*tensors.model);
     tools::finite::mps::random_product_state(*tensors.state, settings::strategy::initial_parity_sector, settings::input::bitfield,
                                              settings::strategy::use_pauli_eigvecs);
@@ -426,10 +427,10 @@ void class_algorithm_finite::reset_to_initial_state() {
     status.iter                 = tensors.state->reset_iter();
 }
 
-void class_algorithm_finite::reset_to_random_product_state(const std::string &parity_sector) {
-    tools::log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
+void class_algorithm_finite::reset_to_random_product_state(const std::string &axis) {
+    tools::log->trace("Resetting MPS to random product state in parity sector: {}", axis);
     // Randomize state
-    tools::finite::mps::random_product_state(*tensors.state, parity_sector, -1, settings::strategy::use_pauli_eigvecs);
+    tools::finite::mps::random_product_state(*tensors.state, axis, -1, settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
     tensors.state->lowest_recorded_variance = 1;
     status.iter                 = tensors.state->reset_iter();
@@ -438,7 +439,7 @@ void class_algorithm_finite::reset_to_random_product_state(const std::string &pa
     tools::log->info("Successfully reset to product state with global spin components: {}", spin_components);
 }
 
-void class_algorithm_finite::reset_to_random_current_state(std::optional<double> chi_lim) {
+void class_algorithm_finite::reset_to_random_current_state(std::optional<long> chi_lim) {
     if(not tensors.position_is_any_edge()) return;
     tools::log->info("Resetting MPS by flipping random spins on current state");
     if(tensors.get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
@@ -450,7 +451,7 @@ void class_algorithm_finite::reset_to_random_current_state(std::optional<double>
 
     // Truncate even more on explicit request
     if(chi_lim) {
-        size_t chi_lim_parsed = chi_lim.value() < 1 ? (size_t)(chi_lim.value() * (double) tensors.state->find_largest_chi()) : (size_t) chi_lim.value();
+        long chi_lim_parsed = chi_lim.value() < 1 ? static_cast<long>(chi_lim.value() * tensors.state->find_largest_chi()) : chi_lim.value();
         tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_parsed);
     }
     tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));

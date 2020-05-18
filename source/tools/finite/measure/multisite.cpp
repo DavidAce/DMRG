@@ -108,7 +108,7 @@
 //    if(state.measurements.energy) return state.measurements.energy.value();
 //    if(state.active_sites.empty()) return tools::finite::measure::energy(state);
 //    tools::common::profile::t_ene->tic();
-//    auto theta = state.get_multisite_mps();
+//    auto theta = state.get_multisite_tensor();
 //    tools::common::profile::t_ene->toc();
 //    state.measurements.energy = multisite::energy(state, theta);
 //    return state.measurements.energy.value();
@@ -130,7 +130,7 @@
 //    } else {
 //        if(state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
 //        tools::common::profile::t_var->tic();
-//        auto theta = state.get_multisite_mps();
+//        auto theta = state.get_multisite_tensor();
 //        tools::common::profile::t_var->toc();
 //        state.measurements.energy_variance = multisite::energy_variance(state, theta);
 //        return state.measurements.energy_variance.value();

@@ -8,13 +8,8 @@ namespace tools::common::svd{
     using Scalar = std::complex<double>;
     /* clang-format off */
     extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                                long                             chi_limit,
-                                                std::optional<std::list<long>>   spin_dims,
-                                                std::optional<double>            svd_threshold = std::nullopt);
-
-    extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                                std::list<long>                 spin_dims,
-                                                std::list<size_t>               positions,
+                                                const std::list<long>         & spin_dims,
+                                                const std::list<size_t>       & positions,
                                                 size_t                          center_position,
                                                 long                            chi_limit,
                                                 std::optional<double>           svd_threshold = std::nullopt);

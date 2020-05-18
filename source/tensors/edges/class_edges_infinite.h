@@ -1,6 +1,7 @@
 #pragma once
 #pragma once
 #include <complex>
+#include <config/enums.h>
 #include <list>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -18,6 +19,15 @@ class class_edges_infinite {
     std::unique_ptr<class_env_var> varR;
 
     public:
+    class_edges_infinite();
+    ~class_edges_infinite();                                                // Read comment on implementation
+    class_edges_infinite(class_edges_infinite &&other) noexcept;            // default move ctor
+    class_edges_infinite &operator=(class_edges_infinite &&other) noexcept; // default move assign
+    class_edges_infinite(const class_edges_infinite &other);                // copy ctor
+    class_edges_infinite &operator=(const class_edges_infinite &other);     // copy assign
+
+    void initialize();
+
     void                 assert_validity() const;
     [[nodiscard]] size_t get_length() const;
     size_t               get_position() const; // pos of eneL or varL
@@ -38,9 +48,8 @@ class class_edges_infinite {
     [[nodiscard]] env_pair<class_env_ene>       get_ene();
     [[nodiscard]] env_pair<class_env_var>       get_var();
 
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar,3>> get_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar,4>> get_var_blk() const;
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar,3>>       get_ene_blk();
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar,4>>       get_var_blk();
-
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 4>> get_var_blk() const;
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_ene_blk();
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 4>>       get_var_blk();
 };

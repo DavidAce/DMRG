@@ -8,6 +8,48 @@
 #include <math/nmspc_math.h>
 #include <tools/common/log.h>
 
+class_edges_finite::class_edges_finite() = default; // Can't initialize lists since we don't know the model size yet
+
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_edges_finite::~class_edges_finite()                                   = default;            // default dtor
+class_edges_finite::class_edges_finite(class_edges_finite &&other) noexcept = default;            // default move ctor
+class_edges_finite &class_edges_finite::operator=(class_edges_finite &&other) noexcept = default; // default move assign
+
+class_edges_finite::class_edges_finite(const class_edges_finite &other) : active_sites(other.active_sites) {
+    eneL.clear();
+    eneR.clear();
+    varL.clear();
+    varR.clear();
+    for(const auto &other_eneL : other.eneL) eneL.emplace_back(std::make_unique<class_env_ene>(*other_eneL));
+    for(const auto &other_eneR : other.eneR) eneR.emplace_back(std::make_unique<class_env_ene>(*other_eneR));
+    for(const auto &other_varL : other.varL) varL.emplace_back(std::make_unique<class_env_var>(*other_varL));
+    for(const auto &other_varR : other.varR) varR.emplace_back(std::make_unique<class_env_var>(*other_varR));
+}
+
+class_edges_finite &class_edges_finite::operator=(const class_edges_finite &other) {
+    // check for self-assignment
+    if(this != &other) {
+        active_sites = other.active_sites;
+        eneL.clear();
+        eneR.clear();
+        varL.clear();
+        varR.clear();
+        for(const auto &other_eneL : other.eneL) eneL.emplace_back(std::make_unique<class_env_ene>(*other_eneL));
+        for(const auto &other_eneR : other.eneR) eneR.emplace_back(std::make_unique<class_env_ene>(*other_eneR));
+        for(const auto &other_varL : other.varL) varL.emplace_back(std::make_unique<class_env_var>(*other_varL));
+        for(const auto &other_varR : other.varR) varR.emplace_back(std::make_unique<class_env_var>(*other_varR));
+    }
+    return *this;
+}
+
 template<typename T, typename = std::void_t<>>
 struct has_validity : public std::false_type {};
 template<typename T>
@@ -22,15 +64,17 @@ void class_edges_finite::env_pair<env_type>::assert_validity() const {
         R.assert_validity();
     }
 }
-// Explicit instantiations
-//template struct class_edges_finite::env_pair<class_env_ene>;
-//template struct class_edges_finite::env_pair<class_env_var>;
-//template struct class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar,3>>;
-//template struct class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar,4>>;
-//template struct class_edges_finite::env_pair<const class_env_ene>;
-//template struct class_edges_finite::env_pair<const class_env_var>;
-//template struct class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar,3>>;
-//template struct class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar,4>>;
+
+
+void class_edges_finite::initialize(size_t model_size){
+    for(size_t pos = 0; pos < model_size; pos++){
+        eneL.emplace_back(std::make_unique<class_env_ene>("L",pos));
+        varL.emplace_back(std::make_unique<class_env_var>("L",pos));
+        eneR.emplace_front(std::make_unique<class_env_ene>("R",pos));
+        varR.emplace_front(std::make_unique<class_env_var>("R",pos));
+    }
+
+}
 
 
 size_t class_edges_finite::get_length() const {
@@ -39,7 +83,6 @@ size_t class_edges_finite::get_length() const {
             fmt::format("Size mismatch in environments: eneL {} | eneR {} | varL {} | varR {}", eneL.size(), eneR.size(), varL.size(), varR.size()));
     return eneL.size();
 }
-
 
 /* clang-format off */
 bool class_edges_finite::is_real() const {
@@ -65,8 +108,6 @@ void class_edges_finite::assert_validity() const {
     for(const auto &env : varR) env->assert_validity();
 }
 /* clang-format on */
-
-
 
 const class_env_ene &class_edges_finite::get_eneL(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_eneL(pos): pos is out of range {} | system size {}", pos, get_length()));
@@ -129,7 +170,6 @@ class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 4>> class
     return {get_var(posL).L.block, get_var(posR).R.block};
 }
 
-
 class_edges_finite::env_pair<const class_env_ene> class_edges_finite::get_multisite_ene(std::optional<std::list<size_t>> sites) const {
     if(not sites) sites = active_sites;
     if(sites.value().empty()) throw std::runtime_error("Could not get edges: active site list is empty");
@@ -154,8 +194,6 @@ class_edges_finite::env_pair<class_env_var> class_edges_finite::get_multisite_va
     return get_var(sites.value().front(), sites.value().back());
 }
 
-
-
 class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>>
     class_edges_finite::get_multisite_ene_blk(std::optional<std::list<size_t>> sites) const {
     const auto &envs = get_multisite_ene(std::move(sites));
@@ -168,14 +206,12 @@ class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 4>>
     return {envs.L.block, envs.R.block};
 }
 
-class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>>
-    class_edges_finite::get_multisite_ene_blk(std::optional<std::list<size_t>> sites) {
+class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_multisite_ene_blk(std::optional<std::list<size_t>> sites) {
     auto envs = get_multisite_ene(std::move(sites));
     return {envs.L.block, envs.R.block};
 }
 
-class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 4>>
-    class_edges_finite::get_multisite_var_blk(std::optional<std::list<size_t>> sites) {
+class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 4>> class_edges_finite::get_multisite_var_blk(std::optional<std::list<size_t>> sites) {
     auto envs = get_multisite_var(std::move(sites));
     return {envs.L.block, envs.R.block};
 }

@@ -24,7 +24,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
 }
 
 Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_tensors_infinite &tensors, std::string_view ritzstring) {
-//    const auto                mps = state.get_mps();
+//    const auto                mps = state.get_mps_site();
 //    std::array<long, 3> shape_mps   = tensors.state->dimensions();
 //    std::array<long, 4> shape_mpo   = tensors.model->dimensions();
 //    tools::common::profile::t_eig->tic();
@@ -56,7 +56,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
     eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::stringToRitz(ritzstring);
     auto shape_mps = tensors.state->dimensions();
     auto shape_mpo = tensors.model->dimensions();
-    const auto & mpo = tensors.model->get_mpo();
+    const auto & mpo = tensors.model->get_2site_tensor();
     const auto & env = tensors.edges->get_ene_blk();
 
     tools::common::profile::t_eig->tic();

@@ -44,7 +44,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter<double>                  ("model::ising_tf_rf::h_tran"                   , model::ising_tf_rf::h_tran);
     dmrg_config.load_parameter<double>                  ("model::ising_tf_rf::h_mean"                   , model::ising_tf_rf::h_mean);
     dmrg_config.load_parameter<double>                  ("model::ising_tf_rf::h_stdv"                   , model::ising_tf_rf::h_stdv);
-    dmrg_config.load_parameter<size_t>                  ("model::ising_tf_rf::spin_dim"                 , model::ising_tf_rf::spin_dim);
+    dmrg_config.load_parameter<long>                    ("model::ising_tf_rf::spin_dim"                 , model::ising_tf_rf::spin_dim);
     dmrg_config.load_parameter<std::string>             ("model::ising_tf_rf::distribution"             , model::ising_tf_rf::distribution);
     dmrg_config.load_parameter<double>                  ("model::ising_sdual::J_mean"                   , model::ising_sdual::J_mean);
     dmrg_config.load_parameter<double>                  ("model::ising_sdual::h_mean"                   , model::ising_sdual::h_mean);
@@ -53,7 +53,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter<double>                  ("model::ising_sdual::lambda"                   , model::ising_sdual::lambda);
     dmrg_config.load_parameter<bool>                    ("model::ising_sdual::parity_sep"               , model::ising_sdual::parity_sep);
     dmrg_config.load_parameter<std::string>             ("model::ising_sdual::distribution"             , model::ising_sdual::distribution);
-    dmrg_config.load_parameter<size_t>                  ("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
+    dmrg_config.load_parameter<long>                    ("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
     dmrg_config.load_parameter<bool>                    ("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter<bool>                    ("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
     dmrg_config.load_parameter<bool>                    ("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);

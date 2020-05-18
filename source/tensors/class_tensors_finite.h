@@ -12,6 +12,10 @@ class class_tensors_finite {
     std::unique_ptr<class_state_finite> state;
     std::unique_ptr<class_model_finite> model;
     std::unique_ptr<class_edges_finite> edges;
+
+    std::list<size_t>              active_sites;
+    mutable tensors_measure_finite measurements;
+
     // This class should have these responsibilities:
     //  - Initialize the tensors
     //  - Move/manage center position
@@ -20,6 +24,12 @@ class class_tensors_finite {
     //  - Manage measurements cache
 
     class_tensors_finite();
+    ~class_tensors_finite();                                                // Read comment on implementation
+    class_tensors_finite(class_tensors_finite &&other) noexcept;            // default move ctor
+    class_tensors_finite &operator=(class_tensors_finite &&other) noexcept; // default move assign
+    class_tensors_finite(const class_tensors_finite &other);                // copy ctor
+    class_tensors_finite &operator=(const class_tensors_finite &other);     // copy assign
+
     void initialize(ModelType model_type, size_t model_size, size_t position);
 
     [[nodiscard]] bool   is_real() const;
@@ -33,16 +43,13 @@ class class_tensors_finite {
     [[nodiscard]] bool   position_is_any_edge() const;
     [[nodiscard]] bool   position_is_at(size_t pos) const;
     // Active sites
-    std::list<size_t> active_sites;
-    void              sync_active_sites();
-    void              activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
-    void              do_all_measurements() const;
-    void              move_center_point();
-    void              rebuild_edges();
-    void              assert_validity() const;
+    void sync_active_sites();
+    void activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
+    void do_all_measurements() const;
+    void move_center_point();
+    void rebuild_edges();
+    void assert_validity() const;
 
     void clear_measurements() const;
     void clear_cache() const;
-
-    mutable tensors_measure_finite measurements;
 };

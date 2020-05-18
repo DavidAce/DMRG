@@ -37,25 +37,37 @@ class class_state_finite {
     using Scalar = std::complex<double>;
 
     private:
-    using MType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    using VType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    template<auto rank>
-    using TType                   = Eigen::Tensor<Scalar, rank>;
+    struct Cache {
+        std::optional<Eigen::Tensor<Scalar, 3>> multisite_tensor = std::nullopt;
+    };
+
     size_t              iter      = 0;
     size_t              step      = 0;
     int                 direction = 1;
     std::optional<long> chi_lim;
     std::optional<long> chi_max;
+    std::vector<double>       truncated_variance;
+    mutable Cache             cache;
+    mutable std::vector<bool> site_update_tags;
 
     public:
-    class_state_finite() = default;
-    ~class_state_finite();
-    class_state_finite(const class_state_finite &other);
-    class_state_finite &      operator=(const class_state_finite &other);
-    std::list<class_mps_site> MPS;
+    std::list<class_mps_site>    mps_sites;
+    std::list<size_t>            active_sites;
+    mutable state_measure_finite measurements;
+    mutable double               lowest_recorded_variance = 1.0;
 
-    const TType<1> &midchain_bond() const;
-    const TType<1> &current_bond() const;
+    public:
+    class_state_finite();
+    ~class_state_finite();                                              // Read comment on implementation
+    class_state_finite(class_state_finite &&other) noexcept;            // default move ctor
+    class_state_finite &operator=(class_state_finite &&other) noexcept; // default move assign
+    class_state_finite(const class_state_finite &other);                // copy ctor
+    class_state_finite &operator=(const class_state_finite &other);     // copy assign
+
+    void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
+
+    const Eigen::Tensor<Scalar, 1> &midchain_bond() const;
+    const Eigen::Tensor<Scalar, 1> &current_bond() const;
 
     size_t get_iteration() const;
     size_t reset_iter();
@@ -90,14 +102,13 @@ class class_state_finite {
     bool has_nan() const;
     void assert_validity() const;
 
-    const class_mps_site &get_mps(size_t pos) const;
-    class_mps_site &      get_mps(size_t pos);
-    const class_mps_site &get_mps() const;
-    class_mps_site &      get_mps();
+    const class_mps_site &get_mps_site(size_t pos) const;
+    class_mps_site &      get_mps_site(size_t pos);
+    const class_mps_site &get_mps_site() const;
+    class_mps_site &      get_mps_site();
 
-
-    //    const class_model_base &     get_mpo(size_t pos) const;
-    //    class_model_base &           get_mpo(size_t pos);
+    //    const class_model_base &     get_2site_tensor(size_t pos) const;
+    //    class_model_base &           get_2site_tensor(size_t pos);
     //    const class_environment &    get_ENVL(size_t pos) const;
     //    const class_environment &    get_ENVR(size_t pos) const;
     //    const class_environment_var &get_ENV2L(size_t pos) const;
@@ -117,20 +128,15 @@ class class_state_finite {
     //    bool is_damped() const;
 
     // For multisite
-    std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
     std::list<size_t>      activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
     size_t                 active_problem_size() const;
 
-    const TType<3> &get_multisite_mps() const;
+    const Eigen::Tensor<Scalar, 3> &get_multisite_tensor() const;
     //    const TType<4> &                                                                                                    get_multimpo() const;
     //    std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>>         get_multienv() const;
     //    std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> get_multienv2() const;
-
-    private:
-    std::vector<double> truncation_error;
-    std::vector<double> truncated_variance;
 
     public:
     void                       set_truncation_error(size_t left_site, double error);
@@ -150,28 +156,13 @@ class class_state_finite {
     size_t num_bonds_at_limit() const;
     bool   is_bond_limited(double threshold = 1e-8) const;
 
-    public:
-    mutable state_measure_finite measurements;
-    mutable double               lowest_recorded_variance = 1.0;
-
     void clear_measurements() const;
     void do_all_measurements() const;
     void clear_cache() const;
 
-    void                      tag_active_sites_have_been_updated(bool tag) const;
-    void                      tag_all_sites_have_been_updated(bool tag) const;
-    bool                      all_sites_updated() const;
-    bool                      any_sites_updated() const;
-    bool                      active_sites_updated() const;
-    mutable std::vector<bool> site_update_tags;
-
-    private:
-    struct Cache {
-        //        std::optional<TType<4>>          theta        = std::nullopt;
-        //        std::optional<TType<4>>          multimpo     = std::nullopt;
-        std::optional<TType<3>> multisite_mps = std::nullopt;
-    };
-
-    public:
-    mutable Cache cache;
+    void tag_active_sites_have_been_updated(bool tag) const;
+    void tag_all_sites_have_been_updated(bool tag) const;
+    bool all_sites_updated() const;
+    bool any_sites_updated() const;
+    bool active_sites_updated() const;
 };

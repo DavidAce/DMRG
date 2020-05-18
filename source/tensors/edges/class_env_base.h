@@ -25,6 +25,7 @@ class class_env_base {
     public:
     std::string side;
     size_t      sites = 0; /*!< Number of particles that have been contracted into this environment. */
+    class_env_base() = default;
     explicit class_env_base(std::string side_, size_t position_);
     explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_base &MPO);
 
@@ -37,9 +38,9 @@ class class_env_base {
         }
     }
 
-    virtual void clear()                                                             = 0;
+    virtual void clear()                                                              = 0;
     virtual void assert_validity() const                                              = 0;
-    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO) = 0;
+    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO)  = 0;
     virtual bool is_real() const                                                      = 0;
     virtual bool has_nan() const                                                      = 0;
 
