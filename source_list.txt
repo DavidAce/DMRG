@@ -32,8 +32,8 @@ source/tensors/edges/class_env_ene.cpp
 source/tensors/edges/class_env_var.cpp
 source/tensors/edges/class_edges_finite.cpp
 source/tensors/edges/class_edges_infinite.cpp
-source/tensors/model/class_mpo_base.cpp
 source/tensors/model/class_mpo_factory.cpp
+source/tensors/model/class_mpo_site.cpp
 source/tensors/model/class_ising_sdual.cpp
 source/tensors/model/class_ising_tf_rf.cpp
 source/tensors/model/class_model_finite.cpp
@@ -126,9 +126,9 @@ source/tensors/edges/class_env_ene.h
 source/tensors/edges/class_env_var.h
 source/tensors/edges/class_edges_finite.h
 source/tensors/edges/class_edges_infinite.h
-source/tensors/model/class_mpo_base.h
 source/tensors/model/class_mpo_factory.h
 source/tensors/model/class_mpo_parameters.h
+source/tensors/model/class_mpo_site.h
 source/tensors/model/class_model_finite.h
 source/tensors/model/class_model_infinite.h
 source/tensors/model/class_ising_sdual.h

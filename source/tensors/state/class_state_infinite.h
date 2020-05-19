@@ -25,8 +25,17 @@ class class_state_infinite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 3>> twosite_tensor = std::nullopt;
-        std::optional<Eigen::Tensor<Scalar, 4>> theta          = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>> twosite_tensor  = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 4>> theta           = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>> GA              = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>> GB              = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LC_diag         = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LA_diag         = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LB_diag         = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LC_diag_inv     = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LA_diag_inv     = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> LB_diag_inv     = std::nullopt;
+
     };
 
     std::unique_ptr<class_mps_site> MPS_A;
@@ -35,9 +44,11 @@ class class_state_infinite {
 
     //    std::unique_ptr<class_mps_2site> mps_sites; /*!< A matrix product state for two sites , A and B, and a center bond. In Vidal Canonical Form
     //                                                   \f$\Lambda^A\Gamma^A \Lambda^C \Gamma^B\Lambda^B\f$. */
-    std::optional<long>            chi_lim;
-    std::optional<long>            chi_max;
-    mutable Cache                  cache;
+    std::optional<long> chi_lim;
+    std::optional<long> chi_max;
+    mutable Cache       cache;
+
+    public:
     mutable state_measure_infinite measurements;
     mutable double                 lowest_recorded_variance = 1.0;
 
@@ -58,9 +69,9 @@ class class_state_infinite {
     [[nodiscard]] std::pair<size_t, size_t>       get_positions();
     [[nodiscard]] size_t                          get_positionA();
     [[nodiscard]] size_t                          get_positionB();
-    [[nodiscard]] long                            get_chi() const;
-    [[nodiscard]] long                            get_chiA() const;
-    [[nodiscard]] long                            get_chiB() const;
+    [[nodiscard]] long                            chiC() const;
+    [[nodiscard]] long                            chiA() const;
+    [[nodiscard]] long                            chiB() const;
     [[nodiscard]] long                            get_chi_lim() const;
     [[nodiscard]] long                            get_chi_max() const;
     [[nodiscard]] long                            get_spin_dimA() const;
@@ -73,11 +84,18 @@ class class_state_infinite {
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A_bare() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &B() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 2>        LC() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 3>        GA() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 3>        GB() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 2>        LA() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 2>        LB() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LC_diag() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LA_diag() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LB_diag() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LC_diag_inv() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LA_diag_inv() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 2> &LB_diag_inv() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> & GA() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> & GB() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LC() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LA() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LB() const;
+
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_2site_tensor(Scalar norm = 1.0) const;
     void                                          set_chi_lim(long chi_lim_);
     void                                          set_chi_max(long chi_max_);
@@ -91,10 +109,10 @@ class class_state_infinite {
     void set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB,
                  const Eigen::Tensor<Scalar, 1> &LB);
 
-//    template<typename T>
-//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_matrix() const;
-//    template<typename T>
-//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix() const;
+    //    template<typename T>
+    //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_matrix() const;
+    //    template<typename T>
+    //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix() const;
 
     void do_all_measurements() const;
     void clear_measurements() const;

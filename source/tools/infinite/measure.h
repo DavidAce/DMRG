@@ -12,7 +12,7 @@ namespace tools::infinite::measure{
     extern void   do_all_measurements             (const class_state_infinite & state);
 
     extern size_t length                          (const class_tensors_infinite & tensors);
-    extern size_t length                          (const class_state_infinite & state);
+    extern size_t length                          (const class_edges_infinite & edges);
     extern long   bond_dimension                  (const class_state_infinite & state);
     extern double truncation_error                (const class_state_infinite & state);
     extern double norm                            (const class_state_infinite & state);

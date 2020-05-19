@@ -4,16 +4,14 @@
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/log.h>
 #include <tools/finite/env.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 
-class_tensors_finite::class_tensors_finite() :
-    state(std::make_unique<class_state_finite>()),
-    model(std::make_unique<class_model_finite>()),
-    edges(std::make_unique<class_edges_finite>())
-{
+class_tensors_finite::class_tensors_finite()
+    : state(std::make_unique<class_state_finite>()), model(std::make_unique<class_model_finite>()), edges(std::make_unique<class_edges_finite>()) {
     tools::log->trace("Constructing tensors");
 }
 
@@ -26,21 +24,14 @@ class_tensors_finite::class_tensors_finite() :
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_tensors_finite::~class_tensors_finite() = default;                                                    // default dtor
-class_tensors_finite::class_tensors_finite(class_tensors_finite &&other)  noexcept = default;               // default move ctor
-class_tensors_finite &class_tensors_finite::operator=(class_tensors_finite &&other) noexcept = default;     // default move assign
+class_tensors_finite::~class_tensors_finite()                                     = default;            // default dtor
+class_tensors_finite::class_tensors_finite(class_tensors_finite &&other) noexcept = default;            // default move ctor
+class_tensors_finite &class_tensors_finite::operator=(class_tensors_finite &&other) noexcept = default; // default move assign
 
-class_tensors_finite::class_tensors_finite(const class_tensors_finite &other):
-    state(std::make_unique<class_state_finite>(*other.state)),
-    model(std::make_unique<class_model_finite>(*other.model)),
-    edges(std::make_unique<class_edges_finite>(*other.edges)),
-    active_sites(other.active_sites),
-    measurements(other.measurements)
-{
-
-}
-class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite &other)
-{
+class_tensors_finite::class_tensors_finite(const class_tensors_finite &other)
+    : state(std::make_unique<class_state_finite>(*other.state)), model(std::make_unique<class_model_finite>(*other.model)),
+      edges(std::make_unique<class_edges_finite>(*other.edges)), active_sites(other.active_sites), measurements(other.measurements) {}
+class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite &other) {
     // check for self-assignment
     if(this != &other) {
         state        = std::make_unique<class_state_finite>(*other.state);
@@ -52,25 +43,22 @@ class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite
     return *this;
 }
 
-
-
-
 void class_tensors_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
-    state->initialize(model_type,model_size, position);
-    model->initialize(model_type,model_size);
+    state->initialize(model_type, model_size, position);
+    model->initialize(model_type, model_size);
     edges->initialize(model_size);
-    tools::finite::env::rebuild_edges(*state,*model,*edges);
+    tools::finite::env::rebuild_edges(*state, *model, *edges);
 }
 
 // Active sites
 void class_tensors_finite::sync_active_sites() {
-    active_sites = state->active_sites;
+    active_sites        = state->active_sites;
     model->active_sites = state->active_sites;
     edges->active_sites = state->active_sites;
 }
 
-void class_tensors_finite::activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites){
-    active_sites = state->activate_sites(threshold, max_sites, min_sites);
+void class_tensors_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
+    active_sites        = state->activate_sites(threshold, max_sites, min_sites);
     model->active_sites = state->active_sites;
     edges->active_sites = state->active_sites;
 }
@@ -97,23 +85,24 @@ bool class_tensors_finite::position_is_left_edge() const { return state->positio
 bool class_tensors_finite::position_is_right_edge() const { return state->position_is_right_edge(); }
 bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
+void class_tensors_finite::move_center_point() {}
 
-
-void class_tensors_finite::move_center_point() {
-
-
+void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar,3> & multisite_tensor) {
+    //Make sure the active sites are the same everywhere
+    if(not math::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
+        throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(),state->get_chi_lim());
+    clear_cache();
+    clear_measurements();
 }
 
 
-void class_tensors_finite::do_all_measurements() const {
-    tools::finite::measure::do_all_measurements(*this);
-}
-
-
+void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
     measurements = tensors_measure_finite();
     state->clear_measurements();
 }
+
 void class_tensors_finite::clear_cache() const {
     state->clear_cache();
     model->clear_cache();

@@ -3,7 +3,7 @@
 //
 
 #include "class_environment.h"
-#include <tensors/model/class_mpo_base.h>
+#include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 using namespace std;
 using namespace Textra;
@@ -11,18 +11,18 @@ using Scalar = class_environment_base::Scalar;
 
 
 class_environment_base::class_environment_base(std::string side_, size_t position_):position(position_),side(side_){}
-class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):side(side_)
+class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_mpo_site &MPO):side(side_)
     {
         if (MPS.get_position() != MPO.get_position())
             throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(),MPO.get_position()));
         position = MPS.get_position();
     }
 
-class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):
+class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_mpo_site &MPO):
         class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
 
 
-class_environment_var::class_environment_var(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):
+class_environment_var::class_environment_var(std::string side_, const class_mps_site & MPS, const class_mpo_site &MPO):
         class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
 
 
@@ -53,7 +53,7 @@ void class_environment_var::assertValidity() const {
 
 
 
-class_environment class_environment::enlarge(const class_mps_site & MPS, const class_mpo_base &MPO){
+class_environment class_environment::enlarge(const class_mps_site & MPS, const class_mpo_site &MPO){
     if(MPS.get_position() != MPO.get_position()) throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
 
     if(not edge_has_been_set) throw std::logic_error("Have to set edge dimensions first!");
@@ -83,7 +83,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
     if (side == "L"){
 
         /*! # Left environment contraction
-         * [      ]--0 0--[LB]--1 1--[  GA    ]--2
+         * [      ]--0 0--[LB_diag]--1 1--[  GA    ]--2
          * [      ]                      |
          * [      ]                      0
          * [      ]
@@ -95,7 +95,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
          * [      ]
          * [      ]                      0
          * [      ]                      |
-         * [      ]--1 0--[LB]--1  1--[GA conj ]--2
+         * [      ]--1 0--[LB_diag]--1  1--[GA conj ]--2
          */
 
         if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV L pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
@@ -112,7 +112,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
         block = block_enlarged;
     }else if (side== "R"){
         /*! # Right environment contraction
-         *  1--[ GB conj ]--2 0--[LB]--1  0--[      ]
+         *  1--[ GB conj ]--2 0--[LB_diag]--1  0--[      ]
          *          |                        [      ]
          *          0                        [      ]
          *                                   [      ]
@@ -124,7 +124,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
          *                                   [      ]
          *          0                        [      ]
          *          |                        [      ]
-         *    1--[  GB   ]--2 0--[LB]--1  1--[      ]
+         *    1--[  GB   ]--2 0--[LB_diag]--1  1--[      ]
         */
 
         if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
@@ -141,7 +141,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
     }
 }
 
-void class_environment::set_edge_dims(const class_mps_site & MPS, const class_mpo_base &MPO) {
+void class_environment::set_edge_dims(const class_mps_site & MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
         long mpsDim = MPS.get_chiL();
@@ -176,7 +176,7 @@ void class_environment::set_edge_dims(const class_mps_site & MPS, const class_mp
 
 
 
-class_environment_var class_environment_var::enlarge(const class_mps_site & MPS, const class_mpo_base &MPO){
+class_environment_var class_environment_var::enlarge(const class_mps_site & MPS, const class_mpo_site &MPO){
     if(MPS.get_position() != MPO.get_position()) throw std::logic_error("MPS and MPO not at the same position!");
     class_environment_var env = *this;
     if(env.sites == 0 and not env.edge_has_been_set){
@@ -204,7 +204,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
     if (side == "L"){
 
         /*! # Left environment contraction
-         * [      ]--0 0--[LB]--1 1--[  GA   ]--2
+         * [      ]--0 0--[LB_diag]--1 1--[  GA   ]--2
          * [      ]                      |
          * [      ]                      0
          * [      ]
@@ -222,7 +222,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
          * [      ]
          * [      ]                      0
          * [      ]                      |
-         * [      ]--1 0--[LB]--1  1--[GA conj ]--2
+         * [      ]--1 0--[LB_diag]--1  1--[GA conj ]--2
          */
         if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV2 L pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
         if(MPS.dimension(1) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV2 L pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),1,MPS.dimension(1) ,0,block.dimension(0)));
@@ -239,7 +239,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
     }
     if (side == "R"){
         /*! # Right environment contraction
-         *  1--[   GB    ]--2 0--[LB]--1  0--[      ]
+         *  1--[   GB    ]--2 0--[LB_diag]--1  0--[      ]
          *          |                        [      ]
          *          0                        [      ]
          *                                   [      ]
@@ -257,7 +257,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
          *                                   [      ]
          *          0                        [      ]
          *          |                        [      ]
-         *  1--[ GB conj ]--2 0--[LB]--1  1--[      ]
+         *  1--[ GB conj ]--2 0--[LB_diag]--1  1--[      ]
         */
         if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
         if(MPS.dimension(2) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),2,MPS.dimension(2) ,0,block.dimension(0)));
@@ -274,7 +274,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
     }
 }
 
-void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_mpo_base &MPO) {
+void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
         long mpsDim = MPS.get_chiL();

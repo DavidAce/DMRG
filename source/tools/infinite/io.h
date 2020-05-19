@@ -2,7 +2,9 @@
 
 #include <string>
 #include <list>
+class class_tensors_infinite;
 class class_state_infinite;
+class class_model_infinite;
 class class_algorithm_status;
 enum class StorageLevel;
 enum class SimulationTask;

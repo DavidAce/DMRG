@@ -11,7 +11,7 @@
  */
 
 class class_mps_site;
-class class_mpo_base;
+class class_mpo_site;
 
 class class_env_base {
     public:
@@ -27,7 +27,7 @@ class class_env_base {
     size_t      sites = 0; /*!< Number of particles that have been contracted into this environment. */
     class_env_base() = default;
     explicit class_env_base(std::string side_, size_t position_);
-    explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_base &MPO);
+    explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
 
     void         set_position(const size_t position_) { position = position_; }
     size_t       get_position() const {
@@ -40,7 +40,7 @@ class class_env_base {
 
     virtual void clear()                                                              = 0;
     virtual void assert_validity() const                                              = 0;
-    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO)  = 0;
+    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO)  = 0;
     virtual bool is_real() const                                                      = 0;
     virtual bool has_nan() const                                                      = 0;
 

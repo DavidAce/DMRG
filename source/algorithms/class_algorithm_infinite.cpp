@@ -86,9 +86,8 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
             // Only do this if the simulation is stuck.
             if(status.algorithm_has_got_stuck) {
                 tools::log->debug("Truncation error : {}", tensors.state->get_truncation_error());
-                tools::log->debug("Bond dimensions  : {}", tensors.state->get_chi());
-                if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and
-                   tensors.state->get_chi() >= tensors.state->get_chi_lim()) {
+                tools::log->debug("Bond dimensions  : {}", tensors.state->chiC());
+                if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and tensors.state->chiC() >= tensors.state->get_chi_lim()) {
                     // Write results before updating bond dimension chi
                     //                    backup_best_state(*state);
                     write_to_file(StorageReason::CHI_UPDATE);

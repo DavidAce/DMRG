@@ -2,17 +2,16 @@
 // Created by david on 2019-07-06.
 //
 
-#include "class_mps_site.h"
 #include <general/nmspc_tensor_extra.h>
+// textra must appear first
+#include "class_mps_site.h"
 #include <io/nmspc_logger.h>
 
 using Scalar = class_mps_site::Scalar;
 
 class_mps_site::class_mps_site() = default;
 class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error)
-    : M(M_), L(L_), position(pos), truncation_error(error){}
-
-
+    : M(M_), L(L_), position(pos), truncation_error(error) {}
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -23,30 +22,19 @@ class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_mps_site::~class_mps_site() = default;                                              // default dtor
-class_mps_site::class_mps_site(class_mps_site &&other)  noexcept = default;               // default move ctor
-class_mps_site &class_mps_site::operator=(class_mps_site &&other) noexcept = default;     // default move assign
-class_mps_site::class_mps_site(const class_mps_site &other) = default;
+class_mps_site::~class_mps_site()                               = default;            // default dtor
+class_mps_site::class_mps_site(class_mps_site &&other) noexcept = default;            // default move ctor
+class_mps_site &class_mps_site::operator=(class_mps_site &&other) noexcept = default; // default move assign
+class_mps_site::class_mps_site(const class_mps_site &other)                = default;
 class_mps_site &class_mps_site::operator=(const class_mps_site &other) = default;
-
-
-
-
-
-
-
 
 bool class_mps_site::isCenter() const {
     if(LC.has_value()) {
         if(LC.value().dimension(0) != M.dimension(2))
-            throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2), LC.value().dimension(0)));
+            throw std::runtime_error(fmt::format("M and LC_diag dim mismatch: {} != {}", M.dimension(2), LC.value().dimension(0)));
     }
     return LC.has_value();
 }
-
-
-
-
 
 bool class_mps_site::is_real() const { return Textra::isReal(M, "M"); }
 bool class_mps_site::has_nan() const { return Textra::hasNaN(M, "M"); }
@@ -54,37 +42,31 @@ void class_mps_site::assert_validity() const {
     if(Textra::hasNaN(M, "M")) throw std::runtime_error("MPS at position " + std::to_string(get_position()) + " has NAN's");
 }
 
-const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() const { return std::as_const(M); }
-
+const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() const { return M; }
 const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
     if(isCenter()) {
-        if(MC) {
-            return std::as_const(MC.value());
-        } else {
+        if(MC)
+            return MC.value();
+        else {
             MC = M.contract(Textra::asDiagonal(get_LC()), Textra::idx({2}, {0}));
-            return std::as_const(MC.value());
+            return MC.value();
         }
-    } else {
-        return std::as_const(M);
-    }
+    } else
+        return M;
 }
 
-const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const { return std::as_const(L); }
+const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const { return L; }
 const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
     if(isCenter())
-        return std::as_const(LC.value());
+        return LC.value();
     else
         throw std::runtime_error("Site at position " + std::to_string(get_position()) + " is not a center");
 }
 
-Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() {
-    return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M_bare());
-}
-
-Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() { return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M()); }
-Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() { return L; }
-Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
-
+Eigen::Tensor<Scalar, 3> &   class_mps_site::get_M_bare() { return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M_bare()); }
+Eigen::Tensor<Scalar, 3> &   class_mps_site::get_M() { return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M()); }
+Eigen::Tensor<Scalar, 1> &   class_mps_site::get_L() { return L; }
+Eigen::Tensor<Scalar, 1> &   class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
 std::tuple<long, long, long> class_mps_site::get_dims() const { return {spin_dim(), get_chiL(), get_chiR()}; }
 long                         class_mps_site::spin_dim() const { return M.dimension(0); }
 long                         class_mps_site::get_chiL() const { return M.dimension(1); }
@@ -128,14 +110,13 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
         MC.reset();
         truncation_error_LC = error;
     } else
-        throw std::runtime_error("Can't set LC: Position hasn't been set yet");
+        throw std::runtime_error("Can't set LC_diag: Position hasn't been set yet");
 }
 
-void class_mps_site::set_truncation_error(double error) { truncation_error = error; }
-void class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
-double class_mps_site::get_truncation_error(){return truncation_error;}
-double class_mps_site::get_truncation_error_LC(){return truncation_error_LC;}
-
+void   class_mps_site::set_truncation_error(double error) { truncation_error = error; }
+void   class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
+double class_mps_site::get_truncation_error() const { return truncation_error; }
+double class_mps_site::get_truncation_error_LC() const { return truncation_error_LC; }
 
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
     long mpoDimL = mpo.dimension(0);

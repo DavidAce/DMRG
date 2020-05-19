@@ -2,17 +2,20 @@
 // Created by david on 2019-01-29.
 //
 
+#include <general/nmspc_tensor_extra.h>
+// -- (textra first)
 #include "class_state_finite.h"
 #include <config/nmspc_settings.h>
+#include <tensors/state/class_mps_site.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
+#include <tools/finite/svd.h>
 
 class_state_finite::class_state_finite() = default; // Can't initialize lists since we don't know the model size yet
-
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -41,29 +44,28 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     lowest_recorded_variance(other.lowest_recorded_variance)
 {
     mps_sites.clear();
-    for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(mps));
+    for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
 }
 /* clang-format on */
 
 class_state_finite &class_state_finite::operator=(const class_state_finite &other) {
     // check for self-assignment
     if(this != &other) {
-        iter = other.iter;
-        step = other.step;
-        direction = other.direction;
-        chi_lim = other.chi_lim;
-        chi_max = other.chi_max;
-        cache = other.cache;
-        site_update_tags = other.site_update_tags;
-        active_sites = other.active_sites;
-        measurements = other.measurements;
+        iter                     = other.iter;
+        step                     = other.step;
+        direction                = other.direction;
+        chi_lim                  = other.chi_lim;
+        chi_max                  = other.chi_max;
+        cache                    = other.cache;
+        site_update_tags         = other.site_update_tags;
+        active_sites             = other.active_sites;
+        measurements             = other.measurements;
         lowest_recorded_variance = other.lowest_recorded_variance;
         mps_sites.clear();
-        for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(mps));
+        for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
     }
     return *this;
 }
-
 
 void class_state_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
     tools::log->info("Initializing state with {} sites at position {}", model_size, position);
@@ -71,10 +73,10 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
     if(position >= model_size) throw std::logic_error("Tried to initialize state at a position larger than the number of sites");
 
-    size_t spin_dim = 2;
-    switch(model_type){
-        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim;break;
-        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim;break;
+    long spin_dim = 2;
+    switch(model_type) {
+        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim; break;
+        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim; break;
         default: spin_dim = 2;
     }
 
@@ -87,8 +89,8 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     M(1, 0, 0) = 1;
     L(0)       = 1;
     for(size_t site = 0; site < model_size; site++) {
-        mps_sites.emplace_back(class_mps_site(M, L, site));
-        if(site == position) mps_sites.back().set_LC(L);
+        mps_sites.emplace_back(std::make_unique<class_mps_site>(M, L, site));
+        if(site == position) mps_sites.back()->set_LC(L);
     }
     if(mps_sites.size() != model_size) throw std::logic_error("Initialized state with wrong size");
     if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
@@ -96,22 +98,21 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     site_update_tags = std::vector<bool>(model_size, false);
 }
 
-
 void class_state_finite::set_positions() {
     size_t pos = 0;
-    for(auto &mps : mps_sites) mps.set_position(pos++);
+    for(auto &mps : mps_sites) mps->set_position(pos++);
 }
 
 size_t class_state_finite::get_length() const { return mps_sites.size(); }
 size_t class_state_finite::get_position() const {
     size_t pos          = 0;
     bool   found_center = false;
-    for(auto &mps : mps_sites)
-        if(mps.isCenter() and not found_center) {
-            pos          = mps.get_position();
+    for(const auto &mps : mps_sites)
+        if(mps->isCenter() and not found_center) {
+            pos          = mps->get_position();
             found_center = true;
-        } else if(mps.isCenter() and found_center)
-            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps.get_position()));
+        } else if(mps->isCenter() and found_center)
+            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps->get_position()));
     if(not found_center) throw std::logic_error("Could not find center");
     return pos;
 }
@@ -166,9 +167,9 @@ Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
     return dimensions;
 }
 
-size_t class_state_finite::size_2site() const {
+long class_state_finite::size_2site() const {
     auto dims = dimensions_2site();
-    return static_cast<size_t>(dims[0] * dims[1] * dims[2]);
+    return dims[0] * dims[1] * dims[2];
 }
 
 bool class_state_finite::position_is_the_middle() const {
@@ -188,18 +189,18 @@ bool class_state_finite::position_is_at(size_t pos) const { return get_position(
 
 bool class_state_finite::is_real() const {
     bool mps_real = true;
-    for(auto &mps : mps_sites) mps_real = mps_real and mps.is_real();
+    for(const auto &mps : mps_sites) mps_real = mps_real and mps->is_real();
     return mps_real;
 }
 
 bool class_state_finite::has_nan() const {
-    for(auto &mps : mps_sites)
-        if(mps.has_nan()) return true;
+    for(const auto &mps : mps_sites)
+        if(mps->has_nan()) return true;
     return false;
 }
 
 void class_state_finite::assert_validity() const {
-    for(auto &mps : mps_sites) mps.assert_validity();
+    for(const auto &mps : mps_sites) mps->assert_validity();
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain_bond() const {
@@ -216,9 +217,9 @@ const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::current_
 
 const class_mps_site &class_state_finite::get_mps_site(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
-    auto mps_it = std::next(mps_sites.begin(), static_cast<long>(pos));
-    if(mps_it->get_position() != pos) throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_it->get_position()));
-    return *mps_it;
+    const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
+    if(mps_ptr->get_position() != pos) throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position()));
+    return *mps_ptr;
 }
 
 class_mps_site &class_state_finite::get_mps_site(size_t pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps_site(pos)); }
@@ -228,7 +229,7 @@ const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
 //
-// const class_mpo_base &class_state_finite::get_2site_tensor(size_t pos) const {
+// const class_mpo_site &class_state_finite::get_2site_tensor(size_t pos) const {
 //    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
 //    if(pos <= MPO_L.back()->get_position()) {
 //        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
@@ -245,8 +246,8 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    }
 //}
 //
-// class_mpo_base &class_state_finite::get_2site_tensor(size_t pos) {
-//    return const_cast<class_mpo_base &>(static_cast<const class_state_finite &>(*this).get_2site_tensor(pos));
+// class_mpo_site &class_state_finite::get_2site_tensor(size_t pos) {
+//    return const_cast<class_mpo_site &>(static_cast<const class_state_finite &>(*this).get_2site_tensor(pos));
 //}
 //
 // const class_environment &class_state_finite::get_ENVL(size_t pos) const {
@@ -352,48 +353,53 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    return false;
 //}
 
-std::list<size_t> class_state_finite::activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites) {
+std::list<size_t> class_state_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
     clear_cache();
     return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
 }
 
-std::list<size_t> class_state_finite::activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites) {
+std::list<size_t> class_state_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
     clear_cache();
     return active_sites = tools::finite::multisite::generate_truncated_site_list(*this, threshold, chi_lim, max_sites, min_sites);
 }
 
 Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
-size_t class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
+long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
+
+Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_tensor(const std::list<size_t> &sites) const {
+    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
+    if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
+    tools::log->trace("Contracting multisite mps tensor");
+    tools::common::profile::t_mps->tic();
+    Eigen::Tensor<Scalar, 3> multisite_tensor;
+    Eigen::Tensor<Scalar, 3> temp;
+    OMP                      omp;
+    bool                     first = true;
+    for(auto &site : sites) {
+        if(first) {
+            multisite_tensor = get_mps_site(site).get_M();
+            first            = false;
+            continue;
+        }
+        const auto &M    = get_mps_site(site).get_M();
+        long        dim0 = multisite_tensor.dimension(0) * M.dimension(0);
+        long        dim1 = multisite_tensor.dimension(1);
+        long        dim2 = M.dimension(2);
+        temp.device(omp.dev) =
+            multisite_tensor.contract(M, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2});
+        multisite_tensor = temp;
+    }
+    tools::common::profile::t_mps->toc();
+    return multisite_tensor;
+}
 
 const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_tensor() const {
     if(cache.multisite_tensor) return cache.multisite_tensor.value();
-    tools::log->trace("Contracting multi theta");
-    if(active_sites.empty()) {
-        throw std::runtime_error("No active sites on which to build multitheta");
-    }
-    Eigen::Tensor<Scalar, 3> multitheta;
-    Eigen::Tensor<Scalar, 3> temp;
-    bool                     first = true;
-    for(auto &site : active_sites) {
-        if(first) {
-            multitheta = get_mps_site(site).get_M();
-            first      = false;
-            continue;
-        }
-        if(site != get_mps_site(site).get_position()) throw std::runtime_error("Site mismatch in get_multisite_tensor");
-        auto M     = get_mps_site(site).get_M();
-        long dim0  = multitheta.dimension(0) * M.dimension(0);
-        long dim1  = multitheta.dimension(1);
-        long dim2  = M.dimension(2);
-        temp       = multitheta.contract(M, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2});
-        multitheta = temp;
-    }
-    //    auto & L = get_L(active_sites.back()+1);
-    //    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
-    cache.multisite_tensor = temp;
+    cache.multisite_tensor = get_multisite_tensor(active_sites);
     return cache.multisite_tensor.value();
 }
+
 
 // const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
 //    if(cache.multimpo) return cache.multimpo.value();
@@ -433,39 +439,30 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
 //    return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
 //}
 
-
-void class_state_finite::set_truncation_error(size_t pos, double error)
-/*! The truncation error vector has length + 1 elements, as many as there are bond matrices.
- *  Obviously, the edge matrices are always 1, so we expect these to have truncation_error = 0.
- *  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
- *  site on the left of the decomposition.
- */
-{
-    if(truncation_error.empty()) {
-        tools::log->debug("Resizing truncation_error container to size: {}", get_length() + 1);
-        truncation_error = std::vector<double>(get_length() + 1, 0.0);
-    }
-    get_mps_site(pos).set_truncation_error(error);
-    truncation_error[left_site + 1] = error;
-}
-
+void class_state_finite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }
 void class_state_finite::set_truncation_error(double error) { set_truncation_error(get_position(), error); }
 
-double class_state_finite::get_truncation_error(size_t left_site) const {
-    if(truncation_error.empty() or truncation_error.size() < get_length() + 1) {
-        tools::log->warn("Truncation error container hasn't been initialized! You called this function prematurely");
-        return std::numeric_limits<double>::infinity();
-    }
-    return truncation_error[left_site + 1];
+void class_state_finite::set_truncation_error_LC(double error) {
+    auto &mps = get_mps_site(get_position());
+    if(not mps.isCenter()) throw std::runtime_error("mps at current position is not a center");
+    mps.set_truncation_error_LC(error);
 }
 
-double class_state_finite::get_truncation_error() const { return get_truncation_error(get_position()); }
+double class_state_finite::get_truncation_error(size_t pos) const { return get_mps_site(pos).get_truncation_error(); }
+
+double class_state_finite::get_truncation_error() const { return get_mps_site(get_position()).get_truncation_error(); }
+double class_state_finite::get_truncation_error_LC() const { return get_mps_site(get_position()).get_truncation_error_LC(); }
 double class_state_finite::get_truncation_error_midchain() const {
     size_t center_pos = (get_length() - 1) / 2;
-    return get_truncation_error(center_pos);
+    if(center_pos > get_position())
+        return get_mps_site(center_pos).get_truncation_error();
+    else if(center_pos == get_position())
+        return get_mps_site(center_pos).get_truncation_error_LC();
+    else
+        return get_mps_site(center_pos + 1).get_truncation_error();
 }
 
-const std::vector<double> &class_state_finite::get_truncation_errors() const { return truncation_error; }
+std::vector<double> class_state_finite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 
 void class_state_finite::set_truncated_variance(size_t left_site, double error) {
     /*! The truncated variance vector has length + 1 elements, as many as there are bond matrices.
@@ -492,15 +489,15 @@ double                     class_state_finite::get_truncated_variance() const { 
 const std::vector<double> &class_state_finite::get_truncated_variances() const { return truncated_variance; }
 
 size_t class_state_finite::num_sites_truncated(double threshold) const {
-    auto   truncation_errors = get_truncation_errors();
-    size_t trunc_bond_count =
-        (size_t) std::count_if(truncation_errors.begin(), truncation_errors.end(), [threshold](auto const &val) { return val > threshold; });
+    auto truncation_errors = get_truncation_errors();
+    auto trunc_bond_count =
+        static_cast<size_t>(std::count_if(truncation_errors.begin(), truncation_errors.end(), [threshold](auto const &val) { return val > threshold; }));
     return trunc_bond_count;
 }
 
 size_t class_state_finite::num_bonds_at_limit() const {
     auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = (size_t) std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= (size_t) get_chi_lim(); });
+    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= get_chi_lim(); }));
     return bonds_at_lim;
 }
 
@@ -537,8 +534,8 @@ bool class_state_finite::any_sites_updated() const {
 bool class_state_finite::active_sites_updated() const {
     if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     if(active_sites.empty()) return false;
-    auto first_site_ptr = site_update_tags.begin() + active_sites.front();
-    auto last_site_ptr  = first_site_ptr + active_sites.size() - 1;
+    auto first_site_ptr = std::next(site_update_tags.begin(), static_cast<long>(active_sites.front()));
+    auto last_site_ptr  = std::next(site_update_tags.begin(), static_cast<long>(active_sites.back()));
     tools::log->trace("Checking update status on active sites: {}", active_sites);
     bool updated = std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
     tools::log->trace("Active sites updated: {}", updated);

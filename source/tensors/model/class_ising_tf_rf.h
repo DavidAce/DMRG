@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "class_mpo_base.h"
+#include "class_mpo_site.h"
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/details/h5ppHid.h>
 #include <iomanip>
 #include <iostream>
 
-class class_ising_tf_rf : public class_mpo_base {
+class class_ising_tf_rf : public class_mpo_site {
     using Scalar = std::complex<double>;
 
     private:
@@ -21,7 +21,7 @@ class class_ising_tf_rf : public class_mpo_base {
 
     public:
     class_ising_tf_rf(ModelType model_type_, size_t position_);
-    [[nodiscard]] std::unique_ptr<class_mpo_base> clone() const override;
+    [[nodiscard]] std::unique_ptr<class_mpo_site> clone() const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4>          MPO_reduced_view() const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 1>          get_MPO_edge_left() const override;

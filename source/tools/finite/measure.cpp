@@ -16,6 +16,7 @@
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tensors/state/class_mps_site.h>
 #include <tools/common/log.h>
 #include <tools/common/moments.h>
 #include <tools/common/prof.h>
@@ -218,11 +219,11 @@ Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_fi
     // 16x2x9 tensor. Now the reshaping convert it into a 32 x 9 matrix. Because
     // Eigen is column major, the doubling 16->32 will stack the third index twice.
 
-    for(auto &mps : state.MPS) {
-        long dim0 = mps.get_spin_dim();
-        long dimR = mps.get_chiR();
+    for(auto &mps : state.mps_sites) {
+        long dim0 = mps->spin_dim();
+        long dimR = mps->get_chiR();
         long dimL = chain.dimension(0);
-        temp      = chain.contract(mps.get_M(), idx({1}, {1})).reshape(array2{dimL * dim0, dimR});
+        temp      = chain.contract(mps->get_M(), idx({1}, {1})).reshape(array2{dimL * dim0, dimR});
         chain     = temp;
     }
 
@@ -241,9 +242,9 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                                  model.active_sites, edges.active_sites));
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges);
+        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges);
     } else {
-        const auto &mpo = model.get_multisite_mpo();
+        const auto &mpo = model.get_multisite_tensor();
         const auto &env = edges.get_multisite_ene_blk();
         tools::log->trace("Measuring energy");
         tools::common::profile::t_ene->tic();
@@ -266,7 +267,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const clas
     // Else
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>)
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges) + model.get_energy_reduced();
+        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges) + model.get_energy_reduced();
     else
         return tools::finite::measure::energy_minus_energy_reduced(state, model, edges) + model.get_energy_reduced();
 }
@@ -300,7 +301,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
                                                  state.active_sites, model.active_sites, edges.active_sites));
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
-        auto var = tools::finite::measure::energy_variance(state.get_multisite_mps(), model, edges);
+        auto var = tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges);
         if(var < state.lowest_recorded_variance) state.lowest_recorded_variance = var;
         return var;
     } else {
@@ -314,7 +315,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(not math::all_equal(model.active_sites, edges.active_sites))
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
-        const auto &mpo = model.get_multisite_mpo();
+        const auto &mpo = model.get_multisite_tensor();
         const auto &env = edges.get_multisite_var_blk();
         tools::log->trace("Measuring energy variance");
         tools::common::profile::t_ene->tic();

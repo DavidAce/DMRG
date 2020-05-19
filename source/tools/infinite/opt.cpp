@@ -8,7 +8,7 @@
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
-#include <tensors/model/class_mpo_base.h>
+#include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_environment.h>
 #include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
@@ -83,7 +83,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
 // Do unitary evolution on an MPS
 //============================================================================//
 
-Eigen::Tensor<Scalar, 3> tools::infinite::opt::time_evolve_theta(const class_state_infinite &state, const Eigen::Tensor<Scalar, 2> &U)
+Eigen::Tensor<Scalar, 3> tools::infinite::opt::time_evolve_state(const class_state_infinite &state, const Eigen::Tensor<Scalar, 2> &U)
 /*!
 @verbatim
   1--[ mps ]--2
@@ -98,6 +98,6 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::time_evolve_theta(const class_sta
 @endverbatim
 */
 {
-    return U.contract(state.get_mps(), Textra::idx({0}, {0}));
+    return U.contract(state.get_2site_tensor(), Textra::idx({0}, {0}));
 }
 

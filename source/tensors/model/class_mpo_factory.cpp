@@ -5,9 +5,9 @@
 #include "class_mpo_factory.h"
 #include "class_ising_sdual.h"
 #include "class_ising_tf_rf.h"
-#include "class_mpo_base.h"
+#include "class_mpo_site.h"
 
-std::unique_ptr<class_mpo_base> class_mpo_factory::create_mpo(size_t position, ModelType model_type) {
+std::unique_ptr<class_mpo_site> class_mpo_factory::create_mpo(size_t position, ModelType model_type) {
     switch(model_type){
         case ModelType::ising_tf_rf: return std::make_unique<class_ising_tf_rf>(model_type,position);
         case ModelType::ising_sdual: return std::make_unique<class_ising_sdual>(model_type,position);
@@ -15,4 +15,4 @@ std::unique_ptr<class_mpo_base> class_mpo_factory::create_mpo(size_t position, M
     }
 }
 
-std::unique_ptr<class_mpo_base> class_mpo_factory::clone(std::unique_ptr<class_mpo_base> other) { return other->clone(); }
+std::unique_ptr<class_mpo_site> class_mpo_factory::clone(std::unique_ptr<class_mpo_site> other) { return other->clone(); }

@@ -2,12 +2,12 @@
 #include <general/nmspc_tensor_omp.h>
 #include <list>
 class class_state_finite;
-class class_mpo_base;
+class class_mpo_site;
 
 namespace tools::finite::ops {
     using Scalar = std::complex<double>;
 //    extern std::list<Eigen::Tensor<Scalar,4>>
-//    make_mpo_list                 (const std::list<std::unique_ptr<class_mpo_base>> & mpos_L, const std::list<std::unique_ptr<class_mpo_base>> & mpos_R);
+//    make_mpo_list                 (const std::list<std::unique_ptr<class_mpo_site>> & mpos_L, const std::list<std::unique_ptr<class_mpo_site>> & mpos_R);
     extern void apply_mpo                     (class_state_finite & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
     extern void apply_mpos                    (class_state_finite & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
     extern class_state_finite

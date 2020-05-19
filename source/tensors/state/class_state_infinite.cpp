@@ -80,9 +80,9 @@ std::pair<size_t, size_t> class_state_infinite::get_positions() { return std::ma
 size_t                    class_state_infinite::get_positionA() { return MPS_A->get_position(); }
 size_t                    class_state_infinite::get_positionB() { return MPS_B->get_position(); }
 
-long class_state_infinite::get_chi() const { return MPS_A->get_LC().dimension(0); }
-long class_state_infinite::get_chiA() const { return MPS_A->get_L().dimension(0); }
-long class_state_infinite::get_chiB() const { return MPS_B->get_L().dimension(0); }
+long class_state_infinite::chiC() const { return MPS_A->get_LC().dimension(0); }
+long class_state_infinite::chiA() const { return MPS_A->get_L().dimension(0); }
+long class_state_infinite::chiB() const { return MPS_B->get_L().dimension(0); }
 
 long class_state_infinite::get_chi_lim() const {
     // Should get the the current limit on allowed bond dimension
@@ -113,25 +113,29 @@ double class_state_infinite::get_truncation_error() const {
     return tools::infinite::measure::truncation_error(*this);
 }
 
-Eigen::DSizes<long, 3> class_state_infinite::dimensions() const { return Eigen::DSizes<long, 3>{get_spin_dimA() * get_spin_dimB(), get_chiA(), get_chiB()}; }
+Eigen::DSizes<long, 3> class_state_infinite::dimensions() const { return Eigen::DSizes<long, 3>{get_spin_dimA() * get_spin_dimB(), chiA(), chiB()}; }
 
 const class_mps_site &class_state_infinite::get_mps_siteA() const { return *MPS_A; }
 const class_mps_site &class_state_infinite::get_mps_siteB() const { return *MPS_B; }
 class_mps_site &      class_state_infinite::get_mps_siteA() { return *MPS_A; }
 class_mps_site &      class_state_infinite::get_mps_siteB() { return *MPS_B; }
 
+/* clang-format off */
 const Eigen::Tensor<Scalar, 3> &class_state_infinite::A_bare() const { return MPS_A->get_M_bare(); }
 const Eigen::Tensor<Scalar, 3> &class_state_infinite::A() const { return MPS_A->get_M(); }
 const Eigen::Tensor<Scalar, 3> &class_state_infinite::B() const { return MPS_B->get_M(); }
-Eigen::Tensor<Scalar, 2>        class_state_infinite::LC() const { return Textra::asDiagonal(MPS_A->get_LC()); }
-Eigen::Tensor<Scalar, 3>        class_state_infinite::GA() const {
-    return MPS_A->get_M_bare().contract(Textra::asDiagonalInversed(MPS_A->get_L()), Textra::idx({1}, {1})).shuffle(Textra::array3{0, 2, 1});
-}
-Eigen::Tensor<Scalar, 3> class_state_infinite::GB() const {
-    return MPS_B->get_M_bare().contract(Textra::asDiagonalInversed(MPS_B->get_L()), Textra::idx({2}, {0}));
-}
-Eigen::Tensor<Scalar, 2> class_state_infinite::LA() const { return Textra::asDiagonal(MPS_A->get_L()); }
-Eigen::Tensor<Scalar, 2> class_state_infinite::LB() const { return Textra::asDiagonal(MPS_B->get_L()); }
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LC_diag() const { if(cache.LC_diag) return cache.LC_diag.value(); else cache.LC_diag = Textra::asDiagonal(MPS_A->get_LC()); return cache.LC_diag.value();}
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LA_diag() const { if(cache.LA_diag) return cache.LA_diag.value(); else cache.LA_diag = Textra::asDiagonal(MPS_A->get_L()); return cache.LA_diag.value();}
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LB_diag() const { if(cache.LB_diag) return cache.LB_diag.value(); else cache.LB_diag = Textra::asDiagonal(MPS_B->get_L()); return cache.LB_diag.value();}
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LC_diag_inv() const { if(cache.LC_diag_inv) return cache.LC_diag_inv.value(); else cache.LC_diag_inv = Textra::asDiagonalInversed(MPS_A->get_LC()); return cache.LC_diag_inv.value();}
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LA_diag_inv() const { if(cache.LA_diag_inv) return cache.LA_diag_inv.value(); else cache.LA_diag_inv = Textra::asDiagonalInversed(MPS_A->get_L()); return cache.LA_diag_inv.value();}
+const Eigen::Tensor<Scalar, 2> &class_state_infinite::LB_diag_inv() const { if(cache.LB_diag_inv) return cache.LB_diag_inv.value(); else cache.LB_diag_inv = Textra::asDiagonalInversed(MPS_B->get_L()); return cache.LB_diag_inv.value();}
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::GA() const {if(cache.GA) return cache.GA.value(); else cache.GA = MPS_A->get_M_bare().contract(Textra::asDiagonalInversed(MPS_A->get_L()), Textra::idx({1}, {1})).shuffle(Textra::array3{0, 2, 1}); return cache.GA.value();}
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::GB() const {if(cache.GB) return cache.GB.value(); else cache.GB = MPS_B->get_M_bare().contract(Textra::asDiagonalInversed(MPS_B->get_L()), Textra::idx({2}, {0})); return cache.GB.value();}
+const Eigen::Tensor<Scalar, 1> &class_state_infinite::LC() const { return MPS_A->get_LC(); }
+const Eigen::Tensor<Scalar, 1> &class_state_infinite::LA() const { return MPS_A->get_L(); }
+const Eigen::Tensor<Scalar, 1> &class_state_infinite::LB() const { return MPS_B->get_L(); }
+/* clang-format on */
 
 const Eigen::Tensor<Scalar, 3> &class_state_infinite::get_2site_tensor(Scalar norm) const {
     /*!

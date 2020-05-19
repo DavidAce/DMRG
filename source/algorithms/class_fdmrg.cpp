@@ -12,9 +12,6 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/svd.h>
 
-using namespace std;
-using namespace Textra;
-
 class_fdmrg::class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
     tools::log->trace("Constructing class {}", algo_name);
 }
@@ -65,9 +62,8 @@ void class_fdmrg::single_fDMRG_step() {
      */
     tools::log->trace("Starting single fDMRG step with ritz: [{}]", enum2str(ritz));
     tools::common::profile::t_sim->tic();
-    Eigen::Tensor<Scalar, 4> theta = tools::finite::opt::find_ground_state(tensors, ritz);
-    tools::finite::svd::truncate_theta(theta, *tensors.state);
-    tensors.clear_measurements();
+    Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
+    tensors.merge_multisite_tensor(multisite_tensor);
     tools::common::profile::t_sim->toc();
     status.wall_time = tools::common::profile::t_tot->get_age();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();

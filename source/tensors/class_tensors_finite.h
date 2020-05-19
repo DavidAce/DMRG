@@ -3,12 +3,15 @@
 #include <list>
 #include <measure/tensors_measure_finite.h>
 #include <memory>
+#include <complex>
+#include <unsupported/Eigen/CXX11/Tensor>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
 
 class class_tensors_finite {
     public:
+    using Scalar = std::complex<double>;
     std::unique_ptr<class_state_finite> state;
     std::unique_ptr<class_model_finite> model;
     std::unique_ptr<class_edges_finite> edges;
@@ -44,9 +47,10 @@ class class_tensors_finite {
     [[nodiscard]] bool   position_is_at(size_t pos) const;
     // Active sites
     void sync_active_sites();
-    void activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
+    void activate_sites(long threshold, size_t max_sites, size_t min_sites = 2);
     void do_all_measurements() const;
     void move_center_point();
+    void merge_multisite_tensor(const Eigen::Tensor<Scalar,3> & multisite_tensor);
     void rebuild_edges();
     void assert_validity() const;
 

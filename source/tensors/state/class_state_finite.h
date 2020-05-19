@@ -6,12 +6,11 @@
 
 #include <Eigen/Core>
 #include <complex>
+#include <config/enums.h>
+#include <list>
 #include <measure/state_measure_finite.h>
 #include <memory>
 #include <optional>
-#include <tensors/model/class_mpo_base.h>
-#include <tensors/state/class_environment.h>
-#include <tensors/state/class_mps_site.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 /**
@@ -31,30 +30,32 @@
  *
  *  The numbers in parentheses denote the position in the chain, note that this isn't the same as the position in the corresponding containers.
  */
+class class_mps_site;
+class class_tensors_finite;
 
 class class_state_finite {
     public:
     using Scalar = std::complex<double>;
-
     private:
+
     struct Cache {
         std::optional<Eigen::Tensor<Scalar, 3>> multisite_tensor = std::nullopt;
     };
 
-    size_t              iter      = 0;
-    size_t              step      = 0;
-    int                 direction = 1;
-    std::optional<long> chi_lim;
-    std::optional<long> chi_max;
+    size_t                    iter      = 0;
+    size_t                    step      = 0;
+    int                       direction = 1;
+    std::optional<long>       chi_lim;
+    std::optional<long>       chi_max;
     std::vector<double>       truncated_variance;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;
 
     public:
-    std::list<class_mps_site>    mps_sites;
-    std::list<size_t>            active_sites;
-    mutable state_measure_finite measurements;
-    mutable double               lowest_recorded_variance = 1.0;
+    std::list<std::unique_ptr<class_mps_site>> mps_sites;
+    std::list<size_t>                          active_sites;
+    mutable state_measure_finite               measurements;
+    mutable double                             lowest_recorded_variance = 1.0;
 
     public:
     class_state_finite();
@@ -90,7 +91,7 @@ class class_state_finite {
     void                   flip_direction();
     int                    get_direction() const;
     Eigen::DSizes<long, 3> dimensions_2site() const;
-    size_t                 size_2site() const;
+    long                   size_2site() const;
 
     bool position_is_the_middle() const;
     bool position_is_the_middle_any_direction() const;
@@ -107,44 +108,27 @@ class class_state_finite {
     const class_mps_site &get_mps_site() const;
     class_mps_site &      get_mps_site();
 
-    //    const class_model_base &     get_2site_tensor(size_t pos) const;
-    //    class_model_base &           get_2site_tensor(size_t pos);
-    //    const class_environment &    get_ENVL(size_t pos) const;
-    //    const class_environment &    get_ENVR(size_t pos) const;
-    //    const class_environment_var &get_ENV2L(size_t pos) const;
-    //    const class_environment_var &get_ENV2R(size_t pos) const;
-    //
-    //    TType<4> get_theta() const;
 
-    // For reduced energy MPO's
-    //    bool   is_reduced() const;
-    //    double get_energy_reduced() const;
-    //    double get_energy_per_site_reduced() const;
-    //    void   set_reduced_energy(double total_energy);
-    //    void   set_reduced_energy_per_site(double site_energy);
-    //    void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-    //    void damp_hamiltonian(double coupling_damp, double field_damp);
-    //    bool is_perturbed() const;
-    //    bool is_damped() const;
 
     // For multisite
-    std::list<size_t>      activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
-    std::list<size_t>      activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
+    std::list<size_t>      activate_sites(long threshold, size_t max_sites, size_t min_sites = 2);
+    std::list<size_t>      activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
-    size_t                 active_problem_size() const;
+    long                   active_problem_size() const;
 
+    Eigen::Tensor<Scalar, 3>  get_multisite_tensor(const std::list<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_tensor() const;
-    //    const TType<4> &                                                                                                    get_multimpo() const;
-    //    std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>>         get_multienv() const;
-    //    std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> get_multienv2() const;
+
 
     public:
-    void                       set_truncation_error(size_t left_site, double error);
-    void                       set_truncation_error(double error);
-    double                     get_truncation_error(size_t left_site) const;
-    double                     get_truncation_error() const;
-    double                     get_truncation_error_midchain() const;
-    const std::vector<double> &get_truncation_errors() const;
+    void                set_truncation_error(size_t pos, double error);
+    void                set_truncation_error(double error);
+    void                set_truncation_error_LC(double error);
+    double              get_truncation_error(size_t pos) const;
+    double              get_truncation_error() const;
+    double              get_truncation_error_LC() const;
+    double              get_truncation_error_midchain() const;
+    std::vector<double> get_truncation_errors() const;
 
     void                       set_truncated_variance(size_t left_site, double error);
     void                       set_truncated_variance(double error);

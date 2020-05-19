@@ -9,9 +9,6 @@
 #include <tensors/state/class_mps_site.h>
 #include <tools/infinite/env.h>
 #include <tools/infinite/measure.h>
-#include <tools/infinite/mpo.h>
-#include <tools/infinite/mps.h>
-#include <tools/common/svd.h>
 #include <tools/common/log.h>
 
 class_tensors_infinite::class_tensors_infinite():
@@ -75,8 +72,6 @@ void class_tensors_infinite::update_mps(const Eigen::Tensor<Scalar,3> & twosite_
     state->set_mps(twosite_tensor);
     clear_cache();
     clear_measurements();
-
-
 }
 
 void class_tensors_infinite::enlarge() {

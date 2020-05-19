@@ -74,7 +74,7 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
      *
      * The U and V tensors contain the sites to the left and right of the center bond,
      * and are sent away for further splitting.
-     * S will later become LC after absorbing the remnants of (then split up) U and V.
+     * S will later become LC_diag after absorbing the remnants of (then split up) U and V.
      *
      *
      *
@@ -154,19 +154,19 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
     //      * dL = 1, dR = multisite_tensor.dimension(0) = prod(spin_dims)
     //      * mps_sites_left is empty
     //      * V_residue = U
-    //      * "LC" = V_residue * S * U_residue = U * S * U_residue
-    //      * Contract LC into the first B (not setting LC!)
+    //      * "LC_diag" = V_residue * S * U_residue = U * S * U_residue
+    //      * Contract LC into the first B (not setting LC_diag!)
     //      * Splice mps_sites_right onto mps_sites_left as usual
     //  * center_point > all positions:
     //      * dL = multisite_tensor.dimension(0) = prod(spin_dims) , dR = 1
     //      * mps_sites_right is empty
     //      * U_residue = V
-    //      * "LC" = V_residue * S * U_residue = V_residue * S * V
-    //      * Contract LC into the last A (not setting LC!)
+    //      * "LC_diag" = V_residue * S * U_residue = V_residue * S * V
+    //      * Contract LC into the last A (not setting LC_diag!)
     //      * Splice mps_sites_right onto mps_sites_left is not needed, but can be done anyway to reuse code
     //  * center_point is somewhere in positions (normal case):
-    //      * LC = V_residue * S * U_residue
-    //      * Set LC into the last site in mps_sites_left
+    //      * LC_diag = V_residue * S * U_residue
+    //      * Set LC_diag into the last site in mps_sites_left
     //      * Splice mps_sites_right onto mps_sites_left as usual
     //
     //////////////// DEPRECATED ////////////////////
@@ -247,8 +247,8 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
 //            // Store the singular values for the next iteration
 //            S_prev = S;
 //        }else{
-//            // Now U is a left-unitary "A" matrix, and the singular value S is a center bond "LC"
-//            // We can distinguish it by setting S in its LC
+//            // Now U is a left-unitary "A" matrix, and the singular value S is a center bond "LC_diag"
+//            // We can distinguish it by setting S in its LC_diag
 //            mps_sites.emplace_front(class_mps_site());
 //            mps_sites.front().set_position(--position);
 //            mps_sites.front().set_M(U);

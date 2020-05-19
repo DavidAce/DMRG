@@ -12,7 +12,7 @@ class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
 class class_tensors_finite;
-class class_mpo_base;
+class class_mpo_site;
 class class_algorithm_status;
 namespace tools::finite::measure{
     using Scalar = std::complex<double>;
