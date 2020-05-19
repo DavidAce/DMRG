@@ -40,7 +40,7 @@ size_t tools::finite::multisite::get_problem_size(const class_state_finite &stat
 
 
 
-std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites, const size_t min_sites){
+std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const long threshold, const size_t max_sites, const size_t min_sites){
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
     tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}",
             state.get_position(), state.get_direction(), threshold,max_sites,min_sites);
@@ -57,6 +57,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         costs.emplace_back(get_problem_size(state,sites));
         position += direction;
     }
+
     tools::log->trace("Activation problem sizes: {}", costs);
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
@@ -86,7 +87,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
 
 
 
-std::list<size_t> tools::finite::multisite::generate_truncated_site_list(class_state_finite &state, const size_t threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites){
+std::list<size_t> tools::finite::multisite::generate_truncated_site_list(class_state_finite &state, const long threshold, const long chi_lim, const size_t max_sites, const size_t min_sites){
     auto active_sites = generate_site_list(state,threshold,max_sites,min_sites);
     if(active_sites.size() == max_sites) return active_sites; // Fastest outcome
     state.active_sites.clear();

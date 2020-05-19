@@ -11,7 +11,7 @@
 #include <tools/common/views.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tensors/state/class_state_finite.h>
-#include <tensors/state/class_mps_2site.h>
+#include <tensors/state/class_mps_site.h>
 #include <math/class_eigsolver.h>
 #include <math/nmspc_math.h>
 //#include "class_mps_util.h"
@@ -51,8 +51,8 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     // On even thetas we have  chiA = chiB on the outer bond
     // On odd thetas we have chiC on the outer bond.
 //    int chiA2 = (int)(state.MPS->chiA()*state.MPS->chiA());
-    int chiB2 = (int)(state.MPS->chiB()*state.MPS->chiB());
-    int chiC2 = (int)(state.MPS->chiC()*state.MPS->chiC());
+    int chiB2 = static_cast<int>(state.chiB() * state.chiB());
+    int chiC2 = static_cast<int>(state.chiC() * state.chiC());
 
     theta = get_theta(state);
     Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(state).reshape(array2{chiB2,chiB2});
@@ -70,18 +70,18 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     Scalar normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
     Scalar normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
 
-    r_evn = MatrixTensorMap(eigvec_R_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
-    l_evn = MatrixTensorMap(eigvec_L_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
-    r_odd = MatrixTensorMap(eigvec_R_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
-    l_odd = MatrixTensorMap(eigvec_L_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
+    r_evn = MatrixTensorMap(eigvec_R_evn).reshape(array2{state.chiB(),state.chiB()})/normalization_evn;
+    l_evn = MatrixTensorMap(eigvec_L_evn).reshape(array2{state.chiB(),state.chiB()})/normalization_evn;
+    r_odd = MatrixTensorMap(eigvec_R_odd).reshape(array2{state.chiC(),state.chiC()})/normalization_odd;
+    l_odd = MatrixTensorMap(eigvec_L_odd).reshape(array2{state.chiC(),state.chiC()})/normalization_odd;
 
     theta                = get_theta(state);
     theta_sw             = get_theta_swapped(state);
     theta_evn_normalized = get_theta_evn(state, sqrt(eigval_R_evn));
     theta_odd_normalized = get_theta_odd(state, sqrt(eigval_R_odd));
 
-    LAGA                 = state.MPS->A_bare(); // Modified! May contain some error? Check git history for comparison
-    LCGB                 = state.MPS->LC().contract(state.MPS->GB(), Textra::idx({1},{1})).shuffle(array3{1,0,2}); // Modified! May contain some error? Check git history for comparison
+    LAGA                 = state.A_bare(); // Modified! May contain some error? Check git history for comparison
+    LCGB                 = state.LC_diag().contract(state.GB(), Textra::idx({1},{1})).shuffle(array3{1,0,2}); // Modified! May contain some error? Check git history for comparison
 
     transfer_matrix_evn    = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
     transfer_matrix_odd    = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
@@ -117,14 +117,18 @@ tools::common::views::get_theta(const class_state_finite & state, Scalar norm)
 /*!
  * Returns a two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+        1--[ LB ]--[ GA ]--[ LC_diag ]-- [ GB ] -- [ LB_diag ]--3
                      |                 |
                      0                 2
+
+    where we define LB*GA*LC_diag = M on the "A" site and GB*LB_diag = M on the right site
      @endverbatim
  */
 {
     auto pos = state.get_position();
-    return state.get_mps_site(pos).get_M().contract(state.get_mps_site(pos + 1).get_M(), Textra::idx({2},{1})) /norm;
+    const auto & mpsA = state.get_mps_site(pos);
+    const auto & mpsB = state.get_mps_site(pos+1);
+    return mpsA.get_M().contract(mpsB.get_M(), Textra::idx({2},{1})) /norm;
 }
 
 
@@ -134,7 +138,7 @@ tools::common::views::get_theta(const class_state_infinite & state, Scalar norm)
 /*!
  * Returns a two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+        1--[ LB ]--[ GA ]--[ LA_diag ]-- [ GB ] -- [ LB_diag ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -142,7 +146,7 @@ tools::common::views::get_theta(const class_state_infinite & state, Scalar norm)
 {
 
     return
-            state.MPS->A().contract(state.MPS->B(), Textra::idx({2},{1})) / norm;
+            state.A().contract(state.B(), Textra::idx({2},{1})) / norm;
 }
 
 
@@ -152,17 +156,18 @@ tools::common::views::get_theta_swapped(const class_state_infinite & state, Scal
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LC ]--3
+        1--[ LC ]--[ GB ]--[ LB_diag ]-- [ GA ] -- [ LC_diag ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 {
 
-    return state.MPS->LC() //whatever L_A was in the previous moves
-                    .contract(state.MPS->B() , idx({1},{1}))
-                    .contract(state.MPS->GA(), idx({2},{1}))
-                    .contract(state.MPS->LC(), idx({3}, {0}))
+    return state
+               .LC_diag() //whatever L_A was in the previous moves
+                    .contract(state.B() , idx({1},{1}))
+                    .contract(state.GA(), idx({2},{1}))
+                    .contract(state.LC_diag(), idx({3}, {0}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -176,15 +181,15 @@ tools::common::views::get_theta_evn(const class_state_infinite & state, Scalar n
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
-        1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
+        1--[ LA_diag ]--[ GA ]-- [ LC_diag ] -- [ GB ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 
 {
-    return  state.MPS->A()
-             .contract(state.MPS->GB(),  idx({2},{1}))
+    return  state.A()
+             .contract(state.GB(),  idx({2},{1}))
             /norm;
 }
 
@@ -193,15 +198,15 @@ tools::common::views::get_theta_odd(const class_state_infinite & state, Scalar n
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
+        1--[ LC_diag ]--[ GB ]-- [ LB_diag ] -- [ GA ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 {
-    return state.MPS->LC()
-                    .contract(state.MPS->B(),    idx({1},{1}))
-                    .contract(state.MPS->GA(),   idx({2},{1}))
+    return state.LC_diag()
+                    .contract(state.B(),    idx({1},{1}))
+                    .contract(state.GA(),   idx({2},{1}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -209,18 +214,18 @@ tools::common::views::get_theta_odd(const class_state_infinite & state, Scalar n
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_zero(const class_state_infinite & state) {
-    Eigen::Tensor<Scalar,1> I = state.MPS->MPS_A->get_LC();
+    long dim = state.chiC();
+    Eigen::Tensor<Scalar,2> I = asDiagonal(Eigen::Tensor<Scalar,1>(dim));
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
-
-    return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(array4{0,2,1,3});
+    return I.contract(I, pair ).shuffle(array4{0,2,1,3});
 }
 
 
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_LBGA(const class_state_infinite & state, Scalar norm)  {
-    return state.MPS->A().contract( state.MPS->A().conjugate() , idx({0},{0}))
+    return state.A().contract( state.A().conjugate() , idx({0},{0}))
                    .shuffle(array4{0,3,1,2})
            /norm;
 }
@@ -228,17 +233,17 @@ tools::common::views::get_transfer_matrix_LBGA(const class_state_infinite & stat
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_GALC(const class_state_infinite & state, Scalar norm)  {
-    return state.MPS->LC()
-                   .contract(state.MPS->GA(),             idx({2},{0}))
-                   .contract(state.MPS->GA().conjugate(), idx({0},{0}))
-                   .contract(state.MPS->LC(), idx({3}, {0}) )
+    return state.LC_diag()
+                   .contract(state.GA(),             idx({2},{0}))
+                   .contract(state.GA().conjugate(), idx({0},{0}))
+                   .contract(state.LC_diag(),             idx({3}, {0}) )
                    .shuffle(array4{0,2,1,3})
            /norm;
 }
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_GBLB(const class_state_infinite & state, Scalar norm)  {
-    return state.MPS->B().contract(state.MPS->B().conjugate() ,   idx({0},{0}))
+    return state.B().contract(state.B().conjugate() ,   idx({0},{0}))
                    .shuffle(array4{0,2,1,3})
            /norm;
 }
@@ -246,10 +251,10 @@ tools::common::views::get_transfer_matrix_GBLB(const class_state_infinite & stat
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_LCGB(const class_state_infinite & state, Scalar norm)  {
-    return state.MPS->LC()
-                    .contract(state.MPS->GB(),               idx({1},{1}))
-                    .contract(state.MPS->GB().conjugate(),   idx({1},{0}))
-                    .contract(state.MPS->LC(), idx({2}, {1}) )
+    return state.LC_diag()
+                    .contract(state.GB(),               idx({1},{1}))
+                    .contract(state.GB().conjugate(),   idx({1},{0}))
+                    .contract(state.LC_diag(), idx({2}, {1}) )
                     .shuffle(array4{0,3,1,2})
             /norm;
 }
@@ -302,160 +307,160 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 
 
 
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_theta(const class_mps_2site  &MPS, Scalar norm)
-/*!
- * Returns a two-site MPS
-     @verbatim
-        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
-                     |                 |
-                     0                 2
-     @endverbatim
- */
-{
-    return
-            MPS.A().contract(MPS.B(), idx({2},{1})) / norm;
-}
-
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_theta_swapped(const class_mps_2site  &MPS, Scalar norm)
-/*!
- * Returns a two-site MPS with A and B swapped
-     @verbatim
-        1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
-                     |                 |
-                     0                 2
-     @endverbatim
- */
-{
-    return MPS.LC() //whatever L_A was in the previous moves
-                    .contract(MPS.B(),        idx({1},{1}))
-                    .contract(MPS.GA(),       idx({2},{1}))
-                    .contract(MPS.LA(),       idx({3},{0}))
-                    .shuffle(array4{1,0,2,3})
-            /norm;
-}
-
-
-
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_theta_evn(const class_mps_2site  &MPS, Scalar norm)
-/*!
- * Returns a right normalized two-site MPS
-     @verbatim
-        1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
-                     |                 |
-                     0                 2
-     @endverbatim
- */
-
-{
-    return  MPS.A()
-             .contract(MPS.GB(),  idx({2},{1}))
-            /norm;
-}
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_theta_odd(const class_mps_2site  &MPS, Scalar norm)
-/*!
- * Returns a two-site MPS with A and B swapped
-     @verbatim
-        1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
-                     |                 |
-                     0                 2
-     @endverbatim
- */
-{
-    return MPS.LC()
-                    .contract(MPS.B(),           idx({1},{1}))
-                    .contract(MPS.GA(),          idx({2},{1}))
-                    .shuffle(array4{1,0,2,3})
-            /norm;
-}
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
-    Eigen::Tensor<Scalar,1> I = MPS.MPS_A->get_LC();
-    I.setConstant(1.0);
-    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
-
-    return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(array4{0,2,1,3});
-}
-
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, Scalar norm)  {
-    return MPS.A().contract(MPS.A().conjugate() , idx({0},{0}))
-                   .shuffle(array4{0,3,1,2})
-           /norm;
-}
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, Scalar norm)  {
-    return MPS.LC()
-                   .contract(MPS.GA(),               idx({2},{0}))
-                   .contract(MPS.GA().conjugate(),   idx({0},{0}))
-                   .contract(MPS.LC(), idx({3}, {0}) )
-                   .shuffle(array4{0,2,1,3})
-           /norm;
-}
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, Scalar norm)  {
-    return MPS.B().contract(MPS.B().conjugate() ,   idx({0},{0}))
-                   .shuffle(array4{0,2,1,3})
-           /norm;
-}
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, Scalar norm)  {
-    return MPS.LC()
-                    .contract(MPS.GB(),               idx({1},{1}))
-                    .contract(MPS.GB().conjugate(),   idx({1},{0}))
-                    .contract(MPS.LC(), idx({2}, {1}) )
-                    .shuffle(array4{0,3,1,2})
-            /norm;
-}
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_theta_evn(const class_mps_2site  &MPS, Scalar norm)  {
-    using namespace tools::common::views;
-    return get_theta_evn(MPS).contract(get_theta_evn(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
-}
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_theta_odd(const class_mps_2site  &MPS, Scalar norm)  {
-    return get_theta_odd(MPS).contract(get_theta_odd(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
-}
-
-
-Eigen::Tensor<Scalar,4>
-tools::common::views::get_transfer_matrix_AB(const class_mps_2site  &MPS, int p) {
-    Eigen::Tensor<Scalar,4> temp = get_transfer_matrix_zero(MPS);
-    Eigen::Tensor<Scalar,4> temp2;
-    for (int i = 0; i < p-2; i++){
-        if(math::mod(i,2) == 0){
-            temp2 = temp.contract(get_transfer_matrix_LBGA(MPS), idx({2,3},{0,1}));
-
-        }else{
-            temp2 = temp.contract(get_transfer_matrix_LCGB(MPS), idx({2,3},{0,1}));
-        }
-        temp = temp2;
-
-
-    }
-    return temp;
-}
-
-
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_theta(const class_mps_2site  &MPS, Scalar norm)
+///*!
+// * Returns a two-site MPS
+//     @verbatim
+//        1--[ LA_diag ]--[ GA ]--[ LC_diag ]-- [ GB ] -- [ LB_diag ]--3
+//                     |                 |
+//                     0                 2
+//     @endverbatim
+// */
+//{
+//    return
+//            MPS.A().contract(MPS.B(), idx({2},{1})) / norm;
+//}
+//
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_theta_swapped(const class_mps_2site  &MPS, Scalar norm)
+///*!
+// * Returns a two-site MPS with A and B swapped
+//     @verbatim
+//        1--[ LC_diag ]--[ GB ]--[ LB_diag ]-- [ GA ] -- [ LA_diag ]--3
+//                     |                 |
+//                     0                 2
+//     @endverbatim
+// */
+//{
+//    return MPS.LC_diag() //whatever L_A was in the previous moves
+//                    .contract(MPS.B(),        idx({1},{1}))
+//                    .contract(MPS.GA(),       idx({2},{1}))
+//                    .contract(MPS.LA_diag(),       idx({3},{0}))
+//                    .shuffle(array4{1,0,2,3})
+//            /norm;
+//}
+//
+//
+//
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_theta_evn(const class_mps_2site  &MPS, Scalar norm)
+///*!
+// * Returns a right normalized two-site MPS
+//     @verbatim
+//        1--[ LA_diag ]--[ GA ]-- [ LC_diag ] -- [ GB ]--3
+//                     |                 |
+//                     0                 2
+//     @endverbatim
+// */
+//
+//{
+//    return  MPS.A()
+//             .contract(MPS.GB(),  idx({2},{1}))
+//            /norm;
+//}
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_theta_odd(const class_mps_2site  &MPS, Scalar norm)
+///*!
+// * Returns a two-site MPS with A and B swapped
+//     @verbatim
+//        1--[ LC_diag ]--[ GB ]-- [ LB_diag ] -- [ GA ]--3
+//                     |                 |
+//                     0                 2
+//     @endverbatim
+// */
+//{
+//    return MPS.LC_diag()
+//                    .contract(MPS.B(),           idx({1},{1}))
+//                    .contract(MPS.GA(),          idx({2},{1}))
+//                    .shuffle(array4{1,0,2,3})
+//            /norm;
+//}
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
+//    Eigen::Tensor<Scalar,1> I = MPS.MPS_A->get_LC();
+//    I.setConstant(1.0);
+//    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
+//
+//    return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(array4{0,2,1,3});
+//}
+//
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, Scalar norm)  {
+//    return MPS.A().contract(MPS.A().conjugate() , idx({0},{0}))
+//                   .shuffle(array4{0,3,1,2})
+//           /norm;
+//}
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, Scalar norm)  {
+//    return MPS.LC_diag()
+//                   .contract(MPS.GA(),               idx({2},{0}))
+//                   .contract(MPS.GA().conjugate(),   idx({0},{0}))
+//                   .contract(MPS.LC_diag(), idx({3}, {0}) )
+//                   .shuffle(array4{0,2,1,3})
+//           /norm;
+//}
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, Scalar norm)  {
+//    return MPS.B().contract(MPS.B().conjugate() ,   idx({0},{0}))
+//                   .shuffle(array4{0,2,1,3})
+//           /norm;
+//}
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, Scalar norm)  {
+//    return MPS.LC_diag()
+//                    .contract(MPS.GB(),               idx({1},{1}))
+//                    .contract(MPS.GB().conjugate(),   idx({1},{0}))
+//                    .contract(MPS.LC_diag(), idx({2}, {1}) )
+//                    .shuffle(array4{0,3,1,2})
+//            /norm;
+//}
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_theta_evn(const class_mps_2site  &MPS, Scalar norm)  {
+//    using namespace tools::common::views;
+//    return get_theta_evn(MPS).contract(get_theta_evn(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+//}
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_theta_odd(const class_mps_2site  &MPS, Scalar norm)  {
+//    return get_theta_odd(MPS).contract(get_theta_odd(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+//}
+//
+//
+//Eigen::Tensor<Scalar,4>
+//tools::common::views::get_transfer_matrix_AB(const class_mps_2site  &MPS, int p) {
+//    Eigen::Tensor<Scalar,4> temp = get_transfer_matrix_zero(MPS);
+//    Eigen::Tensor<Scalar,4> temp2;
+//    for (int i = 0; i < p-2; i++){
+//        if(math::mod(i,2) == 0){
+//            temp2 = temp.contract(get_transfer_matrix_LBGA(MPS), idx({2,3},{0,1}));
+//
+//        }else{
+//            temp2 = temp.contract(get_transfer_matrix_LCGB(MPS), idx({2,3},{0,1}));
+//        }
+//        temp = temp2;
+//
+//
+//    }
+//    return temp;
+//}
+//
+//
 

@@ -8,6 +8,4 @@ namespace tools::infinite::debug {
     extern void check_integrity             (const class_state_infinite & state);
     extern void check_integrity             (const class_model_infinite & model);
     extern void check_integrity             (const class_edges_infinite & edges);
-    extern void check_normalization_routine (const class_state_infinite & state);
-
 }

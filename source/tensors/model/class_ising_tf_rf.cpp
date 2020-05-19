@@ -14,7 +14,7 @@
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
-class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : class_mpo_base(model_type_, position_) {
+class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {
     h5tb.param.J1       = settings::model::ising_tf_rf::J1;
     h5tb.param.J2       = settings::model::ising_tf_rf::J2;
     h5tb.param.h_tran   = settings::model::ising_tf_rf::h_tran;
@@ -170,7 +170,7 @@ Eigen::MatrixXcd class_ising_tf_rf::single_site_hamiltonian(size_t position, siz
     return -(h5tb.param.J1 * SZ[i] * SZ[j] + h5tb.param.h_tran * 0.5 * (SX[i] + SX[j]));
 }
 
-std::unique_ptr<class_mpo_base> class_ising_tf_rf::clone() const { return std::make_unique<class_ising_tf_rf>(*this); }
+std::unique_ptr<class_mpo_site> class_ising_tf_rf::clone() const { return std::make_unique<class_ising_tf_rf>(*this); }
 
 size_t class_ising_tf_rf::get_spin_dimension() const { return h5tb.param.spin_dim; }
 

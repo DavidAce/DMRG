@@ -15,7 +15,6 @@ namespace tools::finite::debug {
     extern void check_integrity    (const class_edges_finite & edges);
     extern void check_integrity    (const class_tensors_finite & tensors);
 
-    extern void check_normalization_routine (const class_state_finite & state);
     extern void print_parity_properties     (const class_state_finite & state);
     /* clang-format on */
 }

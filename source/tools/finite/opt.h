@@ -22,7 +22,7 @@ class class_algorithm_status;
 namespace tools::finite::opt{
     using Scalar = std::complex<double>;
     extern Eigen::Tensor<Scalar,3> find_excited_state(const class_tensors_finite & tensors, const class_algorithm_status & status, OptMode optMode, OptSpace optSpace, OptType optType);
-    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_tensors_finite & tensors, StateRitz ritz);
+    extern Eigen::Tensor<Scalar,3> find_ground_state (const class_tensors_finite & tensors, StateRitz ritz);
 }
 
 
@@ -45,8 +45,8 @@ namespace tools::finite::opt::internal{
                                                                                     const class_algorithm_status & status,
                                                                                     OptType optType, OptMode optMode,OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_tensors_finite & tensors, const class_algorithm_status & status);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_tensors_finite & tensors, StateRitz ritz);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_tensors_finite & tensors, std::string_view ritz);
+        extern Eigen::Tensor<std::complex<double>,3> ground_state_optimization   (const class_tensors_finite & tensors, StateRitz ritz);
+        extern Eigen::Tensor<std::complex<double>,3> ground_state_optimization   (const class_tensors_finite & tensors, std::string_view ritz);
         extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_tensors_finite & tensors, OptType optType, OptMode optMode, OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
 

@@ -25,7 +25,7 @@ class_model_infinite::class_model_infinite(const class_model_infinite &other):
     cache(other.cache),
     HA(other.HA->clone()),
     HB(other.HB->clone()),
-    model_type(other.model_type),
+    model_type(other.model_type)
 {}
 
 class_model_infinite &class_model_infinite::operator=(const class_model_infinite &other) {
@@ -48,6 +48,21 @@ void class_model_infinite::initialize(ModelType model_type_){
     HB = class_mpo_factory::create_mpo(1,model_type);
 }
 
+void class_model_infinite::randomize() {
+    tools::log->trace("Randomizing model mpos");
+    HA->randomize_hamiltonian();
+    HB->randomize_hamiltonian();
+    std::vector<class_mpo_site::TableMap> all_params;
+
+    all_params.push_back(HA->get_parameters());
+    all_params.push_back(HB->get_parameters());
+
+    HA->set_averages(all_params);
+    HB->set_averages(all_params);
+
+}
+
+
 
 Eigen::DSizes<long, 4> class_model_infinite::dimensions() const {
     long dim0 = HA->MPO().dimension(0);
@@ -57,10 +72,10 @@ Eigen::DSizes<long, 4> class_model_infinite::dimensions() const {
     return Eigen::DSizes<long, 4> { dim0, dim1, dim2, dim3 };
 }
 
-const class_mpo_base &class_model_infinite::get_mpo_siteA() const{return *HA;}
-const class_mpo_base &class_model_infinite::get_mpo_siteB() const{return *HB;}
-class_mpo_base &      class_model_infinite::get_mpo_siteA(){return *HA;}
-class_mpo_base &      class_model_infinite::get_mpo_siteB(){return *HB;}
+const class_mpo_site &class_model_infinite::get_mpo_siteA() const{return *HA;}
+const class_mpo_site &class_model_infinite::get_mpo_siteB() const{return *HB;}
+class_mpo_site &      class_model_infinite::get_mpo_siteA(){return *HA;}
+class_mpo_site &      class_model_infinite::get_mpo_siteB(){return *HB;}
 
 
 const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_tensor() const {

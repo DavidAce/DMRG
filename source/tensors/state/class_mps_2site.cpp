@@ -152,10 +152,10 @@ Eigen::Tensor<class_mps_2site::Scalar, 3> class_mps_2site::get_2site_tensor(Scal
 /*!
  * Returns a two-site tensor
      @verbatim
-        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+        1--[ LA_diag ]--[ GA ]--[ LC_diag ]-- [ GB ] -- [ LB_diag ]--3
                      |                 |
                      0                 2
-       which in our notation is simply A * B  (because A = LA * GA * LC and B = GB * LB),
+       which in our notation is simply A * B  (because A = LA_diag * GA * LC_diag and B = GB * LB_diag),
        becomes
 
         1--[ 2site_tensor ]--2

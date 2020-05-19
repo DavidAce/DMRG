@@ -19,12 +19,12 @@ namespace eigutils{
         enum class Form{SYMMETRIC, NONSYMMETRIC};       // Real Symmetric, Real General or Complex General
         enum class Storage {DENSE,SPARSE,STL};          // Eigen Dense or sparse, or std::vector for container
         enum class Shift {ON,OFF};                      // Enable or disable shift invert
-        enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE};   // Choice of eigenvalue. LA is largest algebraic, and so on.
+        enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE};   // Choice of eigenvalue. LA_diag is largest algebraic, and so on.
         enum class Side {L,R};                          // Left or right eigenvectors
         enum class Type {REAL,CPLX};                    // Real or complex, i.e. double or std::complex<double> matrix
 
         inline Ritz stringToRitz(std::string_view ritzstring){
-            if (ritzstring == "LA") return Ritz::LA;
+            if (ritzstring == "LA_diag") return Ritz::LA;
             if (ritzstring == "SA") return Ritz::SA;
             if (ritzstring == "LM") return Ritz::LM;
             if (ritzstring == "SM") return Ritz::SM;
@@ -61,7 +61,7 @@ namespace eigutils{
 
         eigConfig() {
             RitzToString = {
-                    {eigSetting::Ritz::LA, "LA"},
+                    {eigSetting::Ritz::LA, "LA_diag"},
                     {eigSetting::Ritz::SA, "SA"},
                     {eigSetting::Ritz::LM, "LM"},
                     {eigSetting::Ritz::SM, "SM"},

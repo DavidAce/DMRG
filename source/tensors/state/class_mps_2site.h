@@ -31,7 +31,7 @@ class class_mps_site;
                               [d]    [d]
         Theta     =	[chia]__.__|__.__|__.__[chib]
 
-                           LA  GA LC GB LB
+                           LA_diag  GA LC_diag GB LB_diag
   @endverbatim
  where the values in [ ] denote the dimension of each leg of the full tensor:
  - \f$d\f$ = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.

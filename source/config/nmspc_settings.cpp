@@ -75,9 +75,9 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter<double>                  ("precision::subspace_error_factor"             , precision::subspace_error_factor);
     dmrg_config.load_parameter<double>                  ("precision::max_subspace_error"                , precision::max_subspace_error);
     dmrg_config.load_parameter<double>                  ("precision::min_subspace_error"                , precision::min_subspace_error);
-    dmrg_config.load_parameter<size_t>                  ("precision::max_size_full_diag"                , precision::max_size_full_diag);
-    dmrg_config.load_parameter<size_t>                  ("precision::max_size_part_diag"                , precision::max_size_part_diag);
-    dmrg_config.load_parameter<size_t>                  ("precision::max_size_direct"                   , precision::max_size_direct);
+    dmrg_config.load_parameter<long>                    ("precision::max_size_full_diag"                , precision::max_size_full_diag);
+    dmrg_config.load_parameter<long>                    ("precision::max_size_part_diag"                , precision::max_size_part_diag);
+    dmrg_config.load_parameter<long>                    ("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter<double>                  ("precision::max_norm_error"                    , precision::max_norm_error);
     dmrg_config.load_parameter<size_t>                  ("precision::max_resets"                        , precision::max_resets);
     dmrg_config.load_parameter<bool>                    ("precision::use_reduced_energy"                , precision::use_reduced_energy);

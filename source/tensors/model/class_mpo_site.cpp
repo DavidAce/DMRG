@@ -2,7 +2,7 @@
 // Created by david on 2018-07-04.
 //
 
-#include "class_mpo_base.h"
+#include "class_mpo_site.h"
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
@@ -12,10 +12,10 @@
 using namespace qm;
 using Scalar = std::complex<double>;
 
-class_mpo_base::class_mpo_base(ModelType model_type_, size_t position_)
+class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_)
     : model_type(model_type_), position(position_){}
 
-const Eigen::Tensor<Scalar, 4> &class_mpo_base::MPO() const {
+const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
     if(all_mpo_parameters_have_been_set) {
         return mpo_internal;
     } else {
@@ -23,9 +23,9 @@ const Eigen::Tensor<Scalar, 4> &class_mpo_base::MPO() const {
     }
 }
 
-bool class_mpo_base:: is_real() const { return Textra::isReal(MPO(), "MPO"); }
+bool class_mpo_site:: is_real() const { return Textra::isReal(MPO(), "MPO"); }
 
-bool class_mpo_base:: has_nan() const {
+bool class_mpo_site:: has_nan() const {
     for(auto &param : get_parameters()) {
         if(param.second.type() == typeid(double))
             if(std::isnan(std::any_cast<double>(param.second))) {
@@ -35,7 +35,7 @@ bool class_mpo_base:: has_nan() const {
     return (Textra::hasNaN(mpo_internal, "MPO"));
 }
 
-void class_mpo_base::assert_validity() const {
+void class_mpo_site::assert_validity() const {
     for(auto &param : get_parameters())
         if(param.second.type() == typeid(double))
             if(std::isnan(std::any_cast<double>(param.second))) {
@@ -47,20 +47,20 @@ void class_mpo_base::assert_validity() const {
 }
 
 
-void class_mpo_base::set_position(size_t position_) { position = position_; }
+void class_mpo_site::set_position(size_t position_) { position = position_; }
 
-std::vector<std::string> class_mpo_base::get_parameter_names() const {
+std::vector<std::string> class_mpo_site::get_parameter_names() const {
     std::vector<std::string> parameter_names;
     for(auto &item : get_parameters()) parameter_names.push_back(item.first);
     return parameter_names;
 }
-std::vector<std::any> class_mpo_base::get_parameter_values() const {
+std::vector<std::any> class_mpo_site::get_parameter_values() const {
     std::vector<std::any> parameter_values;
     for(auto &item : get_parameters()) parameter_values.push_back(item.second);
     return parameter_values;
 }
 
-size_t class_mpo_base::get_position() const {
+size_t class_mpo_site::get_position() const {
     if(position) {
         return position.value();
     } else {
@@ -68,25 +68,25 @@ size_t class_mpo_base::get_position() const {
     }
 }
 
-bool class_mpo_base::is_damped() const { return alpha != 0.0 or beta != 0.0; }
+bool class_mpo_site::is_damped() const { return alpha != 0.0 or beta != 0.0; }
 
-bool class_mpo_base::is_reduced() const { return e_reduced != 0.0; }
+bool class_mpo_site::is_reduced() const { return e_reduced != 0.0; }
 
-double class_mpo_base::get_reduced_energy() const { return e_reduced; }
+double class_mpo_site::get_reduced_energy() const { return e_reduced; }
 
-void class_mpo_base::set_reduced_energy(double site_energy) {
+void class_mpo_site::set_reduced_energy(double site_energy) {
     e_reduced    = site_energy;
     mpo_internal = MPO_reduced_view();
 }
 
 
-void class_mpo_base::print_parameter_names() const {
+void class_mpo_site::print_parameter_names() const {
     std::cout << std::setprecision(10);
     for(auto &item : get_parameters()) std::cout << std::setw(16) << std::left << item.first;
     std::cout << std::endl;
 }
 
-void class_mpo_base::print_parameter_values() const {
+void class_mpo_site::print_parameter_values() const {
     std::cout << std::setprecision(10);
     for(auto &item : get_parameters()) {
         if(item.second.type() == typeid(int)) std::cout << std::setw(16) << std::left << std::any_cast<int>(item.second);
@@ -115,7 +115,7 @@ void class_mpo_base::print_parameter_values() const {
 //
 
 
-void class_mpo_base::write_mpo(h5pp::File &file, const std::string &model_prefix) const {
+void class_mpo_site::write_mpo(h5pp::File &file, const std::string &model_prefix) const {
     std::string mpo_path     = model_prefix + "/mpo";
     std::string dataset_name = mpo_path + "/H_" + std::to_string(get_position());
     file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_COMPACT);
@@ -130,7 +130,7 @@ void class_mpo_base::write_mpo(h5pp::File &file, const std::string &model_prefix
     }
 }
 
-void class_mpo_base::read_mpo(const h5pp::File &file, const std::string &model_prefix) {
+void class_mpo_site::read_mpo(const h5pp::File &file, const std::string &model_prefix) {
     std::string mpo_dset = model_prefix + "/mpo"+ "H_" + std::to_string(get_position());
     TableMap    map;
     if(file.linkExists(mpo_dset)) {

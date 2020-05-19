@@ -116,7 +116,7 @@
 //            state.ENV_L .emplace_back(state.ENV_L .back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //            state.ENV2_L.emplace_back(state.ENV2_L.back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //        } else{
-//            //Always set LC on the last "A" matrix
+//            //Always set LC_diag on the last "A" matrix
 //            state.get_mps_site(site).set_LC(S);
 //        }
 //        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
@@ -304,7 +304,7 @@
 //
 //    auto target_sites = state.active_sites;
 //    // When going to the right, we shouldn't truncate the last site since
-//    // the corresponding LC will not be part of the update.
+//    // the corresponding LC_diag will not be part of the update.
 //    target_sites.pop_back();
 //
 //    if(target_sites.size() <= 1){

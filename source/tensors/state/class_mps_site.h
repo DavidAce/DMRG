@@ -23,21 +23,21 @@ class class_mps_site {
 
     public:
 
-    class_mps_site();
-    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error = 0);
     ~class_mps_site();                                           // Read comment on implementation
+    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error = 0);
+    class_mps_site();                                           // ctor
+    class_mps_site(const class_mps_site &other);                // default copy ctor
     class_mps_site(class_mps_site &&other) noexcept;            // default move ctor
     class_mps_site &operator=(class_mps_site &&other) noexcept; // default move assign
-    class_mps_site(const class_mps_site &other);                // copy ctor
-    class_mps_site &operator=(const class_mps_site &other);
+    class_mps_site &operator=(const class_mps_site &other);     // default copy assign
 
 
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
     void                                          assert_validity() const;
     [[nodiscard]] bool                            isCenter() const;
-    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_M_bare() const; /*!< Gets the A or B matrix without LC attached */
-    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_M() const;      /*!< Gets A or B matrix. If this is a center (A matrix) it attaches LC */
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_M_bare() const; /*!< Gets the A or B matrix without LC_diag attached */
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_M() const;      /*!< Gets A or B matrix. If this is a center (A matrix) it attaches LC_diag */
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> &get_L() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> &get_LC() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 3> &      get_M_bare();
@@ -57,8 +57,8 @@ class class_mps_site {
     void set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error = 0);
     void set_truncation_error(double error);
     void set_truncation_error_LC(double error);
-    double get_truncation_error();
-    double get_truncation_error_LC();
+    double get_truncation_error() const;
+    double get_truncation_error_LC() const;
     void unset_LC() {
         LC.reset();
         MC.reset();

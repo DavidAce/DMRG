@@ -8,7 +8,8 @@
 #include <io/table_types.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
-#include <tensors/model/class_mpo_base.h>
+#include <tensors/model/class_mpo_site.h>
+#include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
@@ -35,7 +36,7 @@ void tools::finite::io::h5resume::load_tensors(const h5pp::File &h5ppFile, const
         tools::common::io::h5resume::load_profiling_from_hdf5(h5ppFile, state_prefix);
 //        tools::finite::env::rebuild_edges(state, model, edges);
 
-        tools::finite::mps::normalize(*tensors.state);
+        tools::finite::mps::normalize_state(*tensors.state);
 //        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, state, status);
         std::cerr << "MUST REBUILD ENVIRONMENTS AFTER RESUME!!" << std::endl;
     } catch(std::exception &ex) {
@@ -64,8 +65,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: model_size [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
-
-        tools::finite::mpo::initialize(model, settings::model::model_type, model_size);
+        model.initialize(str2enum<ModelType>(model_type),model_size);
         for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_hamiltonian(h5ppFile, ham_path);
 
     } else if(h5ppFile.linkExists(mpo_path)) {
@@ -78,8 +78,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: Hamiltonian sites [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
-
-        tools::finite::mpo::initialize(model, settings::model::model_type, model_size);
+        model.initialize(str2enum<ModelType>(model_type),model_size);
         for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_mpo(h5ppFile, mpo_path);
     }
 }
@@ -100,8 +99,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     if(model_size != settings::model::model_size)
         throw std::runtime_error(
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-
-    tools::finite::mps::initialize(state, settings::model::model_type, model_size, position);
+    state.initialize(str2enum<ModelType>(model_type),model_size,position);
     for(size_t pos = 0; pos < model_size; pos++) {
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_path, "L", pos);

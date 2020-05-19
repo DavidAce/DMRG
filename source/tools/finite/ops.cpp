@@ -5,7 +5,8 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/nmspc_random.h>
-#include <tensors/model/class_mpo_base.h>
+#include <tensors/model/class_mpo_site.h>
+#include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -17,7 +18,7 @@
 using Scalar         = std::complex<double>;
 using namespace Textra;
 
-//std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_base>> & mpos_L, const std::list<std::unique_ptr<class_mpo_base>> & mpos_R){
+//std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_site>> & mpos_L, const std::list<std::unique_ptr<class_mpo_site>> & mpos_R){
 //    std::list<Eigen::Tensor<Scalar,4>> mpos;
 //    for(auto &mpo_L : mpos_L){
 //        mpos.push_back(mpo_L->MPO());
@@ -48,11 +49,9 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     tools::log->info("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
     tools::log->info("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
     auto mpo = mpos.begin();
-    auto mps = state.MPS.begin();
-    while(mpo != mpos.end() and mps != state.mps_sites.end()){
-        mps->apply_mpo(*mpo);
+    for(size_t pos = 0; pos < state.get_length(); pos++){
+        state.get_mps_site(pos).apply_mpo(*mpo);
         mpo++;
-        mps++;
     }
 
 
@@ -65,10 +64,10 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Ldim*mpoDimL,Ldim})
-                        .contract(state.mps_sites.front().get_M_bare(),Textra::idx({0},{1}))
+                        .contract(state.mps_sites.front()->get_M_bare(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
-        state.mps_sites.front().set_M(M_temp);
-        state.mps_sites.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
+        state.mps_sites.front()->set_M(M_temp);
+        state.mps_sites.front()->set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
     }
     {
         long mpoDimR = mpos.back().dimension(1);
@@ -77,10 +76,10 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
                 Redge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Rdim*mpoDimR,Rdim})
-                        .contract(state.mps_sites.back().get_M_bare(),Textra::idx({0},{2}))
+                        .contract(state.mps_sites.back()->get_M_bare(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
-        state.mps_sites.back().set_M(M_temp);
-        state.mps_sites.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
+        state.mps_sites.back()->set_M(M_temp);
+        state.mps_sites.back()->set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
     state.clear_measurements();
     if(state.has_nan()) throw std::runtime_error("State has NAN's after applying MPO's");
@@ -109,7 +108,7 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
     // Normalize and truncate back to original bond dimension
-    tools::finite::mps::normalize(state_projected,state.find_largest_chi());
+    tools::finite::mps::normalize_state(state_projected,state.find_largest_chi());
     tools::log->info("Bond dimensions      after  normalization0: {}", tools::finite::measure::bond_dimensions(state_projected));
 
 //    double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
@@ -184,20 +183,15 @@ double tools::finite::ops::overlap(const class_state_finite & state1, const clas
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mps1 = state1.mps_sites.begin();
-    auto mps2 = state2.mps_sites.begin();
+    size_t pos = 0;
     Eigen::Tensor<Scalar,2> overlap =
-        mps1->get_M()
-            .contract(mps2->get_M().conjugate(), Textra::idx({0,1},{0,1}));
-    mps1++;
-    mps2++;
-    while(mps1 != state1.mps_sites.end() and mps2 != state2.mps_sites.end()){
+        state1.get_mps_site(pos).get_M()
+            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0,1},{0,1}));
+    for(pos = 1; pos < state1.get_length(); pos++){
         Eigen::Tensor<Scalar,2> temp = overlap
-            .contract(mps1->get_M()            , Textra::idx({0},{1}))
-            .contract(mps2->get_M().conjugate(), Textra::idx({0,1},{1,0}));
+            .contract(state1.get_mps_site(pos).get_M()            , Textra::idx({0},{1}))
+            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0,1},{1,0}));
         overlap = temp;
-        mps1++;
-        mps2++;
     }
 
     double norm_chain = std::real(Textra::TensorMatrixMap(overlap).trace());

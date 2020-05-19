@@ -3,10 +3,11 @@
 //
 
 #include <h5pp/h5pp.h>
-#include <tensors/model/class_mpo_base.h>
 #include <regex>
+#include <tensors/edges/class_edges_infinite.h>
+#include <tensors/model/class_model_infinite.h>
+#include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_environment.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/prof.h>
@@ -29,9 +30,8 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
     tools::common::profile::t_hdf->tic();
     auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
     std::string dsetName = state_prefix + "/schmidt_midchain";
-    h5ppFile.writeDataset(state.MPS->MPS_A->get_LC(), dsetName, layout);
+    h5ppFile.writeDataset(state.LC(), dsetName, layout);
     h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-    h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
     h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", dsetName);
     h5ppFile.writeAttribute(state.get_chi_max(), "chi_max", dsetName);
     tools::common::profile::t_hdf->toc();
@@ -40,11 +40,11 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
 
     tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(state.MPS->MPS_A->get_LC() , state_prefix + "/mps/L_C");
+    h5ppFile.writeDataset(state.LC() , state_prefix + "/mps/L_C");
     h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", state_prefix + "/mps/L_C");
-    h5ppFile.writeAttribute(state.MPS->MPS_A->get_LC().dimensions(), "dimensions", state_prefix + "/mps/L_C");
-    h5ppFile.writeDataset(state.MPS->MPS_A->get_L() , state_prefix + "/mps/L_A");
-    h5ppFile.writeDataset(state.MPS->MPS_B->get_L() , state_prefix + "/mps/L_B");
+    h5ppFile.writeAttribute(state.LC().dimensions(), "dimensions", state_prefix + "/mps/L_C");
+    h5ppFile.writeDataset(state.LA() , state_prefix + "/mps/L_A");
+    h5ppFile.writeDataset(state.LB() , state_prefix + "/mps/L_B");
     h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", state_prefix + "/mps/L_C");
     h5ppFile.writeAttribute(state.get_chi_max(), "chi_max", state_prefix + "/mps/L_C");
     tools::common::profile::t_hdf->toc();
@@ -52,40 +52,37 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
     if(storage_level < StorageLevel::FULL) return;
 
     tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(state.MPS->MPS_A->get_M_bare() , state_prefix + "/mps/M_A");
-    h5ppFile.writeDataset(state.MPS->MPS_B->get_M_bare() , state_prefix + "/mps/M_B");
-    h5ppFile.writeAttribute(state.MPS->MPS_A->get_M_bare().dimensions(), "dimensions", state_prefix + "/mps/M_A");
-    h5ppFile.writeAttribute(state.MPS->MPS_B->get_M_bare().dimensions(), "dimensions", state_prefix + "/mps/M_B");
+    h5ppFile.writeDataset(state.A_bare(), state_prefix + "/mps/M_A");
+    h5ppFile.writeAttribute(state.A_bare().dimensions(), "dimensions", state_prefix + "/mps/M_A");
+    h5ppFile.writeDataset(state.B() , state_prefix + "/mps/M_B");
+    h5ppFile.writeAttribute(state.B().dimensions(), "dimensions", state_prefix + "/mps/M_B");
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::infinite::io::h5dset::write_mpo(h5pp::File &h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_state_infinite &state){
+void tools::infinite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_model_infinite &model){
     if(storage_level < StorageLevel::FULL) return;
-    if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix + "/mpo");
+    if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The model has already been written to [{}]", model_prefix + "/mpo");
 
     tools::common::profile::t_hdf->tic();
-    state.HA->write_mpo(h5ppFile,model_prefix);
-    state.HB->write_mpo(h5ppFile,model_prefix);
+    model.get_mpo_siteA().write_mpo(h5ppFile,model_prefix);
+    model.get_mpo_siteB().write_mpo(h5ppFile,model_prefix);
     h5ppFile.writeAttribute(2, "model_size", model_prefix + "/mpo");
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix + "/mpo");
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::infinite::io::h5dset::write_edges(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel & storage_level, const class_state_infinite &state){
+void tools::infinite::io::h5dset::write_edges(h5pp::File &h5ppFile, const std::string &edges_prefix, const StorageLevel & storage_level, const class_edges_infinite &edges){
     if(storage_level < StorageLevel::NORMAL) return;
     tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(state.Lblock->block, state_prefix + "/env");
-    h5ppFile.writeDataset(state.Rblock->block, state_prefix + "/env");
+    const auto & ene = edges.get_ene_blk();
+    const auto & var = edges.get_var_blk();
+    h5ppFile.writeDataset(ene.L, edges_prefix + "/eneL");
+    h5ppFile.writeDataset(ene.R, edges_prefix + "/eneR");
+    h5ppFile.writeDataset(var.L, edges_prefix + "/varL");
+    h5ppFile.writeDataset(var.R, edges_prefix + "/varR");
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::infinite::io::h5dset::write_env2(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel & storage_level, const class_state_infinite &state){
-    if(storage_level < StorageLevel::NORMAL) return;
-    tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(state.Lblock2->block, state_prefix + "/env2");
-    h5ppFile.writeDataset(state.Rblock2->block, state_prefix + "/env2");
-    tools::common::profile::t_hdf->toc();
-}
 
 //
 //void tools::infinite::io::h5dset::write_hamiltonian_params(h5pp::File &h5pp_file, const std::string & sim_name, const StorageLevel & storage_level, const class_state_infinite &state){

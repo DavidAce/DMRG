@@ -14,7 +14,7 @@
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
-class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : class_mpo_base(model_type_, position_) {
+class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {
     h5tb.param.J_mean   = settings::model::ising_sdual::J_mean;
     h5tb.param.h_mean   = settings::model::ising_sdual::h_mean;
     h5tb.param.J_stdv   = settings::model::ising_sdual::J_stdv;
@@ -245,7 +245,7 @@ Eigen::MatrixXcd class_ising_sdual::single_site_hamiltonian(size_t position, siz
              h5tb.param.lambda * (h5tb.param.h_avrg * SX[i] * SX[j] + h5tb.param.J_avrg * SZ[i] * SZ[k]));
 }
 
-std::unique_ptr<class_mpo_base> class_ising_sdual::clone() const { return std::make_unique<class_ising_sdual>(*this); }
+std::unique_ptr<class_mpo_site> class_ising_sdual::clone() const { return std::make_unique<class_ising_sdual>(*this); }
 
 size_t class_ising_sdual::get_spin_dimension() const { return h5tb.param.spin_dim; }
 

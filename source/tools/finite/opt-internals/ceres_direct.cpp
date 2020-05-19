@@ -2,6 +2,8 @@
 // Created by david on 2019-07-09.
 //
 
+#include <general/nmspc_tensor_extra.h>
+// -- (textra first)
 #include "ceres_direct_functor.h"
 #include <general/class_tic_toc.h>
 #include <algorithms/class_algorithm_status.h>

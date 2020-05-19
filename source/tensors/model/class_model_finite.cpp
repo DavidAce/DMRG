@@ -1,9 +1,11 @@
 //
 // Created by david on 2020-05-11.
 //
-
+#include <general/nmspc_tensor_extra.h>
+// -- (textra first)
 #include "class_model_finite.h"
 #include "class_mpo_factory.h"
+#include <tools/common/prof.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/multisite.h>
 #include <tools/finite/views.h>
@@ -46,25 +48,29 @@ class_model_finite &class_model_finite::operator=(const class_model_finite &othe
     return *this;
 }
 
-void class_model_finite::initialize(ModelType model_type_, size_t num_sites) {
-    tools::log->trace("Initializing model with {} sites", num_sites);
-    if(num_sites < 2) throw std::logic_error("Tried to initialize_state MPO with less than 2 sites");
-    if(num_sites > 2048) throw std::logic_error("Tried to initialize_state MPO with more than 2048 sites");
-    if(not MPO.empty()) throw std::logic_error("Tried to initialize_state over an existing model. This is usually not what you want!");
+void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
+    tools::log->trace("Initializing model with {} sites", model_size);
+    if(model_size < 2) throw std::logic_error("Tried to initialize model with less than 2 sites");
+    if(model_size > 2048) throw std::logic_error("Tried to initialize model with more than 2048 sites");
+    if(not MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
     // Generate MPO
     model_type = model_type_;
-    for(size_t site = 0; site < num_sites; site++) {
+    for(size_t site = 0; site < model_size; site++) {
         MPO.emplace_back(class_mpo_factory::create_mpo(site, model_type));
     }
-    if(MPO.size() != num_sites) throw std::logic_error("Initialized MPO with wrong size");
+    if(MPO.size() != model_size) throw std::logic_error("Initialized MPO with wrong size");
 }
 
-const class_mpo_base &class_model_finite::get_mpo(size_t pos) const {
+
+
+
+
+const class_mpo_site &class_model_finite::get_mpo(size_t pos) const {
     if(pos >= MPO.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
     return **std::next(MPO.begin(), static_cast<long>(pos));
 }
 
-class_mpo_base &class_model_finite::get_mpo(size_t pos) { return const_cast<class_mpo_base &>(static_cast<const class_model_finite &>(*this).get_mpo(pos)); }
+class_mpo_site &class_model_finite::get_mpo(size_t pos) { return const_cast<class_mpo_site &>(static_cast<const class_model_finite &>(*this).get_mpo(pos)); }
 
 size_t class_model_finite::get_length() const { return MPO.size(); }
 
@@ -138,6 +144,38 @@ bool class_model_finite::is_damped() const {
 
 Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_mpo() const { return tools::finite::views::get_multisite_tensor(*this); }
+Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::list<size_t> &sites) const {
+    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
+    if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
+    tools::log->trace("Contracting multisite mpo tensor");
+    tools::common::profile::t_mpo->tic();
+    Eigen::Tensor<Scalar, 4> multisite_tensor;
+    Eigen::Tensor<Scalar, 4> temp;
+    OMP                      omp;
+    bool                     first = true;
+    for(auto &site : sites) {
+        if(first) {
+            multisite_tensor = get_mpo(site).MPO();
+            first            = false;
+            continue;
+        }
+        const auto &M    = get_mpo(site).MPO();
+        long        dim0 = multisite_tensor.dimension(0);
+        long        dim1 = M.dimension(1);
+        long        dim2 = multisite_tensor.dimension(2) * M.dimension(2);
+        long        dim3 = multisite_tensor.dimension(3) * M.dimension(3);
+        temp.device(omp.dev) =
+            multisite_tensor.contract(M, Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
+        multisite_tensor = temp;
+    }
+    tools::common::profile::t_mpo->toc();
+    return multisite_tensor;
+}
+
+const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_tensor() const {
+    if(cache.multisite_tensor) return cache.multisite_tensor.value();
+    cache.multisite_tensor = get_multisite_tensor(active_sites);
+    return cache.multisite_tensor.value();
+}
 
 void class_model_finite::clear_cache() const { cache = Cache(); }

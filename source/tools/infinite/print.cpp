@@ -2,22 +2,16 @@
 // Created by david on 2019-02-20.
 //
 
-#include <iostream>
-#include <tensors/model/class_mpo_base.h>
-#include <tensors/state/class_mps_2site.h>
+#include "print.h"
 #include <tensors/state/class_state_infinite.h>
-#include <tools/infinite/print.h>
+#include <tensors/model/class_model_infinite.h>
+#include <tensors/model/class_mpo_site.h>
+#include <tools/common/log.h>
 
-void tools::infinite::print::print_hamiltonians(const class_state_infinite & state){
-    state.HA->print_parameter_names();
-    state.HA->print_parameter_values();
-    state.HB->print_parameter_values();
-
+void tools::infinite::print::print_hamiltonians(const class_model_infinite &model) {
+    model.get_mpo_siteA().print_parameter_names();
+    model.get_mpo_siteA().print_parameter_values();
+    model.get_mpo_siteB().print_parameter_values();
 }
 
-void tools::infinite::print::print_state(const class_state_infinite & state){
-    using namespace Textra;
-    std::cout << std::setprecision(10);
-    std::cout << "State length              : "    << state.get_length()   << std::endl;
-    std::cout << "State position            : "    << state.get_position() << std::endl;
-}
+void tools::infinite::print::print_state(const class_state_infinite &state) { tools::log->warn("Print state not implemented yet"); }

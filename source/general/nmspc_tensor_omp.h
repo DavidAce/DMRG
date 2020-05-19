@@ -13,22 +13,22 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 
 class OMP{
-public:
+    public:
     int num_threads = 1;
-    #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
+#if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     Eigen::ThreadPool       tp;
     Eigen::ThreadPoolDevice dev;
     explicit OMP([[maybe_unused]] int num_threads_):
-        num_threads(num_threads_ > 1 ? num_threads_ : static_cast<int>(std::thread::hardware_concurrency())),
+        num_threads(num_threads_ > 1 ? num_threads_ : Eigen::nbThreads()),
         tp(num_threads),
         dev(&tp, num_threads)
-        {}
+    {}
     explicit OMP():
-        num_threads(static_cast<int>(std::thread::hardware_concurrency())),
+        num_threads(Eigen::nbThreads()),
         tp(num_threads),
         dev(&tp, num_threads)
-        {}
-    #else
+    {}
+#else
     Eigen::DefaultDevice dev;
     OMP(int num_threads_):
         num_threads(num_threads_)
@@ -36,6 +36,5 @@ public:
     explicit OMP():
         num_threads(1)
         {}
-    #endif
-
+#endif
 };

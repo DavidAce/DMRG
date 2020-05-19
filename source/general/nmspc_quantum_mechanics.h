@@ -16,9 +16,9 @@ namespace qm{
         extern Eigen::Matrix2cd sy;
         extern Eigen::Matrix2cd sz;
         extern Eigen::Matrix2cd Id;
-        extern std::array<Eigen::Vector2cd,2> sx_eigvecs;
-        extern std::array<Eigen::Vector2cd,2> sy_eigvecs;
-        extern std::array<Eigen::Vector2cd,2> sz_eigvecs;
+        extern std::array<Eigen::Vector2cd,2> sx_spinors;
+        extern std::array<Eigen::Vector2cd,2> sy_spinors;
+        extern std::array<Eigen::Vector2cd,2> sz_spinors;
         extern std::vector<Eigen::MatrixXcd> SX;
         extern std::vector<Eigen::MatrixXcd> SY;
         extern std::vector<Eigen::MatrixXcd> SZ;

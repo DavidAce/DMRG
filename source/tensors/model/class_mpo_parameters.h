@@ -26,7 +26,7 @@ class h5tb_ising_sdual {
         double   h_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
         double   lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
         double   delta            = 0;         /*!< Difference J_mean - h_mean  */
-        int64_t  spin_dim         = 2;         /*!< Spin dimension */
+        long     spin_dim         = 2;         /*!< Spin dimension */
         char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
     static inline h5pp::hid::h5t h5_type;
@@ -88,7 +88,7 @@ class h5tb_ising_tf_rf {
         double   h_stdv           = 0; /*!< Random field standard deviation. In distribution this is N(h_mean,h_stdv) or U(h_mean-h_stdv,h_mean+h_stdv) */
         double   h_rand           = 0; /*!< Random field value */
         double   h_pert           = 0; /*!< Perturbation */
-        uint64_t spin_dim         = 2; /*!< Spin dimension */
+        long     spin_dim         = 2; /*!< Spin dimension */
         char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
 

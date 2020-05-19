@@ -13,11 +13,11 @@
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <math/class_eigsolver.h>
 
-Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, StateRitz ritz){
+Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, StateRitz ritz){
     return ground_state_optimization(tensors,enum2str(ritz));
 }
 
-Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
+Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
     tools::log->trace("Starting ground state optimization");
 //    using Scalar = std::complex<double>;
     using namespace internal;
@@ -27,7 +27,7 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
     Ritz ritz = stringToRitz(ritzstring);
     auto shape_mps = tensors.state->active_dimensions();
     auto shape_mpo = tensors.model->active_dimensions();
-    const auto & mpo = tensors.model->get_multisite_mpo();
+    const auto & mpo = tensors.model->get_multisite_tensor();
     const auto & env = tensors.edges->get_multisite_ene_blk();
 
     tools::common::profile::t_eig->tic();

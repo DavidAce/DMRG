@@ -158,7 +158,7 @@ void class_xdmrg::single_xDMRG_step() {
 
     if(tensors.state->is_real()) optType = OptType::REAL;
 
-    size_t threshold = 0;
+    long threshold = 0;
     switch(optSpace) {
         case OptSpace::DIRECT: threshold = settings::precision::max_size_direct; break;
         case OptSpace::SUBSPACE_ONLY: threshold = settings::precision::max_size_part_diag; break;
@@ -219,14 +219,14 @@ void class_xdmrg::single_xDMRG_step() {
         double variance_new = measure::energy_variance_per_site(theta, tensors);
         results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++, tools::common::profile::t_opt->get_last_time_interval()}});
         //
-        //        if(state_is_within_energy_window(theta)) {
-        //            variance_new = measure::energy_variance_per_site(*tensors.state, theta);
-        //            results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++}});
+        //        if(state_is_within_energy_window(multisite_tensor)) {
+        //            variance_new = measure::energy_variance_per_site(*tensors.state, multisite_tensor);
+        //            results.insert({variance_new, {multisite_tensor, tensors.state->active_sites, theta_count++}});
         //        }else{
         //            tools::log->info("Rejecting state found out of energy window");
-        //            theta = tensors.state->get_multisite_tensor();
+        //            multisite_tensor = tensors.state->get_multisite_tensor();
         //            variance_new = measure::energy_variance_per_site(*tensors.state);
-        //            results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++}});
+        //            results.insert({variance_new, {multisite_tensor, tensors.state->active_sites, theta_count++}});
         //        }
         // We can now decide if we are happy with the result or not.
         double decrease = std::log10(variance_old) / std::log10(variance_new);
@@ -243,26 +243,23 @@ void class_xdmrg::single_xDMRG_step() {
         tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),
                           std::log10(result.first), 1000 * std::get<3>(result.second));
 
-    // Check the contents of results.
-    //    auto[variance_new,theta] = std::make_pair(results.begin()->first,results.begin()->second);
-    tensors.state->clear_cache();
-    tensors.state->clear_measurements();
+
     auto        variance_new = results.begin()->first;
-    const auto &theta        = std::get<0>(results.begin()->second);
+    const auto &multisite_tensor     = std::get<0>(results.begin()->second);
     tensors.state->active_sites      = std::get<1>(results.begin()->second);
 
     if(std::log10(variance_new) < std::log10(variance_old) - 1e-2) tensors.state->tag_active_sites_have_been_updated(true);
 
-    // Truncate theta down to chi_lim
+    // Truncate multisite_tensor down to chi_lim
     auto chi_lim = tensors.state->get_chi_lim();
 
     // Truncate even more if doing chi quench
     //    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
-    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(theta,tensors);
+    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor,tensors);
     tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-    tools::finite::svd::truncate_theta(theta, *tensors.state, chi_lim);
+    tensors.merge_multisite_tensor(multisite_tensor);
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
     tensors.state->set_truncated_variance((variance_after_svd - variance_before_svd) / variance_after_svd);
     tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));

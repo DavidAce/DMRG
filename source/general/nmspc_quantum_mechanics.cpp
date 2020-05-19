@@ -46,13 +46,13 @@ namespace qm::spinOneHalf {
     Matrix2cd Id  = (Matrix2cd() << 1.0, 0.0,
             0.0, 1.0).finished();
 
-    std::array<Vector2cd,2> sx_eigvecs {(Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),
+    std::array<Vector2cd,2> sx_spinors{(Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),
                                         (Vector2cd() << 1.0,-1.0).finished()/std::sqrt(2)};
 
-    std::array<Vector2cd,2> sy_eigvecs {(Vector2cd() << 1.0, imp).finished()/std::sqrt(2),
+    std::array<Vector2cd,2> sy_spinors{(Vector2cd() << 1.0, imp).finished()/std::sqrt(2),
                                         (Vector2cd() << 1.0, imn).finished()/std::sqrt(2)};
 
-    std::array<Vector2cd,2> sz_eigvecs {(Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
+    std::array<Vector2cd,2> sz_spinors{(Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
                                         (Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};
 
     std::vector<Eigen::MatrixXcd> SX;

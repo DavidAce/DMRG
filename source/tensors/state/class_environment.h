@@ -31,7 +31,7 @@
  */
 
 class class_mps_site;
-class class_mpo_base;
+class class_mpo_site;
 
 class class_environment_base {
     public:
@@ -46,12 +46,12 @@ class class_environment_base {
     std::string side;
     size_t      sites = 0; /*!< Number of particles that have been contracted into this environment. */
     explicit class_environment_base(std::string side_, size_t position_);
-    explicit class_environment_base(std::string side_, const class_mps_site &MPS, const class_mpo_base &MPO);
+    explicit class_environment_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
 
     virtual bool  is_real() const                                                        = 0;
     virtual bool  has_nan() const                                                        = 0;
     virtual void assertValidity() const                                                = 0;
-    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO) = 0;
+    virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) = 0;
     void         set_position(const size_t position_) { position = position_; }
     size_t       get_position() const {
         if(position) {
@@ -69,13 +69,13 @@ class class_environment final : public class_environment_base {
     public:
     Eigen::Tensor<Scalar, 3> block; /*!< The environment block. */
     using class_environment_base::class_environment_base;
-    explicit class_environment(std::string side_, const class_mps_site &MPS, const class_mpo_base &MPO);
-    [[nodiscard]] class_environment enlarge(const class_mps_site &MPS, const class_mpo_base &MPO);
+    explicit class_environment(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
+    [[nodiscard]] class_environment enlarge(const class_mps_site &MPS, const class_mpo_site &MPO);
 
     bool  is_real() const final;
     bool  has_nan() const final;
     void assertValidity() const final;
-    void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO) final;
+    void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) final;
 };
 
 class class_environment_var final : public class_environment_base {
@@ -85,13 +85,13 @@ class class_environment_var final : public class_environment_base {
     public:
     Eigen::Tensor<Scalar, 4> block; /*!< The environment block. */
     using class_environment_base::class_environment_base;
-    explicit class_environment_var(std::string side_, const class_mps_site &MPS, const class_mpo_base &MPO);
-    [[nodiscard]] class_environment_var enlarge(const class_mps_site &MPS, const class_mpo_base &MPO);
+    explicit class_environment_var(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
+    [[nodiscard]] class_environment_var enlarge(const class_mps_site &MPS, const class_mpo_site &MPO);
 
     bool  is_real() const final;
     bool  has_nan() const final;
     void assertValidity() const final;
-    void set_edge_dims(const class_mps_site &MPS, const class_mpo_base &MPO) final;
+    void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) final;
 };
 
 //

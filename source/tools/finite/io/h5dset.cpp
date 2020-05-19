@@ -2,13 +2,14 @@
 // Created by david on 2019-03-09.
 //
 
-#include <h5pp/h5pp.h>
-#include <regex>
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
-#include <tensors/state/class_state_finite.h>
+#include <h5pp/h5pp.h>
+#include <regex>
 #include <tensors/model/class_model_finite.h>
-#include <tensors/model/class_mpo_factory.h>
+#include <tensors/model/class_mpo_site.h>
+#include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
@@ -72,7 +73,7 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_path);
     tools::common::profile::t_hdf->toc();
 
-    /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
+    /*! Writes down the full MPS in "L-G-L-G- LC_diag -G-L-G-L" notation. */
     if(storage_level < StorageLevel::FULL) return;
     tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();

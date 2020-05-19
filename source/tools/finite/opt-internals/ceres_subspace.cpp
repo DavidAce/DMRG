@@ -1,7 +1,8 @@
 //
 // Created by david on 2019-07-15.
 //
-
+#include <general/nmspc_tensor_extra.h>
+// -- (textra first)
 #include "ceres_subspace_functor.h"
 #include <iostream>
 #include <math/arpack_extra/matrix_product_stl.h>
@@ -348,7 +349,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     bool   max_overlap_inwindow = status.energy_lbound < max_overlap_energy and max_overlap_energy < status.energy_ubound;
     tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- inside of window: {}", max_overlap, max_overlap_energy, idx, max_overlap_inwindow);
 
-    // For options LC - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates
+    // For options LC_diag - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates
     // should do it.
     //    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
@@ -669,7 +670,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //              We just need to decide which initial guess to use.
 //                  B1) If best_overlap_variance <= theta_variance: set theta_initial = best_overlap_theta.
 //                  B2) Else, set theta_initial = theta_old.
-//          LC)  If overlap_cat <= best_overlap and best_overlap < overlap_high
+//          LC_diag)  If overlap_cat <= best_overlap and best_overlap < overlap_high
 //              This can happen for one reasons:
 //                  1) There are a few candidate states with significant overlap (superposition)
 //              It's clear that we need to optimize, but we have to think carefully about the initial guess.
@@ -709,7 +710,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //              when variance is low we don't want to ruin those last decimals.
 //                  B1) If  best_overlap_variance <= theta_old_variance: keep
 //
-//          LC) If overlap_good <= best_overlap < overlap_high, do variance optimization.
+//          LC_diag) If overlap_good <= best_overlap < overlap_high, do variance optimization.
 //               This can happen if the environments have been modified slightly since the last time we visited this site,
 //               but the signal is still clear -- we are still targeting the same state. However we can't be sure that
 //               the contributions from nearby states is just noise anymore.
@@ -918,7 +919,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //
 //
 //
-//            // LC) If low_overlap < best_overlap < medium_overlap
+//            // LC_diag) If low_overlap < best_overlap < medium_overlap
 //            // Ooops, the subspace error is too high. We still have some options. In order of priority:
 //            // a) If no state is inside the energy window, discard all and return old theta
 //            // b) If any state inside the energy window has lower variance, keep it

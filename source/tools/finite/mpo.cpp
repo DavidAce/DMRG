@@ -3,21 +3,20 @@
 //
 #include <math/nmspc_math.h>
 #include <math/nmspc_random.h>
-#include <tensors/model/class_model_finite.h>
-#include <tensors/model/class_mpo_base.h>
-#include <tensors/model/class_mpo_factory.h>
-#include <tensors/state/class_state_finite.h>
 #include <tensors/edges/class_edges_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/model/class_mpo_factory.h>
+#include <tensors/model/class_mpo_site.h>
+#include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/debug.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 
-
 void tools::finite::mpo::randomize(class_model_finite &model) {
     tools::log->trace("Setting random fields in MPO's");
-    std::vector<class_mpo_base::TableMap> all_params;
+    std::vector<class_mpo_site::TableMap> all_params;
     for(auto &mpo : model.MPO) {
         mpo->randomize_hamiltonian();
         all_params.emplace_back(mpo->get_parameters());
@@ -30,7 +29,7 @@ void tools::finite::mpo::randomize(class_model_finite &model) {
 }
 
 void tools::finite::mpo::perturb_hamiltonian(class_model_finite &model, double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-    std::vector<class_mpo_base::TableMap> all_params;
+    std::vector<class_mpo_site::TableMap> all_params;
     for(auto &mpo : model.MPO) {
         mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
         all_params.push_back(mpo->get_parameters());

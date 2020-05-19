@@ -4,7 +4,7 @@
 #include <list>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
-class class_mpo_base;
+class class_mpo_site;
 
 class class_model_finite {
     public:
@@ -18,7 +18,7 @@ class class_model_finite {
     mutable Cache cache;
 
     public:
-    std::list<std::unique_ptr<class_mpo_base>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<size_t>                          active_sites;
     ModelType                                  model_type = ModelType::ising_tf_rf;
 
@@ -30,13 +30,13 @@ class class_model_finite {
     class_model_finite(const class_model_finite &other);                // copy ctor
     class_model_finite &operator=(const class_model_finite &other);     // copy assign
 
-    void                  initialize(ModelType model_type_, size_t num_sites);
+    void                  initialize(ModelType model_type_, size_t model_size);
     size_t                get_length() const;
     bool                  is_real() const;
     bool                  has_nan() const;
     void                  assert_validity() const;
-    const class_mpo_base &get_mpo(size_t pos) const;
-    class_mpo_base &      get_mpo(size_t pos);
+    const class_mpo_site &get_mpo(size_t pos) const;
+    class_mpo_site &      get_mpo(size_t pos);
 
     // For reduced energy MPO's
     [[nodiscard]] bool   is_reduced() const;
@@ -52,7 +52,8 @@ class class_model_finite {
 
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
-    const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_tensor(const std::list<size_t> & sites) const;
+    const Eigen::Tensor<Scalar, 4> &get_multisite_tensor() const;
 
     void clear_cache() const;
 };
