@@ -16,7 +16,7 @@ namespace rn{
     namespace internal {
         // Make a random number engine
         //    extern std::mt19937 rng;
-        extern pcg32 rng;
+        extern pcg64 rng;
         // Commonly used distributions
         extern std::uniform_int_distribution<int>     rand_int_01;
         extern std::uniform_real_distribution<double> rand_double_01;

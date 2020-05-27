@@ -35,8 +35,8 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     iter(other.iter),
     step(other.step),
     direction(other.direction),
-    chi_lim(other.chi_lim),
-    chi_max(other.chi_max),
+//    chi_lim(other.chi_lim),
+//    chi_lim_max(other.chi_lim_max),
     cache(other.cache),
     site_update_tags(other.site_update_tags),
     active_sites(other.active_sites),
@@ -54,8 +54,8 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         iter                     = other.iter;
         step                     = other.step;
         direction                = other.direction;
-        chi_lim                  = other.chi_lim;
-        chi_max                  = other.chi_max;
+//        chi_lim                  = other.chi_lim;
+//        chi_lim_max              = other.chi_lim_max;
         cache                    = other.cache;
         site_update_tags         = other.site_update_tags;
         active_sites             = other.active_sites;
@@ -127,26 +127,42 @@ size_t class_state_finite::reset_step() { return step = 0; }
 void   class_state_finite::set_step(size_t step_) { step = step_; }
 void   class_state_finite::increment_step() { step++; }
 
-long class_state_finite::get_chi_lim() const {
-    // Should get the the current limit on allowed bond dimension
-    return chi_lim.value();
-}
-void class_state_finite::set_chi_lim(long chi_lim_) {
-    // Should set the the current limit on allowed bond dimension
-    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
-    chi_lim = chi_lim_;
-}
 
-long class_state_finite::get_chi_max() const {
-    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-    return chi_max.value();
-}
-
-void class_state_finite::set_chi_max(long chi_max_) {
-    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
-    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-    chi_max = chi_max_;
-}
+//long class_state_finite::get_chi_lim() const {
+//    // Should get the the current limit on allowed bond dimension
+//    if(not chi_lim) throw std::runtime_error("Chi limit has not been set yet");
+//    return chi_lim.value();
+//}
+//void class_state_finite::set_chi_lim(long chi_lim_) {
+//    // Should set the the current limit on allowed bond dimension
+//    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
+//    chi_lim = chi_lim_;
+//}
+//
+//
+//long class_state_finite::get_chi_lim_init() const {
+//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
+//    if(not chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
+//    return chi_lim_max.value();
+//}
+//
+//void class_state_finite::set_chi_lim_init(long chi_max_) {
+//    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
+//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
+//    chi_lim_max = chi_max_;
+//}
+//
+//long class_state_finite::get_chi_lim_max() const {
+//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
+//    if(not chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
+//    return chi_lim_max.value();
+//}
+//
+//void class_state_finite::set_chi_lim_max(long chi_max_) {
+//    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
+//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
+//    chi_lim_max = chi_max_;
+//}
 
 long class_state_finite::find_largest_chi() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
@@ -200,6 +216,12 @@ bool class_state_finite::has_nan() const {
 }
 
 void class_state_finite::assert_validity() const {
+    size_t pos = 0;
+    for(const auto &mps : mps_sites){
+        if(pos != mps->get_position())
+            throw std::runtime_error(fmt::format("State is corrupted: position mismatch: expected position {} != mps position {}", pos, mps->get_position()));
+        pos++;
+    }
     for(const auto &mps : mps_sites) mps->assert_validity();
 }
 
@@ -329,7 +351,7 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    cache.multimpo = {};
 //    for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
 //    for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
-//    tools::finite::mps::rebuild_edges(*this);
+//    tools::finite::mps::rebuild_all_edges(*this);
 //}
 //
 // void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
@@ -353,16 +375,16 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    return false;
 //}
 
-std::list<size_t> class_state_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
-    clear_cache();
-    return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
-}
-
-std::list<size_t> class_state_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
-    clear_cache();
-    return active_sites = tools::finite::multisite::generate_truncated_site_list(*this, threshold, chi_lim, max_sites, min_sites);
-}
-
+// std::list<size_t> class_state_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
+//    clear_cache();
+//    return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
+//}
+//
+// std::list<size_t> class_state_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
+//    clear_cache();
+//    return active_sites = tools::finite::multisite::generate_truncated_site_list(*this, threshold, chi_lim, max_sites, min_sites);
+//}
+//
 Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
@@ -373,6 +395,9 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
     tools::log->trace("Contracting multisite mps tensor");
     tools::common::profile::t_mps->tic();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
+    constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
+    constexpr auto           contract_idx = Textra::idx({2}, {1});
+    Textra::array3           new_dims;
     Eigen::Tensor<Scalar, 3> temp;
     OMP                      omp;
     bool                     first = true;
@@ -386,9 +411,10 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
         long        dim0 = multisite_tensor.dimension(0) * M.dimension(0);
         long        dim1 = multisite_tensor.dimension(1);
         long        dim2 = M.dimension(2);
-        temp.device(omp.dev) =
-            multisite_tensor.contract(M, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2});
-        multisite_tensor = temp;
+        new_dims         = {dim0, dim1, dim2};
+        temp.resize(new_dims);
+        temp.device(omp.dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        multisite_tensor     = temp;
     }
     tools::common::profile::t_mps->toc();
     return multisite_tensor;
@@ -399,7 +425,6 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
     cache.multisite_tensor = get_multisite_tensor(active_sites);
     return cache.multisite_tensor.value();
 }
-
 
 // const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
 //    if(cache.multimpo) return cache.multimpo.value();
@@ -495,13 +520,13 @@ size_t class_state_finite::num_sites_truncated(double threshold) const {
     return trunc_bond_count;
 }
 
-size_t class_state_finite::num_bonds_at_limit() const {
+size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
     auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= get_chi_lim(); }));
+    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [chi_level](auto const &val) { return val >= chi_level; }));
     return bonds_at_lim;
 }
 
-bool class_state_finite::is_bond_limited(double threshold) const { return num_sites_truncated(threshold) > 0 and num_bonds_at_limit() > 0; }
+bool class_state_finite::is_bond_limited(long chi_lim, double svd_threshold) const { return num_sites_truncated(svd_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
 
 void class_state_finite::clear_measurements() const { measurements = state_measure_finite(); }
 

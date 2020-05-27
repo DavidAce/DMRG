@@ -165,7 +165,6 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     auto                     log2chiL = std::log2(dsizes[1]);
     auto                     log2chiR = std::log2(dsizes[2]);
     auto                     log2spin = std::log2(dsizes[0]);
-    Eigen::Tensor<Scalar, 3> vH2;
 
     if(log2spin >= std::max(log2chiL, log2chiR)) {
         if(log2chiL > log2chiR) {

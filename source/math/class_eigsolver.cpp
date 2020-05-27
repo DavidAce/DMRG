@@ -65,7 +65,7 @@ void class_eigsolver::eigs_init(const int L,
 
     if (ncv < nev ){
         if (nev >= 1 and nev <= 16 ){
-            solverConf.eigMaxNcv = 8 + std::ceil((int)(1.5*nev));
+            solverConf.eigMaxNcv = 8 + static_cast<int>(std::ceil(1.5*nev));
         }
         else
         if (nev > 16 and nev <= L ){

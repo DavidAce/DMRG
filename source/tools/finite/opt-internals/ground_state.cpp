@@ -18,7 +18,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
 }
 
 Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
-    tools::log->trace("Starting ground state optimization");
+    tools::log->trace("Ground state optimization... ");
 //    using Scalar = std::complex<double>;
     using namespace internal;
     using namespace settings::precision;
@@ -37,8 +37,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
             env.R.data(),
             mpo.data(),
             shape_mps,
-            shape_mpo,
-            settings::threading::num_threads);
+            shape_mpo);
 
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
@@ -47,5 +46,6 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
     [[maybe_unused]] auto eigvecs = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     tools::common::profile::t_eig->toc();
+    tools::log->trace("Ground state optimization... OK ({:.5f} s)",tools::common::profile::t_eig->get_last_time_interval());
     return eigvecs.reshape(shape_mps);
 }

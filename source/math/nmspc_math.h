@@ -129,10 +129,7 @@ namespace math
     *   \return modulo of x and y. Example, <code> mod(7,2)  = 1 </code> but <code> mod(-0.5,10)  = 9.5 </code>, instead of <code> -0.5 </code>  as given by x%y.
     */
     template<typename T1, typename T2>
-    inline auto mod(const T1 x, const T2 y)
-    {
-        return (x % y + y) % y;
-    }
+    inline auto mod(const T1 x, const T2 y){return static_cast<T2>((x % y + y) % y);}
 
     /*! \brief Python-style range generator, including edges
     *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6,8] </code>

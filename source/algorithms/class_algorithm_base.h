@@ -4,15 +4,14 @@
 
 #pragma once
 
+#include <algorithms/class_algorithm_status.h>
 #include <complex>
+#include <config/enums.h>
 #include <general/class_tic_toc.h>
 #include <list>
 #include <map>
 #include <memory>
-#include <algorithms/class_algorithm_status.h>
-#include <config/enums.h>
 #include <vector>
-
 
 namespace h5pp {
     class File;
@@ -33,32 +32,33 @@ class class_algorithm_base {
     AlgorithmType               algo_type;
     std::string                 algo_name;
     std::string                 state_name;
-
-    static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
+    std::list<SimulationTask>   sim_tasks;
+    static constexpr double     quietNaN = std::numeric_limits<double>::quiet_NaN();
 
     // Virtual Functions
-    virtual void   run()                                                                                         = 0;
-    virtual void   run_old()                                                                                     = 0;
-    virtual void   check_convergence()                                                                           = 0;
-    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT)                       = 0;
-    virtual void   copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT)                       = 0;
-    virtual bool   algo_on()                                                                                     = 0;
-    virtual long   chi_max()                                                                                     = 0;
-//    virtual size_t write_freq()                                                                                = 0;
-    virtual size_t print_freq()                                                                                  = 0;
-    virtual bool   chi_grow()                                                                                    = 0;
-    virtual long   chi_init()                                                                                    = 0;
-    virtual void   print_status_update()                                                                         = 0;
-    virtual void   print_status_full()                                                                           = 0;
-    virtual void   reset_to_random_product_state(const std::string &axis = "random")                             = 0;
-    virtual void   reset_to_random_current_state(std::optional<long> chi_lim = std::nullopt)                     = 0;
-    virtual void   reset_to_initial_state()                                                                      = 0;
-    virtual void   clear_saturation_status()                                                                     = 0;
-    virtual void   update_truncation_limit()                                                                     = 0;
-    virtual void   update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                  = 0;
+    virtual void   run()                                                                                                                           = 0;
+    virtual void   run_old()                                                                                                                       = 0;
+    virtual void   check_convergence()                                                                                                             = 0;
+    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT)                                                         = 0;
+    virtual void   copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT)                                                         = 0;
+    virtual bool   algo_on()                                                                                                                       = 0;
+    virtual size_t print_freq()                                                                                                                    = 0;
+    virtual long   chi_lim_max()                                                                                                                   = 0;
+    virtual bool   chi_lim_grow()                                                                                                                  = 0;
+    virtual long   chi_lim_init()                                                                                                                  = 0;
+    virtual void   print_status_update()                                                                                                           = 0;
+    virtual void   print_status_full()                                                                                                             = 0;
+    virtual void   reset_to_random_product_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
+                                                 std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt) = 0;
+    virtual void randomize_current_state(std::optional<std::vector<std::string>> pauli_strings = std::nullopt, std::optional<std::string> sector = std::nullopt,
+                                         std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt)           = 0;
+    virtual void   clear_convergence_status()                                                                                                         = 0;
+    virtual void update_truncation_limit()                                                                                                         = 0;
+    virtual void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                                                      = 0;
 
     // common functions
     void   print_profiling();
+    void   reset_bond_dimension_limits();
     double process_memory_in_mb(std::string name);
 
     protected:
@@ -70,6 +70,10 @@ class class_algorithm_base {
         double avgY;
     };
 
-    SaturationReport  check_saturation_using_slope(std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance);
-//    SaturationReport2 check_saturation_using_slope2(std::list<double> &Y_vec, std::list<int> &X_vec, double new_data, int iter, int rate, double tolerance);
+    SaturationReport check_saturation_using_slope(std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate,
+                                                  double tolerance);
+    //    SaturationReport2 check_saturation_using_slope2(std::list<double> &Y_vec, std::list<int> &X_vec, double new_data, int iter, int rate, double
+    //    tolerance);
+
+    std::list<SimulationTask> get_default_task_list();
 };

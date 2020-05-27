@@ -36,8 +36,8 @@ class class_tensors_finite;
 class class_state_finite {
     public:
     using Scalar = std::complex<double>;
-    private:
 
+    private:
     struct Cache {
         std::optional<Eigen::Tensor<Scalar, 3>> multisite_tensor = std::nullopt;
     };
@@ -45,8 +45,9 @@ class class_state_finite {
     size_t                    iter      = 0;
     size_t                    step      = 0;
     int                       direction = 1;
-    std::optional<long>       chi_lim;
-    std::optional<long>       chi_max;
+//    std::optional<long>       chi_lim;
+//    std::optional<long>       chi_lim_init;
+//    std::optional<long>       chi_lim_max;
     std::vector<double>       truncated_variance;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;
@@ -80,11 +81,14 @@ class class_state_finite {
     void   set_step(size_t step_);
     void   increment_step();
 
-    long                   get_chi_lim() const;
-    void                   set_chi_lim(long chi_lim_);
-    long                   get_chi_max() const;
-    void                   set_chi_max(long chi_max_);
+//    long                   get_chi_lim() const;
+//    void                   set_chi_lim(long chi_lim_);
+//    long                   get_chi_lim_max() const;
+//    void                   set_chi_lim_max(long chi_max_);
+//    long                   get_chi_lim_init() const;
+//    void                   set_chi_lim_init(long chi_max_);
     long                   find_largest_chi() const;
+
     void                   set_positions();
     size_t                 get_length() const;
     size_t                 get_position() const;
@@ -108,17 +112,12 @@ class class_state_finite {
     const class_mps_site &get_mps_site() const;
     class_mps_site &      get_mps_site();
 
-
-
     // For multisite
-    std::list<size_t>      activate_sites(long threshold, size_t max_sites, size_t min_sites = 2);
-    std::list<size_t>      activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
     long                   active_problem_size() const;
 
-    Eigen::Tensor<Scalar, 3>  get_multisite_tensor(const std::list<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 3>        get_multisite_tensor(const std::list<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_tensor() const;
-
 
     public:
     void                set_truncation_error(size_t pos, double error);
@@ -137,8 +136,8 @@ class class_state_finite {
     const std::vector<double> &get_truncated_variances() const;
 
     size_t num_sites_truncated(double threshold = 1e-8) const;
-    size_t num_bonds_at_limit() const;
-    bool   is_bond_limited(double threshold = 1e-8) const;
+    size_t num_bonds_reached_chi(long chi_level) const;
+    bool   is_bond_limited(long chi_limit, double threshold = 1e-8) const;
 
     void clear_measurements() const;
     void do_all_measurements() const;

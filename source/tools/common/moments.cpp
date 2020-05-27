@@ -20,6 +20,10 @@ extern double tools::common::moments::first(const mps_type &mps,const mpo_type &
     static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of first moment");
     static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of first moment");
 
+    if(mps.dimension(1) != envL.dimension(0)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
+    if(mps.dimension(2) != envR.dimension(0)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
+    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+
     Eigen::Tensor<Scalar, 0> M1;
     OMP omp(settings::threading::num_threads);
     /* clang-format off */
@@ -56,6 +60,10 @@ extern double tools::common::moments::second(const mps_type &mps,const mpo_type 
     double log2chiL = std::log2(mps.dimension(1));
     double log2chiR = std::log2(mps.dimension(2));
     double log2spin = std::log2(mps.dimension(0));
+    if(mps.dimension(1) != envL.dimension(0)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
+    if(mps.dimension(2) != envR.dimension(0)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
+    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+
     Eigen::Tensor<Scalar, 0> M2;
     OMP                      omp(settings::threading::num_threads);
     /* clang-format off */

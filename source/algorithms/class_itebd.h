@@ -25,10 +25,10 @@ public:
     void check_convergence_time_step();
     void check_convergence()                                final;
     bool   algo_on()                                        final;
-    long   chi_max()                                        final;
+    long   chi_lim_max()                                        final;
 //    size_t write_freq()                                     final;
     size_t print_freq()                                     final;
-    bool   chi_grow()                                       final;
-    long   chi_init()                                       final;
+    bool   chi_lim_grow()                                       final;
+    long   chi_lim_init()                                       final;
 };
 

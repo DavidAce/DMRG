@@ -41,8 +41,6 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
     h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
     h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
-    h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", dsetName);
-    h5ppFile.writeAttribute(state.get_chi_max(), "chi_max", dsetName);
     tools::common::profile::t_hdf->toc();
 
     if(storage_level < StorageLevel::NORMAL) return;
@@ -68,12 +66,10 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     h5ppFile.writeAttribute(state.get_position(), "position", mps_path);
     h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_path);
     h5ppFile.writeAttribute(state.get_step(), "step", mps_path);
-    h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", mps_path);
-    h5ppFile.writeAttribute(state.get_chi_max(), "chi_max", mps_path);
     h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_path);
     tools::common::profile::t_hdf->toc();
 
-    /*! Writes down the full MPS in "L-G-L-G- LC_diag -G-L-G-L" notation. */
+    /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
     if(storage_level < StorageLevel::FULL) return;
     tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();

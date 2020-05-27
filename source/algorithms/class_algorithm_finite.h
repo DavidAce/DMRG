@@ -10,16 +10,16 @@ class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
 
-//class h5pp_table_measurements_finite;
+// class h5pp_table_measurements_finite;
 class class_algorithm_finite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
     explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
-    ~class_algorithm_finite(); // Read comment on implementation
-//    std::unique_ptr<class_state_finite> state;// The finite chain state
-//    std::unique_ptr<class_model_finite> model;// The finite chain model
-//    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
+    //    ~class_algorithm_finite();    // Read comment on implementation
+    //    std::unique_ptr<class_state_finite> state;// The finite chain state
+    //    std::unique_ptr<class_model_finite> model;// The finite chain model
+    //    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
     class_tensors_finite tensors; // State, model and edges
 
     size_t state_number = 0;
@@ -45,31 +45,34 @@ class class_algorithm_finite : public class_algorithm_base {
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
 
     public:
-    virtual void run_simulation() = 0;
+    virtual void run_algorithm() = 0;
     virtual void run_preprocessing();
     virtual void run_postprocessing();
     virtual bool store_wave_function() = 0;
-    void         try_projection(class_state_finite & state);
-    void         try_bond_dimension_quench(class_state_finite & state);
-    void         try_hamiltonian_perturbation(class_state_finite & state);
-    void         try_disorder_damping(class_model_finite & model);
+    void         run_task_list(std::list<SimulationTask> &task_list);
+    void         try_projection(class_state_finite &state);
+    void         try_bond_dimension_quench(class_state_finite &state);
+    void         try_hamiltonian_perturbation(class_state_finite &state);
+    void         try_disorder_damping(class_model_finite &model);
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
+    void         randomize_model();
     void         update_truncation_limit() final;
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
     void         run_old() final;
-    void         clear_saturation_status() override;
-    void         reset_to_random_product_state(const std::string &axis = "random") final;
-    void         reset_to_random_current_state(std::optional<long> chi_lim = std::nullopt) final;
-    void         reset_to_initial_state() final;
-    void         write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
-    void         copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
-    void         print_status_update() final;
-    void         print_status_full() final;
-    void         check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void         check_convergence_entg_entropy(double slope_threshold = quietNaN);
-    void         write_to_file(StorageReason storage_reason, const class_state_finite &state);
-//
+    void         clear_convergence_status() override;
+    void reset_to_random_product_state(ResetReason reason, std::optional<std::string> sector = std::nullopt, std::optional<long> bitfield = std::nullopt,
+                                       std::optional<bool> use_eigenspinors = std::nullopt) final;
+    void randomize_current_state(std::optional<std::vector<std::string>> pauli_strings = std::nullopt, std::optional<std::string> sector = std::nullopt,
+                                 std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt) final;
+    void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
+    void copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
+    void print_status_update() final;
+    void print_status_full() final;
+    void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+    void write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection = false, const std::string &given_prefix = "");
+    //
     std::list<double> V_mpo_vec;    // History of variances
     std::list<size_t> X_mpo_vec;    // History of moves numbers
     std::list<double> V_mpo_slopes; // History of variance slopes

@@ -57,6 +57,7 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
 
 }
 
+size_t tools::finite::measure::length(const class_tensors_finite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const class_state_finite &state) { return state.get_length(); }
 
 double tools::finite::measure::norm(const class_state_finite &state) {
@@ -79,6 +80,25 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     state.measurements.norm = norm_chain;
     return state.measurements.norm.value();
 }
+
+double tools::finite::measure::norm_fast(const class_state_finite &state) {
+    if(state.measurements.norm) return state.measurements.norm.value();
+    const auto pos = state.get_position();
+    const auto & mpsL = state.get_mps_site(pos);
+    const auto & mpsR = state.get_mps_site(pos+1);
+
+    Eigen::Tensor<Scalar,0> norm = mpsL.get_M()
+                                    .contract(mpsR.get_M(), Textra::idx({2},{1}))
+                                    .contract(mpsL.get_M().conjugate(), Textra::idx({0,1},{0,1}))
+                                    .contract(mpsR.get_M().conjugate(), Textra::idx({2,1,0},{1,2,0}));
+
+
+    double norm_fast = std::abs(norm(0));
+    if(std::abs(norm_fast - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_fast);
+    state.measurements.norm = norm_fast;
+    return state.measurements.norm.value();
+}
+
 
 long tools::finite::measure::bond_dimension_current(const class_state_finite &state) {
     if(state.measurements.bond_dimension_current) {

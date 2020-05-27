@@ -27,7 +27,7 @@ class class_edges_infinite {
     class_edges_infinite &operator=(const class_edges_infinite &other);     // copy assign
 
     void initialize();
-
+    void eject_edges();
     void                 assert_validity() const;
     [[nodiscard]] size_t get_length() const;
     size_t               get_position() const; // pos of eneL or varL

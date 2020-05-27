@@ -21,9 +21,9 @@ public:
     void run_simulation()                                   final;
     void check_convergence()                                final;
     bool    algo_on()                                       final;
-    long    chi_max()                                       final;
-    bool    chi_grow()                                      final;
-    long    chi_init()                                      final;
+    long      chi_lim_max()                                       final;
+    bool      chi_lim_grow()                                      final;
+    long      chi_lim_init()                                      final;
     size_t  print_freq()                                    final;
 };
 

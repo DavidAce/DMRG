@@ -117,11 +117,11 @@ tools::common::views::get_theta(const class_state_finite & state, Scalar norm)
 /*!
  * Returns a two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]--[ LC_diag ]-- [ GB ] -- [ LB_diag ]--3
+        1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
                      |                 |
                      0                 2
 
-    where we define LB*GA*LC_diag = M on the "A" site and GB*LB_diag = M on the right site
+    where we define LB*GA*LC = M on the "A" site and GB*LB = M on the right site
      @endverbatim
  */
 {
@@ -138,7 +138,7 @@ tools::common::views::get_theta(const class_state_infinite & state, Scalar norm)
 /*!
  * Returns a two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]--[ LA_diag ]-- [ GB ] -- [ LB_diag ]--3
+        1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -156,7 +156,7 @@ tools::common::views::get_theta_swapped(const class_state_infinite & state, Scal
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LC ]--[ GB ]--[ LB_diag ]-- [ GA ] -- [ LC_diag ]--3
+        1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LC ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -181,7 +181,7 @@ tools::common::views::get_theta_evn(const class_state_infinite & state, Scalar n
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
-        1--[ LA_diag ]--[ GA ]-- [ LC_diag ] -- [ GB ]--3
+        1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -198,7 +198,7 @@ tools::common::views::get_theta_odd(const class_state_infinite & state, Scalar n
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LC_diag ]--[ GB ]-- [ LB_diag ] -- [ GA ]--3
+        1--[ LC ]--[ GB ]--[ LB ] -- [ GA ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -313,7 +313,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 ///*!
 // * Returns a two-site MPS
 //     @verbatim
-//        1--[ LA_diag ]--[ GA ]--[ LC_diag ]-- [ GB ] -- [ LB_diag ]--3
+//        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
 //                     |                 |
 //                     0                 2
 //     @endverbatim
@@ -330,7 +330,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 ///*!
 // * Returns a two-site MPS with A and B swapped
 //     @verbatim
-//        1--[ LC_diag ]--[ GB ]--[ LB_diag ]-- [ GA ] -- [ LA_diag ]--3
+//        1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
 //                     |                 |
 //                     0                 2
 //     @endverbatim
@@ -353,7 +353,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 ///*!
 // * Returns a right normalized two-site MPS
 //     @verbatim
-//        1--[ LA_diag ]--[ GA ]-- [ LC_diag ] -- [ GB ]--3
+//        1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
 //                     |                 |
 //                     0                 2
 //     @endverbatim
@@ -370,7 +370,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 ///*!
 // * Returns a two-site MPS with A and B swapped
 //     @verbatim
-//        1--[ LC_diag ]--[ GB ]-- [ LB_diag ] -- [ GA ]--3
+//        1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
 //                     |                 |
 //                     0                 2
 //     @endverbatim

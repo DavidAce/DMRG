@@ -11,6 +11,8 @@
 namespace qm{
     using Scalar = std::complex<double>;
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);
+    constexpr std::complex<double> imp(0.0,1.0);
+    constexpr std::complex<double> imn(0.0,-1.0);
     namespace spinOneHalf {
         extern Eigen::Matrix2cd sx;
         extern Eigen::Matrix2cd sy;
@@ -38,11 +40,11 @@ namespace qm{
     }
 
     namespace timeEvolution{
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_1st_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_2nd_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(const std::complex<double> t, const size_t & susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_1st_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_2nd_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(std::complex<double> t, size_t susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(std::complex<double> a, size_t susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
     }
 
     namespace mpo{
@@ -50,34 +52,32 @@ namespace qm{
                 Eigen::Tensor<Scalar,4>,
                 Eigen::Tensor<Scalar,3>,
                 Eigen::Tensor<Scalar,3>>
-        pauli_mpo(const Eigen::MatrixXcd paulimatrix);
-
-
-        extern std::tuple<
-                Eigen::Tensor<Scalar,4>,
-                Eigen::Tensor<Scalar,3>,
-                Eigen::Tensor<Scalar,3>>
-        parity_selector_mpo(const Eigen::MatrixXcd &paulimatrix, const int sector = 1);
+        pauli_mpo(const Eigen::MatrixXcd &paulimatrix);
 
 
         extern std::tuple<
                 std::list<Eigen::Tensor<Scalar,4>>,
                 Eigen::Tensor<Scalar,3>,
                 Eigen::Tensor<Scalar,3>>
-        parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites, const int sector = 1);
+        parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites, int sector = 1);
 
         extern std::tuple<
             std::list<Eigen::Tensor<Scalar,4>>,
             Eigen::Tensor<Scalar,3>,
             Eigen::Tensor<Scalar,3>>
-        random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites);
+        random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites);
 
         extern std::tuple<
             std::list<Eigen::Tensor<Scalar,4>>,
             Eigen::Tensor<Scalar,3>,
             Eigen::Tensor<Scalar,3>>
-        random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1, const Eigen::MatrixXcd &paulimatrix2, const size_t sites);
+        random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1, const Eigen::MatrixXcd &paulimatrix2, size_t sites);
 
+        extern std::tuple<
+            std::list<Eigen::Tensor<Scalar,4>>,
+            Eigen::Tensor<Scalar,3>,
+            Eigen::Tensor<Scalar,3>>
+        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites);
     }
 
 

@@ -53,6 +53,12 @@ void class_edges_infinite::initialize(){
     varR = std::make_unique<class_env_var>("R",1);
 }
 
+void class_edges_infinite::eject_edges(){
+    eneL->clear();
+    eneR->clear();
+    varL->clear();
+    varR->clear();
+}
 
 
 template<typename T, typename = std::void_t<>>

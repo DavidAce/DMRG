@@ -15,6 +15,7 @@ class class_env_ene final : public class_env_base {
     [[nodiscard]] class_env_ene enlarge(const class_mps_site &MPS, const class_mpo_site &MPO);
 
     void clear() final;
+    bool has_block() const final;
     void assert_validity() const final;
     void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) final;
 

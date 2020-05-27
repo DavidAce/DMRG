@@ -65,17 +65,14 @@ void class_edges_finite::env_pair<env_type>::assert_validity() const {
     }
 }
 
-
-void class_edges_finite::initialize(size_t model_size){
-    for(size_t pos = 0; pos < model_size; pos++){
-        eneL.emplace_back(std::make_unique<class_env_ene>("L",pos));
-        varL.emplace_back(std::make_unique<class_env_var>("L",pos));
-        eneR.emplace_front(std::make_unique<class_env_ene>("R",pos));
-        varR.emplace_front(std::make_unique<class_env_var>("R",pos));
+void class_edges_finite::initialize(size_t model_size) {
+    for(size_t pos = 0; pos < model_size; pos++) {
+        eneL.emplace_back(std::make_unique<class_env_ene>("L", pos));
+        varL.emplace_back(std::make_unique<class_env_var>("L", pos));
+        eneR.emplace_front(std::make_unique<class_env_ene>("R", pos));
+        varR.emplace_front(std::make_unique<class_env_var>("R", pos));
     }
-
 }
-
 
 size_t class_edges_finite::get_length() const {
     if(not math::all_equal(eneL.size(), eneR.size(), varL.size(), varR.size()))
@@ -108,6 +105,26 @@ void class_edges_finite::assert_validity() const {
     for(const auto &env : varR) env->assert_validity();
 }
 /* clang-format on */
+
+void class_edges_finite::eject_inactive_edges(std::optional<std::list<size_t>> sites) {
+    if(not sites) sites = active_sites;
+    if(not sites) throw std::runtime_error("Could not eject inactive edges: no active sites selected");
+    for(auto &env : eneL)
+        if(env->get_position() > sites->front()) env->clear();
+    for(auto &env : varL)
+        if(env->get_position() > sites->front()) env->clear();
+    for(auto &env : eneR)
+        if(env->get_position() < sites->back()) env->clear();
+    for(auto &env : varR)
+        if(env->get_position() < sites->back()) env->clear();
+}
+
+void class_edges_finite::eject_all_edges() {
+    for(auto &env : eneL) env->clear();
+    for(auto &env : varL) env->clear();
+    for(auto &env : eneR) env->clear();
+    for(auto &env : varR) env->clear();
+}
 
 const class_env_ene &class_edges_finite::get_eneL(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_eneL(pos): pos is out of range {} | system size {}", pos, get_length()));

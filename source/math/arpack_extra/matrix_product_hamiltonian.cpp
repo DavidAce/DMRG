@@ -4,7 +4,10 @@
 
 template<typename T>
 void DenseHamiltonianProduct<T>::MultAx(T* mps_in_, T* mps_out_) {
-    if(counter == 0) omp = std::make_shared<OMP>(num_threads);
+    if(counter == 0){
+        if(not num_threads) num_threads = Eigen::nbThreads();
+        omp = std::make_shared<OMP>(num_threads.value());
+    }
     t_mul.tic();
     Eigen::TensorMap<Eigen::Tensor<const T, 3>>       envL_map(Lblock,shape_mps[1], shape_mps[1], shape_mpo[0] );
     Eigen::TensorMap<Eigen::Tensor<const T, 3>>       envR_map(Rblock,shape_mps[2], shape_mps[2], shape_mpo[1] );

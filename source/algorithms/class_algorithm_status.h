@@ -20,8 +20,9 @@ class class_algorithm_status {
     int    direction                      = 1;
     size_t num_resets                     = 0;
     size_t min_iters                      = 0;
-    long   chi_max                        = 0;
-    long   chi_lim                        = 0;
+    long   chi_lim_max                    = 0; /*!< Maximum allowable bond dimension during an algorithm run */
+    long   chi_lim_init                   = 0; /*!< Initial limit on bond dimension when an algorithm starts */
+    long   chi_lim                        = 0; /*!< Current limit on bond dimension, can be increased dynamically */
     double energy_min                     = 0;
     double energy_max                     = 0;
     double energy_target                  = 0;
@@ -30,6 +31,7 @@ class class_algorithm_status {
     double energy_dens                    = 0;
     double energy_dens_target             = 0;
     double energy_dens_window             = 0;
+    double lowest_recorded_variance       = 1;
     double phys_time                      = 0;
     double wall_time                      = 0;
     double simu_time                      = 0;

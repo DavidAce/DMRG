@@ -19,12 +19,12 @@ namespace eigutils{
         enum class Form{SYMMETRIC, NONSYMMETRIC};       // Real Symmetric, Real General or Complex General
         enum class Storage {DENSE,SPARSE,STL};          // Eigen Dense or sparse, or std::vector for container
         enum class Shift {ON,OFF};                      // Enable or disable shift invert
-        enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE};   // Choice of eigenvalue. LA_diag is largest algebraic, and so on.
+        enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE};   // Choice of eigenvalue. LA is largest algebraic, and so on.
         enum class Side {L,R};                          // Left or right eigenvectors
         enum class Type {REAL,CPLX};                    // Real or complex, i.e. double or std::complex<double> matrix
 
         inline Ritz stringToRitz(std::string_view ritzstring){
-            if (ritzstring == "LA_diag") return Ritz::LA;
+            if (ritzstring == "LA") return Ritz::LA;
             if (ritzstring == "SA") return Ritz::SA;
             if (ritzstring == "LM") return Ritz::LM;
             if (ritzstring == "SM") return Ritz::SM;
@@ -35,16 +35,26 @@ namespace eigutils{
             if (ritzstring == "BE") return Ritz::BE;
             throw std::runtime_error("Wrong ritz string: " + std::string(ritzstring));
         }
+
+        inline std::string_view RitzToString(Ritz ritz){
+            if (ritz == Ritz::LA) return  "LA";
+            if (ritz == Ritz::SA) return  "SA";
+            if (ritz == Ritz::LM) return  "LM";
+            if (ritz == Ritz::SM) return  "SM";
+            if (ritz == Ritz::LR) return  "LR";
+            if (ritz == Ritz::SR) return  "SR";
+            if (ritz == Ritz::LI) return  "LI";
+            if (ritz == Ritz::SI) return  "SI";
+            if (ritz == Ritz::BE) return  "BE";
+            throw std::runtime_error("Wrong ritz enum");
+        }
+
+
     }
 
     class eigConfig{
     public:
         bool confOK = false;
-        using  MapType = std::map<eigSetting::Ritz, std::string>;
-        MapType RitzToString;
-        char ritz_char[3];
-
-
         eigSetting::Form           form        = eigSetting::Form::NONSYMMETRIC;
         eigSetting::Storage        storage     = eigSetting::Storage::DENSE;
         eigSetting::Shift          shift       = eigSetting::Shift::OFF;
@@ -58,55 +68,40 @@ namespace eigutils{
         int     eigMaxNev                      = 1;
         int     eigMaxNcv                      = 16;
         std::complex<double>  sigma            = std::numeric_limits<std::complex<double>>::quiet_NaN();     // Sigma value for shift-invert mode.
-
-        eigConfig() {
-            RitzToString = {
-                    {eigSetting::Ritz::LA, "LA_diag"},
-                    {eigSetting::Ritz::SA, "SA"},
-                    {eigSetting::Ritz::LM, "LM"},
-                    {eigSetting::Ritz::SM, "SM"},
-                    {eigSetting::Ritz::LR, "LR"},
-                    {eigSetting::Ritz::SR, "SR"},
-                    {eigSetting::Ritz::LI, "LI"},
-                    {eigSetting::Ritz::SI, "SI"},
-                    {eigSetting::Ritz::BE, "BE"}
-            };
-        }
-
-        void writeRitzChar()
-        // Writes ritz to string and checks that it is valid for the given problem.
+        std::string get_ritz(){return std::string(eigutils::eigSetting::RitzToString(ritz));}
+        void checkRitz()
+        // Checks that ritz is valid for the given problem.
         // The valid ritzes are stated in the arpack++ manual page 78.
         {
             using namespace eigSetting;
+            std::string suggestion;
             if (type==Type::CPLX or form==Form::NONSYMMETRIC){
                 if (ritz==Ritz::LA or
                     ritz==Ritz::SA or
-                    ritz==Ritz::BE
-                        )
+                    ritz==Ritz::BE)
                 {
-                    std::cerr << "WARNING: Invalid ritz for cplx or nonsym problem: " << RitzToString.at(ritz) << std::endl;
-                    if (ritz==Ritz::LA){ritz = Ritz::LR;}
-                    if (ritz==Ritz::SA){ritz = Ritz::SR;}
-                    if (ritz==Ritz::BE){ritz = Ritz::LM;}
-                    std::cerr << "         Changed ritz to : " << RitzToString.at(ritz)<< std::endl;
+                    std::cerr << "WARNING: Invalid ritz for cplx or nonsym problem: " << RitzToString(ritz) << std::endl;
+                    if (ritz==Ritz::LA) suggestion = "LR";
+                    if (ritz==Ritz::SA) suggestion = "SR";
+                    if (ritz==Ritz::BE) suggestion = "LM";
+                    std::cerr << "         Suggested ritz: " << suggestion << std::endl;
                 }
             }else if (type==Type::REAL and form==Form::SYMMETRIC) {
                 if (ritz==Ritz::LR or
                     ritz==Ritz::SR or
                     ritz==Ritz::LI or
-                    ritz==Ritz::SI
-                        )
+                    ritz==Ritz::SI)
                 {
-                    std::cerr << "WARNING: Invalid ritz for real and sym problem: " << RitzToString.at(ritz)<< std::endl;
-                    if (ritz==Ritz::LR){ritz = Ritz::LA;}
-                    if (ritz==Ritz::SR){ritz = Ritz::SA;}
-                    if (ritz==Ritz::LI){ritz = Ritz::LM;}
-                    if (ritz==Ritz::SI){ritz = Ritz::SM;}
-                    std::cerr << "         Changed ritz to : " << RitzToString.at(ritz)<< std::endl;
+                    std::cerr << "WARNING: Invalid ritz for real and sym problem: " << RitzToString(ritz)<< std::endl;
+                    if (ritz==Ritz::LR) suggestion = "LA";
+                    if (ritz==Ritz::SR) suggestion = "SA";
+                    if (ritz==Ritz::LI) suggestion = "LM";
+                    if (ritz==Ritz::SI) suggestion = "SM";
+                    std::cerr << "         Suggested ritz: " << suggestion << std::endl;
                 }
             }
-
-            RitzToString.at(ritz).copy(ritz_char, 3);
+            if(not suggestion.empty())
+                throw std::runtime_error("Invalid ritz");
             confOK = true;
         }
 

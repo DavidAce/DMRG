@@ -37,7 +37,7 @@ size_t Logger::getLogLevel(std::shared_ptr<spdlog::logger> &log){
 
 
 
-void Logger::setLogger(std::shared_ptr<spdlog::logger> &log, std::string name, size_t levelZeroToSix, bool timestamp){
+void Logger::setLogger(std::shared_ptr<spdlog::logger> &log, const std::string & name, size_t levelZeroToSix, bool timestamp){
     if(spdlog::get(name) == nullptr){
         log = spdlog::stdout_logger_mt(name);
 //            log = spdlog::stdout_color_mt(name);
@@ -51,7 +51,7 @@ void Logger::setLogger(std::shared_ptr<spdlog::logger> &log, std::string name, s
 }
 
 
-std::shared_ptr<spdlog::logger>  Logger::setLogger(std::string name, size_t levelZeroToSix, bool timestamp){
+std::shared_ptr<spdlog::logger>  Logger::setLogger(const std::string & name, size_t levelZeroToSix, bool timestamp){
     if(spdlog::get(name) == nullptr){
         auto log = spdlog::stdout_logger_mt(name);
 //            auto log = spdlog::stdout_color_mt(name);
@@ -63,4 +63,11 @@ std::shared_ptr<spdlog::logger>  Logger::setLogger(std::string name, size_t leve
     }else{
         return spdlog::get(name);
     }
+}
+
+std::shared_ptr<spdlog::logger> Logger::getLogger( const std::string & name ){
+    if(spdlog::get(name) == nullptr)
+        throw std::runtime_error(fmt::format("Logger with name [{}] does not exist",name));
+    else
+        return spdlog::get(name);
 }

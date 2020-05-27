@@ -77,7 +77,20 @@ public:
 
     template<typename Scalar,auto N>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,N> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max = std::nullopt){
+    schmidt(const Eigen::Tensor<Scalar,N> &tensor, long dL, long chiL,long dR, long chiR, std::optional<long> rank_max = std::nullopt){
+        /*
+         * When using this function, it is important that the index order is correct
+         * The order is
+         * 1) left physical index
+         * 2) left bond index
+         * 3) right physical index
+         * 4) right bond index
+         *
+         * It is assumed that this order is built into tensor already. Hard to debug errors will occurr
+         * if this is not the case!
+         * The function call argument order dL, chiL, dR,chiR is meant as a hint for how to use this function.
+         */
+
         if (dL*chiL * dR*chiR != tensor.size())
             throw std::range_error("schmidt error: tensor size does not match given dimensions.");
         auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
@@ -121,6 +134,36 @@ public:
                                S.norm());
     }
 
+
+
+    template<typename Scalar>
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt_multisite(const Eigen::Tensor<Scalar,3> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max = std::nullopt){
+        /* This function assumes that the tensor is given with indices in multisite standard form, i.e., with order
+         *
+         * 1) physical indices (any number of them, contracted from left to right)
+         * 2) left bond index
+         * 4) right bond index
+         *
+         * (1)chiL ---[tensor]--- (2)chiR
+         *               |
+         *          (0)d*d*d...
+         *
+         * we start by transposing the tensor into "left-right" order suitable for schmidt decomposition
+         *
+         * (1)chiL---[  tensor  ]---(3)chiR
+         *            |        |
+         *        (0)dL      (2)dR
+         *
+         * The function call argument order dL, dR, chiL,chiR is meant as a hint for how to use this function.
+         *
+         */
+
+        Eigen::Tensor<Scalar,4> tensor_for_schmidt = tensor.reshape(Textra::array4{dL,dR,chiL,chiR}).shuffle(Textra::array4{0,2,1,3});
+        return schmidt(tensor_for_schmidt,dL,chiL,dR,chiR, rank_max);
+    }
+
+
     template<typename Scalar>
     std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt_from_right  (const Eigen::Tensor<Scalar,3> &tensor,long dR , std::optional<long> rank_max = std::nullopt){
@@ -156,20 +199,11 @@ public:
         if(tensor.dimension(0) % dR != 0)
             throw std::runtime_error("Tensor dim 0 is not divisible by the given spin dimension " + std::to_string(dR));
 
-
         long dLdR = tensor.dimension(0);
         long dL   = dLdR/dR;
         long chiL = tensor.dimension(1);
         long chiR = tensor.dimension(2);
-        Eigen::Tensor<Scalar,4> tensor_temp = tensor
-                                           .reshape(Textra::array4{dL,dR,chiL,chiR})
-                                           .shuffle(Textra::array4{0,2,1,3});
-        return schmidt(tensor_temp, dL,dR,chiL,chiR,rank_max);
-//        auto [U,S,V,rank] = do_svd(tensor_temp.data(),dL*chiL, dR*chiR,rank_max);
-//        return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
-//                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-//                               Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
-//        );
+        return schmidt_multisite(tensor,dL,dR,chiL,chiR,rank_max);
     }
 
 
@@ -214,18 +248,8 @@ public:
         long dR   = dLdR/dL;
         long chiL = tensor.dimension(1);
         long chiR = tensor.dimension(2);
-        Eigen::Tensor<Scalar,4> tensor_temp = tensor
-            .reshape(Textra::array4{dL,dR,chiL,chiR})
-            .shuffle(Textra::array4{0,2,1,3});
-        return schmidt(tensor_temp, dL,dR,chiL,chiR,rank_max);
-//        auto [U,S,V,rank] = do_svd(tensor_temp.data(),dL*chiL, dR*chiR,rank_max);
-//        return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
-//                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-//                               Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
-//        );
+        return schmidt_multisite(tensor,dL,dR,chiL,chiR,rank_max);
     }
-
-
 };
 
 

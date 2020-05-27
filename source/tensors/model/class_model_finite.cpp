@@ -61,10 +61,6 @@ void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
     if(MPO.size() != model_size) throw std::logic_error("Initialized MPO with wrong size");
 }
 
-
-
-
-
 const class_mpo_site &class_model_finite::get_mpo(size_t pos) const {
     if(pos >= MPO.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
     return **std::next(MPO.begin(), static_cast<long>(pos));
@@ -119,7 +115,7 @@ void class_model_finite::set_reduced_energy_per_site(double site_energy) {
     clear_cache();
     for(auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
     std::cerr << "MUST REBUILD ENVIRONMENTS AFTER SETTING REDUCED ENERGY ON MPO'S!!" << std::endl;
-    //    tools::finite::mps::rebuild_edges(*this);
+    //    tools::finite::mps::rebuild_all_edges(*this);
 }
 
 void class_model_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
@@ -150,6 +146,9 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_t
     tools::log->trace("Contracting multisite mpo tensor");
     tools::common::profile::t_mpo->tic();
     Eigen::Tensor<Scalar, 4> multisite_tensor;
+    constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
+    constexpr auto           contract_idx = Textra::idx({1}, {0});
+    Textra::array4           new_dims;
     Eigen::Tensor<Scalar, 4> temp;
     OMP                      omp;
     bool                     first = true;
@@ -164,9 +163,10 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_t
         long        dim1 = M.dimension(1);
         long        dim2 = multisite_tensor.dimension(2) * M.dimension(2);
         long        dim3 = multisite_tensor.dimension(3) * M.dimension(3);
-        temp.device(omp.dev) =
-            multisite_tensor.contract(M, Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
-        multisite_tensor = temp;
+        new_dims         = {dim0, dim1, dim2, dim3};
+        temp.resize(new_dims);
+        temp.device(omp.dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        multisite_tensor     = temp;
     }
     tools::common::profile::t_mpo->toc();
     return multisite_tensor;

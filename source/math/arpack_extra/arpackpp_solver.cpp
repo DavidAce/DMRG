@@ -80,13 +80,13 @@ void arpackpp_solver<MatrixType>::eigs() {
     nev_internal = std::min(matrix.rows()/2,solverConf.eigMaxNev);
     ncv_internal = std::max(solverConf.eigMaxNcv, 2+solverConf.eigMaxNev);
     ncv_internal = std::min(ncv_internal, matrix.rows());
-    assert(ncv_internal >= solverConf.eigMaxNev + 2 and ncv_internal <= matrix.rows());
+//    assert(ncv_internal >= solverConf.eigMaxNev + 2 and ncv_internal <= matrix.rows());
     assert(nev_internal >= 1 and nev_internal <= matrix.rows() / 2);
 
     // Stupidly enough, the only difference between the github and "apt" versions of arpack++,
     // is that the apt version only accepts char*, whereas the github one accepts string and char*.
     // For this reason we have to convert the ritz to a format that both can take.
-    solverConf.writeRitzChar();
+    solverConf.checkRitz();
     matrix.set_mode(solverConf.form);
     matrix.set_side(solverConf.side);
 
@@ -120,7 +120,7 @@ void arpackpp_solver<MatrixType>::eigs_sym() {
                 nev_internal,
                 &matrix,
                 &MatrixType::MultAx,
-                solverConf.ritz_char,
+                solverConf.get_ritz().c_str(),
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
@@ -157,7 +157,7 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
                 nev_internal,
                 &matrix,
                 &MatrixType::MultAx,
-                solverConf.ritz_char,
+                solverConf.get_ritz().c_str(),
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
@@ -194,12 +194,14 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
 template<typename MatrixType>
 void arpackpp_solver<MatrixType>::eigs_comp() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value){
+        std::string ritz = "SR";
         ARCompStdEig<double, MatrixType> solver(
                 matrix.rows(),
                 nev_internal,
                 &matrix,
                 &MatrixType::MultAx,
-                solverConf.ritz_char,
+                ritz.c_str(),
+//                solverConf.ritz_char,
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
@@ -272,7 +274,6 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
         solution.meta.counter       = matrix.counter;
         assert(solution.meta.nev_converged >= solution.meta.nev  and "Not enough eigenvalues converged");
         assert(solution.meta.eigvals_found and "Eigenvalues were not found");
-
     }
 }
 

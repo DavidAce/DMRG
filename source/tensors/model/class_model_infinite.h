@@ -43,10 +43,7 @@ class class_model_infinite {
     Eigen::DSizes<long, 4>              dimensions() const;
 
     [[nodiscard]] bool   is_reduced() const;
-    [[nodiscard]] double get_energy_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
-
-    void set_reduced_energy(double total_energy);
     void set_reduced_energy_per_site(double site_energy);
     void clear_cache();
 };

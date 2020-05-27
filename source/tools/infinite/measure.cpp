@@ -9,7 +9,6 @@
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
@@ -56,7 +55,7 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 //        //Evolve
 //        Eigen::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(),Textra::idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
 //        auto[U, S, V] = SVD.schmidt(theta_evo,chi_lim);
-//        MPS_evolved->LC_diag = S;
+//        MPS_evolved->LC = S;
 //        Eigen::Tensor<Scalar,3> L_U =  asDiagonalInversed(MPS_evolved->MPS_A->get_L()).contract(U,Textra::idx({1}, {1})).shuffle(array3{1, 0, 2});
 //        Eigen::Tensor<Scalar,3> V_L =  V.contract(asDiagonalInversed(MPS_evolved->MPS_B->get_L()),Textra::idx({2}, {0}));
 //        MPS_evolved->MPS_A->set_G(L_U);
@@ -350,16 +349,14 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 //
 //
 
-class_mps_2site::Scalar moment_generating_function(const class_state_infinite &state_original, std::vector<Eigen::Tensor<class_mps_2site::Scalar, 2>> &Op_vec) {
-    //    t_temp1->tic();
-    using Scalar                                 = class_mps_2site::Scalar;
+class_state_infinite::Scalar moment_generating_function(const class_state_infinite &state_original, std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {
+    using Scalar                                 = class_state_infinite::Scalar;
     class_state_infinite state_evolved           = state_original;
 
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
 
-    long chi_max = 5 * state_evolved.chiC();
-    //    t_temp2->tic();
+//    long chi_lim_max = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
         Eigen::Tensor<Scalar, 3> mps_evo   = Op.contract(state_evolved.get_2site_tensor(), Textra::idx({0}, {0}));
@@ -449,9 +446,9 @@ template double tools::infinite::measure::energy_minus_energy_reduced(const Eige
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
     if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>)
-        return tools::infinite::measure::energy_minus_energy_reduced(state.get_2site_tensor(), model, edges) + model.get_energy_reduced();
+        return tools::infinite::measure::energy_mpo(state.get_2site_tensor(), model, edges);
     else
-        return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) + model.get_energy_reduced();
+        return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) + model.get_energy_per_site_reduced() * static_cast<double>(edges.get_length());
 }
 
 template double tools::infinite::measure::energy_mpo(const class_state_infinite &, const class_model_infinite &model,

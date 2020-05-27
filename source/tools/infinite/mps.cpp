@@ -3,7 +3,6 @@
 //
 
 #include <config/nmspc_settings.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
@@ -12,9 +11,8 @@
 using Scalar = std::complex<double>;
 
 
-class_state_infinite tools::infinite::mps::set_random_state(const class_state_infinite &state, [[maybe_unused]] const std::string &parity) {
+void tools::infinite::mps::random_product_state(const class_state_infinite &state, [[maybe_unused]] const std::string &sector, [[maybe_unused]] long bitfield, bool use_eigenspinors) {
     throw std::runtime_error("You need to implement set random state for infinite state");
-    return state;
 }
 
 

@@ -2,9 +2,10 @@
 // Created by david on 2020-05-14.
 //
 
-#include <general/nmspc_tensor_extra.h>
 #include "class_model_infinite.h"
 #include "class_mpo_factory.h"
+#include <general/nmspc_tensor_extra.h>
+#include <math/nmspc_math.h>
 
 class_model_infinite::class_model_infinite() = default;
 
@@ -62,7 +63,22 @@ void class_model_infinite::randomize() {
 
 }
 
+bool class_model_infinite::is_real() const{
+    return HA->is_real() and HB->is_real();
+}
+bool class_model_infinite::has_nan() const{
+    return HA->has_nan() or HB->has_nan();
+}
+void class_model_infinite::assert_validity() const{
+    HA->assert_validity();
+    HB->assert_validity();
+}
 
+
+const class_mpo_site &class_model_infinite::get_mpo_siteA() const{return *HA;}
+const class_mpo_site &class_model_infinite::get_mpo_siteB() const{return *HB;}
+class_mpo_site &      class_model_infinite::get_mpo_siteA(){return *HA;}
+class_mpo_site &      class_model_infinite::get_mpo_siteB(){return *HB;}
 
 Eigen::DSizes<long, 4> class_model_infinite::dimensions() const {
     long dim0 = HA->MPO().dimension(0);
@@ -72,10 +88,25 @@ Eigen::DSizes<long, 4> class_model_infinite::dimensions() const {
     return Eigen::DSizes<long, 4> { dim0, dim1, dim2, dim3 };
 }
 
-const class_mpo_site &class_model_infinite::get_mpo_siteA() const{return *HA;}
-const class_mpo_site &class_model_infinite::get_mpo_siteB() const{return *HB;}
-class_mpo_site &      class_model_infinite::get_mpo_siteA(){return *HA;}
-class_mpo_site &      class_model_infinite::get_mpo_siteB(){return *HB;}
+
+
+bool   class_model_infinite::is_reduced() const{
+    return HA->is_reduced() and HB->is_reduced();
+}
+
+
+double class_model_infinite::get_energy_per_site_reduced() const{
+    if(not math::all_equal(HA->get_reduced_energy(),HB->get_reduced_energy()))
+        throw std::runtime_error(fmt::format("Reduced energy mismatch: HA {:.16f} != HB {:.16f}",HA->get_reduced_energy(),HB->get_reduced_energy()));
+    return HA->get_reduced_energy();
+}
+
+
+void   class_model_infinite::set_reduced_energy_per_site(double site_energy){
+    HA->set_reduced_energy(site_energy);
+    HB->set_reduced_energy(site_energy);
+}
+
 
 
 const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_tensor() const {

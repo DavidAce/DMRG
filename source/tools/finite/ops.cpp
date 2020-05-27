@@ -15,10 +15,11 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 
-using Scalar         = std::complex<double>;
+using Scalar = std::complex<double>;
 using namespace Textra;
 
-//std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_site>> & mpos_L, const std::list<std::unique_ptr<class_mpo_site>> & mpos_R){
+// std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_site>> & mpos_L, const
+// std::list<std::unique_ptr<class_mpo_site>> & mpos_R){
 //    std::list<Eigen::Tensor<Scalar,4>> mpos;
 //    for(auto &mpo_L : mpos_L){
 //        mpos.push_back(mpo_L->MPO());
@@ -29,16 +30,15 @@ using namespace Textra;
 //    return mpos;
 //}
 
-
-void tools::finite::ops::apply_mpo(class_state_finite & state, const Eigen::Tensor<Scalar,4> &mpo, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
-    std::list<Eigen::Tensor<Scalar,4>> mpos(state.get_length(), mpo);
-    apply_mpos(state,mpos,Ledge,Redge);
+void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
+                                   const Eigen::Tensor<Scalar, 3> &Redge) {
+    std::list<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
+    apply_mpos(state, mpos, Ledge, Redge);
 }
 
-
-
-void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
-    if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
+void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
+                                    const Eigen::Tensor<Scalar, 3> &Redge) {
+    if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
@@ -49,39 +49,67 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     tools::log->info("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
     tools::log->info("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
     auto mpo = mpos.begin();
-    for(size_t pos = 0; pos < state.get_length(); pos++){
+    for(size_t pos = 0; pos < state.get_length(); pos++) {
         state.get_mps_site(pos).apply_mpo(*mpo);
         mpo++;
     }
 
-
     // Take care of the edges. Apply the left and right MPO-edges on A's and B's
-    // so the left and right most lambdas become ones
+    // so the left- and right-most lambdas become ones.
+    // Looking at the pictures, the A/B mps tensors have already been contracted with mpo's
+    // in the for loop above, where their horizontal legs have been merged as well.
+    // Hence, asking for get_M_bare() will get us the A/B with mpo's connected.
     {
-        long mpoDimL = mpos.front().dimension(0);
-        auto Ldim    = Ledge.dimension(0);
+        /*
+         *    |------ 0     1---[A]---2
+         *    |                  |
+         *    |                  0
+         *    |                  2
+         *    |                  |
+         *  [Ledge]--- 2   0---[mpo]---1
+         *    |                  |
+         *    |                  2
+         *    |
+         *    |------ 1
+         */
+
+        long                     mpoDimL = mpos.front().dimension(0);
+        auto                     Ldim    = Ledge.dimension(0);
         Eigen::Tensor<Scalar, 3> M_temp =
-                Ledge
-                        .shuffle(Textra::array3{0,2,1})
-                        .reshape(Textra::array2{Ldim*mpoDimL,Ldim})
-                        .contract(state.mps_sites.front()->get_M_bare(),Textra::idx({0},{1}))
-                        .shuffle(Textra::array3{1,0,2});
-        state.mps_sites.front()->set_M(M_temp);
-        state.mps_sites.front()->set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
+            Ledge
+                .shuffle(Textra::array3{0, 2, 1})                                       // Start by shuffling the legs into consecutive order before merge
+                .reshape(Textra::array2{Ldim * mpoDimL, Ldim})                          // Merge the legs
+                .contract(state.mps_sites.front()->get_M_bare(), Textra::idx({0}, {1})) // Contract with A which already has the mpo on it
+                .shuffle(Textra::array3{1, 0, 2});                                      // Shuffle back to convention
+        auto one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
+        state.mps_sites.front()->set_mps(M_temp, one, 0);
     }
     {
-        long mpoDimR = mpos.back().dimension(1);
-        auto Rdim    = Redge.dimension(0);
-        Eigen::Tensor<Scalar, 3> M_temp =
-                Redge
-                        .shuffle(Textra::array3{0,2,1})
-                        .reshape(Textra::array2{Rdim*mpoDimR,Rdim})
-                        .contract(state.mps_sites.back()->get_M_bare(),Textra::idx({0},{2}))
-                        .shuffle(Textra::array3{1,2,0});
-        state.mps_sites.back()->set_M(M_temp);
-        state.mps_sites.back()->set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
+        /*
+         *     1---[B]---2   0 ------|
+         *          |                |
+         *          0                |
+         *          2                |
+         *          |                |
+         *    0---[mpo]---1  2 ---[Redge]
+         *          |                |
+         *          2                |
+         *                           |
+         *                   1 ------|
+         */
+
+        long                     mpoDimR = mpos.back().dimension(1);
+        auto                     Rdim    = Redge.dimension(0);
+        Eigen::Tensor<Scalar, 3> M_temp  = Redge.shuffle(Textra::array3{0, 2, 1})
+                                              .reshape(Textra::array2{Rdim * mpoDimR, Rdim})
+                                              .contract(state.mps_sites.back()->get_M_bare(), Textra::idx({0}, {2}))
+                                              .shuffle(Textra::array3{1, 2, 0});
+        auto one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
+        state.mps_sites.back()->set_mps(M_temp, one, 0);
     }
+
     state.clear_measurements();
+    state.clear_cache();
     if(state.has_nan()) throw std::runtime_error("State has NAN's after applying MPO's");
     tools::log->info("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
     tools::log->info("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
@@ -89,108 +117,117 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     tools::log->info("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
 }
 
-
-class_state_finite tools::finite::ops::get_projection_to_parity_sector(const class_state_finite & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
-    if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
+class_state_finite tools::finite::ops::get_projection_to_sector(const class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+    if(std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::common::profile::t_prj->tic();
-    tools::log->debug("Generating parity projected state with sign {}", sign);
-    auto spin_components = tools::finite::measure::spin_components(state);
+    tools::log->debug("Generating state projected into sector with sign {}", sign);
+    auto   spin_components          = tools::finite::measure::spin_components(state);
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
-    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component );
-//    double variance_original  = tools::finite::measure::energy_variance_per_site(state);
+    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component);
+    //    double variance_original  = tools::finite::measure::energy_variance_per_site(state);
 
     // Make a temporary state
     class_state_finite state_projected = state;
     state_projected.clear_measurements();
     state_projected.clear_cache();
     // Do the projection
-    const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
-    apply_mpos(state_projected,mpo, L,R);
+    const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state_projected.get_length(), sign);
+    apply_mpos(state_projected, mpos, L, R);
     // Normalize and truncate back to original bond dimension
-    tools::finite::mps::normalize_state(state_projected,state.find_largest_chi());
-    tools::log->info("Bond dimensions      after  normalization0: {}", tools::finite::measure::bond_dimensions(state_projected));
+    tools::finite::mps::normalize_state(state_projected, state.find_largest_chi());
+    tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state_projected));
 
-//    double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
-//    tools::log->info("Norm                 after  projection   : {:.16f}", tools::finite::measure::norm(state_projected));
-//    tools::log->info("Spin components      after  projection   : {}", tools::finite::measure::spin_components(state_projected));
-//    tools::log->info("Bond dimensions      after  projection   : {}", tools::finite::measure::bond_dimensions(state_projected));
-//    tools::log->info("Entanglement entropy after  projection   : {}", tools::finite::measure::entanglement_entropies(state_projected));
+    //    double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+    //    tools::log->info("Norm                 after  projection   : {:.16f}", tools::finite::measure::norm(state_projected));
+    //    tools::log->info("Spin components      after  projection   : {}", tools::finite::measure::spin_components(state_projected));
+    //    tools::log->info("Bond dimensions      after  projection   : {}", tools::finite::measure::bond_dimensions(state_projected));
+    //    tools::log->info("Entanglement entropy after  projection   : {}", tools::finite::measure::entanglement_entropies(state_projected));
 
     // Check that the calculations went fine
     tools::finite::debug::check_integrity(state_projected);
     state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
     spin_components          = tools::finite::measure::spin_components(state_projected);
     requested_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
-    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
-    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component );
+    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component);
 
-//    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
+    //    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
     tools::common::profile::t_prj->toc();
     return state_projected;
 }
 
-class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector(const class_state_finite &state, const Eigen::MatrixXcd & paulimatrix) {
-    tools::log->trace("Finding closest projection");
+
+void tools::finite::ops::project_to_sector(class_state_finite & state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+    if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]",sign));
+    tools::common::profile::t_prj->tic();
+    tools::log->debug("Projecting state into sector with sign {}", sign);
+    auto   spin_components          = tools::finite::measure::spin_components(state);
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    if (requested_spin_component > 0){
-        return get_projection_to_parity_sector(state, paulimatrix, 1);
-    }else{
-        return get_projection_to_parity_sector(state, paulimatrix, -1);
-    }
-}
+    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component);
+    // Make a temporary state
+    state.clear_measurements();
+    state.clear_cache();
+    // Do the projection
+    const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
+    apply_mpos(state, mpos, L, R);
+    state.tag_all_sites_have_been_updated(true); // All sites change in this operation
+    spin_components          = tools::finite::measure::spin_components(state);
+    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component);
 
-class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector(const class_state_finite &state, std::string parity_sector) {
-    tools::log->trace("Finding closest projection in parity sector {}", parity_sector );
-    if      (parity_sector == "x")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sx);}
-    else if (parity_sector == "y")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sy);}
-    else if (parity_sector == "z")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sz);}
-    else if (parity_sector == "+x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx, 1);}
-    else if (parity_sector == "-x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx,-1);}
-    else if (parity_sector == "+y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy, 1);}
-    else if (parity_sector == "-y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy,-1);}
-    else if (parity_sector == "+z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz, 1);}
-    else if (parity_sector == "-z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz,-1);}
-    else if (parity_sector == "randomAxis"){
-        std::vector<std::string> possibilities = {"x","y","z"};
-        std::string chosen_axis = possibilities[rn::uniform_integer_box(0, 2)];
-        get_projection_to_closest_parity_sector(state, chosen_axis);
-    }
-    else if (parity_sector == "random"){
-        auto coeffs = Eigen::Vector3d::Random().normalized();
-        Eigen::Matrix2cd random_c2 =
-                    coeffs(0) * qm::spinOneHalf::sx
-                +   coeffs(1) * qm::spinOneHalf::sy
-                +   coeffs(2) * qm::spinOneHalf::sz;
-        return get_projection_to_closest_parity_sector(state, random_c2);
-    }
-    else if (parity_sector == "none"){return state;}
-    else{
-        tools::log->warn(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "randomAxis", "random" or "none". Got: )" + parity_sector);
-        tools::log->warn("Taking whichever is closest to current state!");
-        auto spin_components = tools::finite::measure::spin_components(state);
-        auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
-        if(max_idx == 0)      {return get_projection_to_closest_parity_sector(state, "x"); }
-        else if(max_idx == 1) {return get_projection_to_closest_parity_sector(state, "y"); }
-        else if(max_idx == 2) {return get_projection_to_closest_parity_sector(state, "z"); }
-        else {throw std::runtime_error("Wrong parity_sector string and could not find closest parity state");}
-    }
-    throw std::runtime_error(fmt::format(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "randomAxis", "random" or "none". Got: )" + parity_sector));
+    //    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
+    tools::common::profile::t_prj->toc();
+    return state_projected;
 }
 
 
-double tools::finite::ops::overlap(const class_state_finite & state1, const class_state_finite & state2){
 
+
+class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const class_state_finite &state, const std::string &sector) {
+    tools::log->trace("Finding axis closest to sector {}", sector);
+    std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+    bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
+
+    if(sector_is_valid) {
+        auto sector_sign = mps::internals::get_sign(sector);
+        auto paulimatrix = mps::internals::get_pauli(sector);
+        if(sector_sign == 0) {
+            double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
+            if(requested_spin_component > 0)
+                sector_sign = 1;
+            else
+                sector_sign = -1;
+
+        }
+        return get_projection_to_sector(state, paulimatrix, sector_sign);
+
+    }else if(sector == "randomAxis") {
+        std::vector<std::string> possibilities = {"x", "y", "z"};
+        std::string              chosen_axis   = possibilities[rn::uniform_integer_box<size_t>(0, 2)];
+        get_projection_to_nearest_sector(state, chosen_axis);
+    } else if(sector == "random") {
+        auto             coeffs    = Eigen::Vector3d::Random().normalized();
+        Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spinOneHalf::sx + coeffs(1) * qm::spinOneHalf::sy + coeffs(2) * qm::spinOneHalf::sz;
+        return get_projection_to_sector(state, random_c2,1);
+    } else if(sector == "none") {
+        return state;
+    } else
+        throw std::runtime_error(fmt::format("Could not parse sector string [{}]",sector));
+}
+
+
+
+
+double tools::finite::ops::overlap(const class_state_finite &state1, const class_state_finite &state2) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    size_t pos = 0;
-    Eigen::Tensor<Scalar,2> overlap =
-        state1.get_mps_site(pos).get_M()
-            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0,1},{0,1}));
-    for(pos = 1; pos < state1.get_length(); pos++){
-        Eigen::Tensor<Scalar,2> temp = overlap
-            .contract(state1.get_mps_site(pos).get_M()            , Textra::idx({0},{1}))
-            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0,1},{1,0}));
+    size_t                   pos     = 0;
+    Eigen::Tensor<Scalar, 2> overlap = state1.get_mps_site(pos).get_M().contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0, 1}, {0, 1}));
+    for(pos = 1; pos < state1.get_length(); pos++) {
+        Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), Textra::idx({0}, {1}))
+                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0, 1}, {1, 0}));
         overlap = temp;
     }
 
@@ -198,46 +235,44 @@ double tools::finite::ops::overlap(const class_state_finite & state1, const clas
     return norm_chain;
 }
 
-double tools::finite::ops::expectation_value(const class_state_finite & state1, const class_state_finite & state2, const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,3> & Ledge, const Eigen::Tensor<std::complex<double>,3> & Redge){
-
+double tools::finite::ops::expectation_value(const class_state_finite &state1, const class_state_finite &state2,
+                                             const std::list<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 3> &Ledge,
+                                             const Eigen::Tensor<std::complex<double>, 3> &Redge) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mpo_it    = mpos.begin();
-    Eigen::Tensor<Scalar,3> L = Ledge;
+    auto                     mpo_it = mpos.begin();
+    Eigen::Tensor<Scalar, 3> L      = Ledge;
     for(size_t pos = 0; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar,3> temp =
-                L
-                .contract(state1.get_mps_site(pos).get_M()              , idx({0},{1}))
-                .contract(*mpo_it++                                , idx({1,2},{0,2}))
-                .contract(state2.get_mps_site(pos).get_M().conjugate()  , idx({0,3},{1,0}))
-                .shuffle(array3{0,2,1});
+        Eigen::Tensor<Scalar, 3> temp = L.contract(state1.get_mps_site(pos).get_M(), idx({0}, {1}))
+                                            .contract(*mpo_it++, idx({1, 2}, {0, 2}))
+                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), idx({0, 3}, {1, 0}))
+                                            .shuffle(array3{0, 2, 1});
 
         L = temp;
     }
     assert(L.dimensions() == Redge.dimensions());
-    Eigen::Tensor<Scalar,0> E_all_sites = L.contract(Redge, idx({0,1,2},{0,1,2}));
-    double energy_chain = std::real(E_all_sites(0));
+    Eigen::Tensor<Scalar, 0> E_all_sites  = L.contract(Redge, idx({0, 1, 2}, {0, 1, 2}));
+    double                   energy_chain = std::real(E_all_sites(0));
     return energy_chain;
 }
 
-double tools::finite::ops::exp_sq_value     (const class_state_finite & state1, const class_state_finite & state2, const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,4> & Ledge, const Eigen::Tensor<std::complex<double>,4> & Redge){
-
+double tools::finite::ops::exp_sq_value(const class_state_finite &state1, const class_state_finite &state2,
+                                        const std::list<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
+                                        const Eigen::Tensor<std::complex<double>, 4> &Redge) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mpo_it    = mpos.begin();
-    Eigen::Tensor<Scalar,4> L = Ledge;
+    auto                     mpo_it = mpos.begin();
+    Eigen::Tensor<Scalar, 4> L      = Ledge;
     for(size_t pos = 0; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar,4> temp =
-                L
-                .contract(state1.get_mps_site(pos).get_M()              , idx({0},{1}))
-                .contract(*mpo_it                                  , idx({1,3},{0,2}))
-                .contract(*mpo_it++                                , idx({1,4},{0,2}))
-                .contract(state2.get_mps_site(pos).get_M().conjugate()  , idx({0,4},{1,0}))
-                .shuffle(array4{0,3,1,2});
+        Eigen::Tensor<Scalar, 4> temp = L.contract(state1.get_mps_site(pos).get_M(), idx({0}, {1}))
+                                            .contract(*mpo_it, idx({1, 3}, {0, 2}))
+                                            .contract(*mpo_it++, idx({1, 4}, {0, 2}))
+                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), idx({0, 4}, {1, 0}))
+                                            .shuffle(array4{0, 3, 1, 2});
 
         L = temp;
     }
     assert(L.dimensions() == Redge.dimensions());
-    Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(Redge, idx({0,1,2,3},{0,1,2,3}));
+    Eigen::Tensor<Scalar, 0> H2_all_sites = L.contract(Redge, idx({0, 1, 2, 3}, {0, 1, 2, 3}));
     return std::real(H2_all_sites(0));
 }
