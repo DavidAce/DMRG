@@ -216,7 +216,8 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "chi_max", HOFFSET(table, chi_max), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "chi_lim_max", HOFFSET(table, chi_lim_max), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "chi_lim_init", HOFFSET(table, chi_lim_max), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "chi_lim", HOFFSET(table, chi_lim), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "energy_min", HOFFSET(table, energy_min), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max", HOFFSET(table, energy_max), H5T_NATIVE_DOUBLE);
@@ -226,6 +227,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "energy_dens", HOFFSET(table, energy_dens), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_target", HOFFSET(table, energy_dens_target), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_window", HOFFSET(table, energy_dens_window), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "lowest_recorded_variance", HOFFSET(table, lowest_recorded_variance), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "simu_time", HOFFSET(table, simu_time), H5T_NATIVE_DOUBLE);

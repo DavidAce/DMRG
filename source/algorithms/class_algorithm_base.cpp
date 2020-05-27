@@ -4,10 +4,10 @@
 
 #include "class_algorithm_base.h"
 #include <complex>
+#include <config/nmspc_settings.h>
 #include <fstream>
 #include <h5pp/h5pp.h>
 #include <math/nmspc_math.h>
-#include <config/nmspc_settings.h>
 #include <sstream>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -24,8 +24,16 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     tools::common::profile::init_profiling();
 }
 
+void class_algorithm_base::reset_bond_dimension_limits() {
+    status.chi_lim_init = chi_lim_init();
+    status.chi_lim_max  = chi_lim_max();
+    if(chi_lim_grow()) status.chi_lim = chi_lim_init();
+    else
+        status.chi_lim = chi_lim_max();
 
-
+    // Sanity check
+    if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
+}
 
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
@@ -38,17 +46,13 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance) {
     SaturationReport report;
     size_t           last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if(iter < rate + last_measurement) {
-        return report;
-    }
+    if(iter < rate + last_measurement) { return report; }
 
     // It's time to check. Insert current numbers
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
     size_t min_data_points = 2;
-    if(Y_vec.size() < min_data_points) {
-        return report;
-    }
+    if(Y_vec.size() < min_data_points) { return report; }
     size_t start_point = 0;
     double band_size   = 2.0 + 2.0 * tolerance; // Between 2 and  4 standard deviations away
 
@@ -59,8 +63,8 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     // Here we monitor the standard deviation of the signal between [some_point, X_vec.end()],
     // and move "some_point" towards the end. If the standard deviation goes below a certain
     // threshold, we've found the stabilization point.
-    auto recent_point = static_cast<size_t>(std::floor(0.75 * static_cast<double>(Y_vec.size())));
-    recent_point      = std::min(Y_vec.size() - min_data_points, recent_point);
+    auto recent_point       = static_cast<size_t>(std::floor(0.75 * static_cast<double>(Y_vec.size())));
+    recent_point            = std::min(Y_vec.size() - min_data_points, recent_point);
     double recent_point_std = math::stdev(Y_vec, recent_point); // Computes the standard dev of Y_vec from recent_point to end
     for(size_t some_point = 0; some_point < Y_vec.size(); some_point++) {
         double some_point_std = math::stdev(Y_vec, some_point); // Computes the standard dev of Y_vec from some_point to end
@@ -70,10 +74,10 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
         }
     }
     // Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    double avgY         = math::mean(Y_vec, start_point);
-    double slope        = math::slope(X_vec, Y_vec, start_point) / avgY * 100 / std::sqrt(Y_vec.size() - start_point); // TODO: Is dividing by sqrt(elems) reasonable?
-    slope               = std::isnan(slope) ? 0.0 : slope;
-    report.slope        = slope;
+    double avgY  = math::mean(Y_vec, start_point);
+    double slope = math::slope(X_vec, Y_vec, start_point) / avgY * 100 / std::sqrt(Y_vec.size() - start_point); // TODO: Is dividing by sqrt(elems) reasonable?
+    slope        = std::isnan(slope) ? 0.0 : slope;
+    report.slope = slope;
     report.check_from   = start_point;
     report.avgY         = avgY;
     report.has_computed = true;

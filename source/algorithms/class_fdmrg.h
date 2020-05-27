@@ -18,12 +18,13 @@ class class_fdmrg : public class_algorithm_finite {
     explicit class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_);
     StateRitz ritz = StateRitz::SR;
     void      single_fDMRG_step();
-    void      run_simulation() final;
+    void      run_task_list(std::list<fdmrg_task> &task_list);
+    void      run_algorithm() final;
     void      check_convergence() final;
     bool      algo_on() final;
-    long      chi_max() final;
+    long      chi_lim_max() final;
     size_t    print_freq() final;
-    bool      chi_grow() final;
-    long      chi_init() final;
+    bool      chi_lim_grow() final;
+    long      chi_lim_init() final;
     bool      store_wave_function() final;
 };

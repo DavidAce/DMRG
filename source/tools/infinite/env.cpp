@@ -3,12 +3,21 @@
 //
 
 #include "env.h"
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/edges/class_env_ene.h>
 #include <tensors/edges/class_env_var.h>
+
+
+void tools::infinite::env::reset_edges(const class_state_infinite & state, const class_model_infinite & model, class_edges_infinite & edges){
+    edges.get_ene().L.set_edge_dims(state.get_mps_siteA(),model.get_mpo_siteA());
+    edges.get_ene().R.set_edge_dims(state.get_mps_siteB(),model.get_mpo_siteB());
+    edges.get_var().L.set_edge_dims(state.get_mps_siteA(),model.get_mpo_siteA());
+    edges.get_var().R.set_edge_dims(state.get_mps_siteB(),model.get_mpo_siteB());
+}
+
+
 
 
 void tools::infinite::env::enlarge_edges(const class_state_infinite & state, const class_model_infinite & model, class_edges_infinite & edges){

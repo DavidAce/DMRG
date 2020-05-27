@@ -38,7 +38,7 @@ class class_mpo_site {
 
     public:
     explicit class_mpo_site(ModelType model_type_, size_t position_);
-    virtual ~class_mpo_site() = 0;
+    virtual ~class_mpo_site() = default;
 
     void set_position(size_t new_pos);
     void assert_validity() const;
@@ -59,7 +59,7 @@ class class_mpo_site {
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view(double single_site_energy) const = 0;
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_left() const                         = 0;
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_right() const                        = 0;
-    [[nodiscard]] virtual size_t                          get_spin_dimension() const                        = 0;
+    [[nodiscard]] virtual long                            get_spin_dimension() const                        = 0;
     [[nodiscard]] virtual TableMap                        get_parameters() const                            = 0;
     [[nodiscard]] virtual bool                            is_perturbed() const                              = 0;
     [[nodiscard]] virtual Eigen::MatrixXcd                single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,

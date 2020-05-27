@@ -43,8 +43,8 @@ template<typename Scalar, bool sparseLU>
 SparseMatrixProduct<Scalar, sparseLU>::SparseMatrixProduct(const Scalar *A_, const int L_, const bool copy_data, const eigutils::eigSetting::Form form_, const eigutils::eigSetting::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
     if (copy_data){
-        A_stl.resize(L*L);
-        std::copy(A_ptr,A_ptr + L*L, A_stl.begin());
+        A_stl.resize(static_cast<size_t>(L*L));
+        std::copy(A_ptr,A_ptr + static_cast<size_t>(L*L), A_stl.begin());
         A_ptr = A_stl.data();
     }
 

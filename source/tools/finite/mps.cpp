@@ -16,11 +16,12 @@
 #include <tools/finite/svd.h>
 
 #include "measure.h"
+#include <math/nmspc_math.h>
 #include <tools/common/prof.h>
 #include <tools/common/svd.h>
 #include <utility>
 
-void tools::finite::mps::move_center_point(class_state_finite &state, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     if(state.position_is_any_edge()) {
         // Instead of moving out of the chain, just flip the direction and return
         state.flip_direction();
@@ -35,37 +36,43 @@ void tools::finite::mps::move_center_point(class_state_finite &state, std::optio
         long   dR   = mpsR.spin_dim();
         long   chiL = mpsL.get_chiL();
         long   chiR = mpsR.get_chiR();
-        // Store the special LC_diag bond in a temporary. It needs to be put back afterwards
+        // Store the special LC bond in a temporary. It needs to be put back afterwards
         Eigen::Tensor<Scalar, 1> LC = mps.get_LC();
         Eigen::Tensor<Scalar, 3> twosite_tensor;
         if(state.get_direction() == 1) {
+            // Here both M_bare are B's
+            // i.e. mpsL.get_M() = GB * LB
+            // and  mpsR.get_M() = GB * GB
+            // So we have to attach LC from the left
             twosite_tensor = Textra::asDiagonal(LC)
-                                 .contract(mpsL.get_M_bare(), Textra::idx({1}, {1}))
-                                 .contract(mpsR.get_M_bare(), Textra::idx({2}, {1}))
+                                 .contract(mpsL.get_M(), Textra::idx({1}, {1}))
+                                 .contract(mpsR.get_M(), Textra::idx({2}, {1}))
                                  .shuffle(Textra::array4{1, 2, 0, 3})
                                  .reshape(Textra::array3{dL * dR, chiL, chiR});
         } else {
-            twosite_tensor = mpsL.get_M_bare()
-                                 .contract(mpsR.get_M_bare(), Textra::idx({2}, {1}))
-                                 .contract(Textra::asDiagonal(LC), Textra::idx({3}, {0}))
-                                 .shuffle(Textra::array4{0, 2, 1, 3})
-                                 .reshape(Textra::array3{dL * dR, chiL, chiR});
+            // Here both M_bare are A's
+            // The right A should be the previous position, so it has an attached
+            // LC if we ask for get_M(), i.e. mpsR.get_M() = LA * GA * LC
+            // The left A should be a simple A, i.e. mpsL.get_M() = LA * GA
+
+            twosite_tensor =
+                mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
+
         tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
         state.clear_cache();
         state.clear_measurements();
 
-        // Put LC_diag where it belongs.
+        // Put LC where it belongs.
         // Recall that mpsL, mpsR are on the new position, not the old one!
-        if(state.get_direction() == 1)
-            mpsL.set_L(LC);
+        if(state.get_direction() == 1) mpsL.set_L(LC);
         else
             mpsR.set_L(LC);
     }
 }
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::list<size_t> &sites,
-                                                size_t center_position, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold) {
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -74,13 +81,18 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     if(multisite_mps.dimension(2) != state.get_mps_site(sites.back()).get_chiR())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
-    if(not chi_lim) chi_lim = state.get_chi_lim();
-
+    long            spin_prod = 1;
     std::list<long> spin_dims;
-    for(const auto &site : sites) spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
+    for(const auto &site : sites) {
+        spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
+        spin_prod *= spin_dims.back();
+    }
+    if(spin_prod != multisite_mps.dimension(0))
+        throw std::runtime_error(
+            fmt::format("Could not merge multisite mps into state: multisite_mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod));
 
     // Split the multisite mps into single-site mps objects
-    auto mps_list = tools::common::svd::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim.value(), svd_threshold);
+    auto mps_list = tools::common::svd::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
 
     if(sites.size() != mps_list.size())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: number of sites mismatch: positions.size() {} != mps_list.size() {}",
@@ -94,47 +106,72 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
     for(const auto &mps_src : mps_list) {
         auto &mps_tgt = **mps_ptr;
-        if(mps_tgt.get_position() != mps_src.get_position())
-            throw std::runtime_error(fmt::format("Could not merge multisite mps into state: Position mismatch: mps_tgt pos {} != mps_src pos {}",
-                                                 mps_tgt.get_position(), mps_src.get_position()));
-        mps_tgt.set_M(mps_src.get_M());
-        if(mps_src.get_L().size() > 0) // The edges have empty "L"
-            mps_tgt.set_L(mps_src.get_L());
-        if(mps_src.isCenter()) mps_tgt.set_LC(mps_src.get_LC());
+        mps_tgt.merge_mps(mps_src);
         mps_ptr++;
     }
     state.clear_cache();
     state.clear_measurements();
 }
 
-void tools::finite::mps::normalize_state(class_state_finite &state, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-    // When a state needs to be normalized it's enough to "move" the center position around the whole chain
+bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
     // Each move performs an SVD decomposition which leaves unitaries after it, effectively normalizing the state.
+    // NOTE! It may be important to start with the current position.
 
-    tools::log->trace("Normalizing state");
+    // We may want to make a quick check on release builds, but more thorough on debug, for performance.
+    const double norm = [state]{
+      if(settings::debug)
+        return tools::finite::measure::norm(state);
+      else
+        return tools::finite::measure::norm_fast(state);
+    }();
 
-    size_t num_moves = 2 * (state.get_length() - 2);
-    if(state.has_nan()) throw std::runtime_error("State has NAN's before normalization");
-    tools::log->info("Norm                 before normalization: {:.16f}", tools::finite::measure::norm(state));
-    tools::log->info("Spin components      before normalization: {}", tools::finite::measure::spin_components(state));
-    tools::log->info("Bond dimensions      before normalization: {}", tools::finite::measure::bond_dimensions(state));
-    tools::log->info("Entanglement entropy before normalization: {}", tools::finite::measure::entanglement_entropies(state));
+    // We may only go ahead with a normalization if its really needed.
+    if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
 
+    if(settings::debug) {
+        tools::log->trace("Normalizing state");
+        tools::log->info("Position             before normalization: {}", state.get_position());
+        tools::log->info("Direction            before normalization: {}", state.get_direction());
+        tools::log->info("Norm                 before normalization: {:.16f}", tools::finite::measure::norm(state));
+        tools::log->info("Spin components      before normalization: {}", tools::finite::measure::spin_components(state));
+        tools::log->info("Bond dimensions      before normalization: {}", tools::finite::measure::bond_dimensions(state));
+        tools::log->info("Entanglement entropy before normalization: {}", tools::finite::measure::entanglement_entropies(state));
+    }
+    // Start with normalizing at the current position
+    size_t                   num_moves = 2 * (state.get_length() - 1);
+    size_t                   posL      = state.get_position();
+    size_t                   posR      = posL + 1;
+    auto &                   mpsL      = state.get_mps_site(posL);
+    auto &                   mpsR      = state.get_mps_site(posR);
+    long                     dL        = mpsL.spin_dim();
+    long                     dR        = mpsR.spin_dim();
+    long                     chiL      = mpsL.get_chiL();
+    long                     chiR      = mpsR.get_chiR();
+    Eigen::Tensor<Scalar, 3> twosite_tensor =
+        mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
+    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
+
+    // Now we can move around the chain
     for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
-
-    if(state.has_nan()) throw std::runtime_error("State has NAN's after normalization");
-    tools::log->info("Norm                 after  normalization: {:.16f}", tools::finite::measure::norm(state));
-    tools::log->info("Spin components      after  normalization: {}", tools::finite::measure::spin_components(state));
-    tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state));
-    tools::log->info("Entanglement entropy after  normalization: {}", tools::finite::measure::entanglement_entropies(state));
-    std::cerr << "MUST REBUILD ENVIRONMENTS NORMALIZATION" << std::endl;
-    //    tools::finite::mps::rebuild_edges(state);
+    state.clear_measurements();
+    state.clear_cache();
+    state.assert_validity();
+    if(settings::debug) {
+        tools::log->info("Position             after  normalization: {}", state.get_position());
+        tools::log->info("Direction            after  normalization: {}", state.get_direction());
+        tools::log->info("Norm                 after  normalization: {:.16f}", tools::finite::measure::norm(state));
+        tools::log->info("Spin components      after  normalization: {}", tools::finite::measure::spin_components(state));
+        tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state));
+        tools::log->info("Entanglement entropy after  normalization: {}", tools::finite::measure::entanglement_entropies(state));
+    }
+    return true;
 }
 
-void tools::finite::mps::random_product_state(class_state_finite &state, const std::string &sector, long state_number, bool use_pauli_eigenspinors)
+void tools::finite::mps::random_product_state(class_state_finite &state, const std::string &sector, long bitfield, bool use_eigenspinors)
 /*!
  * There are many ways to random_product_state an initial product state state, based on the
- * arguments (sector,state_number,use_pauli_eigenspinors) = (string,long,true/false).
+ * arguments (sector,state_number,use_eigenspinors) = (string,long,true/false).
  * Let sector="+-axis" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
 
         a) ("+-axis"  ,+- ,t,f)     Set spinors to a random sequence of eigenvectors (up/down) of either
@@ -164,42 +201,45 @@ void tools::finite::mps::random_product_state(class_state_finite &state, const s
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);
 
-    if(state_number >= 0)
-        internals::set_random_product_state_in_sector_using_bitset(state, sector, state_number);
-    else
-        internals::set_random_product_state(state, sector, use_pauli_eigenspinors);
-    std::cerr << "MUST REBUILD ENVIRONMENTS AFTER RANDOM PRODUCT STATE INIT" << std::endl;
-    //    tools::finite::mps::rebuild_edges(state);
+    if(bitfield >= 0 and bitfield != internals::used_bitfield) {
+        internals::set_random_product_state_in_sector_using_bitfield(state, sector, bitfield);
+        internals::used_bitfield = bitfield;
+    } else
+        internals::set_random_product_state(state, sector, use_eigenspinors);
 }
 
-void tools::finite::mps::random_current_state(class_state_finite &state, const std::string &axis1, const std::string &axis2) {
-    Eigen::MatrixXcd paulimatrix1;
-    Eigen::MatrixXcd paulimatrix2;
-    if(axis1 == "x")
-        paulimatrix1 = qm::spinOneHalf::sx;
-    else if(axis1 == "y")
-        paulimatrix1 = qm::spinOneHalf::sy;
-    else if(axis1 == "z")
-        paulimatrix1 = qm::spinOneHalf::sz;
-    else
-        paulimatrix1 = qm::spinOneHalf::Id;
-    if(axis2 == "x")
-        paulimatrix2 = qm::spinOneHalf::sx;
-    else if(axis2 == "y")
-        paulimatrix2 = qm::spinOneHalf::sy;
-    else if(axis2 == "z")
-        paulimatrix2 = qm::spinOneHalf::sz;
-    else
-        paulimatrix2 = qm::spinOneHalf::Id;
-    //    auto [mpos,L,R] = qm::mpo::random_pauli_mpos(paulimatrix,state.get_length());
-    auto chi_lim      = state.find_largest_chi();
-    auto [mpos, L, R] = qm::mpo::random_pauli_mpos_x2(paulimatrix1, paulimatrix2, state.get_length());
+void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
+    std::vector<Eigen::Matrix2cd> paulimatrices;
+    for(const auto &str : paulistrings) paulimatrices.emplace_back(internals::get_pauli(str));
+    auto [mpos, L, R] = qm::mpo::random_pauli_mpos(paulimatrices, state.get_length());
     tools::finite::ops::apply_mpos(state, mpos, L, R);
-    tools::finite::mps::normalize_state(state, chi_lim);
-    tools::finite::debug::check_integrity(state);
-    state = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
 }
 
-void tools::finite::mps::project_to_closest_sector(class_state_finite &state, const std::string &sector) {
-    state = tools::finite::ops::get_projection_to_closest_parity_sector(state, sector);
+void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    tools::log->trace("Truncating all sites to bond dimension {}", chi_lim);
+
+    auto original_position  = state.get_position();
+    auto original_direction = state.get_direction();
+    // Start by truncating at the current position.
+    while(true) {
+        move_center_point(state, chi_lim, svd_threshold);
+        if(state.get_position() == original_position and state.get_direction() == original_direction) {
+            // Check if all bond dimensions less than or equal to below chi_lim
+            auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
+            if(std::all_of(bond_dimensions.begin(), bond_dimensions.end(), [chi_lim](const long &chi) { return chi <= chi_lim; })) break;
+        }
+    }
+
+    tools::log->trace("Truncated all sites");
+    std::cerr << "MUST REBUILD EDGES AFTER TRUNCATING ALL SITES" << std::endl;
+}
+
+void tools::finite::mps::truncate_active_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    tools::log->warn("Truncate active sites needs an implementation");
+    throw std::runtime_error("Truncate active sites needs an implementation");
+}
+
+void tools::finite::mps::truncate_next_sites(class_state_finite &state, long chi_lim, size_t num_sites, std::optional<double> svd_threshold) {
+    tools::log->warn("Truncate next sites needs an implementation");
+    throw std::runtime_error("Truncate next sites needs an implementation");
 }

@@ -4,12 +4,14 @@
 #include <string_view>
 #include <type_traits>
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD };
-enum class SimulationTask {FIND_ENERGY_RANGE, ADD_INIT_STATE, ADD_STATE, FINISH_STATE, STORAGE_LEVEL_UP};
+enum class MultisiteMove {ONE, MID, MAX};
 enum class StateRitz {LR,SR}; //Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fDMRG.
 enum class ModelType{ising_tf_rf,ising_sdual};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE };
+enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
+enum class ResetReason {INIT, SATURATED};
+enum class Condition {ALWAYS, IFNEEDED}; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE};
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -17,6 +19,39 @@ enum class PerturbMode {
     UNIFORM_RANDOM_PERCENTAGE, // J_ptb = std::random_uniform(-couplingPtb, couplingPtb) * J_rnd
     UNIFORM_RANDOM_ABSOLUTE,   // J_ptb = std::random_uniform(-couplingPtb, couplingPtb)
 };
+
+enum class SimulationTask {
+    INIT_RANDOM_PRODUCT_STATE,
+    INIT_RANDOMIZE_MODEL,
+//    INIT_RESUME_FROM_FILE, // Resume should not be a task. Rather, consider storing the current task list on file and reading it back in
+    FIND_GROUND_STATE,
+    FIND_HIGHEST_STATE,
+    FIND_EXCITED_STATE,
+};
+
+enum class fdmrg_task {
+    INIT_RANDOMIZE_MODEL,
+    INIT_RANDOM_PRODUCT_STATE,
+    INIT_BOND_DIM_LIMITS,
+    INIT_WRITE_MODEL,
+    INIT_CLEAR_STATUS,
+    INIT_DEFAULT,
+    FIND_GROUND_STATE,
+    FIND_HIGHEST_STATE,
+    POST_WRITE_RESULT,
+    POST_PRINT_RESULT,
+    POST_DEFAULT,
+};
+
+enum class ExcitedDmrgTasks {
+    INIT_RANDOM_PRODUCT_STATE,
+    INIT_RANDOMIZE_MODEL,
+    FIND_GROUND_STATE,
+    FIND_HIGHEST_STATE,
+    FIND_EXCITED_STATE,
+};
+
+
 
 /* clang-format off */
 template<typename T>
@@ -26,6 +61,11 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == AlgorithmType::fDMRG) return "fDMRG";
         if(item == AlgorithmType::xDMRG) return "xDMRG";
         if(item == AlgorithmType::iTEBD) return "iDMRG";
+    }
+    if constexpr(std::is_same_v<T, MultisiteMove>) {
+        if(item == MultisiteMove::ONE) return "ONE";
+        if(item == MultisiteMove::MID) return "MID";
+        if(item == MultisiteMove::MAX) return "MAX";
     }
     if constexpr(std::is_same_v<T, StateRitz>) {
         if(item == StateRitz::SR) return "SR";
@@ -43,6 +83,14 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StopReason::RANDOMIZE) return "RANDOMIZE";
         if(item == StopReason::NONE)      return "NONE";
     }
+    if constexpr(std::is_same_v<T, ResetReason>) {
+        if(item == ResetReason::SATURATED) return "SATURATED";
+        if(item == ResetReason::INIT) return "INIT";
+    }
+    if constexpr(std::is_same_v<T, Condition>) {
+        if(item == Condition::ALWAYS) return "ALWAYS";
+        if(item == Condition::IFNEEDED) return "IFNEEDED";
+    }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
         if(item == StorageLevel::LIGHT)     return "LIGHT";
@@ -57,6 +105,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StorageReason::INIT_STATE)   return "INIT_STATE";
         if(item == StorageReason::EMIN_STATE)   return "EMIN_STATE";
         if(item == StorageReason::EMAX_STATE)   return "EMAX_STATE";
+        if(item == StorageReason::MODEL)        return "MODEL";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == PerturbMode::PERCENTAGE)                 return "PERCENTAGE";
@@ -91,6 +140,11 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "xDMRG") return AlgorithmType::xDMRG;
         if(item == "iDMRG") return AlgorithmType::iTEBD;
     }
+    if constexpr(std::is_same_v<T, MultisiteMove>) {
+        if(item == "ONE") return MultisiteMove::ONE;
+        if(item == "MID") return MultisiteMove::MID;
+        if(item == "MAX") return MultisiteMove::MAX;
+    }
     if constexpr(std::is_same_v<T, StateRitz>) {
         if(item == "SR") return StateRitz::SR;
         if(item == "LR") return StateRitz::LR;
@@ -107,6 +161,14 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "RANDOMIZE") return StopReason::RANDOMIZE;
         if(item == "NONE")      return StopReason::NONE;
     }
+    if constexpr(std::is_same_v<T, ResetReason>) {
+        if(item == "SATURATED") return ResetReason::SATURATED;
+        if(item == "INIT") return ResetReason::INIT;
+    }
+    if constexpr(std::is_same_v<T, Condition>) {
+        if(item == "ALWAYS") return Condition::ALWAYS;
+        if(item == "IFNEEDED") return Condition::IFNEEDED;
+    }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == "NONE")      return StorageLevel::NONE;
         if(item == "LIGHT")     return StorageLevel::LIGHT;
@@ -121,6 +183,7 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "INIT_STATE")return StorageReason::INIT_STATE;
         if(item == "EMIN_STATE")return StorageReason::EMIN_STATE;
         if(item == "EMAX_STATE")return StorageReason::EMAX_STATE;
+        if(item == "MODEL")     return StorageReason::MODEL;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == "PERCENTAGE")                return PerturbMode::PERCENTAGE;

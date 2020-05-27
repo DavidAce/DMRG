@@ -14,25 +14,24 @@ class class_edges_finite {
     std::list<size_t> active_sites;
 
     private:
-//    size_t iter      = 0;
-//    size_t step      = 0;
-//    int    direction = 1;
+    //    size_t iter      = 0;
+    //    size_t step      = 0;
+    //    int    direction = 1;
 
     std::list<std::unique_ptr<class_env_ene>> eneL;
     std::list<std::unique_ptr<class_env_ene>> eneR;
     std::list<std::unique_ptr<class_env_var>> varL;
     std::list<std::unique_ptr<class_env_var>> varR;
-    public:
 
+    public:
     class_edges_finite();
-    ~class_edges_finite(); // Read comment on implementation
-    class_edges_finite (class_edges_finite &&other) noexcept;                  // default move ctor
-    class_edges_finite  &operator=(class_edges_finite &&other) noexcept ;      // default move assign
-    class_edges_finite (const class_edges_finite &other);                      // copy ctor
-    class_edges_finite  &operator=(const class_edges_finite &other);           // copy assign
+    ~class_edges_finite();                                              // Read comment on implementation
+    class_edges_finite(class_edges_finite &&other) noexcept;            // default move ctor
+    class_edges_finite &operator=(class_edges_finite &&other) noexcept; // default move assign
+    class_edges_finite(const class_edges_finite &other);                // copy ctor
+    class_edges_finite &operator=(const class_edges_finite &other);     // copy assign
 
     void initialize(size_t model_size);
-
 
     [[nodiscard]] const class_env_ene &get_eneL(size_t pos) const;
     [[nodiscard]] const class_env_ene &get_eneR(size_t pos) const;
@@ -43,11 +42,13 @@ class class_edges_finite {
     [[nodiscard]] class_env_var &      get_varL(size_t pos);
     [[nodiscard]] class_env_ene &      get_eneR(size_t pos);
 
-    void                 assert_validity() const;
     [[nodiscard]] size_t get_length() const;
     [[nodiscard]] bool   is_real() const;
     [[nodiscard]] bool   has_nan() const;
+    void                 assert_validity() const;
 
+    void eject_inactive_edges(std::optional<std::list<size_t>> sites = std::nullopt);
+    void eject_all_edges();
 
     // This is a reference wrapper for an edge pair
     template<typename env_type>

@@ -10,7 +10,7 @@ namespace rn{
     namespace internal {
         // Make a random number engine
         //    std::mt19937 rng;
-        pcg32 rng;
+        pcg64 rng;
         // Commonly used distributions
         std::uniform_int_distribution<int>      rand_int_01(0, 1);
         std::uniform_real_distribution<double>  rand_double_01(0.0,1.0);
@@ -23,15 +23,15 @@ namespace rn{
         if(n.has_value() and n.value() >= 0){
             auto given_seed = (unsigned long) n.value();
             std::cout << "Seeding : " << given_seed << std::endl;
-            std::seed_seq seq{given_seed};
+            pcg_extras::seed_seq_from<pcg64> seq (given_seed);
+//            std::seed_seq seq{given_seed};
             internal::rng.seed(seq);
-            std::srand(internal::rng());
         }else{
             std::cout << "Seeding : std::random_device" << std::endl;
             pcg_extras::seed_seq_from<std::random_device> seed_source;
             internal::rng.seed(seed_source);
-            std::srand(internal::rng());
         }
+        std::srand(static_cast<unsigned>(internal::rng()));
     }
 
     int uniform_integer_01(){
@@ -69,7 +69,7 @@ namespace rn{
         for (int i = 0; i < in.derived().size(); i++){
             boot.push_back(in(uniform_integer_box(0, (int) (in.size() - 1))));
         }
-        return Eigen::Map<ArrayXd>(boot.data(),boot.size());
+        return Eigen::Map<ArrayXd>(boot.data(), static_cast<Index>(boot.size()));
     }
     ArrayXd random_with_replacement(const ArrayXd & in, const int n){
         if (n > in.size()){cout << "n too large" << endl; exit(1);}
@@ -77,7 +77,7 @@ namespace rn{
         for (int i = 0; i < n; i++){
             boot.push_back(in(uniform_integer_box(0, (int) (in.size() - 1))));
         }
-        return Eigen::Map<ArrayXd>(boot.data(),boot.size());
+        return Eigen::Map<ArrayXd>(boot.data(), static_cast<Index>(boot.size()));
     }
 
     double gaussian_truncated(const double lowerLimit, const double upperLimit, const double mean, const double std) {

@@ -51,7 +51,7 @@ void class_ising_sdual::set_parameters(TableMap &parameters) {
     h5tb.param.h_pert   = std::any_cast<double>(parameters["h_pert"]);
     h5tb.param.lambda   = std::any_cast<double>(parameters["lambda"]);
     h5tb.param.delta    = std::any_cast<double>(parameters["delta"]);
-    h5tb.param.spin_dim = std::any_cast<size_t>(parameters["spin_dim"]);
+    h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     all_mpo_parameters_have_been_set = true;
     build_mpo();
@@ -247,7 +247,7 @@ Eigen::MatrixXcd class_ising_sdual::single_site_hamiltonian(size_t position, siz
 
 std::unique_ptr<class_mpo_site> class_ising_sdual::clone() const { return std::make_unique<class_ising_sdual>(*this); }
 
-size_t class_ising_sdual::get_spin_dimension() const { return h5tb.param.spin_dim; }
+long class_ising_sdual::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
 void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool reverse) {
     if(reverse) {

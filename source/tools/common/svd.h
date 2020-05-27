@@ -9,7 +9,7 @@ namespace tools::common::svd{
     /* clang-format off */
     extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
                                                 const std::list<long>         & spin_dims,
-                                                const std::list<size_t>       & positions,
+                                                const std::list<size_t>       & sites,
                                                 size_t                          center_position,
                                                 long                            chi_limit,
                                                 std::optional<double>           svd_threshold = std::nullopt);
@@ -17,18 +17,14 @@ namespace tools::common::svd{
 
     namespace internal{
 
-        extern std::tuple<
-                    std::list<class_mps_site>,
-                    Eigen::Tensor<Scalar,3>>
+        extern std::list<class_mps_site>
                     split_mps_from_left(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                         std::list<long>                 spin_dims,
                                         std::list<size_t>               positions,
                                         long                            chi_limit,
                                         std::optional<double>           svd_threshold = std::nullopt);
 
-        extern std::tuple<
-                    std::list<class_mps_site>,
-                    Eigen::Tensor<Scalar,3>>
+        extern std::list<class_mps_site>
                     split_mps_from_right(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                          std::list<long>                 spin_dims,
                                          std::list<size_t>               positions,

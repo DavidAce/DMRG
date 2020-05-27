@@ -116,23 +116,25 @@ namespace settings {
         }
     }
 
-    // Options that affect convergence
+    // Options for strategy that affect convergence and targeted state
     namespace strategy {
-        inline bool         chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
-        inline bool         perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
-        inline bool         damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool         project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool         project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
-        inline bool         project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
-        inline bool         randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
-        inline bool         randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
-        inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize_state spinors in x,y or z  */
-        inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
-        inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
-    }
+        inline bool          chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
+        inline bool          perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
+        inline bool          damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
+        inline bool          project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
+        inline bool          project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool          project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_lim_grow == true). */
+        inline bool          randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
+        inline bool          randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
+        inline bool          use_eigenspinors                        = true;               /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
+        inline size_t        max_resets                              = 1;                  /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
+        inline size_t        multisite_max_sites                     = 8;                  /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
+        inline MultisiteMove multisite_move                          = MultisiteMove::ONE; /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline std::string   target_sector                           = "x";                /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
+}
 
 
-    //Parmaters that control MPS, eigensolver and SVD precision
+    //Parmaters that control precision in MPS, eigensolver and SVD
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
@@ -148,21 +150,18 @@ namespace settings {
         inline long     max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline long     max_size_direct                 = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
         inline double   max_norm_error                  = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
-        inline size_t   max_resets                      = 4     ;   /*!< Maximum number of resets to initial state. One must be allowed for initialization */
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from each mpo to avoid catastrophic cancellation when computing the variance */
         inline double   overlap_high                    = 0.99;
         inline double   overlap_cat                     = 0.70710678;
-        inline size_t   max_sites_multidmrg             = 8     ;    /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
-        inline std::string move_multisite         = "one" ;    /*!< How many sites to move after a multi-site dmrg step, choose between {one,mid,max} */
     }
 
     //Parameters controlling iDMRG
     namespace idmrg {
         inline bool on           = true;                           /*!< Turns iDMRG simulation on/off. */
         inline size_t max_iters  = 5000;                           /*!< Maximum number of iDMRG iterations before forced termination */
-        inline long chi_max      = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool chi_grow     = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long chi_init     = 16;                             /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline long chi_lim_max  = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool chi_lim_grow = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long chi_lim_init = 16;                             /*!< Initial chi limit. Only used when chi_lim_grow == true. */
         inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */
 //        inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
 
@@ -176,9 +175,9 @@ namespace settings {
         inline double   delta_t0     = 0.1;                      /*!< Initial time step for iTEBD time evolution.*/
         inline double   delta_tmin   = 0.00001;                  /*!< Final time step for iTEBD time evolution.*/
         inline size_t   suzuki_order = 1;                        /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
-        inline long     chi_max      = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow     = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_init     = 16;                       /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline long     chi_lim_max  = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_lim_grow = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_lim_init = 16;                       /*!< Initial chi limit. Only used when chi_lim_grow == true. */
         inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. (0 = off).*/
 //        inline size_t   write_freq   = 100;                      /*!< Write frequency,for output file buffer. (0 = off). */
 
@@ -189,9 +188,9 @@ namespace settings {
         inline bool     on           = true;                         /*!< Turns fDMRG simulation on/off. */
         inline size_t   max_iters    = 10;                           /*!< Max number sweeps along the chain. */
         inline size_t   min_iters    = 4;                            /*!< Min number sweeps along the chain. */
-        inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_init     = 16;                           /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_lim_grow = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when chi_lim_grow == true. */
         inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
 //        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
@@ -202,9 +201,9 @@ namespace settings {
         inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters               = 10;               /*!< Max number sweeps along the chain. */
         inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
-        inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_init                = 16;               /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline long     chi_lim_max             = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_lim_grow            = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when chi_lim_grow == true. */
         inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
 //        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */

@@ -5,18 +5,19 @@
 #include "class_tensors_infinite.h"
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
-#include <tensors/state/class_state_infinite.h>
 #include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_infinite.h>
+#include <tools/common/log.h>
 #include <tools/infinite/env.h>
 #include <tools/infinite/measure.h>
-#include <tools/common/log.h>
+#include <tools/infinite/mps.h>
 
 class_tensors_infinite::class_tensors_infinite():
     state(std::make_unique<class_state_infinite>()),
     model(std::make_unique<class_model_infinite>()),
     edges(std::make_unique<class_edges_infinite>())
 {
-    tools::log->trace("Constructing tensors");
+    tools::log->trace("Constructing class_tensors_infinite");
 }
 
 
@@ -60,6 +61,17 @@ void class_tensors_infinite::initialize(ModelType model_type_) {
     edges->initialize();
 }
 
+
+
+void class_tensors_infinite::reset_to_random_product_state(const std::string & sector, long bitfield, bool use_eigenspinors){
+    eject_edges();
+    state->clear_cache(); // Other caches can remain intact
+    tools::infinite::mps::random_product_state(*state, sector, bitfield,use_eigenspinors);
+    reset_edges();
+}
+
+
+
 bool class_tensors_infinite::is_real() const { return state->is_real() and model->is_real() and edges->is_real(); }
 bool class_tensors_infinite::has_nan() const { return state->has_nan() or model->has_nan() or edges->has_nan(); }
 void class_tensors_infinite::assert_validity() const {
@@ -68,15 +80,32 @@ void class_tensors_infinite::assert_validity() const {
     edges->assert_validity();
 }
 
-void class_tensors_infinite::update_mps(const Eigen::Tensor<Scalar,3> & twosite_tensor) {
+size_t class_tensors_infinite::get_length() const {
+    return edges->get_length();
+}
+
+void class_tensors_infinite::reset_edges(){
+    tools::infinite::env::reset_edges(*state, *model, *edges);
+    clear_measurements();
+}
+
+void class_tensors_infinite::eject_edges(){
+    edges->eject_edges();
+    clear_measurements();
+}
+
+
+void class_tensors_infinite::merge_multisite_tensor(const Eigen::Tensor<Scalar,3> & twosite_tensor) {
     state->set_mps(twosite_tensor);
-    clear_cache();
+    state->clear_cache();
     clear_measurements();
 }
 
 void class_tensors_infinite::enlarge() {
     tools::infinite::env::enlarge_edges(*state,*model,*edges);
     state->swap_AB();
+    clear_cache();
+    clear_measurements();
 }
 
 

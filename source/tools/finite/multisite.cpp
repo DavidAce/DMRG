@@ -18,10 +18,10 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state
     if(not active_sites) active_sites = state.active_sites;
     if(active_sites.value().empty()) return Eigen::DSizes<long,3>{0,0,0};
     Eigen::DSizes<long,3> dimensions;
+    active_sites.value().sort();
     if(active_sites.value().front() > active_sites.value().back())
-        throw std::runtime_error(fmt::format("Active site list is not strictly increasing: {}", active_sites.value()));
-    if(active_sites.value().size() < 2)
-        throw std::runtime_error(fmt::format("Active site list must have 2 or more items: {}", active_sites.value()));
+        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
+
     dimensions[1] = state.get_mps_site(active_sites.value().front()).get_M().dimension(1);
     dimensions[2] = state.get_mps_site(active_sites.value().back()) .get_M().dimension(2);
     dimensions[0] = 1;
@@ -35,9 +35,7 @@ Eigen::DSizes<long,4> tools::finite::multisite::get_dimensions(const class_model
     if(not active_sites) active_sites = model.active_sites;
     if(active_sites.value().empty()) return Eigen::DSizes<long,4>{0,0,0,0};
     if(active_sites.value().front() > active_sites.value().back())
-        throw std::runtime_error(fmt::format("Active site list is not strictly increasing: {}", active_sites.value()));
-    if(active_sites.value().size() < 2)
-        throw std::runtime_error(fmt::format("Active site list must have 2 or more items: {}", active_sites.value()));
+        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
     Eigen::DSizes<long,4> dimensions;
     dimensions[0] = model.get_mpo(active_sites.value().front()).MPO().dimension(0);
     dimensions[1] = model.get_mpo(active_sites.value().back()) .MPO().dimension(1);
@@ -77,9 +75,11 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         sites.emplace_back(position);
         costs.emplace_back(get_problem_size(state,sites));
         position += direction;
-        if(position == -1 or position == length-1) break;
+        if(sites.size() >= max_sites) break;
+        if(position == -1 or position == length) break;
     }
-    tools::log->trace("Activation problem sizes: {}", costs);
+    tools::log->trace("Activation candidates: {}", sites);
+    tools::log->trace("Activation costs     : {}", costs);
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
@@ -100,9 +100,14 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
             costs.pop_back();
         }
     }
-    if (direction == -1){std::reverse(sites.begin(),sites.end());}
+    sites.sort();
+//    if (direction == -1){std::reverse(sites.begin(),sites.end());}
     tools::log->debug("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
                      state.get_position(), state.get_direction(), threshold,max_sites,min_sites,sites, costs.back(),reason );
+
+    if (sites.size() < 2)
+        throw std::runtime_error("Less than 2 active sites");
+
     return sites;
 }
 

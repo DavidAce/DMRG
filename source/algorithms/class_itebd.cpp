@@ -8,7 +8,6 @@
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -18,7 +17,7 @@ using namespace Textra;
 
 class_itebd::class_itebd(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_infinite(std::move(h5ppFile_), AlgorithmType::iTEBD) {
-    tools::log->trace("Constructing class {}", algo_name);
+    tools::log->trace("Constructing class_itebd");
     status.delta_t      = settings::itebd::delta_t0;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -62,7 +61,7 @@ void class_itebd::single_TEBD_step(){
     tools::common::profile::t_sim->tic();
     for (auto &U: unitary_time_evolving_operators){
         Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state,U);
-        tensors.update_mps(twosite_tensor);
+        tensors.merge_multisite_tensor(twosite_tensor);
         if (&U != &unitary_time_evolving_operators.back()) {
             tensors.state->swap_AB();        }
     }
@@ -96,7 +95,7 @@ void class_itebd::check_convergence_time_step(){
         status.delta_t = std::max(settings::itebd::delta_tmin, status.delta_t * 0.5);
         unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
 //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);
-        clear_saturation_status();
+        clear_convergence_status();
     }
 }
 
@@ -129,9 +128,9 @@ void class_itebd::check_convergence_time_step(){
 
 
 bool   class_itebd::algo_on()    {return settings::itebd::on;}
-long   class_itebd::chi_max()   {return settings::itebd::chi_max;}
+long   class_itebd::chi_lim_max()   {return settings::itebd::chi_lim_max;}
 //size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
 size_t class_itebd::print_freq(){return settings::itebd::print_freq;}
-bool   class_itebd::chi_grow()  {return settings::itebd::chi_grow;}
-long   class_itebd::chi_init()  {return settings::itebd::chi_init;}
+bool   class_itebd::chi_lim_grow()  {return settings::itebd::chi_lim_grow;}
+long   class_itebd::chi_lim_init()  {return settings::itebd::chi_lim_init;}
 

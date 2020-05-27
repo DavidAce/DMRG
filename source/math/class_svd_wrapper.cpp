@@ -41,23 +41,33 @@ void class_SVD::setThreshold(double newThreshold) {
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
  *  Performs rigorous checks to ensure stability of DMRG.
-*   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
-*   \param rows Rows of the matrix
-*   \param cols Columns of the matrix
-*   \param rank_max Maximum number of singular values
-*   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
-*/
+ *  In some cases Eigen::BCDSVD/JacobiSVD will fail with segfault. Here we use a patched version of Eigen that throws an error
+ *  instead so we get a chance to catch it and use lapack svd instead.
+ *   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
+ *   \param rows Rows of the matrix
+ *   \param cols Columns of the matrix
+ *   \param rank_max Maximum number of singular values
+ *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
+ */
 template<typename Scalar>
 std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
 class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
     if (use_lapacke) return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
     if(not rank_max.has_value()) rank_max = std::min(rows,cols);
 
-    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows,cols);
+    Eigen::Map<const MatrixType<Scalar>> mat (mat_ptr, rows,cols);
+
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
     if (cols <= 0)              throw std::runtime_error("SVD error: cols() == 0");
+
+    #ifndef NDEBUG
+    // These are more expensive debugging operations
     if (not mat.allFinite())    throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
+    if(mat.isZero(1e-12))
+        std::cerr << "SVD Warning\n"
+                  << "  Given matrix elements are all close to zero (prec 1e-12)" << std::endl;
+    #endif
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
@@ -71,12 +81,13 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<lo
     }
 
     if (SVD.rank() <= 0
+    or rank == 0
     or not SVD.matrixU().leftCols(rank).allFinite()
     or not SVD.singularValues().head(rank).allFinite()
     or not SVD.matrixV().leftCols(rank).allFinite() )
     {
         std::cerr   << "SVD error \n"
-                    << "  svd_threshold     = " << SVDThreshold << '\n'
+                    << "  svd_threshold    = " << SVDThreshold << '\n'
                     << "  Truncation Error = " << truncation_error << '\n'
                     << "  Rank             = " << rank << '\n'
                     << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'

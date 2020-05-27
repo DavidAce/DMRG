@@ -6,7 +6,6 @@
 #include <glog/logging.h>
 #include <string>
 #include <tensors/class_tensors_finite.h>
-#include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>

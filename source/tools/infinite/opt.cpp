@@ -4,17 +4,13 @@
 
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <math/class_eigsolver.h>
-#include <math/class_svd_wrapper.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
-#include <tensors/state/class_environment.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/prof.h>
-#include <tools/common/views.h>
 #include <tools/infinite/opt.h>
 
 using Scalar = tools::infinite::opt::Scalar;
@@ -24,35 +20,8 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
 }
 
 Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_tensors_infinite &tensors, std::string_view ritzstring) {
-//    const auto                mps = state.get_mps_site();
-//    std::array<long, 3> shape_mps   = tensors.state->dimensions();
-//    std::array<long, 4> shape_mpo   = tensors.model->dimensions();
-//    tools::common::profile::t_eig->tic();
-//    int nev = 1;
-//    using namespace settings::precision;
-//    using namespace eigutils::eigSetting;
-//    Ritz ritz = stringToRitz(ritzstring);
-//
-//    std::cerr << "split up superblock!" << std::endl;
-////    DenseHamiltonianProduct<Scalar> matrix(state.Lblock->block.data(), state.Rblock->block.data(), state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4,
-////                                           shape_mpo4, settings::threading::num_threads);
-//    class_eigsolver                 solver;
-////    solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
-//    auto eigvec =
-//        Eigen::TensorMap<const Eigen::Tensor<Scalar, 1>>(solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(), solver.solution.meta.rows);
-//
-//    tools::common::profile::t_eig->toc();
-//    return eigvec.reshape(theta.dimensions());
-//
-
-
-
-
-
-
     tools::log->trace("Starting ground state optimization");
 
-//
     eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::stringToRitz(ritzstring);
     auto shape_mps = tensors.state->dimensions();
     auto shape_mpo = tensors.model->dimensions();

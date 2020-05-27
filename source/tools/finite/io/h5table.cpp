@@ -46,8 +46,8 @@ void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const 
     measurement_entry.length                          = static_cast<uint64_t>(tools::finite::measure::length(tensors));
     measurement_entry.bond_dimension_midchain         = static_cast<long>(tools::finite::measure::bond_dimension_midchain(*tensors.state));
     measurement_entry.bond_dimension_current          = static_cast<long>(tools::finite::measure::bond_dimension_current(*tensors.state));
-    measurement_entry.bond_dimension_limit            = tensors.state->get_chi_lim();
-    measurement_entry.bond_dimension_maximum          = tensors.state->get_chi_max();
+    measurement_entry.bond_dimension_limit            = status.chi_lim;
+    measurement_entry.bond_dimension_maximum          = status.chi_lim_max;
     measurement_entry.entanglement_entropy_midchain   = tools::finite::measure::entanglement_entropy_midchain(*tensors.state);
     measurement_entry.entanglement_entropy_current    = tools::finite::measure::entanglement_entropy_current(*tensors.state);
     measurement_entry.norm                            = tools::finite::measure::norm(*tensors.state);

@@ -40,20 +40,21 @@ class DenseHamiltonianProduct {
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
     std::shared_ptr<OMP>       omp;
-    int                        num_threads = 1; /*!< Number of threads */
+    std::optional<int>         num_threads = std::nullopt; /*!< Number of threads */
     public:
-    DenseHamiltonianProduct(const Scalar_ *           Lblock_,         /*!< The left block tensor.  */
-                            const Scalar_ *           Rblock_,         /*!< The right block tensor.  */
-                            const Scalar_ *           mpo_,            /*!< The Hamiltonian MPO's  */
-                            const std::array<long, 3> shape_mps_,      /*!< An array containing the shapes of theta  */
-                            const std::array<long, 4> shape_mpo_,      /*!< An array containing the shapes of the MPO  */
-                            const int                 num_threads_ = 1 /*!< Number of threads */
+    DenseHamiltonianProduct(const Scalar_ *           Lblock_,                    /*!< The left block tensor.  */
+                            const Scalar_ *           Rblock_,                    /*!< The right block tensor.  */
+                            const Scalar_ *           mpo_,                       /*!< The Hamiltonian MPO's  */
+                            const std::array<long, 3> shape_mps_,                 /*!< An array containing the shapes of theta  */
+                            const std::array<long, 4> shape_mpo_,                 /*!< An array containing the shapes of the MPO  */
+                            std::optional<int>        num_threads_ = std::nullopt /*!< Number of threads */
                             )
         : Lblock(Lblock_), Rblock(Rblock_), mpo(mpo_), shape_mps(shape_mps_), shape_mpo(shape_mpo_), num_threads(num_threads_) {
         t_mul.set_properties(profile_matrix_product_hamiltonian, 10, "Time multiplying");
         if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
         if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
         if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
+        mps_size = static_cast<int>(shape_mps[0] * shape_mps[1] * shape_mps[2]);
     }
 
     // Functions used in in Arpack++ solver

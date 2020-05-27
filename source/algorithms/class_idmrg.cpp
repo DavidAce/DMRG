@@ -18,7 +18,7 @@ using namespace Textra;
 
 class_idmrg::class_idmrg(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_infinite(std::move(h5ppFile_), AlgorithmType::iDMRG) {
-    tools::log->trace("Constructing class {}", algo_name);
+    tools::log->trace("Constructing class_idmrg");
     tensors.initialize(settings::model::model_type);
 }
 
@@ -51,7 +51,7 @@ void class_idmrg::run_simulation() {
             stop_reason = StopReason::SATURATED;
             break;
         }
-        if(status.num_resets > settings::precision::max_resets) {
+        if(status.num_resets > settings::strategy::max_resets) {
             stop_reason = StopReason::MAX_RESET;
             break;
         }
@@ -76,7 +76,7 @@ void class_idmrg::single_iDMRG_step(){
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
     tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
-    tensors.update_mps(twosite_tensor);
+    tensors.merge_multisite_tensor(twosite_tensor);
     tools::common::profile::t_sim->toc();
     status.wall_time = tools::common::profile::t_tot->get_age();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
@@ -103,10 +103,10 @@ void class_idmrg::check_convergence(){
 
 
 bool   class_idmrg::algo_on()   {return settings::idmrg::on;}
-long   class_idmrg::chi_max()   {return settings::idmrg::chi_max;}
+long   class_idmrg::chi_lim_max()   {return settings::idmrg::chi_lim_max;}
 size_t class_idmrg::print_freq(){return settings::idmrg::print_freq;}
-bool   class_idmrg::chi_grow()  {return settings::idmrg::chi_grow;}
-long   class_idmrg::chi_init()  {return settings::idmrg::chi_init;}
+bool   class_idmrg::chi_lim_grow()  {return settings::idmrg::chi_lim_grow;}
+long   class_idmrg::chi_lim_init()  {return settings::idmrg::chi_lim_init;}
 
 
 

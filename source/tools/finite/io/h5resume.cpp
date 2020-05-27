@@ -27,18 +27,14 @@ void tools::finite::io::h5resume::load_tensors(const h5pp::File &h5ppFile, const
     try {
         tensors.clear_measurements();
         tensors.clear_cache();
-
         if(h5ppFile.readAttribute<std::string>("storage_level", state_prefix) != enum2str(StorageLevel::FULL))
             throw std::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
         tools::common::io::h5resume::load_sim_status_from_hdf5(h5ppFile, state_prefix, status);
         tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model, status);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
         tools::common::io::h5resume::load_profiling_from_hdf5(h5ppFile, state_prefix);
-//        tools::finite::env::rebuild_edges(state, model, edges);
-
-        tools::finite::mps::normalize_state(*tensors.state);
-//        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, state, status);
-        std::cerr << "MUST REBUILD ENVIRONMENTS AFTER RESUME!!" << std::endl;
+        tensors.rebuild_all_edges();
+        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors, status);
     } catch(std::exception &ex) {
         throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what()));
     }
@@ -123,10 +119,9 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         if(pos != position and state.get_mps_site(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
         //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
     }
+
     state.set_iter(status.iter);
     state.set_step(status.step);
-    state.set_chi_lim(status.chi_lim);
-    state.set_chi_max(status.chi_max);
 }
 
 void compare(double val1, double val2, double tol, const std::string &tag) {
@@ -152,7 +147,7 @@ std::list<SimulationTask> tools::finite::io::h5resume::getTaskList(const h5pp::F
     //    if(not status.algorithm_has_succeeded) reasons.push_back(ResumeTasks::FINISH);
     //    if(not status.algorithm_has_converged) reasons.push_back(ResumeTasks::NOT_CONVERGED);
     //    if(status.state_number < settings::xdmrg::max_states) reasons.push_back(ResumeTasks::APPEND_STATES);
-    //    if(status.chi_lim_has_reached_chi_max and settings::xdmrg::chi_max)
+    //    if(status.chi_lim_has_reached_chi_max and settings::xdmrg::chi_lim_max)
     //        ResumeTasks::
     // There may also be
     return tasks;

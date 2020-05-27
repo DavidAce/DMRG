@@ -286,7 +286,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_tensors_
     Eigen::VectorXd  eigvals;
 
     // If multitheta is small enough you can afford full diag.
-    if((size_t) multitheta.size() <= settings::precision::max_size_full_diag) {
+    if(multitheta.size() <= settings::precision::max_size_full_diag) {
         std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multitheta);
     } else {
         double energy_target;
@@ -349,7 +349,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     bool   max_overlap_inwindow = status.energy_lbound < max_overlap_energy and max_overlap_energy < status.energy_ubound;
     tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- inside of window: {}", max_overlap, max_overlap_energy, idx, max_overlap_inwindow);
 
-    // For options LC_diag - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates
+    // For options C - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates
     // should do it.
     //    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
@@ -670,7 +670,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //              We just need to decide which initial guess to use.
 //                  B1) If best_overlap_variance <= theta_variance: set theta_initial = best_overlap_theta.
 //                  B2) Else, set theta_initial = theta_old.
-//          LC_diag)  If overlap_cat <= best_overlap and best_overlap < overlap_high
+//          C)  If overlap_cat <= best_overlap and best_overlap < overlap_high
 //              This can happen for one reasons:
 //                  1) There are a few candidate states with significant overlap (superposition)
 //              It's clear that we need to optimize, but we have to think carefully about the initial guess.
@@ -919,7 +919,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //
 //
 //
-//            // LC_diag) If low_overlap < best_overlap < medium_overlap
+//            // C) If low_overlap < best_overlap < medium_overlap
 //            // Ooops, the subspace error is too high. We still have some options. In order of priority:
 //            // a) If no state is inside the energy window, discard all and return old theta
 //            // b) If any state inside the energy window has lower variance, keep it

@@ -87,7 +87,6 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::opt
                     << "  S all finite     : " << std::boolalpha << S.head(rank).allFinite() << '\n'
                     << "  V all finite     : " << std::boolalpha << VT.topRows(rank).allFinite() << '\n'
                     << "  Lapacke info     = " << info << '\n';
-//        return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
         throw std::runtime_error("SVD lapacke error:  Erroneous results");
     }
 

@@ -9,10 +9,12 @@
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
+#include <tools/finite/multisite.h>
+#include <tools/finite/ops.h>
 
 class_tensors_finite::class_tensors_finite()
     : state(std::make_unique<class_state_finite>()), model(std::make_unique<class_model_finite>()), edges(std::make_unique<class_edges_finite>()) {
-    tools::log->trace("Constructing tensors");
+    tools::log->trace("Constructing class_tensors_finite");
 }
 
 // We need to define the destructor and other special functions
@@ -47,7 +49,42 @@ void class_tensors_finite::initialize(ModelType model_type, size_t model_size, s
     state->initialize(model_type, model_size, position);
     model->initialize(model_type, model_size);
     edges->initialize(model_size);
-    tools::finite::env::rebuild_edges(*state, *model, *edges);
+}
+
+void class_tensors_finite::randomize_model() {
+    tools::finite::mpo::randomize(*model);
+    rebuild_all_edges();
+}
+
+void class_tensors_finite::randomize_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim,
+                                           std::optional<double> svd_threshold) {
+    eject_all_edges();
+    tools::finite::mps::apply_random_paulis(*state, pauli_strings);
+    *state = tools::finite::ops::get_projection_to_nearest_sector(*state, sector);
+    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold); // Call directly
+    if(not has_normalized) throw std::runtime_error("Normalization should definitely happen after projection");
+    rebuild_all_edges();
+    clear_measurements();
+    state->clear_cache(); // Other caches can remain intact
+}
+
+void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold) {
+    // Normalize if unity was lost for some reason (numerical error buildup)
+    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold);
+    if(has_normalized) {
+        eject_all_edges();
+        rebuild_active_edges();
+        clear_measurements();
+        state->clear_cache(); // Other caches can remain intact
+        assert_validity();
+    }
+}
+
+void class_tensors_finite::reset_to_random_product_state(const std::string &sector, long bitfield, bool use_eigenspinors) {
+    clear_measurements();
+    tools::finite::mps::random_product_state(*state, sector, bitfield, use_eigenspinors);
+    tools::finite::mps::normalize_state(*state, 1, 1e-8);
+    rebuild_all_edges();
 }
 
 // Active sites
@@ -55,14 +92,30 @@ void class_tensors_finite::sync_active_sites() {
     active_sites        = state->active_sites;
     model->active_sites = state->active_sites;
     edges->active_sites = state->active_sites;
+    tools::finite::env::rebuild_active_edges(*state, *model, *edges);
 }
 
 void class_tensors_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
-    active_sites        = state->activate_sites(threshold, max_sites, min_sites);
-    model->active_sites = state->active_sites;
-    edges->active_sites = state->active_sites;
+    active_sites        = tools::finite::multisite::generate_site_list(*state, threshold, max_sites, min_sites);
+    state->active_sites = active_sites;
+    model->active_sites = active_sites;
+    edges->active_sites = active_sites;
+    tools::finite::env::rebuild_active_edges(*state, *model, *edges);
+    clear_cache();
+    clear_measurements();
 }
 
+void class_tensors_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
+    active_sites        = tools::finite::multisite::generate_truncated_site_list(*state, threshold, chi_lim, max_sites, min_sites);
+    state->active_sites = active_sites;
+    model->active_sites = active_sites;
+    edges->active_sites = active_sites;
+    tools::finite::env::rebuild_active_edges(*state, *model, *edges);
+    clear_cache();
+    clear_measurements();
+}
+
+long class_tensors_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
 bool class_tensors_finite::is_real() const { return state->is_real() and model->is_real() and edges->is_real(); }
 bool class_tensors_finite::has_nan() const { return state->has_nan() or model->has_nan() or edges->has_nan(); }
 void class_tensors_finite::assert_validity() const {
@@ -85,18 +138,22 @@ bool class_tensors_finite::position_is_left_edge() const { return state->positio
 bool class_tensors_finite::position_is_right_edge() const { return state->position_is_right_edge(); }
 bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
-void class_tensors_finite::move_center_point() {}
-
-void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar,3> & multisite_tensor) {
-    //Make sure the active sites are the same everywhere
+void class_tensors_finite::move_center_point(long chi_lim) { tools::finite::mps::move_center_point(*state, chi_lim); }
+void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold) {
+    // Make sure the active sites are the same everywhere
     if(not math::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(),state->get_chi_lim());
-    clear_cache();
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim);
     clear_measurements();
+    state->clear_cache(); // Other caches can remain intact
+    normalize_state(chi_lim, svd_threshold);
+    assert_validity();
 }
 
-
+void class_tensors_finite::rebuild_all_edges() { tools::finite::env::rebuild_all_edges(*state, *model, *edges); }
+void class_tensors_finite::rebuild_active_edges() { tools::finite::env::rebuild_active_edges(*state, *model, *edges); }
+void class_tensors_finite::eject_all_edges() { edges->eject_all_edges(); }
+void class_tensors_finite::eject_inactive_edges() { edges->eject_inactive_edges(); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
     measurements = tensors_measure_finite();

@@ -116,7 +116,7 @@
 //            state.ENV_L .emplace_back(state.ENV_L .back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //            state.ENV2_L.emplace_back(state.ENV2_L.back().enlarge(state.get_mps_site(site), state.get_MPO(site)));
 //        } else{
-//            //Always set LC_diag on the last "A" matrix
+//            //Always set LC on the last "A" matrix
 //            state.get_mps_site(site).set_LC(S);
 //        }
 //        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(),
@@ -275,94 +275,6 @@
 //}
 //
 //
-//void tools::finite::svd::truncate_all_sites(class_state_finite & state, const size_t & chi_lim, std::optional<double> svd_threshold){
-//    tools::log->trace("Truncating all sites to bond dimension {}",chi_lim);
-//
-//    auto original_position = state.get_position();
-//    auto original_direction = state.get_direction();
-//    // Start by truncating at the current position.
-//    while(true){
-//        move_center_point(state,chi_lim,svd_threshold);
-//        if(state.get_position() == original_position and state.get_direction() == original_direction){
-//            // Check if all bond dimensions less than or equal to below chi_lim
-//            auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
-//            if (std::all_of(bond_dimensions.begin(), bond_dimensions.end(),
-//                           [chi_lim](const size_t &chi){return chi <= chi_lim;}))
-//                break;
-//        }
-//    }
-//
-//    tools::log->trace("Truncated all sites");
-//}
-//
-//
-//void tools::finite::svd::truncate_active_sites(class_state_finite & state, const size_t & chi_lim, std::optional<double> svd_threshold){
-//    if(state.active_sites.empty()) return;
-//    if(state.active_sites.size() < 2) throw std::runtime_error("Need 2 or more active sites");
-//
-//    tools::log->trace("Currently active sites {}", state.active_sites);
-//
-//    auto target_sites = state.active_sites;
-//    // When going to the right, we shouldn't truncate the last site since
-//    // the corresponding LC_diag will not be part of the update.
-//    target_sites.pop_back();
-//
-//    if(target_sites.size() <= 1){
-//        //We only got two active, sites, this is simple.
-//        tools::finite::svd::truncate_theta(state.get_theta(),state,chi_lim,svd_threshold);
-//        return;
-//    }
-//    tools::log->trace("Truncating interior sites {}", target_sites);
-//    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
-//
-//
-//    size_t original_position  = state.get_position();
-//    int original_direction    = state.get_direction();
-//    auto last_bond_dimensions = tools::finite::measure::bond_dimensions(state);
-//    while(true){
-//        size_t next_position = state.get_position() + state.get_direction();
-//        bool next_position_is_interior = std::find(target_sites.begin(), target_sites.end(), next_position) != target_sites.end();
-//        if(next_position_is_interior)
-//            tools::finite::mps::move_center_point(state,chi_lim);
-//        else
-//            tools::finite::mps::move_center_point(state,state.get_chi_lim());
-//
-//        //Check if we are done
-//        if(state.get_position() == original_position and state.get_direction() == original_direction){
-//            // Check if all bond dimensions less than or equal to below chi_lim
-//            auto prev_bond_dimensions = last_bond_dimensions;
-//            last_bond_dimensions = tools::finite::measure::bond_dimensions(state);
-//            if (last_bond_dimensions == prev_bond_dimensions) break;
-//        }
-//
-//        //We don't need to go too far away from the active sites, you can come back earlier
-//        if(state.get_direction() > 0 and state.get_position()  >  state.active_sites.back()) state.flip_direction();
-//        if(state.get_direction() < 0 and state.get_position()  <  state.active_sites.front()) state.flip_direction();
-//
-////        tools::log->info("Pos {} dir {} active_sites {}", state.get_position(), state.get_direction(),state.active_sites);
-//    }
-//    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
-//
-//}
-//
-//
-//void tools::finite::svd::truncate_next_sites(class_state_finite & state, const size_t & chi_lim, size_t num_sites, std::optional<double> svd_threshold){
-//    state.clear_cache();
-//    state.clear_measurements();
-//    if(not state.active_sites.empty()) throw std::logic_error("Make sure the active site list is empty before reaching this point");
-//
-//    size_t from = state.get_direction() > 0 ? state.get_position() : state.get_position() + 1;
-//    size_t upto = from + (static_cast<size_t>(state.get_direction()) * (num_sites - 1));
-//    from = std::max(from,0ul);
-//    from = std::min(from,state.get_length()-1);
-//    upto = std::max(upto,0ul);
-//    upto = std::min(upto,state.get_length()-1);
-//    tools::log->trace("Truncating starting from {} upto {}, num sites = {}",from,upto,num_sites);
-//
-//    auto sites  =  math::range(std::min(from,upto),std::max(from,upto),1);
-//    state.active_sites = std::list<size_t>(sites.begin(),sites.end());
-//    truncate_active_sites(state,chi_lim,svd_threshold);
-//    state.active_sites.clear();
-//}
+
 //
 
