@@ -183,9 +183,9 @@ namespace settings {
 
     }
 
-    //Parameters controlling fDMRG
+    //Parameters controlling fdmrg
     namespace fdmrg {
-        inline bool     on           = true;                         /*!< Turns fDMRG simulation on/off. */
+        inline bool     on           = true;                         /*!< Turns fdmrg simulation on/off. */
         inline size_t   max_iters    = 10;                           /*!< Max number sweeps along the chain. */
         inline size_t   min_iters    = 4;                            /*!< Min number sweeps along the chain. */
         inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */

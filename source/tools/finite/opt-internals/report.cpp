@@ -45,7 +45,7 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                        "nev",
                        "max <θ_i|θ>",
                        "min <θ_i|θ>",
-                       "log10(1-Σ|<θ_i|θ>|^2)",
+                       "log₁₀(1-Σ|<θ_i|θ>|²)",
                        "Eig Time[ms]",
                        "Ham Time[ms]",
                        "LU Time[ms]");

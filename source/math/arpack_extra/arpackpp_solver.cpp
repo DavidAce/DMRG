@@ -194,14 +194,12 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
 template<typename MatrixType>
 void arpackpp_solver<MatrixType>::eigs_comp() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value){
-        std::string ritz = "SR";
         ARCompStdEig<double, MatrixType> solver(
                 matrix.rows(),
                 nev_internal,
                 &matrix,
                 &MatrixType::MultAx,
-                ritz.c_str(),
-//                solverConf.ritz_char,
+                solverConf.get_ritz().c_str(),
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,

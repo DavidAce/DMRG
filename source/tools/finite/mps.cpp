@@ -120,7 +120,7 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
 
     // We may want to make a quick check on release builds, but more thorough on debug, for performance.
     const double norm = [state]{
-      if(settings::debug)
+      if(state.all_sites_updated())
         return tools::finite::measure::norm(state);
       else
         return tools::finite::measure::norm_fast(state);

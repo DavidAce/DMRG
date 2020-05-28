@@ -23,6 +23,7 @@ class class_xdmrg : public class_algorithm_finite {
     explicit class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_);
     void   find_energy_range();
     void   single_xDMRG_step();
+    void   single_xDMRG_step_old();
     void   reset_to_random_state_in_energy_window(ResetReason reason, std::optional<std::string> sector = std::nullopt);
     void   run_preprocessing() final;
     void   run_algorithm() final;

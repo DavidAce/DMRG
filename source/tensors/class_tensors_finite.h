@@ -38,6 +38,9 @@ class class_tensors_finite {
     void randomize_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void reset_to_random_product_state(const std::string &sector, long bitfield, bool use_eigenspinors);
+    void project_to_nearest_sector(const std::string & sector);
+    void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
+
 
     void                 assert_validity() const;
     [[nodiscard]] bool   is_real() const;
@@ -59,8 +62,7 @@ class class_tensors_finite {
     void move_center_point(long chi_lim);
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim,std::optional<double> svd_threshold = std::nullopt);
 
-    void rebuild_all_edges();
-    void rebuild_active_edges();
+    void rebuild_edges();
     void eject_all_edges();
     void eject_inactive_edges();
 

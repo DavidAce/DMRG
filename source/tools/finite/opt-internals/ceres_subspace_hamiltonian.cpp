@@ -27,8 +27,8 @@ Eigen::Tensor<std::complex<double>, 6> tools::finite::opt::internal::local_hamil
     auto cols           = ham.dimension(0) * ham.dimension(1) * ham.dimension(2);
     auto rows           = ham.dimension(3) * ham.dimension(4) * ham.dimension(5);
     long size           = dim0 * dim1 * dim2;
-    if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian dim0*dim1*dim2 and cols: {} != {}", cols, size));
-    if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian dim3*dim4*dim5 and rows: {} != {}", rows, size));
+    if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian rows (dim0*dim1*dim2) and size: {} != {}", cols, size));
+    if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian cols (dim3*dim4*dim5) and size: {} != {}", rows, size));
 
     auto   ham_map         = Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols);
     double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham_map.size());
@@ -62,8 +62,8 @@ Eigen::Tensor<std::complex<double>, 6> tools::finite::opt::internal::local_hamil
     auto cols = ham_sq.dimension(0) * ham_sq.dimension(1) * ham_sq.dimension(2);
     auto rows = ham_sq.dimension(3) * ham_sq.dimension(4) * ham_sq.dimension(5);
     long size = dim0 * dim1 * dim2;
-    if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian squared dim0*dim1*dim2 and cols: {} != {}", cols, size));
-    if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian squared dim3*dim4*dim5 and rows: {} != {}", rows, size));
+    if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian squared rows (dim0*dim1*dim2) and size: {} != {}", cols, size));
+    if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian squared cols (dim3*dim4*dim5) and size: {} != {}", rows, size));
 
     auto   ham_sq_map      = Eigen::Map<Eigen::MatrixXcd>(ham_sq.data(), rows, cols);
     double non_hermiticity = (ham_sq_map - ham_sq_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham_sq_map.size());
@@ -80,16 +80,18 @@ Eigen::Tensor<std::complex<double>, 6> tools::finite::opt::internal::local_hamil
 Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix(const class_model_finite &model,
                                                                                                 const class_edges_finite &edges) {
     auto ham_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(model, edges);
-    auto rows       = ham_tensor.dimension(0);
-    auto cols       = ham_tensor.dimension(1);
+    auto cols = ham_tensor.dimension(0) * ham_tensor.dimension(1) * ham_tensor.dimension(2);
+    auto rows = ham_tensor.dimension(3) * ham_tensor.dimension(4) * ham_tensor.dimension(5);
+    if(rows != cols) throw std::runtime_error(fmt::format("Hamiltonian tensor is not square: rows [{}] | cols [{}]",rows,cols));
     return Eigen::Map<Eigen::MatrixXcd>(ham_tensor.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
 }
 
 Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix(const class_model_finite &model,
                                                                                                         const class_edges_finite &edges) {
     auto ham_squared_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(model, edges);
-    auto rows               = ham_squared_tensor.dimension(0);
-    auto cols               = ham_squared_tensor.dimension(1);
+    auto cols = ham_squared_tensor.dimension(0) * ham_squared_tensor.dimension(1) * ham_squared_tensor.dimension(2);
+    auto rows = ham_squared_tensor.dimension(3) * ham_squared_tensor.dimension(4) * ham_squared_tensor.dimension(5);
+    if(rows != cols) throw std::runtime_error(fmt::format("Hamiltonian squared tensor is not square: rows [{}] | cols [{}]",rows,cols));
     return Eigen::Map<Eigen::MatrixXcd>(ham_squared_tensor.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
 }
 
@@ -168,7 +170,7 @@ Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_ham
     H2                     = H2.selfadjointView<Eigen::Lower>();
     double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum() / static_cast<double>(H2.size());
     double sparcity        = static_cast<double>((H2.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(H2.size());
-
+    if(H2.rows() != H2.cols()) throw std::runtime_error(fmt::format("Hamiltonian tensor is not square: rows [{}] | cols [{}]",H2.rows(), H2.cols()));
     if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}", non_hermiticity));
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(H2.hasNaN()) throw std::runtime_error("subspace hamiltonian squared has NaN's!");

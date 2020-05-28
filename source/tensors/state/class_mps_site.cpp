@@ -32,12 +32,6 @@ class_mps_site::class_mps_site(const class_mps_site &other)                = def
 class_mps_site &class_mps_site::operator=(const class_mps_site &other) = default;
 
 bool class_mps_site::isCenter() const {
-    if(LC) {
-        // Note: Here we can't use "get_M()": that would become lead to a circular error cince get_M() checks this function too.
-        if(LC.value().dimension(0) != get_M_bare().dimension(2))
-            throw std::runtime_error(
-                fmt::format("class_mps_site::isCenter(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
-    }
     return LC.has_value();
 }
 
@@ -62,7 +56,10 @@ const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() const {
 }
 const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
     if(isCenter()) {
-        if(MC) {
+        if(LC.value().dimension(0) != get_M_bare().dimension(2))
+            throw std::runtime_error(
+                fmt::format("class_mps_site::get_M(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
+        if(MC){
             if(MC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): MC has size 0 at position {}", get_position()));
             return MC.value();
         } else {
@@ -83,6 +80,9 @@ const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const {
 }
 const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
     if(isCenter()) {
+        if(LC.value().dimension(0) != get_M_bare().dimension(2))
+            throw std::runtime_error(
+                fmt::format("class_mps_site::get_LC(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
         if(LC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_LC(): LC has size 0 at position {}", get_position()));
         return LC.value();
     } else

@@ -15,8 +15,8 @@
 #include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
-#include <tensors/state/class_state_finite.h>
 #include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/moments.h>
 #include <tools/common/prof.h>
@@ -44,17 +44,16 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
     state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
     state.measurements.spin_components               = measure::spin_components(state);
 
-    state.measurements.length                        = measure::length                       (state);
-    state.measurements.bond_dimension_midchain       = measure::bond_dimension_midchain      (state);
-    state.measurements.bond_dimension_current        = measure::bond_dimension_current       (state);
-    state.measurements.bond_dimensions               = measure::bond_dimensions              (state);
-    state.measurements.norm                          = measure::norm                         (state);
-    state.measurements.spin_components               = measure::spin_components              (state);
+    state.measurements.length                        = measure::length(state);
+    state.measurements.bond_dimension_midchain       = measure::bond_dimension_midchain(state);
+    state.measurements.bond_dimension_current        = measure::bond_dimension_current(state);
+    state.measurements.bond_dimensions               = measure::bond_dimensions(state);
+    state.measurements.norm                          = measure::norm(state);
+    state.measurements.spin_components               = measure::spin_components(state);
     state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
-    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current (state);
-    state.measurements.entanglement_entropies        = measure::entanglement_entropies       (state);
-    state.measurements.truncation_errors             = measure::truncation_errors            (state);
-
+    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
+    state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
+    state.measurements.truncation_errors             = measure::truncation_errors(state);
 }
 
 size_t tools::finite::measure::length(const class_tensors_finite &tensors) { return tensors.get_length(); }
@@ -83,15 +82,14 @@ double tools::finite::measure::norm(const class_state_finite &state) {
 
 double tools::finite::measure::norm_fast(const class_state_finite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    const auto pos = state.get_position();
-    const auto & mpsL = state.get_mps_site(pos);
-    const auto & mpsR = state.get_mps_site(pos+1);
+    const auto  pos  = state.get_position();
+    const auto &mpsL = state.get_mps_site(pos);
+    const auto &mpsR = state.get_mps_site(pos + 1);
 
-    Eigen::Tensor<Scalar,0> norm = mpsL.get_M()
-                                    .contract(mpsR.get_M(), Textra::idx({2},{1}))
-                                    .contract(mpsL.get_M().conjugate(), Textra::idx({0,1},{0,1}))
-                                    .contract(mpsR.get_M().conjugate(), Textra::idx({2,1,0},{1,2,0}));
-
+    Eigen::Tensor<Scalar, 0> norm = mpsL.get_M()
+                                        .contract(mpsR.get_M(), Textra::idx({2}, {1}))
+                                        .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
+                                        .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
 
     double norm_fast = std::abs(norm(0));
     if(std::abs(norm_fast - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_fast);
@@ -99,41 +97,30 @@ double tools::finite::measure::norm_fast(const class_state_finite &state) {
     return state.measurements.norm.value();
 }
 
-
 long tools::finite::measure::bond_dimension_current(const class_state_finite &state) {
-    if(state.measurements.bond_dimension_current) {
-        return state.measurements.bond_dimension_current.value();
-    }
+    if(state.measurements.bond_dimension_current) { return state.measurements.bond_dimension_current.value(); }
     state.measurements.bond_dimension_current = state.current_bond().dimension(0);
     return state.measurements.bond_dimension_current.value();
 }
 
 long tools::finite::measure::bond_dimension_midchain(const class_state_finite &state) {
-    if(state.measurements.bond_dimension_midchain) {
-        return state.measurements.bond_dimension_midchain.value();
-    }
+    if(state.measurements.bond_dimension_midchain) { return state.measurements.bond_dimension_midchain.value(); }
     state.measurements.bond_dimension_midchain = state.midchain_bond().dimension(0);
     return state.measurements.bond_dimension_midchain.value();
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions(const class_state_finite &state) {
-    if(state.measurements.bond_dimensions) {
-        return state.measurements.bond_dimensions.value();
-    }
+    if(state.measurements.bond_dimensions) { return state.measurements.bond_dimensions.value(); }
     state.measurements.bond_dimensions = std::vector<long>{};
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_L().dimension(0));
-        if(state.get_mps_site(pos).isCenter()) {
-            state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_LC().dimension(0));
-        }
+        if(state.get_mps_site(pos).isCenter()) { state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
     }
     return state.measurements.bond_dimensions.value();
 }
 
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropy_current) {
-        return state.measurements.entanglement_entropy_current.value();
-    }
+    if(state.measurements.entanglement_entropy_current) { return state.measurements.entanglement_entropy_current.value(); }
     tools::common::profile::t_ent->tic();
     auto &                   LC                     = state.current_bond();
     Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
@@ -143,9 +130,7 @@ double tools::finite::measure::entanglement_entropy_current(const class_state_fi
 }
 
 double tools::finite::measure::entanglement_entropy_midchain(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropy_midchain) {
-        return state.measurements.entanglement_entropy_midchain.value();
-    }
+    if(state.measurements.entanglement_entropy_midchain) { return state.measurements.entanglement_entropy_midchain.value(); }
     tools::common::profile::t_ent->tic();
     auto &                   LC                      = state.midchain_bond();
     Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
@@ -155,9 +140,7 @@ double tools::finite::measure::entanglement_entropy_midchain(const class_state_f
 }
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropies) {
-        return state.measurements.entanglement_entropies.value();
-    }
+    if(state.measurements.entanglement_entropies) { return state.measurements.entanglement_entropies.value(); }
     tools::common::profile::t_ent->tic();
     std::vector<double> entanglement_entropies;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
@@ -177,9 +160,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
 }
 
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
-    if(state.measurements.spin_components) {
-        return state.measurements.spin_components.value();
-    }
+    if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
     double spin_x                      = measure::spin_component(state, qm::spinOneHalf::sx);
     double spin_y                      = measure::spin_component(state, qm::spinOneHalf::sy);
     double spin_z                      = measure::spin_component(state, qm::spinOneHalf::sz);
@@ -210,23 +191,17 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     throw std::runtime_error("Unexpected axis: " + axis);
 }
 
-std::vector<double> tools::finite::measure::truncation_errors(const class_state_finite & state){
-    if(state.measurements.truncation_errors)
-        return state.measurements.truncation_errors.value();
+std::vector<double> tools::finite::measure::truncation_errors(const class_state_finite &state) {
+    if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
     std::vector<double> truncation_errors;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const auto & mps = state.get_mps_site(pos);
+        const auto &mps = state.get_mps_site(pos);
         truncation_errors.emplace_back(mps.get_truncation_error());
-        if(mps.isCenter()) {
-            truncation_errors.emplace_back(mps.get_truncation_error_LC());
-        }
+        if(mps.isCenter()) { truncation_errors.emplace_back(mps.get_truncation_error_LC()); }
     }
     state.measurements.truncation_errors = truncation_errors;
     return state.measurements.truncation_errors.value();
 }
-
-
-
 
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
     Eigen::Tensor<Scalar, 2> chain(1, 1);
@@ -321,13 +296,10 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
                                                  state.active_sites, model.active_sites, edges.active_sites));
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
-        auto var = tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges);
-        if(var < state.lowest_recorded_variance) state.lowest_recorded_variance = var;
-        return var;
+        return tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges);
     } else {
         double energy = 0;
-        if(model.is_reduced())
-            energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges);
+        if(model.is_reduced()) energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges);
         else
             energy = tools::finite::measure::energy(state, model, edges);
         double E2 = energy * energy;
@@ -335,9 +307,13 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(not math::all_equal(model.active_sites, edges.active_sites))
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
+
         const auto &mpo = model.get_multisite_tensor();
         const auto &env = edges.get_multisite_var_blk();
         tools::log->trace("Measuring energy variance");
+        if(state.dimension(0) != mpo.dimension(2))
+            throw std::runtime_error(
+                fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo.dimension(2)));
         tools::common::profile::t_ene->tic();
         double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
         tools::common::profile::t_ene->toc();
@@ -374,8 +350,7 @@ double tools::finite::measure::energy_minus_energy_reduced(const class_tensors_f
 }
 
 double tools::finite::measure::energy(const class_tensors_finite &tensors) {
-    if(tensors.measurements.energy)
-        return tensors.measurements.energy.value();
+    if(tensors.measurements.energy) return tensors.measurements.energy.value();
     else {
         tensors.measurements.energy = tools::finite::measure::energy(*tensors.state, *tensors.model, *tensors.edges);
         return tensors.measurements.energy.value();
@@ -383,8 +358,7 @@ double tools::finite::measure::energy(const class_tensors_finite &tensors) {
 }
 
 double tools::finite::measure::energy_per_site(const class_tensors_finite &tensors) {
-    if(tensors.measurements.energy_per_site)
-        return tensors.measurements.energy_per_site.value();
+    if(tensors.measurements.energy_per_site) return tensors.measurements.energy_per_site.value();
     else {
         tensors.measurements.energy_per_site = tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges);
         return tensors.measurements.energy_per_site.value();
@@ -392,8 +366,7 @@ double tools::finite::measure::energy_per_site(const class_tensors_finite &tenso
 }
 
 double tools::finite::measure::energy_variance(const class_tensors_finite &tensors) {
-    if(tensors.measurements.energy_variance)
-        return tensors.measurements.energy_variance.value();
+    if(tensors.measurements.energy_variance) return tensors.measurements.energy_variance.value();
     else {
         tensors.measurements.energy_variance = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges);
         return tensors.measurements.energy_variance.value();
@@ -401,8 +374,7 @@ double tools::finite::measure::energy_variance(const class_tensors_finite &tenso
 }
 
 double tools::finite::measure::energy_variance_per_site(const class_tensors_finite &tensors) {
-    if(tensors.measurements.energy_variance_per_site)
-        return tensors.measurements.energy_variance_per_site.value();
+    if(tensors.measurements.energy_variance_per_site) return tensors.measurements.energy_variance_per_site.value();
     else {
         tensors.measurements.energy_variance_per_site = tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges);
         return tensors.measurements.energy_variance_per_site.value();

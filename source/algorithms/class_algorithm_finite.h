@@ -50,10 +50,10 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual void run_postprocessing();
     virtual bool store_wave_function() = 0;
     void         run_task_list(std::list<SimulationTask> &task_list);
-    void         try_projection(class_state_finite &state);
-    void         try_bond_dimension_quench(class_state_finite &state);
-    void         try_hamiltonian_perturbation(class_state_finite &state);
-    void         try_disorder_damping(class_model_finite &model);
+    void         try_projection();
+    void         try_bond_dimension_quench();
+    void         try_hamiltonian_perturbation();
+    void         try_disorder_damping();
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
     void         randomize_model();
     void         update_truncation_limit() final;
