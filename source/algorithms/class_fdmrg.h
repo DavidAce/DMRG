@@ -17,7 +17,7 @@ class class_fdmrg : public class_algorithm_finite {
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_);
     StateRitz ritz = StateRitz::SR;
-    void      single_fDMRG_step();
+    void      single_fdmrg_step();
     void      run_task_list(std::list<fdmrg_task> &task_list);
     void      run_algorithm() final;
     void      check_convergence() final;

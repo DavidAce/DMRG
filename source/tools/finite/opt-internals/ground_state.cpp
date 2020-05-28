@@ -18,7 +18,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
 }
 
 Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
-    tools::log->trace("Ground state optimization... ");
+    tools::log->trace("Ground state optimization... with ritz {}", ritzstring);
 //    using Scalar = std::complex<double>;
     using namespace internal;
     using namespace settings::precision;
@@ -40,6 +40,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
             shape_mpo);
 
     class_eigsolver solver;
+    tools::log->trace("Ground state optimization... with ritz {}", RitzToString(ritz));
     solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
 
     [[maybe_unused]] auto eigvals = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);

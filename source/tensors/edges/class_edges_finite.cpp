@@ -108,7 +108,13 @@ void class_edges_finite::assert_validity() const {
 
 void class_edges_finite::eject_inactive_edges(std::optional<std::list<size_t>> sites) {
     if(not sites) sites = active_sites;
-    if(not sites) throw std::runtime_error("Could not eject inactive edges: no active sites selected");
+    if(not sites or sites->empty()) {
+        // If there are no active sites we may just as well
+        // eject everything and let the next rebuild take
+        // care of it.
+        eject_all_edges();
+        return;
+    }
     for(auto &env : eneL)
         if(env->get_position() > sites->front()) env->clear();
     for(auto &env : varL)

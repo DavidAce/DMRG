@@ -345,7 +345,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
         tools::log->info("Bonds at limit  count : {} ", bond_at_lim_count);
         tools::log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
     }
-    bool state_is_bond_limited = tensors.state->is_bond_limited(5 * settings::precision::svd_threshold);
+    bool state_is_bond_limited = tensors.state->is_bond_limited(status.chi_lim, 5 * settings::precision::svd_threshold);
     if(not state_is_bond_limited) {
         tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.chi_lim);
         return;
@@ -379,7 +379,7 @@ void class_algorithm_finite::reset_to_random_product_state(ResetReason reason, s
 
     tensors.reset_to_random_product_state(sector.value(), bitfield.value(), use_eigenspinors.value());
     clear_convergence_status();
-    tensors.state->lowest_recorded_variance = 1;
+    status.lowest_recorded_variance = 1;
     status.iter                             = tensors.state->reset_iter();
     status.step                             = tensors.state->reset_step();
     auto spin_components                    = tools::finite::measure::spin_components(*tensors.state);
@@ -402,7 +402,7 @@ void class_algorithm_finite::randomize_current_state(std::optional<std::vector<s
 
     clear_convergence_status();
 
-    tensors.state->lowest_recorded_variance = 1;
+    status.lowest_recorded_variance = 1;
     status.iter                             = tensors.state->reset_iter();
     auto spin_components                    = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Successfully reset to random state based on current state. New components: {}", spin_components);
@@ -417,24 +417,24 @@ void class_algorithm_finite::randomize_model(){
 
 
 
-void class_algorithm_finite::try_projection(class_state_finite &state) {
-    if(not state.position_is_any_edge()) return;
+void class_algorithm_finite::try_projection() {
+    if(not tensors.position_is_any_edge()) return;
     if(has_projected) return;
     if(settings::strategy::project_on_every_sweep or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
-        *tensors.state = tools::finite::ops::get_projection_to_nearest_sector(*tensors.state, settings::strategy::target_sector);
+        tensors.project_to_nearest_sector(settings::strategy::target_sector);
         has_projected  = true;
         write_to_file(StorageReason::PROJ_STATE);
     }
 }
 
-void class_algorithm_finite::try_bond_dimension_quench(class_state_finite &state) {
+void class_algorithm_finite::try_bond_dimension_quench() {
     if(tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges) < 10 * settings::precision::variance_convergence_threshold)
         return;
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_convergence_status();
-    if(not state.position_is_any_edge()) return;
-    if(chi_quench_steps >= state.get_length()) {
+    if(not tensors.position_is_any_edge()) return;
+    if(chi_quench_steps >= tensors.get_length()) {
         tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
         tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_quench_ahead);
         return;
@@ -453,15 +453,15 @@ void class_algorithm_finite::try_bond_dimension_quench(class_state_finite &state
         return;
     }
     double truncation_threshold = 5 * settings::precision::svd_threshold;
-    size_t trunc_bond_count     = state.num_sites_truncated(truncation_threshold);
-    size_t bond_at_lim_count    = state.num_bonds_reached_chi(status.chi_lim);
+    size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
+    size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
     tools::log->trace("Truncation threshold : {:.4e}", std::pow(truncation_threshold, 2));
-    tools::log->trace("Truncation errors    : {}", state.get_truncation_errors());
+    tools::log->trace("Truncation errors    : {}", tensors.state->get_truncation_errors());
     tools::log->trace("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->trace("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*tensors.state));
     tools::log->trace("Truncated bond count : {} ", trunc_bond_count);
     tools::log->trace("Bonds at limit  count: {} ", bond_at_lim_count);
-    if(state.is_bond_limited(truncation_threshold)) {
+    if(tensors.state->is_bond_limited(status.chi_lim, truncation_threshold)) {
         tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
@@ -471,15 +471,13 @@ void class_algorithm_finite::try_bond_dimension_quench(class_state_finite &state
     tools::finite::mps::truncate_all_sites(*tensors.state, max_bond_dimension / 2);
     tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
     clear_convergence_status();
-    chi_quench_steps = 1 * state.get_length();
+    chi_quench_steps = 1 * tensors.get_length();
     num_chi_quenches++;
 }
 
-void class_algorithm_finite::try_hamiltonian_perturbation(class_state_finite &state) {
+void class_algorithm_finite::try_hamiltonian_perturbation() {
     if(not settings::strategy::perturb_when_stuck) return;
-    if(not state.position_is_any_edge()) return;
-    if(tensors.model->is_perturbed()) return;
-    if(perturbation_steps > 0) return;
+    if(perturbation_steps-- > 0) return;
     if(not status.algorithm_has_got_stuck) {
         tools::log->info("Perturbation skipped: simulation not stuck");
         return;
@@ -488,19 +486,26 @@ void class_algorithm_finite::try_hamiltonian_perturbation(class_state_finite &st
         tools::log->info("Perturbation skipped: max number of perturbation trials ({}) have been made already", num_perturbations);
         return;
     }
+    if(tensors.model->is_perturbed()){
+        tensors.perturb_hamiltonian(0, 0, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
+    }else{
+        tensors.perturb_hamiltonian(1e-2, 1e-2, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
+        perturbation_steps = 2*(tensors.get_length()-1);
+    }
+
 }
 
-void class_algorithm_finite::try_disorder_damping(class_model_finite &model) {
-    //    if(not state.position_is_left_edge()) return;
+void class_algorithm_finite::try_disorder_damping() {
+    // if(not state.position_is_left_edge()) return;
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()) {
         tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-        model.damp_hamiltonian(damping_exponents.back(), 0);
+        tensors.model->damp_hamiltonian(damping_exponents.back(), 0);
         damping_exponents.pop_back();
-        if(damping_exponents.empty() and model.is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
+        if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
     }
     if(not settings::strategy::damping_when_stuck) return;
-    if(model.is_damped()) return;
+    if(tensors.model->is_damped()) return;
     if(not status.algorithm_has_got_stuck) {
         tools::log->info("Damping skipped: simulation not stuck");
         return;
@@ -516,9 +521,9 @@ void class_algorithm_finite::try_disorder_damping(class_model_finite &model) {
     has_damped = true;
     clear_convergence_status();
     tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-    model.damp_hamiltonian(damping_exponents.back(), 0);
+    tensors.model->damp_hamiltonian(damping_exponents.back(), 0);
     damping_exponents.pop_back();
-    if(damping_exponents.empty() and model.is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
+    if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
 
 void class_algorithm_finite::check_convergence_variance(double threshold, double slope_threshold) {
@@ -764,12 +769,12 @@ void class_algorithm_finite::print_status_update() {
         report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.front(), tensors.state->active_sites.back());
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.back(), tensors.state->active_sites.front());
-    report += fmt::format("E/L: {:<20.16f} ", tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges));
+    report += fmt::format("E/L: {:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε: {:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
     report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ",
-                          std::log10(tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges)),
-                          std::log10(tensors.state->lowest_recorded_variance / static_cast<double>(tensors.state->get_length())));
+                          std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
+                          std::log10(status.lowest_recorded_variance / static_cast<double>(tensors.state->get_length())));
     report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_lim_max(), status.chi_lim,
                           tools::finite::measure::bond_dimension_current(*tensors.state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
@@ -792,13 +797,13 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Steps                              = {}", status.step);
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_age(),
                      tools::common::profile::t_tot->get_age() / 60);
-    tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges));
+    tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) {
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
-                         tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, status.energy_min, status.energy_max));
+                         tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
     }
     tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}",
-                     std::log10(tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges)));
+                     std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
     tools::log->info("Bond dimension maximum χmax        = {}", chi_lim_max());
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));

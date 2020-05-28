@@ -117,75 +117,26 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
     tools::log->info("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
 }
 
-class_state_finite tools::finite::ops::get_projection_to_sector(const class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
-    if(std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    tools::common::profile::t_prj->tic();
-    tools::log->debug("Generating state projected into sector with sign {}", sign);
-    auto   spin_components          = tools::finite::measure::spin_components(state);
-    double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
-    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component);
-    //    double variance_original  = tools::finite::measure::energy_variance_per_site(state);
-
-    // Make a temporary state
-    class_state_finite state_projected = state;
-    state_projected.clear_measurements();
-    state_projected.clear_cache();
-    // Do the projection
-    const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state_projected.get_length(), sign);
-    apply_mpos(state_projected, mpos, L, R);
-    // Normalize and truncate back to original bond dimension
-    tools::finite::mps::normalize_state(state_projected, state.find_largest_chi());
-    tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state_projected));
-
-    //    double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
-    //    tools::log->info("Norm                 after  projection   : {:.16f}", tools::finite::measure::norm(state_projected));
-    //    tools::log->info("Spin components      after  projection   : {}", tools::finite::measure::spin_components(state_projected));
-    //    tools::log->info("Bond dimensions      after  projection   : {}", tools::finite::measure::bond_dimensions(state_projected));
-    //    tools::log->info("Entanglement entropy after  projection   : {}", tools::finite::measure::entanglement_entropies(state_projected));
-
-    // Check that the calculations went fine
-    tools::finite::debug::check_integrity(state_projected);
-    state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
-    spin_components          = tools::finite::measure::spin_components(state_projected);
-    requested_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
-    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
-    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component);
-
-    //    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
-    tools::common::profile::t_prj->toc();
-    return state_projected;
-}
 
 
-void tools::finite::ops::project_to_sector(class_state_finite & state, const Eigen::MatrixXcd &paulimatrix, int sign) {
-    if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]",sign));
+void tools::finite::ops::project_to_sector(class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+    if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::common::profile::t_prj->tic();
     tools::log->debug("Projecting state into sector with sign {}", sign);
-    auto   spin_components          = tools::finite::measure::spin_components(state);
-    double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
+    auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
-    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component);
-    // Make a temporary state
     state.clear_measurements();
     state.clear_cache();
     // Do the projection
     const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
     apply_mpos(state, mpos, L, R);
     state.tag_all_sites_have_been_updated(true); // All sites change in this operation
-    spin_components          = tools::finite::measure::spin_components(state);
+    spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
-    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component);
-
-    //    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
     tools::common::profile::t_prj->toc();
-    return state_projected;
 }
 
-
-
-
-class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const class_state_finite &state, const std::string &sector) {
+void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {
     tools::log->trace("Finding axis closest to sector {}", sector);
     std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
@@ -195,30 +146,37 @@ class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const cl
         auto paulimatrix = mps::internals::get_pauli(sector);
         if(sector_sign == 0) {
             double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-            if(requested_spin_component > 0)
-                sector_sign = 1;
+            if(requested_spin_component > 0) sector_sign = 1;
             else
                 sector_sign = -1;
-
         }
-        return get_projection_to_sector(state, paulimatrix, sector_sign);
+        project_to_sector(state, paulimatrix, sector_sign);
 
-    }else if(sector == "randomAxis") {
+    } else if(sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
         std::string              chosen_axis   = possibilities[rn::uniform_integer_box<size_t>(0, 2)];
-        get_projection_to_nearest_sector(state, chosen_axis);
+        project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
         Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spinOneHalf::sx + coeffs(1) * qm::spinOneHalf::sy + coeffs(2) * qm::spinOneHalf::sz;
-        return get_projection_to_sector(state, random_c2,1);
+        return project_to_sector(state, random_c2, 1);
     } else if(sector == "none") {
-        return state;
+        return;
     } else
-        throw std::runtime_error(fmt::format("Could not parse sector string [{}]",sector));
+        throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
 }
 
+class_state_finite tools::finite::ops::get_projection_to_sector(const class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+    auto state_projected = state;
+    project_to_sector(state_projected, paulimatrix, sign);
+    return state_projected;
+}
 
-
+class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const class_state_finite &state, const std::string &sector) {
+    auto state_projected = state;
+    project_to_nearest_sector(state_projected,sector);
+    return state_projected;
+}
 
 double tools::finite::ops::overlap(const class_state_finite &state1, const class_state_finite &state2) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");

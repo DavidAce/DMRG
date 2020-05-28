@@ -40,8 +40,7 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     cache(other.cache),
     site_update_tags(other.site_update_tags),
     active_sites(other.active_sites),
-    measurements(other.measurements),
-    lowest_recorded_variance(other.lowest_recorded_variance)
+    measurements(other.measurements)
 {
     mps_sites.clear();
     for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
@@ -60,7 +59,6 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         site_update_tags         = other.site_update_tags;
         active_sites             = other.active_sites;
         measurements             = other.measurements;
-        lowest_recorded_variance = other.lowest_recorded_variance;
         mps_sites.clear();
         for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
     }
@@ -513,10 +511,10 @@ double class_state_finite::get_truncated_variance(size_t left_site) const {
 double                     class_state_finite::get_truncated_variance() const { return get_truncated_variance(get_position()); }
 const std::vector<double> &class_state_finite::get_truncated_variances() const { return truncated_variance; }
 
-size_t class_state_finite::num_sites_truncated(double threshold) const {
+size_t class_state_finite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();
     auto trunc_bond_count =
-        static_cast<size_t>(std::count_if(truncation_errors.begin(), truncation_errors.end(), [threshold](auto const &val) { return val > threshold; }));
+        static_cast<size_t>(std::count_if(truncation_errors.begin(), truncation_errors.end(), [truncation_threshold](auto const &val) { return val > truncation_threshold; }));
     return trunc_bond_count;
 }
 
@@ -526,7 +524,7 @@ size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
     return bonds_at_lim;
 }
 
-bool class_state_finite::is_bond_limited(long chi_lim, double svd_threshold) const { return num_sites_truncated(svd_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
+bool class_state_finite::is_bond_limited(long chi_lim, double truncation_threshold) const { return num_sites_truncated(truncation_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
 
 void class_state_finite::clear_measurements() const { measurements = state_measure_finite(); }
 

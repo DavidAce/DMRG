@@ -33,7 +33,7 @@ void tools::finite::io::h5resume::load_tensors(const h5pp::File &h5ppFile, const
         tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model, status);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
         tools::common::io::h5resume::load_profiling_from_hdf5(h5ppFile, state_prefix);
-        tensors.rebuild_all_edges();
+        tensors.rebuild_edges();
         tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors, status);
     } catch(std::exception &ex) {
         throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what()));

@@ -5,7 +5,7 @@
 #include <type_traits>
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD };
 enum class MultisiteMove {ONE, MID, MAX};
-enum class StateRitz {LR,SR}; //Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fDMRG.
+enum class StateRitz {LR,SR}; //Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class ModelType{ising_tf_rf,ising_sdual};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
@@ -43,12 +43,19 @@ enum class fdmrg_task {
     POST_DEFAULT,
 };
 
-enum class ExcitedDmrgTasks {
-    INIT_RANDOM_PRODUCT_STATE,
+enum class xdmrg_task {
     INIT_RANDOMIZE_MODEL,
-    FIND_GROUND_STATE,
-    FIND_HIGHEST_STATE,
+    INIT_RANDOM_PRODUCT_STATE,
+    INIT_BOND_DIM_LIMITS,
+    INIT_WRITE_MODEL,
+    INIT_CLEAR_STATUS,
+    INIT_DEFAULT,
+    FIND_ENERGY_RANGE,
+    FIND_SEED_STATE,
     FIND_EXCITED_STATE,
+    POST_WRITE_RESULT,
+    POST_PRINT_RESULT,
+    POST_DEFAULT,
 };
 
 

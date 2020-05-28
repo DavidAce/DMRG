@@ -56,7 +56,6 @@ class class_state_finite {
     std::list<std::unique_ptr<class_mps_site>> mps_sites;
     std::list<size_t>                          active_sites;
     mutable state_measure_finite               measurements;
-    mutable double                             lowest_recorded_variance = 1.0;
 
     public:
     class_state_finite();
@@ -135,9 +134,9 @@ class class_state_finite {
     double                     get_truncated_variance() const;
     const std::vector<double> &get_truncated_variances() const;
 
-    size_t num_sites_truncated(double threshold = 1e-8) const;
+    size_t num_sites_truncated(double truncation_threshold) const;
     size_t num_bonds_reached_chi(long chi_level) const;
-    bool   is_bond_limited(long chi_limit, double threshold = 1e-8) const;
+    bool   is_bond_limited(long chi_limit, double truncation_threshold) const;
 
     void clear_measurements() const;
     void do_all_measurements() const;
