@@ -1,6 +1,7 @@
 #pragma once
 #include <complex>
 #include <list>
+#include <set>
 #include <optional>
 #include <string>
 #include <tools/finite/opt-internals/enum_classes.h>
@@ -20,8 +21,10 @@ namespace tools::finite::mps {
     extern void truncate_all_sites              (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_active_sites           (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_next_sites             (class_state_finite & state, long chi_lim, size_t num_sites = 4, std::optional<double> svd_threshold = std::nullopt);
+    extern bool bitfield_is_valid               (long bitfield);
+
     namespace internals{
-        inline long used_bitfield = -1;
+        inline std::set<long> used_bitfields;
         extern int get_sign(const std::string &sector);
         extern std::string get_axis(const std::string &sector);
         extern Eigen::Vector2cd get_spinor(const std::string &axis, int sign);

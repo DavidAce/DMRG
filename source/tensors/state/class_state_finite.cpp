@@ -36,7 +36,7 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     step(other.step),
     direction(other.direction),
 //    chi_lim(other.chi_lim),
-//    chi_lim_max(other.chi_lim_max),
+//    chi_lim_max(other.cfg_chi_lim_max),
     cache(other.cache),
     site_update_tags(other.site_update_tags),
     active_sites(other.active_sites),
@@ -54,7 +54,7 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         step                     = other.step;
         direction                = other.direction;
 //        chi_lim                  = other.chi_lim;
-//        chi_lim_max              = other.chi_lim_max;
+//        chi_lim_max              = other.cfg_chi_lim_max;
         cache                    = other.cache;
         site_update_tags         = other.site_update_tags;
         active_sites             = other.active_sites;
@@ -140,26 +140,26 @@ void   class_state_finite::increment_step() { step++; }
 //
 //long class_state_finite::get_chi_lim_init() const {
 //    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-//    if(not chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
-//    return chi_lim_max.value();
+//    if(not cfg_chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
+//    return cfg_chi_lim_max.value();
 //}
 //
 //void class_state_finite::set_chi_lim_init(long chi_max_) {
 //    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
 //    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-//    chi_lim_max = chi_max_;
+//    cfg_chi_lim_max = chi_max_;
 //}
 //
 //long class_state_finite::get_chi_lim_max() const {
 //    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-//    if(not chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
-//    return chi_lim_max.value();
+//    if(not cfg_chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
+//    return cfg_chi_lim_max.value();
 //}
 //
 //void class_state_finite::set_chi_lim_max(long chi_max_) {
 //    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
 //    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-//    chi_lim_max = chi_max_;
+//    cfg_chi_lim_max = chi_max_;
 //}
 
 long class_state_finite::find_largest_chi() const {

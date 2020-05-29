@@ -21,16 +21,7 @@ class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h
 }
 
 void class_algorithm_infinite::run() {
-    if(not algo_on()) return;
-    tools::common::profile::t_tot->tic();
-    run_preprocessing();
-    run_simulation();
-    run_postprocessing();
-    tools::common::profile::t_tot->toc();
-}
-
-void class_algorithm_infinite::run_old() {
-    if(not algo_on()) return;
+    if(not cfg_algorithm_is_on()) return;
     tools::common::profile::t_tot->tic();
     run_preprocessing();
     run_simulation();
@@ -40,9 +31,9 @@ void class_algorithm_infinite::run_old() {
 
 void class_algorithm_infinite::run_preprocessing() {
     tools::common::profile::t_pre->tic();
-    tensors.state->set_chi_max(chi_lim_max());
-    status.chi_lim_max = chi_lim_max();
-    update_bond_dimension_limit(chi_lim_init());
+    tensors.state->set_chi_max(cfg_chi_lim_max());
+    status.chi_lim_max = cfg_chi_lim_max();
+    update_bond_dimension_limit(cfg_chi_lim_init());
     write_to_file(StorageReason::MODEL);
     tools::common::profile::t_pre->toc();
 }
@@ -69,21 +60,21 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 
     try {
         long chi_lim_now = tensors.state->get_chi_lim();
-        if(chi_lim_now < chi_lim_init()) throw std::logic_error("Chi limit should be larger than chi init");
+        if(chi_lim_now < cfg_chi_lim_init()) throw std::logic_error("Chi limit should be larger than chi init");
     } catch(std::exception &error) {
         // If we reached this stage, either
         // 1) chi_lim is not initialized yet
         // 2) chi_lim is initialized, but it is smaller than the init value found in settings
-        // Either way, we should set chi_lim to be chi_lim_init, unless chi_lim_init is larger than tmp_bond_limit
-        tools::log->info("Setting initial bond dimension limit: {}", chi_lim_init());
-        tensors.state->set_chi_lim(chi_lim_init());
-        status.chi_lim = chi_lim_init();
+        // Either way, we should set chi_lim to be chi_lim_init, unless cfg_chi_lim_init is larger than tmp_bond_limit
+        tools::log->info("Setting initial bond dimension limit: {}", cfg_chi_lim_init());
+        tensors.state->set_chi_lim(cfg_chi_lim_init());
+        status.chi_lim = cfg_chi_lim_init();
         return;
     }
 
-    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() >= chi_lim_max();
+    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() >= cfg_chi_lim_max();
     if(not status.chi_lim_has_reached_chi_max) {
-        if(chi_lim_grow()) {
+        if(cfg_chi_lim_grow()) {
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
             if(status.algorithm_has_got_stuck) {
@@ -97,12 +88,12 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
                     tools::log->info("Updating bond dimension limit {} -> {}", tensors.state->get_chi_lim(), chi_new_limit);
                     tensors.state->set_chi_lim(chi_new_limit);
                     clear_convergence_status();
-                    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == chi_lim_max();
+                    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == cfg_chi_lim_max();
 
                     copy_from_tmp();
 
                 } else {
-                    tools::log->debug("chi_lim_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond "
+                    tools::log->debug("cfg_chi_lim_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond "
                                       "dimension limit {}",
                                       tensors.state->get_chi_lim());
                 }
@@ -111,41 +102,41 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
             }
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
-            tools::log->info("Setting bond dimension limit to maximum = {}", chi_lim_max());
-            tensors.state->set_chi_lim(chi_lim_max());
+            tools::log->info("Setting bond dimension limit to maximum = {}", cfg_chi_lim_max());
+            tensors.state->set_chi_lim(cfg_chi_lim_max());
         }
     } else {
-        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_lim_max(), tensors.state->get_chi_lim());
+        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", cfg_chi_lim_max(), tensors.state->get_chi_lim());
     }
     status.chi_lim = tensors.state->get_chi_lim();
     if(tensors.state->get_chi_lim() > tensors.state->get_chi_max())
-        throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", tensors.state->get_chi_lim(), tensors.state->get_chi_max()));
+        throw std::runtime_error(fmt::format("chi_lim is larger than cfg_chi_lim_max! {} > {}", tensors.state->get_chi_lim(), tensors.state->get_chi_max()));
 }
 
 // void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
 //    if(not max_bond_dim.has_value()) {
-//        tools::log->debug("No max bond dim given, setting {}", chi_lim_max());
-//        max_bond_dim = chi_lim_max();
+//        tools::log->debug("No max bond dim given, setting {}", cfg_chi_lim_max());
+//        max_bond_dim = cfg_chi_lim_max();
 //    }
 //    try{
 //        long chi_lim_now = tensors.state->get_chi_lim();
-//        if(chi_lim_now < chi_lim_init())
+//        if(chi_lim_now < cfg_chi_lim_init())
 //            throw std::logic_error("Chi limit should be larger than chi init");
 //    }catch(std::exception &error){
 //        //If we reached this stage, either
 //        // 1) chi_lim is not initialized yet
 //        // 2) chi_lim is initialized, but it is smaller than the init value found in settings
-//        // Either way, we should set chi_lim to be chi_lim_init, unless chi_lim_init is larger than max_bond_dim
-//        tools::log->info("Setting initial bond dimension limit: {}", chi_lim_init());
-//        tensors.state->set_chi_lim(std::min(max_bond_dim.value(),chi_lim_init()));
-//        status.chi_lim_max = max_bond_dim.value();
+//        // Either way, we should set chi_lim to be chi_lim_init, unless cfg_chi_lim_init is larger than max_bond_dim
+//        tools::log->info("Setting initial bond dimension limit: {}", cfg_chi_lim_init());
+//        tensors.state->set_chi_lim(std::min(max_bond_dim.value(),cfg_chi_lim_init()));
+//        status.cfg_chi_lim_max = max_bond_dim.value();
 //        status.chi_lim = tensors.state->get_chi_lim();
 //        return;
 //    }
 //
 //    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == max_bond_dim;
 //    if(not status.chi_lim_has_reached_chi_max){
-//        if(chi_lim_grow()){
+//        if(cfg_chi_lim_grow()){
 //            // Here the settings specify to grow the bond dimension limit progressively during the simulation
 //            // Only do this if the simulation is stuck.
 //            if(status.algorithm_has_got_stuck){
@@ -154,21 +145,21 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //                tensors.state->set_chi_lim(chi_new_limit);
 //                clear_convergence_status();
 //            }else{
-//                tools::log->debug("chi_lim_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", tensors.state->get_chi_lim());
+//                tools::log->debug("cfg_chi_lim_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", tensors.state->get_chi_lim());
 //            }
 //        }else{
 //            // Here the settings specify to just set the limit to maximum chi directly
-//            tools::log->debug("Setting bond dimension limit to maximum = {}", chi_lim_max());
+//            tools::log->debug("Setting bond dimension limit to maximum = {}", cfg_chi_lim_max());
 //            tensors.state->set_chi_lim(max_bond_dim.value());
 //        }
 //    }else{
-//        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_lim_max(),state->get_chi_lim());
+//        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", cfg_chi_lim_max(),state->get_chi_lim());
 //    }
-//    status.chi_lim_max = max_bond_dim.value();
+//    status.cfg_chi_lim_max = max_bond_dim.value();
 //    status.chi_lim = tensors.state->get_chi_lim();
 //}
 
-void class_algorithm_infinite::reset_to_random_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
+void class_algorithm_infinite::randomize_into_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
                                                              std::optional<bool> use_eigenspinors) {
     tools::log->trace("Resetting to random product state");
     if(reason == ResetReason::SATURATED) {
@@ -188,7 +179,7 @@ void class_algorithm_infinite::reset_to_random_product_state(ResetReason reason,
     clear_convergence_status();
 }
 
-void class_algorithm_infinite::randomize_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
+void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
                                                        std::optional<long> chi_lim, std::optional<double> svd_threshold) {
     tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
     throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
@@ -333,7 +324,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
         }
 
         case StorageReason::CHI_UPDATE: {
-            if(not chi_lim_grow()) return;
+            if(not cfg_chi_lim_grow()) return;
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix.append("/checkpoint");
             state_prefix.append("/chi_" + std::to_string(tensors.state->get_chi_lim()));
@@ -398,15 +389,16 @@ void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
         case StorageReason::PROJ_STATE:
         case StorageReason::INIT_STATE:
         case StorageReason::EMIN_STATE:
-        case StorageReason::EMAX_STATE: break;
+        case StorageReason::EMAX_STATE:
+        case StorageReason::MODEL: break;
     }
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 }
 
 void class_algorithm_infinite::print_status_update() {
-    if(math::mod(status.iter, print_freq()) != 0) { return; }
+    if(math::mod(status.iter, cfg_print_freq()) != 0) { return; }
     //    if (not tensors.state->position_is_the_middle()) {return;}
-    if(print_freq() == 0) { return; }
+    if(cfg_print_freq() == 0) { return; }
     //    compute_observables();
     using namespace std;
     std::stringstream report;
@@ -443,7 +435,7 @@ void class_algorithm_infinite::print_status_update() {
     }
 
     report << left << "S: " << setw(21) << setprecision(16) << fixed << tools::infinite::measure::entanglement_entropy(*tensors.state);
-    report << left << "χmax: " << setw(4) << setprecision(3) << fixed << chi_lim_max();
+    report << left << "χmax: " << setw(4) << setprecision(3) << fixed << cfg_chi_lim_max();
     report << left << "χ: " << setw(4) << setprecision(3) << fixed << tools::infinite::measure::bond_dimension(*tensors.state);
     report << left << "log₁₀ trunc: " << setw(10) << setprecision(4) << fixed << std::log10(tools::infinite::measure::truncation_error(*tensors.state));
     report << left << "Sites: " << setw(6) << setprecision(1) << fixed << tensors.get_length();
@@ -516,7 +508,7 @@ void class_algorithm_infinite::print_status_full() {
     }
 
     tools::log->info("Entanglement Entropy  = {:<16.16f}", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    tools::log->info("χmax                  = {:<16d}", chi_lim_max());
+    tools::log->info("χmax                  = {:<16d}", cfg_chi_lim_max());
     tools::log->info("χ                     = {:<16d}", tools::infinite::measure::bond_dimension(*tensors.state));
     tools::log->info("log₁₀ truncation:     = {:<16.16f}", log10(std::log10(tools::infinite::measure::truncation_error(*tensors.state))));
 

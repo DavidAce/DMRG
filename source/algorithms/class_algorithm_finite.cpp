@@ -27,8 +27,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tensors.initialize(settings::model::model_type, settings::model::model_size, 0);
     S_mat.resize(tensors.get_length() + 1);
     X_mat.resize(tensors.get_length() + 1);
-//    tools::finite::print::dimensions(*tensors.model);
-//    tools::finite::print::dimensions(tensors);
+    //    tools::finite::print::dimensions(*tensors.model);
+    //    tools::finite::print::dimensions(tensors);
 }
 
 // We need to make a destructor manually for the enclosing class "class_model_finite"
@@ -37,8 +37,13 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 // This allows us to forward declare the abstract base class "class_model_base"
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-//class_algorithm_finite::~class_algorithm_finite() = default;
+// class_algorithm_finite::~class_algorithm_finite() = default;
 
+
+
+
+
+void class_algorithm_finite::run()
 /*!
  * \brief Dispatches finite DMRG stages.
  * This function manages the stages of simulation differently depending on whether
@@ -64,183 +69,32 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
             - No: start new simulation
 
  */
-void class_algorithm_finite::run() {
+ {
     tools::log->info("Starting {}", algo_name);
     tools::common::profile::t_tot->tic();
-    if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
-        // We may want to resume this simulation.
-        // Resume can imply many things
-        // 1) Resume a simulation which terminated prematurely
-        // 2) Resume a previously successful simulation. This may be desireable if the config
-        //    wants something that is not present in the file.
-        //      a) A certain number of states
-        //      b) A state inside of a particular energy window
-        //      c) The ground or "roof" states
-        // To guide the behavior, we check the setting ResumePolicy.
-        try {
-            auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_name);
-            if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid resume candidates found");
-            tools::log->info("Resuming state [{}]", state_prefix);
-            tools::finite::io::h5resume::load_tensors(*h5pp_file, state_prefix, tensors, status);
-            // Now we decide what to do
-            // Let's consider case 1
 
-            //            if(status.algorithm_has_succeeded){
-            //
-            //            }
-            exit(0);
-            while(h5pp_file->linkExists(algo_name + state_name)) state_name = "state_" + std::to_string(state_number++);
+    // We may want to resume this simulation.
+    if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
+        try {
+            resume();
         } catch(std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
-            exit(0);
-            run_preprocessing();
+            run_default_task_list();
         }
     } else {
-        run_preprocessing();
-    }
-
-    run_algorithm();
-    run_postprocessing();
-    tools::common::profile::t_tot->toc();
-
-    //
-    //    if(not algo_on()) return;
-    //    if(not settings::input::h5_load_filename.empty()){
-    //        h5pp::File h5pp_load(settings::input::h5_load_filename,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
-    //        tools::finite::io::h5restore::load_tensors(h5pp_load, sim_name, status, *tensors.state);
-    //    }
-
-    //
-    //
-    //    tools::log->info("Starting {}", sim_name);
-    //    tools::common::profile::t_tot->tic();
-    //    if(h5pp_file) {
-    //        // This is case 1
-    //        bool finOK_exists = h5pp_file->linkExists("common/finished_all");
-    //        bool mps_exists   = h5pp_file->linkExists(sim_name + "/state/mps");
-    //        bool finOK        = false;
-    //        if(finOK_exists) finOK = h5pp_file->readDataset<bool>("common/finished_all");
-    //
-    //        if(not finOK) {
-    //            // Case 1 a -- run full simulation from scratch.
-    //            tools::log->trace("Case 1a");
-    //            run_preprocessing();
-    //            run_algorithm();
-    //        } else if(not mps_exists) {
-    //            // Case 1 b
-    //            tools::log->trace("Case 1b");
-    //            run_preprocessing();
-    //            run_algorithm();
-    //        } else if(mps_exists) {
-    //            // We can go ahead and load the state from output
-    //            tools::log->trace("Loading MPS from file");
-    //            try {
-    //                tools::finite::io::h5resume::load_tensors(*h5pp_file, sim_name, status, *tensors.state);
-    //            } catch(std::exception &ex) {
-    //                tools::log->error("Failed to load from output: {}", ex.what());
-    //                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
-    //            } catch(...) {
-    //                tools::log->error("Unknown error when trying to resume from file.");
-    //            }
-    //
-    //            bool convergence_was_reached = h5pp_file->readDataset<bool>(sim_name + "/status/simulation_has_converged");
-    //            if(not convergence_was_reached) {
-    //                // Case 1 c -- resume simulation, reset the number of sweeps first.
-    //                tools::log->trace("Case 1c");
-    //                settings::xdmrg::max_sweeps += tensors.state->get_iteration();
-    //                run_algorithm();
-    //
-    //            } else {
-    //                // Case 1 d -- not much else to do.. redo postprocessing for good measure.
-    //                tools::log->trace("Case 1d");
-    //            }
-    //        }
-    //    } else {
-    //        // This is case 2
-    //        tools::log->trace("Case 2");
-    //        run_preprocessing();
-    //        run_algorithm();
-    //    }
-    //    tools::common::profile::t_tot->toc();
-    //    run_postprocessing();
-}
-
-void class_algorithm_finite::run_old()
-/*!
- * \brief Dispatches finite DMRG stages.
- * This function manages the stages of simulation differently depending on whether
- * the data already existed in hdf5 storage or not.
- *
- * There can be two main scenarios that split into cases:
- * 1) The hdf5 file existed already and contains
- *      a) nothing recognizeable (previous crash?)       -- run full simulation from scratch.
- *      b) a converged simulation but no MPS             -- run full simulation from scratch.
- *      c) a not-yet-converged MPS                       -- resume simulation, reset the number of sweeps first.
- *      d) a converged MPS                               -- not much to do... run postprocessing
- * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
-
- *
- */
-{
-    if(not algo_on()) { return; }
-    tools::log->info("Starting {}", algo_name);
-    tools::common::profile::t_tot->tic();
-    if(h5pp_file) {
-        // This is case 1
-        bool finOK_exists = h5pp_file->linkExists("common/finished_all");
-        bool mps_exists   = h5pp_file->linkExists(algo_name + "/state/mps");
-        bool finOK        = false;
-        if(finOK_exists) finOK = h5pp_file->readDataset<bool>("common/finished_all");
-
-        if(not finOK) {
-            // Case 1 a -- run full simulation from scratch.
-            tools::log->trace("Case 1a");
-            run_preprocessing();
-            run_algorithm();
-        } else if(not mps_exists) {
-            // Case 1 b
-            tools::log->trace("Case 1b");
-            run_preprocessing();
-            run_algorithm();
-        } else if(mps_exists) {
-            // We can go ahead and load the state from output
-            tools::log->trace("Loading MPS from file");
-            try {
-                tools::finite::io::h5resume::load_tensors(*h5pp_file, algo_name, tensors, status);
-            } catch(std::exception &ex) {
-                tools::log->error("Failed to load from output: {}", ex.what());
-                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
-            } catch(...) { tools::log->error("Unknown error when trying to resume from file."); }
-
-            bool convergence_was_reached = h5pp_file->readDataset<bool>(algo_name + "/status/simulation_has_converged");
-            if(not convergence_was_reached) {
-                // Case 1 c -- resume simulation, reset the number of sweeps first.
-                tools::log->trace("Case 1c");
-                settings::xdmrg::max_iters += status.iter;
-                run_algorithm();
-
-            } else {
-                // Case 1 d -- not much else to do.. redo postprocessing for good measure.
-                tools::log->trace("Case 1d");
-            }
-        }
-    } else {
-        // This is case 2
-        tools::log->trace("Case 2");
-        run_preprocessing();
-        run_algorithm();
+        run_default_task_list();
     }
     tools::common::profile::t_tot->toc();
-    run_postprocessing();
 }
+
 
 void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Running default preprocessing for {}", algo_name);
     tools::common::profile::t_pre->tic();
     status.clear();
-    reset_bond_dimension_limits();
+    init_bond_dimension_limits();
     randomize_model();
-    reset_to_random_product_state(ResetReason::INIT,settings::strategy::target_sector,settings::input::bitfield, settings::strategy::use_eigenspinors );
+    randomize_into_product_state(ResetReason::INIT, settings::strategy::target_sector, settings::input::bitfield, settings::strategy::use_eigenspinors);
     write_to_file(StorageReason::MODEL);
     tools::common::profile::t_pre->toc();
     tools::log->info("Finished default preprocessing for {}", algo_name);
@@ -308,13 +162,14 @@ void class_algorithm_finite::update_truncation_limit() {
     //    tools::log->info("Lowered SVD threshold to {}",settings::precision::svd_threshold);
 }
 
-
-
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(not tensors.position_is_any_edge()) return;
     status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
-    if(not chi_lim_grow()) { status.chi_lim = status.chi_lim_max; return;}
-    if(status.chi_lim_has_reached_chi_max)  return;
+    if(not cfg_chi_lim_grow()) {
+        status.chi_lim = status.chi_lim_max;
+        return;
+    }
+    if(status.chi_lim_has_reached_chi_max) return;
 
     // If we got here we want increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
@@ -357,65 +212,62 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
     status.chi_lim *= 2;
     clear_convergence_status();
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
-    if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32) randomize_current_state();
+    if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32) randomize_from_current_state();
 
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
-        throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim,status.chi_lim_max));
+        throw std::runtime_error(fmt::format("chi_lim is larger than cfg_chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
 }
 
-void class_algorithm_finite::reset_to_random_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
-                                                           std::optional<bool> use_eigenspinors) {
-    tools::log->trace("Resetting state to random product state");
-    if(reason == ResetReason::SATURATED) {
-        if(status.num_resets >= settings::strategy::max_resets)
-            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
-        else
-            status.num_resets++;
-    }
-    if(not sector) sector = settings::strategy::target_sector;
-    if(not bitfield) bitfield = settings::input::bitfield;
-    if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
-
-    tensors.reset_to_random_product_state(sector.value(), bitfield.value(), use_eigenspinors.value());
-    clear_convergence_status();
-    status.lowest_recorded_variance = 1;
-    status.iter                             = tensors.state->reset_iter();
-    status.step                             = tensors.state->reset_step();
-    auto spin_components                    = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Successfully reset to random product state with spin components: {}", spin_components);
-}
-
-void class_algorithm_finite::randomize_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
-                                                     std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing current state by applying random pauli matrices on each site");
-    if(not pauli_strings) pauli_strings = {"x", "z"};
-    if(not sector) sector = settings::strategy::target_sector;
-    if(not chi_lim) chi_lim = tensors.state->find_largest_chi();
-    if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
-
-    // Randomize state
-    tools::log->info("Applying random paulis");
-    tools::log->debug("Bond dimensions before randomization: {}", tools::finite::measure::bond_dimensions(*tensors.state));
-    tensors.randomize_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
-    tools::log->debug("Bond dimensions after  randomization: {}", tools::finite::measure::bond_dimensions(*tensors.state));
-
-    clear_convergence_status();
-
-    status.lowest_recorded_variance = 1;
-    status.iter                             = tensors.state->reset_iter();
-    auto spin_components                    = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Successfully reset to random state based on current state. New components: {}", spin_components);
-    if(not tensors.state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
-}
-
-void class_algorithm_finite::randomize_model(){
+void class_algorithm_finite::randomize_model() {
     tools::log->info("Randomizing model");
     tensors.randomize_model();
     clear_convergence_status();
 };
 
+void class_algorithm_finite::randomize_into_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
+                                                          std::optional<bool> use_eigenspinors) {
+    tools::log->info("Randomizing into product state: [{}] | Reason {} ...", state_name, enum2str(reason));
+    if(reason == ResetReason::SATURATED) {
+        if(status.num_resets >= settings::strategy::max_resets)
+            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
+        else
+            status.num_resets++; // Only increment if doing it for saturation reasons
+    }
+    if(not sector) sector = settings::strategy::target_sector;
+    if(not bitfield) bitfield = settings::input::bitfield;
+    if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
 
+    tensors.randomize_into_product_state(sector.value(), bitfield.value(), use_eigenspinors.value());
+    clear_convergence_status();
+    status.lowest_recorded_variance = 1;
+    status.iter                     = tensors.state->reset_iter();
+    status.step                     = tensors.state->reset_step();
+    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
+    tools::log->info("Randomizing into product state: [{}] | Reason {} ... OK! | spin components {}", state_name, enum2str(reason), spin_components);
+}
+
+void class_algorithm_finite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
+                                                          std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+    tools::log->info("Randomizing from current state: [{}] ...", state_name);
+    if(not pauli_strings) pauli_strings = {"x", "z"};
+    if(not sector) sector = settings::strategy::target_sector;
+    if(not chi_lim) chi_lim = tensors.state->find_largest_chi();
+    if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
+    // Randomize state
+    tensors.randomize_from_current_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
+    clear_convergence_status();
+    excited_state_number++;
+    status.reset();
+    status.iter      = tensors.state->reset_iter();
+    status.step      = tensors.state->reset_step();
+    status.position  = tensors.state->get_position();
+    status.direction = tensors.state->get_direction();
+    if(cfg_chi_lim_grow())
+        status.chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
+    auto spin_components = tools::finite::measure::spin_components(*tensors.state);
+    tools::log->info("Randomizing from current state: [{}] ... OK! | spin components {}", state_name, spin_components);
+}
 
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_any_edge()) return;
@@ -423,7 +275,7 @@ void class_algorithm_finite::try_projection() {
     if(settings::strategy::project_on_every_sweep or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
         tensors.project_to_nearest_sector(settings::strategy::target_sector);
-        has_projected  = true;
+        has_projected = true;
         write_to_file(StorageReason::PROJ_STATE);
     }
 }
@@ -486,13 +338,12 @@ void class_algorithm_finite::try_hamiltonian_perturbation() {
         tools::log->info("Perturbation skipped: max number of perturbation trials ({}) have been made already", num_perturbations);
         return;
     }
-    if(tensors.model->is_perturbed()){
+    if(tensors.model->is_perturbed()) {
         tensors.perturb_hamiltonian(0, 0, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
-    }else{
+    } else {
         tensors.perturb_hamiltonian(1e-2, 1e-2, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
-        perturbation_steps = 2*(tensors.get_length()-1);
+        perturbation_steps = 2 * (tensors.get_length() - 1);
     }
-
 }
 
 void class_algorithm_finite::try_disorder_damping() {
@@ -616,7 +467,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
 }
 
 void class_algorithm_finite::clear_convergence_status() {
-    tools::log->trace("Clearing saturation status");
+    tools::log->trace("Clearing convergence status");
     for(auto &mat : S_mat) { mat.clear(); }
     for(auto &mat : X_mat) { mat.clear(); }
     S_slopes.clear();
@@ -642,24 +493,23 @@ void class_algorithm_finite::clear_convergence_status() {
     has_damped                         = false;
 }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason) {write_to_file(storage_reason, *tensors.state);}
+void class_algorithm_finite::write_to_file(StorageReason storage_reason) { write_to_file(storage_reason, *tensors.state); }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection, const std::string & given_prefix ) {
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection, const std::string &given_prefix) {
     StorageLevel      storage_level;
     const std::string table_prefix = algo_name + "/" + state_name;
     std::string       state_prefix = algo_name + "/" + state_name; // May get modified
     std::string       model_prefix = algo_name + "/model";
     if(not given_prefix.empty()) state_prefix = given_prefix;
 
-
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
-            //If we have finished we may want to write a projection too
+            // If we have finished we may want to write a projection too
             state_prefix.append("/finished");
-            write_to_file(StorageReason::PROJ_STATE, state,is_projection, state_prefix);
+            write_to_file(StorageReason::PROJ_STATE, state, is_projection, state_prefix);
             break;
         }
         case StorageReason::CHECKPOINT: {
@@ -673,18 +523,17 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::CHI_UPDATE: {
-            if(not chi_lim_grow()) return;
-            //If we have updated chi we may want to write a projection too
+            if(not cfg_chi_lim_grow()) return;
+            // If we have updated chi we may want to write a projection too
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix.append("/checkpoint");
             state_prefix.append("/chi_" + std::to_string(status.chi_lim));
-            if(settings::strategy::project_on_chi_update)
-                write_to_file(StorageReason::PROJ_STATE, state,is_projection,state_prefix);
+            if(settings::strategy::project_on_chi_update) write_to_file(StorageReason::PROJ_STATE, state, is_projection, state_prefix);
             break;
         }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::output::storage_level_proj_state;
-            if(not is_projection and storage_level != StorageLevel::NONE){
+            if(not is_projection and storage_level != StorageLevel::NONE) {
                 auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(*tensors.state, settings::strategy::target_sector);
                 write_to_file(storage_reason, state_projected, true, state_prefix);
                 return;
@@ -710,7 +559,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         case StorageReason::MODEL: {
             storage_level = settings::output::storage_level_model;
             tools::finite::io::h5table::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
-            tools::finite::io::h5dset::write_model(*h5pp_file,  model_prefix, storage_level, *tensors.model);
+            tools::finite::io::h5dset::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
             copy_from_tmp(storage_reason);
             return;
         }
@@ -756,8 +605,8 @@ void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
 }
 
 void class_algorithm_finite::print_status_update() {
-    if(math::mod(status.step, print_freq()) != 0) return;
-    if(print_freq() == 0) return;
+    if(math::mod(status.step, cfg_print_freq()) != 0) return;
+    if(cfg_print_freq() == 0) return;
 
     std::string report;
     report += fmt::format("{:<} ", algo_name);
@@ -772,11 +621,10 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("E/L: {:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε: {:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
-    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ",
-                          std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
+    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
                           std::log10(status.lowest_recorded_variance / static_cast<double>(tensors.state->get_length())));
-    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_lim_max(), status.chi_lim,
-                          tools::finite::measure::bond_dimension_current(*tensors.state));
+    report +=
+        fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
@@ -802,9 +650,8 @@ void class_algorithm_finite::print_status_full() {
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                          tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
     }
-    tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}",
-                     std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
-    tools::log->info("Bond dimension maximum χmax        = {}", chi_lim_max());
+    tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
+    tools::log->info("Bond dimension maximum χmax        = {}", cfg_chi_lim_max());
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
     tools::log->info("Entanglement entropies Sₑ          = {}", tools::finite::measure::entanglement_entropies(*tensors.state));

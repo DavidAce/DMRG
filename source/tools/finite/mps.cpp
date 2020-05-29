@@ -171,7 +171,7 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
 void tools::finite::mps::random_product_state(class_state_finite &state, const std::string &sector, long bitfield, bool use_eigenspinors)
 /*!
  * There are many ways to random_product_state an initial product state state, based on the
- * arguments (sector,state_number,use_eigenspinors) = (string,long,true/false).
+ * arguments (sector,excited_state_number,use_eigenspinors) = (string,long,true/false).
  * Let sector="+-axis" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
 
         a) ("+-axis"  ,+- ,t,f)     Set spinors to a random sequence of eigenvectors (up/down) of either
@@ -201,12 +201,18 @@ void tools::finite::mps::random_product_state(class_state_finite &state, const s
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);
 
-    if(bitfield >= 0 and bitfield != internals::used_bitfield) {
+    if(bitfield_is_valid(bitfield)) {
         internals::set_random_product_state_in_sector_using_bitfield(state, sector, bitfield);
-        internals::used_bitfield = bitfield;
+        internals::used_bitfields.insert(bitfield);
     } else
         internals::set_random_product_state(state, sector, use_eigenspinors);
 }
+
+
+bool tools::finite::mps::bitfield_is_valid(long bitfield) {
+    return bitfield > 0 and internals::used_bitfields.count(bitfield) == 0;
+}
+
 
 void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
     std::vector<Eigen::Matrix2cd> paulimatrices;

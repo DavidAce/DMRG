@@ -127,10 +127,10 @@ void class_itebd::check_convergence_time_step(){
 
 
 
-bool   class_itebd::algo_on()    {return settings::itebd::on;}
-long   class_itebd::chi_lim_max()   {return settings::itebd::chi_lim_max;}
+bool   class_itebd::cfg_algorithm_is_on()    {return settings::itebd::on;}
+long   class_itebd::cfg_chi_lim_max()   {return settings::itebd::chi_lim_max;}
 //size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
-size_t class_itebd::print_freq(){return settings::itebd::print_freq;}
-bool   class_itebd::chi_lim_grow()  {return settings::itebd::chi_lim_grow;}
-long   class_itebd::chi_lim_init()  {return settings::itebd::chi_lim_init;}
+size_t class_itebd::cfg_print_freq(){return settings::itebd::print_freq;}
+bool   class_itebd::cfg_chi_lim_grow()  {return settings::itebd::chi_lim_grow;}
+long   class_itebd::cfg_chi_lim_init()  {return settings::itebd::chi_lim_init;}
 

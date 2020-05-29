@@ -4,7 +4,7 @@
 
 [requires]
 ceres-solver/2.0.0@davidace/stable
-h5pp/1.7.2@davidace/stable
+h5pp/1.7.4@davidace/stable
 eigen/3.3.7@davidace/patched
 arpack++/2.3.0@davidace/stable
 

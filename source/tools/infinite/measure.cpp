@@ -356,7 +356,7 @@ class_state_infinite::Scalar moment_generating_function(const class_state_infini
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
 
-//    long chi_lim_max = 5 * state_evolved.chiC();
+//    long cfg_chi_lim_max = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
         Eigen::Tensor<Scalar, 3> mps_evo   = Op.contract(state_evolved.get_2site_tensor(), Textra::idx({0}, {0}));

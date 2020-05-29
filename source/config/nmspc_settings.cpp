@@ -23,7 +23,9 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter<long>                    ("input::bitfield"                              , input::bitfield);
     dmrg_config.load_parameter<string>                  ("output::output_filepath"                      , output::output_filepath);
     dmrg_config.load_parameter<bool>                    ("output::save_profiling"                       , output::save_profiling);
-    dmrg_config.load_parameter<bool>                    ("output::journal_keep_only_last_iter"          , output::checkpoint_keep_newest_only);
+    dmrg_config.load_parameter<bool>                    ("output::checkpoint_keep_newest_only"          , output::checkpoint_keep_newest_only);
+    dmrg_config.load_parameter<bool>                    ("output::checkpoint_keep_chi_updates"          , output::checkpoint_keep_chi_updates);
+    dmrg_config.load_parameter<bool>                    ("output::checkpoint_frequency"                 , output::checkpoint_keep_chi_updates);
     dmrg_config.load_parameter<bool>                    ("output::use_temp_dir"                         , output::use_temp_dir);
     dmrg_config.load_parameter<size_t>                  ("output::copy_from_temp_freq"                  , output::copy_from_temp_freq);
     dmrg_config.load_parameter<string>                  ("output::temp_dir"                             , output::temp_dir);

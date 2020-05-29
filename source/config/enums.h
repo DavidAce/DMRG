@@ -10,7 +10,7 @@ enum class ModelType{ising_tf_rf,ising_sdual};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
-enum class ResetReason {INIT, SATURATED};
+enum class ResetReason {INIT, FIND_WINDOW, SATURATED};
 enum class Condition {ALWAYS, IFNEEDED}; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE};
 enum class PerturbMode {
@@ -20,18 +20,9 @@ enum class PerturbMode {
     UNIFORM_RANDOM_ABSOLUTE,   // J_ptb = std::random_uniform(-couplingPtb, couplingPtb)
 };
 
-enum class SimulationTask {
-    INIT_RANDOM_PRODUCT_STATE,
-    INIT_RANDOMIZE_MODEL,
-//    INIT_RESUME_FROM_FILE, // Resume should not be a task. Rather, consider storing the current task list on file and reading it back in
-    FIND_GROUND_STATE,
-    FIND_HIGHEST_STATE,
-    FIND_EXCITED_STATE,
-};
-
 enum class fdmrg_task {
     INIT_RANDOMIZE_MODEL,
-    INIT_RANDOM_PRODUCT_STATE,
+    INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_BOND_DIM_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
@@ -45,8 +36,11 @@ enum class fdmrg_task {
 
 enum class xdmrg_task {
     INIT_RANDOMIZE_MODEL,
-    INIT_RANDOM_PRODUCT_STATE,
+    INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    INIT_RANDOMIZE_INTO_PRODUCT_STATE_IN_WIN,
+    INIT_RANDOMIZE_FROM_CURRENT_STATE,
     INIT_BOND_DIM_LIMITS,
+    INIT_ENERGY_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_DEFAULT,
@@ -91,8 +85,9 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StopReason::NONE)      return "NONE";
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
-        if(item == ResetReason::SATURATED) return "SATURATED";
         if(item == ResetReason::INIT) return "INIT";
+        if(item == ResetReason::FIND_WINDOW) return "FIND_WINDOW";
+        if(item == ResetReason::SATURATED) return "SATURATED";
     }
     if constexpr(std::is_same_v<T, Condition>) {
         if(item == Condition::ALWAYS) return "ALWAYS";
@@ -169,8 +164,9 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "NONE")      return StopReason::NONE;
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
-        if(item == "SATURATED") return ResetReason::SATURATED;
         if(item == "INIT") return ResetReason::INIT;
+        if(item == "FIND_WINDOW") return ResetReason::FIND_WINDOW;
+        if(item == "SATURATED") return ResetReason::SATURATED;
     }
     if constexpr(std::is_same_v<T, Condition>) {
         if(item == "ALWAYS") return Condition::ALWAYS;

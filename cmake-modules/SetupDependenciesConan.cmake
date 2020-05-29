@@ -16,7 +16,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     ### Install conan-modules/conanfile.txt dependencies          ###
     ### This uses conan to get spdlog,eigen3,h5pp,ceres-solver    ###
     ###    ceres-solver/2.0.0@davidace/development                ###
-    ###    h5pp/1.5.1@davidace/stable                             ###
+    ###    h5pp/1.7.3@davidace/stable                             ###
     ###    eigen/3.3.7@davidace/patched                           ###
     ##################################################################
 

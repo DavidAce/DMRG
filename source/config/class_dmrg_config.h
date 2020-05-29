@@ -45,17 +45,17 @@ class class_dmrg_config {
         try {
             if(param_val.empty()) throw std::range_error("Parameter [" + param_name + "] has no value");
             if constexpr(std::is_same_v<T, unsigned int>) {
-                int val = (T) std::stoi(param_val);
+                auto val = static_cast<int>(std::stoi(param_val));
                 if(val < 0) throw std::runtime_error("Read negative value for unsigned parameter: " + std::to_string(val));
-                return (T) val;
+                return static_cast<T> (val);
             }
-            if constexpr(std::is_same_v<T, unsigned long>) return (T) std::stoul(param_val);
-            if constexpr(std::is_same_v<T, unsigned long long>) return (T) std::stoull(param_val);
-            if constexpr(std::is_same_v<T, int>) return (T) std::stoi(param_val);
-            if constexpr(std::is_same_v<T, long>) return (T) std::stol(param_val);
-            if constexpr(std::is_same_v<T, long long>) return (T) std::stoll(param_val);
-            if constexpr(std::is_same_v<T, size_t>) return (T) std::stol(param_val);
-            if constexpr(std::is_same_v<T, double>) return (T) std::stod(param_val);
+            if constexpr(std::is_same_v<T, unsigned long>) return std::stoul(param_val);
+            if constexpr(std::is_same_v<T, unsigned long long>) return std::stoull(param_val);
+            if constexpr(std::is_same_v<T, int>) return std::stoi(param_val);
+            if constexpr(std::is_same_v<T, long>) return std::stol(param_val);
+            if constexpr(std::is_same_v<T, long long>) return std::stoll(param_val);
+            if constexpr(std::is_same_v<T, size_t>) return std::stoul(param_val);
+            if constexpr(std::is_same_v<T, double>) return std::stod(param_val);
             if constexpr(std::is_enum_v<T>) return str2enum<T>(param_val);
             if constexpr(std::is_same<T, std::string>::value) return param_val;
             if constexpr(std::is_same<T, bool>::value) {

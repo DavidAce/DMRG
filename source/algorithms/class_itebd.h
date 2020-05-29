@@ -24,11 +24,11 @@ public:
     void single_TEBD_step();
     void check_convergence_time_step();
     void check_convergence()                                final;
-    bool   algo_on()                                        final;
-    long   chi_lim_max()                                        final;
+    bool   cfg_algorithm_is_on()                                        final;
+    long   cfg_chi_lim_max()                                        final;
 //    size_t write_freq()                                     final;
-    size_t print_freq()                                     final;
-    bool   chi_lim_grow()                                       final;
-    long   chi_lim_init()                                       final;
+    size_t cfg_print_freq()                                     final;
+    bool   cfg_chi_lim_grow()                                       final;
+    long   cfg_chi_lim_init()                                       final;
 };
 
