@@ -56,7 +56,7 @@ void class_tensors_finite::randomize_model() {
     rebuild_edges();
 }
 
-void class_tensors_finite::randomize_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim,
+void class_tensors_finite::randomize_from_current_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim,
                                            std::optional<double> svd_threshold) {
     eject_all_edges();
     tools::finite::mps::apply_random_paulis(*state, pauli_strings);
@@ -80,7 +80,7 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     }
 }
 
-void class_tensors_finite::reset_to_random_product_state(const std::string &sector, long bitfield, bool use_eigenspinors) {
+void class_tensors_finite::randomize_into_product_state(const std::string &sector, long bitfield, bool use_eigenspinors) {
     clear_measurements();
     state->clear_cache();
     tools::finite::mps::random_product_state(*state, sector, bitfield, use_eigenspinors);

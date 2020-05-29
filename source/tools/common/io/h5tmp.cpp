@@ -140,6 +140,9 @@ void tools::common::io::h5tmp::create_directory(const std::string &path){
 
 void tools::common::io::h5tmp::copy_from_tmp(const std::string &filepath){
     if(filepath.empty()) return;
+    if(not fs::exists(get_temporary_filepath(filepath)) and internal::file_register.find(filepath) != internal::file_register.end()) {
+        tools::log->debug("Temporary file is already deleted: [{}]", get_temporary_filepath(filepath)); return; }
+
     copy_file(get_temporary_filepath(filepath), get_original_filepath(filepath));
 }
 
@@ -156,6 +159,7 @@ void tools::common::io::h5tmp::copy_file(const std::string & src, const std::str
     }
     fs::path target_path = tgt;
     fs::path source_path = src;
+    if(not fs::exists(source_path)) { tools::log->warn("Could not copy: source file does not exist [{}]", src); return; }
 
     if(not fs::exists(target_path.parent_path())){
         tools::common::io::h5tmp::create_directory(target_path);

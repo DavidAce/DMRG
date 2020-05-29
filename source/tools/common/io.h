@@ -4,6 +4,7 @@
 class class_algorithm_status;
 enum class StorageLevel;
 enum class ModelType;
+enum class AlgorithmType;
 
 namespace h5pp {
     class File;
@@ -28,7 +29,9 @@ namespace tools::common::io {
     }
 
     namespace h5resume{
-        extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, const std::string & sim_name, const std::string & search = "");
+        extern std::optional<size_t>   extract_state_number     (const std::string & state_prefix);
+        extern std::string             extract_state_name       (const std::string & state_prefix);
+        extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, AlgorithmType algo_type, const std::string & search = "");
         extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & state_prefix, class_algorithm_status & status);
         extern void                    load_profiling_from_hdf5 (const h5pp::File & h5ppFile, const std::string & state_prefix);
     }

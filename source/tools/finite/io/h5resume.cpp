@@ -138,17 +138,17 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
             "Energy per site");
 }
 
-std::list<SimulationTask> tools::finite::io::h5resume::getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix,
-                                                                   const class_tensors_finite &tensors, const class_algorithm_status &status) {
+//std::list<SimulationTask> tools::finite::io::h5resume::getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix,
+//                                                                   const class_tensors_finite &tensors, const class_algorithm_status &status) {
     // Here we try to find reasons for resuming the previous simulation.
     // The simplest one: it may not have finished
 
-    std::list<SimulationTask> tasks;
+//    std::list<SimulationTask> tasks;
     //    if(not status.algorithm_has_succeeded) reasons.push_back(ResumeTasks::FINISH);
     //    if(not status.algorithm_has_converged) reasons.push_back(ResumeTasks::NOT_CONVERGED);
-    //    if(status.state_number < settings::xdmrg::max_states) reasons.push_back(ResumeTasks::APPEND_STATES);
-    //    if(status.chi_lim_has_reached_chi_max and settings::xdmrg::chi_lim_max)
+    //    if(status.excited_state_number < settings::xdmrg::max_states) reasons.push_back(ResumeTasks::APPEND_STATES);
+    //    if(status.chi_lim_has_reached_chi_max and settings::xdmrg::cfg_chi_lim_max)
     //        ResumeTasks::
     // There may also be
-    return tasks;
-}
+//    return tasks;
+//}

@@ -102,11 +102,11 @@ void class_idmrg::check_convergence(){
 
 
 
-bool   class_idmrg::algo_on()   {return settings::idmrg::on;}
-long   class_idmrg::chi_lim_max()   {return settings::idmrg::chi_lim_max;}
-size_t class_idmrg::print_freq(){return settings::idmrg::print_freq;}
-bool   class_idmrg::chi_lim_grow()  {return settings::idmrg::chi_lim_grow;}
-long   class_idmrg::chi_lim_init()  {return settings::idmrg::chi_lim_init;}
+bool   class_idmrg::cfg_algorithm_is_on()   {return settings::idmrg::on;}
+long   class_idmrg::cfg_chi_lim_max()   {return settings::idmrg::chi_lim_max;}
+size_t class_idmrg::cfg_print_freq(){return settings::idmrg::print_freq;}
+bool   class_idmrg::cfg_chi_lim_grow()  {return settings::idmrg::chi_lim_grow;}
+long   class_idmrg::cfg_chi_lim_init()  {return settings::idmrg::chi_lim_init;}
 
 
 

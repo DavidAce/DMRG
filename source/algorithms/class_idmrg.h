@@ -20,10 +20,10 @@ public:
     void single_iDMRG_step();
     void run_simulation()                                   final;
     void check_convergence()                                final;
-    bool    algo_on()                                       final;
-    long      chi_lim_max()                                       final;
-    bool      chi_lim_grow()                                      final;
-    long      chi_lim_init()                                      final;
-    size_t  print_freq()                                    final;
+    bool      cfg_algorithm_is_on()                                       final;
+    long      cfg_chi_lim_max()                                       final;
+    bool      cfg_chi_lim_grow()                                      final;
+    long      cfg_chi_lim_init()                                      final;
+    size_t    cfg_print_freq()                                    final;
 };
 

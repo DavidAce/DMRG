@@ -1,13 +1,13 @@
 /*! \file */
 
 #include <algorithms/class_algorithm_launcher.h>
+#include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
 #include <io/class_config_reader.h>
 #include <io/nmspc_filesystem.h>
 #include <io/nmspc_logger.h>
 #include <iostream>
 #include <math/nmspc_random.h>
-#include <config/nmspc_settings.h>
 #include <tools/common/log.h>
 #ifdef _OPENMP
     #include <omp.h>
@@ -30,8 +30,41 @@
 #include <gitversion.h>
 #include <thread>
 
-#include <csignal>
 #include <config/class_dmrg_config.h>
+#include <csignal>
+#include <tools/common/io.h>
+
+void print_usage() {
+    std::cout <<
+        R"(
+==========  DMRG++  ============
+Usage                       : DMRG++ [-option <value>].
+-h                          : Help. Shows this text.
+-b <positive integer>       : Integer whose bitfield sets the initial product state. Negative is unused (default -1)
+-c <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
+-s <seed>                   : Positive number that seeds the random number generator (default = 1)
+-t <num threads>            : Number of OpenMP threads
+-o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
+-v                          : Enables trace-level verbosity
+-x                          : Do not append seed to the output filename.
+
+)";
+}
+
+
+void clean_up() {
+    if(not settings::output::use_temp_dir) return;
+    if(fs::exists(settings::output::tmp::hdf5_temp_path)){
+        try{
+            tools::log->info("Cleaning up temporary file: [{}]", settings::output::tmp::hdf5_temp_path);
+            h5pp::hdf5::moveFile(settings::output::tmp::hdf5_temp_path,settings::output::tmp::hdf5_final_path,h5pp::FilePermission::REPLACE);
+        }catch(const std::exception & err){
+            tools::log->info("Cleaning not needed: {}", err.what());
+        }
+    }
+    H5garbage_collect();
+    H5Eprint(H5E_DEFAULT, stderr);
+}
 
 void signal_callback_handler(int signum) {
     switch(signum) {
@@ -61,22 +94,7 @@ void signal_callback_handler(int signum) {
     std::quick_exit(signum);
 }
 
-void print_usage() {
-    std::cout <<
-        R"(
-==========  DMRG++  ============
-Usage                       : DMRG++ [-option <value>].
--h                          : Help. Shows this text.
--b <positive integer>       : Integer whose bitfield sets the initial product state. Negative is unused (default -1)
--c <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
--s <seed>                   : Positive number that seeds the random number generator (default = 1)
--t <num threads>            : Number of OpenMP threads
--o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
--v                          : Enables trace-level verbosity
--x                          : Do not append seed to the output filename.
 
-)";
-}
 
 std::string filename_append_number(const std::string &filename, const long number) {
     if(number < 0) return filename;
@@ -101,7 +119,13 @@ int main(int argc, char *argv[]) {
     signal(SIGKILL, signal_callback_handler);
     signal(SIGHUP, signal_callback_handler);
     signal(SIGQUIT, signal_callback_handler);
-    tools::log = Logger::setLogger("DMRG++ init", 0, true);
+
+    // Make sure to move back the file from temp location
+    std::atexit(clean_up);
+    std::at_quick_exit(clean_up);
+
+
+    tools::log = Logger::setLogger("DMRG++ main", 0, true);
     using namespace tools;
     // print current Git status
     tools::log->info("Git branch      : {}", GIT::BRANCH);
@@ -123,8 +147,7 @@ int main(int argc, char *argv[]) {
     while(true) {
         char opt = static_cast<char>(getopt(argc, argv, "hb:c:s:t:o:vx"));
         if(opt == EOF) break;
-        if(optarg == nullptr)
-            tools::log->info("Parsing input argument: -{}", opt);
+        if(optarg == nullptr) tools::log->info("Parsing input argument: -{}", opt);
         else
             tools::log->info("Parsing input argument: -{} {}", opt, optarg);
         switch(opt) {
@@ -185,7 +208,7 @@ int main(int argc, char *argv[]) {
     if(num_threads >= 0) settings::threading::num_threads = static_cast<int>(num_threads);
     if(not output.empty()) settings::output::output_filepath = output;
     if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
-    tools::log = Logger::setLogger("DMRG++ init", settings::console::verbosity, settings::console::timestamp);
+    tools::log = Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
 
     // C: Generate the correct output filename based on given seeds
     if(append_seed) {
@@ -199,9 +222,7 @@ int main(int argc, char *argv[]) {
 
 // Set the number of threads to be used
 #ifdef _OPENMP
-    if(settings::threading::num_threads <= 0) {
-        settings::threading::num_threads = (int) std::thread::hardware_concurrency();
-    }
+    if(settings::threading::num_threads <= 0) { settings::threading::num_threads = (int) std::thread::hardware_concurrency(); }
 
     omp_set_num_threads(settings::threading::num_threads);
     Eigen::setNbThreads(settings::threading::num_threads);
@@ -226,8 +247,6 @@ int main(int argc, char *argv[]) {
     #endif
 
 #endif
-
-
 
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file

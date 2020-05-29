@@ -27,18 +27,132 @@ class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorith
     tools::log->trace("Constructing class_xdmrg");
 }
 
+void class_xdmrg::resume() {
+    // Resume can imply many things
+    // 1) Resume a simulation which terminated prematurely
+    // 2) Resume a previously successful simulation. This may be desireable if the config
+    //    wants something that is not present in the file.
+    //      a) A certain number of states
+    //      b) A state inside of a particular energy window
+    //      c) The ground or "roof" states
+    // To guide the behavior, we check the setting ResumePolicy.
+
+    auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
+    if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
+    tools::log->info("Resuming state [{}]", state_prefix);
+    tools::finite::io::h5resume::load_tensors(*h5pp_file, state_prefix, tensors, status);
+
+    // Our first task is to decide on a state name for the newly loaded state
+    // The simplest is to inferr it from the state prefix itself
+    auto name   = tools::common::io::h5resume::extract_state_name(state_prefix);
+    auto number = tools::common::io::h5resume::extract_state_number(state_prefix);
+    if(number) excited_state_number = number.value();
+
+    // Initialize a custom task list
+    std::list<xdmrg_task> task_list;
+
+    if(not status.algorithm_has_finished) {
+        // This could be a checkpoint state
+        // Simply "continue" the algorithm until convergence
+        if(excited_state_number == 0) task_list = {xdmrg_task::FIND_SEED_STATE, xdmrg_task::POST_DEFAULT};
+        else
+            task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT};
+        run_task_list(task_list);
+    }
+
+    // If we reached this point the current state has finished for one reason or another.
+    // We may still have some more things to do, e.g. the config may be asking for more states
+    // Note that if max_states = 4 we are asking for 4 unbiased states, the 0th does not count (it's a seed!)
+    // Example:
+    //      max_states = 4
+    //      excited_state_number = 1
+    //      missing_state_number = 4 - 1 = 3
+    auto missing_state_number = settings::xdmrg::max_states >= excited_state_number ? settings::xdmrg::max_states - excited_state_number : 0;
+    for(size_t new_state_num = 0; new_state_num < missing_state_number; new_state_num++) {
+        task_list.emplace_back(xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE);
+        task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
+        task_list.emplace_back(xdmrg_task::POST_DEFAULT);
+    }
+}
+
+void class_xdmrg::run_default_task_list() {
+    std::list<xdmrg_task> default_task_list = {
+        xdmrg_task::INIT_DEFAULT,
+        xdmrg_task::FIND_SEED_STATE,
+        xdmrg_task::POST_DEFAULT,
+    };
+    // Insert requested number of excited states
+    for(size_t num = 0; num < settings::xdmrg::max_states; num++) {
+        default_task_list.emplace_back(xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE);
+        default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
+        default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
+    }
+
+    run_task_list(default_task_list);
+    if(not default_task_list.empty()) {
+        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
+        throw std::runtime_error("Simulation ended with unfinished tasks");
+    }
+}
+
+void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
+    while(not task_list.empty()) {
+        auto task = task_list.front();
+        switch(task) {
+            case xdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_into_product_state(ResetReason::INIT); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_IN_WIN: randomize_into_product_state_in_energy_window(ResetReason::INIT); break;
+            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_from_current_state(); break;
+            case xdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
+            case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
+            case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
+            case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
+            case xdmrg_task::INIT_DEFAULT:
+                run_preprocessing();
+                break;
+                //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
+            case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range();
+            case xdmrg_task::FIND_SEED_STATE:
+                excited_state_number = 0;
+                state_name           = "state_0_seed";
+                run_algorithm();
+                break;
+            case xdmrg_task::FIND_EXCITED_STATE:
+                state_name = fmt::format("state_{}", excited_state_number);
+                run_algorithm();
+                break;
+            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
+            case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
+            case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
+        }
+        task_list.pop_front();
+    }
+}
+
+void class_xdmrg::init_energy_limits(std::optional<double> energy_density_target, std::optional<double> energy_density_window) {
+    if(not energy_density_target) energy_density_target = settings::xdmrg::energy_density_target;
+    if(not energy_density_window) energy_density_window = settings::xdmrg::energy_density_window;
+    if(energy_density_target.value() < 0.0 or energy_density_target.value() > 1.0)
+        throw std::runtime_error(
+            fmt::format("Error setting energy density target: Expected value in range [0 - 1.0], got: [{:.8f}]", energy_density_target.value()));
+    if(energy_density_window.value() < 0.0 or energy_density_window.value() > 0.5)
+        throw std::runtime_error(
+            fmt::format("Error setting energy density window: Expected value in range [0 - 0.5], got: [{:.8f}]", energy_density_window.value()));
+    status.energy_dens_target = energy_density_target.value();
+    status.energy_dens_window = energy_density_window.value();
+}
+
 void class_xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    class_algorithm_finite::run_preprocessing();
     tools::common::profile::t_pre->tic();
-    status.energy_dens_target = settings::xdmrg::energy_density_target;
-    status.energy_dens_window = settings::xdmrg::energy_density_window;
+    status.clear();
+    randomize_model(); // First use of random!
+    init_bond_dimension_limits();
     find_energy_range();
-    reset_bond_dimension_limits();
-    if(settings::input::bitfield >= 0)
-        reset_to_random_product_state(ResetReason::INIT);
+    init_energy_limits();
+    if(settings::xdmrg::energy_density_window != 0.5) randomize_into_product_state_in_energy_window(ResetReason::INIT);
     else
-        reset_to_random_state_in_energy_window(ResetReason::INIT);
+        randomize_into_product_state(ResetReason::INIT);
     auto spin_components = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Initial spin components: {}", spin_components);
     tools::common::profile::t_pre->toc();
@@ -46,14 +160,12 @@ void class_xdmrg::run_preprocessing() {
 }
 
 void class_xdmrg::run_algorithm() {
-    if(state_name.empty())
-        state_name = "state_" + std::to_string(state_number);
+    if(state_name.empty()) state_name = "state_" + std::to_string(excited_state_number);
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     while(true) {
         single_xDMRG_step();
         print_status_update();
         write_to_file();
-        copy_from_tmp();
         check_convergence();
         update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
@@ -82,7 +194,7 @@ void class_xdmrg::run_algorithm() {
                 stop_reason = StopReason::MAX_RESET;
                 break;
             }
-            if(settings::strategy::randomize_early and state_number == 0 and tensors.state->find_largest_chi() >= 32 and
+            if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_chi() >= 32 and
                tools::finite::measure::energy_variance(tensors) < 1e-4) {
                 stop_reason = StopReason::RANDOMIZE;
                 break;
@@ -102,7 +214,6 @@ void class_xdmrg::single_xDMRG_step() {
     using namespace tools::finite::opt;
     tools::common::profile::t_sim->tic();
 
-
     //    IDEA:
     //        Try converging to some state from a product state.
     //        We know this is a biased state because it was generated  from a product state of low entanglement.
@@ -110,17 +221,14 @@ void class_xdmrg::single_xDMRG_step() {
     //        a new initial guess for some other state. Make sure the parity sector is honored. Converging again now
     //        should erase the any biasing that may have occurred due to the selection of initial product state.
 
-
     // Setup optpmization mode and space.
     //      - Start from the most general condition
     //      - Override later with narrower conditions
-
 
     // Set the fastest mode by default
     opt::OptMode  optMode  = opt::OptMode::VARIANCE;
     opt::OptSpace optSpace = opt::OptSpace::DIRECT;
     opt::OptType  optType  = opt::OptType::CPLX;
-
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) optType = OptType::REAL;
@@ -172,16 +280,14 @@ void class_xdmrg::single_xDMRG_step() {
     // Here we define a list of trials, where each entry determines
     // how many sites to try.
     std::list<size_t> max_num_sites_list;
-    if(status.algorithm_has_stuck_for > 0)
-        max_num_sites_list = {4};
+    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {2, 4};
     else if(status.algorithm_has_stuck_for > 1)
-        max_num_sites_list = {settings::strategy::multisite_max_sites};
+        max_num_sites_list = {2,4,settings::strategy::multisite_max_sites};
     else if(chi_quench_steps > 0)
-        max_num_sites_list = {settings::strategy::multisite_max_sites};
+        max_num_sites_list = {2,4, settings::strategy::multisite_max_sites};
     else
         max_num_sites_list = {2};
-
-
+    if(max_num_sites_list.empty()) max_num_sites_list = {2};
     // Make sure the site list is sane by sorting and filtering out repeated/invalid entries.
     max_num_sites_list.sort();
     max_num_sites_list.unique();
@@ -189,8 +295,8 @@ void class_xdmrg::single_xDMRG_step() {
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    size_t theta_count  = 0;
-    double variance_old = 1;
+    size_t                                                                                    theta_count  = 0;
+    double                                                                                    variance_old = 1;
     std::map<double, std::tuple<Eigen::Tensor<Scalar, 3>, std::list<size_t>, size_t, double>> results;
     for(auto &max_num_sites : max_num_sites_list) {
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
@@ -209,7 +315,7 @@ void class_xdmrg::single_xDMRG_step() {
         variance_old = measure::energy_variance_per_site(tensors); // Should just take value from cache
 
         auto   candidate_tensor = opt::find_excited_state(tensors, status, optMode, optSpace, optType);
-        double variance_new = measure::energy_variance_per_site(candidate_tensor, tensors);
+        double variance_new     = measure::energy_variance_per_site(candidate_tensor, tensors);
         results.insert({variance_new, {candidate_tensor, tensors.state->active_sites, theta_count++, tools::common::profile::t_opt->get_last_time_interval()}});
 
         // We can now decide if we are happy with the result or not.
@@ -227,10 +333,9 @@ void class_xdmrg::single_xDMRG_step() {
         tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),
                           std::log10(result.first), 1000 * std::get<3>(result.second));
 
-
-    auto        variance_new = results.begin()->first;
-    const auto &multisite_tensor     = std::get<0>(results.begin()->second);
-    tensors.state->active_sites      = std::get<1>(results.begin()->second);
+    auto        variance_new     = results.begin()->first;
+    const auto &multisite_tensor = std::get<0>(results.begin()->second);
+    tensors.state->active_sites  = std::get<1>(results.begin()->second);
 
     if(std::log10(variance_new) < std::log10(variance_old) - 1e-2) tensors.state->tag_active_sites_have_been_updated(true);
 
@@ -238,7 +343,7 @@ void class_xdmrg::single_xDMRG_step() {
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
-    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor,tensors);
+    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors);
     tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
@@ -248,12 +353,11 @@ void class_xdmrg::single_xDMRG_step() {
 
     if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
         double site_energy = tools::finite::measure::energy_per_site(tensors);
-        tools::finite::mpo::reduce_mpo_energy(*tensors.model,site_energy);
+        tools::finite::mpo::reduce_mpo_energy(*tensors.model, site_energy);
     }
 
     debug::check_integrity(*tensors.state);
     status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
-
 
     // Update record holder
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
@@ -263,7 +367,6 @@ void class_xdmrg::single_xDMRG_step() {
     status.wall_time = tools::common::profile::t_tot->get_age();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
-
 
 void class_xdmrg::single_xDMRG_step_old() {
     tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {}", status.step, status.iter, status.position, status.direction);
@@ -285,12 +388,12 @@ void class_xdmrg::single_xDMRG_step_old() {
     //        should erase the any biasing that may have occurred due to the selection of initial product state.
 
     // Setup normal conditions
-    if(state_number == 0 and status.chi_lim <= 12) {
+    if(excited_state_number == 0 and status.chi_lim <= 12) {
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(state_number == 0 and (status.chi_lim <= 8 or status.iter < 2)) {
+    if(excited_state_number == 0 and (status.chi_lim <= 8 or status.iter < 2)) {
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
@@ -328,8 +431,7 @@ void class_xdmrg::single_xDMRG_step_old() {
 
     std::list<size_t> max_num_sites_list;
     // Generate a list of maximum number of active sites to try
-    if(status.algorithm_has_stuck_for > 0)
-        max_num_sites_list = {4};
+    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {4};
     else if(status.algorithm_has_stuck_for > 1)
         max_num_sites_list = {settings::strategy::multisite_max_sites};
     else if(chi_quench_steps > 0)
@@ -355,8 +457,8 @@ void class_xdmrg::single_xDMRG_step_old() {
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    size_t theta_count  = 0;
-    double variance_old = measure::energy_variance_per_site(tensors);
+    size_t                                                                                    theta_count  = 0;
+    double                                                                                    variance_old = measure::energy_variance_per_site(tensors);
     std::map<double, std::tuple<Eigen::Tensor<Scalar, 3>, std::list<size_t>, size_t, double>> results;
     for(auto &max_num_sites : max_num_sites_list) {
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
@@ -404,10 +506,9 @@ void class_xdmrg::single_xDMRG_step_old() {
         tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),
                           std::log10(result.first), 1000 * std::get<3>(result.second));
 
-
-    auto        variance_new = results.begin()->first;
-    const auto &multisite_tensor     = std::get<0>(results.begin()->second);
-    tensors.state->active_sites      = std::get<1>(results.begin()->second);
+    auto        variance_new     = results.begin()->first;
+    const auto &multisite_tensor = std::get<0>(results.begin()->second);
+    tensors.state->active_sites  = std::get<1>(results.begin()->second);
 
     if(std::log10(variance_new) < std::log10(variance_old) - 1e-2) tensors.state->tag_active_sites_have_been_updated(true);
 
@@ -418,7 +519,7 @@ void class_xdmrg::single_xDMRG_step_old() {
     //    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
-    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor,tensors);
+    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors);
     tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
@@ -428,12 +529,11 @@ void class_xdmrg::single_xDMRG_step_old() {
 
     if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
         double site_energy = tools::finite::measure::energy_per_site(tensors);
-        tools::finite::mpo::reduce_mpo_energy(*tensors.model,site_energy);
+        tools::finite::mpo::reduce_mpo_energy(*tensors.model, site_energy);
     }
 
     debug::check_integrity(*tensors.state);
     status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
-
 
     // Update record holder
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
@@ -451,7 +551,7 @@ void class_xdmrg::check_convergence() {
         check_convergence_entg_entropy();
     }
 
-    //TODO: Move this reset block away from here
+    // TODO: Move this reset block away from here
 
     //    status.energy_dens = (tools::finite::measure::energy_per_site(*tensors.state) - status.energy_min ) / (status.energy_max - status.energy_min);
     bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
@@ -464,7 +564,7 @@ void class_xdmrg::check_convergence() {
                                              status.energy_dens_target, status.energy_dens_window);
             tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
             status.energy_dens_window = new_energy_dens_window;
-            reset_to_random_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
+            randomize_into_product_state_in_energy_window(ResetReason::SATURATED, settings::strategy::target_sector);
         }
         //        else
         //        if( not     tensors.state->all_sites_updated()
@@ -475,24 +575,17 @@ void class_xdmrg::check_convergence() {
         //            std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
         //                     status.energy_dens, status.energy_dens_window, std::min(energy_window_growth_factor*status.energy_dens_window, 0.5)
         //                     );
-//                     reset_to_random_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
+        //                     randomize_into_product_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
         //        }
     }
 
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-
     status.algorithm_has_saturated =
         ((status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters) or
          (tensors.state->get_iteration() > settings::xdmrg::min_iters and not tensors.state->any_sites_updated()));
-
     status.algorithm_has_succeeded = status.algorithm_has_converged and status.algorithm_has_saturated;
-
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_succeeded;
-
-    if(tensors.state->position_is_any_edge()) {
-        status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
-    }
-
+    if(tensors.state->position_is_any_edge()) { status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0; }
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
     if(tensors.state->position_is_any_edge()) {
@@ -507,8 +600,7 @@ void class_xdmrg::check_convergence() {
     tools::common::profile::t_con->toc();
 }
 
-
-void class_xdmrg::reset_to_random_state_in_energy_window(ResetReason reason, std::optional<std::string> sector) {
+void class_xdmrg::randomize_into_product_state_in_energy_window(ResetReason reason, std::optional<std::string> sector) {
     tools::log->info("Resetting to product state in energy window -- reason: {}", enum2str(reason));
     tools::log->info("Searching for product state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 
@@ -520,10 +612,10 @@ void class_xdmrg::reset_to_random_state_in_energy_window(ResetReason reason, std
 
     int  counter           = 0;
     bool outside_of_window = true;
-    tensors.activate_sites(settings::precision::max_size_full_diag,2);
+    tensors.activate_sites(settings::precision::max_size_full_diag, 2);
     while(true) {
-        reset_to_random_product_state(reason, sector);
-        status.energy_dens = tools::finite::measure::energy_normalized(tensors,status.energy_min,status.energy_max);
+        randomize_into_product_state(ResetReason::FIND_WINDOW, sector, -1); // Do not use the bitfield: set to -1
+        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);
         if(not outside_of_window) break;
@@ -550,23 +642,23 @@ void class_xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::list<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOM_PRODUCT_STATE,
+    std::list<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                       fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
-    std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOM_PRODUCT_STATE,
+    std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
-    class_fdmrg fdmrg(h5pp_file);
+    class_fdmrg           fdmrg(h5pp_file);
     *fdmrg.tensors.model = *tensors.model; // Copy the model
     // Find loewst energy state
     tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(gs_tasks);
     status.energy_min = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
-    //Find highest energy state
+    // Find highest energy state
     tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(hs_tasks);
     status.energy_max = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
-    tools::log = Logger::getLogger(std::string(enum2str(algo_type)));
+    tools::log           = Logger::getLogger(std::string(enum2str(algo_type)));
     status.energy_target = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
     status.energy_ubound = status.energy_target + status.energy_dens_window * (status.energy_max - status.energy_min);
     status.energy_lbound = status.energy_target - status.energy_dens_window * (status.energy_max - status.energy_min);
@@ -575,64 +667,11 @@ void class_xdmrg::find_energy_range() {
     tools::log->info("Energy target  (per site) = {:.8f}", status.energy_target);
     tools::log->info("Energy lbound  (per site) = {:.8f}", status.energy_lbound);
     tools::log->info("Energy ubound  (per site) = {:.8f}", status.energy_ubound);
-
-//    exit(0);
-
-//    if(tensors.state->get_length() != settings::model::model_size) throw std::runtime_error("find_energy_range: state length mismatch");
-//
-//    size_t max_sweeps_during_f_range = 4;
-//    // Backup the state and current status
-//    class_algorithm_status sim_status_backup = status;
-//    class_state_finite     state_backup      = *tensors.state;
-//
-//    update_bond_dimension_limit(16);
-//
-//    // Find energy minimum
-//    tools::finite::mps::random_product_state(*tensors.state, "random", -1, true);
-//    status.iter = tensors.state->reset_iter();
-//    status.step = tensors.state->reset_step();
-//    while(true) {
-//        //        class_algorithm_finite::single_fdmrg_step();
-//        print_status_update();
-//        // It's important not to perform the last moves. That last state would not get optimized
-//        if(tensors.state->position_is_any_edge())
-//            if(status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(tensors) < 1e-8) break;
-//        move_center_point();
-//    }
-//    double energy_min = tools::finite::measure::energy_per_site(tensors);
-//    tensors.normalize_state();
-//    write_to_file(StorageReason::EMIN_STATE);
-//
-//    // Find energy maximum
-//    tools::finite::mps::random_product_state(*tensors.state, "random", -1, true);
-//    status.iter = tensors.state->reset_iter();
-//    status.step = tensors.state->reset_step();
-//    while(true) {
-//        //        class_algorithm_finite::single_fdmrg_step();
-//        print_status_update();
-//        // It's important not to perform the last moves. That last state would not get optimized
-//        if(tensors.state->position_is_any_edge())
-//            if(status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(tensors) < 1e-8) break;
-//        move_center_point();
-//    }
-//    double energy_max = tools::finite::measure::energy_per_site(tensors);
-//    tensors.normalize_state();
-//    write_to_file(StorageReason::EMAX_STATE);
-//
-//    // Recover the backup
-//    status = sim_status_backup;
-//    *tensors.state = state_backup;
-
-    // Define energy targets and bounds
-//    status.energy_min    = energy_min;
-//    status.energy_max    = energy_max;
-
 }
 
-bool class_xdmrg::algo_on() { return settings::xdmrg::on; }
-long class_xdmrg::chi_lim_max() { return settings::xdmrg::chi_lim_max; }
-// size_t class_xDMRG::write_freq() { return settings::xdmrg::write_freq; }
-size_t class_xdmrg::print_freq() { return settings::xdmrg::print_freq; }
-bool   class_xdmrg::chi_lim_grow() { return settings::xdmrg::chi_lim_grow; }
-long   class_xdmrg::chi_lim_init() { return settings::xdmrg::chi_lim_init; }
-bool   class_xdmrg::store_wave_function() { return settings::xdmrg::store_wavefn; }
+bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }
+long   class_xdmrg::cfg_chi_lim_max() { return settings::xdmrg::chi_lim_max; }
+size_t class_xdmrg::cfg_print_freq() { return settings::xdmrg::print_freq; }
+bool   class_xdmrg::cfg_chi_lim_grow() { return settings::xdmrg::chi_lim_grow; }
+long   class_xdmrg::cfg_chi_lim_init() { return settings::xdmrg::chi_lim_init; }
+bool   class_xdmrg::cfg_store_wave_function() { return settings::xdmrg::store_wavefn; }

@@ -24,16 +24,18 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     tools::common::profile::init_profiling();
 }
 
-void class_algorithm_base::reset_bond_dimension_limits() {
-    status.chi_lim_init = chi_lim_init();
-    status.chi_lim_max  = chi_lim_max();
-    if(chi_lim_grow()) status.chi_lim = chi_lim_init();
+void class_algorithm_base::init_bond_dimension_limits() {
+    status.chi_lim_init = cfg_chi_lim_init();
+    status.chi_lim_max  = cfg_chi_lim_max();
+    if(cfg_chi_lim_grow()) status.chi_lim = cfg_chi_lim_init();
     else
-        status.chi_lim = chi_lim_max();
+        status.chi_lim = cfg_chi_lim_max();
 
     // Sanity check
     if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
 }
+
+
 
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.

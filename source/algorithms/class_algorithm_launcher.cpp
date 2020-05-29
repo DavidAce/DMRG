@@ -22,11 +22,8 @@
 namespace s = settings;
 using namespace std;
 
-static std::string hdf5_temp_path;
-static std::string hdf5_final_path;
-
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_): h5pp_file(std::move(h5ppFile_)){
-    setLogger("DMRG");
+    tools::log = Logger::setLogger("DMRG++ launch",  settings::console::verbosity, settings::console::timestamp);
     setup_temp_path();
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
@@ -35,35 +32,15 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
 
 
 class_algorithm_launcher::class_algorithm_launcher(){
-    setLogger("DMRG");
+    tools::log = Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
     start_h5pp_file();
     setup_temp_path();
+
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
     std::atexit(tools::common::profile::print_profiling);
     std::at_quick_exit(tools::common::profile::print_mem_usage);
     std::at_quick_exit(tools::common::profile::print_profiling);
-}
-
-
-
-void class_algorithm_launcher::clean_up() {
-    H5garbage_collect();
-    H5Eprint(H5E_DEFAULT, stderr);
-    H5close();
-    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
-    tools::common::io::h5tmp::copy_from_tmp(hdf5_temp_path);
-    tools::common::io::h5tmp::remove_from_tmp(hdf5_temp_path);
-}
-
-
-void class_algorithm_launcher::setLogger(const std::string& name){
-    if(spdlog::get(name) == nullptr){
-        log = spdlog::stdout_color_mt(name);
-        log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
-        log->set_level(spdlog::level::trace);
-    }else
-        log = spdlog::get(name);
 }
 
 
@@ -97,13 +74,13 @@ void class_algorithm_launcher::start_h5pp_file(){
             case FileCollisionPolicy::RENAME: {
                 h5pp_file                = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::RENAME);
                 std::string new_filepath = h5pp_file->getFilePath();
-                log->info("Renamed output file: [{}] -> [{}]", settings::output::output_filepath,new_filepath );
+                tools::log->info("Renamed output file: [{}] -> [{}]", settings::output::output_filepath,new_filepath );
                 settings::output::output_filepath = new_filepath;
                 break;
             }
             case FileCollisionPolicy::BACKUP: {
                 h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::BACKUP);
-                log->info("Renamed existing file: [{}] -> [{}]", settings::output::output_filepath,settings::output::output_filepath +".bak");
+                tools::log->info("Renamed existing file: [{}] -> [{}]", settings::output::output_filepath,settings::output::output_filepath +".bak");
                 break;
             }
             case FileCollisionPolicy::REPLACE: {
@@ -133,21 +110,18 @@ void class_algorithm_launcher::start_h5pp_file(){
 
 void class_algorithm_launcher::setup_temp_path(){
     if(not h5pp_file)
-        return log->warn("Can't set temporary path to a nullptr h5pp file");
+        return tools::log->warn("Can't set temporary path to a nullptr h5pp file");
 
-    hdf5_temp_path  = h5pp_file->getFilePath();
-    hdf5_final_path = h5pp_file->getFilePath();
+    settings::output::tmp::hdf5_final_path = h5pp_file->getFilePath();
     if(not settings::output::use_temp_dir) return;
     if(not h5pp::fs::exists(settings::output::output_filepath))
         throw std::runtime_error("Can't set temporary path to non-existent file path: " + settings::output::output_filepath);
-    h5pp_file->flush();
+
     tools::common::io::h5tmp::register_new_file(settings::output::output_filepath);
-    tools::common::io::h5tmp::copy_into_tmp(settings::output::output_filepath);
-    auto & temp_filepath = tools::common::io::h5tmp::get_temporary_filepath(settings::output::output_filepath);
-    h5pp_file            = std::make_shared<h5pp::File>(temp_filepath, h5pp::FilePermission::READWRITE);
-//    h5pp_file->setLogLevel(0);
-    std::at_quick_exit(class_algorithm_launcher::clean_up);
-    std::atexit(class_algorithm_launcher::clean_up);
+    settings::output::tmp::hdf5_final_path  = tools::common::io::h5tmp::get_original_filepath(h5pp_file->getFilePath());
+    settings::output::tmp::hdf5_temp_path   = tools::common::io::h5tmp::get_temporary_filepath(h5pp_file->getFileName());
+    h5pp_file->moveFile(tools::common::io::h5tmp::get_temporary_filepath(h5pp_file->getFilePath()), h5pp::FilePermission::REPLACE);
+    tools::log->info("Moved to temporary path [{}] --> [{}]",settings::output::tmp::hdf5_final_path , settings::output::tmp::hdf5_temp_path);
 }
 
 
@@ -161,13 +135,14 @@ void class_algorithm_launcher::run_algorithms(){
 
     if(h5pp_file) {
         h5pp_file->writeDataset(true, "common/finished_all");
-        log->info("Simulation data written to file: {}", hdf5_final_path);
+        tools::log->info("Simulation data written to file: {}", settings::output::tmp::hdf5_final_path);
     }
-    log->info("All simulations finished");
+    tools::log->info("All simulations finished");
+//    h5pp_file->moveFile(tools::common::io::h5tmp::get_original_filepath(h5pp_file->getFilePath()), h5pp::FilePermission::REPLACE);
 }
 
 
-void class_algorithm_launcher::run_idmrg(){
+void class_algorithm_launcher::run_idmrg() const{
     if(settings::idmrg::on){
         class_idmrg idmrg(h5pp_file);
         idmrg.run();
@@ -175,21 +150,21 @@ void class_algorithm_launcher::run_idmrg(){
 }
 
 
-void class_algorithm_launcher::run_fdmrg(){
+void class_algorithm_launcher::run_fdmrg() const{
     if(settings::fdmrg::on){
         class_fdmrg fdmrg(h5pp_file);
         fdmrg.run();
     }
 }
 
-void class_algorithm_launcher::run_xdmrg(){
+void class_algorithm_launcher::run_xdmrg() const{
     if(settings::xdmrg::on){
         class_xdmrg xdmrg(h5pp_file);
         xdmrg.run();
     }
 }
 
-void class_algorithm_launcher::run_itebd(){
+void class_algorithm_launcher::run_itebd() const{
     if(settings::itebd::on){
         class_itebd itebd(h5pp_file);
         itebd.run();

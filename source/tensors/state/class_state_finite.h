@@ -46,8 +46,8 @@ class class_state_finite {
     size_t                    step      = 0;
     int                       direction = 1;
 //    std::optional<long>       chi_lim;
-//    std::optional<long>       chi_lim_init;
-//    std::optional<long>       chi_lim_max;
+//    std::optional<long>       cfg_chi_lim_init;
+//    std::optional<long>       cfg_chi_lim_max;
     std::vector<double>       truncated_variance;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;

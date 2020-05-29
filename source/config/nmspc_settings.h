@@ -65,6 +65,11 @@ namespace settings {
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
+
+        namespace tmp{
+            inline std::string hdf5_temp_path;
+            inline std::string hdf5_final_path;
+        }
     }
 
 
@@ -123,7 +128,7 @@ namespace settings {
         inline bool          damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
         inline bool          project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
         inline bool          project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
-        inline bool          project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_lim_grow == true). */
+        inline bool          project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
         inline bool          randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool          randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors                        = true;               /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
@@ -161,7 +166,7 @@ namespace settings {
         inline size_t max_iters  = 5000;                           /*!< Maximum number of iDMRG iterations before forced termination */
         inline long chi_lim_max  = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_lim_grow = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long chi_lim_init = 16;                             /*!< Initial chi limit. Only used when chi_lim_grow == true. */
+        inline long chi_lim_init = 16;                             /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */
 //        inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
 
@@ -177,7 +182,7 @@ namespace settings {
         inline size_t   suzuki_order = 1;                        /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long     chi_lim_max  = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init = 16;                       /*!< Initial chi limit. Only used when chi_lim_grow == true. */
+        inline long     chi_lim_init = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. (0 = off).*/
 //        inline size_t   write_freq   = 100;                      /*!< Write frequency,for output file buffer. (0 = off). */
 
@@ -190,7 +195,7 @@ namespace settings {
         inline size_t   min_iters    = 4;                            /*!< Min number sweeps along the chain. */
         inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when chi_lim_grow == true. */
+        inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
 //        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
@@ -203,7 +208,7 @@ namespace settings {
         inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
         inline long     chi_lim_max             = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when chi_lim_grow == true. */
+        inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
 //        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */

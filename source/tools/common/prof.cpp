@@ -9,6 +9,7 @@
 #include <sstream>
 
 void tools::common::profile::print_profiling() {
+    if(t_tot == nullptr) return;
     if(settings::profiling::on) {
         auto t_tot_percent = 100.0/std::max(1.0,t_tot->get_age());
         auto t_sim_percent = 100.0/std::max(1.0,t_sim->get_measured_time());
@@ -66,7 +67,6 @@ void tools::common::profile::init_profiling() {
     t_ene_mom = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy (MOM)          ");
     t_var_ham = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance (HAM)        ");
     t_var_mom = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance (MOM)        ");
-
     t_vH2v = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "t_vH2v");
     t_vHv  = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "t_vHv ");
     t_vH2  = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "t_vH2 ");

@@ -16,6 +16,7 @@
 
 using Scalar = tools::finite::mps::Scalar;
 
+
 int tools::finite::mps::internals::get_sign(const std::string &sector) {
     if(sector.at(0) == '+')
         return 1;
@@ -43,6 +44,7 @@ Eigen::Vector2cd tools::finite::mps::internals::get_spinor(const std::string &ax
     if(axis == "z" and sign <= 0) return qm::spinOneHalf::sz_spinors[1];
     throw std::runtime_error(fmt::format("get_spinor given invalid axis: {}", axis));
 }
+
 
 Eigen::Vector2cd tools::finite::mps::internals::get_spinor(const std::string &sector) { return get_spinor(get_axis(sector), get_sign(sector)); }
 

@@ -51,7 +51,7 @@ public:
             if (nev > 0){
                 for (int i = 0; i < nev; i++) {
                     if (eigvecs[i*L].imag() == 0.0){continue;}
-                    Scalar inv_phase = Scalar(0.0,-1.0) * std::arg(eigvecs[i * L]);
+                    Scalar inv_phase = Scalar(0.0,-1.0) * std::arg(eigvecs[static_cast<size_t>(i * L)]);
                     auto begin = eigvecs.begin() + i * L;
                     auto end = begin + L;
                     Scalar exp_inv_phase = std::exp(inv_phase);

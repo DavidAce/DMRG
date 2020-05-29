@@ -216,8 +216,8 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "chi_lim_max", HOFFSET(table, chi_lim_max), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "chi_lim_init", HOFFSET(table, chi_lim_init), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "cfg_chi_lim_max", HOFFSET(table, chi_lim_max), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "cfg_chi_lim_init", HOFFSET(table, chi_lim_init), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "chi_lim", HOFFSET(table, chi_lim), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "energy_min", HOFFSET(table, energy_min), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max", HOFFSET(table, energy_max), H5T_NATIVE_DOUBLE);

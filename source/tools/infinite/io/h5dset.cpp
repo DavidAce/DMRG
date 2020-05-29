@@ -32,7 +32,7 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
     h5ppFile.writeDataset(state.LC(), dsetName, layout);
     h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
     h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", dsetName);
-    h5ppFile.writeAttribute(state.get_chi_max(), "chi_lim_max", dsetName);
+    h5ppFile.writeAttribute(state.get_chi_max(), "cfg_chi_lim_max", dsetName);
     tools::common::profile::t_hdf->toc();
 
     if(storage_level < StorageLevel::NORMAL) return;
@@ -45,7 +45,7 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
     h5ppFile.writeDataset(state.LA() , state_prefix + "/mps/L_A");
     h5ppFile.writeDataset(state.LB() , state_prefix + "/mps/L_B");
     h5ppFile.writeAttribute(state.get_chi_lim(), "chi_lim", state_prefix + "/mps/L_C");
-    h5ppFile.writeAttribute(state.get_chi_max(), "chi_lim_max", state_prefix + "/mps/L_C");
+    h5ppFile.writeAttribute(state.get_chi_max(), "cfg_chi_lim_max", state_prefix + "/mps/L_C");
     tools::common::profile::t_hdf->toc();
 
     if(storage_level < StorageLevel::FULL) return;
