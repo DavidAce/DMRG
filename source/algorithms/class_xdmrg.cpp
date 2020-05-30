@@ -140,6 +140,20 @@ void class_xdmrg::init_energy_limits(std::optional<double> energy_density_target
             fmt::format("Error setting energy density window: Expected value in range [0 - 0.5], got: [{:.8f}]", energy_density_window.value()));
     status.energy_dens_target = energy_density_target.value();
     status.energy_dens_window = energy_density_window.value();
+
+    // Set energy boundaries. This function is supposed to run after find_energy_range!
+    if(status.energy_max == status.energy_min)
+        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max == {} and energy_min == {}\n"
+                                             "Try running find_energy_range() first",
+                                             status.energy_max, status.energy_min));
+    status.energy_target = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
+    status.energy_ubound = status.energy_target + status.energy_dens_window * (status.energy_max - status.energy_min);
+    status.energy_lbound = status.energy_target - status.energy_dens_window * (status.energy_max - status.energy_min);
+    tools::log->info("Energy minimum (per site) = {:.8f}", status.energy_min);
+    tools::log->info("Energy maximum (per site) = {:.8f}", status.energy_max);
+    tools::log->info("Energy target  (per site) = {:.8f}", status.energy_target);
+    tools::log->info("Energy lbound  (per site) = {:.8f}", status.energy_lbound);
+    tools::log->info("Energy ubound  (per site) = {:.8f}", status.energy_ubound);
 }
 
 void class_xdmrg::run_preprocessing() {
@@ -153,8 +167,6 @@ void class_xdmrg::run_preprocessing() {
     if(settings::xdmrg::energy_density_window != 0.5) randomize_into_product_state_in_energy_window(ResetReason::INIT);
     else
         randomize_into_product_state(ResetReason::INIT);
-    auto spin_components = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Initial spin components: {}", spin_components);
     tools::common::profile::t_pre->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
@@ -280,18 +292,16 @@ void class_xdmrg::single_xDMRG_step() {
     // Here we define a list of trials, where each entry determines
     // how many sites to try.
     std::list<size_t> max_num_sites_list;
-    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {2, 4};
-    else if(status.algorithm_has_stuck_for > 1)
-        max_num_sites_list = {2,4,settings::strategy::multisite_max_sites};
-    else if(chi_quench_steps > 0)
-        max_num_sites_list = {2,4, settings::strategy::multisite_max_sites};
+    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {4};
+    else if(status.algorithm_has_stuck_for > 1 or chi_quench_steps > 0)
+        max_num_sites_list = {4, settings::strategy::multisite_max_sites};
     else
         max_num_sites_list = {2};
-    if(max_num_sites_list.empty()) max_num_sites_list = {2};
     // Make sure the site list is sane by sorting and filtering out repeated/invalid entries.
     max_num_sites_list.sort();
     max_num_sites_list.unique();
     max_num_sites_list.remove_if([](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
+    if(max_num_sites_list.empty()) max_num_sites_list = {2};
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
@@ -311,6 +321,7 @@ void class_xdmrg::single_xDMRG_step() {
             tools::log->debug("Can't activate more sites");
             break;
         }
+
 
         variance_old = measure::energy_variance_per_site(tensors); // Should just take value from cache
 
@@ -632,8 +643,7 @@ void class_xdmrg::randomize_into_product_state_in_energy_window(ResetReason reas
     tools::log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(tensors),
                      status.energy_dens, counter);
     clear_convergence_status();
-    status.energy_ubound = status.energy_target + status.energy_dens_window * (status.energy_max - status.energy_min);
-    status.energy_lbound = status.energy_target - status.energy_dens_window * (status.energy_max - status.energy_min);
+    init_energy_limits(std::nullopt,status.energy_dens_window);
     tools::log->info("Number of product state resets: {}", status.num_resets);
 }
 
@@ -658,15 +668,7 @@ void class_xdmrg::find_energy_range() {
     fdmrg.run_task_list(hs_tasks);
     status.energy_max = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
-    tools::log           = Logger::getLogger(std::string(enum2str(algo_type)));
-    status.energy_target = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
-    status.energy_ubound = status.energy_target + status.energy_dens_window * (status.energy_max - status.energy_min);
-    status.energy_lbound = status.energy_target - status.energy_dens_window * (status.energy_max - status.energy_min);
-    tools::log->info("Energy minimum (per site) = {:.8f}", status.energy_min);
-    tools::log->info("Energy maximum (per site) = {:.8f}", status.energy_max);
-    tools::log->info("Energy target  (per site) = {:.8f}", status.energy_target);
-    tools::log->info("Energy lbound  (per site) = {:.8f}", status.energy_lbound);
-    tools::log->info("Energy ubound  (per site) = {:.8f}", status.energy_ubound);
+    tools::log = Logger::getLogger(std::string(enum2str(algo_type)));
 }
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }

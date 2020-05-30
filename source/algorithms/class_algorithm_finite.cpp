@@ -609,7 +609,8 @@ void class_algorithm_finite::print_status_update() {
     if(cfg_print_freq() == 0) return;
 
     std::string report;
-    report += fmt::format("{:<} ", algo_name);
+//    report += fmt::format("{:<} ", algo_name);
+    report += fmt::format("{:<} ", state_name);
     report += fmt::format("iter: {:<4} ", status.iter);
     report += fmt::format("step: {:<5} ", status.step);
     report += fmt::format("L: {} ", tensors.state->get_length());
@@ -629,7 +630,7 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("con: {:<5} ", status.algorithm_has_converged);
-    report += fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot->get_age());
+    report += fmt::format("time:{:>6.2f}s ", tools::common::profile::t_tot->get_age());
     report += fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);

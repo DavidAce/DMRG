@@ -390,7 +390,7 @@ long class_state_finite::active_problem_size() const { return tools::finite::mul
 Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_tensor(const std::list<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
-    tools::log->trace("Contracting multisite mps tensor");
+    tools::log->trace("Contracting multisite mps tensor with {} sites", sites.size());
     tools::common::profile::t_mps->tic();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
@@ -414,6 +414,15 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
         temp.device(omp.dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_tensor     = temp;
     }
+
+    if constexpr(settings::debug) {
+        // Check the norm of the tensor on debug builds
+        Eigen::Tensor<Scalar,0> norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0,1,2},{0,1,2}));
+        double norm = std::abs(norm_scalar(0));
+        if(std::abs(norm - 1) > settings::precision::max_norm_error)
+            throw std::runtime_error(fmt::format("Multisite tensor is not normalized. Norm = {:.16f} {:+.16f}i", std::real(norm_scalar(0)), std::imag(norm_scalar(0))));
+    }
+
     tools::common::profile::t_mps->toc();
     return multisite_tensor;
 }

@@ -4,15 +4,15 @@
 #include <string_view>
 #include <type_traits>
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD };
-enum class MultisiteMove {ONE, MID, MAX};
-enum class StateRitz {LR,SR}; //Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
-enum class ModelType{ising_tf_rf,ising_sdual};
+enum class MultisiteMove { ONE, MID, MAX };
+enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
+enum class ModelType { ising_tf_rf, ising_sdual };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
+enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
-enum class ResetReason {INIT, FIND_WINDOW, SATURATED};
-enum class Condition {ALWAYS, IFNEEDED}; // Rules of engagement
-enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE};
+enum class ResetReason { INIT, FIND_WINDOW, SATURATED };
+enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
+enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
     ABSOLUTE,                  // J_ptb = couplingPtb
@@ -52,8 +52,6 @@ enum class xdmrg_task {
     POST_DEFAULT,
 };
 
-
-
 /* clang-format off */
 template<typename T>
 constexpr std::string_view enum2str(const T &item) {
@@ -89,9 +87,9 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == ResetReason::FIND_WINDOW) return "FIND_WINDOW";
         if(item == ResetReason::SATURATED) return "SATURATED";
     }
-    if constexpr(std::is_same_v<T, Condition>) {
-        if(item == Condition::ALWAYS) return "ALWAYS";
-        if(item == Condition::IFNEEDED) return "IFNEEDED";
+    if constexpr(std::is_same_v<T, NormPolicy>) {
+        if(item == NormPolicy::ALWAYS) return "ALWAYS";
+        if(item == NormPolicy::IFNEEDED) return "IFNEEDED";
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
@@ -168,9 +166,9 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "FIND_WINDOW") return ResetReason::FIND_WINDOW;
         if(item == "SATURATED") return ResetReason::SATURATED;
     }
-    if constexpr(std::is_same_v<T, Condition>) {
-        if(item == "ALWAYS") return Condition::ALWAYS;
-        if(item == "IFNEEDED") return Condition::IFNEEDED;
+    if constexpr(std::is_same_v<T, NormPolicy>) {
+        if(item == "ALWAYS") return NormPolicy::ALWAYS;
+        if(item == "IFNEEDED") return NormPolicy::IFNEEDED;
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == "NONE")      return StorageLevel::NONE;

@@ -317,18 +317,24 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_tensors_
 Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &  tensors,
                                                                                                        const class_algorithm_status &status, OptType optType,
                                                                                                        OptMode optMode, OptSpace optSpace) {
+    tools::log->trace("Optimizing in SUBSPACE mode");
+    using namespace eigutils::eigSetting;
+    tools::common::profile::t_opt->tic();
+    // Handy references
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
-    tools::log->trace("Optimizing in SUBSPACE mode");
-    tools::common::profile::t_opt->tic();
-    using namespace eigutils::eigSetting;
+
     auto   options                  = ceres_default_options;
     double theta_old_variance       = tools::finite::measure::energy_variance_per_site(tensors);
     double subspace_error_threshold = settings::precision::min_subspace_error;
 
     auto &theta_old     = state.get_multisite_tensor();
     auto  theta_old_vec = Eigen::Map<const Eigen::VectorXcd>(theta_old.data(), theta_old.size());
+    if(std::abs(tools::finite::measure::norm_fast(state) - 1) > settings::precision::max_norm_error)
+        throw std::runtime_error(fmt::format("The state given for subspace optimization has invalid norm = [{}]", tools::finite::measure::norm(state)));
+    if(std::abs(theta_old_vec.norm() - 1) > settings::precision::max_norm_error)
+        throw std::runtime_error(fmt::format("The tensor given for subspace optimization has invalid norm = [{}]", theta_old_vec.norm()));
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -356,7 +362,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced()) / state.get_length(); // Remove energy reduction for energy window comparisons
                                                                                                       //    bool force_accept = false;
 
-    tools::log->trace("Current energy          : {:.16f}", tools::finite::measure::energy_per_site(tensors));
+    tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(tensors));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance));
     //    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
     //    status.energy_ubound);

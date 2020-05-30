@@ -113,23 +113,26 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     state.clear_measurements();
 }
 
-bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
     // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
     // Each move performs an SVD decomposition which leaves unitaries after it, effectively normalizing the state.
     // NOTE! It may be important to start with the current position.
 
     // We may want to make a quick check on release builds, but more thorough on debug, for performance.
-    const double norm = [state]{
-      if(state.all_sites_updated())
-        return tools::finite::measure::norm(state);
-      else
-        return tools::finite::measure::norm_fast(state);
-    }();
+    if(norm_policy == NormPolicy::IFNEEDED){
+        const double norm = [state]{
+          if(state.all_sites_updated())
+              return tools::finite::measure::norm(state);
+          else
+              return tools::finite::measure::norm_fast(state);
+        }();
 
-    // We may only go ahead with a normalization if its really needed.
-    if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
-
-    if(settings::debug) {
+        // We may only go ahead with a normalization if its really needed.
+        if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
+    }
+    // Otherwise we just do the normalization
+    if constexpr (settings::debug) {
+        state.clear_measurements();
         tools::log->trace("Normalizing state");
         tools::log->info("Position             before normalization: {}", state.get_position());
         tools::log->info("Direction            before normalization: {}", state.get_direction());
@@ -154,10 +157,8 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
 
     // Now we can move around the chain
     for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
-    state.clear_measurements();
-    state.clear_cache();
-    state.assert_validity();
-    if(settings::debug) {
+    if constexpr (settings::debug) {
+        state.clear_measurements();
         tools::log->info("Position             after  normalization: {}", state.get_position());
         tools::log->info("Direction            after  normalization: {}", state.get_direction());
         tools::log->info("Norm                 after  normalization: {:.16f}", tools::finite::measure::norm(state));
@@ -165,6 +166,11 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
         tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state));
         tools::log->info("Entanglement entropy after  normalization: {}", tools::finite::measure::entanglement_entropies(state));
     }
+
+    state.clear_measurements();
+    state.clear_cache();
+    state.assert_validity();
+
     return true;
 }
 
@@ -199,13 +205,15 @@ void tools::finite::mps::random_product_state(class_state_finite &state, const s
     tools::log->debug("Setting random product state in sector {}", sector);
     state.clear_measurements();
     state.clear_cache();
-    state.tag_all_sites_have_been_updated(false);
-
     if(bitfield_is_valid(bitfield)) {
         internals::set_random_product_state_in_sector_using_bitfield(state, sector, bitfield);
         internals::used_bitfields.insert(bitfield);
     } else
         internals::set_random_product_state(state, sector, use_eigenspinors);
+
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_have_been_updated(true); // This operation changes all sites
 }
 
 
