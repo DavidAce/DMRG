@@ -14,7 +14,9 @@
 
 Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status,
                                                                                     OptMode optMode, OptSpace optSpace, OptType optType) {
-    tools::log->trace("Optimizing excited state");
+    tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
+                      tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());
+
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;
     if(not googleLogginghasInitialized) {
@@ -23,8 +25,6 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_st
         google::SetStderrLogging(3);
     }
 
-    tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
-                      tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());
 
     /* clang-format off */
     ceres_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;

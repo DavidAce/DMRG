@@ -36,7 +36,7 @@ class class_tensors_finite {
     void initialize(ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
     void randomize_from_current_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
     void randomize_into_product_state(const std::string &sector, long bitfield, bool use_eigenspinors);
     void project_to_nearest_sector(const std::string & sector);
     void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);

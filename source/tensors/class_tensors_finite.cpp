@@ -58,22 +58,15 @@ void class_tensors_finite::randomize_model() {
 
 void class_tensors_finite::randomize_from_current_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim,
                                            std::optional<double> svd_threshold) {
-    eject_all_edges();
     tools::finite::mps::apply_random_paulis(*state, pauli_strings);
-    *state = tools::finite::ops::get_projection_to_nearest_sector(*state, sector);
-    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold); // Call directly
-    if(not has_normalized) throw std::runtime_error("Normalization should definitely happen after projection");
-    rebuild_edges();
-    clear_measurements();
-    state->clear_cache(); // Other caches can remain intact
+    project_to_nearest_sector(sector);
 }
 
-void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold) {
+void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
     // Normalize if unity was lost for some reason (numerical error buildup)
-    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold);
+    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold, norm_policy);
     if(has_normalized) {
         clear_measurements();
-        state->clear_cache(); // Other caches can remain intact
         eject_all_edges();
         rebuild_edges();
         assert_validity();
@@ -82,23 +75,15 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
 
 void class_tensors_finite::randomize_into_product_state(const std::string &sector, long bitfield, bool use_eigenspinors) {
     clear_measurements();
-    state->clear_cache();
     tools::finite::mps::random_product_state(*state, sector, bitfield, use_eigenspinors);
-    tools::finite::mps::normalize_state(*state, 1, 1e-8);
-    eject_all_edges();
-    rebuild_edges();
-    assert_validity();
+    normalize_state(1,std::nullopt, NormPolicy::ALWAYS); // Set chi to 1
 }
 
 void class_tensors_finite::project_to_nearest_sector(const std::string &sector) {
     clear_measurements();
-    state->clear_cache();
     auto chi_lim_projected =  2*state->find_largest_chi();
     tools::finite::ops::project_to_nearest_sector(*state, sector);
-    tools::finite::mps::normalize_state(*state,chi_lim_projected);
-    eject_all_edges();
-    rebuild_edges();
-    assert_validity();
+    normalize_state(chi_lim_projected,std::nullopt, NormPolicy::ALWAYS);
 }
 
 void class_tensors_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
@@ -168,11 +153,9 @@ void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3>
     // Make sure the active sites are the same everywhere
     if(not math::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim);
     clear_measurements();
-    state->clear_cache(); // Other caches can remain intact
-    normalize_state(chi_lim, svd_threshold);
-    assert_validity();
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim);
+    normalize_state(chi_lim, svd_threshold,NormPolicy::IFNEEDED);
 }
 
 void class_tensors_finite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }

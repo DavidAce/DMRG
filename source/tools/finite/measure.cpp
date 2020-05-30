@@ -65,7 +65,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     Eigen::Tensor<Scalar, 2> temp;
     bool                     first = true;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M(); // std::get<1>(*mpsL);
+        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
         if(first) {
             chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
             first = false;

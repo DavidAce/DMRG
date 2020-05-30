@@ -2,6 +2,7 @@
 // Created by david on 2019-01-30.
 //
 
+#include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/nmspc_random.h>
@@ -38,16 +39,21 @@ void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tenso
 
 void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
                                     const Eigen::Tensor<Scalar, 3> &Redge) {
-    if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
+    if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
+
+    if constexpr(settings::debug){
+        state.clear_measurements();
+        tools::log->debug("Norm                 before applying mpos: {:.16f}", tools::finite::measure::norm(state));
+        tools::log->debug("Spin components      before applying mpos: {}", tools::finite::measure::spin_components(state));
+        tools::log->debug("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
+        tools::log->debug("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+    }
     state.clear_measurements();
-    if(state.has_nan()) throw std::runtime_error("State has NAN's before applying MPO's");
-    tools::log->info("Norm                 before applying mpos: {:.16f}", tools::finite::measure::norm(state));
-    tools::log->info("Spin components      before applying mpos: {}", tools::finite::measure::spin_components(state));
-    tools::log->info("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
-    tools::log->info("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+
+
     auto mpo = mpos.begin();
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         state.get_mps_site(pos).apply_mpo(*mpo);
@@ -108,39 +114,50 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
         state.mps_sites.back()->set_mps(M_temp, one, 0);
     }
 
+
+    if constexpr(settings::debug){
+        state.clear_measurements();
+        tools::log->debug("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
+        tools::log->debug("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
+        tools::log->debug("Bond dimensions      after  applying mpos: {}", tools::finite::measure::bond_dimensions(state));
+        tools::log->debug("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+    }
+
     state.clear_measurements();
     state.clear_cache();
-    if(state.has_nan()) throw std::runtime_error("State has NAN's after applying MPO's");
-    tools::log->info("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
-    tools::log->info("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
-    tools::log->info("Bond dimensions      after  applying mpos: {}", tools::finite::measure::bond_dimensions(state));
-    tools::log->info("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+    state.tag_all_sites_have_been_updated(true); // All sites change in this operation
+    state.assert_validity();
 }
 
 
 
 void tools::finite::ops::project_to_sector(class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+    // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
+    // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
+    // This operation leaves the global norm unchanged (thanks to the 0.5 factor) but locally each MPS loses its
+    // norm (norm = 2), and entanglement entropies become doubled.
+    // Therefore a proper full normalization is required after this operation, as well as a full
+    // rebuild of environments.
+
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::common::profile::t_prj->tic();
     tools::log->debug("Projecting state into sector with sign {}", sign);
     auto spin_components = tools::finite::measure::spin_components(state);
-    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     state.clear_measurements();
     state.clear_cache();
     // Do the projection
     const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
     apply_mpos(state, mpos, L, R);
-    state.tag_all_sites_have_been_updated(true); // All sites change in this operation
     spin_components = tools::finite::measure::spin_components(state);
-    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     tools::common::profile::t_prj->toc();
 }
 
 void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {
-    tools::log->trace("Finding axis closest to sector {}", sector);
+    tools::log->debug("Projecting state to axis nearest sector {}", sector);
     std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
-
     if(sector_is_valid) {
         auto sector_sign = mps::internals::get_sign(sector);
         auto paulimatrix = mps::internals::get_pauli(sector);
