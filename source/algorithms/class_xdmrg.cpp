@@ -253,7 +253,7 @@ void class_xdmrg::single_xDMRG_step() {
     if(status.chi_lim <= 8 or status.iter < 2) {
         // TODO: We may not want to do this on states post randomization
         optMode  = OptMode::OVERLAP;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+        optSpace = OptSpace::SUBSPACE_ONLY;
     }
 
     // Setup strong overrides to normal conditions, e.g.,
@@ -362,17 +362,17 @@ void class_xdmrg::single_xDMRG_step() {
     tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
     tools::log->debug("Variance loss due to  SVD: {:.16f}", tensors.state->get_truncated_variance());
 
-    if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
-        double site_energy = tools::finite::measure::energy_per_site(tensors);
-        tools::finite::mpo::reduce_mpo_energy(*tensors.model, site_energy);
-    }
-
     debug::check_integrity(*tensors.state);
     status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
     // Update record holder
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
     if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
+
+    // Reduce mpo energy to avoid catastrophic cancellation
+    if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
+        tensors.reduce_mpo_energy();
+    }
 
     tools::common::profile::t_sim->toc();
     status.wall_time = tools::common::profile::t_tot->get_age();

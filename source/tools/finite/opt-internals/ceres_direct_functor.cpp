@@ -21,9 +21,9 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     tools::log->trace("Constructing direct functor");
 
 #ifdef _OPENMP
-    tools::log->trace("Parallelizing with {} threads", omp.num_threads);
+    tools::log->trace("- Detected {} OpenMP threads", omp.num_threads);
 #endif
-    tools::log->trace("Generating multi components");
+    tools::log->trace("- Generating multisite components");
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
@@ -50,8 +50,6 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     }
 
     dsizes = state.active_dimensions();
-    tools::log->trace("Finished building multicomponents");
-
     Hv_tensor.resize(dsizes);
     H2v_tensor.resize(dsizes);
     num_parameters = static_cast<int>(dsizes[0] * dsizes[1] * dsizes[2]);

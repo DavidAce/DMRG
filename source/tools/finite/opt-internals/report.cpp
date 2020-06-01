@@ -9,7 +9,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
     tools::log->debug(format_hdr.c_str(),
                       "Algorithm",
                       "size",
-                      "rank",
+                      "basis",
                       "energy",
                       "variance",
                       "overlap",
@@ -31,7 +31,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
         std::get<7>(item),
         std::get<8>(item),
         std::get<9>(item)*1000,
-        std::get<9>(item)*1000 / (double)std::get<8>(item));
+        std::get<9>(item)*1000 / std::max(1,std::get<8>(item)));
     }
     bfgs_log.clear();
 }
@@ -91,4 +91,18 @@ void tools::finite::opt::internal::reports::print_time_report(){
                      1000 * std::get<4>(item));
     }
     time_log.clear();
+}
+
+
+
+
+void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & algorithm, long size, int rank, double energy, std::complex<double> variance,
+                    double overlap, double norm, int iter, int counter, double time){
+    bfgs_log.emplace_back(algorithm, size, rank, energy, variance, overlap, norm, iter, counter, time);
+}
+void tools::finite::opt::internal::reports::time_add_entry(double vH2v, double vHv, double vH2, double vH, double time){
+    time_log.emplace_back(vH2v,vHv,vH2, vH, time);
+}
+void tools::finite::opt::internal::reports::eigs_add_entry(double nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time){
+    eigs_log.emplace_back(nev, max_olap, min_olap, eps, eig_time,ham_time,lu_time);
 }

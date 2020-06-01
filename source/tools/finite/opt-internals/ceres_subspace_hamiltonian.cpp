@@ -10,6 +10,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt.h>
+#include <tools/finite/opt-internals/candidate_tensor.h>
 
 Eigen::Tensor<std::complex<double>, 6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_model_finite &model,
                                                                                                                       const class_edges_finite &edges) {
@@ -94,6 +95,95 @@ Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_ham
     if(rows != cols) throw std::runtime_error(fmt::format("Hamiltonian squared tensor is not square: rows [{}] | cols [{}]",rows,cols));
     return Eigen::Map<Eigen::MatrixXcd>(ham_squared_tensor.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
 }
+
+
+Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_model_finite &model,
+                                                                                                                     const class_edges_finite &edges,
+                                                                                                                     const std::vector<candidate_tensor> & candidate_list) {
+    // First, make sure every candidate is actually a basis vector, otherwise this computation would turn difficult if we have to skip rows and columns
+    for(const auto & candidate: candidate_list)
+        if(not candidate.is_basis_vector) throw std::runtime_error("One candidate is not a basis vector. When constructing a hamiltonian subspace matrix, make sure the candidates are all eigenvectors/basis vectors");
+
+    const auto &mpo = model.get_multisite_tensor();
+    const auto &env = edges.get_multisite_var_blk();
+    tools::common::profile::t_hsq->tic();
+    tools::log->trace("Contracting subspace hamiltonian squared new");
+    long   dim0     = mpo.dimension(2);
+    long   dim1     = env.L.dimension(0);
+    long   dim2     = env.R.dimension(0);
+    double log2spin = std::log2(dim0);
+    double log2chiL = std::log2(dim1);
+    double log2chiR = std::log2(dim2);
+    long   eignum   = static_cast<long>(candidate_list.size()); // Number of eigenvectors
+
+    Eigen::Tensor<Scalar, 0> H2_ij;
+    Eigen::Tensor<Scalar, 3> Hv(dim0, dim1, dim2);
+    Eigen::MatrixXcd         H2(eignum, eignum);
+
+    OMP omp(settings::threading::num_threads);
+
+    if(log2spin >= std::max(log2chiL, log2chiR)) {
+        if(log2chiL >= log2chiR) {
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL >= log2chiR");
+            for(auto col = 0; col < eignum; col++) {
+                const auto & theta_j = std::next(candidate_list.begin(), col)->get_tensor();
+                Hv.device(omp.dev) = theta_j.contract(env.L, Textra::idx({1}, {0}))
+                    .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+                    .contract(env.R, Textra::idx({0, 3}, {0, 2}))
+                    .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
+                    .shuffle(Textra::array3{2, 0, 1});
+                for(auto row = col; row < eignum; row++) {
+                    const auto & theta_i = std::next(candidate_list.begin(), row)->get_tensor();
+                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                    H2(row, col)          = H2_ij(0);
+                }
+            }
+        } else {
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL < log2chiR");
+            for(auto col = 0; col < eignum; col++) {
+                const auto & theta_j = std::next(candidate_list.begin(), col)->get_tensor();
+                Hv.device(omp.dev) = theta_j.contract(env.R, Textra::idx({2}, {0}))
+                    .contract(mpo, Textra::idx({0, 3}, {2, 1}))
+                    .contract(env.L, Textra::idx({0, 3}, {0, 2}))
+                    .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
+                    .shuffle(Textra::array3{2, 1, 0});
+                for(auto row = col; row < eignum; row++) {
+                    const auto & theta_i = std::next(candidate_list.begin(), row)->get_tensor();
+                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                    H2(row, col)          = H2_ij(0);
+                }
+            }
+        }
+    } else {
+        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
+        for(auto col = 0; col < eignum; col++) {
+            const auto & theta_j = std::next(candidate_list.begin(), col)->get_tensor();
+            Hv.device(omp.dev) = theta_j.contract(env.L, Textra::idx({1}, {0}))
+                .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+                .contract(mpo, Textra::idx({4, 2}, {2, 0}))
+                .contract(env.R, Textra::idx({0, 2, 3}, {0, 2, 3}))
+                .shuffle(Textra::array3{1, 0, 2});
+            for(auto row = col; row < eignum; row++) {
+                const auto & theta_i = std::next(candidate_list.begin(), row)->get_tensor();
+                H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                H2(row, col)          = H2_ij(0);
+            }
+        }
+    }
+
+    H2                     = H2.selfadjointView<Eigen::Lower>();
+    double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum() / static_cast<double>(H2.size());
+    double sparcity        = static_cast<double>((H2.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(H2.size());
+    if(H2.rows() != H2.cols()) throw std::runtime_error(fmt::format("Hamiltonian tensor is not square: rows [{}] | cols [{}]",H2.rows(), H2.cols()));
+    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}", non_hermiticity));
+    if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
+    if(H2.hasNaN()) throw std::runtime_error("subspace hamiltonian squared has NaN's!");
+    tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
+    tools::common::profile::t_hsq->toc();
+    return H2;
+}
+
+
 
 Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_model_finite &model,
                                                                                                                      const class_edges_finite &edges,
@@ -341,3 +431,20 @@ template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_
 template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(const class_model_finite &model,
                                                                                                                     const class_edges_finite &edges,
                                                                                                                     const Eigen::MatrixXcd &  eigvecs);
+
+template<typename T>
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new(const class_model_finite &model, const class_edges_finite &edges,
+                                                                                              const std::vector<candidate_tensor> &candidate_list) {
+    static_assert(std::is_same<T, std::complex<double>>::value or std::is_same<T, double>::value, "Wrong type, expected double or complex double");
+    if constexpr(std::is_same<T, std::complex<double>>::value)
+        return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(model, edges, candidate_list);
+    else if constexpr(std::is_same<T, double>::value)
+        return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(model, edges, candidate_list).real();
+}
+// Explicit instantiations
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<double>(const class_model_finite &model,
+                                                                                                                    const class_edges_finite &edges,
+                                                                                                                    const std::vector<candidate_tensor> &candidate_list);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(const class_model_finite &model,
+                                                                                                                    const class_edges_finite &edges,
+                                                                                                                    const std::vector<candidate_tensor> &candidate_list);
