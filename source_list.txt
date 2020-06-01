@@ -61,11 +61,15 @@ source/tools/finite/mps-internals.cpp
 source/tools/finite/mps.cpp
 source/tools/finite/multisite.cpp
 source/tools/finite/ops.cpp
+source/tools/finite/opt-internals/candidate_tensor.cpp
 source/tools/finite/opt-internals/ceres_base.cpp
 source/tools/finite/opt-internals/ceres_direct.cpp
 source/tools/finite/opt-internals/ceres_direct_functor.cpp
 source/tools/finite/opt-internals/ceres_rosenbrock.cpp
 source/tools/finite/opt-internals/ceres_subspace.cpp
+source/tools/finite/opt-internals/ceres_subspace_diag_full.cpp
+source/tools/finite/opt-internals/ceres_subspace_diag_part.cpp
+source/tools/finite/opt-internals/ceres_subspace_filter.cpp
 source/tools/finite/opt-internals/ceres_subspace_functor.cpp
 source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp
 source/tools/finite/opt-internals/enum_classes.cpp
@@ -151,6 +155,7 @@ source/tools/finite/mpo.h
 source/tools/finite/mps.h
 source/tools/finite/multisite.h
 source/tools/finite/ops.h
+source/tools/finite/opt-internals/candidate_tensor.h
 source/tools/finite/opt-internals/ceres_direct_functor.h
 source/tools/finite/opt-internals/ceres_rosenbrock.h
 source/tools/finite/opt-internals/ceres_subspace_functor.h

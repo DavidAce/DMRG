@@ -40,7 +40,7 @@ class class_tensors_finite {
     void randomize_into_product_state(const std::string &sector, long bitfield, bool use_eigenspinors);
     void project_to_nearest_sector(const std::string & sector);
     void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-
+    void reduce_mpo_energy(std::optional<double> site_energy = std::nullopt);
 
     void                 assert_validity() const;
     [[nodiscard]] bool   is_real() const;

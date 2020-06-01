@@ -92,8 +92,21 @@ void class_tensors_finite::perturb_hamiltonian(double coupling_ptb, double field
     tools::finite::mpo::perturb_hamiltonian(*model, coupling_ptb, field_ptb, perturbMode);
     eject_all_edges();
     rebuild_edges();
-    assert_validity();
+    model->assert_validity();
 }
+
+void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) {
+    if(not site_energy)
+        site_energy = tools::finite::measure::energy_per_site(*this);
+    measurements = tensors_measure_finite(); // State measurements can remain
+    model->clear_cache(); // State cache can remain
+    tools::finite::mpo::reduce_mpo_energy(*model,site_energy.value());
+    eject_all_edges();
+    rebuild_edges();
+    model->assert_validity();
+}
+
+
 
 
 // Active sites
