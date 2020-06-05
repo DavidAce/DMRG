@@ -9,12 +9,10 @@
 
 
 #include <math/nmspc_eigutils.h>
-#include <general/class_tic_toc.h>
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#define profile_matrix_product_dense 1
-
+class class_tic_toc;
 
 template <typename Scalar_>
 class StlMatrixProduct {
@@ -46,7 +44,6 @@ public:
 
     ~StlMatrixProduct();
 
-
     // Functions used in in Arpack++ solver
     [[nodiscard]] int rows() const {return L;};
     [[nodiscard]] int cols() const {return L;};
@@ -67,14 +64,10 @@ public:
     const eigutils::eigSetting::Side &get_side()const{return side;}
 
     // Profiling
-    void init_profiling(){
-        t_factorOp.set_properties(profile_matrix_product_dense, 5,"Time FactorOp");
-        t_multOpv.set_properties(profile_matrix_product_dense, 5,"Time MultOpv");
-        t_multax.set_properties(profile_matrix_product_dense, 5,"Time MultAx");
-    }
-    class_tic_toc t_factorOp;
-    class_tic_toc t_multOpv;
-    class_tic_toc t_multax;
+    void init_profiling();
+    std::unique_ptr<class_tic_toc> t_factorOP;
+    std::unique_ptr<class_tic_toc> t_multOPv;
+    std::unique_ptr<class_tic_toc> t_multAx;
 };
 
 

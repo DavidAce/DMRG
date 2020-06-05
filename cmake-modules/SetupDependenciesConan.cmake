@@ -9,7 +9,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     ###  static openmp anyway because I find it useful. Installing             ###
     ###  libiomp5 might help for shared linking.                               ###
     ##############################################################################
-    find_package(OpenMP) # Uses DMRG's own find module
+    find_package(OpenMP REQUIRED) # Uses DMRG's own find module
 
 
     ##################################################################
@@ -24,6 +24,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         find_package(Fortran REQUIRED)
         include(cmake-modules/SetupMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
         if(TARGET mkl::mkl)
+            include(cmake-modules/getExpandedTarget.cmake)
             expand_target_libs(mkl::mkl MKL_LIBRARIES)
             # Passing MKL_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
             # Replacing each ";" with spaces will work until arpack-ng tries to link as is.
@@ -51,10 +52,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         list(APPEND NATIVE_TARGETS gfortran::gfortran)
     endif()
 
-
-
-
-    list(APPEND NATIVE_TARGETS openmp::openmp)
 
     find_program (
             CONAN_COMMAND
@@ -105,7 +102,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     if(TARGET CONAN_PKG::Eigen3 AND TARGET openmp::openmp)
         target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_THREADS)
     endif()
-
     if(TARGET CONAN_PKG::Eigen3)
         if(TARGET mkl::mkl)
             message(STATUS "Eigen3 will use MKL")
@@ -126,4 +122,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         #    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
     endif()
 
+    if(TARGET openmp::openmp)
+        list(APPEND NATIVE_TARGETS openmp::openmp)
+    endif()
 endif()

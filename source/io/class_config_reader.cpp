@@ -10,7 +10,7 @@
 
 class_config_reader::class_config_reader(const std::string &file_path_): file_path(file_path_) {
     auto extension = file_path.extension();
-    if(extension == ".cfg"){
+    if(extension == ".config"){
         fs::path found_file = find_config_file(file_path);
         std::ifstream          file;
         if (not found_file.empty()){

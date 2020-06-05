@@ -2,7 +2,6 @@
 // Created by david on 2019-07-09.
 //
 
-#include <ceres/ceres.h>
 #include <general/class_tic_toc.h>
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
@@ -17,7 +16,12 @@ ceres_base_functor::ceres_base_functor(
         const class_algorithm_status & status):
         omp(settings::threading::num_threads)
 {
-    reset_timers();
+    t_bfgs = std::make_unique<class_tic_toc>(settings::profiling::on,5,"");
+    t_vH2  = std::make_unique<class_tic_toc>(settings::profiling::on,5,"");
+    t_vH2v = std::make_unique<class_tic_toc>(settings::profiling::on,5,"");
+    t_vH   = std::make_unique<class_tic_toc>(settings::profiling::on,5,"");
+    t_vHv  = std::make_unique<class_tic_toc>(settings::profiling::on,5,"");
+
     length                   = tensors.get_length();
 
     //All energies in status are per site!

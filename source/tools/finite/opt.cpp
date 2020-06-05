@@ -11,9 +11,11 @@
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/opt.h>
+#include <tools/finite/opt_tensor.h>
 
-Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status,
-                                                                                    OptMode optMode, OptSpace optSpace, OptType optType) {
+tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
+                                                  OptType optType) {
+    tools::common::profile::t_opt->tic();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
                       tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());
 
@@ -25,13 +27,12 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_st
         google::SetStderrLogging(3);
     }
 
-
     /* clang-format off */
     ceres_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
     ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.nonlinear_conjugate_gradient_type          = ceres::NonlinearConjugateGradientType::FLETCHER_REEVES;
-    ceres_default_options.max_num_iterations                         = 2000;
+    ceres_default_options.max_num_iterations                         = 4000;
     ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-64;//  std::numeric_limits<double>::epsilon();
@@ -50,7 +51,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_st
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_got_stuck){
-        ceres_default_options.max_num_iterations                        = 4000;
+        ceres_default_options.max_num_iterations                        = 8000;
         ceres_default_options.function_tolerance                        = 1e-8;
         ceres_default_options.gradient_tolerance                        = 1e-6;
         ceres_default_options.parameter_tolerance                       = 1e-8;
@@ -71,55 +72,43 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::find_excited_st
     //    s is the optimal step length computed by the line search.
     //    it is the time take by the current iteration.
     //    tt is the total time taken by the minimizer.
-
+    opt_tensor result;
     switch(optSpace) {
             /* clang-format off */
-        case OptSpace::SUBSPACE_ONLY:       return internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace);
-        case OptSpace::SUBSPACE_AND_DIRECT: return internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace);
-        case OptSpace::DIRECT:              return internal::ceres_direct_optimization(tensors,status, optType,optMode,optSpace);
+        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace); break;
+        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace); break;
+        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
-    throw std::logic_error("No valid optimization type given");
+    tools::common::profile::t_opt->toc();
+    // Finish up and print reports
+    reports::print_bfgs_report();
+    reports::print_time_report();
+    return result;
 }
 
 Eigen::Tensor<std::complex<double>, 3> tools::finite::opt::find_ground_state(const class_tensors_finite &tensors, StateRitz ritz) {
     return internal::ground_state_optimization(tensors, ritz);
 }
 
-void tools::finite::opt::internal::reset_timers() {
-    //    tools::common::profile::t_opt-> reset();
-    //    tools::common::profile::t_eig-> reset();
-    //    tools::common::profile::t_tot-> reset();
-    tools::common::profile::t_ham->reset();
-    tools::common::profile::t_vH2v->reset();
-    tools::common::profile::t_vHv->reset();
-    tools::common::profile::t_vH2->reset();
-    tools::common::profile::t_vH->reset();
-    tools::common::profile::t_op->reset();
-}
-
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
-    if(std::abs(x) >= window)
-        return std::abs(x) - window;
+    if(std::abs(x) >= window) return std::abs(x) - window;
     else
         return 0;
 }
 double tools::finite::opt::internal::windowed_grad_abs(double x, double window) {
-    if(std::abs(x) >= window)
-        return sgn(x);
+    if(std::abs(x) >= window) return sgn(x);
     else
         return 0.0;
 }
 
 double tools::finite::opt::internal::windowed_func_pow(double x, double window) {
-    if(std::abs(x) >= window)
-        return x * x - window * window;
+    if(std::abs(x) >= window) return x * x - window * window;
     else
         return 0.0;
 }
 double tools::finite::opt::internal::windowed_grad_pow(double x, double window) {
-    if(std::abs(x) >= window)
-        return 2.0 * x;
+    if(std::abs(x) >= window) return 2.0 * x;
     else
         return 0.0;
 }

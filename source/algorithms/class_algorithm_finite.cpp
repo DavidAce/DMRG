@@ -16,7 +16,6 @@
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/print.h>
@@ -38,10 +37,6 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
 // class_algorithm_finite::~class_algorithm_finite() = default;
-
-
-
-
 
 void class_algorithm_finite::run()
 /*!
@@ -69,7 +64,7 @@ void class_algorithm_finite::run()
             - No: start new simulation
 
  */
- {
+{
     tools::log->info("Starting {}", algo_name);
     tools::common::profile::t_tot->tic();
 
@@ -86,7 +81,6 @@ void class_algorithm_finite::run()
     }
     tools::common::profile::t_tot->toc();
 }
-
 
 void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Running default preprocessing for {}", algo_name);
@@ -122,7 +116,16 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     }
 
     tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
+    // // ############### Debug
     tensors.clear_cache();
+    tensors.clear_measurements();
+    auto variance = tools::finite::measure::energy_variance_per_site(tensors);
+    tools::log->info("Variance before move: {:.16f}", std::log10(variance));
+    // ###############
+
+
+    tensors.clear_cache();
+    tensors.clear_measurements();
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
             if(tensors.position_is_any_edge()) {
@@ -148,6 +151,18 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     status.direction = tensors.state->get_direction();
     has_projected    = false;
 }
+
+void class_algorithm_finite::reduce_mpo_energy() {
+    // Reduce mpo energy to avoid catastrophic cancellation
+    // Note that this operation makes the Hamiltonian nearly singular,
+    // which is tough for Lanczos/Arnoldi iterations to handle
+    if(settings::precision::use_reduced_energy and tensors.position_is_any_edge()) {
+        tools::log->info("Reducing MPO energy");
+        tensors.reduce_mpo_energy();
+    }
+}
+
+
 
 void class_algorithm_finite::update_truncation_limit() {
     if(not tensors.state->position_is_any_edge()) return;
@@ -252,7 +267,7 @@ void class_algorithm_finite::randomize_from_current_state(std::optional<std::vec
     tools::log->info("Randomizing from current state: [{}] ...", state_name);
     if(not pauli_strings) pauli_strings = {"x", "z"};
     if(not sector) sector = settings::strategy::target_sector;
-    if(not chi_lim) chi_lim = tensors.state->find_largest_chi();
+    if(not chi_lim) chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
     if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
     // Randomize state
     tensors.randomize_from_current_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
@@ -263,10 +278,13 @@ void class_algorithm_finite::randomize_from_current_state(std::optional<std::vec
     status.step      = tensors.state->reset_step();
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
-    if(cfg_chi_lim_grow())
-        status.chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-    auto spin_components = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Randomizing from current state: [{}] ... OK! | spin components {}", state_name, spin_components);
+    if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
+    tools::log->info("Randomizing from current state: [{}] ... OK!", state_name);
+    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
+    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    if(tensors.state->find_largest_chi() > chi_lim.value())
+        throw std::runtime_error(
+            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 }
 
 void class_algorithm_finite::try_projection() {
@@ -339,9 +357,9 @@ void class_algorithm_finite::try_hamiltonian_perturbation() {
         return;
     }
     if(tensors.model->is_perturbed()) {
-        tensors.perturb_hamiltonian(0, 0, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
+        tensors.perturb_model_params(0, 0, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
     } else {
-        tensors.perturb_hamiltonian(1e-2, 1e-2, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
+        tensors.perturb_model_params(1e-2, 1e-2, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
         perturbation_steps = 2 * (tensors.get_length() - 1);
     }
 }
@@ -609,7 +627,7 @@ void class_algorithm_finite::print_status_update() {
     if(cfg_print_freq() == 0) return;
 
     std::string report;
-//    report += fmt::format("{:<} ", algo_name);
+    //    report += fmt::format("{:<} ", algo_name);
     report += fmt::format("{:<} ", state_name);
     report += fmt::format("iter: {:<4} ", status.iter);
     report += fmt::format("step: {:<5} ", status.step);
@@ -623,15 +641,15 @@ void class_algorithm_finite::print_status_update() {
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε: {:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
     report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
-                          std::log10(status.lowest_recorded_variance / static_cast<double>(tensors.state->get_length())));
+                          std::log10(status.lowest_recorded_variance));
     report +=
         fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("con: {:<5} ", status.algorithm_has_converged);
-    report += fmt::format("time:{:>6.2f}s ", tools::common::profile::t_tot->get_age());
-    report += fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+    report += fmt::format("time:{:>8.2f}s ", tools::common::profile::t_tot->get_age());
+    report += fmt::format("mem: [rss {:<.1f} peak {:<.1f} vm {:<.1f}] MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
 }

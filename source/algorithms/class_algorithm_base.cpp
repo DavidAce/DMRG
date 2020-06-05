@@ -45,7 +45,7 @@ void class_algorithm_base::init_bond_dimension_limits() {
  */
 class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope(
     //        std::list<bool>  & B_vec,
-    std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance) {
+    std::vector<double> &Y_vec, std::vector<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance) {
     SaturationReport report;
     size_t           last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if(iter < rate + last_measurement) { return report; }

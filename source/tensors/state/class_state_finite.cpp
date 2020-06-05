@@ -10,7 +10,6 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
 #include <tools/finite/svd.h>
@@ -26,9 +25,9 @@ class_state_finite::class_state_finite() = default; // Can't initialize lists si
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_state_finite::~class_state_finite()                                   = default;            // default dtor
-class_state_finite::class_state_finite(class_state_finite &&other) noexcept = default;            // default move ctor
-class_state_finite &class_state_finite::operator=(class_state_finite &&other) noexcept = default; // default move assign
+class_state_finite::~class_state_finite()                                       = default; // default dtor
+class_state_finite::class_state_finite(class_state_finite &&other)              = default; // default move ctor
+class_state_finite &class_state_finite::operator=(class_state_finite &&other)   = default; // default move assign
 
 /* clang-format off */
 class_state_finite::class_state_finite(const class_state_finite &other):
@@ -352,8 +351,8 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    tools::finite::mps::rebuild_all_edges(*this);
 //}
 //
-// void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-//    tools::finite::mpo::perturb_hamiltonian(*this, coupling_ptb, field_ptb, perturbMode);
+// void class_state_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
+//    tools::finite::mpo::perturb_model_params(*this, coupling_ptb, field_ptb, perturbMode);
 //}
 //
 // void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp);
@@ -387,7 +386,7 @@ Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return to
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
-Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_tensor(const std::list<size_t> &sites) const {
+Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
     tools::log->trace("Contracting multisite mps tensor with {} sites", sites.size());

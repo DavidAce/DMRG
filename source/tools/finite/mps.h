@@ -12,7 +12,7 @@ class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
     extern void move_center_point               (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-    extern void merge_multisite_tensor          (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::list<size_t> & sites, size_t center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern void merge_multisite_tensor          (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::vector<size_t> & sites, size_t center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern bool normalize_state                 (class_state_finite & state,long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void random_product_state            (class_state_finite & state, const std::string & sector, long bitfield, bool use_eigenspinors = false);
     extern void apply_random_paulis             (class_state_finite & state, const std::vector<std::string> & paulistrings);

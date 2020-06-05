@@ -35,8 +35,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
                                                                              double* fx,
                                                                              double* grad_double_double) const
 {
-    using namespace tools::common::profile;
-    t_op->tic();
+    t_bfgs->tic();
     Scalar vH2v,vHv;
     Scalar ene,ene2,var;
     double vv, log10var;
@@ -126,7 +125,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     }
 
     counter++;
-    t_op->toc();
+    t_bfgs->toc();
     return true;
 }
 

@@ -61,7 +61,7 @@ std::string class_dmrg_config::get_config_file_as_string() {
         h5pp::File file(file_path.string(), h5pp::FilePermission::READONLY);
         return file.readDataset<std::string>("common/config_file_contents");
     } else {
-        throw std::runtime_error(fmt::format("Tried to read config from file with unknown extension [{}], expected .h5 or .cfg", file_path.filename().string()));
+        throw std::runtime_error(fmt::format("Tried to read config from file with unknown extension [{}], expected .h5 or .config", file_path.filename().string()));
     }
     return std::string();
 }

@@ -6,7 +6,6 @@
 #include "class_model_finite.h"
 #include "class_mpo_factory.h"
 #include <tools/common/prof.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/multisite.h>
 #include <tools/finite/views.h>
 
@@ -22,8 +21,8 @@ class_model_finite::class_model_finite() = default; // Can't initialize lists si
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
 class_model_finite::~class_model_finite()                                   = default;            // default dtor
-class_model_finite::class_model_finite(class_model_finite &&other) noexcept = default;            // default move ctor
-class_model_finite &class_model_finite::operator=(class_model_finite &&other) noexcept = default; // default move assign
+class_model_finite::class_model_finite(class_model_finite &&other) = default;            // default move ctor
+class_model_finite &class_model_finite::operator=(class_model_finite &&other) = default; // default move assign
 
 /* clang-format off */
 class_model_finite::class_model_finite(const class_model_finite &other) :
@@ -60,6 +59,17 @@ void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
     }
     if(MPO.size() != model_size) throw std::logic_error("Initialized MPO with wrong size");
 }
+
+void class_model_finite::randomize(){
+    tools::log->trace("Randomizing model");
+    std::vector<class_mpo_site::TableMap> all_params;
+    for(auto &mpo : MPO) {
+        mpo->randomize_hamiltonian();
+        all_params.emplace_back(mpo->get_parameters());
+    }
+    for(auto &mpo : MPO) mpo->set_averages(all_params, false);
+}
+
 
 const class_mpo_site &class_model_finite::get_mpo(size_t pos) const {
     if(pos >= MPO.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
@@ -114,15 +124,28 @@ void class_model_finite::set_reduced_energy_per_site(double site_energy) {
     if(get_energy_per_site_reduced() == site_energy) return;
     clear_cache();
     for(auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
-    std::cerr << "MUST REBUILD ENVIRONMENTS AFTER SETTING REDUCED ENERGY ON MPO'S!!" << std::endl;
-    //    tools::finite::mps::rebuild_all_edges(*this);
+
 }
 
 void class_model_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-    tools::finite::mpo::perturb_hamiltonian(*this, coupling_ptb, field_ptb, perturbMode);
+    std::vector<class_mpo_site::TableMap> all_params;
+    for(auto &mpo : MPO) {
+        mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
+        all_params.push_back(mpo->get_parameters());
+    }
+    for(auto &mpo : MPO) mpo->set_averages(all_params, false);
+    clear_cache();
+    if(coupling_ptb == 0.0 and field_ptb == 0.0 and is_perturbed()) throw std::runtime_error("Model: Should have unperturbed!");
 }
 
-void class_model_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp); }
+void class_model_finite::damp_hamiltonian(double coupling_damp, double field_damp) {
+    for(auto &mpo : MPO) {
+        mpo->set_coupling_damping(coupling_damp);
+        mpo->set_field_damping(field_damp);
+    }
+    clear_cache();
+    if(coupling_damp == 0.0 and field_damp == 0.0 and is_damped()) throw std::runtime_error("Model: Should have undamped!");
+}
 
 bool class_model_finite::is_perturbed() const {
     for(size_t pos = 0; pos < get_length(); pos++) {
@@ -140,10 +163,10 @@ bool class_model_finite::is_damped() const {
 
 Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::list<size_t> &sites) const {
+Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
-    tools::log->trace("Contracting multisite mpo tensor");
+    tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
     tools::common::profile::t_mpo->tic();
     Eigen::Tensor<Scalar, 4> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};

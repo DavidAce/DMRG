@@ -20,7 +20,7 @@ EOF
 
 execname="DMRG++"
 build="Release"
-file="input.cfg"
+file="input.config"
 threads="8"
 modelseed=0
 stateseed=0

@@ -25,9 +25,9 @@ class_state_infinite::class_state_infinite() : MPS_A(std::make_unique<class_mps_
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_state_infinite::~class_state_infinite()                                     = default;            // default dtor
-class_state_infinite::class_state_infinite(class_state_infinite &&other) noexcept = default;            // default move ctor
-class_state_infinite &class_state_infinite::operator=(class_state_infinite &&other) noexcept = default; // default move assign
+class_state_infinite::~class_state_infinite()                                        = default;            // default dtor
+class_state_infinite::class_state_infinite(class_state_infinite &&other)             = default;            // default move ctor
+class_state_infinite &class_state_infinite::operator=(class_state_infinite &&other)  = default; // default move assign
 
 /* clang-format off */
 class_state_infinite::class_state_infinite(const class_state_infinite &other):

@@ -54,14 +54,14 @@ class class_state_finite {
 
     public:
     std::list<std::unique_ptr<class_mps_site>> mps_sites;
-    std::list<size_t>                          active_sites;
+    std::vector<size_t>                          active_sites;
     mutable state_measure_finite               measurements;
 
     public:
     class_state_finite();
     ~class_state_finite();                                              // Read comment on implementation
-    class_state_finite(class_state_finite &&other) noexcept;            // default move ctor
-    class_state_finite &operator=(class_state_finite &&other) noexcept; // default move assign
+    class_state_finite(class_state_finite &&other);                     // default move ctor
+    class_state_finite &operator=(class_state_finite &&other);          // default move assign
     class_state_finite(const class_state_finite &other);                // copy ctor
     class_state_finite &operator=(const class_state_finite &other);     // copy assign
 
@@ -115,7 +115,7 @@ class class_state_finite {
     Eigen::DSizes<long, 3> active_dimensions() const;
     long                   active_problem_size() const;
 
-    Eigen::Tensor<Scalar, 3>        get_multisite_tensor(const std::list<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 3>        get_multisite_tensor(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_tensor() const;
 
     public:

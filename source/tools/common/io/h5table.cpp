@@ -29,6 +29,7 @@ void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const st
         h5ppFile.createTable(h5pp_table_profiling::h5_type, table_path, "profiling");
 
     h5pp_table_profiling::table profiling_entry;
+    /* clang-format off */
     profiling_entry.iter            = status.iter;
     profiling_entry.step            = status.step;
     profiling_entry.position        = status.position;
@@ -39,11 +40,6 @@ void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const st
     profiling_entry.t_con           = tools::common::profile::t_con->get_measured_time();
     profiling_entry.t_eig           = tools::common::profile::t_eig->get_measured_time();
     profiling_entry.t_svd           = tools::common::profile::t_svd->get_measured_time();
-    profiling_entry.t_ham           = tools::common::profile::t_ham->get_measured_time();
-    profiling_entry.t_hsq           = tools::common::profile::t_hsq->get_measured_time();
-    profiling_entry.t_mps           = tools::common::profile::t_mps->get_measured_time();
-    profiling_entry.t_mpo           = tools::common::profile::t_mpo->get_measured_time();
-    profiling_entry.t_opt           = tools::common::profile::t_opt->get_measured_time();
     profiling_entry.t_evo           = tools::common::profile::t_evo->get_measured_time();
     profiling_entry.t_env           = tools::common::profile::t_env->get_measured_time();
     profiling_entry.t_ent           = tools::common::profile::t_ent->get_measured_time();
@@ -56,11 +52,26 @@ void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const st
     profiling_entry.t_ene_mom       = tools::common::profile::t_ene_mom->get_measured_time();
     profiling_entry.t_var_ham       = tools::common::profile::t_var_ham->get_measured_time();
     profiling_entry.t_var_mom       = tools::common::profile::t_var_mom->get_measured_time();
-    profiling_entry.t_vH2v          = tools::common::profile::t_vH2v->get_measured_time();
-    profiling_entry.t_vHv           = tools::common::profile::t_vHv->get_measured_time();
-    profiling_entry.t_vH2           = tools::common::profile::t_vH2->get_measured_time();
-    profiling_entry.t_vH            = tools::common::profile::t_vH->get_measured_time();
-    profiling_entry.t_op            = tools::common::profile::t_op->get_measured_time();
+    profiling_entry.t_mps           = tools::common::profile::t_mps->get_measured_time();
+    profiling_entry.t_mpo           = tools::common::profile::t_mpo->get_measured_time();
+    profiling_entry.t_opt           = tools::common::profile::t_opt->get_measured_time();
+    profiling_entry.t_opt_dir       = tools::common::profile::t_opt_dir->get_measured_time();
+    profiling_entry.t_opt_dir_bfgs  = tools::common::profile::t_opt_dir_bfgs->get_measured_time();
+    profiling_entry.t_opt_dir_vH2   = tools::common::profile::t_opt_dir_vH2->get_measured_time();
+    profiling_entry.t_opt_dir_vH2v  = tools::common::profile::t_opt_dir_vH2v->get_measured_time();
+    profiling_entry.t_opt_dir_vH    = tools::common::profile::t_opt_dir_vH->get_measured_time();
+    profiling_entry.t_opt_dir_vHv   = tools::common::profile::t_opt_dir_vHv->get_measured_time();
+    profiling_entry.t_opt_sub       = tools::common::profile::t_opt_sub->get_measured_time();
+    profiling_entry.t_opt_sub_ham   = tools::common::profile::t_opt_sub_ham->get_measured_time();
+    profiling_entry.t_opt_sub_hsq   = tools::common::profile::t_opt_sub_hsq->get_measured_time();
+    profiling_entry.t_opt_sub_lu    = tools::common::profile::t_opt_sub_lu->get_measured_time();
+    profiling_entry.t_opt_sub_eig   = tools::common::profile::t_opt_sub_eig->get_measured_time();
+    profiling_entry.t_opt_sub_bfgs  = tools::common::profile::t_opt_sub_bfgs->get_measured_time();
+    profiling_entry.t_opt_sub_vH2   = tools::common::profile::t_opt_sub_vH2->get_measured_time();
+    profiling_entry.t_opt_sub_vH2v  = tools::common::profile::t_opt_sub_vH2v->get_measured_time();
+    profiling_entry.t_opt_sub_vH    = tools::common::profile::t_opt_sub_vH->get_measured_time();
+    profiling_entry.t_opt_sub_vHv   = tools::common::profile::t_opt_sub_vHv->get_measured_time();
+    /* clang-format on */
     h5ppFile.appendTableEntries(profiling_entry, table_path);
 }
 

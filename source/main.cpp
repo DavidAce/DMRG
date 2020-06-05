@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
     }
     /*
      There may be multiple config files to consider:
-         1) Given from CLI (.cfg/.h5)
+         1) Given from CLI (.config/.h5)
          2) Inside the output file "<output>_<seed>.h5" if it already exists.
 
      What should one do?
@@ -176,14 +176,14 @@ int main(int argc, char *argv[]) {
      Taking 2) into account leads to very confusing policies.
 
      What are the implications?
-        - If CLI passes a .cfg file we have to override some of its settings:
+        - If CLI passes a .config file we have to override some of its settings:
             - output
 
     */
 
     /*! It's important that we do things in this order:
-        A1: config file not given:  use the default input/input.cfg
-        A2: config file given with .cfg/h5 extension: load given config
+        A1: config file not given:  use the default input/input.config
+        A2: config file given with .config/h5 extension: load given config
 
         B: Override settings with parameters given through CLI
 
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
     */
 
     // B: Try loading given config file.
-    //   Note that there is a default "input/input.cfg" if none was given
+    //   Note that there is a default "input/input.config" if none was given
     if(not config.empty()) {
         class_dmrg_config dmrg_config(config);
         if(dmrg_config.file_exists) {
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
         } else
             throw std::runtime_error(fmt::format("Could not find config file: {}", config)); // Invalid file given
         settings::input::config_filename = config;
-    } // else use default cfg
+    } // else use default config
 
     // B: Override settings
     if(seed >= 0) settings::input::seed = seed;

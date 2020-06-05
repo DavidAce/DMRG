@@ -202,7 +202,7 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy)
     }
     Eigen::Tensor<Scalar, 4> temp                                           = MPO();
     temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - site_energy * Id);
-    temp.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
+//    temp.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     return temp;
 }
 

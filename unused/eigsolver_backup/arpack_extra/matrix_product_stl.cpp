@@ -8,6 +8,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <memory>
+#include <general/class_tic_toc.h>
+#define profile_matrix_product_dense 1
 
 // Function definitions
 template <typename Scalar>
@@ -38,7 +40,12 @@ namespace stl_lu{
 
 }
 
-
+template<typename Scalar>
+void StlMatrixProduct<Scalar>::init_profiling(){
+    t_factorOP = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5,"Time FactorOp");
+    t_multOPv = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5,"Time MultOpv");
+    t_multAx = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5,"Time MultAx");
+}
 
 
 template<typename Scalar>
@@ -82,7 +89,7 @@ void StlMatrixProduct<Scalar>::FactorOP()
     if(readyFactorOp){return;}
 //    lu_real_ptr = std::make_shared<LU_REAL>( LU_REAL() );
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
-    t_factorOp.tic();
+    t_factorOP->tic();
     assert(readyShift and "Shift value sigma has not been set.");
     if constexpr(std::is_same_v<Scalar,double>){
         stl_lu::lu_real.value().compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
@@ -93,8 +100,8 @@ void StlMatrixProduct<Scalar>::FactorOP()
     }
 
     readyFactorOp = true;
-    t_factorOp.toc();
-//    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << '\n';
+    t_factorOP->toc();
+//    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOP.get_last_time_interval() * 1000 << '\n';
 }
 
 
@@ -104,6 +111,7 @@ template<typename Scalar>
 void StlMatrixProduct<Scalar>::MultOPv(Scalar* x_in_ptr, Scalar* x_out_ptr) {
     using namespace eigutils::eigSetting;
     assert(readyFactorOp and "FactorOp() has not been run yet.");
+    t_multOPv->tic();
     switch (side){
         case Side::R: {
             Eigen::Map<VectorType<Scalar>>       x_in    (x_in_ptr,L);
@@ -124,6 +132,7 @@ void StlMatrixProduct<Scalar>::MultOPv(Scalar* x_in_ptr, Scalar* x_out_ptr) {
             break;
         }
     }
+    t_multOPv->toc();
     counter++;
 }
 
@@ -133,6 +142,7 @@ void StlMatrixProduct<Scalar>::MultOPv(Scalar* x_in_ptr, Scalar* x_out_ptr) {
 template<typename Scalar>
 void StlMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
     using namespace eigutils::eigSetting;
+    t_multAx->tic();
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
     switch (form){
         case Form::NONSYMMETRIC:
@@ -158,6 +168,7 @@ void StlMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
             break;
         }
     }
+    t_multAx->toc();
     counter++;
 }
 

@@ -55,8 +55,8 @@ class class_state_infinite {
     public:
     class_state_infinite();
     ~class_state_infinite();                                                // Read comment on implementation
-    class_state_infinite(class_state_infinite &&other) noexcept;            // default move ctor
-    class_state_infinite &operator=(class_state_infinite &&other) noexcept; // default move assign
+    class_state_infinite(class_state_infinite &&other);                     // default move ctor
+    class_state_infinite &operator=(class_state_infinite &&other);          // default move assign
     class_state_infinite(const class_state_infinite &other);                // copy ctor
     class_state_infinite &operator=(const class_state_infinite &other);     // copy assign
 

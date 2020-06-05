@@ -66,7 +66,7 @@ arpackpp_solver<MatrixType>::arpackpp_solver(
 {
 
     t_sol.set_properties(profile_arpack, 10,"Time iterating  ");
-    t_get.set_properties(profile_arpack, 10,"Time getting sol");
+    t_get.set_properties(profile_arpack, 10,"Time getting result");
     t_sub.set_properties(profile_arpack, 10,"Time subtracting");
     t_all.set_properties(profile_arpack, 10,"Time doing all  ");
 }

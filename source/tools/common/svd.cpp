@@ -7,8 +7,8 @@
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/log.h>
 
-std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::list<long> &spin_dims,
-                                                        const std::list<size_t> &sites, size_t center_position, long chi_limit,
+std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+                                                        const std::vector<size_t> &sites, size_t center_position, long chi_limit,
                                                         std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites.
      *  Consider a case with 3 sites and
@@ -100,10 +100,10 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
 
 
     // Split the multisite tensor at the given center position.
-    std::list<size_t> sites_left;
-    std::list<size_t> sites_right;
-    std::list<long>   spin_dims_left;
-    std::list<long>   spin_dims_right;
+    std::vector<size_t> sites_left;
+    std::vector<size_t> sites_right;
+    std::vector<long>   spin_dims_left;
+    std::vector<long>   spin_dims_right;
 
     // Define dimensions for the first reshape into a rank-4 tensor
     long chiL = multisite_tensor.dimension(1);
@@ -160,7 +160,7 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
 }
 
 std::list<class_mps_site>
-tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 3> &multisite_mps, std::list<long> spin_dims, std::list<size_t> sites,
+tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 3> &multisite_mps, std::vector<long> spin_dims, std::vector<size_t> sites,
                                                       long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the left.
      *  Consider a case with 3 sites and
@@ -259,7 +259,7 @@ tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 3>
 
         // Store the singular values for the next iteration
         S_prev = S;
-        sites.pop_front();
+        sites.erase(sites.begin());
     }
     // Now we have a series of A-A-A-A matrices and their corresponding L's
     // At the last step we have a residual S*V left over, where V has already absorbed S.
@@ -284,8 +284,8 @@ tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 3>
 }
 
 std::list<class_mps_site>
-    tools::common::svd::internal::split_mps_from_right(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, std::list<long> spin_dims,
-                                                       std::list<size_t> sites, long chi_limit, std::optional<double> svd_threshold) {
+    tools::common::svd::internal::split_mps_from_right(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, std::vector<long> spin_dims,
+                                                       std::vector<size_t> sites, long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the right
      *  Consider a case with 3 sites and
      *  spin_dims = {2,2,2}

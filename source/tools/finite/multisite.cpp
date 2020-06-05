@@ -14,11 +14,11 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
 
-Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::list<size_t>> active_sites){
+Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::vector<size_t>> active_sites){
     if(not active_sites) active_sites = state.active_sites;
     if(active_sites.value().empty()) return Eigen::DSizes<long,3>{0,0,0};
     Eigen::DSizes<long,3> dimensions;
-    active_sites.value().sort();
+    std::sort(active_sites.value().begin(), active_sites.value().end());
     if(active_sites.value().front() > active_sites.value().back())
         throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
 
@@ -31,7 +31,7 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state
     return dimensions;
 }
 
-Eigen::DSizes<long,4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::list<size_t>> active_sites){
+Eigen::DSizes<long,4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::vector<size_t>> active_sites){
     if(not active_sites) active_sites = model.active_sites;
     if(active_sites.value().empty()) return Eigen::DSizes<long,4>{0,0,0,0};
     if(active_sites.value().front() > active_sites.value().back())
@@ -51,14 +51,14 @@ Eigen::DSizes<long,4> tools::finite::multisite::get_dimensions(const class_model
 
 
 
-long tools::finite::multisite::get_problem_size(const class_state_finite &state, std::optional<std::list<size_t>> active_sites){
+long tools::finite::multisite::get_problem_size(const class_state_finite &state, std::optional<std::vector<size_t>> active_sites){
     auto dims = get_dimensions(state,std::move(active_sites));
     return (dims[0]*dims[1]*dims[2]);
 }
 
 
 
-std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, long threshold, size_t max_sites, const size_t min_sites){
+std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, long threshold, size_t max_sites, const size_t min_sites){
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
     tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}",
             state.get_position(), state.get_direction(), threshold,max_sites,min_sites);
@@ -66,8 +66,8 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
     int    direction = state.get_direction();
     int    position  = static_cast<int>(state.get_position());
     int    length    = static_cast<int>(state.get_length());
-    std::list<long>   costs;
-    std::list<size_t> sites;
+    std::vector<long>   costs;
+    std::vector<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
     if (direction == -1)
         position = std::min(position+1, length-1);  // If going to the left, take position to be the site on the right of the center bond.
@@ -100,7 +100,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
             costs.pop_back();
         }
     }
-    sites.sort();
+    std::sort(sites.begin(),sites.end());
 //    if (direction == -1){std::reverse(sites.begin(),sites.end());}
     tools::log->debug("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
                      state.get_position(), state.get_direction(), threshold,max_sites,min_sites,sites, costs.back(),reason );
@@ -113,7 +113,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
 
 
 
-std::list<size_t> tools::finite::multisite::generate_truncated_site_list(class_state_finite &state, long threshold, long chi_lim, const size_t max_sites, const size_t min_sites){
+std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(class_state_finite &state, long threshold, long chi_lim, const size_t max_sites, const size_t min_sites){
     auto active_sites = generate_site_list(state,threshold,max_sites,min_sites);
     if(active_sites.size() == max_sites) return active_sites; // Fastest outcome
     state.active_sites.clear();

@@ -71,7 +71,7 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
     }
 }
 
-void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::list<size_t> &sites,
+void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                 size_t center_position, long chi_lim, std::optional<double> svd_threshold) {
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
@@ -82,7 +82,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
     long            spin_prod = 1;
-    std::list<long> spin_dims;
+    std::vector<long> spin_dims;
     for(const auto &site : sites) {
         spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
         spin_prod *= spin_dims.back();

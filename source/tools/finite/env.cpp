@@ -61,7 +61,6 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
     if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(fmt::format("All active sites are not equal: state {} | model {} | edges {}",state.active_sites, model.active_sites, edges.active_sites));
 
-    edges.eject_inactive_edges();
     size_t min_pos = 0;
     size_t max_pos = state.get_length()-1;
 
@@ -71,6 +70,7 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
     if(not edges.active_sites.empty()){
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
+        edges.eject_inactive_edges(); // Discard edges past the active ones
     }
 
     auto & ene_front = edges.get_eneL(min_pos);
@@ -82,6 +82,8 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
         auto & ene_next = edges.get_eneL(pos+1);
         auto & var_curr = edges.get_varL(pos);
         auto & var_next = edges.get_varL(pos+1);
+        if(not ene_next.has_block()) tools::log->info("Rebuilding L edge for pos {} from pos {}", pos+1,pos);
+        if(not var_next.has_block()) tools::log->info("Rebuilding L edge for pos {} from pos {}", pos+1,pos);
         if(not ene_next.has_block()) ene_next = ene_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
         if(not var_next.has_block()) var_next = var_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
     }
@@ -95,6 +97,8 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
         auto & ene_prev = edges.get_eneR(pos-1);
         auto & var_curr = edges.get_varR(pos);
         auto & var_prev = edges.get_varR(pos-1);
+        if(not ene_prev.has_block()) tools::log->info("Rebuilding R edge for pos {} from pos {}", pos-1,pos);
+        if(not var_prev.has_block()) tools::log->info("Rebuilding R edge for pos {} from pos {}", pos-1,pos);
         if(not ene_prev.has_block()) ene_prev = ene_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
         if(not var_prev.has_block()) var_prev = var_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
     }

@@ -13,20 +13,20 @@ class class_model_finite {
     private:
     struct Cache {
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_tensor = std::nullopt;
-        std::optional<std::list<size_t>>        cached_sites     = std::nullopt;
+        std::optional<std::vector<size_t>>        cached_sites     = std::nullopt;
     };
     mutable Cache cache;
 
     public:
     std::list<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<size_t>                          active_sites;
+    std::vector<size_t>                        active_sites;
     ModelType                                  model_type = ModelType::ising_tf_rf;
 
     public:
     class_model_finite();
     ~class_model_finite();                                              // Read comment on implementation
-    class_model_finite(class_model_finite &&other) noexcept;            // default move ctor
-    class_model_finite &operator=(class_model_finite &&other) noexcept; // default move assign
+    class_model_finite(class_model_finite &&other);            // default move ctor
+    class_model_finite &operator=(class_model_finite &&other); // default move assign
     class_model_finite(const class_model_finite &other);                // copy ctor
     class_model_finite &operator=(const class_model_finite &other);     // copy assign
 
@@ -45,6 +45,7 @@ class class_model_finite {
     [[nodiscard]] double get_energy_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
 
+    void randomize();
     void set_reduced_energy(double total_energy);
     void set_reduced_energy_per_site(double site_energy);
     void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
@@ -52,7 +53,7 @@ class class_model_finite {
 
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_tensor(const std::list<size_t> & sites) const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_tensor(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_tensor() const;
 
     void clear_cache() const;

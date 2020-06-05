@@ -20,10 +20,8 @@
 
 
 
-
-
 class_eigsolver::class_eigsolver(size_t logLevel_):logLevel(logLevel_){
-    eigutils::eigLogger::setLogger("eig",logLevel,false);
+    eigutils::eigLogger::setLogger("eigsolver",logLevel,false);
 }
 
 

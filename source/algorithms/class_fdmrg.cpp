@@ -10,7 +10,6 @@
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
@@ -113,13 +112,23 @@ void class_fdmrg::run_algorithm() {
     if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     while(true) {
+        double variance = 0;
+        if(not tensors.active_sites.empty())
+            variance = tools::finite::measure::energy_variance_per_site(tensors);
+        else
+            tools::log->error("Active sites is empty");
+        tools::log->info("Variance before single DMRG step: {:.16f}", std::log10(variance));
         single_fdmrg_step();
+        if(not tensors.active_sites.empty())
+            variance = tools::finite::measure::energy_variance_per_site(tensors);
+        tools::log->info("Variance after single DMRG step: {:.16f}", std::log10(variance));
         print_status_update();
         write_to_file();
         check_convergence();
         update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
+        reduce_mpo_energy();
 
         // It's important not to perform the last move.
         // That last state would not get optimized
@@ -153,21 +162,19 @@ void class_fdmrg::single_fdmrg_step() {
      * \fn void single_DMRG_step(std::string ritz)
      */
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
+
+
     tools::common::profile::t_sim->tic();
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_max_sites);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
+
+    tools::log->trace("Merging tensor");
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
 
     // Update record holder
+    tools::log->trace("Checking if variance beats standing record");
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
     if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
-
-    // Reduce mpo energy to avoid catastrophic cancellation
-    if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
-        tensors.reduce_mpo_energy();
-    }
-
-
 
     tools::common::profile::t_sim->toc();
     status.wall_time = tools::common::profile::t_tot->get_age();

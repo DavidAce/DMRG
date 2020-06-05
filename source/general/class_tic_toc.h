@@ -12,21 +12,22 @@ class class_tic_toc {
     private:
     using hresclock = std::chrono::high_resolution_clock;
     hresclock::time_point tic_timepoint;
+    hresclock::time_point toc_timepoint;
     hresclock::time_point start_timepoint;
+    hresclock::duration   delta_time    = std::chrono::high_resolution_clock::duration::zero();
+    hresclock::duration   measured_time = std::chrono::high_resolution_clock::duration::zero();
 
     std::string name            = "";
-    bool        enable          = false; // Whether we are profiling or not.
+    bool        enable          = true; // Whether we are profiling or not.
+    bool        is_measuring    = false;
     int         print_precision = 5;
     int         padding         = 5;
 
     public:
     class_tic_toc(bool on_off, int prec, std::string output_text); // Constructor
-    class_tic_toc() = default;
+    class_tic_toc();
     void tic();
     void toc();
-
-    hresclock::duration delta_time;
-    hresclock::duration measured_time;
 
     void                      set_properties(bool on_off, int prec, std::string output_text);
     void                      set_label(std::string output_text);
@@ -47,6 +48,10 @@ class class_tic_toc {
 
     void reset();
 
-    class_tic_toc &      operator=(double measured_time);
+    class_tic_toc &      operator=(double other_time_in_seconds);
+    class_tic_toc &      operator+=(double other_time_in_seconds);
+    class_tic_toc &      operator-=(double other_time_in_seconds);
+    class_tic_toc &      operator+=(const class_tic_toc & rhs);
+    class_tic_toc &      operator-=(const class_tic_toc & rhs);
     friend std::ostream &operator<<(std::ostream &, const class_tic_toc &);
 };

@@ -16,7 +16,6 @@
 #include <tools/finite/debug.h>
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <typeindex>
 
