@@ -25,9 +25,9 @@ class_edges_infinite::class_edges_infinite():
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_edges_infinite::~class_edges_infinite() = default;                                                    // default dtor
-class_edges_infinite::class_edges_infinite(class_edges_infinite &&other)  noexcept = default;               // default move ctor
-class_edges_infinite &class_edges_infinite::operator=(class_edges_infinite &&other) noexcept = default;     // default move assign
+class_edges_infinite::~class_edges_infinite()                                        = default;   // default dtor
+class_edges_infinite::class_edges_infinite(class_edges_infinite &&other)             = default;   // default move ctor
+class_edges_infinite &class_edges_infinite::operator=(class_edges_infinite &&other)  = default;   // default move assign
 class_edges_infinite::class_edges_infinite(const class_edges_infinite &other):
     eneL(std::make_unique<class_env_ene>(*other.eneL)),
     eneR(std::make_unique<class_env_ene>(*other.eneR)),

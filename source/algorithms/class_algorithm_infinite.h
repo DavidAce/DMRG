@@ -44,23 +44,23 @@ class class_algorithm_infinite : public class_algorithm_base {
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
 
-    std::list<bool>   B_mpo_vec; // History of saturation true/false
-    std::list<double> V_mpo_vec; // History of variances
-    std::list<size_t> X_mpo_vec; // History of moves numbers
+    std::vector<bool>   B_mpo_vec; // History of saturation true/false
+    std::vector<double> V_mpo_vec; // History of variances
+    std::vector<size_t> X_mpo_vec; // History of moves numbers
     double            V_mpo_slope = 0;
 
-    std::list<bool>   B_ham_vec; // History of saturation true/false
-    std::list<double> V_ham_vec;
-    std::list<size_t> X_ham_vec;
+    std::vector<bool>   B_ham_vec; // History of saturation true/false
+    std::vector<double> V_ham_vec;
+    std::vector<size_t> X_ham_vec;
     double            V_ham_slope = 0;
 
-    std::list<bool>   B_mom_vec; // History of saturation true/false
-    std::list<double> V_mom_vec;
-    std::list<size_t> X_mom_vec;
+    std::vector<bool>   B_mom_vec; // History of saturation true/false
+    std::vector<double> V_mom_vec;
+    std::vector<size_t> X_mom_vec;
     double            V_mom_slope = 0;
 
-    std::list<bool>   BS_vec; // History of saturation true/false
-    std::list<double> S_vec;
-    std::list<size_t> XS_vec;
+    std::vector<bool>   BS_vec; // History of saturation true/false
+    std::vector<double> S_vec;
+    std::vector<size_t> XS_vec;
     double            S_slope = 0;
 };

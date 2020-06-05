@@ -12,7 +12,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -d | --dry-run                  : Dry run
    | --download-method          : Download method for dependencies [ find | fetch | find-or-fetch | conan ] (default = find)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
--g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
+-g | --compiler [=arg]          : Compiler        | GNU | Clang | Tau (default = "")
 -G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
 -h | --help                     : Help. Shows this text.
@@ -225,6 +225,15 @@ elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
     echo "Exporting compiler flags for Clang"
     export CC=clang
     export CXX=clang++
+elif [[ "$compiler" =~ Tau|tau ]] ; then
+    echo "Exporting compiler flags for Tau"
+    echo "Enabling shared linking for Tau"
+    echo "Hint: If this doesnt work, try compiling normally with the plain compiler once first"
+    enable_shared="ON"
+    export PATH=/home/david/GitProjects/DMRG++/.tau/bin/ThinkStation/:$PATH
+    export CC=tau_gcc
+    export CXX=tau_g++
+    export FC=tau_gfortran
 fi
 
 
@@ -285,7 +294,7 @@ if [ -z "$dry_run" ] ;then
             echo "Exit code: $exit_code"
             echo "CMakeFiles/CMakeError.log:"
             echo ""
-            cat CMakeFiles/CMakeError.log
+ #           cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
 
@@ -311,7 +320,7 @@ if [ -z "$dry_run" ] ;then
             echo "Exit code: $exit_code"
             echo "CMakeFiles/CMakeError.log:"
             echo ""
-            cat CMakeFiles/CMakeError.log
+#            cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
 fi

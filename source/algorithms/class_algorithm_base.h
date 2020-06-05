@@ -68,7 +68,7 @@ class class_algorithm_base {
         double avgY;
     };
 
-    SaturationReport check_saturation_using_slope(std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate,
+    SaturationReport check_saturation_using_slope(std::vector<double> &Y_vec, std::vector<size_t> &X_vec, double new_data, size_t iter, size_t rate,
                                                   double tolerance);
     //    SaturationReport2 check_saturation_using_slope2(std::list<double> &Y_vec, std::list<int> &X_vec, double new_data, int iter, int rate, double
     //    tolerance);

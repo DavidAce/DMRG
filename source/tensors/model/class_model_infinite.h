@@ -24,8 +24,8 @@ class class_model_infinite {
 
     class_model_infinite();
     ~class_model_infinite();                                                // Read comment on implementation
-    class_model_infinite(class_model_infinite &&other) noexcept;            // default move ctor
-    class_model_infinite &operator=(class_model_infinite &&other) noexcept; // default move assign
+    class_model_infinite(class_model_infinite &&other);                     // default move ctor
+    class_model_infinite &operator=(class_model_infinite &&other);          // default move assign
     class_model_infinite(const class_model_infinite &other);                // copy ctor
     class_model_infinite &operator=(const class_model_infinite &other);     // copy assign
 

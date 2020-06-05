@@ -1,17 +1,21 @@
 
-#include <tools/finite/opt.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <tools/finite/opt.h>
+#include <tools/finite/opt_tensor.h>
+
+/* clang-format off */
 void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
-    std::string format_hdr = "{:<24} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
-    std::string format_num = "- {:<22} {:<7} {:<7} {:<20.16f} {:<12.8f} {:<18.16f} {:<18.16f} {:<5} {:<7} {:<18.4f} {:<18.4f}";
+    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
+    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
     tools::log->debug(format_hdr.c_str(),
-                      "Algorithm",
+                      "Optimization report",
                       "size",
-                      "basis",
+                      "space",
                       "energy",
-                      "variance",
+                      "log₁₀ var",
                       "overlap",
                       "norm",
                       "iter",
@@ -19,19 +23,10 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
                       "Elapsed time [ms]",
                       "Time per count [ms]");
 
-    for(auto &item : bfgs_log){
+    for(auto &entry : bfgs_log){
         tools::log->debug(format_num.c_str(),
-        std::get<0>(item),
-        std::get<1>(item),
-        std::get<2>(item),
-        std::get<3>(item),
-        std::real(std::get<4>(item)),
-        std::get<5>(item),
-        std::get<6>(item),
-        std::get<7>(item),
-        std::get<8>(item),
-        std::get<9>(item)*1000,
-        std::get<9>(item)*1000 / std::max(1,std::get<8>(item)));
+        entry.description,
+        entry.size,entry.space,entry.energy,std::log10(entry.variance),entry.overlap,entry.norm,entry.iter,entry.counter,entry.time*1000,entry.time*1000.0/std::max(1.0,static_cast<double>(entry.counter)));
     }
     bfgs_log.clear();
 }
@@ -39,8 +34,8 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
 void tools::finite::opt::internal::reports::print_eigs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (eigs_log.empty()) return;
-    std::string format_hdr = "- {:<5} {:<22} {:<22} {:<23} {:<12} {:<12} {:<12}"; //Thetas are not counted
-    std::string format_num = "- {:<5} {:<20.16f} {:<20.16f} {:<21.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
+    std::string format_hdr = "- {:<5} {:<22} {:<22} {:<23} {:<12} {:<12} {:<12}";
+    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<21.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
     tools::log->debug(format_hdr.c_str(),
                        "nev",
                        "max <θ_i|θ>",
@@ -50,15 +45,15 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                        "Ham Time[ms]",
                        "LU Time[ms]");
 
-    for(auto &item : eigs_log){
+    for(auto &entry : eigs_log){
         tools::log->debug(format_num.c_str(),
-                          std::get<0>(item),
-                          std::get<1>(item),
-                          std::get<2>(item),
-                          std::get<3>(item) ,
-                          std::get<4>(item) * 1000,
-                          std::get<5>(item) * 1000,
-                          std::get<6>(item) * 1000);
+                          entry.nev,
+                          entry.max_olap,
+                          entry.min_olap,
+                          entry.eps ,
+                          entry.eig_time * 1000,
+                          entry.ham_time * 1000,
+                          entry.lu_time  * 1000);
     }
     eigs_log.clear();
 }
@@ -76,19 +71,19 @@ void tools::finite::opt::internal::reports::print_time_report(){
                       "vHv",
                       "vH2",
                       "vH",
-                      "tot",
-                      "op");
-    for(auto &item : time_log){
+                      "sum",
+                      "l-bfgs");
+    for(auto &entry : time_log){
     tools::log->debug(format_num.c_str(),
-                     1000 * std::get<0>(item),
-                     1000 * std::get<1>(item),
-                     1000 * std::get<2>(item),
-                     1000 * std::get<3>(item),
-                     1000 *(std::get<0>(item)
-                          + std::get<1>(item)
-                          + std::get<2>(item)
-                          + std::get<3>(item)),
-                     1000 * std::get<4>(item));
+                     1000 * entry.vH2v,
+                     1000 * entry.vHv,
+                     1000 * entry.vH2,
+                     1000 * entry.vH,
+                     1000 *(entry.vH2v
+                          + entry.vHv
+                          + entry.vH2
+                          + entry.vH),
+                     1000 * entry.bfgs);
     }
     time_log.clear();
 }
@@ -96,13 +91,32 @@ void tools::finite::opt::internal::reports::print_time_report(){
 
 
 
-void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & algorithm, long size, int rank, double energy, std::complex<double> variance,
-                    double overlap, double norm, int iter, int counter, double time){
-    bfgs_log.emplace_back(algorithm, size, rank, energy, variance, overlap, norm, iter, counter, time);
+void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & description, long size,long space, double energy, double variance,
+                    double overlap, double norm, size_t iter, size_t counter, double time){
+    if (tools::log->level() > spdlog::level::debug) return;
+    bfgs_log.push_back({description, size,space, energy, variance, overlap, norm, iter, counter, time});
 }
-void tools::finite::opt::internal::reports::time_add_entry(double vH2v, double vHv, double vH2, double vH, double time){
-    time_log.emplace_back(vH2v,vHv,vH2, vH, time);
+void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_tensor & tensor, std::optional<long> space){
+    if (tools::log->level() > spdlog::level::debug) return;
+    if(not space) space = tensor.get_tensor().size();
+    std::string description = fmt::format("{:<8} {:<16} {}",mode,tensor.get_name(),tag);
+    bfgs_log.push_back({description, tensor.get_tensor().size(),space.value(),tensor.get_energy(), tensor.get_variance(), tensor.get_overlap(), tensor.get_norm(),
+                        tensor.get_iter(), tensor.get_counter(), tensor.get_time()});
 }
-void tools::finite::opt::internal::reports::eigs_add_entry(double nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time){
-    eigs_log.emplace_back(nev, max_olap, min_olap, eps, eig_time,ham_time,lu_time);
+
+void tools::finite::opt::internal::reports::time_add_dir_entry(){
+    if (tools::log->level() > spdlog::level::debug) return;
+    time_log.push_back({tools::common::profile::t_opt_dir_vH2v->get_last_time_interval(), tools::common::profile::t_opt_dir_vHv->get_last_time_interval(),
+                          tools::common::profile::t_opt_dir_vH2->get_last_time_interval() , tools::common::profile::t_opt_dir_vH->get_last_time_interval(),
+                          tools::common::profile::t_opt_dir_bfgs->get_last_time_interval()});
+}
+void tools::finite::opt::internal::reports::time_add_sub_entry(){
+    if (tools::log->level() > spdlog::level::debug) return;
+    time_log.push_back ({tools::common::profile::t_opt_sub_vH2v->get_last_time_interval(), tools::common::profile::t_opt_sub_vHv->get_last_time_interval(),
+                          tools::common::profile::t_opt_sub_vH2->get_last_time_interval() , tools::common::profile::t_opt_sub_vH->get_last_time_interval(),
+                          tools::common::profile::t_opt_sub_bfgs->get_last_time_interval()});
+}
+void tools::finite::opt::internal::reports::eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time){
+    if (tools::log->level() > spdlog::level::debug) return;
+    eigs_log.push_back({nev, max_olap, min_olap, eps, eig_time,ham_time,lu_time});
 }

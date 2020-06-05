@@ -12,8 +12,9 @@
 #include <tensors/state/class_state_infinite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tensors/state/class_mps_site.h>
-#include <math/class_eigsolver.h>
+#include <eig/eig.h>
 #include <math/nmspc_math.h>
+#include <iomanip>
 //#include "class_mps_util.h"
 
 using namespace Textra;
@@ -36,13 +37,12 @@ namespace tools::common::views{
     bool components_computed = false;
 }
 
-template<eigutils::eigSetting::Side side>
-std::pair<Eigen::VectorXcd, Scalar> dominant_eig(Eigen::Tensor<Scalar,2> transfer_mat, int L, int ncv){
-    using namespace eigutils::eigSetting;
-    class_eigsolver solver;
-    solver.eigs<Storage::DENSE>(transfer_mat.data(),L, 1, ncv,NAN,Form::NONSYMMETRIC,Ritz::LM,side, true,true);
-    Eigen::VectorXcd eigvec = Eigen::Map<const Eigen::VectorXcd>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC, side>().data(), solver.solution.meta.rows,1);
-    Scalar eigval= solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
+template<eig::Side side>
+std::pair<Eigen::VectorXcd, Scalar> dominant_eig(const Eigen::Tensor<Scalar,2>  &transfer_mat, int L, int ncv){
+    eig::solver solver;
+    solver.eigs(transfer_mat.data() ,L, 1, ncv,eig::Ritz::LM,eig::Form::NSYM, side, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF, eig::Dephase::ON);
+    auto eigvec = eig::view::get_eigvec<Scalar>(solver.result, 0, side);
+    auto eigval = eig::view::get_eigval<Scalar>(solver.result,0);
     return std::make_pair(eigvec,eigval);
 }
 
@@ -58,14 +58,13 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(state).reshape(array2{chiB2,chiB2});
     Eigen::Tensor<Scalar,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(state).reshape(array2{chiC2,chiC2});
 
-    using namespace eigutils::eigSetting;
 //    int ncvA = std::min(16, chiA2);
     int ncvC = std::min(16, chiC2);
     int ncvB = std::min(16, chiB2);
-    [[maybe_unused]] auto [eigvec_R_evn, eigval_R_evn] = dominant_eig<Side::R>(theta_evn_transfer_mat, chiB2, ncvB);
-    [[maybe_unused]] auto [eigvec_L_evn, eigval_L_evn] = dominant_eig<Side::L>(theta_evn_transfer_mat, chiB2, ncvB);
-    [[maybe_unused]] auto [eigvec_R_odd, eigval_R_odd] = dominant_eig<Side::R>(theta_odd_transfer_mat, chiC2, ncvC);
-    [[maybe_unused]] auto [eigvec_L_odd, eigval_L_odd] = dominant_eig<Side::L>(theta_odd_transfer_mat, chiC2, ncvC);
+    [[maybe_unused]] auto [eigvec_R_evn, eigval_R_evn] = dominant_eig<eig::Side::R>(theta_evn_transfer_mat, chiB2, ncvB);
+    [[maybe_unused]] auto [eigvec_L_evn, eigval_L_evn] = dominant_eig<eig::Side::L>(theta_evn_transfer_mat, chiB2, ncvB);
+    [[maybe_unused]] auto [eigvec_R_odd, eigval_R_odd] = dominant_eig<eig::Side::R>(theta_odd_transfer_mat, chiC2, ncvC);
+    [[maybe_unused]] auto [eigvec_L_odd, eigval_L_odd] = dominant_eig<eig::Side::L>(theta_odd_transfer_mat, chiC2, ncvC);
 
     Scalar normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
     Scalar normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());

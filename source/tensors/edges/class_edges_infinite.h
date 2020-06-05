@@ -21,8 +21,8 @@ class class_edges_infinite {
     public:
     class_edges_infinite();
     ~class_edges_infinite();                                                // Read comment on implementation
-    class_edges_infinite(class_edges_infinite &&other) noexcept;            // default move ctor
-    class_edges_infinite &operator=(class_edges_infinite &&other) noexcept; // default move assign
+    class_edges_infinite(class_edges_infinite &&other);                     // default move ctor
+    class_edges_infinite &operator=(class_edges_infinite &&other);          // default move assign
     class_edges_infinite(const class_edges_infinite &other);                // copy ctor
     class_edges_infinite &operator=(const class_edges_infinite &other);     // copy assign
 

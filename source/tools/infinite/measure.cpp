@@ -2,8 +2,8 @@
 // Created by david on 2019-02-01.
 //
 
+#include <eig/eig.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <math/class_eigsolver.h>
 #include <math/class_svd_wrapper.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
@@ -349,44 +349,47 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 //
 //
 
-class_state_infinite::Scalar moment_generating_function(const class_state_infinite &state_original, std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {
-    using Scalar                                 = class_state_infinite::Scalar;
-    class_state_infinite state_evolved           = state_original;
+class_state_infinite::Scalar moment_generating_function(const class_state_infinite &                                 state_original,
+                                                        std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {
+    using Scalar                       = class_state_infinite::Scalar;
+    class_state_infinite state_evolved = state_original;
 
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
 
-//    long cfg_chi_lim_max = 5 * state_evolved.chiC();
+    //    long cfg_chi_lim_max = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
-        Eigen::Tensor<Scalar, 3> mps_evo   = Op.contract(state_evolved.get_2site_tensor(), Textra::idx({0}, {0}));
+        Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_tensor(), Textra::idx({0}, {0}));
         state_evolved.set_mps(mps_evo);
-        if(&Op != &Op_vec.back()) {
-            state_evolved.swap_AB();
-        }
+        if(&Op != &Op_vec.back()) { state_evolved.swap_AB(); }
     }
 
     long sizeLB = state_evolved.chiB() * state_evolved.chiB();
     // Normalize
-    Eigen::Tensor<Scalar, 2> transfer_matrix_theta_evn = tools::common::views::get_transfer_matrix_theta_evn(state_evolved).reshape(Textra::array2{sizeLB, sizeLB});
+    Eigen::Tensor<Scalar, 2> transfer_matrix_theta_evn =
+        tools::common::views::get_transfer_matrix_theta_evn(state_evolved).reshape(Textra::array2{sizeLB, sizeLB});
     using namespace settings::precision;
-    using namespace eigutils::eigSetting;
-    class_eigsolver solver;
-    solver.eigs<Storage::DENSE>(transfer_matrix_theta_evn.data(), (int) sizeLB, 1, (int) eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM, Side::R, false);
+    eig::solver solver;
+    auto        nev = static_cast<eig::size_type>(1);
+    auto        ncv = static_cast<eig::size_type>(eig_max_ncv);
 
-    auto new_theta_evn_normalized = tools::common::views::get_theta_evn(state_evolved, sqrt(solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0]));
+    solver.eigs(transfer_matrix_theta_evn.data(), sizeLB, nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
+                eig::Dephase::OFF);
+    auto eigval                   = eig::view::get_eigval<eig::cplx>(solver.result, 0);
+    auto new_theta_evn_normalized = tools::common::views::get_theta_evn(state_evolved, sqrt(eigval));
     auto old_theta_evn_normalized = tools::common::views::get_theta_evn(state_original);
-    long sizeL = new_theta_evn_normalized.dimension(1) * state_original.chiA();
-    long sizeR = new_theta_evn_normalized.dimension(3) * state_original.chiB();
+    long sizeL                    = new_theta_evn_normalized.dimension(1) * state_original.chiA();
+    long sizeR                    = new_theta_evn_normalized.dimension(3) * state_original.chiB();
 
     Eigen::Tensor<Scalar, 2> transfer_matrix_G = new_theta_evn_normalized.contract(old_theta_evn_normalized.conjugate(), Textra::idx({0, 2}, {0, 2}))
                                                      .shuffle(Textra::array4{0, 2, 1, 3})
                                                      .reshape(Textra::array2{sizeL, sizeR});
     // Compute the characteristic function G(a).
-    solver.eigs<Storage::DENSE>(transfer_matrix_G.data(), (int) transfer_matrix_G.dimension(0), 1, (int) eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM,
-                                Side::R, false);
+    solver.eigs(transfer_matrix_G.data(), transfer_matrix_G.dimension(0), nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
+                eig::Vecs::OFF, eig::Dephase::OFF);
     //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
-    Scalar lambdaG = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
+    auto lambdaG = eig::view::get_eigval<eig::cplx>(solver.result, 0);
     //    t_temp1->toc();
     return lambdaG;
 }
@@ -415,7 +418,7 @@ double tools::infinite::measure::truncation_error(const class_state_infinite &st
 double tools::infinite::measure::entanglement_entropy(const class_state_infinite &state) {
     tools::common::profile::t_ent->tic();
     if(state.measurements.entanglement_entropy) return state.measurements.entanglement_entropy.value();
-    const auto &                   LC = state.LC();
+    const auto &             LC = state.LC();
     Eigen::Tensor<Scalar, 0> SA = -LC.square().contract(LC.square().log().eval(), Textra::idx({0}, {0}));
     tools::common::profile::t_ent->toc();
     state.measurements.entanglement_entropy = std::real(SA(0));
@@ -445,30 +448,25 @@ template double tools::infinite::measure::energy_minus_energy_reduced(const Eige
 
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
-    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>)
-        return tools::infinite::measure::energy_mpo(state.get_2site_tensor(), model, edges);
+    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) return tools::infinite::measure::energy_mpo(state.get_2site_tensor(), model, edges);
     else
-        return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) + model.get_energy_per_site_reduced() * static_cast<double>(edges.get_length());
+        return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) +
+               model.get_energy_per_site_reduced() * static_cast<double>(edges.get_length());
 }
 
-template double tools::infinite::measure::energy_mpo(const class_state_infinite &, const class_model_infinite &model,
-                                                                      const class_edges_infinite &edges);
-template double tools::infinite::measure::energy_mpo(const Eigen::Tensor<Scalar, 3> &, const class_model_infinite &model,
-                                                                      const class_edges_infinite &edges);
-
+template double tools::infinite::measure::energy_mpo(const class_state_infinite &, const class_model_infinite &model, const class_edges_infinite &edges);
+template double tools::infinite::measure::energy_mpo(const Eigen::Tensor<Scalar, 3> &, const class_model_infinite &model, const class_edges_infinite &edges);
 
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_per_site_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
     std::cerr << "energy_per_site_mpo: CHECK DIVISION" << std::endl;
-    return tools::infinite::measure::energy_mpo(state,model,edges) /  static_cast<double>(2);
+    return tools::infinite::measure::energy_mpo(state, model, edges) / static_cast<double>(2);
 }
 
 template double tools::infinite::measure::energy_per_site_mpo(const class_state_infinite &, const class_model_infinite &model,
-                                                     const class_edges_infinite &edges);
+                                                              const class_edges_infinite &edges);
 template double tools::infinite::measure::energy_per_site_mpo(const Eigen::Tensor<Scalar, 3> &, const class_model_infinite &model,
-                                                     const class_edges_infinite &edges);
-
-
+                                                              const class_edges_infinite &edges);
 
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
@@ -486,14 +484,13 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         auto var = tools::infinite::measure::energy_variance_mpo(state.get_2site_tensor(), model, edges);
         if(var < state.lowest_recorded_variance) state.lowest_recorded_variance = var;
         return var;
-    }else{
+    } else {
         tools::log->trace("Measuring energy variance mpo");
         double energy = 0;
-        if(model.is_reduced())
-            energy = tools::infinite::measure::energy_minus_energy_reduced(state, model, edges);
+        if(model.is_reduced()) energy = tools::infinite::measure::energy_minus_energy_reduced(state, model, edges);
         else
             energy = tools::infinite::measure::energy_mpo(state, model, edges);
-        double E2 = energy * energy;
+        double      E2  = energy * energy;
         const auto &mpo = model.get_2site_tensor();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
@@ -506,20 +503,21 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
 }
 
 template double tools::infinite::measure::energy_variance_mpo(const class_state_infinite &, const class_model_infinite &model,
-                                                     const class_edges_infinite &edges);
+                                                              const class_edges_infinite &edges);
 template double tools::infinite::measure::energy_variance_mpo(const Eigen::Tensor<Scalar, 3> &, const class_model_infinite &model,
-                                                     const class_edges_infinite &edges);
+                                                              const class_edges_infinite &edges);
 
 template<typename state_or_mps_type>
-double tools::infinite::measure::energy_variance_per_site_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
+double tools::infinite::measure::energy_variance_per_site_mpo(const state_or_mps_type &state, const class_model_infinite &model,
+                                                              const class_edges_infinite &edges) {
     std::cerr << "energy_per_site_mpo: CHECK DIVISION" << std::endl;
-    return tools::infinite::measure::energy_variance_mpo(state,model,edges) /  static_cast<double>(2);
+    return tools::infinite::measure::energy_variance_mpo(state, model, edges) / static_cast<double>(2);
 }
 
 template double tools::infinite::measure::energy_variance_per_site_mpo(const class_state_infinite &, const class_model_infinite &model,
-                                                              const class_edges_infinite &edges);
+                                                                       const class_edges_infinite &edges);
 template double tools::infinite::measure::energy_variance_per_site_mpo(const Eigen::Tensor<Scalar, 3> &, const class_model_infinite &model,
-                                                              const class_edges_infinite &edges);
+                                                                       const class_edges_infinite &edges);
 
 double tools::infinite::measure::energy_mpo(const class_tensors_infinite &tensors) {
     if(tensors.measurements.energy_mpo) return tensors.measurements.energy_mpo.value();
@@ -535,7 +533,6 @@ double tools::infinite::measure::energy_per_site_mpo(const class_tensors_infinit
     return tensors.measurements.energy_per_site_mpo.value();
 }
 
-
 double tools::infinite::measure::energy_variance_mpo(const class_tensors_infinite &tensors) {
     if(tensors.measurements.energy_variance_mpo) return tensors.measurements.energy_variance_mpo.value();
     tensors.measurements.energy_variance_mpo = tools::infinite::measure::energy_variance_mpo(*tensors.state, *tensors.model, *tensors.edges);
@@ -544,7 +541,7 @@ double tools::infinite::measure::energy_variance_mpo(const class_tensors_infinit
 
 double tools::infinite::measure::energy_variance_per_site_mpo(const class_tensors_infinite &tensors) {
     if(tensors.measurements.energy_variance_per_site_mpo) return tensors.measurements.energy_variance_per_site_mpo.value();
-    auto L                                   = tools::infinite::measure::length(tensors);
+    auto L                                            = tools::infinite::measure::length(tensors);
     tensors.measurements.energy_variance_per_site_mpo = tools::infinite::measure::energy_variance_mpo(tensors) / static_cast<double>(L);
     return tensors.measurements.energy_variance_per_site_mpo.value();
 }
@@ -562,11 +559,9 @@ double tools::infinite::measure::energy_variance_per_site_mpo(const Eigen::Tenso
     return tools::infinite::measure::energy_variance_per_site_mpo(mps, *tensors.model, *tensors.edges);
 }
 
-
-
 double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinite &tensors) {
-    const auto & state = *tensors.state;
-    const auto & model = *tensors.model;
+    const auto &state = *tensors.state;
+    const auto &model = *tensors.model;
 
     if(tensors.measurements.energy_per_site_ham) return tensors.measurements.energy_per_site_ham.value();
     if(state.measurements.bond_dimension <= 2) return std::numeric_limits<double>::quiet_NaN();
@@ -584,14 +579,14 @@ double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinit
     using namespace tools::common::views;
 
     Eigen::Tensor<Scalar, 0> E_evn = theta_evn_normalized.contract(Textra::MatrixTensorMap(h_evn, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
-        .contract(theta_evn_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
-        .contract(l_evn, Textra::idx({0, 2}, {0, 1}))
-        .contract(r_evn, Textra::idx({0, 1}, {0, 1}));
+                                         .contract(theta_evn_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
+                                         .contract(l_evn, Textra::idx({0, 2}, {0, 1}))
+                                         .contract(r_evn, Textra::idx({0, 1}, {0, 1}));
 
     Eigen::Tensor<Scalar, 0> E_odd = theta_odd_normalized.contract(Textra::MatrixTensorMap(h_odd, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
-        .contract(theta_odd_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
-        .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
-        .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
+                                         .contract(theta_odd_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
+                                         .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
+                                         .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0) + E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!");
     tools::common::profile::t_ene_ham->toc();
     tensors.measurements.energy_per_site_ham = 0.5 * std::real(E_evn(0) + E_odd(0));
@@ -600,8 +595,8 @@ double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinit
 
 double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinite &tensors) {
     if(tensors.measurements.energy_per_site_mom) return tensors.measurements.energy_per_site_mom.value();
-    const auto & state = *tensors.state;
-    const auto & model = *tensors.model;
+    const auto &state = *tensors.state;
+    const auto &model = *tensors.model;
     if(state.chiC() <= 2) {
         tensors.measurements.energy_per_site_mom          = std::numeric_limits<double>::quiet_NaN();
         tensors.measurements.energy_variance_per_site_mom = std::numeric_limits<double>::quiet_NaN();
@@ -619,20 +614,18 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
     auto   Op_vec = qm::timeEvolution::compute_G(a, 4, h_evn, h_odd);
 
     // The following only works if state.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
-    Scalar lambdaG                                  = moment_generating_function(state, Op_vec);
-    Scalar l                                        = 2.0; // Number of sites in unit cell
-    Scalar G                                        = pow(lambdaG, 1.0 / l);
-    Scalar logG                                     = std::log(lambdaG) * 1.0 / l;
-    Scalar logGc                                    = std::log(conj(lambdaG)) * 1.0 / l;
-    Scalar O                                        = (logG - logGc) / (2.0 * a);
-    Scalar VarO                                     = 2.0 * std::log(abs(G)) / (a * a);
+    Scalar lambdaG                                    = moment_generating_function(state, Op_vec);
+    Scalar l                                          = 2.0; // Number of sites in unit cell
+    Scalar G                                          = pow(lambdaG, 1.0 / l);
+    Scalar logG                                       = std::log(lambdaG) * 1.0 / l;
+    Scalar logGc                                      = std::log(conj(lambdaG)) * 1.0 / l;
+    Scalar O                                          = (logG - logGc) / (2.0 * a);
+    Scalar VarO                                       = 2.0 * std::log(abs(G)) / (a * a);
     tensors.measurements.energy_per_site_mom          = std::real(O);
     tensors.measurements.energy_variance_per_site_mom = std::real(VarO);
     tools::common::profile::t_ene_mom->toc();
     return tensors.measurements.energy_per_site_mom.value();
 }
-
-
 
 double tools::infinite::measure::energy_variance_per_site_ham(const class_tensors_infinite &tensors) {
     if(tensors.measurements.energy_variance_per_site_ham) return tensors.measurements.energy_variance_per_site_ham.value();

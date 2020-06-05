@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include <algorithms/class_algorithm_status.h>
 #include <array>
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include <algorithms/class_algorithm_status.h>
 #include <vector>
 
 class h5pp_table_measurements_finite {
@@ -127,78 +127,99 @@ class h5pp_table_measurements_infinite {
 class h5pp_table_profiling {
     public:
     static inline h5pp::hid::h5t h5_type;
+    /* clang-format off */
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
         uint64_t position  = 0;
-        double   t_tot     = 0;
-        double   t_pre     = 0;
-        double   t_pos     = 0;
-        double   t_sim     = 0;
-        double   t_con     = 0;
-        double   t_eig     = 0;
-        double   t_svd     = 0;
-        double   t_ham     = 0;
-        double   t_hsq     = 0;
-        double   t_mps     = 0;
-        double   t_mpo     = 0;
-        double   t_opt     = 0;
-        double   t_evo     = 0;
-        double   t_env     = 0;
-        double   t_ent     = 0;
-        double   t_ene     = 0;
-        double   t_var     = 0;
-        double   t_prj     = 0;
-        double   t_chk     = 0;
-        double   t_hdf     = 0;
-        double   t_ene_ham = 0;
-        double   t_ene_mom = 0;
-        double   t_var_ham = 0;
-        double   t_var_mom = 0;
-        double   t_vH2v    = 0;
-        double   t_vHv     = 0;
-        double   t_vH2     = 0;
-        double   t_vH      = 0;
-        double   t_op      = 0;
+        double   t_tot             = 0;
+        double   t_pre             = 0;
+        double   t_pos             = 0;
+        double   t_sim             = 0;
+        double   t_con             = 0;
+        double   t_eig             = 0;
+        double   t_svd             = 0;
+        double   t_evo             = 0;
+        double   t_env             = 0;
+        double   t_ent             = 0;
+        double   t_ene             = 0;
+        double   t_var             = 0;
+        double   t_prj             = 0;
+        double   t_chk             = 0;
+        double   t_hdf             = 0;
+        double   t_ene_ham         = 0;
+        double   t_ene_mom         = 0;
+        double   t_var_ham         = 0;
+        double   t_var_mom         = 0;
+        double   t_mps             = 0;
+        double   t_mpo             = 0;
+        double   t_opt             = 0;
+        double   t_opt_dir         = 0;
+        double   t_opt_dir_bfgs    = 0;
+        double   t_opt_dir_vH2     = 0;
+        double   t_opt_dir_vH2v    = 0;
+        double   t_opt_dir_vH      = 0;
+        double   t_opt_dir_vHv     = 0;
+        double   t_opt_sub         = 0;
+        double   t_opt_sub_ham     = 0;
+        double   t_opt_sub_hsq     = 0;
+        double   t_opt_sub_lu      = 0;
+        double   t_opt_sub_eig     = 0;
+        double   t_opt_sub_bfgs    = 0;
+        double   t_opt_sub_vH2     = 0;
+        double   t_opt_sub_vH2v    = 0;
+        double   t_opt_sub_vH      = 0;
+        double   t_opt_sub_vHv     = 0;
     };
 
     h5pp_table_profiling() { register_table_type(); }
     static void register_table_type() {
         if(h5_type.valid()) return;
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-        H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "t_tot", HOFFSET(table, t_tot), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_pre", HOFFSET(table, t_pre), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_pos", HOFFSET(table, t_pos), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_sim", HOFFSET(table, t_sim), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_con", HOFFSET(table, t_con), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_eig", HOFFSET(table, t_eig), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_svd", HOFFSET(table, t_svd), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ham", HOFFSET(table, t_ham), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_hsq", HOFFSET(table, t_hsq), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_mps", HOFFSET(table, t_mps), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_mpo", HOFFSET(table, t_mpo), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_opt", HOFFSET(table, t_opt), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_evo", HOFFSET(table, t_evo), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_env", HOFFSET(table, t_env), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ent", HOFFSET(table, t_ent), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ene", HOFFSET(table, t_ene), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_var", HOFFSET(table, t_var), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_prj", HOFFSET(table, t_prj), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_chk", HOFFSET(table, t_chk), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_hdf", HOFFSET(table, t_hdf), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ene_ham", HOFFSET(table, t_ene_ham), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ene_mom", HOFFSET(table, t_ene_mom), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_var_ham", HOFFSET(table, t_var_ham), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_var_mom", HOFFSET(table, t_var_mom), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_vH2v", HOFFSET(table, t_vH2v), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_vHv", HOFFSET(table, t_vHv), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_vH2", HOFFSET(table, t_vH2), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_vH", HOFFSET(table, t_vH), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_op", HOFFSET(table, t_op), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_pos",            HOFFSET(table, t_pos         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_sim",            HOFFSET(table, t_sim         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_con",            HOFFSET(table, t_con         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_eig",            HOFFSET(table, t_eig         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_svd",            HOFFSET(table, t_svd         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_evo",            HOFFSET(table, t_evo         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_env",            HOFFSET(table, t_env         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ent",            HOFFSET(table, t_ent         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ene",            HOFFSET(table, t_ene         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_var",            HOFFSET(table, t_var         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_prj",            HOFFSET(table, t_prj         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_chk",            HOFFSET(table, t_chk         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_hdf",            HOFFSET(table, t_hdf         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ene_ham",        HOFFSET(table, t_ene_ham     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ene_mom",        HOFFSET(table, t_ene_mom     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_var_ham",        HOFFSET(table, t_var_ham     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_var_mom",        HOFFSET(table, t_var_mom     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_mps",            HOFFSET(table, t_mps         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_mpo",            HOFFSET(table, t_mpo         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt",            HOFFSET(table, t_opt         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir",        HOFFSET(table, t_opt_dir     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_bfgs",   HOFFSET(table, t_opt_dir_bfgs), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_vH2",    HOFFSET(table, t_opt_dir_vH2 ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_vH2v",   HOFFSET(table, t_opt_dir_vH2v), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_vH",     HOFFSET(table, t_opt_dir_vH  ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_vHv",    HOFFSET(table, t_opt_dir_vHv ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub",        HOFFSET(table, t_opt_sub     ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_ham",    HOFFSET(table, t_opt_sub_ham ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_hsq",    HOFFSET(table, t_opt_sub_hsq ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_lu",     HOFFSET(table, t_opt_sub_lu  ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_eig",    HOFFSET(table, t_opt_sub_eig ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_bfgs",   HOFFSET(table, t_opt_sub_bfgs), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_vH2",    HOFFSET(table, t_opt_sub_vH2 ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_vH2v",   HOFFSET(table, t_opt_sub_vH2v), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_vH",     HOFFSET(table, t_opt_sub_vH  ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_vHv",    HOFFSET(table, t_opt_sub_vHv ), H5T_NATIVE_DOUBLE);
+
     }
+    /* clang-format on */
 };
 
 class h5pp_table_algorithm_status {
@@ -237,7 +258,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "variance_mpo_saturated_for", HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_ham_saturated_for", HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_mom_saturated_for", HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "algorithm_has_finished", HOFFSET(table,  algorithm_has_finished), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_finished", HOFFSET(table, algorithm_has_finished), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "algorithm_has_converged", HOFFSET(table, algorithm_has_converged), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "algorithm_has_saturated", HOFFSET(table, algorithm_has_saturated), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "algorithm_has_succeeded", HOFFSET(table, algorithm_has_succeeded), H5T_NATIVE_UINT8);

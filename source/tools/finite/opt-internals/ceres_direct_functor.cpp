@@ -60,8 +60,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
 template<typename Scalar>
 bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
-    using namespace tools::common::profile;
-    t_op->tic();
+    t_bfgs->tic();
     Scalar ene, ene2, var;
     Scalar vHv, vH2v;
     double vv, log10var;
@@ -153,13 +152,13 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     }
 
     counter++;
-    tools::common::profile::t_op->toc();
+    t_bfgs->toc();
     return true;
 }
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
-    tools::common::profile::t_vH2->tic();
+    t_vH2->tic();
     auto                     log2chiL = std::log2(dsizes[1]);
     auto                     log2chiR = std::log2(dsizes[2]);
     auto                     log2spin = std::log2(dsizes[0]);
@@ -197,12 +196,12 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
                                          .shuffle(Textra::array3{1, 0, 2});
     }
 
-    tools::common::profile::t_vH2->toc();
+    t_vH2->toc();
 }
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
-    tools::common::profile::t_vH->tic();
+    t_vH->tic();
     auto log2chiL = std::log2(dsizes[1]);
     auto log2chiR = std::log2(dsizes[2]);
     //            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
@@ -224,7 +223,7 @@ void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
                                         .shuffle(Textra::array3{1, 2, 0});
     }
 
-    tools::common::profile::t_vH->toc();
+    t_vH->toc();
 }
 
 // template<typename Scalar>

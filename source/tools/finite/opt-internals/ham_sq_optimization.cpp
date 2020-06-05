@@ -7,8 +7,8 @@
 #include <tools/common/prof.h>
 #include <tensors/state/class_state_finite.h>
 #include <config/nmspc_settings.h>
-#include <math/arpack_extra/matrix_product_hamiltonian_sq.h>
-#include <math/class_eigsolver.h>
+#include <eig/eig.h>
+//#include <eig/arpack_extra/matrix_product_hamiltonian_sq.h>
 
 //Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq_optimization(const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace){
 //    tools::log->trace("Starting hamiltonian squared optimization");

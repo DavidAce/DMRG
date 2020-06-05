@@ -6,23 +6,30 @@
 #include <cmath>
 #include <iomanip>
 
+class_tic_toc::class_tic_toc() : class_tic_toc(true, 5, "") {}
+
 class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text) : name(output_text), enable(on_off), print_precision(prec) {
     if(enable) {
-        if(!name.empty()) {
-            name = name + ": ";
-        }
+        if(!name.empty()) { name = name + ": "; }
         reset();
     }
 }
 
 void class_tic_toc::tic() {
-    if(enable) tic_timepoint = std::chrono::high_resolution_clock::now();
+    if(enable) {
+        if(is_measuring) throw std::runtime_error("Called tic() twice: this timer is already measuring");
+        tic_timepoint = std::chrono::high_resolution_clock::now();
+        is_measuring  = true;
+    }
 }
 
 void class_tic_toc::toc() {
     if(enable) {
-        delta_time = std::chrono::high_resolution_clock::now() - tic_timepoint;
+        if(not is_measuring) throw std::runtime_error("Called toc() twice or without prior tic()");
+        toc_timepoint = std::chrono::high_resolution_clock::now();
+        delta_time    = toc_timepoint - tic_timepoint;
         measured_time += delta_time;
+        is_measuring = false;
     }
 }
 
@@ -44,29 +51,20 @@ double class_tic_toc::get_measured_time() const { return std::chrono::duration_c
 
 double class_tic_toc::get_last_time_interval() const { return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count(); }
 
-
 void class_tic_toc::print_age() const {
-    if(enable) {
-        std::cout << string_age() << std::endl;
-    }
+    if(enable) { std::cout << string_age() << std::endl; }
 }
 
 void class_tic_toc::print_measured_time() const {
-    if(enable) {
-        std::cout << string_measured_time() << std::endl;
-    }
+    if(enable) { std::cout << string_measured_time() << std::endl; }
 }
 
 void class_tic_toc::print_last_time_interval() const {
-    if(enable) {
-        std::cout << string_last_time_interval() << std::endl;
-    }
+    if(enable) { std::cout << string_last_time_interval() << std::endl; }
 }
 
 void class_tic_toc::print_measured_time_w_percent(double cmp) const {
-    if(enable) {
-        std::cout << string_measured_time_w_percent(cmp) << std::endl;
-    }
+    if(enable) { std::cout << string_measured_time_w_percent(cmp) << std::endl; }
 }
 
 std::string class_tic_toc::string(double tgt, double cmp) const {
@@ -99,11 +97,37 @@ void class_tic_toc::reset() {
         measured_time   = std::chrono::high_resolution_clock::duration::zero();
         delta_time      = std::chrono::high_resolution_clock::duration::zero();
         start_timepoint = std::chrono::high_resolution_clock::now();
+        is_measuring    = false;
     }
 }
 
 class_tic_toc &class_tic_toc::operator=(double other_time_in_seconds) {
     this->measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    this->delta_time    = this->measured_time;
+    return *this;
+}
+
+class_tic_toc &class_tic_toc::operator+=(double other_time_in_seconds) {
+    this->measured_time += std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    this->delta_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    return *this;
+}
+
+class_tic_toc &class_tic_toc::operator-=(double other_time_in_seconds) {
+    this->measured_time -= std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    this->delta_time = -std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    return *this;
+}
+
+class_tic_toc &class_tic_toc::operator+=(const class_tic_toc &rhs) {
+    this->measured_time += rhs.measured_time;
+    this->delta_time     = rhs.measured_time;
+    return *this;
+}
+
+class_tic_toc &class_tic_toc::operator-=(const class_tic_toc &rhs) {
+    this->measured_time -= rhs.measured_time;
+    this->delta_time = -rhs.measured_time;
     return *this;
 }
 

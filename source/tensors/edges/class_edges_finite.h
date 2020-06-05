@@ -11,7 +11,7 @@ class class_env_var;
 class class_edges_finite {
     public:
     using Scalar = std::complex<double>;
-    std::list<size_t> active_sites;
+    std::vector<size_t> active_sites;
 
     private:
     //    size_t iter      = 0;
@@ -26,8 +26,8 @@ class class_edges_finite {
     public:
     class_edges_finite();
     ~class_edges_finite();                                              // Read comment on implementation
-    class_edges_finite(class_edges_finite &&other) noexcept;            // default move ctor
-    class_edges_finite &operator=(class_edges_finite &&other) noexcept; // default move assign
+    class_edges_finite(class_edges_finite &&other);                     // default move ctor
+    class_edges_finite &operator=(class_edges_finite &&other);          // default move assign
     class_edges_finite(const class_edges_finite &other);                // copy ctor
     class_edges_finite &operator=(const class_edges_finite &other);     // copy assign
 
@@ -47,7 +47,7 @@ class class_edges_finite {
     [[nodiscard]] bool   has_nan() const;
     void                 assert_validity() const;
 
-    void eject_inactive_edges(std::optional<std::list<size_t>> sites = std::nullopt);
+    void eject_inactive_edges(std::optional<std::vector<size_t>> sites = std::nullopt);
     void eject_all_edges();
 
     // This is a reference wrapper for an edge pair
@@ -74,13 +74,13 @@ class class_edges_finite {
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_ene_blk(size_t posL, size_t posR);
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 4>>       get_var_blk(size_t posL, size_t posR);
 
-    [[nodiscard]] env_pair<const class_env_ene> get_multisite_ene(std::optional<std::list<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<const class_env_var> get_multisite_var(std::optional<std::list<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<class_env_ene>       get_multisite_ene(std::optional<std::list<size_t>> sites = std::nullopt);
-    [[nodiscard]] env_pair<class_env_var>       get_multisite_var(std::optional<std::list<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<const class_env_ene> get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const class_env_var> get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<class_env_ene>       get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<class_env_var>       get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt);
 
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk(std::optional<std::list<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 4>> get_multisite_var_blk(std::optional<std::list<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_ene_blk(std::optional<std::list<size_t>> sites = std::nullopt);
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 4>>       get_multisite_var_blk(std::optional<std::list<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 4>> get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 4>>       get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
 };

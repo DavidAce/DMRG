@@ -314,9 +314,9 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(state.dimension(0) != mpo.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo.dimension(2)));
-        tools::common::profile::t_ene->tic();
+        tools::common::profile::t_var->tic();
         double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
-        tools::common::profile::t_ene->toc();
+        tools::common::profile::t_var->toc();
         double var = std::abs(H2 - E2);
         return var;
     }

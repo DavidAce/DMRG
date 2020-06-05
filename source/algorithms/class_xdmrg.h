@@ -24,7 +24,6 @@ class class_xdmrg : public class_algorithm_finite {
     void   find_energy_range();
     void   init_energy_limits(std::optional<double> energy_density_target = std::nullopt, std::optional<double> energy_density_window = std::nullopt);
     void   single_xDMRG_step();
-    void   single_xDMRG_step_old();
     void   randomize_into_product_state_in_energy_window(ResetReason reason, std::optional<std::string> sector = std::nullopt);
     void   run_task_list(std::list<xdmrg_task> &task_list);
     void   run_preprocessing() final;

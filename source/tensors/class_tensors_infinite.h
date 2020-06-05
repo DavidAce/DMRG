@@ -26,8 +26,8 @@ class class_tensors_infinite {
 
     class_tensors_infinite();
     ~class_tensors_infinite();                                                  // Read comment on implementation
-    class_tensors_infinite(class_tensors_infinite &&other) noexcept;            // default move ctor
-    class_tensors_infinite &operator=(class_tensors_infinite &&other) noexcept; // default move assign
+    class_tensors_infinite(class_tensors_infinite &&other);                     // default move ctor
+    class_tensors_infinite &operator=(class_tensors_infinite &&other);          // default move assign
     class_tensors_infinite(const class_tensors_infinite &other);                // copy ctor
     class_tensors_infinite &operator=(const class_tensors_infinite &other);     // copy assign
 

@@ -27,8 +27,8 @@ class class_mps_site {
     class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error = 0);
     class_mps_site();                                           // ctor
     class_mps_site(const class_mps_site &other);                // default copy ctor
-    class_mps_site(class_mps_site &&other) noexcept;            // default move ctor
-    class_mps_site &operator=(class_mps_site &&other) noexcept; // default move assign
+    class_mps_site(class_mps_site &&other);                     // default move ctor
+    class_mps_site &operator=(class_mps_site &&other);          // default move assign
     class_mps_site &operator=(const class_mps_site &other);     // default copy assign
 
     [[nodiscard]] bool                            is_real() const;

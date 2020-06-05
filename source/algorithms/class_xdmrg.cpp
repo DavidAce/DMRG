@@ -17,10 +17,10 @@
 #include <tools/finite/debug.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
+#include <tools/finite/opt_tensor.h>
 #include <tools/finite/svd.h>
 
 class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
@@ -111,7 +111,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
                 run_preprocessing();
                 break;
                 //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
-            case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range();
+            case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_SEED_STATE:
                 excited_state_number = 0;
                 state_name           = "state_0_seed";
@@ -186,6 +186,7 @@ void class_xdmrg::run_algorithm() {
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
+        reduce_mpo_energy();
 
         // It's important not to perform the last move.
         // That last state would not get optimized
@@ -291,23 +292,24 @@ void class_xdmrg::single_xDMRG_step() {
     // any significant improvement we may try with 4 or 8 sites.
     // Here we define a list of trials, where each entry determines
     // how many sites to try.
-    std::list<size_t> max_num_sites_list;
+    std::vector<size_t> max_num_sites_list;
     if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {4};
     else if(status.algorithm_has_stuck_for > 1 or chi_quench_steps > 0)
         max_num_sites_list = {4, settings::strategy::multisite_max_sites};
     else
         max_num_sites_list = {2};
     // Make sure the site list is sane by sorting and filtering out repeated/invalid entries.
-    max_num_sites_list.sort();
-    max_num_sites_list.unique();
-    max_num_sites_list.remove_if([](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
+    std::sort(max_num_sites_list.begin(), max_num_sites_list.end());
+    std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
+    std::remove_if(max_num_sites_list.begin(), max_num_sites_list.end(), [](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
+
     if(max_num_sites_list.empty()) max_num_sites_list = {2};
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    size_t                                                                                    theta_count  = 0;
-    double                                                                                    variance_old = 1;
-    std::map<double, std::tuple<Eigen::Tensor<Scalar, 3>, std::list<size_t>, size_t, double>> results;
+    size_t                  theta_count  = 0;
+    double                  variance_old = 1;
+    std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
 
@@ -321,16 +323,11 @@ void class_xdmrg::single_xDMRG_step() {
             tools::log->debug("Can't activate more sites");
             break;
         }
-
-
         variance_old = measure::energy_variance_per_site(tensors); // Should just take value from cache
-
-        auto   candidate_tensor = opt::find_excited_state(tensors, status, optMode, optSpace, optType);
-        double variance_new     = measure::energy_variance_per_site(candidate_tensor, tensors);
-        results.insert({variance_new, {candidate_tensor, tensors.state->active_sites, theta_count++, tools::common::profile::t_opt->get_last_time_interval()}});
+        results.emplace_back(opt::find_excited_state(tensors, status, optMode, optSpace, optType));
 
         // We can now decide if we are happy with the result or not.
-        double decrease = std::log10(variance_old) / std::log10(variance_new);
+        double decrease = std::log10(variance_old) / std::log10(results.back().get_variance());
         if(decrease < 0.99) {
             tools::log->debug("State improved during {} optimization. Variance decrease: {:.4f}", optSpace, decrease);
             break;
@@ -339,209 +336,31 @@ void class_xdmrg::single_xDMRG_step() {
             continue;
         }
     }
-    int result_count = 0;
-    for(auto &result : results)
-        tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),
-                          std::log10(result.first), 1000 * std::get<3>(result.second));
+    // Sort the results in order of increasing variance
+    std::sort(results.begin(), results.end(), [](const opt_tensor &lhs, const opt_tensor &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
-    auto        variance_new     = results.begin()->first;
-    const auto &multisite_tensor = std::get<0>(results.begin()->second);
-    tensors.state->active_sites  = std::get<1>(results.begin()->second);
+    for(auto &candidate : results)
+        tools::log->debug("{} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
+                          candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_variance(), candidate.get_energy(), candidate.get_overlap(),
+                          candidate.get_norm(), 1000 * candidate.get_time());
 
-    if(std::log10(variance_new) < std::log10(variance_old) - 1e-2) tensors.state->tag_active_sites_have_been_updated(true);
+    // Take the best result
+    const auto & winner = results.front();
+    tensors.active_sites = results.front().get_sites();
+    tensors.sync_active_sites();
+    if(std::log10(variance_old)/std::log10(winner.get_variance()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
 
     // Truncate even more if doing chi quench
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
-    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors);
+    auto variance_before_svd = winner.get_variance();
     tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-    tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
+    tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
     tensors.state->set_truncated_variance((variance_after_svd - variance_before_svd) / variance_after_svd);
     tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
     tools::log->debug("Variance loss due to  SVD: {:.16f}", tensors.state->get_truncated_variance());
-
-    debug::check_integrity(*tensors.state);
-    status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
-
-    // Update record holder
-    auto var = tools::finite::measure::energy_variance_per_site(tensors);
-    if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
-
-    // Reduce mpo energy to avoid catastrophic cancellation
-    if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
-        tensors.reduce_mpo_energy();
-    }
-
-    tools::common::profile::t_sim->toc();
-    status.wall_time = tools::common::profile::t_tot->get_age();
-    status.simu_time = tools::common::profile::t_sim->get_measured_time();
-}
-
-void class_xdmrg::single_xDMRG_step_old() {
-    tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {}", status.step, status.iter, status.position, status.direction);
-
-    using namespace tools::finite;
-    using namespace tools::finite::opt;
-    tools::common::profile::t_sim->tic();
-
-    // Set the fastest mode by default
-    opt::OptMode  optMode  = opt::OptMode::VARIANCE;
-    opt::OptSpace optSpace = opt::OptSpace::DIRECT;
-    opt::OptType  optType  = opt::OptType::CPLX;
-
-    //    IDEA:
-    //        Try converging to some state from a product state.
-    //        We know this is a biased state because it was generated  from a product state of low entanglement.
-    //        After converging, apply randomly either identity or pauli_x MPO operators on some sites, to generate
-    //        a new initial guess for some other state. Make sure the parity sector is honored. Converging again now
-    //        should erase the any biasing that may have occurred due to the selection of initial product state.
-
-    // Setup normal conditions
-    if(excited_state_number == 0 and status.chi_lim <= 12) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
-    if(excited_state_number == 0 and (status.chi_lim <= 8 or status.iter < 2)) {
-        optMode  = OptMode::OVERLAP;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
-    // Setup strong overrides to normal conditions, e.g., for experiments like chi quench
-
-    if(tensors.state->size_2site() < settings::precision::max_size_part_diag and chi_quench_steps > 0) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
-    if(tensors.state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(tensors) > 1e-4) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
-    //    if(tensors.state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(*tensors.state) > 1e-2){
-    //        optMode  = OptMode::OVERLAP;
-    //        optSpace = OptSpace::SUBSPACE_ONLY;
-    //    }
-
-    if(status.variance_mpo_has_converged) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::DIRECT;
-    }
-
-    if(tensors.state->is_real()) optType = OptType::REAL;
-
-    long threshold = 0;
-    switch(optSpace) {
-        case OptSpace::DIRECT: threshold = settings::precision::max_size_direct; break;
-        case OptSpace::SUBSPACE_ONLY: threshold = settings::precision::max_size_part_diag; break;
-        case OptSpace::SUBSPACE_AND_DIRECT: threshold = settings::precision::max_size_part_diag; break;
-    }
-
-    std::list<size_t> max_num_sites_list;
-    // Generate a list of maximum number of active sites to try
-    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {4};
-    else if(status.algorithm_has_stuck_for > 1)
-        max_num_sites_list = {settings::strategy::multisite_max_sites};
-    else if(chi_quench_steps > 0)
-        max_num_sites_list = {settings::strategy::multisite_max_sites};
-    else if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
-        max_num_sites_list = {2};
-    else if(optSpace == OptSpace::SUBSPACE_ONLY)
-        max_num_sites_list = {2};
-    else
-        max_num_sites_list = {2};
-
-    // Make sure not to use SUBSPACE if the 2-site problem size is huge
-    // When this happens, we can't use SUBSPACE even with two sites,
-    // so we might as well give it to DIRECT, which handles larger problems.
-    if(tensors.state->size_2site() > threshold) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::DIRECT;
-    }
-
-    max_num_sites_list.sort();
-    max_num_sites_list.unique();
-    max_num_sites_list.remove_if([](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
-    if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
-
-    tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    size_t                                                                                    theta_count  = 0;
-    double                                                                                    variance_old = measure::energy_variance_per_site(tensors);
-    std::map<double, std::tuple<Eigen::Tensor<Scalar, 3>, std::list<size_t>, size_t, double>> results;
-    for(auto &max_num_sites : max_num_sites_list) {
-        if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
-
-        auto old_num_sites = tensors.active_sites.size();
-        auto old_prob_size = tensors.active_problem_size();
-        tensors.activate_sites(threshold, max_num_sites);
-        //        if(chi_quench_steps == 0) tensors.state->activate_sites(threshold, max_num_sites);
-        //        else tensors.state->activate_truncated_sites(threshold,chi_lim_quench_ahead, max_num_sites);
-        //         Reduce bond dimensions for some sites ahead
-        //        if(chi_quench_steps > 0) tools::finite::mps::truncate_active_sites(*tensors.state, chi_lim_quench_ahead);
-
-        // Check that we are not about to solve the same problem again
-        if(not results.empty() and tensors.active_sites.size() == old_num_sites and tensors.active_problem_size() == old_prob_size) {
-            // If we reached this point we have exhausted the number of sites available
-            tools::log->debug("Can't activate more sites");
-            break;
-        }
-
-        auto   theta        = opt::find_excited_state(tensors, status, optMode, optSpace, optType);
-        double variance_new = measure::energy_variance_per_site(theta, tensors);
-        results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++, tools::common::profile::t_opt->get_last_time_interval()}});
-        //
-        //        if(state_is_within_energy_window(multisite_tensor)) {
-        //            variance_new = measure::energy_variance_per_site(*tensors.state, multisite_tensor);
-        //            results.insert({variance_new, {multisite_tensor, tensors.state->active_sites, theta_count++}});
-        //        }else{
-        //            tools::log->info("Rejecting state found out of energy window");
-        //            multisite_tensor = tensors.state->get_multisite_tensor();
-        //            variance_new = measure::energy_variance_per_site(*tensors.state);
-        //            results.insert({variance_new, {multisite_tensor, tensors.state->active_sites, theta_count++}});
-        //        }
-        // We can now decide if we are happy with the result or not.
-        double decrease = std::log10(variance_old) / std::log10(variance_new);
-        if(decrease < 0.99) {
-            tools::log->debug("State improved during {} optimization. Variance decrease: {:.4f}", optSpace, decrease);
-            break;
-        } else {
-            tools::log->debug("State did not improve during {} optimization. Variance decrease {:.4f}", optSpace, decrease);
-            continue;
-        }
-    }
-    int result_count = 0;
-    for(auto &result : results)
-        tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),
-                          std::log10(result.first), 1000 * std::get<3>(result.second));
-
-    auto        variance_new     = results.begin()->first;
-    const auto &multisite_tensor = std::get<0>(results.begin()->second);
-    tensors.state->active_sites  = std::get<1>(results.begin()->second);
-
-    if(std::log10(variance_new) < std::log10(variance_old) - 1e-2) tensors.state->tag_active_sites_have_been_updated(true);
-
-    // Truncate multisite_tensor down to chi_lim
-    auto chi_lim = status.chi_lim;
-
-    // Truncate even more if doing chi quench
-    //    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
-
-    // Do the truncation with SVD
-    auto variance_before_svd = tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors);
-    tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-    tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
-    auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
-    tensors.state->set_truncated_variance((variance_after_svd - variance_before_svd) / variance_after_svd);
-    tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
-    tools::log->debug("Variance loss due to  SVD: {:.16f}", tensors.state->get_truncated_variance());
-
-    if(settings::precision::use_reduced_energy and tensors.state->position_is_any_edge()) {
-        double site_energy = tools::finite::measure::energy_per_site(tensors);
-        tools::finite::mpo::reduce_mpo_energy(*tensors.model, site_energy);
-    }
 
     debug::check_integrity(*tensors.state);
     status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
@@ -643,7 +462,7 @@ void class_xdmrg::randomize_into_product_state_in_energy_window(ResetReason reas
     tools::log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(tensors),
                      status.energy_dens, counter);
     clear_convergence_status();
-    init_energy_limits(std::nullopt,status.energy_dens_window);
+    init_energy_limits(std::nullopt, status.energy_dens_window);
     tools::log->info("Number of product state resets: {}", status.num_resets);
 }
 

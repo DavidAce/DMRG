@@ -1,13 +1,14 @@
 cmake-build*/
 .idea/
 .vscode/
+.tau/
 output/
 build/
 tmp/
 libs/
 libs*/
 doxygen_log.txt
-test*.cfg
+test*.config
 *.log
 *.err
 .directory

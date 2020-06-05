@@ -35,7 +35,7 @@ Go to the [working notes](https://github.com/DavidAce/Notebooks/blob/master/DMRG
 \section installation Installation
 \subsection quickstart Quick start
 - Git clone and build with `./build.sh`.
-- Run with `./run.sh` after setting your options in `./input/input.cfg`.
+- Run with `./run.sh` after setting your options in `./input/input.config`.
 - Profit from `./output/output.h5`.
 
 
@@ -58,15 +58,15 @@ If the dependencies are successfully found or installed, the project is built an
 
 \subsection execution Execution
 To run the executable, launch `.\run.sh`, or `.\run.sh -h` to learn more.
-If no configuration file is given as argument to `run.sh`, the executable will look for a configuration file located in `./input/input.cfg`.
+If no configuration file is given as argument to `run.sh`, the executable will look for a configuration file located in `./input/input.config`.
 
 
 \subsection configuration-file Configuration file
-The default configuration file in `./input/input.cfg` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters,
+The default configuration file in `./input/input.config` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters,
 system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.
 
 \subsection output-file Output file
-After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `./input/input.cfg`.
+After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `./input/input.config`.
 By default this should be in `.output/output.h5`. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and
 optionally the final state in MPS form.
 

@@ -19,8 +19,8 @@ class_model_infinite::class_model_infinite() = default;
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
 class_model_infinite::~class_model_infinite() = default;                                                    // default dtor
-class_model_infinite::class_model_infinite(class_model_infinite &&other)  noexcept = default;               // default move ctor
-class_model_infinite &class_model_infinite::operator=(class_model_infinite &&other) noexcept = default;     // default move assign
+class_model_infinite::class_model_infinite(class_model_infinite &&other) = default;               // default move ctor
+class_model_infinite &class_model_infinite::operator=(class_model_infinite &&other) = default;     // default move assign
 
 class_model_infinite::class_model_infinite(const class_model_infinite &other):
     cache(other.cache),

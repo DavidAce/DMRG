@@ -58,6 +58,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
+    void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         randomize_model();
     void         update_truncation_limit() final;
@@ -76,11 +77,11 @@ class class_algorithm_finite : public class_algorithm_base {
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection = false, const std::string &given_prefix = "");
 
-    std::list<double> V_mpo_vec;    // History of variances
-    std::list<size_t> X_mpo_vec;    // History of moves numbers
-    std::list<double> V_mpo_slopes; // History of variance slopes
+    std::vector<double> V_mpo_vec;    // History of variances
+    std::vector<size_t> X_mpo_vec;    // History of moves numbers
+    std::vector<double> V_mpo_slopes; // History of variance slopes
 
-    std::vector<std::list<double>> S_mat;
-    std::vector<std::list<size_t>> X_mat;
-    std::list<double>              S_slopes; // History of variance slopes
+    std::vector<std::vector<double>> S_mat;
+    std::vector<std::vector<size_t>> X_mat;
+    std::vector<double>              S_slopes; // History of variance slopes
 };

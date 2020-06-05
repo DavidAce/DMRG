@@ -8,8 +8,8 @@ namespace tools::common::svd{
     using Scalar = std::complex<double>;
     /* clang-format off */
     extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                                const std::list<long>         & spin_dims,
-                                                const std::list<size_t>       & sites,
+                                                const std::vector<long>         & spin_dims,
+                                                const std::vector<size_t>       & sites,
                                                 size_t                          center_position,
                                                 long                            chi_limit,
                                                 std::optional<double>           svd_threshold = std::nullopt);
@@ -19,15 +19,15 @@ namespace tools::common::svd{
 
         extern std::list<class_mps_site>
                     split_mps_from_left(const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                        std::list<long>                 spin_dims,
-                                        std::list<size_t>               positions,
+                                        std::vector<long>               spin_dims,
+                                        std::vector<size_t>             positions,
                                         long                            chi_limit,
                                         std::optional<double>           svd_threshold = std::nullopt);
 
         extern std::list<class_mps_site>
                     split_mps_from_right(const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                         std::list<long>                 spin_dims,
-                                         std::list<size_t>               positions,
+                                         std::vector<long>               spin_dims,
+                                         std::vector<size_t>             positions,
                                          long                            chi_limit,
                                          std::optional<double>           svd_threshold = std::nullopt);
     }

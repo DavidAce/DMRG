@@ -18,7 +18,7 @@ class OMP{
 #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     Eigen::ThreadPool       tp;
     Eigen::ThreadPoolDevice dev;
-    explicit OMP([[maybe_unused]] int num_threads_):
+    explicit OMP(int num_threads_):
         num_threads(num_threads_ > 1 ? num_threads_ : Eigen::nbThreads()),
         tp(num_threads),
         dev(&tp, num_threads)

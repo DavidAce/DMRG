@@ -34,7 +34,7 @@ namespace settings {
     namespace input{
         inline long        seed                                 = 1;                            /*!< Main seed for the random number generator. */
         inline long        bitfield                             = -1;                           /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
-        inline std::string config_filename                      = "input/input.cfg";            /*!< Default config filename. Can either be a .cfg file or a .h5 file with a config stored as a string in /common/config_file_contents */
+        inline std::string config_filename                      = "input/input.config";            /*!< Default config filename. Can either be a .config file or a .h5 file with a config stored as a string in /common/config_file_contents */
         inline std::string config_file_contents;
     }
 
