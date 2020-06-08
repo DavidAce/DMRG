@@ -211,19 +211,19 @@ void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> latt
 }
 
 void class_ising_tf_rf::write_hamiltonian(h5pp::File &file, const std::string &model_prefix) const {
-    std::string ham_path = model_prefix + "/Hamiltonian";
-    if(not file.linkExists(ham_path)) file.createTable(h5tb_ising_tf_rf::h5_type, ham_path, "Transverse-field Ising");
-    file.appendTableEntries(h5tb, ham_path);
+    std::string ham_prefix = model_prefix + "/Hamiltonian";
+    if(not file.linkExists(ham_prefix)) file.createTable(h5tb_ising_tf_rf::h5_type, ham_prefix, "Transverse-field Ising");
+    file.appendTableEntries(h5tb, ham_prefix);
 }
 
 void class_ising_tf_rf::read_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
-    std::string ham_path = model_prefix + "/Hamiltonian";
-    if(file.linkExists(ham_path)) {
-        h5tb.param                         = file.readTableEntries<h5tb_ising_tf_rf::table>(ham_path, position);
+    std::string ham_prefix = model_prefix + "/Hamiltonian";
+    if(file.linkExists(ham_prefix)) {
+        h5tb.param                         = file.readTableEntries<h5tb_ising_tf_rf::table>(ham_prefix, position);
         all_mpo_parameters_have_been_set = true;
         build_mpo();
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_path));
+        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_prefix));
     }
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_dset = model_prefix + "/mpo/H_" + std::to_string(get_position());

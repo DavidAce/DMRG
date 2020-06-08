@@ -24,7 +24,7 @@ namespace tools::common::io {
 
     namespace h5attr{
         extern void write_meta (h5pp::File & h5ppFile,
-                                const std::string & sim_name, const std::string &state_prefix, const std::string &model_prefix, ModelType model_type,
+                                const std::string & algo_name,const std::string & state_name, const std::string &state_prefix, const std::string &model_prefix, ModelType model_type,
                                 const StorageLevel & storage_level, const class_algorithm_status &status);
     }
 

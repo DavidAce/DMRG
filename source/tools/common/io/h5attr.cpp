@@ -5,17 +5,28 @@
 #include <string>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
-void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const std::string &model_prefix,
+void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::string &algo_name, const std::string & state_name, const std::string &state_prefix, const std::string &model_prefix,
                                            ModelType model_type, const StorageLevel &storage_level, const class_algorithm_status &status) {
+
+    // Write metadata into /common so that we can find state paths later.
+    // In particular, one dataset should contain the root paths to all states
+
+
+
     std::string storage_level_str(enum2str(storage_level));
     std::string model_type_str   (enum2str(model_type));
-    std::string ham_path          = model_prefix + "/Hamiltonian";
-    std::string mpo_path          = model_prefix + "/mpo";
-    std::string mps_path          = state_prefix + "/mps";
+    std::string state_root        = algo_name + "/" + state_name;
+    std::string ham_prefix        = model_prefix + "/Hamiltonian";
+    std::string mpo_prefix        = model_prefix + "/mpo";
+    std::string mps_prefix        = state_prefix + "/mps";
+
+    // Register this state root in an attribute of the algorithm root directory.
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_root, storage_level_str, algo_name);
+    h5ppFile.writeAttribute(status.algorithm_has_finished,state_root, algo_name);
 
     // Add the storage level of all states as an attribute of this simulation group.
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, storage_level_str, sim_name);
-    h5ppFile.writeAttribute(storage_level_str, state_prefix, sim_name);
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, storage_level_str, algo_name);
+    h5ppFile.writeAttribute(storage_level_str, state_prefix, algo_name);
 
     // Write storage level into an attribute of the current state that is being written to
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "storage_level", storage_level_str, state_prefix);
@@ -31,14 +42,19 @@ void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::stri
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "step", status.step, state_prefix);
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "position", status.position, state_prefix);
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "model_type", model_type_str, state_prefix);
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "ham_path", ham_path, state_prefix);
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "mpo_path", mpo_path, state_prefix);
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "ham_prefix", ham_prefix, state_prefix);
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", "mpo_prefix", mpo_prefix, state_prefix);
     h5ppFile.writeAttribute(status.iter, "iteration", state_prefix);
     h5ppFile.writeAttribute(status.step, "step", state_prefix);
     h5ppFile.writeAttribute(status.position, "position", state_prefix);
     h5ppFile.writeAttribute(model_type_str, "model_type", state_prefix);
-    h5ppFile.writeAttribute(ham_path, "ham_path", state_prefix);
-    h5ppFile.writeAttribute(mpo_path, "mpo_path", state_prefix);
+    h5ppFile.writeAttribute(ham_prefix, "ham_prefix", state_prefix);
+    h5ppFile.writeAttribute(mpo_prefix, "mpo_prefix", state_prefix);
+
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, status.iter, "common/state_roots");
+    h5ppFile.writeDataset("The attributes on this dataset contains the root paths to all states", "common/state_roots");
+    h5ppFile.writeAttribute(status.algorithm_has_finished, state_root, "common/state_roots");
+
 
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, status.iter, "common/iteration");
     h5ppFile.writeDataset("The attributes on this dataset are the current step of each state", "common/iteration");
@@ -48,17 +64,17 @@ void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::stri
     h5ppFile.writeDataset("The attributes on this dataset are the current step of each state", "common/step");
     h5ppFile.writeAttribute(status.step, state_prefix, "common/step");
 
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, ham_path, "common/ham_path");
-    h5ppFile.writeDataset("The attributes on this dataset are paths to the Hamiltonian Table", "common/ham_path");
-    h5ppFile.writeAttribute(ham_path, state_prefix, "common/ham_path");
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, ham_prefix, "common/ham_prefix");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to the Hamiltonian Table", "common/ham_prefix");
+    h5ppFile.writeAttribute(ham_prefix, state_prefix, "common/ham_prefix");
 
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, mpo_path, "common/mpo_path");
-    h5ppFile.writeDataset("The attributes on this dataset are paths to MPOs", "common/mpo_path");
-    h5ppFile.writeAttribute(mpo_path, state_prefix, "common/mpo_path");
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, mpo_prefix, "common/mpo_prefix");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to MPOs", "common/mpo_prefix");
+    h5ppFile.writeAttribute(mpo_prefix, state_prefix, "common/mpo_prefix");
 
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, mps_path, "common/mps_path");
-    h5ppFile.writeDataset("The attributes on this dataset are paths to MPSs", "common/mps_path");
-    h5ppFile.writeAttribute(mps_path, state_prefix, "common/mps_path");
+    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, mps_prefix, "common/mps_prefix");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to MPSs", "common/mps_prefix");
+    h5ppFile.writeAttribute(mps_prefix, state_prefix, "common/mps_prefix");
 
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_prefix, status.algorithm_has_succeeded, "common/success");
     h5ppFile.writeDataset("The attributes on this dataset tell if the simulation succeeded", "common/success");

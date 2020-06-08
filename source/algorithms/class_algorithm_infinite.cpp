@@ -362,7 +362,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::infinite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, *tensors.state);
     tools::infinite::io::h5dset::write_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
-    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
+    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_name,state_prefix, model_prefix, settings::model::model_type, storage_level, status);
 
     // The main results have now been written. Next we append data to tables
     // Some storage reasons should not do this however. Like projection.

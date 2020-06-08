@@ -116,8 +116,8 @@ void class_mpo_site::print_parameter_values() const {
 
 
 void class_mpo_site::write_mpo(h5pp::File &file, const std::string &model_prefix) const {
-    std::string mpo_path     = model_prefix + "/mpo";
-    std::string dataset_name = mpo_path + "/H_" + std::to_string(get_position());
+    std::string mpo_prefix   = model_prefix + "/mpo";
+    std::string dataset_name = mpo_prefix + "/H_" + std::to_string(get_position());
     file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_COMPACT);
     file.writeAttribute(get_position(), "position", dataset_name);
     for(auto &params : get_parameters()) {
