@@ -11,7 +11,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
@@ -194,10 +194,9 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
 std::vector<double> tools::finite::measure::truncation_errors(const class_state_finite &state) {
     if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
     std::vector<double> truncation_errors;
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const auto &mps = state.get_mps_site(pos);
-        truncation_errors.emplace_back(mps.get_truncation_error());
-        if(mps.isCenter()) { truncation_errors.emplace_back(mps.get_truncation_error_LC()); }
+    for(const auto &mps : state.mps_sites) {
+        truncation_errors.emplace_back(mps->get_truncation_error());
+        if(mps->isCenter()) truncation_errors.emplace_back(mps->get_truncation_error_LC());
     }
     state.measurements.truncation_errors = truncation_errors;
     return state.measurements.truncation_errors.value();
@@ -234,7 +233,7 @@ Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_fi
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>) {
-        if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                                  model.active_sites, edges.active_sites));
         return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges);
@@ -292,7 +291,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
 
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>) {
-        if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
                                                  state.active_sites, model.active_sites, edges.active_sites));
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
@@ -304,7 +303,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             energy = tools::finite::measure::energy(state, model, edges);
         double E2 = energy * energy;
 
-        if(not math::all_equal(model.active_sites, edges.active_sites))
+        if(not num::all_equal(model.active_sites, edges.active_sites))
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
 

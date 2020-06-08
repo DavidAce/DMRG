@@ -35,7 +35,7 @@ void tools::infinite::mps::random_product_state(const class_state_infinite &stat
 //    for(const auto &site : positions) spin_dims.emplace_back(state.get_mps(site).spin_dim());
 //
 //    // Split the multisite mps into single-site mps objects
-//    auto mps_list = tools::common::svd::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim.value(), svd_threshold);
+//    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim.value(), svd_threshold);
 //
 //    if(positions.size() != mps_list.size())
 //        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: number of sites mismatch: positions.size() {} != mps_list.size() {}",

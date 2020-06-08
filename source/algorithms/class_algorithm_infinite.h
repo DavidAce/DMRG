@@ -28,10 +28,8 @@ class class_algorithm_infinite : public class_algorithm_base {
     void run()                                                                                               final;
     void update_truncation_limit()                                                                           final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                        final;
-    void randomize_into_product_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
-                                       std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt) final;
-    void randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings = std::nullopt, std::optional<std::string> sector = std::nullopt,
-                                 std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt) final;
+    void randomize_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
+                                       std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt);
     void clear_convergence_status()                                                                           override;
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT)                             final;
     void copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT)                             final;

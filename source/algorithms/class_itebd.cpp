@@ -35,6 +35,7 @@ void class_itebd::run_preprocessing() {
 
 void class_itebd::run_simulation()    {
     tools::log->info("Starting {} simulation", algo_name);
+    tools::common::profile::t_sim->tic();
     while(status.iter < settings::itebd::max_iters and not status.algorithm_has_converged) {
         single_TEBD_step();
         status.phys_time += status.delta_t;
@@ -44,6 +45,7 @@ void class_itebd::run_simulation()    {
         check_convergence();
         status.iter++;
     }
+    tools::common::profile::t_sim->toc();
 }
 
 void class_itebd::run_postprocessing(){
@@ -58,7 +60,6 @@ void class_itebd::single_TEBD_step(){
  * \fn single_TEBD_step(class_superblock &state)
  * \brief infinite Time evolving block decimation.
  */
-    tools::common::profile::t_sim->tic();
     for (auto &U: unitary_time_evolving_operators){
         Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state,U);
         tensors.merge_multisite_tensor(twosite_tensor);
@@ -66,8 +67,7 @@ void class_itebd::single_TEBD_step(){
             tensors.state->swap_AB();        }
     }
     tensors.clear_measurements();
-    tools::common::profile::t_sim->toc();
-    status.wall_time = tools::common::profile::t_tot->get_age();
+    status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
@@ -101,7 +101,7 @@ void class_itebd::check_convergence_time_step(){
 
 //void class_iTEBD::store_log_entry_progress(bool force){
 //    if (not force){
-//        if (math::mod(status.iteration, settings::itebd::write_freq) != 0) {return;}
+//        if (num::mod(status.iteration, settings::itebd::write_freq) != 0) {return;}
 //    }
 //    compute_observables();
 //    t_sto->tic();

@@ -1,16 +1,16 @@
 //
 // Created by david on 2019-02-17.
 //
+#include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <iostream>
-#include <math/nmspc_math.h>
-#include <tensors/model/class_model_finite.h>
+#include <math/num.h>
+#include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/edges/class_env_ene.h>
 #include <tensors/edges/class_env_var.h>
+#include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
-#include <tensors/class_tensors_finite.h>
-#include <config/nmspc_settings.h>
 
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -291,7 +291,7 @@ void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //    tools::common::profile::t_chk->tic();
 //    try{
 //
-//        if(not math::all_equal(state.get_length(),model.get_length(), edges.get_length()))
+//        if(not num::all_equal(state.get_length(),model.get_length(), edges.get_length()))
 //            throw std::runtime_error(fmt::format("Lengths not all equal: state {} | model {} | edges {}", state.get_length(),model.get_length(), edges.get_length()));
 //        for(const auto &ene : edges.ene)
 //            if (not ene.)
@@ -501,18 +501,18 @@ void tools::finite::debug::check_integrity(const class_state_finite &state, cons
 //    if constexpr (not settings::debug) return;
 //    tools::common::profile::t_chk->tic();
 //    tools::log->trace("Integrity check...");
-//    if(not math::all_equal(state.get_length(),model.get_length(), edges.get_length()))
+//    if(not num::all_equal(state.get_length(),model.get_length(), edges.get_length()))
 //        throw std::runtime_error(fmt::format("Lengths not all equal: state {} | model {} | edges {}", state.get_length(),model.get_length(), edges.get_length()));
 //
-//    if(not math::all_equal(state.active_sites,model.active_sites, edges.active_sites))
+//    if(not num::all_equal(state.active_sites,model.active_sites, edges.active_sites))
 //        throw std::runtime_error(fmt::format("Active sites not all equal: state {} | model {} | edges {}", state.active_sites,model.active_sites, edges.active_sites));
 //
-//    if(not math::all_equal(state.active_sites,model.active_sites, edges.active_sites))
+//    if(not num::all_equal(state.active_sites,model.active_sites, edges.active_sites))
 //        throw std::runtime_error(fmt::format("Active sites not all equal: state {} | model {} | edges {}", state.active_sites,model.active_sites, edges.active_sites));
 //
 //
 //
-//    if(not math::all_equal(edges.ene.back().get_position(),model.get_length(), edges.get_length()))
+//    if(not num::all_equal(edges.ene.back().get_position(),model.get_length(), edges.get_length()))
 //        throw std::runtime_error(fmt::format("Lengths not all equal: state {} | model {} | edges {}", state.get_length(),model.get_length(), edges.get_length()));
 //
 //    if( edges.ene.back().sites != state.get_position())

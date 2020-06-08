@@ -123,19 +123,20 @@ namespace settings {
 
     // Options for strategy that affect convergence and targeted state
     namespace strategy {
-        inline bool          chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
-        inline bool          perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
-        inline bool          damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool          project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool          project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
-        inline bool          project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
-        inline bool          randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
-        inline bool          randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
-        inline bool          use_eigenspinors                        = true;               /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
-        inline size_t        max_resets                              = 1;                  /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
-        inline size_t        multisite_max_sites                     = 8;                  /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
-        inline MultisiteMove multisite_move                          = MultisiteMove::ONE; /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline std::string   target_sector                           = "x";                /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
+        inline bool          chi_quench_when_stuck     = false;                                  /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
+        inline bool          perturb_when_stuck        = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
+        inline bool          damping_when_stuck        = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
+        inline bool          project_when_stuck        = true;                                   /*!< Project to target parity sector at each sweep when stuck. */
+        inline bool          project_on_every_sweep    = true;                                   /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool          project_on_chi_update     = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
+        inline bool          randomize_on_chi_update   = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
+        inline bool          randomize_early           = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
+        inline bool          use_eigenspinors          = true;                                   /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
+        inline size_t        max_resets                = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
+        inline size_t        multisite_max_sites       = 8;                                      /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
+        inline MultisiteMove multisite_move            = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline StateType     initial_state             = StateType::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
+        inline std::string   target_sector             = "x";                                    /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
 }
 
 

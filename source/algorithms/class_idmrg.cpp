@@ -28,6 +28,7 @@ void class_idmrg::run_simulation() {
     if(ritz == StateRitz::SR) state_name = "state_emin";
     else state_name = "state_emax";
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    tools::common::profile::t_sim->tic();
     while(true){
         single_iDMRG_step();
         print_status_update();
@@ -66,6 +67,7 @@ void class_idmrg::run_simulation() {
         status.step++;
     }
     tools::log->info("Finished {} simulation -- reason: {}", algo_name,enum2str(stop_reason));
+    tools::common::profile::t_sim->toc();
 }
 
 
@@ -74,11 +76,9 @@ void class_idmrg::single_iDMRG_step(){
  * \fn void single_DMRG_step(class_superblock &state)
  */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
-    tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
     tensors.merge_multisite_tensor(twosite_tensor);
-    tools::common::profile::t_sim->toc();
-    status.wall_time = tools::common::profile::t_tot->get_age();
+    status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 

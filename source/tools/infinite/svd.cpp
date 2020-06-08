@@ -1,12 +1,12 @@
 #include "svd.h"
 #include <config/nmspc_settings.h>
-#include <math/class_svd_wrapper.h>
-#include <tensors/state/class_state_infinite.h>
-#include <tools/common/svd.h>
-#include <tensors/state/class_mps_site.h>
+#include <math/svd.h>
 #include <tensors/state/class_mps_2site.h>
+#include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_infinite.h>
+#include <tools/common/split.h>
 void tools::infinite::svd::truncate_theta(Eigen::Tensor<Scalar, 3> &mps, class_state_infinite &state) {
-    auto mps_list = tools::common::svd::split_mps(mps);
+    auto mps_list = tools::common::split::split_mps(mps);
     // Presumably we get only two sites out of this
     if(mps_list.size() != 2) throw std::runtime_error("Got more than two sites from svd split");
     auto mps_it = mps_list.begin();

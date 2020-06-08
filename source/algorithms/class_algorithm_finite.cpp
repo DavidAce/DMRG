@@ -5,7 +5,7 @@
 #include "class_algorithm_finite.h"
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -88,7 +88,8 @@ void class_algorithm_finite::run_preprocessing() {
     status.clear();
     init_bond_dimension_limits();
     randomize_model();
-    randomize_into_product_state(ResetReason::INIT, settings::strategy::target_sector, settings::input::bitfield, settings::strategy::use_eigenspinors);
+    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
+                    settings::strategy::use_eigenspinors);
     write_to_file(StorageReason::MODEL);
     tools::common::profile::t_pre->toc();
     tools::log->info("Finished default preprocessing for {}", algo_name);
@@ -122,7 +123,6 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     auto variance = tools::finite::measure::energy_variance_per_site(tensors);
     tools::log->info("Variance before move: {:.16f}", std::log10(variance));
     // ###############
-
 
     tensors.clear_cache();
     tensors.clear_measurements();
@@ -161,8 +161,6 @@ void class_algorithm_finite::reduce_mpo_energy() {
         tensors.reduce_mpo_energy();
     }
 }
-
-
 
 void class_algorithm_finite::update_truncation_limit() {
     if(not tensors.state->position_is_any_edge()) return;
@@ -223,11 +221,13 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
+    if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
+        randomize_state(ResetReason::CHI_UPDATE, StateType::RANDOMIZE_GIVEN_STATE, std::nullopt, status.chi_lim);
+
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
     status.chi_lim *= 2;
     clear_convergence_status();
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
-    if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32) randomize_from_current_state();
 
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
@@ -240,9 +240,9 @@ void class_algorithm_finite::randomize_model() {
     clear_convergence_status();
 };
 
-void class_algorithm_finite::randomize_into_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
-                                                          std::optional<bool> use_eigenspinors) {
-    tools::log->info("Randomizing into product state: [{}] | Reason {} ...", state_name, enum2str(reason));
+void class_algorithm_finite::randomize_state(ResetReason reason, StateType state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
+                                             std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
+    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ...", state_name, enum2str(state_type), enum2str(reason));
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -250,42 +250,80 @@ void class_algorithm_finite::randomize_into_product_state(ResetReason reason, st
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
     if(not sector) sector = settings::strategy::target_sector;
-    if(not bitfield) bitfield = settings::input::bitfield;
+    if(not chi_lim) {
+        if(reason == ResetReason::INIT) chi_lim = cfg_chi_lim_init();
+        else
+            chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
+    }
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
+    if(not bitfield) bitfield = settings::input::bitfield;
+    if(not svd_threshold and state_type == StateType::RANDOMIZE_GIVEN_STATE) svd_threshold = 1e-4;
 
-    tensors.randomize_into_product_state(sector.value(), bitfield.value(), use_eigenspinors.value());
+    tensors.randomize_state(state_type, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, svd_threshold);
     clear_convergence_status();
-    status.lowest_recorded_variance = 1;
-    status.iter                     = tensors.state->reset_iter();
-    status.step                     = tensors.state->reset_step();
-    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Randomizing into product state: [{}] | Reason {} ... OK! | spin components {}", state_name, enum2str(reason), spin_components);
-}
-
-void class_algorithm_finite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
-                                                          std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing from current state: [{}] ...", state_name);
-    if(not pauli_strings) pauli_strings = {"x", "z"};
-    if(not sector) sector = settings::strategy::target_sector;
-    if(not chi_lim) chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-    if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
-    // Randomize state
-    tensors.randomize_from_current_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
-    clear_convergence_status();
-    excited_state_number++;
     status.reset();
     status.iter      = tensors.state->reset_iter();
     status.step      = tensors.state->reset_step();
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
     if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
-    tools::log->info("Randomizing from current state: [{}] ... OK!", state_name);
-    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
-    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    if(reason == ResetReason::NEW_STATE) excited_state_number++;
+
     if(tensors.state->find_largest_chi() > chi_lim.value())
         throw std::runtime_error(
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
+
+    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_type), enum2str(reason));
+    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
+    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
 }
+
+// void class_algorithm_finite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
+//                                                          std::optional<bool> use_eigenspinors) {
+//    tools::log->info("Randomizing into product state: [{}] | Reason {} ...", state_name, enum2str(reason));
+//    if(reason == ResetReason::SATURATED) {
+//        if(status.num_resets >= settings::strategy::max_resets)
+//            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
+//        else
+//            status.num_resets++; // Only increment if doing it for saturation reasons
+//    }
+//    if(not sector) sector = settings::strategy::target_sector;
+//    if(not bitfield) bitfield = settings::input::bitfield;
+//    if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
+//
+//    tensors.randomize_state(sector.value(), bitfield.value(), use_eigenspinors.value());
+//    clear_convergence_status();
+//    status.lowest_recorded_variance = 1;
+//    status.iter                     = tensors.state->reset_iter();
+//    status.step                     = tensors.state->reset_step();
+//    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
+//    tools::log->info("Randomizing into product state: [{}] | Reason {} ... OK! | spin components {}", state_name, enum2str(reason), spin_components);
+//}
+//
+// void class_algorithm_finite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
+//                                                          std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+//    tools::log->info("Randomizing from current state: [{}] ...", state_name);
+//    if(not pauli_strings) pauli_strings = {"x", "z"};
+//    if(not sector) sector = settings::strategy::target_sector;
+//    if(not chi_lim) chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
+//    if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
+//    // Randomize state
+//    tensors.randomize_from_current_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
+//    clear_convergence_status();
+//    excited_state_number++;
+//    status.reset();
+//    status.iter      = tensors.state->reset_iter();
+//    status.step      = tensors.state->reset_step();
+//    status.position  = tensors.state->get_position();
+//    status.direction = tensors.state->get_direction();
+//    if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
+//    tools::log->info("Randomizing from current state: [{}] ... OK!", state_name);
+//    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
+//    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
+//    if(tensors.state->find_largest_chi() > chi_lim.value())
+//        throw std::runtime_error(
+//            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
+//}
 
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_any_edge()) return;
@@ -383,7 +421,7 @@ void class_algorithm_finite::try_disorder_damping() {
         tools::log->info("Damping skipped: max number of damping trials ({}) have been made already", num_dampings);
         return;
     }
-    // damping_exponents = math::LogSpaced(6,0.0,0.25,0.001);
+    // damping_exponents = num::LogSpaced(6,0.0,0.25,0.001);
     // damping_exponents = {0.0,0.1};
     damping_exponents = {0.0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.256};
     tools::log->info("Generating damping exponents = {}", damping_exponents);
@@ -532,7 +570,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::CHECKPOINT: {
             if(not state.position_is_any_edge()) return;
-            if(math::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+            if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
             state_prefix.append("/checkpoint");
             storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only) state_prefix.append("/iter_last");
@@ -610,7 +648,7 @@ void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
     if(not tensors.state->position_is_any_edge()) return;
     switch(storage_reason) {
         case StorageReason::CHECKPOINT:
-            if(math::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
+            if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
         case StorageReason::FINISHED:
         case StorageReason::CHI_UPDATE:
         case StorageReason::PROJ_STATE:
@@ -623,7 +661,7 @@ void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
 }
 
 void class_algorithm_finite::print_status_update() {
-    if(math::mod(status.step, cfg_print_freq()) != 0) return;
+    if(num::mod(status.step, cfg_print_freq()) != 0) return;
     if(cfg_print_freq() == 0) return;
 
     std::string report;

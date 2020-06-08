@@ -6,7 +6,7 @@
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
-#include <tools/common/svd.h>
+#include <tools/common/split.h>
 #include <tools/common/views.h>
 #include <tools/infinite/measure.h>
 
@@ -280,7 +280,7 @@ void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tenso
     long   dB       = get_spin_dimB();
     size_t posA     = get_positionA();
     size_t posB     = get_positionB();
-    auto   mps_list = tools::common::svd::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi);
+    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi);
     set_mps(mps_list);
 }
 

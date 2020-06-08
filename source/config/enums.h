@@ -10,9 +10,17 @@ enum class ModelType { ising_tf_rf, ising_sdual };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
-enum class ResetReason { INIT, FIND_WINDOW, SATURATED };
+enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE};
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
+enum class StateType {
+    RANDOM_PRODUCT_STATE,
+    RANDOM_ENTANGLED_STATE,
+    RANDOMIZE_GIVEN_STATE,
+    PRODUCT_STATE
+};
+
+
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
     ABSOLUTE,                  // J_ptb = couplingPtb
@@ -20,9 +28,12 @@ enum class PerturbMode {
     UNIFORM_RANDOM_ABSOLUTE,   // J_ptb = std::random_uniform(-couplingPtb, couplingPtb)
 };
 
+
+
 enum class fdmrg_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
     INIT_BOND_DIM_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
@@ -37,13 +48,18 @@ enum class fdmrg_task {
 enum class xdmrg_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-    INIT_RANDOMIZE_INTO_PRODUCT_STATE_IN_WIN,
+    INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
+    INIT_RANDOMIZE_INTO_STATE_IN_WIN,
     INIT_RANDOMIZE_FROM_CURRENT_STATE,
     INIT_BOND_DIM_LIMITS,
     INIT_ENERGY_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_DEFAULT,
+    NEXT_RANDOMIZE_INTO_PRODUCT_STATE,
+    NEXT_RANDOMIZE_INTO_ENTANGLED_STATE,
+    NEXT_RANDOMIZE_FROM_CURRENT_STATE,
+    NEXT_RANDOMIZE_INTO_STATE_IN_WIN,
     FIND_ENERGY_RANGE,
     FIND_SEED_STATE,
     FIND_EXCITED_STATE,
@@ -84,12 +100,14 @@ constexpr std::string_view enum2str(const T &item) {
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == ResetReason::INIT) return "INIT";
-        if(item == ResetReason::FIND_WINDOW) return "FIND_WINDOW";
-        if(item == ResetReason::SATURATED) return "SATURATED";
+        if(item == ResetReason::FIND_WINDOW)        return "FIND_WINDOW";
+        if(item == ResetReason::SATURATED)          return "SATURATED";
+        if(item == ResetReason::NEW_STATE)  return "NEW_STATE";
+        if(item == ResetReason::CHI_UPDATE)         return "CHI_UPDATE";
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
-        if(item == NormPolicy::ALWAYS) return "ALWAYS";
-        if(item == NormPolicy::IFNEEDED) return "IFNEEDED";
+        if(item == NormPolicy::ALWAYS)      return "ALWAYS";
+        if(item == NormPolicy::IFNEEDED)    return "IFNEEDED";
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
@@ -106,6 +124,12 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StorageReason::EMIN_STATE)   return "EMIN_STATE";
         if(item == StorageReason::EMAX_STATE)   return "EMAX_STATE";
         if(item == StorageReason::MODEL)        return "MODEL";
+    }
+    if constexpr(std::is_same_v<T, StateType>) {
+        if(item == StateType::RANDOM_PRODUCT_STATE)     return "RANDOM_PRODUCT_STATE";
+        if(item == StateType::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
+        if(item == StateType::RANDOMIZE_GIVEN_STATE)    return "RANDOMIZE_GIVEN_STATE";
+        if(item == StateType::PRODUCT_STATE)            return "PRODUCT_STATE";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == PerturbMode::PERCENTAGE)                 return "PERCENTAGE";
@@ -162,9 +186,11 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "NONE")      return StopReason::NONE;
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
-        if(item == "INIT") return ResetReason::INIT;
-        if(item == "FIND_WINDOW") return ResetReason::FIND_WINDOW;
-        if(item == "SATURATED") return ResetReason::SATURATED;
+        if(item == "INIT")              return ResetReason::INIT;
+        if(item == "FIND_WINDOW")       return ResetReason::FIND_WINDOW;
+        if(item == "SATURATED")         return ResetReason::SATURATED;
+        if(item == "NEW_STATE") return ResetReason::NEW_STATE;
+        if(item == "CHI_UPDATE")        return ResetReason::CHI_UPDATE;
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS") return NormPolicy::ALWAYS;
@@ -185,6 +211,12 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "EMIN_STATE")return StorageReason::EMIN_STATE;
         if(item == "EMAX_STATE")return StorageReason::EMAX_STATE;
         if(item == "MODEL")     return StorageReason::MODEL;
+    }
+    if constexpr(std::is_same_v<T, StateType>) {
+        if(item == "RANDOM_PRODUCT_STATE")     return StateType::RANDOM_PRODUCT_STATE;
+        if(item == "RANDOM_ENTANGLED_STATE")   return StateType::RANDOM_ENTANGLED_STATE;
+        if(item == "RANDOMIZE_GIVEN_STATE")    return StateType::RANDOMIZE_GIVEN_STATE;
+        if(item == "PRODUCT_STATE")            return StateType::PRODUCT_STATE;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == "PERCENTAGE")                return PerturbMode::PERCENTAGE;

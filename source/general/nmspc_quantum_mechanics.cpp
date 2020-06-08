@@ -9,8 +9,8 @@
 
 #include "nmspc_quantum_mechanics.h"
 #include "nmspc_tensor_extra.h"
-#include <math/nmspc_math.h>
-#include <math/nmspc_random.h>
+#include <math/num.h>
+#include <math/rnd.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 
@@ -140,7 +140,7 @@ namespace qm::timeEvolution {
         }
         std::vector<Eigen::Tensor<std::complex<double>, 2>> tensor_vec;
         for(auto &m : matrix_vec) {
-            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, spin_dim_evn, spin_dim_evn)); // spin_dim^2  *
+            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, spin_dim_evn, spin_dim_odd)); // spin_dim^2  *
         }
         return tensor_vec;
     }
@@ -275,9 +275,9 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
-        binary[rn::uniform_integer_box<size_t>(0, sites)] *= -1;
+        binary[rnd::uniform_integer_box<size_t>(0, sites)] *= -1;
         sum = std::accumulate(binary.begin(), binary.end(), 0);
-        if((math::mod(sites, 2) == 0 and sum == 0) or (math::mod(sites, 2) == 1 and sum == 1)) break;
+        if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
 
     std::list<Eigen::Tensor<Scalar, 4>> mpos;
@@ -340,9 +340,9 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
-        binary[rn::uniform_integer_box(0, static_cast<int>(sites))] *= -1;
+        binary[rnd::uniform_integer_box<size_t>(0, sites)] *= -1;
         sum = std::accumulate(binary.begin(), binary.end(), 0);
-        if((math::mod(sites, 2) == 0 and sum == 0) or (math::mod(sites, 2) == 1 and sum == 1)) break;
+        if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list
@@ -413,9 +413,9 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
-        binary[rn::uniform_integer_box<size_t>(0, sites)] *= -1;
+        binary[rnd::uniform_integer_box<size_t>(0, sites)] *= -1;
         sum = std::accumulate(binary.begin(), binary.end(), 0);
-        if((math::mod(sites, 2) == 0 and sum == 0) or (math::mod(sites, 2) == 1 and sum == 1)) break;
+        if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list

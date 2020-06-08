@@ -7,7 +7,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
-#include <math/nmspc_random.h>
+#include <math/rnd.h>
 
 using namespace qm;
 using Scalar = std::complex<double>;

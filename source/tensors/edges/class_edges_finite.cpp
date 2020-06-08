@@ -5,7 +5,7 @@
 #include "class_edges_finite.h"
 #include "class_env_ene.h"
 #include "class_env_var.h"
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tools/common/log.h>
 
 class_edges_finite::class_edges_finite() = default; // Can't initialize lists since we don't know the model size yet
@@ -75,7 +75,7 @@ void class_edges_finite::initialize(size_t model_size) {
 }
 
 size_t class_edges_finite::get_length() const {
-    if(not math::all_equal(eneL.size(), eneR.size(), varL.size(), varR.size()))
+    if(not num::all_equal(eneL.size(), eneR.size(), varL.size(), varR.size()))
         throw std::runtime_error(
             fmt::format("Size mismatch in environments: eneL {} | eneR {} | varL {} | varR {}", eneL.size(), eneR.size(), varL.size(), varR.size()));
     return eneL.size();

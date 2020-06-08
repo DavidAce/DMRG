@@ -5,7 +5,7 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
-#include <math/nmspc_random.h>
+#include <math/rnd.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
@@ -159,8 +159,8 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
     std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
     if(sector_is_valid) {
-        auto sector_sign = mps::internals::get_sign(sector);
-        auto paulimatrix = mps::internals::get_pauli(sector);
+        auto sector_sign = mps::internal::get_sign(sector);
+        auto paulimatrix = mps::internal::get_pauli(sector);
         if(sector_sign == 0) {
             double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
             if(requested_spin_component > 0) sector_sign = 1;
@@ -171,7 +171,7 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
 
     } else if(sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
-        std::string              chosen_axis   = possibilities[rn::uniform_integer_box<size_t>(0, 2)];
+        std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, 2)];
         project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();

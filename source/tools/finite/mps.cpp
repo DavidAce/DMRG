@@ -10,16 +10,13 @@
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
-#include <tools/finite/debug.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
-#include <tools/finite/svd.h>
 
 #include "measure.h"
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tools/common/prof.h>
-#include <tools/common/svd.h>
-#include <utility>
+#include <tools/common/split.h>
 
 void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     if(state.position_is_any_edge()) {
@@ -37,7 +34,9 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
         long   chiL = mpsL.get_chiL();
         long   chiR = mpsR.get_chiR();
         // Store the special LC bond in a temporary. It needs to be put back afterwards
+        // Do the same with its truncation error
         Eigen::Tensor<Scalar, 1> LC = mps.get_LC();
+        double truncation_error_LC = mps.get_truncation_error_LC();
         Eigen::Tensor<Scalar, 3> twosite_tensor;
         if(state.get_direction() == 1) {
             // Here both M_bare are B's
@@ -65,9 +64,9 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 
         // Put LC where it belongs.
         // Recall that mpsL, mpsR are on the new position, not the old one!
-        if(state.get_direction() == 1) mpsL.set_L(LC);
+        if(state.get_direction() == 1) mpsL.set_L(LC,truncation_error_LC);
         else
-            mpsR.set_L(LC);
+            mpsR.set_L(LC,truncation_error_LC);
     }
 }
 
@@ -92,7 +91,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
             fmt::format("Could not merge multisite mps into state: multisite_mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod));
 
     // Split the multisite mps into single-site mps objects
-    auto mps_list = tools::common::svd::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
+    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
 
     if(sites.size() != mps_list.size())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: number of sites mismatch: positions.size() {} != mps_list.size() {}",
@@ -174,57 +173,28 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     return true;
 }
 
-void tools::finite::mps::random_product_state(class_state_finite &state, const std::string &sector, long bitfield, bool use_eigenspinors)
-/*!
- * There are many ways to random_product_state an initial product state state, based on the
- * arguments (sector,excited_state_number,use_eigenspinors) = (string,long,true/false).
- * Let sector="+-axis" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
 
-        a) ("+-axis"  ,+- ,t,f)     Set spinors to a random sequence of eigenvectors (up/down) of either
-                                    sx, sy or sz pauli matrices (same pauli for all sites). If the global
-                                    sign (+-) is omitted, a random sign is chosen with equal probabilities.
-                                    In the x and z cases the full state will turn out to be entirely real,
-                                    which improves performance.
-
-        b) ("random"    ,+- ,f,f)   Set each spinor randomly on C2
-
-
-        c) ("+-axis"  ,+- ,f,f)   Set each spinor randomly on C2 (i.e. case b) and then project the  full state
-                                    to the given parity sector. If the global sign (+-) is omitted,  a random
-                                    sign is chosen with equal probabilities. As a consequence of this, the
-                                    full state will have always have nonzero imaginary part.
-
-        d) ("randomAxis",+- ,f,f)   Randomly select one of {"x","y","z"} and go to case a).
-        e) ("none"      ,+- ,f,f)   Does not random_product_state
-        f) ("+-axis"  ,>=0,?,t)   Interpret seed_state as bitfield "01100010110..." and interpret these as
-                                    up(0)/down(1) of either sx, sy or sz pauli matrices (same pauli for all sites)
- * Note: seed_state is only used if >= 0.
- * Note: we "use" the seed_state only once. Subsequent calls do not keep resetting the seed.
-*/
-{
-    tools::log->debug("Setting random product state in sector {}", sector);
-    state.clear_measurements();
-    state.clear_cache();
-    if(bitfield_is_valid(bitfield)) {
-        internals::set_random_product_state_in_sector_using_bitfield(state, sector, bitfield);
-        internals::used_bitfields.insert(bitfield);
-    } else
-        internals::set_random_product_state(state, sector, use_eigenspinors);
-
-    state.clear_measurements();
-    state.clear_cache();
-    state.tag_all_sites_have_been_updated(true); // This operation changes all sites
+void tools::finite::mps::randomize_state (class_state_finite & state, const std::string & sector, StateType state_type, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield){
+    bool real = true;
+    switch(state_type){
+        case StateType::RANDOM_PRODUCT_STATE: return internal::random_product_state(state,sector,use_eigenspinors,bitfield);
+        case StateType::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state,sector,chi_lim, use_eigenspinors, real);
+        case StateType::RANDOMIZE_GIVEN_STATE: return internal::randomize_given_state(state);
+        case StateType::PRODUCT_STATE: return internal::set_product_state(state,sector);
+    }
 }
 
 
-bool tools::finite::mps::bitfield_is_valid(long bitfield) {
-    return bitfield > 0 and internals::used_bitfields.count(bitfield) == 0;
+
+
+bool tools::finite::mps::bitfield_is_valid(std::optional<long> bitfield) {
+    return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
 
 
 void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
     std::vector<Eigen::Matrix2cd> paulimatrices;
-    for(const auto &str : paulistrings) paulimatrices.emplace_back(internals::get_pauli(str));
+    for(const auto &str : paulistrings) paulimatrices.emplace_back(internal::get_pauli(str));
     auto [mpos, L, R] = qm::mpo::random_pauli_mpos(paulimatrices, state.get_length());
     tools::finite::ops::apply_mpos(state, mpos, L, R);
 }
