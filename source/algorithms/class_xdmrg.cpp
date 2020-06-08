@@ -5,9 +5,8 @@
 #include "class_xdmrg.h"
 #include "class_fdmrg.h"
 #include <config/nmspc_settings.h>
-#include <math/nmspc_math.h>
-#include <math/nmspc_random.h>
-#include <tensors/class_tensors_finite.h>
+#include <math/num.h>
+#include <math/rnd.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -17,11 +16,8 @@
 #include <tools/finite/debug.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mps.h>
-#include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_tensor.h>
-#include <tools/finite/svd.h>
 
 class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -100,9 +96,10 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case xdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_into_product_state(ResetReason::INIT); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_IN_WIN: randomize_into_product_state_in_energy_window(ResetReason::INIT); break;
-            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_from_current_state(); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_PRODUCT_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_ENTANGLED_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT,StateType::RANDOMIZE_GIVEN_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_into_state_in_energy_window(ResetReason::INIT,settings::strategy::initial_state); break;
             case xdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
@@ -111,6 +108,10 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
                 run_preprocessing();
                 break;
                 //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
+            case xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_PRODUCT_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_ENTANGLED_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOMIZE_GIVEN_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_SEED_STATE:
                 excited_state_number = 0;
@@ -164,9 +165,9 @@ void class_xdmrg::run_preprocessing() {
     init_bond_dimension_limits();
     find_energy_range();
     init_energy_limits();
-    if(settings::xdmrg::energy_density_window != 0.5) randomize_into_product_state_in_energy_window(ResetReason::INIT);
+    if(settings::xdmrg::energy_density_window != 0.5) randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
-        randomize_into_product_state(ResetReason::INIT);
+        randomize_state(ResetReason::INIT,settings::strategy::initial_state);
     tools::common::profile::t_pre->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
@@ -174,6 +175,7 @@ void class_xdmrg::run_preprocessing() {
 void class_xdmrg::run_algorithm() {
     if(state_name.empty()) state_name = "state_" + std::to_string(excited_state_number);
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    tools::common::profile::t_sim->tic();
     while(true) {
         single_xDMRG_step();
         print_status_update();
@@ -218,6 +220,8 @@ void class_xdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
+    tools::common::profile::t_sim->toc();
+
 }
 
 void class_xdmrg::single_xDMRG_step() {
@@ -225,7 +229,6 @@ void class_xdmrg::single_xDMRG_step() {
 
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    tools::common::profile::t_sim->tic();
 
     //    IDEA:
     //        Try converging to some state from a product state.
@@ -307,7 +310,6 @@ void class_xdmrg::single_xDMRG_step() {
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    size_t                  theta_count  = 0;
     double                  variance_old = 1;
     std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
@@ -369,8 +371,7 @@ void class_xdmrg::single_xDMRG_step() {
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
     if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
 
-    tools::common::profile::t_sim->toc();
-    status.wall_time = tools::common::profile::t_tot->get_age();
+    status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
@@ -394,7 +395,7 @@ void class_xdmrg::check_convergence() {
                                              status.energy_dens_target, status.energy_dens_window);
             tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
             status.energy_dens_window = new_energy_dens_window;
-            randomize_into_product_state_in_energy_window(ResetReason::SATURATED, settings::strategy::target_sector);
+            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
         }
         //        else
         //        if( not     tensors.state->all_sites_updated()
@@ -405,7 +406,7 @@ void class_xdmrg::check_convergence() {
         //            std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
         //                     status.energy_dens, status.energy_dens_window, std::min(energy_window_growth_factor*status.energy_dens_window, 0.5)
         //                     );
-        //                     randomize_into_product_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
+        //                     randomize_into_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
         //        }
     }
 
@@ -430,9 +431,9 @@ void class_xdmrg::check_convergence() {
     tools::common::profile::t_con->toc();
 }
 
-void class_xdmrg::randomize_into_product_state_in_energy_window(ResetReason reason, std::optional<std::string> sector) {
-    tools::log->info("Resetting to product state in energy window -- reason: {}", enum2str(reason));
-    tools::log->info("Searching for product state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
+void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateType state_type, std::optional<std::string> sector) {
+    tools::log->info("Resetting to state in energy window -- reason: {}", enum2str(reason));
+    tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 
     status.num_resets++;
     if(reason == ResetReason::SATURATED and status.num_resets > settings::strategy::max_resets) {
@@ -444,7 +445,7 @@ void class_xdmrg::randomize_into_product_state_in_energy_window(ResetReason reas
     bool outside_of_window = true;
     tensors.activate_sites(settings::precision::max_size_full_diag, 2);
     while(true) {
-        randomize_into_product_state(ResetReason::FIND_WINDOW, sector, -1); // Do not use the bitfield: set to -1
+        randomize_state(ResetReason::FIND_WINDOW,state_type, sector, -1); // Do not use the bitfield: set to -1
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);

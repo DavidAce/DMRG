@@ -2,9 +2,9 @@
 // Created by david on 2019-02-01.
 //
 
-#include <eig/eig.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <math/class_svd_wrapper.h>
+#include <math/eig.h>
+#include <math/svd.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
@@ -46,7 +46,7 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 ////    t_temp1->tic();
 //    std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 //
-//    class_SVD<Scalar> SVD;
+//    svd::solver<Scalar> SVD;
 //    SVD.setThreshold(settings::precision::svd_threshold);
 
 //    long chi_lim = 5*MPS_evolved->chiC();
@@ -294,7 +294,7 @@ void tools::infinite::measure::do_all_measurements(const class_state_infinite &s
 //    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) -
 //    (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA}); Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd =
 //    Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA,
-//    sizeLB*sizeLB}); class_SVD<Scalar> SVD; SVD.setThreshold(settings::precision::svd_threshold);
+//    sizeLB*sizeLB}); svd::solver<Scalar> SVD; SVD.setThreshold(settings::precision::svd_threshold);
 
 //    Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
 //    Eigen::Tensor<Scalar,4> E_odd_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(array4{sizeLA,sizeLA,sizeLB,sizeLB});
@@ -354,7 +354,7 @@ class_state_infinite::Scalar moment_generating_function(const class_state_infini
     using Scalar                       = class_state_infinite::Scalar;
     class_state_infinite state_evolved = state_original;
 
-    class_SVD SVD;
+    svd::solver SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
 
     //    long cfg_chi_lim_max = 5 * state_evolved.chiC();
@@ -729,7 +729,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
     Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_odd =
         Textra::MatrixTensorMap(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
         (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
-    class_SVD SVD;
+    svd::solver SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
     Eigen::Tensor<Scalar, 4> E_evn_pinv = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(Textra::array4{sizeLB, sizeLB, sizeLA, sizeLA});
     Eigen::Tensor<Scalar, 4> E_odd_pinv = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(Textra::array4{sizeLA, sizeLA, sizeLB, sizeLB});

@@ -3,13 +3,13 @@
 //
 
 #include "class_ising_tf_rf.h"
+#include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
-#include <math/nmspc_math.h>
-#include <math/nmspc_random.h>
-#include <config/nmspc_settings.h>
+#include <math/num.h>
+#include <math/rnd.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
@@ -100,11 +100,11 @@ void class_ising_tf_rf::build_mpo()
 
 void class_ising_tf_rf::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
-        h5tb.param.h_rand = rn::normal(h5tb.param.h_mean, h5tb.param.h_stdv);
+        h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_stdv);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.h_rand = rn::log_normal(h5tb.param.h_mean, h5tb.param.h_stdv);
+        h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_stdv);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
-        h5tb.param.h_rand = rn::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_stdv / 2.0, h5tb.param.h_mean + h5tb.param.h_stdv / 2.0);
+        h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_stdv / 2.0, h5tb.param.h_mean + h5tb.param.h_stdv / 2.0);
     } else {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform>");
     }
@@ -130,11 +130,11 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
             break;
         }
         case PerturbMode::UNIFORM_RANDOM_ABSOLUTE: {
-            h5tb.param.h_pert = rn::uniform_double_box(-field_ptb, field_ptb);
+            h5tb.param.h_pert = rnd::uniform_double_box(-field_ptb, field_ptb);
             break;
         }
         case PerturbMode::UNIFORM_RANDOM_PERCENTAGE: {
-            h5tb.param.h_pert = h5tb.param.h_rand * rn::uniform_double_box(-field_ptb, field_ptb);
+            h5tb.param.h_pert = h5tb.param.h_rand * rnd::uniform_double_box(-field_ptb, field_ptb);
             break;
         }
     }
@@ -165,8 +165,8 @@ Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view(double site_energy)
 
 Eigen::MatrixXcd class_ising_tf_rf::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
                                                             std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {
-    auto i = math::mod(position, sites);
-    auto j = math::mod(position + 1, sites);
+    auto i = num::mod(position, sites);
+    auto j = num::mod(position + 1, sites);
     return -(h5tb.param.J1 * SZ[i] * SZ[j] + h5tb.param.h_tran * 0.5 * (SX[i] + SX[j]));
 }
 

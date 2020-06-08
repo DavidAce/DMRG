@@ -2,8 +2,8 @@
 // Created by david on 2019-07-06.
 //
 
-#include <eig/arpack_extra/matrix_product_hamiltonian.h>
-#include <eig/eig.h>
+#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <math/eig.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>

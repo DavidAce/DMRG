@@ -8,13 +8,13 @@
 // Created by david on 2018-07-06.
 //
 
-#include <tools/common/views.h>
-#include <tensors/state/class_state_infinite.h>
-#include <tensors/state/class_state_finite.h>
-#include <tensors/state/class_mps_site.h>
-#include <eig/eig.h>
-#include <math/nmspc_math.h>
 #include <iomanip>
+#include <math/eig.h>
+#include <math/num.h>
+#include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/state/class_state_infinite.h>
+#include <tools/common/views.h>
 //#include "class_mps_util.h"
 
 using namespace Textra;
@@ -276,7 +276,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
     Eigen::Tensor<Scalar,4> temp = get_transfer_matrix_zero(state);
     Eigen::Tensor<Scalar,4> temp2;
     for (int i = 0; i < p-2; i++){
-        if(math::mod(i,2) == 0){
+        if(num::mod(i,2) == 0){
             temp2 = temp.contract(get_transfer_matrix_LBGA(state), idx({2,3},{0,1}));
 
         }else{
@@ -448,7 +448,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //    Eigen::Tensor<Scalar,4> temp = get_transfer_matrix_zero(MPS);
 //    Eigen::Tensor<Scalar,4> temp2;
 //    for (int i = 0; i < p-2; i++){
-//        if(math::mod(i,2) == 0){
+//        if(num::mod(i,2) == 0){
 //            temp2 = temp.contract(get_transfer_matrix_LBGA(MPS), idx({2,3},{0,1}));
 //
 //        }else{

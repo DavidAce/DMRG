@@ -2,17 +2,17 @@
 // Created by david on 2020-05-13.
 //
 #include "env.h"
+#include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/edges/class_env_ene.h>
 #include <tensors/edges/class_env_var.h>
-#include <math/nmspc_math.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 
 //void tools::finite::env::rebuild_all_edges(const class_state_finite & state, const class_model_finite & model, class_edges_finite & edges) {
 //    tools::log->trace("Rebuilding all edges");
-//    if(not math::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+//    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
 //        throw std::runtime_error(fmt::format("All lengths not equal: state {} | model {} | edges {}",state.get_length(), model.get_length(), edges.get_length() ));
 //
 //    // Note that the last environment should always be empty!
@@ -56,9 +56,9 @@
 
 
 void tools::finite::env::rebuild_edges(const class_state_finite & state, const class_model_finite & model, class_edges_finite & edges){
-    if(not math::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw std::runtime_error(fmt::format("All lengths not equal: state {} | model {} | edges {}",state.get_length(), model.get_length(), edges.get_length() ));
-    if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(fmt::format("All active sites are not equal: state {} | model {} | edges {}",state.active_sites, model.active_sites, edges.active_sites));
 
     size_t min_pos = 0;
@@ -82,8 +82,8 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
         auto & ene_next = edges.get_eneL(pos+1);
         auto & var_curr = edges.get_varL(pos);
         auto & var_next = edges.get_varL(pos+1);
-        if(not ene_next.has_block()) tools::log->info("Rebuilding L edge for pos {} from pos {}", pos+1,pos);
-        if(not var_next.has_block()) tools::log->info("Rebuilding L edge for pos {} from pos {}", pos+1,pos);
+        if(not ene_next.has_block()) tools::log->trace("Rebuilding L ene edge for pos {} from pos {}", pos+1,pos);
+        if(not var_next.has_block()) tools::log->trace("Rebuilding L var edge for pos {} from pos {}", pos+1,pos);
         if(not ene_next.has_block()) ene_next = ene_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
         if(not var_next.has_block()) var_next = var_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
     }
@@ -97,8 +97,8 @@ void tools::finite::env::rebuild_edges(const class_state_finite & state, const c
         auto & ene_prev = edges.get_eneR(pos-1);
         auto & var_curr = edges.get_varR(pos);
         auto & var_prev = edges.get_varR(pos-1);
-        if(not ene_prev.has_block()) tools::log->info("Rebuilding R edge for pos {} from pos {}", pos-1,pos);
-        if(not var_prev.has_block()) tools::log->info("Rebuilding R edge for pos {} from pos {}", pos-1,pos);
+        if(not ene_prev.has_block()) tools::log->trace("Rebuilding R ene edge for pos {} from pos {}", pos-1,pos);
+        if(not var_prev.has_block()) tools::log->trace("Rebuilding R var edge for pos {} from pos {}", pos-1,pos);
         if(not ene_prev.has_block()) ene_prev = ene_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
         if(not var_prev.has_block()) var_prev = var_curr.enlarge(state.get_mps_site(pos),model.get_mpo(pos));
     }

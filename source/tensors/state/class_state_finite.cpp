@@ -10,9 +10,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
-#include <tools/finite/svd.h>
 
 class_state_finite::class_state_finite() = default; // Can't initialize lists since we don't know the model size yet
 

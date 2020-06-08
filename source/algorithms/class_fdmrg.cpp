@@ -13,7 +13,6 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
-#include <tools/finite/svd.h>
 
 class_fdmrg::class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
     tools::log->trace("Constructing class_fdmrg");
@@ -60,7 +59,8 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case fdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_into_product_state(ResetReason::INIT); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_PRODUCT_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
@@ -101,7 +101,7 @@ void class_fdmrg::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
-    randomize_into_product_state(ResetReason::INIT);
+    randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     auto spin_components = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Initial spin components: {}", spin_components);
     tools::common::profile::t_pre->toc();
@@ -111,17 +111,9 @@ void class_fdmrg::run_preprocessing() {
 void class_fdmrg::run_algorithm() {
     if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    tools::common::profile::t_sim->tic();
     while(true) {
-        double variance = 0;
-        if(not tensors.active_sites.empty())
-            variance = tools::finite::measure::energy_variance_per_site(tensors);
-        else
-            tools::log->error("Active sites is empty");
-        tools::log->info("Variance before single DMRG step: {:.16f}", std::log10(variance));
         single_fdmrg_step();
-        if(not tensors.active_sites.empty())
-            variance = tools::finite::measure::energy_variance_per_site(tensors);
-        tools::log->info("Variance after single DMRG step: {:.16f}", std::log10(variance));
         print_status_update();
         write_to_file();
         check_convergence();
@@ -155,6 +147,7 @@ void class_fdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
+    tools::common::profile::t_sim->toc();
 }
 
 void class_fdmrg::single_fdmrg_step() {
@@ -163,8 +156,6 @@ void class_fdmrg::single_fdmrg_step() {
      */
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
 
-
-    tools::common::profile::t_sim->tic();
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_max_sites);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
 
@@ -172,12 +163,10 @@ void class_fdmrg::single_fdmrg_step() {
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
 
     // Update record holder
-    tools::log->trace("Checking if variance beats standing record");
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
     if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
 
-    tools::common::profile::t_sim->toc();
-    status.wall_time = tools::common::profile::t_tot->get_age();
+    status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 

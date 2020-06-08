@@ -5,7 +5,7 @@
 #include "class_edges_infinite.h"
 #include "class_env_ene.h"
 #include "class_env_var.h"
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tools/common/log.h>
 
 
@@ -78,16 +78,16 @@ void class_edges_infinite::env_pair<env_type>::assert_validity() const {
 }
 
 size_t class_edges_infinite::get_length() const {
-    if(not math::all_equal(eneL->sites, eneR->sites, varL->sites, varR->sites))
+    if(not num::all_equal(eneL->sites, eneR->sites, varL->sites, varR->sites))
         throw std::runtime_error(
             fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->sites, eneR->sites, varL->sites, varR->sites));
     return eneL->sites + eneR->sites + 2;
 }
 
 size_t class_edges_infinite::get_position() const {
-    if(not math::all_equal(eneL->get_position(), varL->get_position()))
+    if(not num::all_equal(eneL->get_position(), varL->get_position()))
         throw std::runtime_error(fmt::format("Position mismatch in edges: eneL {} | varL {}", eneL->get_position(), varL->get_position()));
-    if(not math::all_equal(eneR->get_position(), varR->get_position()))
+    if(not num::all_equal(eneR->get_position(), varR->get_position()))
         throw std::runtime_error(fmt::format("Position mismatch in edges: eneR {} | varR {}", eneR->get_position(), varR->get_position()));
     return eneL->get_position();
 }

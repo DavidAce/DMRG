@@ -5,7 +5,7 @@
 #include "class_model_infinite.h"
 #include "class_mpo_factory.h"
 #include <general/nmspc_tensor_extra.h>
-#include <math/nmspc_math.h>
+#include <math/num.h>
 
 class_model_infinite::class_model_infinite() = default;
 
@@ -96,7 +96,7 @@ bool   class_model_infinite::is_reduced() const{
 
 
 double class_model_infinite::get_energy_per_site_reduced() const{
-    if(not math::all_equal(HA->get_reduced_energy(),HB->get_reduced_energy()))
+    if(not num::all_equal(HA->get_reduced_energy(),HB->get_reduced_energy()))
         throw std::runtime_error(fmt::format("Reduced energy mismatch: HA {:.16f} != HB {:.16f}",HA->get_reduced_energy(),HB->get_reduced_energy()));
     return HA->get_reduced_energy();
 }

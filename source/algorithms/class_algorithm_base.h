@@ -46,18 +46,12 @@ class class_algorithm_base {
     virtual long   cfg_chi_lim_init()                                                                                                                  = 0;
     virtual void   print_status_update()                                                                                                           = 0;
     virtual void   print_status_full()                                                                                                             = 0;
-    virtual void randomize_into_product_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
-                                                 std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt) = 0;
-    virtual void   randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings = std::nullopt, std::optional<std::string> sector = std::nullopt,
-                                         std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt)           = 0;
     virtual void   clear_convergence_status()                                                                                                         = 0;
     virtual void update_truncation_limit()                                                                                                         = 0;
     virtual void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                                                      = 0;
 
     // common functions
-    void   print_profiling();
     void   init_bond_dimension_limits();
-    double process_memory_in_mb(std::string name);
 
     protected:
     //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from

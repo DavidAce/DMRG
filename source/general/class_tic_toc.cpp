@@ -47,8 +47,12 @@ double class_tic_toc::get_age() const {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start_timepoint).count();
 }
 
-double class_tic_toc::get_measured_time() const { return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count(); }
-
+double class_tic_toc::get_measured_time() const {
+    if(is_measuring) {
+        return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time + std::chrono::high_resolution_clock::now() - tic_timepoint).count();
+    } else
+        return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count();
+}
 double class_tic_toc::get_last_time_interval() const { return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count(); }
 
 void class_tic_toc::print_age() const {
@@ -121,7 +125,7 @@ class_tic_toc &class_tic_toc::operator-=(double other_time_in_seconds) {
 
 class_tic_toc &class_tic_toc::operator+=(const class_tic_toc &rhs) {
     this->measured_time += rhs.measured_time;
-    this->delta_time     = rhs.measured_time;
+    this->delta_time = rhs.measured_time;
     return *this;
 }
 

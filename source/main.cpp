@@ -7,7 +7,7 @@
 #include <io/nmspc_filesystem.h>
 #include <io/nmspc_logger.h>
 #include <iostream>
-#include <math/nmspc_random.h>
+#include <math/rnd.h>
 #include <tools/common/log.h>
 #ifdef _OPENMP
     #include <omp.h>
@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
 
     // Seed with random::device initially (This also takes care of srand used by Eigen)
     // This is to make reproducible simulations
-    rn::seed(settings::input::seed);
+    rnd::seed(settings::input::seed);
 
 // Set the number of threads to be used
 #ifdef _OPENMP

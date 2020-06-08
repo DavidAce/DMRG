@@ -1,6 +1,6 @@
 
 #include "class_tensors_finite.h"
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -56,10 +56,13 @@ void class_tensors_finite::randomize_model() {
     rebuild_edges();
 }
 
-void class_tensors_finite::randomize_from_current_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim,
-                                           std::optional<double> svd_threshold) {
-    tools::finite::mps::apply_random_paulis(*state, pauli_strings);
-    project_to_nearest_sector(sector,chi_lim,svd_threshold);
+void class_tensors_finite::randomize_state(StateType state_type,const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
+    clear_measurements();
+    tools::finite::mps::randomize_state(*state, sector,state_type, chi_lim, use_eigenspinors, bitfield);
+    if(state_type == StateType::RANDOMIZE_GIVEN_STATE)
+        project_to_nearest_sector(sector,chi_lim,svd_threshold);
+
+    normalize_state(chi_lim,svd_threshold,NormPolicy::ALWAYS);
 }
 
 void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
@@ -73,11 +76,7 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     }
 }
 
-void class_tensors_finite::randomize_into_product_state(const std::string &sector, long bitfield, bool use_eigenspinors) {
-    clear_measurements();
-    tools::finite::mps::random_product_state(*state, sector, bitfield, use_eigenspinors);
-    normalize_state(1,std::nullopt, NormPolicy::ALWAYS); // Set chi to 1
-}
+
 
 void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
     clear_measurements();
@@ -154,7 +153,7 @@ void class_tensors_finite::assert_validity() const {
 }
 
 size_t class_tensors_finite::get_length() const {
-    if(not math::all_equal(state->get_length(), model->get_length(), edges->get_length()))
+    if(not num::all_equal(state->get_length(), model->get_length(), edges->get_length()))
         throw std::runtime_error("All lengths are not equal: state {} | model {} | edges {}");
     return state->get_length();
 }
@@ -170,7 +169,7 @@ bool class_tensors_finite::position_is_at(size_t pos) const { return state->posi
 void class_tensors_finite::move_center_point(long chi_lim) { tools::finite::mps::move_center_point(*state, chi_lim); }
 void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold) {
     // Make sure the active sites are the same everywhere
-    if(not math::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
+    if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
     tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim);

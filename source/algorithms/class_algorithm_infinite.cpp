@@ -4,7 +4,7 @@
 #include "class_algorithm_infinite.h"
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
-#include <math/nmspc_math.h>
+#include <math/num.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
@@ -159,7 +159,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //    status.chi_lim = tensors.state->get_chi_lim();
 //}
 
-void class_algorithm_infinite::randomize_into_product_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
+void class_algorithm_infinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
                                                              std::optional<bool> use_eigenspinors) {
     tools::log->trace("Resetting to random product state");
     if(reason == ResetReason::SATURATED) {
@@ -179,11 +179,11 @@ void class_algorithm_infinite::randomize_into_product_state(ResetReason reason, 
     clear_convergence_status();
 }
 
-void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
-                                                       std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-    tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
-    throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
-}
+//void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
+//                                                       std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+//    tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
+//    throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
+//}
 
 void class_algorithm_infinite::clear_convergence_status() {
     tools::log->trace("Clearing saturation status");
@@ -314,7 +314,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
             break;
         }
         case StorageReason::CHECKPOINT: {
-            if(math::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+            if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
             state_prefix.append("/checkpoint");
             storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only) state_prefix.append("/iter_last");
@@ -383,7 +383,7 @@ void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
     if(not settings::output::use_temp_dir) return;
     switch(storage_reason) {
         case StorageReason::CHECKPOINT:
-            if(math::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
+            if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
         case StorageReason::FINISHED:
         case StorageReason::CHI_UPDATE:
         case StorageReason::PROJ_STATE:
@@ -396,7 +396,7 @@ void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
 }
 
 void class_algorithm_infinite::print_status_update() {
-    if(math::mod(status.iter, cfg_print_freq()) != 0) { return; }
+    if(num::mod(status.iter, cfg_print_freq()) != 0) { return; }
     //    if (not tensors.state->position_is_the_middle()) {return;}
     if(cfg_print_freq() == 0) { return; }
     //    compute_observables();
