@@ -115,7 +115,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_SEED_STATE:
                 excited_state_number = 0;
-                state_name           = "state_0_seed";
+                state_name = fmt::format("state_{}", excited_state_number);
                 run_algorithm();
                 break;
             case xdmrg_task::FIND_EXCITED_STATE:
@@ -264,11 +264,6 @@ void class_xdmrg::single_xDMRG_step() {
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
 
-    if(tensors.state->size_2site() < settings::precision::max_size_part_diag) {
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
     if(status.variance_mpo_has_converged) {
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::DIRECT;
@@ -278,7 +273,7 @@ void class_xdmrg::single_xDMRG_step() {
     long max_problem_size = 0;
     switch(optSpace) {
         case OptSpace::DIRECT: max_problem_size = settings::precision::max_size_direct; break;
-        case OptSpace::SUBSPACE_ONLY: max_problem_size = settings::precision::max_size_part_diag; break;
+        case OptSpace::SUBSPACE_ONLY:
         case OptSpace::SUBSPACE_AND_DIRECT: max_problem_size = settings::precision::max_size_part_diag; break;
     }
 
