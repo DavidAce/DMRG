@@ -11,7 +11,7 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.array([28,36]) #np.linspace(16,36,6, dtype=int)
+sites        = np.array([16,24]) #np.linspace(16,36,6, dtype=int)
 # sites        = np.linspace(16,36,6, dtype=int)
 lambdas      = [0] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
@@ -29,14 +29,15 @@ for num_L in sites:
                 os.makedirs(location, exist_ok=True)
                 input_filename = location + '/' + basename + '_L'+ str(num_L) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '.cfg'
                 settings = {
-                    "model::selfdual_tf_rf_ising::J_mean"         : "{:.2f}".format(J_mean[num_j]),
-                    "model::selfdual_tf_rf_ising::h_mean"         : "{:.2f}".format(h_mean[num_h]),
-                    "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
-                    "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
-                    "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
-                    "xdmrg::num_sites"                            : str(num_L),
-                    "xdmrg::chi_max"                              : "512",
-                    "output::output_filename"                     : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5'
+                    "output::output_filepath"            : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5',
+                    "model::model_size"                  : str(num_L)
+                    "model::ising_sdual::J_mean"         : "{:.2f}".format(J_mean[num_j]),
+                    "model::ising_sdual::h_mean"         : "{:.2f}".format(h_mean[num_h]),
+                    "model::ising_sdual::lambda"         : "{:.2f}".format(lambdas[num_l]),
+                    "model::ising_sdual::J_stdv"         : "1.0",
+                    "model::ising_sdual::h_stdv"         : "1.0",
+                    "xdmrg::chi_lim_max"                 : "512",
+                    "xdmrg::max_states "                 : str(2),
                 }
                 num_total = num_total + 1
                 generate_input_file(settings, input_filename, template_filename)
