@@ -33,7 +33,12 @@ void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_t
         }
        candidate_list.pop_back();
     }
-
+    size_t idx = 0;
+    for(auto & candidate : candidate_list){
+        candidate.set_name(fmt::format("eigenvector {}", idx++));
+        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", candidate.get_name(), candidate.get_overlap(),
+                          candidate.get_energy_per_site());
+    }
 
     tools::log->trace("Filtered from {} down to {} states", initial_size, candidate_list.size());
     tools::log->trace("Subspace error after filter = {}", std::log10(subspace_error));
@@ -44,42 +49,42 @@ void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_t
 
 
 std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_highest_overlap(const std::vector<opt_tensor> &candidate_list,
-                                                                                                        double energy_lbound, double energy_ubound) {
+                                                                                                        double energy_llim_per_site, double energy_ulim_per_site) {
     if(candidate_list.empty()) return std::nullopt;
     auto   overlaps = get_overlaps(candidate_list);
     long idx      = 0;
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
-        if(candidate.get_energy() > energy_ubound) overlaps(idx) = 0.0;
-        if(candidate.get_energy() < energy_lbound) overlaps(idx) = 0.0;
+        if(candidate.get_energy_per_site() > energy_ulim_per_site) overlaps(idx) = 0.0;
+        if(candidate.get_energy_per_site() < energy_llim_per_site) overlaps(idx) = 0.0;
         idx++;
     }
     // Now we have a list of overlaps where nonzero elements correspond do candidates inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff(&idx);
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_lbound, energy_ubound);
+        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim_per_site, energy_ulim_per_site);
         return std::nullopt;
     }
     return idx;
 }
 
-std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_tensor> &candidate_list, size_t max_candidates, double energy_lbound,
-                                                               double energy_ubound) {
+std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_tensor> &candidate_list, size_t max_candidates, double energy_llim_per_site,
+                                                               double energy_ulim_per_site) {
     if(candidate_list.empty()) return std::vector<size_t>();
     auto   overlaps = get_overlaps(candidate_list);
     long idx      = 0;
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
-        if(candidate.get_energy() > energy_ubound) overlaps(idx) = 0.0;
-        if(candidate.get_energy() < energy_lbound) overlaps(idx) = 0.0;
+        if(candidate.get_energy_per_site() > energy_ulim_per_site) overlaps(idx) = 0.0;
+        if(candidate.get_energy_per_site() < energy_llim_per_site) overlaps(idx) = 0.0;
         idx++;
     }
     // Now we have a list of overlaps where nonzero elements correspond do candidates inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff();
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_lbound, energy_ubound);
+        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim_per_site, energy_ulim_per_site);
         return std::vector<size_t>();
     }
 
@@ -138,6 +143,18 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::
     energies.conservativeResize(idx);
     return energies;
 }
+
+Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(const std::vector<opt_tensor> &candidate_list) {
+    Eigen::VectorXd energies(static_cast<long>(candidate_list.size()));
+    long            idx = 0;
+    for(const auto &candidate : candidate_list) {
+        if(not candidate.is_basis_vector) continue;
+        energies(idx++) = candidate.get_energy_per_site();
+    }
+    energies.conservativeResize(idx);
+    return energies;
+}
+
 
 double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<opt_tensor> &candidate_list) {
     double eps = 0;

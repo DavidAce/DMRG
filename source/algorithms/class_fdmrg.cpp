@@ -164,7 +164,7 @@ void class_fdmrg::single_fdmrg_step() {
 
     // Update record holder
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
-    if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
+    if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();

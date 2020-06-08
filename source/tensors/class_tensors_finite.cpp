@@ -59,10 +59,9 @@ void class_tensors_finite::randomize_model() {
 void class_tensors_finite::randomize_state(StateType state_type,const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
     clear_measurements();
     tools::finite::mps::randomize_state(*state, sector,state_type, chi_lim, use_eigenspinors, bitfield);
-    if(state_type == StateType::RANDOMIZE_GIVEN_STATE)
-        project_to_nearest_sector(sector,chi_lim,svd_threshold);
-
     normalize_state(chi_lim,svd_threshold,NormPolicy::ALWAYS);
+    if(state_type == StateType::RANDOMIZE_GIVEN_STATE or state_type == StateType::RANDOM_ENTANGLED_STATE)
+        project_to_nearest_sector(sector,chi_lim,svd_threshold);
 }
 
 void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {

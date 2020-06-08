@@ -22,15 +22,15 @@ class class_algorithm_status {
     long   chi_lim_max                 = 0; /*!< Maximum allowable bond dimension during an algorithm run */
     long   chi_lim_init                = 0; /*!< Initial limit on bond dimension when an algorithm starts */
     long   chi_lim                     = 0; /*!< Current limit on bond dimension, can be increased dynamically */
-    double energy_min                  = 0;
-    double energy_max                  = 0;
-    double energy_target               = 0;
-    double energy_ubound               = 0;
-    double energy_lbound               = 0;
+    double energy_min_per_site         = 0;
+    double energy_max_per_site         = 0;
+    double energy_tgt_per_site         = 0;
+    double energy_ulim_per_site        = 0;
+    double energy_llim_per_site        = 0;
     double energy_dens                 = 0;
     double energy_dens_target          = 0;
     double energy_dens_window          = 0;
-    double lowest_recorded_variance    = 1;
+    double lowest_recorded_variance_per_site = 1;
     double phys_time                   = 0;
     double wall_time                   = 0;
     double simu_time                   = 0;
@@ -61,17 +61,17 @@ class class_algorithm_status {
         // Keeps some data for simulations that follow
         auto status = *this;
         clear();
-        energy_min         = status.energy_min;
-        energy_max         = status.energy_max;
+        energy_min_per_site         = status.energy_min_per_site;
+        energy_max_per_site         = status.energy_max_per_site;
         min_iters          = status.min_iters;
         chi_lim_max        = status.chi_lim_max;
         chi_lim_init       = status.chi_lim_init;
         chi_lim            = status.chi_lim;
-        energy_min         = status.energy_min;
-        energy_max         = status.energy_max;
-        energy_target      = status.energy_target;
-        energy_ubound      = status.energy_ubound;
-        energy_lbound      = status.energy_lbound;
+        energy_min_per_site         = status.energy_min_per_site;
+        energy_max_per_site         = status.energy_max_per_site;
+        energy_tgt_per_site         = status.energy_tgt_per_site;
+        energy_ulim_per_site        = status.energy_ulim_per_site;
+        energy_llim_per_site        = status.energy_llim_per_site;
         energy_dens        = status.energy_dens;
         energy_dens_target = status.energy_dens_target;
         energy_dens_window = status.energy_dens_window;
