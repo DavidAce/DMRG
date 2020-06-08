@@ -48,12 +48,12 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
     //        throw std::runtime_error(fmt::format("Mismatch when loading MPO: State position [{}] != status.position [{}]", position, status.position));
 
     // Find the path to the MPO
-    auto mpo_path = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_path");
-    auto ham_path = h5ppFile.readAttribute<std::string>(state_prefix, "common/ham_path");
-    if(h5ppFile.linkExists(ham_path)) {
-        tools::log->trace("Initializing MPOs from Hamiltonian table on file: [{}]", ham_path);
-        auto model_type = h5ppFile.readAttribute<std::string>("model_type", ham_path);
-        auto model_size = h5ppFile.readAttribute<size_t>("model_size", ham_path);
+    auto mpo_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_prefix");
+    auto ham_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/ham_prefix");
+    if(h5ppFile.linkExists(ham_prefix)) {
+        tools::log->trace("Initializing MPOs from Hamiltonian table on file: [{}]", ham_prefix);
+        auto model_type = h5ppFile.readAttribute<std::string>("model_type", ham_prefix);
+        auto model_size = h5ppFile.readAttribute<size_t>("model_size", ham_prefix);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
             throw std::runtime_error(fmt::format("Mismatch when loading MPO: model_type [{}] != settings::model::model_type [{}]", model_type,
                                                  enum2str(settings::model::model_type)));
@@ -61,12 +61,12 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: model_size [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
         model.initialize(str2enum<ModelType>(model_type),model_size);
-        for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_hamiltonian(h5ppFile, ham_path);
+        for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_hamiltonian(h5ppFile, ham_prefix);
 
-    } else if(h5ppFile.linkExists(mpo_path)) {
-        tools::log->trace("Initializing MPOs from MPO's on file: [{}]", mpo_path);
-        auto model_type = h5ppFile.readAttribute<std::string>("model_type", mpo_path);
-        auto model_size = h5ppFile.readAttribute<size_t>("model_size", mpo_path);
+    } else if(h5ppFile.linkExists(mpo_prefix)) {
+        tools::log->trace("Initializing MPOs from MPO's on file: [{}]", mpo_prefix);
+        auto model_type = h5ppFile.readAttribute<std::string>("model_type", mpo_prefix);
+        auto model_size = h5ppFile.readAttribute<size_t>("model_size", mpo_prefix);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
             throw std::runtime_error(fmt::format("Mismatch when loading MPO: Hamiltonian model_type [{}] != settings::model::model_type [{}]", model_type,
                                                  enum2str(settings::model::model_type)));
@@ -74,7 +74,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: Hamiltonian sites [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
         model.initialize(str2enum<ModelType>(model_type),model_size);
-        for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_mpo(h5ppFile, mpo_path);
+        for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).read_mpo(h5ppFile, mpo_prefix);
     }
 }
 
@@ -82,10 +82,10 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
                                              const class_algorithm_status &status) {
     if(h5ppFile.readAttribute<std::string>("storage_level", state_prefix) != enum2str(StorageLevel::FULL))
         throw std::runtime_error("Given prefix to MPS data with StorageLevel < FULL. The MPS's can only be resumed from FULL storage");
-    std::string mps_path   = state_prefix + "/mps";
+    std::string mps_prefix   = state_prefix + "/mps";
     auto        model_type = h5ppFile.readAttribute<std::string>("model_type", state_prefix);
-    auto        model_size = h5ppFile.readAttribute<size_t>("model_size", mps_path);
-    auto        position   = h5ppFile.readAttribute<size_t>("position", mps_path);
+    auto        model_size = h5ppFile.readAttribute<size_t>("model_size", mps_prefix);
+    auto        position   = h5ppFile.readAttribute<size_t>("position", mps_prefix);
     if(position != status.position)
         throw std::runtime_error(fmt::format("Mismatch when loading MPS: position [{}] != status.position [{}]", position, status.position));
     if(str2enum<ModelType>(model_type) != settings::model::model_type)
@@ -97,11 +97,11 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     state.initialize(str2enum<ModelType>(model_type),model_size,position);
     for(size_t pos = 0; pos < model_size; pos++) {
         std::string pos_str     = std::to_string(pos);
-        std::string dset_L_name = fmt::format("{}/{}_{}", mps_path, "L", pos);
-        std::string dset_M_name = fmt::format("{}/{}_{}", mps_path, "M", pos);
+        std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
+        std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
         if(state.get_mps_site(pos).isCenter()) {
-            std::string dset_LC_name = fmt::format("{}/{}", mps_path, "L_C");
-            if(not h5ppFile.linkExists(mps_path + "/L_C")) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
+            std::string dset_LC_name = fmt::format("{}/{}", mps_prefix, "L_C");
+            if(not h5ppFile.linkExists(mps_prefix + "/L_C")) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
             auto LC          = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_LC_name);
             auto pos_on_file = h5ppFile.readAttribute<size_t>("position", dset_LC_name);
             if(pos != pos_on_file) throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));

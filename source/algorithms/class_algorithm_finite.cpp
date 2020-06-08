@@ -546,8 +546,9 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason) { write
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection, const std::string &given_prefix) {
     StorageLevel      storage_level;
-    const std::string table_prefix = algo_name + "/" + state_name;
-    std::string       state_prefix = algo_name + "/" + state_name; // May get modified
+    const std::string state_root   = algo_name + "/" + state_name;
+    const std::string table_prefix = state_root;
+    std::string       state_prefix = state_root; // May get modified
     std::string       model_prefix = algo_name + "/model";
     if(not given_prefix.empty()) state_prefix = given_prefix;
 
@@ -617,7 +618,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::finite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, state);
     tools::finite::io::h5dset::write_ent(*h5pp_file, state_prefix, storage_level, state);
-    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
+    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
 
     // The main results have now been written. Next we append data to tables
     // Some storage reasons should not do this however. Like projection.

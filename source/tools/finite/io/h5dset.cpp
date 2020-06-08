@@ -49,24 +49,24 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     // There should be one more sites+1 number of L's, because there is also a center bond
     // However L_i always belongs M_i. Stick to this rule!
     // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
-    std::string mps_path = state_prefix + "/mps";
+    std::string mps_prefix = state_prefix + "/mps";
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = mps_path + "/L_" + std::to_string(pos);
+        dsetName = mps_prefix + "/L_" + std::to_string(pos);
         h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
         h5ppFile.writeAttribute(pos, "position", dsetName);
         h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
         if(state.get_mps_site(pos).isCenter()) {
-            dsetName = mps_path + "/L_C";
+            dsetName = mps_prefix + "/L_C";
             h5ppFile.writeDataset(state.get_mps_site(pos).get_LC(), dsetName, layout);
             h5ppFile.writeAttribute(pos, "position", dsetName);
             h5ppFile.writeAttribute(state.get_mps_site(pos).get_LC().dimensions(), "dimensions", dsetName);
         }
     }
-    h5ppFile.writeAttribute(state.get_length(), "model_size", mps_path);
-    h5ppFile.writeAttribute(state.get_position(), "position", mps_path);
-    h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_path);
-    h5ppFile.writeAttribute(state.get_step(), "step", mps_path);
-    h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_path);
+    h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
+    h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
+    h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_prefix);
+    h5ppFile.writeAttribute(state.get_step(), "step", mps_prefix);
+    h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
     tools::common::profile::t_hdf->toc();
 
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
@@ -74,7 +74,7 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = mps_path + "/M_" + std::to_string(pos);
+        dsetName = mps_prefix + "/M_" + std::to_string(pos);
         h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
         h5ppFile.writeAttribute(pos, "position", dsetName);
         h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);

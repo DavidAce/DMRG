@@ -96,6 +96,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         # Collect the number of states present.
         state_keys = ""
         try:
+
             if 'xDMRG' in h5file:
                 state_keys = [str(x) for x in h5file['xDMRG'].keys() if 'state' in x]
         except Exception as err:
@@ -111,7 +112,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             step_journal = 0
             prefix = 'xDMRG/' + state_key
             try:
-                if prefix + '/journal/sim_status' in h5file:
+                if prefix + '/checkpoint/sim_status' in h5file:
                     step_array =  h5file[prefix + '/journal'].get('sim_status')['step']
                     if(len(step_array)>0):
                         step_journal = step_array[-1]
