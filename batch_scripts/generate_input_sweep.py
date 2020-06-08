@@ -30,7 +30,7 @@ for num_L in sites:
                 input_filename = location + '/' + basename + '_L'+ str(num_L) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '.cfg'
                 settings = {
                     "output::output_filepath"            : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5',
-                    "model::model_size"                  : str(num_L)
+                    "model::model_size"                  : str(num_L),
                     "model::ising_sdual::J_mean"         : "{:.2f}".format(J_mean[num_j]),
                     "model::ising_sdual::h_mean"         : "{:.2f}".format(h_mean[num_h]),
                     "model::ising_sdual::lambda"         : "{:.2f}".format(lambdas[num_l]),
