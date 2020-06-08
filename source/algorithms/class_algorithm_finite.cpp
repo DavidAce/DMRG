@@ -117,13 +117,6 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     }
 
     tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
-    // // ############### Debug
-    tensors.clear_cache();
-    tensors.clear_measurements();
-    auto variance = tools::finite::measure::energy_variance_per_site(tensors);
-    tools::log->info("Variance before move: {:.16f}", std::log10(variance));
-    // ###############
-
     tensors.clear_cache();
     tensors.clear_measurements();
     try {
@@ -694,7 +687,7 @@ void class_algorithm_finite::print_status_update() {
 
 void class_algorithm_finite::print_status_full() {
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][ " + state_name + " ");
+    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
     tools::log->info("{:=^60}", "");
     tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
     tools::log->info("Sites                              = {}", tensors.state->get_length());
@@ -722,4 +715,6 @@ void class_algorithm_finite::print_status_full() {
                      status.variance_mpo_has_saturated);
     tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
                      status.entanglement_has_saturated);
+    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
+
 }

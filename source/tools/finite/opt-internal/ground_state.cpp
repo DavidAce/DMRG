@@ -48,7 +48,5 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
     // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0,  eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
     tools::common::profile::t_eig->toc();
-    auto eigval =  eig::view::get_eigval<Scalar>(solver.result,0);
-    tools::log->trace("Found eigenvalue {:.16f}", std::real(eigval));
     return eig::view::get_eigvec<Scalar>(solver.result,shape_mps, 0);
 }

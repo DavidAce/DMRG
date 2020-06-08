@@ -197,13 +197,11 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     cmake --version
 elif [[ "$HOSTNAME" == *"raken"* ]];then
     if [ -z "$no_module" ]; then
-        module load CMake/3.16.5
+        module load CMake
         if [ "$enable_mkl" = "ON" ] ; then
             module load imkl
         fi
         if [[ "$download_method" =~ find ]] ; then
-                module load buildenv-gcc/2018a-eb
-                module load foss/2019b
                 module load HDF5/1.10.5-GCCcore-8.3.0
                 if [ "$enable_mkl" = "OFF" ] ; then
                     module load OpenBLAS

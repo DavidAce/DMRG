@@ -36,8 +36,8 @@ void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_t
     size_t idx = 0;
     for(auto & candidate : candidate_list){
         candidate.set_name(fmt::format("eigenvector {}", idx++));
-        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", candidate.get_name(), candidate.get_overlap(),
-                          candidate.get_energy_per_site());
+//        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", candidate.get_name(), candidate.get_overlap(),
+//                          candidate.get_energy_per_site());
     }
 
     tools::log->trace("Filtered from {} down to {} states", initial_size, candidate_list.size());

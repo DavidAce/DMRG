@@ -65,8 +65,6 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
         candidate_list.emplace_back(fmt::format("eigenvector {}", idx), tensor_map, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
                                     overlaps(idx), tensors.get_length());
         candidate_list.back().is_basis_vector = true;
-        tools::log->trace("eigs found eigenvector {:<2}: overlap {:.16f} | energy {:>20.16f}", idx, candidate_list.back().get_overlap(),
-                          candidate_list.back().get_energy_per_site());
     }
     return candidate_list;
 }
@@ -136,7 +134,13 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
      *          where y is the current vector.
      *
      *
-     * Step 1)  Make sure k is as small as possible. I.e. filter out eigenvectors from [x] down
+     * Step 1)
+     *      - (O) If  OptMode::OVERLAP:
+     *            Find the index for the best candidate inside of the energy window:
+     *              - OA) idx >= 0: Candidate found in window. Return that candidate
+     *              - OB) idx = -1: No candidate found in window. Return old tensor
+     *       -(V) If OptMode::SUBSPACE or OptMode::SUBSPACE_AND_DIRECT
+     *          Make sure k is as small as possible. I.e. filter out eigenvectors from [x] down
      *          to an even smaller set of "relevant" candidates for doing subspace optimization.
      *          Allowing a maximum of k == 64 candidates keeps ram below 2GB when the problem
      *          size == 4096 (the linear size of H_local and the mps multisite_tensor).
@@ -151,13 +155,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
      *          ¹ We define eps = 1 - Σ_i |<x_i|y>|². A value eps ~1e-10 is reasonable.
      *
      * Step 2)
-     *      - (O) If  OptMode::OVERLAP:
-     *            Find the index for the best candidate inside of the energy window:
-     *              - OA) idx >= 0: Candidate found in window. Return that candidate
-     *              - OB) idx = -1: No candidate found in window. Return old tensor
-     *
-     *      -(V) If OptMode::SUBSPACE or OptMode::SUBSPACE_AND_DIRECT
-     *            Find the index for the best candidate inside of the energy window:
+     *          Find the index for the best candidate inside of the energy window:
      *              - VA) idx = -1: No candidate found in window. Return old tensor
      *              - VB) We have many candidates, including the current tensor.
      *                    They should be viewed as good starting guesses for LBFGS optimization.
@@ -217,38 +215,42 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
     tools::log->trace("Subspace found with {} eigenvectors", candidate_list.size());
 
-    /*
-     *  Step 1) Filter the candidates
-     *
-     */
-
-    internal::subspace::filter_candidates(candidate_list, settings::precision::min_subspace_error, 128);
 
     /*
      *
-     * Step 2) (Overlap mode)
+     * Step 1) (Overlap mode) Return best overlap
      *
      */
     if(optMode == OptMode::OVERLAP) {
         auto max_overlap_idx = internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
         if(max_overlap_idx) {
             // (OA)
-            const auto &candidate_max_overlap = *std::next(candidate_list.begin(), static_cast<long>(max_overlap_idx.value()));
+            auto &candidate_max_overlap = *std::next(candidate_list.begin(), static_cast<long>(max_overlap_idx.value()));
+            candidate_max_overlap.set_variance(tools::finite::measure::energy_variance(candidate_max_overlap.get_tensor(),tensors));
             if(tools::log->level() == spdlog::level::trace) {
-                tools::log->trace("ceres_subspace_optimization: OA - Candidate {:<2} has highest overlap {:.16f} | energy: {:>20.16f}", max_overlap_idx.value(),
-                                  candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site());
+                tools::log->trace("ceres_subspace_optimization: Candidate {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>20.16f}", max_overlap_idx.value(),
+                                  candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(), std::log10(candidate_max_overlap.get_variance_per_site()));
             }
             state.tag_active_sites_have_been_updated(true);
+            tools::common::profile::t_opt_sub->toc();
             return candidate_max_overlap;
         } else {
             // (OB)
-            tools::log->warn("ceres_subspace_optimization: OB - No overlapping states in energy range. Returning old tensor");
-            // TODO: remove throw
-            throw std::runtime_error("This should not happen on debug");
+            tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
             state.tag_active_sites_have_been_updated(false);
+            tools::common::profile::t_opt_sub->toc();
             return initial_tensor;
         }
     }
+
+    /*
+     *  Step 1)  (Variance mode) Filter the candidates
+     *
+     */
+
+    internal::subspace::filter_candidates(candidate_list, settings::precision::min_subspace_error, 128);
+
+
 
     /*
      *
