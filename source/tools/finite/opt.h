@@ -31,8 +31,8 @@ namespace tools::finite::opt {
     using TensorType = Eigen::Tensor<T, rank>;
 
     using Scalar = std::complex<double>;
-    extern opt_tensor find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
-                                                       OptSpace optSpace, OptType optType);
+    extern opt_tensor find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
+                                         OptType optType);
     extern Eigen::Tensor<Scalar, 3> find_ground_state(const class_tensors_finite &tensors, StateRitz ritz);
 }
 
@@ -82,12 +82,13 @@ namespace tools::finite::opt::internal{
         filter_candidates(std::vector<opt_tensor> & candidate_list, double maximum_subspace_error, size_t max_accept);
 
 
-        extern std::optional<size_t> get_idx_to_candidate_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, double energy_lbound, double energy_ubound);
-        extern std::vector<size_t> get_idx_to_candidates_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, size_t max_candidates, double energy_lbound, double energy_ubound);
+        extern std::optional<size_t> get_idx_to_candidate_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::vector<size_t> get_idx_to_candidates_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, size_t max_candidates, double energy_llim_per_site, double energy_ulim_per_site);
 
         extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_tensor> & candidate_list);
         extern Eigen::VectorXd get_eigvals(const std::vector<opt_tensor> & candidate_list);
         extern Eigen::VectorXd get_energies(const std::vector<opt_tensor> & candidate_list);
+        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_tensor> & candidate_list);
         extern Eigen::VectorXd get_overlaps(const std::vector<opt_tensor> & candidate_list);
         extern double get_subspace_error(const std::vector<opt_tensor> & candidate_list);
         extern double get_subspace_error(const std::vector<double> &overlaps);
@@ -169,17 +170,17 @@ namespace tools::finite::opt::internal{
 
     class ceres_base_functor : public ceres::FirstOrderFunction{
     protected:
-        mutable double variance;
-        mutable double energy  ;
+        mutable double variance_per_site;
+        mutable double energy_per_site  ;
         mutable double energy_reduced;
-        mutable double energy_lower_bound;
-        mutable double energy_upper_bound;
-        mutable double energy_target;
-        mutable double energy_min;
-        mutable double energy_max;
+        mutable double energy_llim_per_site;
+        mutable double energy_ulim_per_site;
+        mutable double energy_tgt_per_site;
+        mutable double energy_min_per_site;
+        mutable double energy_max_per_site;
         mutable double energy_dens;
-        mutable double energy_target_dens;
-        mutable double energy_window;
+        mutable double energy_dens_target;
+        mutable double energy_dens_window;
         mutable double energy_offset;
         mutable double norm_offset;
         mutable double norm;
@@ -193,11 +194,11 @@ namespace tools::finite::opt::internal{
     public:
         explicit ceres_base_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);
 
-        double get_variance   () const;
-        double get_energy     () const;
-        size_t get_count      () const;
-        double get_norm       () const;
-        int    NumParameters  () const final;
+        double get_variance_per_site   () const;
+        double get_energy_per_site     () const;
+        size_t get_count               () const;
+        double get_norm                () const;
+        int    NumParameters           () const final;
 
         std::unique_ptr<class_tic_toc> t_bfgs;
         std::unique_ptr<class_tic_toc> t_vH2;

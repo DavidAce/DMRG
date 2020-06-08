@@ -79,7 +79,7 @@ void class_xdmrg::run_default_task_list() {
     };
     // Insert requested number of excited states
     for(size_t num = 0; num < settings::xdmrg::max_states; num++) {
-        default_task_list.emplace_back(xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE);
+        default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE);
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
@@ -143,18 +143,18 @@ void class_xdmrg::init_energy_limits(std::optional<double> energy_density_target
     status.energy_dens_window = energy_density_window.value();
 
     // Set energy boundaries. This function is supposed to run after find_energy_range!
-    if(status.energy_max == status.energy_min)
-        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max == {} and energy_min == {}\n"
+    if(status.energy_max_per_site == status.energy_min_per_site)
+        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max_per_site == {} and energy_min_per_site == {}\n"
                                              "Try running find_energy_range() first",
-                                             status.energy_max, status.energy_min));
-    status.energy_target = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
-    status.energy_ubound = status.energy_target + status.energy_dens_window * (status.energy_max - status.energy_min);
-    status.energy_lbound = status.energy_target - status.energy_dens_window * (status.energy_max - status.energy_min);
-    tools::log->info("Energy minimum (per site) = {:.8f}", status.energy_min);
-    tools::log->info("Energy maximum (per site) = {:.8f}", status.energy_max);
-    tools::log->info("Energy target  (per site) = {:.8f}", status.energy_target);
-    tools::log->info("Energy lbound  (per site) = {:.8f}", status.energy_lbound);
-    tools::log->info("Energy ubound  (per site) = {:.8f}", status.energy_ubound);
+                                             status.energy_max_per_site, status.energy_min_per_site));
+    status.energy_tgt_per_site = status.energy_min_per_site + status.energy_dens_target * (status.energy_max_per_site - status.energy_min_per_site);
+    status.energy_ulim_per_site = status.energy_tgt_per_site + status.energy_dens_window * (status.energy_max_per_site - status.energy_min_per_site);
+    status.energy_llim_per_site = status.energy_tgt_per_site - status.energy_dens_window * (status.energy_max_per_site - status.energy_min_per_site);
+    tools::log->info("Energy minimum     (per site) = {:.8f}", status.energy_min_per_site);
+    tools::log->info("Energy maximum     (per site) = {:.8f}", status.energy_max_per_site);
+    tools::log->info("Energy target      (per site) = {:.8f}", status.energy_tgt_per_site);
+    tools::log->info("Energy lower limit (per site) = {:.8f}", status.energy_llim_per_site);
+    tools::log->info("Energy upper limit (per site) = {:.8f}", status.energy_ulim_per_site);
 }
 
 void class_xdmrg::run_preprocessing() {
@@ -310,7 +310,7 @@ void class_xdmrg::single_xDMRG_step() {
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-    double                  variance_old = 1;
+    double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
@@ -325,16 +325,16 @@ void class_xdmrg::single_xDMRG_step() {
             tools::log->debug("Can't activate more sites");
             break;
         }
-        variance_old = measure::energy_variance_per_site(tensors); // Should just take value from cache
+        variance_old_per_site = measure::energy_variance_per_site(tensors); // Should just take value from cache
         results.emplace_back(opt::find_excited_state(tensors, status, optMode, optSpace, optType));
 
         // We can now decide if we are happy with the result or not.
-        double decrease = std::log10(variance_old) / std::log10(results.back().get_variance());
-        if(decrease < 0.99) {
-            tools::log->debug("State improved during {} optimization. Variance decrease: {:.4f}", optSpace, decrease);
+        double percent = 100* results.back().get_variance_per_site() / variance_old_per_site;
+        if(percent < 99) {
+            tools::log->debug("State improved during {} optimization. Variance: new/old: {:.4f} %", optSpace, percent);
             break;
         } else {
-            tools::log->debug("State did not improve during {} optimization. Variance decrease {:.4f}", optSpace, decrease);
+            tools::log->debug("State did not improve during {} optimization. Variance new/old: {:.4f} %", optSpace, percent);
             continue;
         }
     }
@@ -342,34 +342,34 @@ void class_xdmrg::single_xDMRG_step() {
     std::sort(results.begin(), results.end(), [](const opt_tensor &lhs, const opt_tensor &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
     for(auto &candidate : results)
-        tools::log->debug("{} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-                          candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_variance(), candidate.get_energy(), candidate.get_overlap(),
+        tools::log->debug("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
+                          candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance_per_site()), candidate.get_energy_per_site(), candidate.get_overlap(),
                           candidate.get_norm(), 1000 * candidate.get_time());
 
     // Take the best result
     const auto & winner = results.front();
     tensors.active_sites = results.front().get_sites();
     tensors.sync_active_sites();
-    if(std::log10(variance_old)/std::log10(winner.get_variance()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
+    if(std::log10(variance_old_per_site)/std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
 
     // Truncate even more if doing chi quench
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
-    auto variance_before_svd = winner.get_variance();
-    tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
+    auto variance_per_site_before_svd = winner.get_variance_per_site();
+    tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_per_site_before_svd));
     tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
-    auto variance_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
-    tensors.state->set_truncated_variance((variance_after_svd - variance_before_svd) / variance_after_svd);
-    tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+    auto variance_per_site_after_svd = tools::finite::measure::energy_variance_per_site(tensors);
+    tensors.state->set_truncated_variance((variance_per_site_after_svd - variance_per_site_before_svd) / variance_per_site_after_svd);
+    tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_per_site_after_svd));
     tools::log->debug("Variance loss due to  SVD: {:.16f}", tensors.state->get_truncated_variance());
 
     debug::check_integrity(*tensors.state);
-    status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
+    status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
 
     // Update record holder
     auto var = tools::finite::measure::energy_variance_per_site(tensors);
-    if(var < status.lowest_recorded_variance) status.lowest_recorded_variance = var;
+    if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
@@ -384,7 +384,7 @@ void class_xdmrg::check_convergence() {
 
     // TODO: Move this reset block away from here
 
-    //    status.energy_dens = (tools::finite::measure::energy_per_site(*tensors.state) - status.energy_min ) / (status.energy_max - status.energy_min);
+    //    status.energy_dens = (tools::finite::measure::energy_per_site(*tensors.state) - status.energy_min_per_site ) / (status.energy_max_per_site - status.energy_min_per_site);
     bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
     if(status.iter > 2 and tensors.state->position_is_any_edge()) {
         if(outside_of_window and
@@ -446,7 +446,7 @@ void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, Stat
     tensors.activate_sites(settings::precision::max_size_full_diag, 2);
     while(true) {
         randomize_state(ResetReason::FIND_WINDOW,state_type, sector, -1); // Do not use the bitfield: set to -1
-        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
+        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);
         if(not outside_of_window) break;
@@ -481,12 +481,12 @@ void class_xdmrg::find_energy_range() {
     // Find loewst energy state
     tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(gs_tasks);
-    status.energy_min = tools::finite::measure::energy_per_site(fdmrg.tensors);
+    status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
     // Find highest energy state
     tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(hs_tasks);
-    status.energy_max = tools::finite::measure::energy_per_site(fdmrg.tensors);
+    status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
     tools::log = Logger::getLogger(std::string(enum2str(algo_type)));
 }

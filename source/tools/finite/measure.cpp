@@ -335,8 +335,8 @@ template double tools::finite::measure::energy_variance_per_site(const Eigen::Te
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_normalized(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
-                                                 double energy_min, double energy_max) {
-    return (tools::finite::measure::energy_per_site(state, model, edges) - energy_min) / (energy_max - energy_min);
+                                                 double energy_min_per_site, double energy_max_per_site) {
+    return (tools::finite::measure::energy_per_site(state, model, edges) - energy_min_per_site) / (energy_max_per_site - energy_min_per_site);
 }
 
 template double tools::finite::measure::energy_normalized(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges, double,

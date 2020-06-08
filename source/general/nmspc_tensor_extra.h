@@ -134,13 +134,17 @@ namespace Textra {
         return inversed;
     }
 
-    template<typename Scalar>
-    constexpr auto asNormalized(const Eigen::Tensor<Scalar,1> &tensor) {
+    template<typename Scalar,auto rank>
+    constexpr auto asNormalized(const Eigen::Tensor<Scalar,rank> &tensor) {
         Eigen::Map<const VectorType<Scalar>> map (tensor.data(),tensor.size());
-        return Eigen::TensorMap<Eigen::Tensor<const Scalar,1>>(map.normalized().eval().data(), array1{map.size()});
+        return Eigen::TensorMap<Eigen::Tensor<const Scalar,rank>>(map.normalized().eval().data(), tensor.dimensions());
     }
 
-
+    template<typename Scalar,auto rank>
+    void normalize(Eigen::Tensor<Scalar,rank> &tensor) {
+        Eigen::Map<VectorType<Scalar>> map (tensor.data(),tensor.size());
+        map.normalize();
+    }
 
 
 

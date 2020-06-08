@@ -20,11 +20,14 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     std::vector<size_t> sites (tensors.active_sites.begin(),tensors.active_sites.end());
-    opt_tensor initial_tensor("Current state", tensors.state->get_multisite_tensor(), sites,
-                              0.0, // Energy reduced
-                              tensors.model->get_energy_reduced(), tools::finite::measure::energy_variance_per_site(tensors),
-                              1.0 // Overlap
-    );
+    opt_tensor initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                                       tensors.model->get_energy_reduced(), // Energy reduced for full system
+                                       tools::finite::measure::energy_variance(tensors),
+                                       1.0, // Overlap
+                                       tensors.get_length());
+
+
     return ceres_direct_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
@@ -35,12 +38,14 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     tools::common::profile::t_opt_dir->tic();
 
     reports::bfgs_add_entry("Direct", "init", initial_tensor);
-
+    const auto & current_tensor = tensors.state->get_multisite_tensor();
+    const auto   current_vector = Eigen::Map<const Eigen::VectorXcd>(current_tensor.data(),current_tensor.size());
     auto       options = ceres_default_options;
     auto       summary = ceres::GradientProblemSolver::Summary();
     opt_tensor optimized_tensor;
     optimized_tensor.set_name(initial_tensor.get_name());
     optimized_tensor.set_sites(initial_tensor.get_sites());
+    optimized_tensor.set_length(initial_tensor.get_length());
     tools::common::profile::t_opt_dir_bfgs->tic();
     switch(optType) {
         case OptType::CPLX: {
@@ -51,12 +56,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             tools::log->trace("Running LBFGS direct cplx");
             ceres::Solve(options, problem, optimized_tensor.get_vector_cplx_as_2xreal().data(), &summary);
             // Copy the results from the functor
-            optimized_tensor.set_energy(functor->get_energy());
-            optimized_tensor.set_variance(functor->get_variance());
-            optimized_tensor.set_iter(summary.iterations.size());
             optimized_tensor.set_counter(functor->get_count());
-            optimized_tensor.set_time(summary.total_time_in_seconds);
-            optimized_tensor.set_overlap(std::abs(initial_tensor.get_vector().dot(optimized_tensor.get_vector())));
             *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
             *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
             *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
@@ -71,13 +71,8 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             tools::log->trace("Running LBFGS direct real");
             ceres::Solve(options, problem, initial_tensor_real.data(), &summary);
             // Copy the results from the functor
-            optimized_tensor.set_tensor_real(initial_tensor_real.data(), initial_tensor.get_tensor().dimensions());
-            optimized_tensor.set_energy(functor->get_energy());
-            optimized_tensor.set_variance(functor->get_variance());
-            optimized_tensor.set_iter(summary.iterations.size());
             optimized_tensor.set_counter(functor->get_count());
-            optimized_tensor.set_time(summary.total_time_in_seconds);
-            optimized_tensor.set_overlap(std::abs(initial_tensor.get_vector().dot(optimized_tensor.get_vector())));
+            optimized_tensor.set_tensor_real(initial_tensor_real.data(), initial_tensor.get_tensor().dimensions());
             *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
             *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
             *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
@@ -85,6 +80,14 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             break;
         }
     }
+    // Copy and set the rest of the tensor metadata
+    optimized_tensor.normalize();
+    optimized_tensor.set_iter(summary.iterations.size());
+    optimized_tensor.set_time(summary.total_time_in_seconds);
+    optimized_tensor.set_energy(tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors));
+    optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
+    optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
+
     tools::common::profile::t_opt_dir_bfgs->toc();
     reports::time_add_dir_entry();
 

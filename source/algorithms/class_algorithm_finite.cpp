@@ -293,7 +293,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
 //
 //    tensors.randomize_state(sector.value(), bitfield.value(), use_eigenspinors.value());
 //    clear_convergence_status();
-//    status.lowest_recorded_variance = 1;
+//    status.lowest_recorded_variance_per_site = 1;
 //    status.iter                     = tensors.state->reset_iter();
 //    status.step                     = tensors.state->reset_step();
 //    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
@@ -679,7 +679,7 @@ void class_algorithm_finite::print_status_update() {
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε: {:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
     report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
-                          std::log10(status.lowest_recorded_variance));
+                          std::log10(status.lowest_recorded_variance_per_site));
     report +=
         fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
@@ -694,9 +694,9 @@ void class_algorithm_finite::print_status_update() {
 
 void class_algorithm_finite::print_status_full() {
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "]");
+    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][ " + state_name + " ");
     tools::log->info("{:=^60}", "");
-    tools::log->info("--- Final results  --- {} ---", algo_name);
+    tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
     tools::log->info("Sites                              = {}", tensors.state->get_length());
     tools::log->info("Iterations (sweeps)                = {}", status.iter);
     tools::log->info("Steps                              = {}", status.step);
@@ -705,7 +705,7 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) {
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
-                         tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
+                         tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
     }
     tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
     tools::log->info("Bond dimension maximum χmax        = {}", cfg_chi_lim_max());
@@ -718,8 +718,8 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Simulation saturated               = {:<}", status.algorithm_has_saturated);
     tools::log->info("Simulation succeeded               = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Simulation got stuck               = {:<}", status.algorithm_has_got_stuck);
-    tools::log->info("σ² slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}", V_mpo_slopes.back(),
-                     status.variance_mpo_has_converged, status.variance_mpo_has_saturated);
-    tools::log->info("Sₑ slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}", S_slopes.back(),
-                     status.entanglement_has_converged, status.entanglement_has_saturated);
+    tools::log->info("σ²                                 = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged,
+                     status.variance_mpo_has_saturated);
+    tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
+                     status.entanglement_has_saturated);
 }

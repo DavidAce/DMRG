@@ -28,7 +28,6 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
 
-    energy_reduced = model.get_energy_reduced();
     if constexpr(std::is_same<Scalar, double>::value) {
         mpo                 = model.get_multisite_tensor().real();
         const auto &env_ene = edges.get_multisite_ene_blk();
@@ -63,7 +62,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     t_bfgs->tic();
     Scalar ene, ene2, var;
     Scalar vHv, vH2v;
-    double vv, log10var;
+    double vv, log10var_per_site;
     double norm_func, norm_grad;
     int    vecSize = NumParameters();
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
@@ -103,15 +102,15 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
-    energy                         = std::real(ene + energy_reduced) / static_cast<double>(length);
-    variance                       = std::abs(var) / static_cast<double>(length);
+    energy_per_site                = std::real(ene + energy_reduced) / static_cast<double>(length);
+    variance_per_site              = std::abs(var) / static_cast<double>(length);
     norm_offset                    = std::abs(vv) - 1.0;
     std::tie(norm_func, norm_grad) = windowed_func_grad(norm_offset, 0.2);
     double epsilon                 = 1e-14;
-    log10var                       = std::log10(epsilon + variance);
+    log10var_per_site              = std::log10(epsilon + variance_per_site);
 
     if(fx != nullptr) {
-        fx[0] = log10var + norm_func;
+        fx[0] = log10var_per_site + norm_func;
     }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
@@ -124,28 +123,15 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         }
         grad += norm_grad * v;
     }
-    //
-    //    tools::log->debug("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} |H2v|_max: {:<24.18f} |ene2|:
-    //    {:<24.18f} ene: {:<24.18f} fx: {:<24.18f}",
-    //                      std::log10(std::abs(var)/length),
-    //                      std::real(ene + energy_reduced) / length,
-    //                      grad.norm(),
-    //                      grad.cwiseAbs().maxCoeff(),
-    //                      vv,
-    //                      H2v.real().maxCoeff(),
-    //                      std::real(ene2),
-    //                      std::real(ene),
-    //                      fx[0]);
-    //
 
-    if(std::isnan(log10var) or std::isinf(log10var)) {
+    if(std::isnan(log10var_per_site) or std::isinf(log10var_per_site)) {
         tools::log->warn("log₁₀ variance is invalid");
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("vH2v            = {:.16f} + i{:.16f}", std::real(vH2v), std::imag(vH2v));
         tools::log->warn("vHv             = {:.16f} + i{:.16f}", std::real(vHv), std::imag(vHv));
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}", std::real(ene), std::imag(ene));
-        tools::log->warn("log₁₀(var/L)    = {:.16f}", std::log10(variance / static_cast<double>(length)));
+        tools::log->warn("log₁₀(var/L)    = {:.16f}", std::log10(variance_per_site));
         tools::log->warn("energy offset   = {:.16f}", energy_offset);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
