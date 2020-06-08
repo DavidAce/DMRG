@@ -219,7 +219,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     long             subspace_idx = 0;
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
-        subspace_vector(subspace_idx++) = candidate.get_vector().adjoint() * fullspace_vector;
+        subspace_vector(subspace_idx++) = candidate.get_vector().dot(fullspace_vector);
     }
     subspace_vector.conservativeResize(subspace_idx);
     return subspace_vector.normalized();
