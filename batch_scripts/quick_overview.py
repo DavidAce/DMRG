@@ -106,16 +106,14 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             if len(args.state) > 0 and not args.state in state_key:
                 continue
             try:
-                state_prefix = 'xDMRG/' + state_key
-                msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
-                status_last_entry = h5file[state_prefix].get('status')[-1]
+                algorithm_prefix = 'xDMRG'
+                state_prefix = algorithm_prefix + '/' + state_key
 
-
-                finished.append(h5file[state_prefix].attrs[state_prefix])
-
-
+                finished.append(h5file[algorithm_prefix].attrs[state_prefix])
                 if (args.finished and finished[-1] == 0):
                     continue
+                msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
+                status_last_entry = h5file[state_prefix].get('status')[-1]
                 realization_name = h5path.replace('.h5', '')
                 chainlen.append(msrmnt_last_entry['length'])
                 seed.append([int(x) for x in regex.findall(realization_name)][-1])
