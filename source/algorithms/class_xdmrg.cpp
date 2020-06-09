@@ -260,7 +260,7 @@ void class_xdmrg::single_xDMRG_step() {
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(status.chi_lim <= 8 or status.iter < 2) {
+    if(status.chi_lim <= 8 or status.iter < 2 or status.step < 2*tensors.get_length()) {
         // TODO: We may not want to do this on states post randomization
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;

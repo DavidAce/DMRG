@@ -242,6 +242,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     if(not svd_threshold and state_type == StateType::RANDOMIZE_GIVEN_STATE) svd_threshold = 1e-4;
 
     tensors.randomize_state(state_type, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, svd_threshold);
+    while(tensors.state->get_position() != 0 and tensors.state->get_direction() != 1) move_center_point();
     clear_convergence_status();
     status.reset();
     status.iter      = tensors.state->reset_iter();
