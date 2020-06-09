@@ -232,10 +232,11 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     }
     if(not sector) sector = settings::strategy::target_sector;
     if(not chi_lim) {
-        if(StateType::RANDOMIZE_GIVEN_STATE)
+        if(state_type == StateType::RANDOMIZE_GIVEN_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-        else chi_lim = cfg_chi_lim_init();
-     }
+        else
+            chi_lim = cfg_chi_lim_init();
+    }
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_type == StateType::RANDOMIZE_GIVEN_STATE) svd_threshold = 1e-4;
