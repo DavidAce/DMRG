@@ -25,6 +25,7 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     tools::log->trace("Finding subspace");
     MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges);
     const auto &       multisite_tensor = state.get_multisite_tensor();
+    auto   dbl_length    = static_cast<double>(state.get_length());
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -33,19 +34,25 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     if(multisite_tensor.size() <= settings::precision::max_size_full_diag) {
         std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multisite_tensor);
     } else {
-        double energy_target;
-        if(model.is_reduced()) energy_target = tools::finite::measure::energy_minus_energy_reduced(multisite_tensor, tensors);
-        else
-            energy_target = tools::finite::measure::energy(multisite_tensor, tensors);
-        tools::log->trace("Energy target + energy reduced = energy per site: {} + {} = {}", energy_target / static_cast<double>(state.get_length()),
-                          model.get_energy_reduced() / static_cast<double>(state.get_length()),
-                          (energy_target + model.get_energy_reduced()) / static_cast<double>(state.get_length()));
-
-        std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multisite_tensor, energy_target, subspace_error_threshold, optMode, optSpace);
+        double eigval_target;
+        double energy_target = tools::finite::measure::energy(tensors);
+        if(model.is_reduced()) {
+            eigval_target = tools::finite::measure::energy_minus_energy_reduced(tensors);
+            tools::log->trace("Energy reduce = {:.16f} | per site = {:.16f}", model.get_energy_reduced(), model.get_energy_per_site_reduced());
+            tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
+            tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
+            tools::log->trace("Eigval target + Energy reduce = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length, model.get_energy_per_site_reduced(),
+                              energy_target / dbl_length);
+        } else {
+            eigval_target = energy_target;
+        }
+        std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multisite_tensor, eigval_target, subspace_error_threshold, optMode, optSpace);
     }
-    tools::log->trace("Eigenvalue range: {} --> {}", eigvals.minCoeff(), eigvals.maxCoeff());
-    tools::log->trace("Energy per site range: {} --> {}", (eigvals.minCoeff() + model.get_energy_reduced()) / static_cast<double>(state.get_length()),
-                      (eigvals.maxCoeff() + model.get_energy_reduced()) / static_cast<double>(state.get_length()));
+    tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
+    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_reduced(),
+                      eigvals.maxCoeff() + model.get_energy_reduced()) ;
+    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff()/dbl_length + model.get_energy_per_site_reduced(),
+                      eigvals.maxCoeff()/dbl_length + model.get_energy_per_site_reduced());
     reports::print_eigs_report();
 
     if constexpr(std::is_same<Scalar, double>::value) {
@@ -80,7 +87,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_tensor          initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
                               tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                              tensors.model->get_energy_reduced(), // Energy reduced for full system
+                              tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                               tools::finite::measure::energy_variance(tensors),
                               1.0, // Overlap
                               tensors.get_length());
@@ -215,21 +222,22 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
     tools::log->trace("Subspace found with {} eigenvectors", candidate_list.size());
 
-
     /*
      *
      * Step 1) (Overlap mode) Return best overlap
      *
      */
     if(optMode == OptMode::OVERLAP) {
-        auto max_overlap_idx = internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
+        auto max_overlap_idx =
+            internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
         if(max_overlap_idx) {
             // (OA)
             auto &candidate_max_overlap = *std::next(candidate_list.begin(), static_cast<long>(max_overlap_idx.value()));
-            candidate_max_overlap.set_variance(tools::finite::measure::energy_variance(candidate_max_overlap.get_tensor(),tensors));
+            candidate_max_overlap.set_variance(tools::finite::measure::energy_variance(candidate_max_overlap.get_tensor(), tensors));
             if(tools::log->level() == spdlog::level::trace) {
-                tools::log->trace("ceres_subspace_optimization: Candidate {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>20.16f}", max_overlap_idx.value(),
-                                  candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(), std::log10(candidate_max_overlap.get_variance_per_site()));
+                tools::log->trace("ceres_subspace_optimization: Candidate {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>20.16f}",
+                                  max_overlap_idx.value(), candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(),
+                                  std::log10(candidate_max_overlap.get_variance_per_site()));
             }
             state.tag_active_sites_have_been_updated(true);
             tools::common::profile::t_opt_sub->toc();
@@ -250,8 +258,6 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
     internal::subspace::filter_candidates(candidate_list, settings::precision::min_subspace_error, 128);
 
-
-
     /*
      *
      * Step 2) (Variance mode)
@@ -265,7 +271,8 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
     //    double t_H2_subspace = tools::common::profile::t_opt->get_last_time_interval();
 
     // Find the best candidates and compute their variance
-    auto candidate_list_top_idx = internal::subspace::get_idx_to_candidates_with_highest_overlap(candidate_list, 5, status.energy_llim_per_site, status.energy_ulim_per_site);
+    auto candidate_list_top_idx =
+        internal::subspace::get_idx_to_candidates_with_highest_overlap(candidate_list, 5, status.energy_llim_per_site, status.energy_ulim_per_site);
     for(auto &idx : candidate_list_top_idx) {
         auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
         candidate.set_variance(tools::finite::measure::energy_variance(candidate.get_tensor(), tensors));
