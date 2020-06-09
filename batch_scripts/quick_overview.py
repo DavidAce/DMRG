@@ -110,7 +110,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
                 status_last_entry = h5file[state_prefix].get('status')[-1]
 
-                finished.append(0)
+
+                finished.append(h5file[state_prefix].attrs[state_prefix])
+
 
                 if (args.finished and finished[-1] == 0):
                     continue
