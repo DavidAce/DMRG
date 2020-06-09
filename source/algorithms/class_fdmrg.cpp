@@ -35,8 +35,7 @@ void class_fdmrg::resume() {
 
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to inferr it from the state prefix itself
-    auto name   = tools::common::io::h5resume::extract_state_name(state_prefix);
-
+    auto name = tools::common::io::h5resume::extract_state_name(state_prefix);
 
     // Initialize a custom task list
     std::list<fdmrg_task> task_list;
@@ -45,8 +44,10 @@ void class_fdmrg::resume() {
         // This could be a checkpoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("emax") != std::string::npos) task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
-        else if(name.find("emin") != std::string::npos) task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
-        else throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]",name));
+        else if(name.find("emin") != std::string::npos)
+            task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
+        else
+            throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]", name));
         task_list.emplace_back(fdmrg_task::POST_DEFAULT);
         run_task_list(task_list);
     }
@@ -59,18 +60,20 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case fdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_PRODUCT_STATE); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT,StateType::RANDOM_ENTANGLED_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_PRODUCT_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
-                ritz = StateRitz::SR;
+                ritz       = StateRitz::SR;
+                state_name = "state_e_min";
                 run_algorithm();
                 break;
             case fdmrg_task::FIND_HIGHEST_STATE:
-                ritz = StateRitz::LR;
+                ritz       = StateRitz::LR;
+                state_name = "state_e_max";
                 run_algorithm();
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
@@ -117,7 +120,6 @@ void class_fdmrg::run_algorithm() {
         print_status_update();
         write_to_file();
         check_convergence();
-        update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
         reduce_mpo_energy();
@@ -142,6 +144,13 @@ void class_fdmrg::run_algorithm() {
                 break;
             }
         }
+        // Update record holder
+        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
+            tools::log->trace("Updating variance record holder");
+            auto var = tools::finite::measure::energy_variance_per_site(tensors);
+            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
+        }
+
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         move_center_point();
     }
@@ -159,12 +168,7 @@ void class_fdmrg::single_fdmrg_step() {
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_max_sites);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
 
-    tools::log->trace("Merging tensor");
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
-
-    // Update record holder
-    auto var = tools::finite::measure::energy_variance_per_site(tensors);
-    if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.simu_time = tools::common::profile::t_sim->get_measured_time();
@@ -179,26 +183,18 @@ void class_fdmrg::check_convergence() {
     }
 
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-
-    status.algorithm_has_saturated =
-        ((status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters) or
-         (tensors.state->get_iteration() > settings::fdmrg::min_iters and not tensors.state->any_sites_updated()));
-
+    status.algorithm_has_saturated = status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters;
     status.algorithm_has_succeeded = status.algorithm_has_converged and status.algorithm_has_saturated;
-
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_succeeded;
-
-    if(tensors.state->position_is_any_edge()) { status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0; }
-
+    if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
-
     if(tensors.state->position_is_any_edge()) {
-        tools::log->debug("Simulation has converged: {}", status.algorithm_has_converged);
-        tools::log->debug("Simulation has saturated: {}", status.algorithm_has_saturated);
-        tools::log->debug("Simulation has succeeded: {}", status.algorithm_has_succeeded);
-        tools::log->debug("Simulation has got stuck: {}", status.algorithm_has_got_stuck);
-        tools::log->debug("Simulation has stuck for: {}", status.algorithm_has_stuck_for);
-        tools::log->debug("Simulation has to stop  : {}", status.algorithm_has_to_stop);
+        tools::log->debug("Algorithm has converged: {}", status.algorithm_has_converged);
+        tools::log->debug("Algorithm has saturated: {}", status.algorithm_has_saturated);
+        tools::log->debug("Algorithm has succeeded: {}", status.algorithm_has_succeeded);
+        tools::log->debug("Algorithm has got stuck: {}", status.algorithm_has_got_stuck);
+        tools::log->debug("Algorithm has stuck for: {}", status.algorithm_has_stuck_for);
+        tools::log->debug("Algorithm has to stop  : {}", status.algorithm_has_to_stop);
     }
     tools::common::profile::t_con->toc();
 }

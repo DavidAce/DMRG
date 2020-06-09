@@ -45,25 +45,21 @@ class class_state_finite {
     size_t                    iter      = 0;
     size_t                    step      = 0;
     int                       direction = 1;
-//    std::optional<long>       chi_lim;
-//    std::optional<long>       cfg_chi_lim_init;
-//    std::optional<long>       cfg_chi_lim_max;
-    std::vector<double>       truncated_variance;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;
 
     public:
     std::list<std::unique_ptr<class_mps_site>> mps_sites;
-    std::vector<size_t>                          active_sites;
+    std::vector<size_t>                        active_sites;
     mutable state_measure_finite               measurements;
 
     public:
     class_state_finite();
-    ~class_state_finite();                                              // Read comment on implementation
-    class_state_finite(class_state_finite &&other);                     // default move ctor
-    class_state_finite &operator=(class_state_finite &&other);          // default move assign
-    class_state_finite(const class_state_finite &other);                // copy ctor
-    class_state_finite &operator=(const class_state_finite &other);     // copy assign
+    ~class_state_finite();                                          // Read comment on implementation
+    class_state_finite(class_state_finite &&other);                 // default move ctor
+    class_state_finite &operator=(class_state_finite &&other);      // default move assign
+    class_state_finite(const class_state_finite &other);            // copy ctor
+    class_state_finite &operator=(const class_state_finite &other); // copy assign
 
     void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
 
@@ -80,13 +76,13 @@ class class_state_finite {
     void   set_step(size_t step_);
     void   increment_step();
 
-//    long                   get_chi_lim() const;
-//    void                   set_chi_lim(long chi_lim_);
-//    long                   get_chi_lim_max() const;
-//    void                   set_chi_lim_max(long chi_max_);
-//    long                   get_chi_lim_init() const;
-//    void                   set_chi_lim_init(long chi_max_);
-    long                   find_largest_chi() const;
+    //    long                   get_chi_lim() const;
+    //    void                   set_chi_lim(long chi_lim_);
+    //    long                   get_chi_lim_max() const;
+    //    void                   set_chi_lim_max(long chi_max_);
+    //    long                   get_chi_lim_init() const;
+    //    void                   set_chi_lim_init(long chi_max_);
+    long find_largest_chi() const;
 
     void                   set_positions();
     size_t                 get_length() const;
@@ -127,12 +123,6 @@ class class_state_finite {
     double              get_truncation_error_LC() const;
     double              get_truncation_error_midchain() const;
     std::vector<double> get_truncation_errors() const;
-
-    void                       set_truncated_variance(size_t left_site, double error);
-    void                       set_truncated_variance(double error);
-    double                     get_truncated_variance(size_t left_site) const;
-    double                     get_truncated_variance() const;
-    const std::vector<double> &get_truncated_variances() const;
 
     size_t num_sites_truncated(double truncation_threshold) const;
     size_t num_bonds_reached_chi(long chi_level) const;

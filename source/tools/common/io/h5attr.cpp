@@ -20,7 +20,7 @@ void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::stri
     std::string mpo_prefix        = model_prefix + "/mpo";
     std::string mps_prefix        = state_prefix + "/mps";
 
-    // Register this state root in an attribute of the algorithm root directory.
+    // Register this state prefix as the lastest written if its a checkpoint or a final result
     tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", state_root, storage_level_str, algo_name);
     h5ppFile.writeAttribute(status.algorithm_has_finished,state_root, algo_name);
 

@@ -493,30 +493,6 @@ double class_state_finite::get_truncation_error_midchain() const {
 
 std::vector<double> class_state_finite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 
-void class_state_finite::set_truncated_variance(size_t left_site, double error) {
-    /*! The truncated variance vector has length + 1 elements, as many as there are bond matrices.
-     *  Obviously, the edge matrices are always 1, so we expect these to have truncated variance = 0.
-     *  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
-     *  site on the left of the decomposition.
-     */
-    if(truncated_variance.empty()) {
-        tools::log->debug("Resizing truncated_variance container to size: {}", get_length() + 1);
-        truncated_variance = std::vector<double>(get_length() + 1, 0.0);
-    }
-    truncated_variance[left_site + 1] = error;
-}
-void class_state_finite::set_truncated_variance(double error) { set_truncated_variance(get_position(), error); }
-
-double class_state_finite::get_truncated_variance(size_t left_site) const {
-    if(truncated_variance.empty() or truncated_variance.size() < get_length() + 1) {
-        tools::log->warn("Truncated variance container hasn't been initialized! You called this function prematurely");
-        return std::numeric_limits<double>::infinity();
-    }
-    return truncated_variance[left_site + 1];
-}
-double                     class_state_finite::get_truncated_variance() const { return get_truncated_variance(get_position()); }
-const std::vector<double> &class_state_finite::get_truncated_variances() const { return truncated_variance; }
-
 size_t class_state_finite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();
     auto trunc_bond_count =
@@ -532,9 +508,14 @@ size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
 
 bool class_state_finite::is_bond_limited(long chi_lim, double truncation_threshold) const { return num_sites_truncated(truncation_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
 
-void class_state_finite::clear_measurements() const { measurements = state_measure_finite(); }
+void class_state_finite::clear_measurements() const {
+    tools::log->trace("Clearing state measurements");
+    measurements = state_measure_finite(); }
 
-void class_state_finite::clear_cache() const { cache = Cache(); }
+void class_state_finite::clear_cache() const {
+    tools::log->trace("Clearing state cache");
+    cache = Cache();
+}
 
 void class_state_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 

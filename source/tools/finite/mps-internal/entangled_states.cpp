@@ -39,6 +39,7 @@ void tools::finite::mps::internal::random_entangled_state(class_state_finite &st
 }
 
 void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2(class_state_finite &state, long chi_lim, bool real) {
+    tools::log->info("Setting random entangled state with spinors randomly in C2 ...");
     const auto spin_dim        = state.get_mps_site(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     for(auto &mps_ptr : state.mps_sites) {
@@ -59,6 +60,7 @@ void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2
             mps.set_LC(LC);
         }
     }
+    tools::log->info("Setting random entangled state with spinors randomly in C2 ... OK");
 }
 
 void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_eigenspinors(class_state_finite &state, const std::string &sector, long chi_lim) {

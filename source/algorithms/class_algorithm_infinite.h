@@ -26,7 +26,6 @@ class class_algorithm_infinite : public class_algorithm_base {
 
     /* clang-format off */
     void run()                                                                                               final;
-    void update_truncation_limit()                                                                           final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                        final;
     void randomize_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
                                        std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt);

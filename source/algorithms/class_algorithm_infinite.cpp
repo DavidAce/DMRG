@@ -47,9 +47,6 @@ void class_algorithm_infinite::run_postprocessing() {
     tools::common::profile::print_profiling();
 }
 
-void class_algorithm_infinite::update_truncation_limit() {
-    // Will update SVD threshold iff the state precision is being limited by truncation error
-}
 
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {

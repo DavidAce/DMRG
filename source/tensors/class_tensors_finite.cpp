@@ -59,9 +59,10 @@ void class_tensors_finite::randomize_model() {
 void class_tensors_finite::randomize_state(StateType state_type,const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
     clear_measurements();
     tools::finite::mps::randomize_state(*state, sector,state_type, chi_lim, use_eigenspinors, bitfield);
-    normalize_state(chi_lim,svd_threshold,NormPolicy::ALWAYS);
     if(state_type == StateType::RANDOMIZE_GIVEN_STATE or state_type == StateType::RANDOM_ENTANGLED_STATE)
         project_to_nearest_sector(sector,chi_lim,svd_threshold);
+    else
+        normalize_state(chi_lim,svd_threshold,NormPolicy::ALWAYS);
 }
 
 void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
@@ -76,10 +77,10 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
 }
 
 
-
 void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
     clear_measurements();
     if (not chi_lim) chi_lim =  state->find_largest_chi();
+    tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
     tools::finite::ops::project_to_nearest_sector(*state, sector);
     normalize_state(chi_lim.value(),svd_threshold, NormPolicy::ALWAYS);
 }
@@ -180,11 +181,12 @@ void class_tensors_finite::eject_all_edges() { edges->eject_all_edges(); }
 void class_tensors_finite::eject_inactive_edges() { edges->eject_inactive_edges(); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
+    tools::log->trace("Clearing tensor measurements");
     measurements = tensors_measure_finite();
     state->clear_measurements();
 }
 
 void class_tensors_finite::clear_cache() const {
-    state->clear_cache();
     model->clear_cache();
+    state->clear_cache();
 }
