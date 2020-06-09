@@ -231,12 +231,14 @@ Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_fi
 }
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
+double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
+                                                           tensors_measure_finite *measurements) {
+    if(measurements != nullptr and measurements->energy_minus_energy_reduced) return measurements->energy_minus_energy_reduced.value();
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                                  model.active_sites, edges.active_sites));
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges);
+        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges, measurements);
     } else {
         const auto &mpo = model.get_multisite_tensor();
         const auto &env = edges.get_multisite_ene_blk();
@@ -244,41 +246,56 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         tools::common::profile::t_ene->tic();
         double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
         tools::common::profile::t_ene->toc();
+        if(measurements != nullptr) measurements->energy_minus_energy_reduced = e_minus_ered;
         return e_minus_ered;
     }
 }
 
 template double tools::finite::measure::energy_minus_energy_reduced(const class_state_finite &, const class_model_finite &model,
-                                                                    const class_edges_finite &edges);
+                                                                    const class_edges_finite &edges, tensors_measure_finite *measurements);
 template double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model,
-                                                                    const class_edges_finite &edges);
+                                                                    const class_edges_finite &edges, tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
+double tools::finite::measure::energy(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
+                                      tensors_measure_finite *measurements) {
+    if(measurements != nullptr and measurements->energy) return measurements->energy.value();
     // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
     // If they are reduced, then
     //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
     // Else
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
+    double energy;
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>)
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges,measurements) + model.get_energy_reduced();
     else
-        return tools::finite::measure::energy_minus_energy_reduced(state, model, edges) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements) + model.get_energy_reduced();
+
+    if(measurements != nullptr) measurements->energy = energy;
+    return energy;
 }
 
-template double tools::finite::measure::energy(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges);
-template double tools::finite::measure::energy(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges);
+template double tools::finite::measure::energy(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges,
+                                               tensors_measure_finite *measurements);
+template double tools::finite::measure::energy(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
+                                               tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy_per_site(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
-    return tools::finite::measure::energy(state, model, edges) / static_cast<double>(model.get_length());
+double tools::finite::measure::energy_per_site(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
+                                               tensors_measure_finite *measurements) {
+    double energy_per_site = tools::finite::measure::energy(state, model, edges, measurements) / static_cast<double>(model.get_length());
+    if(measurements != nullptr) measurements->energy_per_site = energy_per_site;
+    return energy_per_site;
 }
 
-template double tools::finite::measure::energy_per_site(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges);
-template double tools::finite::measure::energy_per_site(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges);
+template double tools::finite::measure::energy_per_site(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges,
+                                                        tensors_measure_finite *measurements);
+template double tools::finite::measure::energy_per_site(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
+                                                        tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy_variance(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
+double tools::finite::measure::energy_variance(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
+                                               tensors_measure_finite *measurements) {
     // Depending on whether the mpo's are reduced or not we get different formulas.
     // If mpo's are reduced:
     //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
@@ -287,20 +304,21 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
     //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
     //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
     //      because E_red != E necessarily (though they are supposed to be very close)
-    // Else:
+    // Else, if E_red = 0 (i.e. not reduced) we get the usual formula:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
+    if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
 
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
                                                  state.active_sites, model.active_sites, edges.active_sites));
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
-        return tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges);
+        return tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges, measurements);
     } else {
         double energy = 0;
-        if(model.is_reduced()) energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges);
+        if(model.is_reduced()) energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements);
         else
-            energy = tools::finite::measure::energy(state, model, edges);
+            energy = tools::finite::measure::energy(state, model, edges, measurements);
         double E2 = energy * energy;
 
         if(not num::all_equal(model.active_sites, edges.active_sites))
@@ -317,41 +335,48 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
         tools::common::profile::t_var->toc();
         double var = std::abs(H2 - E2);
+        if(measurements != nullptr) measurements->energy_variance = var;
         return var;
     }
 }
 
-template double tools::finite::measure::energy_variance(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges);
-template double tools::finite::measure::energy_variance(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges);
+template double tools::finite::measure::energy_variance(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges,
+                                                        tensors_measure_finite *measurements);
+template double tools::finite::measure::energy_variance(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
+                                                        tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy_variance_per_site(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges) {
-    return tools::finite::measure::energy_variance(state, model, edges) / static_cast<double>(model.get_length());
+double tools::finite::measure::energy_variance_per_site(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
+                                                        tensors_measure_finite *measurements) {
+    double energy_variance_per_site = tools::finite::measure::energy_variance(state, model, edges, measurements) / static_cast<double>(model.get_length());
+    if(measurements != nullptr) measurements->energy_variance_per_site = energy_variance_per_site;
+    return energy_variance_per_site;
 }
 
-template double tools::finite::measure::energy_variance_per_site(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges);
+template double tools::finite::measure::energy_variance_per_site(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges,
+                                                                 tensors_measure_finite *measurements);
 template double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model,
-                                                                 const class_edges_finite &edges);
+                                                                 const class_edges_finite &edges, tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_normalized(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
-                                                 double energy_min_per_site, double energy_max_per_site) {
-    return (tools::finite::measure::energy_per_site(state, model, edges) - energy_min_per_site) / (energy_max_per_site - energy_min_per_site);
+                                                 double energy_min_per_site, double energy_max_per_site,tensors_measure_finite *measurements) {
+    return (tools::finite::measure::energy_per_site(state, model, edges, measurements) - energy_min_per_site) / (energy_max_per_site - energy_min_per_site);
 }
 
 template double tools::finite::measure::energy_normalized(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges, double,
-                                                          double);
+                                                          double,tensors_measure_finite *measurements);
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
-                                                          double, double);
+                                                          double, double,tensors_measure_finite *measurements);
 
 double tools::finite::measure::energy_minus_energy_reduced(const class_tensors_finite &tensors) {
-    return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges);
+    return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
 }
 
 double tools::finite::measure::energy(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy) return tensors.measurements.energy.value();
     else {
-        tensors.measurements.energy = tools::finite::measure::energy(*tensors.state, *tensors.model, *tensors.edges);
+        tensors.measurements.energy = tools::finite::measure::energy(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy.value();
     }
 }
@@ -359,7 +384,7 @@ double tools::finite::measure::energy(const class_tensors_finite &tensors) {
 double tools::finite::measure::energy_per_site(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_per_site) return tensors.measurements.energy_per_site.value();
     else {
-        tensors.measurements.energy_per_site = tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges);
+        tensors.measurements.energy_per_site = tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_per_site.value();
     }
 }
@@ -367,7 +392,7 @@ double tools::finite::measure::energy_per_site(const class_tensors_finite &tenso
 double tools::finite::measure::energy_variance(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_variance) return tensors.measurements.energy_variance.value();
     else {
-        tensors.measurements.energy_variance = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges);
+        tensors.measurements.energy_variance = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_variance.value();
     }
 }
@@ -375,7 +400,8 @@ double tools::finite::measure::energy_variance(const class_tensors_finite &tenso
 double tools::finite::measure::energy_variance_per_site(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_variance_per_site) return tensors.measurements.energy_variance_per_site.value();
     else {
-        tensors.measurements.energy_variance_per_site = tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges);
+        tensors.measurements.energy_variance_per_site =
+            tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_variance_per_site.value();
     }
 }

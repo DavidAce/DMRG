@@ -166,7 +166,7 @@ Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return to
 Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
-    tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
+    tools::log->trace("Contracting multisite mpo tensor with {} sites ...", sites.size());
     tools::common::profile::t_mpo->tic();
     Eigen::Tensor<Scalar, 4> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
@@ -201,4 +201,7 @@ const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_mult
     return cache.multisite_tensor.value();
 }
 
-void class_model_finite::clear_cache() const { cache = Cache(); }
+void class_model_finite::clear_cache() const {
+    tools::log->trace("Clearing model cache");
+    cache = Cache();
+}

@@ -61,7 +61,6 @@ class class_algorithm_finite : public class_algorithm_base {
     void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         randomize_model();
-    void         update_truncation_limit() final;
     void         run() final;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason,
@@ -77,8 +76,8 @@ class class_algorithm_finite : public class_algorithm_base {
     void copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
     void print_status_update() final;
     void print_status_full() final;
-    void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+    void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
+    void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection = false, const std::string &given_prefix = "");
 
     std::vector<double> V_mpo_vec;    // History of variances

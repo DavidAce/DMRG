@@ -72,6 +72,7 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                 size_t center_position, long chi_lim, std::optional<double> svd_threshold) {
+    tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -130,9 +131,9 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
         if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
     }
     // Otherwise we just do the normalization
+    tools::log->trace("Normalizing state");
     if constexpr (settings::debug) {
         state.clear_measurements();
-        tools::log->trace("Normalizing state");
         tools::log->info("Position             before normalization: {}", state.get_position());
         tools::log->info("Direction            before normalization: {}", state.get_direction());
         tools::log->info("Norm                 before normalization: {:.16f}", tools::finite::measure::norm(state));

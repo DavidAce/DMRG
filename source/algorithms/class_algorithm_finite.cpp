@@ -99,6 +99,7 @@ void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
     tools::common::profile::t_pos->tic();
     write_to_file(StorageReason::FINISHED);
+    write_to_file(StorageReason::PROJ_STATE);
     print_status_full();
     tools::common::profile::t_pos->toc();
     tools::log->info("Finished default postprocessing for {}", algo_name);
@@ -153,19 +154,6 @@ void class_algorithm_finite::reduce_mpo_energy() {
         tools::log->info("Reducing MPO energy");
         tensors.reduce_mpo_energy();
     }
-}
-
-void class_algorithm_finite::update_truncation_limit() {
-    if(not tensors.state->position_is_any_edge()) return;
-    // Will update SVD threshold iff the energy variance is being limited by truncation error
-    size_t bond_at_lim_count = tensors.state->num_bonds_reached_chi(status.chi_lim);
-    if(bond_at_lim_count > 0) return; // Return because we should rather increase bond dimension than lower the svd threshold
-    tools::log->info("Truncated variances: {}", tensors.state->get_truncated_variances());
-    //
-    //    double truncation_threshold = settings::precision::svd_threshold;
-    //    size_t trunc_bond_count  = tensors.state->num_sites_truncated(truncation_threshold);
-    //    if(trunc_bond_count > 0) settings::precision::svd_threshold *= 0.5;
-    //    tools::log->info("Lowered SVD threshold to {}",settings::precision::svd_threshold);
 }
 
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
@@ -244,10 +232,10 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     }
     if(not sector) sector = settings::strategy::target_sector;
     if(not chi_lim) {
-        if(reason == ResetReason::INIT) chi_lim = cfg_chi_lim_init();
-        else
+        if(StateType::RANDOMIZE_GIVEN_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-    }
+        else chi_lim = cfg_chi_lim_init();
+     }
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_type == StateType::RANDOMIZE_GIVEN_STATE) svd_threshold = 1e-4;
@@ -330,8 +318,6 @@ void class_algorithm_finite::try_projection() {
 }
 
 void class_algorithm_finite::try_bond_dimension_quench() {
-    if(tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges) < 10 * settings::precision::variance_convergence_threshold)
-        return;
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_convergence_status();
     if(not tensors.position_is_any_edge()) return;
@@ -340,11 +326,6 @@ void class_algorithm_finite::try_bond_dimension_quench() {
         tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_quench_ahead);
         return;
     }
-
-    //    if(not status.algorithm_has_got_stuck) {
-    //        tools::log->trace("Chi quench skipped: simulation not stuck");
-    //        return;
-    //    }
     if(status.algorithm_has_stuck_for <= 2) {
         tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
         return;
@@ -353,6 +334,7 @@ void class_algorithm_finite::try_bond_dimension_quench() {
         tools::log->trace("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
         return;
     }
+    if(tools::finite::measure::energy_variance(tensors) < 10 * settings::precision::variance_convergence_threshold) return;
     double truncation_threshold = 5 * settings::precision::svd_threshold;
     size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
     size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
@@ -426,29 +408,29 @@ void class_algorithm_finite::try_disorder_damping() {
     if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
 
-void class_algorithm_finite::check_convergence_variance(double threshold, double slope_threshold) {
+void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> slope_threshold) {
     // Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
     //    if(not tensors.state->position_is_any_edge()) {
     //        return;
     //    }
     tools::log->debug("Checking convergence of variance mpo");
-    threshold       = std::isnan(threshold) ? settings::precision::variance_convergence_threshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::variance_slope_threshold : slope_threshold;
-    auto report     = check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::finite::measure::energy_variance(tensors), status.iter, 1, slope_threshold);
-    status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges) < threshold;
+    if(not threshold) threshold = settings::precision::variance_convergence_threshold;
+    if(not slope_threshold) slope_threshold = settings::precision::variance_slope_threshold;
+    auto report = check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::finite::measure::energy_variance(tensors), status.iter, 1, slope_threshold.value());
+    status.variance_mpo_has_converged = tools::finite::measure::energy_variance(tensors) < threshold;
     if(report.has_computed) {
         V_mpo_slopes.emplace_back(report.slope);
         auto last_nonconverged_ptr = std::find_if(V_mpo_vec.rbegin(), V_mpo_vec.rend(), [threshold](auto const &val) { return val > threshold; });
         auto last_nonsaturated_ptr =
             std::find_if(V_mpo_slopes.rbegin(), V_mpo_slopes.rend(), [slope_threshold](auto const &val) { return val > slope_threshold; });
-        size_t converged_count            = (size_t) std::distance(V_mpo_vec.rbegin(), last_nonconverged_ptr);
-        size_t saturated_count            = (size_t) std::distance(V_mpo_slopes.rbegin(), last_nonsaturated_ptr);
+        auto converged_count              = static_cast<size_t>(std::distance(V_mpo_vec.rbegin(), last_nonconverged_ptr));
+        auto saturated_count              = static_cast<size_t>(std::distance(V_mpo_slopes.rbegin(), last_nonsaturated_ptr));
         status.variance_mpo_has_saturated = report.slope < slope_threshold; // or saturated_count >= min_saturation_iters;
         status.variance_mpo_saturated_for = std::max(converged_count, saturated_count);
         tools::log->debug("Variance slope details:");
         tools::log->debug(" -- relative slope    = {} %", report.slope);
-        tools::log->debug(" -- tolerance         = {} %", slope_threshold);
+        tools::log->debug(" -- tolerance         = {} %", slope_threshold.value());
         tools::log->debug(" -- last var average  = {} ", report.avgY);
         tools::log->debug(" -- check from        = {} ", report.check_from);
         tools::log->debug(" -- var history       = {} ", V_mpo_vec);
@@ -462,19 +444,18 @@ void class_algorithm_finite::check_convergence_variance(double threshold, double
     }
 }
 
-void class_algorithm_finite::check_convergence_entg_entropy(double slope_threshold) {
+void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double> slope_threshold) {
     // Based on the the slope of entanglement entanglement_entropy_midchain
     // This one is cheap to compute.
     if(not tensors.state->position_is_any_edge()) { return; }
     tools::log->debug("Checking convergence of entanglement");
-
-    slope_threshold                         = std::isnan(slope_threshold) ? settings::precision::entropy_slope_threshold : slope_threshold;
+    if(not slope_threshold) slope_threshold = settings::precision::entropy_slope_threshold;
     auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
     std::vector<SaturationReport> reports(entropies.size());
 
-    for(size_t site = 0; site < entropies.size(); site++) {
-        reports[site] = check_saturation_using_slope(S_mat[site], X_mat[site], entropies[site], status.iter, 1, slope_threshold);
-    }
+    for(size_t site = 0; site < entropies.size(); site++)
+        reports[site] = check_saturation_using_slope(S_mat[site], X_mat[site], entropies[site], status.iter, 1, slope_threshold.value());
+
     bool all_computed                 = std::all_of(reports.begin(), reports.end(), [](const SaturationReport r) { return r.has_computed; });
     status.entanglement_has_saturated = false;
     if(all_computed) {
@@ -490,7 +471,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
 
         S_slopes.push_back(reports[idx_max_slope].slope);
         auto last_nonsaturated_ptr = std::find_if(S_slopes.rbegin(), S_slopes.rend(), [slope_threshold](auto const &val) { return val > slope_threshold; });
-        auto saturated_count       = (size_t) std::distance(S_slopes.rbegin(), last_nonsaturated_ptr);
+        auto saturated_count       = static_cast<size_t>(std::distance(S_slopes.rbegin(), last_nonsaturated_ptr));
 
         status.entanglement_has_saturated = S_slopes.back() < slope_threshold;
         status.entanglement_saturated_for = saturated_count;
@@ -502,7 +483,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         tools::log->debug("Entanglement slope details of worst slope:");
         tools::log->debug(" -- site              = {}", idx_max_slope);
         tools::log->debug(" -- relative slope    = {} %", reports[idx_max_slope].slope);
-        tools::log->debug(" -- tolerance         = {} %", slope_threshold);
+        tools::log->debug(" -- tolerance         = {} %", slope_threshold.value());
         tools::log->debug(" -- check from        = {} ", reports[idx_max_slope].check_from);
         tools::log->debug(" -- ent history       = {} ", S_mat[idx_max_slope]);
         tools::log->debug(" -- slope history     = {} ", S_slopes);
@@ -559,7 +540,6 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
                 storage_level = settings::output::storage_level_fail_state;
             // If we have finished we may want to write a projection too
             state_prefix.append("/finished");
-            write_to_file(StorageReason::PROJ_STATE, state, is_projection, state_prefix);
             break;
         }
         case StorageReason::CHECKPOINT: {
@@ -578,7 +558,6 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix.append("/checkpoint");
             state_prefix.append("/chi_" + std::to_string(status.chi_lim));
-            if(settings::strategy::project_on_chi_update) write_to_file(StorageReason::PROJ_STATE, state, is_projection, state_prefix);
             break;
         }
         case StorageReason::PROJ_STATE: {
@@ -717,5 +696,4 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
                      status.entanglement_has_saturated);
     tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
-
 }

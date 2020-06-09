@@ -35,7 +35,6 @@ void class_idmrg::run_simulation() {
         write_to_file();
         copy_from_tmp();
         check_convergence();
-        update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
         // It's important not to perform the last move.

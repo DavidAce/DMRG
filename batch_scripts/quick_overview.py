@@ -65,7 +65,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     variance  = []
     variancel = []
     ententrp  = []
-    entdiff   = []
     walltime  = []
     resets    = []
     got_stuck = []
@@ -77,7 +76,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Ent.Diff", "Time",
+        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
         print(header)
@@ -94,76 +93,42 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         # Collect the number of states present.
-        state_keys = ""
+        state_keys = []
         try:
-
             if 'xDMRG' in h5file:
                 state_keys = [str(x) for x in h5file['xDMRG'].keys() if 'state' in x]
         except Exception as err:
             print("Could not read keys in h5file. Reason:", err)
         entry = []
         ententrp_zero = []
+        state_keys.sort()
         for state_num,state_key in enumerate(state_keys):
             if len(args.state) > 0 and not args.state in state_key:
                 continue
-
-            table_path = ''
-            step_results = 0
-            step_journal = 0
-            prefix = 'xDMRG/' + state_key
             try:
-                if prefix + '/checkpoint/sim_status' in h5file:
-                    step_array =  h5file[prefix + '/journal'].get('sim_status')['step']
-                    if(len(step_array)>0):
-                        step_journal = step_array[-1]
-                if prefix + '/results/sim_status' in h5file:
-                    step_array = h5file[prefix + '/results'].get('sim_status')['step']
-                    if(len(step_array)>0):
-                        step_results = step_array[-1]
-            except Exception as err:
-                print("Could not read sim_status. Reason:", err)
-            if step_results == 0 and step_journal == 0:
-                continue
-            if step_journal >= step_results:
-                table_path = prefix + '/journal'
-            else:
-                table_path = prefix + '/results'
+                state_prefix = 'xDMRG/' + state_key
+                msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
+                status_last_entry = h5file[state_prefix].get('status')[-1]
 
-            # print(table_path,step_journal, step_results)
-            try:
-                try:
-                    finished.append(h5file['common/finOK'][-1])
-                except:
-                    finished.append(0)
-                if(args.finished and finished[-1] == 0):
+                finished.append(0)
+
+                if (args.finished and finished[-1] == 0):
                     continue
-
-
                 realization_name = h5path.replace('.h5', '')
-                chainlen       .append(h5file[table_path].get('measurements')['length'][-1])
-                seed           .append([int(x) for x in regex.findall(realization_name)][-1])
-                iter           .append(h5file[table_path].get('sim_status')['iteration'][-1])
-                step           .append(h5file[table_path].get('sim_status')['step'][-1])
-                energy         .append(h5file[table_path].get('measurements')['energy_per_site'][-1])
-                variance       .append(h5file[table_path].get('measurements')['energy_variance_per_site'][-1])
-                #variancel       .append(h5file[table_path].get('measurements')['energy_variance_per_site_lowest'][-1])
-                variancel       .append(get_data(h5file[table_path].get('measurements'),'energy_variance_per_site_lowest'))
-                ententrp       .append(h5file[table_path].get('measurements')['entanglement_entropy_midchain'][-1])
-                walltime       .append(h5file[table_path].get('sim_status')['wall_time'][-1])
-                resets         .append(h5file[table_path].get('sim_status')['num_resets'][-1])
-                got_stuck      .append(h5file[table_path].get('sim_status')['simulation_has_got_stuck'][-1])
-                saturated      .append(h5file[table_path].get('sim_status')['simulation_has_saturated'][-1])
-                converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
-                succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
-
-                ententrp_curr = h5file[table_path]['entanglement_entropies'][()]
-                if len(entdiff) == 0 or len(ententrp_zero) == 0:
-                    ententrp_zero = h5file[table_path]['entanglement_entropies'][()]
-                    entdiff.append(np.nan)
-                else:
-                    entdiff.append(np.sum((ententrp_curr-ententrp_zero)/np.log(2)))
-
-
+                chainlen.append(msrmnt_last_entry['length'])
+                seed.append([int(x) for x in regex.findall(realization_name)][-1])
+                iter.append(status_last_entry['iter'])
+                step.append(status_last_entry['step'])
+                energy.append(msrmnt_last_entry['energy_per_site'])
+                variance.append(msrmnt_last_entry['energy_variance_per_site'])
+                variancel.append(status_last_entry['lowest_recorded_variance_per_site'])
+                ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
+                walltime.append(status_last_entry['wall_time'])
+                resets.append(status_last_entry['num_resets'])
+                got_stuck.append(status_last_entry['algorithm_has_got_stuck'])
+                saturated.append(status_last_entry['algorithm_has_saturated'])
+                converged.append(status_last_entry['algorithm_has_converged'])
+                succeeded.append(status_last_entry['algorithm_has_succeeded'])
 
                 style = ''
                 if finished[-1] == 1 and succeeded[-1] == 1:
@@ -186,26 +151,24 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
                     style = colored.fg("green_4")
 
-
-
                 if not args.summary:
-                    entry.append("{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
-                        chainlen[-1],
-                        seed[-1],
-                        iter[-1],
-                        step[-1],
-                        energy[-1],
-                        np.log10(variance[-1]),
-                        np.log10(variancel[-1]),
-                        ententrp[-1],
-                        entdiff[-1],
-                        walltime[-1] / 60,
-                        resets[-1],
-                        got_stuck[-1],
-                        saturated[-1],
-                        converged[-1],
-                        succeeded[-1],
-                        finished[-1]))
+                    entry.append(
+                        "{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                            chainlen[-1],
+                            seed[-1],
+                            iter[-1],
+                            step[-1],
+                            energy[-1],
+                            np.log10(variance[-1]),
+                            np.log10(variancel[-1]),
+                            ententrp[-1],
+                            walltime[-1] / 60,
+                            resets[-1],
+                            got_stuck[-1],
+                            saturated[-1],
+                            converged[-1],
+                            succeeded[-1],
+                            finished[-1]))
                     print(stylize(entry[-1], style))
 
                     if args.save:
@@ -219,13 +182,11 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     if len(chainlen) == 0:
         continue
-    if np.isnan(entdiff).all():
-        entdiff = np.zeros(len(entdiff))
 
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Entgl-diff>","<Time>",
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.nanmax(chainlen),
         len(seed),
         np.nanmean(iter),
@@ -234,7 +195,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         np.nanmean(np.log10(variance)),
         np.nanmean(np.log10(variancel)),
         np.nanmean(ententrp),
-        np.nanmean(entdiff),
         np.nanmean(walltime) / 60,
         np.sum(resets),
         np.sum(got_stuck),
