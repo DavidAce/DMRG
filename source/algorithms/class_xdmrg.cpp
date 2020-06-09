@@ -50,9 +50,7 @@ void class_xdmrg::resume() {
     if(not status.algorithm_has_finished) {
         // This could be a checkpoint state
         // Simply "continue" the algorithm until convergence
-        if(excited_state_number == 0) task_list = {xdmrg_task::FIND_SEED_STATE, xdmrg_task::POST_DEFAULT};
-        else
-            task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT};
+        task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT};
         run_task_list(task_list);
     }
 
@@ -65,7 +63,7 @@ void class_xdmrg::resume() {
     //      missing_state_number = 4 - 1 = 3
     auto missing_state_number = settings::xdmrg::max_states >= excited_state_number ? settings::xdmrg::max_states - excited_state_number : 0;
     for(size_t new_state_num = 0; new_state_num < missing_state_number; new_state_num++) {
-        task_list.emplace_back(xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE);
+        task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE);
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
@@ -74,11 +72,12 @@ void class_xdmrg::resume() {
 void class_xdmrg::run_default_task_list() {
     std::list<xdmrg_task> default_task_list = {
         xdmrg_task::INIT_DEFAULT,
-        xdmrg_task::FIND_SEED_STATE,
+        xdmrg_task::FIND_EXCITED_STATE,
         xdmrg_task::POST_DEFAULT,
     };
+
     // Insert requested number of excited states
-    for(size_t num = 0; num < settings::xdmrg::max_states; num++) {
+    for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
         default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE);
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -115,11 +114,6 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::NEXT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOMIZE_GIVEN_STATE); break;
             case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
-            case xdmrg_task::FIND_SEED_STATE:
-                excited_state_number = 0;
-                state_name           = fmt::format("state_{}", excited_state_number);
-                run_algorithm();
-                break;
             case xdmrg_task::FIND_EXCITED_STATE:
                 state_name = fmt::format("state_{}", excited_state_number);
                 run_algorithm();
