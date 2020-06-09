@@ -100,6 +100,11 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     eig::log->trace("eigs init");
     result.reset();
     /* clang-format off */
+    // Precision settings which are overridden manually
+    if(not config.eigThreshold) config.eigThreshold = 1e-12;
+    if(not config.eigMaxIter) config.eigMaxIter = 2000;
+
+    // Other settings that we pass on each invocation of eigs
     if(not config.compute_eigvecs) config.compute_eigvecs = compute_eigvecs;
     if(not config.remove_phase)    config.remove_phase    = remove_phase;
     if(not config.eigMaxNev)       config.eigMaxNev       = nev;
@@ -113,8 +118,11 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(not config.storage)         config.storage         = storage;
     /* clang-format on */
 
-    if(ncv < nev) {
-        if(nev >= 1 and nev <= 16) {
+    if(config.eigMaxNev.value() < 1)  config.eigMaxNev = 1;
+    if(config.eigMaxNcv.value() <= 1)  config.eigMaxNcv = 16;
+
+    if(config.eigMaxNcv.value() < config.eigMaxNev.value()) {
+        if(config.eigMaxNev.value() >= 1 and config.eigMaxNev.value() <= 16) {
             config.eigMaxNcv = 8 + static_cast<int>(std::ceil(1.5 * static_cast<double>(nev)));
         } else if(nev > 16 and nev <= L) {
             config.eigMaxNcv = 2 * nev;
@@ -122,13 +130,13 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     }
 
     if(config.form == Form::NSYM) {
-        if(config.eigMaxNev == 1) { config.eigMaxNev = 2; }
+        if(config.eigMaxNev.value() == 1) { config.eigMaxNev = 2; }
     }
-    if(config.eigMaxNcv >= L) { config.eigMaxNcv = (L + nev) / 2; }
+    if(config.eigMaxNcv.value() >= L) { config.eigMaxNcv = (L + config.eigMaxNev.value()) / 2; }
 
-    assert(config.eigMaxNcv <= L and "Ncv > L");
-    assert(config.eigMaxNcv >= config.eigMaxNev and "Ncv < Nev");
-    assert(config.eigMaxNev <= L and "Nev > L");
+    assert(config.eigMaxNcv.value() <= L and "Ncv > L");
+    assert(config.eigMaxNcv.value() >= config.eigMaxNev.value() and "Ncv < Nev");
+    assert(config.eigMaxNev.value() <= L and "Nev > L");
 
     if(config.shift_invert == Shinv::ON and not config.sigma)
         throw std::runtime_error("Sigma must be set to use shift-invert mode");

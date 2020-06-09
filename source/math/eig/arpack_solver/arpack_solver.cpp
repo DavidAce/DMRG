@@ -53,8 +53,8 @@ eig::arpack_solver<MatrixType>::arpack_solver(MatrixType &matrix_, eig::settings
     t_get.set_properties(profile_arpack, 10, "Time getting result");
     t_sub.set_properties(profile_arpack, 10, "Time subtracting");
     t_all.set_properties(profile_arpack, 10, "Time doing all  ");
-    nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev));
-    ncv_internal = static_cast<int>(std::max(config.eigMaxNcv, 2 + config.eigMaxNev));
+    nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev.value()));
+    ncv_internal = static_cast<int>(std::max(config.eigMaxNcv.value(), 2 + config.eigMaxNev.value()));
     ncv_internal = std::min(ncv_internal, matrix.rows());
 }
 
@@ -64,8 +64,8 @@ void eig::arpack_solver<MatrixType>::eigs() {
     eig::log      = Logger::setLogger("eigs", loglevel);
 
     result.reset();
-    nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev));
-    ncv_internal = static_cast<int>(std::max(config.eigMaxNcv, 2 + config.eigMaxNev));
+    nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev.value()));
+    ncv_internal = static_cast<int>(std::max(config.eigMaxNcv.value(), 2 + config.eigMaxNev.value()));
     ncv_internal = std::min(ncv_internal, matrix.rows());
     assert(nev_internal >= 1 and nev_internal <= matrix.rows() / 2);
 
@@ -90,7 +90,7 @@ void eig::arpack_solver<MatrixType>::eigs_sym() {
         assert(config.form == Form::SYMM and "ERROR: config not SYMMETRIC");
         assert(matrix.get_form() == Form::SYMM and "ERROR: matrix not SYMMETRIC");
         ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
-                                               config.eigThreshold, static_cast<int>(config.eigMaxIter), residual);
+                                               config.eigThreshold.value(), static_cast<int>(config.eigMaxIter.value()), residual);
 
         if(config.sigma) {
             if(config.shift_invert == Shinv::ON) {
@@ -111,7 +111,7 @@ void eig::arpack_solver<MatrixType>::eigs_sym() {
                     throw std::runtime_error("Tried to apply shift on an incompatible matrix");
             }
         }
-        find_solution(solver, config.eigMaxNev);
+        find_solution(solver, config.eigMaxNev.value());
         copy_solution(solver);
 
     } else {
@@ -128,7 +128,7 @@ void eig::arpack_solver<MatrixType>::eigs_nsym() {
         if(nev_internal == 1) { nev_internal++; }
 
         ARNonSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
-                                                  config.eigThreshold, config.eigMaxIter, residual);
+                                                  config.eigThreshold.value(), config.eigMaxIter.value(), residual);
 
         if(config.sigma) {
             if(config.shift_invert == Shinv::ON) {
@@ -150,7 +150,7 @@ void eig::arpack_solver<MatrixType>::eigs_nsym() {
             }
         }
 
-        find_solution(solver, config.eigMaxNev);
+        find_solution(solver, config.eigMaxNev.value());
         copy_solution(solver);
     } else {
         throw std::runtime_error("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()));
@@ -161,7 +161,7 @@ template<typename MatrixType>
 void eig::arpack_solver<MatrixType>::eigs_comp() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         ARCompStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
-                                                config.eigThreshold, config.eigMaxIter, residual);
+                                                config.eigThreshold.value(), config.eigMaxIter.value(), residual);
         if(config.sigma) {
             if(config.shift_invert == Shinv::ON) {
                 if constexpr(MatrixType::can_shift_invert) {
@@ -181,7 +181,7 @@ void eig::arpack_solver<MatrixType>::eigs_comp() {
                     throw std::runtime_error("Tried to apply shift on an incompatible matrix");
             }
         }
-        find_solution(solver, config.eigMaxNev);
+        find_solution(solver, config.eigMaxNev.value());
         copy_solution(solver);
     } else {
         throw std::runtime_error("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()));
