@@ -53,8 +53,9 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     Eigen::VectorXd                    eigvals;
     Eigen::MatrixXcd                   eigvecs;
     Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_tensor.data(), multisite_tensor.size());
-    for(auto nev : generate_size_list(static_cast<int>(multisite_tensor.size()))) {
+    for(auto nev : generate_size_list(static_cast<int>(multisite_vector.size()))) {
         tools::common::profile::t_opt_sub_eig->tic();
+        solver.config.clear();
         solver.eigs(hamiltonian,nev, -1,eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, energy_target,  eig::Shinv::ON, eig::Vecs::ON, eig::Dephase::OFF);
         eigvals = eig::view::get_eigvals<eig::real>(solver.result);
         eigvecs = eig::view::get_eigvecs<eig::real>(solver.result, eig::Side::R);
@@ -65,22 +66,22 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
         double          min_overlap    = overlaps.minCoeff();
         double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
         double          subspace_error = 1.0 - sq_sum_overlap;
-        reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), time_ham, tools::common::profile::t_eig->get_last_time_interval(), time_lu);
+        reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), tools::common::profile::t_opt_sub_eig->get_last_time_interval(),time_ham, time_lu);
         time_lu  = 0;
         time_ham = 0;
-        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
-        if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
-        if(min_overlap < 0.0) throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
+        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}",max_overlap));
+        if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("eps larger than one: {:.16f}", sq_sum_overlap));
+        if(min_overlap < 0.0) throw std::runtime_error(fmt::format("min_overlap smaller than zero: {:.16f}", min_overlap));
         if(subspace_error < subspace_error_threshold) {
-            reason = "subspace error is low enough";
+            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, subspace_error_threshold);
             break;
         }
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT and subspace_error < 1e-3) {
-            reason = "subspace error sufficient for SUBSPACE_AND_DIRECT";
+            reason = fmt::format("subspace error sufficient for SUBSPACE_AND_DIRECT mode: {:.3e} < threshold {:.3e}", subspace_error, 1e-3);
             break;
         }
         if(optSpace == OptSpace::SUBSPACE_ONLY and optMode == OptMode::OVERLAP and max_overlap >= 1.0 / std::sqrt(2.0)) {
-            reason = "Overlap sufficient for OVERLAP and SUBSPACE_ONLY";
+            reason = fmt::format("Overlap sufficient for OVERLAP and SUBSPACE_ONLY mode:  {:.16f} >= threshold {:.16f}", max_overlap , 1.0 / std::sqrt(2.0) );
             break;
         }
     }
