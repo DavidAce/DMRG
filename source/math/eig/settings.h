@@ -5,10 +5,10 @@ namespace eig {
     class settings {
         public:
         // Precision
-        double    eigThreshold = 1e-12;
-        int       eigMaxIter   = 2000;
-        size_type eigMaxNev    = 1;
-        size_type eigMaxNcv    = 16;
+        std::optional<double>    eigThreshold = std::nullopt;
+        std::optional<int>       eigMaxIter   = std::nullopt;
+        std::optional<size_type> eigMaxNev    = std::nullopt;
+        std::optional<size_type> eigMaxNcv    = std::nullopt;
         // Solver properties
         std::optional<Form>    form            = std::nullopt;
         std::optional<Type>    type            = std::nullopt;
@@ -20,6 +20,7 @@ namespace eig {
         std::optional<Vecs>    compute_eigvecs = std::nullopt;
         std::optional<Dephase> remove_phase    = std::nullopt;
 
+        void clear();
         // Sanity checks
         void                      checkRitz();
         [[nodiscard]] std::string get_ritz_string() const;

@@ -2,6 +2,10 @@
 #include <iostream>
 
 
+void eig::settings::clear(){
+    *this = settings();
+}
+
 std::string eig::settings::get_ritz_string() const{
     if(not ritz) throw std::runtime_error("Ritz has not been set");
     return std::string(eig::RitzToString(ritz.value()));}
