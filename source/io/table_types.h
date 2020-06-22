@@ -35,7 +35,8 @@ class h5pp_table_measurements_finite {
         double                energy_variance_per_site_lowest;
         std::array<double, 3> spin_components;
         double                truncation_error;
-        double                wall_time;
+        double                total_time;
+        double                algorithm_time;
     };
 
     h5pp_table_measurements_finite() { register_table_type(); }
@@ -64,7 +65,8 @@ class h5pp_table_measurements_finite {
         H5Tinsert(h5_type, "energy_variance_per_site_lowest", HOFFSET(table, energy_variance_per_site_lowest), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "spin_components", HOFFSET(table, spin_components), H5_SPIN_TYPE);
         H5Tinsert(h5_type, "truncation_error", HOFFSET(table, truncation_error), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "total_time", HOFFSET(table, total_time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "algorithm_time", HOFFSET(table, algorithm_time), H5T_NATIVE_DOUBLE);
     }
 };
 
@@ -251,7 +253,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "lowest_recorded_variance_per_site", HOFFSET(table, lowest_recorded_variance_per_site), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "simu_time", HOFFSET(table, simu_time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "algo_time", HOFFSET(table, algo_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "delta_t", HOFFSET(table, delta_t), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "simulation_has_stuck_for", HOFFSET(table, algorithm_has_stuck_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "entanglement_saturated_for", HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_UINT64);

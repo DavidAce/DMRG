@@ -51,6 +51,7 @@ namespace tools::common::profile{
     extern void print_profiling(std::optional<AlgorithmType> algo_type);
     extern void init_profiling();
     extern void reset_profiling();
+    extern void reset_for_run_algorithm();
 
     extern void print_mem_usage();
 

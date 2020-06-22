@@ -1,5 +1,5 @@
 #pragma once
-#include <h5pp/details/h5ppPermissions.h>
+#include <h5pp/details/h5ppEnums.h>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>

@@ -78,7 +78,7 @@ void class_idmrg::single_iDMRG_step(){
     Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
     tensors.merge_multisite_tensor(twosite_tensor);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.simu_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 

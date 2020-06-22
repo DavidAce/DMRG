@@ -33,7 +33,7 @@ class class_algorithm_status {
     double lowest_recorded_variance_per_site = 1;
     double phys_time                   = 0;
     double wall_time                   = 0;
-    double simu_time                   = 0;
+    double algo_time                         = 0;
     double delta_t                     = 0; // Make sure this one gets initialized to delta_t0!
     size_t algorithm_has_stuck_for     = 0;
     size_t entanglement_saturated_for  = 0;

@@ -58,8 +58,9 @@ void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const 
     measurement_entry.energy_variance_lowest          = status.lowest_recorded_variance_per_site;
     measurement_entry.energy_variance_per_site_lowest = status.lowest_recorded_variance_per_site / static_cast<double>(tensors.get_length());
     measurement_entry.spin_components                 = tools::finite::measure::spin_components(*tensors.state);
-    measurement_entry.truncation_error                = tensors.state->get_truncation_error();
-    measurement_entry.wall_time                       = status.wall_time;
+    measurement_entry.truncation_error                = tensors.state->get_truncation_error_midchain();
+    measurement_entry.total_time                      = status.wall_time;
+    measurement_entry.algorithm_time                  = status.algo_time;
     tools::common::profile::t_hdf->tic();
     h5ppFile.appendTableEntries(measurement_entry, table_path);
     tools::common::profile::t_hdf->toc();

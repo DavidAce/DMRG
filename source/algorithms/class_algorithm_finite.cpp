@@ -86,8 +86,8 @@ void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Running default preprocessing for {}", algo_name);
     tools::common::profile::t_pre->tic();
     status.clear();
-    init_bond_dimension_limits();
     randomize_model();
+    init_bond_dimension_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
                     settings::strategy::use_eigenspinors);
     write_to_file(StorageReason::MODEL);
@@ -697,5 +697,5 @@ void class_algorithm_finite::print_status_full() {
                      status.variance_mpo_has_saturated);
     tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
                      status.entanglement_has_saturated);
-    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
+    tools::log->info("{:=^60}", "");
 }

@@ -164,12 +164,14 @@ void class_xdmrg::run_preprocessing() {
     if(settings::xdmrg::energy_density_window != 0.5) randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+    write_to_file(StorageReason::MODEL);
     tools::common::profile::t_pre->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_xdmrg::run_algorithm() {
-    if(state_name.empty()) state_name = "state_" + std::to_string(excited_state_number);
+    if(state_name.empty()) fmt::format("state_{}", excited_state_number);
+    tools::common::profile::reset_for_run_algorithm();
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::t_sim->tic();
     while(true) {
@@ -365,7 +367,7 @@ void class_xdmrg::single_xDMRG_step() {
         (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.simu_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 void class_xdmrg::check_convergence() {
