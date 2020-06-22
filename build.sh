@@ -21,6 +21,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -s | --enable-shared            : Enable shared library linking (default is static)
    | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
+   | --enable-lto               : Enable Link Time Optimization
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
@@ -72,6 +73,7 @@ download_method="find"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
+enable_lto="OFF"
 make_threads=8
 prefer_conda="OFF"
 verbose="OFF"
@@ -83,25 +85,26 @@ while true;
 do
   case "$1" in
     -h|--help)                      usage                                                                          ; shift   ;;
-    -a|--arch)                      march=$2                        ; echo " * Architecture             : $2"      ; shift 2 ;;
-    -b|--build-type)                build_type=$2                   ; echo " * Build type               : $2"      ; shift 2 ;;
-    -c|--clear-cmake)               clear_cmake="ON"                ; echo " * Clear CMake              : ON"      ; shift   ;;
+    -a|--arch)                      march=$2                        ; echo " * Architecture            : $2"      ; shift 2 ;;
+    -b|--build-type)                build_type=$2                   ; echo " * Build type              : $2"      ; shift 2 ;;
+    -c|--clear-cmake)               clear_cmake="ON"                ; echo " * Clear CMake             : ON"      ; shift   ;;
     -l|--clear-libs)
-            clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
-    -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
-       --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
-    -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
-    -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
-    -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
-    -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
-    -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
-       --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
-    -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
-       --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
-       --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel MKL         : ON"      ; shift   ;;
-       --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
-       --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
-    -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
+            clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries         : $2"      ; shift 2 ;;
+    -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                 : ON"      ; shift   ;;
+       --download-method)           download_method=$2              ; echo " * Download method         : $2"      ; shift 2 ;;
+    -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags       : $2"      ; shift 2 ;;
+    -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler            : $2"      ; shift 2 ;;
+    -G|--generator)                 generator=$2                    ; echo " * CMake generator         : $2"      ; shift 2 ;;
+    -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads            : $2"      ; shift 2 ;;
+    -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries   : ON"      ; shift   ;;
+       --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing           : ON"      ; shift   ;;
+    -t|--target)                    target=$2                       ; echo " * CMake Build target      : $2"      ; shift 2 ;;
+       --enable-openmp)             enable_openmp="ON"              ; echo " * OpenMP                  : ON"      ; shift   ;;
+       --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL               : ON"      ; shift   ;;
+       --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization  : ON"      ; shift   ;;
+       --no-modules)                no_modules="ON"                 ; echo " * Disable module load     : ON"      ; shift   ;;
+       --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs    : ON"      ; shift   ;;
+    -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles       : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -265,6 +268,7 @@ cat << EOF >&2
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
+          -DDMRG_ENABLE_LTO=$enable_lto \
           $extra_flags
            -G $generator
            ../../
@@ -285,6 +289,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
+          -DDMRG_ENABLE_LTO=$enable_lto \
           $extra_flags \
            -G "$generator" \
            ../../
