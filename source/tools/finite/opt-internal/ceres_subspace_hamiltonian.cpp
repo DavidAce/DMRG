@@ -27,10 +27,9 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     long dim0 = mpo.dimension(2);
     long dim1 = env.L.dimension(0);
     long dim2 = env.R.dimension(0);
-    OMP  omp(settings::threading::num_threads);
 
     Eigen::Tensor<std::complex<double>, 6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham.device(omp.dev) = env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
+    ham.device(*Textra::omp::dev) = env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
 
     auto cols = ham.dimension(0) * ham.dimension(1) * ham.dimension(2);
     auto rows = ham.dimension(3) * ham.dimension(4) * ham.dimension(5);
@@ -83,21 +82,19 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
     Eigen::Tensor<Scalar, 3> Hv(dim0, dim1, dim2);
     Eigen::MatrixXcd         H2(eignum, eignum);
 
-    OMP omp(settings::threading::num_threads);
-
     if(log2spin >= std::max(log2chiL, log2chiR)) {
         if(log2chiL >= log2chiR) {
             tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL >= log2chiR");
             for(auto col = 0; col < eignum; col++) {
                 const auto &theta_j = std::next(candidate_list.begin(), col)->get_tensor();
-                Hv.device(omp.dev)  = theta_j.contract(env.L, Textra::idx({1}, {0}))
+                Hv.device(*Textra::omp::dev)  = theta_j.contract(env.L, Textra::idx({1}, {0}))
                                          .contract(mpo, Textra::idx({0, 3}, {2, 0}))
                                          .contract(env.R, Textra::idx({0, 3}, {0, 2}))
                                          .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
                                          .shuffle(Textra::array3{2, 0, 1});
                 for(auto row = col; row < eignum; row++) {
                     const auto &theta_i   = std::next(candidate_list.begin(), row)->get_tensor();
-                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                    H2_ij.device(*Textra::omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
                     H2(row, col)          = H2_ij(0);
                 }
             }
@@ -105,14 +102,14 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
             tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL < log2chiR");
             for(auto col = 0; col < eignum; col++) {
                 const auto &theta_j = std::next(candidate_list.begin(), col)->get_tensor();
-                Hv.device(omp.dev)  = theta_j.contract(env.R, Textra::idx({2}, {0}))
+                Hv.device(*Textra::omp::dev)  = theta_j.contract(env.R, Textra::idx({2}, {0}))
                                          .contract(mpo, Textra::idx({0, 3}, {2, 1}))
                                          .contract(env.L, Textra::idx({0, 3}, {0, 2}))
                                          .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
                                          .shuffle(Textra::array3{2, 1, 0});
                 for(auto row = col; row < eignum; row++) {
                     const auto &theta_i   = std::next(candidate_list.begin(), row)->get_tensor();
-                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                    H2_ij.device(*Textra::omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
                     H2(row, col)          = H2_ij(0);
                 }
             }
@@ -121,14 +118,14 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
         tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
         for(auto col = 0; col < eignum; col++) {
             const auto &theta_j = std::next(candidate_list.begin(), col)->get_tensor();
-            Hv.device(omp.dev)  = theta_j.contract(env.L, Textra::idx({1}, {0}))
+            Hv.device(*Textra::omp::dev)  = theta_j.contract(env.L, Textra::idx({1}, {0}))
                                      .contract(mpo, Textra::idx({0, 3}, {2, 0}))
                                      .contract(mpo, Textra::idx({4, 2}, {2, 0}))
                                      .contract(env.R, Textra::idx({0, 2, 3}, {0, 2, 3}))
                                      .shuffle(Textra::array3{1, 0, 2});
             for(auto row = col; row < eignum; row++) {
                 const auto &theta_i   = std::next(candidate_list.begin(), row)->get_tensor();
-                H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+                H2_ij.device(*Textra::omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
                 H2(row, col)          = H2_ij(0);
             }
         }
@@ -169,9 +166,8 @@ template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonia
 //    long                                   dim0 = mpo.dimension(2);
 //    long                                   dim1 = env.L.dimension(0);
 //    long                                   dim2 = env.R.dimension(0);
-//    OMP                                    omp(settings::threading::num_threads);
 //    Eigen::Tensor<std::complex<double>, 6> ham_sq(dim0, dim1, dim2, dim0, dim1, dim2);
-//    ham_sq.device(omp.dev) = env.L.contract(mpo, Textra::idx({2}, {0}))
+//    ham_sq.device(*Textra::omp::dev) = env.L.contract(mpo, Textra::idx({2}, {0}))
 //                                 .contract(mpo, Textra::idx({5, 2}, {2, 0}))
 //                                 .contract(env.R, Textra::idx({2, 4}, {2, 3}))
 //                                 .shuffle(Textra::array6{2, 0, 4, 3, 1, 5});

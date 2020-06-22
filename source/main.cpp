@@ -226,9 +226,10 @@ int main(int argc, char *argv[]) {
 
     omp_set_num_threads(settings::threading::num_threads);
     Eigen::setNbThreads(settings::threading::num_threads);
+    Textra::omp::setNumThreads(settings::threading::num_threads);
+    tools::log->info("Using Eigen Tensor with {} threads", Textra::omp::tp->NumThreads());
     tools::log->info("Using Eigen  with {} threads", Eigen::nbThreads());
     tools::log->info("Using OpenMP with {} threads", omp_get_max_threads());
-
     #ifdef OpenBLAS_AVAILABLE
     openblas_set_num_threads(settings::threading::num_threads);
     tools::log->info("{} compiled with parallel mode {} for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,

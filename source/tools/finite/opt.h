@@ -189,7 +189,6 @@ namespace tools::finite::opt::internal{
         size_t iteration;
         int    num_parameters;
         bool   have_bounds_on_energy = false;
-        OMP omp;
 
     public:
         explicit ceres_base_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);

@@ -21,7 +21,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     tools::log->trace("Constructing direct functor");
 
 #ifdef _OPENMP
-    tools::log->trace("- Detected {} OpenMP threads", omp.num_threads);
+    tools::log->trace("- Detected {} OpenMP threads", Textra::omp::tp->NumThreads());
 #endif
     tools::log->trace("- Generating multisite components");
     const auto &state = *tensors.state;
@@ -154,7 +154,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
             if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-            H2v_tensor.device(omp.dev) = theta.contract(env2L, Textra::idx({0}, {0}))
+            H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
                                              .contract(mpo, Textra::idx({0, 3}, {2, 0}))
                                              .contract(env2R, Textra::idx({0, 3}, {0, 2}))
                                              .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
@@ -165,7 +165,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
             if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
-            H2v_tensor.device(omp.dev) = theta.contract(env2R, Textra::idx({0}, {0}))
+            H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2R, Textra::idx({0}, {0}))
                                              .contract(mpo, Textra::idx({0, 3}, {2, 1}))
                                              .contract(env2L, Textra::idx({0, 3}, {0, 2}))
                                              .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
@@ -175,7 +175,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     } else {
         if(print_path) tools::log->trace("get_H2v path: log2spin < std::max(log2chiL, log2chiR)");
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-        H2v_tensor.device(omp.dev)     = theta.contract(env2L, Textra::idx({0}, {0}))
+        H2v_tensor.device(*Textra::omp::dev)     = theta.contract(env2L, Textra::idx({0}, {0}))
                                          .contract(mpo, Textra::idx({0, 3}, {2, 0}))
                                          .contract(mpo, Textra::idx({4, 2}, {2, 0}))
                                          .contract(env2R, Textra::idx({0, 2, 3}, {0, 2, 3}))
@@ -195,7 +195,7 @@ void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
         if(print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
 
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-        Hv_tensor.device(omp.dev)      = theta.contract(envL, Textra::idx({0}, {0}))
+        Hv_tensor.device(*Textra::omp::dev)      = theta.contract(envL, Textra::idx({0}, {0}))
                                         .contract(mpo, Textra::idx({0, 3}, {2, 0}))
                                         .contract(envR, Textra::idx({0, 2}, {0, 2}))
                                         .shuffle(Textra::array3{1, 0, 2});
@@ -203,7 +203,7 @@ void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
         if(print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
 
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
-        Hv_tensor.device(omp.dev)      = theta.contract(envR, Textra::idx({0}, {0}))
+        Hv_tensor.device(*Textra::omp::dev)      = theta.contract(envR, Textra::idx({0}, {0}))
                                         .contract(mpo, Textra::idx({0, 3}, {2, 1}))
                                         .contract(envL, Textra::idx({0, 2}, {0, 2}))
                                         .shuffle(Textra::array3{1, 2, 0});
