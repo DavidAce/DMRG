@@ -22,7 +22,6 @@
 
 #define profile_matrix_product_hamiltonian 0
 
-class OMP;
 
 template<class Scalar_>
 class MatrixProductHamiltonian {
@@ -42,8 +41,6 @@ class MatrixProductHamiltonian {
     long                 mps_size;
     eig::Form            form = eig::Form::SYMM;
     eig::Side            side = eig::Side::R;
-    std::shared_ptr<OMP> omp;
-    std::optional<int>   num_threads = std::nullopt; /*!< Number of threads */
 
     // Shift and shift-invert mode stuff
     std::complex<double> sigma      = 0.0;   // The real part of the shift
@@ -54,8 +51,7 @@ class MatrixProductHamiltonian {
                              const Scalar_ *     Rblock_,                    /*!< The right block tensor.  */
                              const Scalar_ *     mpo_,                       /*!< The Hamiltonian MPO's  */
                              std::array<long, 3> shape_mps_,                 /*!< An array containing the shapes of theta  */
-                             std::array<long, 4> shape_mpo_,                 /*!< An array containing the shapes of the MPO  */
-                             std::optional<int>  num_threads_ = std::nullopt /*!< Number of threads */
+                             std::array<long, 4> shape_mpo_                 /*!< An array containing the shapes of the MPO  */
     );
 
     // Functions used in in Arpack++ solver

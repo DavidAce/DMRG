@@ -219,7 +219,7 @@ void class_algorithm_finite::randomize_model() {
     tools::log->info("Randomizing model");
     tensors.randomize_model();
     clear_convergence_status();
-};
+}
 
 void class_algorithm_finite::randomize_state(ResetReason reason, StateType state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
                                              std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {

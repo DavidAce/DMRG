@@ -32,7 +32,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
     auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
 
     tools::common::profile::t_eig->tic();
-    MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo, settings::threading::num_threads);
+    MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     eig::solver                      solver;
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::ON);
     tools::common::profile::t_eig->toc();

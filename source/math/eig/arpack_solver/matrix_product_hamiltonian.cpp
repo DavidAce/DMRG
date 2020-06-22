@@ -7,10 +7,9 @@ MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     
                                                             const Scalar_ *     Rblock_,     /*!< The right block tensor.  */
                                                             const Scalar_ *     mpo_,        /*!< The Hamiltonian MPO's  */
                                                             std::array<long, 3> shape_mps_,  /*!< An array containing the shapes of theta  */
-                                                            std::array<long, 4> shape_mpo_,  /*!< An array containing the shapes of the MPO  */
-                                                            std::optional<int>  num_threads_ /*!< Number of threads */
+                                                            std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
                                                             )
-    : Lblock(Lblock_), Rblock(Rblock_), mpo(mpo_), shape_mps(shape_mps_), shape_mpo(shape_mpo_), num_threads(num_threads_) {
+    : Lblock(Lblock_), Rblock(Rblock_), mpo(mpo_), shape_mps(shape_mps_), shape_mpo(shape_mpo_) {
     if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
     if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
     if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
@@ -20,10 +19,10 @@ MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     
 
 template<typename T>
 void MatrixProductHamiltonian<T>::MultAx(T *mps_in_, T *mps_out_) {
-    if(counter == 0) {
-        if(not num_threads) num_threads = Eigen::nbThreads();
-        omp = std::make_shared<OMP>(num_threads.value());
-    }
+//    if(counter == 0) {
+//        if(not num_threads) num_threads = Eigen::nbThreads();
+//        omp = std::make_shared<OMP>(num_threads.value());
+//    }
     t_multAx->tic();
     Eigen::TensorMap<Eigen::Tensor<const T, 3>> envL_map(Lblock, shape_mps[1], shape_mps[1], shape_mpo[0]);
     Eigen::TensorMap<Eigen::Tensor<const T, 3>> envR_map(Rblock, shape_mps[2], shape_mps[2], shape_mpo[1]);
@@ -31,7 +30,7 @@ void MatrixProductHamiltonian<T>::MultAx(T *mps_in_, T *mps_out_) {
     Eigen::TensorMap<Eigen::Tensor<const T, 3>> mps_map_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<T, 3>>       mps_map_out(mps_out_, shape_mps);
 
-    mps_map_out.device(omp->dev) = envL_map.contract(mps_map_in, Textra::idx({0}, {1}))
+    mps_map_out.device(*Textra::omp::dev) = envL_map.contract(mps_map_in, Textra::idx({0}, {1}))
                                        .contract(mpo_map, Textra::idx({1, 2}, {0, 2}))
                                        .contract(envR_map, Textra::idx({1, 2}, {0, 2}))
                                        .shuffle(Textra::array3{1, 0, 2});

@@ -394,7 +394,6 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
     constexpr auto           contract_idx = Textra::idx({2}, {1});
     Textra::array3           new_dims;
     Eigen::Tensor<Scalar, 3> temp;
-    OMP                      omp;
     bool                     first = true;
     for(auto &site : sites) {
         if(first) {
@@ -408,7 +407,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
         long        dim2 = M.dimension(2);
         new_dims         = {dim0, dim1, dim2};
         temp.resize(new_dims);
-        temp.device(omp.dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        temp.device(*Textra::omp::dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_tensor     = temp;
     }
 
