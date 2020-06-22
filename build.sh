@@ -265,6 +265,7 @@ cat << EOF >&2
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
+          $extra_flags
            -G $generator
            ../../
     cmake --build . --target $target --parallel $make_threads
@@ -284,6 +285,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
+          $extra_flags \
            -G "$generator" \
            ../../
     exit_code=$?
