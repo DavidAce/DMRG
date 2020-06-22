@@ -179,7 +179,7 @@ endif()
 
 if(TARGET ceres::ceres)
     target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen pthread )
-
+    target_compile_definitions(ceres::ceres INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
     if(TARGET openmp::openmp)
         target_link_libraries(ceres::ceres INTERFACE openmp::openmp )
     endif()
