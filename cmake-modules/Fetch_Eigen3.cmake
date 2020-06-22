@@ -24,6 +24,7 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     if(TARGET Eigen3::Eigen)
         message(STATUS "Eigen3 installed successfully")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+        target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works to fix CERES segfaults!!!
     else()
         message(FATAL_ERROR "Eigen3 could not be installed")
     endif()
