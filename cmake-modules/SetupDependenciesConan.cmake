@@ -92,6 +92,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             BUILD_TYPE ${CMAKE_BUILD_TYPE}
             BASIC_SETUP CMAKE_TARGETS
             SETTINGS compiler.cppstd=17
+            SETTINGS compiler.libcxx=libstdc++11
             ${DMRG_CONAN_SETTINGS}
             ${DMRG_CONAN_OPTIONS}
             BUILD missing

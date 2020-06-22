@@ -268,7 +268,7 @@ cat << EOF >&2
           -DDMRG_MARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_OPENMP=$enable_openmp
-          -DDMRG_ENABLE_MKL=$enable_mkl
+          -DDMRG_ENABLE_MKL=$enable_mkl \
           -DDMRG_ENABLE_LTO=$enable_lto \
           $extra_flags
            -G $generator
