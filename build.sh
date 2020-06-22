@@ -52,6 +52,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 make-threads:\
                 enable-openmp\
                 enable-mkl\
+                enable-lto\
                 no-modules\
                 prefer-conda\
                 verbose\
