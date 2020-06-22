@@ -68,7 +68,7 @@ void class_itebd::single_TEBD_step(){
     }
     tensors.clear_measurements();
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.simu_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 

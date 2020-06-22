@@ -114,8 +114,53 @@ void tools::common::profile::reset_profiling() {
     if(t_tot == nullptr) throw std::runtime_error("Profiling timers have not been initialized");
     // Do not reset total time!
     /* clang-format off */
+    tools::log->trace("Resetting profiling timers");
     t_pre             ->reset(); // |- Preprocessing
     t_pos             ->reset(); // |- Postprocessing
+    t_sim             ->reset(); // |+ Simulation
+    t_con             ->reset(); //  |- Convergence checks
+    t_eig             ->reset(); //  |- Eig. decomp.
+    t_svd             ->reset(); //  |- Svd. decomp.
+    t_evo             ->reset(); //  |- Time evolution
+    t_env             ->reset(); //  |- Environment upd.
+    t_ent             ->reset(); //  |- Entanglement entropy
+    t_ene             ->reset(); //  |- Energy
+    t_var             ->reset(); //  |- Variance
+    t_prj             ->reset(); //  |- Projections
+    t_chk             ->reset(); //  |- Checks
+    t_hdf             ->reset(); //  |- h5pp storage
+    t_ene_ham         ->reset(); //  |- Energy (HAM)
+    t_ene_mom         ->reset(); //  |- Energy (MOM)
+    t_var_ham         ->reset(); //  |- Variance (HAM)
+    t_var_mom         ->reset(); //  |- Variance (MOM)
+    t_mps             ->reset(); //  |- Multisite-MPS
+    t_mpo             ->reset(); //  |- Multisite-MPO
+    t_opt             ->reset(); //  |+ Optimization (xdmrg)
+    t_opt_dir         ->reset(); //  ||+ Direct
+    t_opt_dir_bfgs    ->reset(); //  |||+ L-BFGS steps
+    t_opt_dir_vH2     ->reset(); //  || |- vH2
+    t_opt_dir_vH2v    ->reset(); //  || |- vH2v
+    t_opt_dir_vH      ->reset(); //  || |- vH
+    t_opt_dir_vHv     ->reset(); //  || |- vHv
+    t_opt_sub         ->reset(); //  ||+ Subspace
+    t_opt_sub_ham     ->reset(); //  | |- Hamiltonian Matrix
+    t_opt_sub_hsq     ->reset(); //  | |- Hamiltonian Matrix²
+    t_opt_sub_lu      ->reset(); //  | |- LU decomposition
+    t_opt_sub_eig     ->reset(); //  | |- Eigenvalue decomp
+    t_opt_sub_bfgs    ->reset(); //  | |+ L-BFGS steps
+    t_opt_sub_vH2     ->reset(); //  |  |- vH2
+    t_opt_sub_vH2v    ->reset(); //  |  |- vH2v
+    t_opt_sub_vH      ->reset(); //  |  |- vH
+    t_opt_sub_vHv     ->reset(); //  |  |- vHv
+    /* clang-format on */
+}
+
+
+void tools::common::profile::reset_for_run_algorithm() {
+    if(t_tot == nullptr) throw std::runtime_error("Profiling timers have not been initialized");
+    // Do not reset total time!
+    /* clang-format off */
+    tools::log->trace("Resetting profiling timers for new algorithm run");
     t_sim             ->reset(); // |+ Simulation
     t_con             ->reset(); //  |- Convergence checks
     t_eig             ->reset(); //  |- Eig. decomp.

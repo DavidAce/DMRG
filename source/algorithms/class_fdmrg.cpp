@@ -113,6 +113,7 @@ void class_fdmrg::run_preprocessing() {
 
 void class_fdmrg::run_algorithm() {
     if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
+    tools::common::profile::reset_for_run_algorithm();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::t_sim->tic();
     while(true) {
@@ -171,7 +172,7 @@ void class_fdmrg::single_fdmrg_step() {
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.simu_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 void class_fdmrg::check_convergence() {

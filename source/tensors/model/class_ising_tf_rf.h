@@ -42,6 +42,6 @@ class class_ising_tf_rf : public class_mpo_site {
     void randomize_hamiltonian() override;
     void set_averages(std::vector<TableMap> all_parameters, bool reverse = false) override;
 
-    void write_hamiltonian(h5pp::File &file, const std::string &model_prefix) const override;
+    void write_hamiltonian(h5pp::File &file, const std::string &table_path) const override;
     void read_hamiltonian(const h5pp::File &file, const std::string &model_prefix) override;
 };

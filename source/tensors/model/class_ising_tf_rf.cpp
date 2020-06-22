@@ -210,10 +210,21 @@ void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> latt
     set_parameters(lattice_parameters[get_position()]);
 }
 
-void class_ising_tf_rf::write_hamiltonian(h5pp::File &file, const std::string &model_prefix) const {
-    std::string ham_prefix = model_prefix + "/Hamiltonian";
-    if(not file.linkExists(ham_prefix)) file.createTable(h5tb_ising_tf_rf::h5_type, ham_prefix, "Transverse-field Ising");
-    file.appendTableEntries(h5tb, ham_prefix);
+void class_ising_tf_rf::write_hamiltonian(h5pp::File &file, const std::string &table_path) const {
+    if(not file.linkExists(table_path)) file.createTable(h5tb_ising_tf_rf::h5_type, table_path, "Transverse-field Ising");
+    file.appendTableEntries(h5tb, table_path);
+    // Position 0 is also responsible for writing attributes
+    if(position.value() != 0) return;
+
+    file.writeAttribute(h5tb.param.J1, "J1", table_path);
+    file.writeAttribute(h5tb.param.J2, "J2", table_path);
+    file.writeAttribute(h5tb.param.h_mean, "h_mean", table_path);
+    file.writeAttribute(h5tb.param.h_stdv, "h_stdv", table_path);
+    file.writeAttribute(h5tb.param.h_tran, "h_tran", table_path);
+    file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
+    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
+
+
 }
 
 void class_ising_tf_rf::read_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
