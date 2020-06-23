@@ -3,6 +3,7 @@
 #include <complex>
 #include <config/enums.h>
 #include <list>
+#include <memory>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 class class_env_ene;

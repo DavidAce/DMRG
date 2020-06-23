@@ -198,8 +198,6 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string              axis      = get_axis(sector);
-    int                      sign      = get_sign(sector);
-    int                      last_sign = 1;
     tools::log->info("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}...", sector, axis);
     auto spinor_up = internal::get_spinor(axis,1);
     auto spinor_dn = internal::get_spinor(axis,-1);

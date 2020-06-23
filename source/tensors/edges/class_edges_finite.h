@@ -4,7 +4,7 @@
 #include <list>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
-
+#include <memory>
 class class_env_ene;
 class class_env_var;
 
