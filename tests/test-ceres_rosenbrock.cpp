@@ -27,7 +27,6 @@ int main (){
     ceres::GradientProblemSolver::Options options;
     options.minimizer_progress_to_stdout = true;
     ceres::GradientProblemSolver::Summary summary;
-    ceres::Problem::Options::cost_function_ownership = ceres::Ownership::DO_NOT_TAKE_OWNERSHIP;
     ceres::Solve(options, problem, parameters, &summary);
 
     std::cout << summary.FullReport() << "\n";
