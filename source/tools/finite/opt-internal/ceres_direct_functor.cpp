@@ -52,9 +52,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     Hv_tensor.resize(dsizes);
     H2v_tensor.resize(dsizes);
     num_parameters = static_cast<int>(dsizes[0] * dsizes[1] * dsizes[2]);
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
-        num_parameters *= 2;
-    }
+    if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 }
 
 template<typename Scalar>
@@ -65,16 +63,12 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     double vv, log10var_per_site;
     double norm_func, norm_grad;
     int    vecSize = NumParameters();
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
-        vecSize = NumParameters() / 2;
-    }
+    if constexpr(std::is_same<Scalar, std::complex<double>>::value) { vecSize = NumParameters() / 2; }
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
     vv   = v.squaredNorm();
     norm = std::sqrt(vv);
 
-    if(!grad_double_double or grad_double_double == nullptr) {
-        tools::log->warn("Gradient ptr is null at step {}", counter);
-    }
+    if(!grad_double_double or grad_double_double == nullptr) { tools::log->warn("Gradient ptr is null at step {}", counter); }
     get_H2v(v);
     get_Hv(v);
 
@@ -109,18 +103,14 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     double epsilon                 = 1e-14;
     log10var_per_site              = std::log10(epsilon + variance_per_site);
 
-    if(fx != nullptr) {
-        fx[0] = log10var_per_site + norm_func;
-    }
+    if(fx != nullptr) { fx[0] = log10var_per_site + norm_func; }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
         auto vv_1  = std::pow(vv, -1);
         auto var_1 = (1.0 / (epsilon + var) / std::log(10));
         grad       = var_1 * vv_1 * (H2v - 2.0 * ene * Hv - (ene2 - 2.0 * ene * ene) * v);
-        if constexpr(std::is_same<Scalar, double>::value) {
-            grad *= 2.0;
-        }
+        if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
         grad += norm_grad * v;
     }
 
@@ -145,9 +135,9 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     t_vH2->tic();
-    auto                     log2chiL = std::log2(dsizes[1]);
-    auto                     log2chiR = std::log2(dsizes[2]);
-    auto                     log2spin = std::log2(dsizes[0]);
+    auto log2chiL = std::log2(dsizes[1]);
+    auto log2chiR = std::log2(dsizes[2]);
+    auto log2spin = std::log2(dsizes[0]);
 
     if(log2spin >= std::max(log2chiL, log2chiR)) {
         if(log2chiL > log2chiR) {
@@ -155,10 +145,10 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
             H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
-                                             .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-                                             .contract(env2R, Textra::idx({0, 3}, {0, 2}))
-                                             .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
-                                             .shuffle(Textra::array3{2, 0, 1});
+                                                       .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+                                                       .contract(env2R, Textra::idx({0, 3}, {0, 2}))
+                                                       .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
+                                                       .shuffle(Textra::array3{2, 0, 1});
         }
 
         else {
@@ -166,20 +156,20 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
             H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2R, Textra::idx({0}, {0}))
-                                             .contract(mpo, Textra::idx({0, 3}, {2, 1}))
-                                             .contract(env2L, Textra::idx({0, 3}, {0, 2}))
-                                             .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
-                                             .shuffle(Textra::array3{2, 1, 0});
+                                                       .contract(mpo, Textra::idx({0, 3}, {2, 1}))
+                                                       .contract(env2L, Textra::idx({0, 3}, {0, 2}))
+                                                       .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
+                                                       .shuffle(Textra::array3{2, 1, 0});
         }
 
     } else {
         if(print_path) tools::log->trace("get_H2v path: log2spin < std::max(log2chiL, log2chiR)");
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-        H2v_tensor.device(*Textra::omp::dev)     = theta.contract(env2L, Textra::idx({0}, {0}))
-                                         .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-                                         .contract(mpo, Textra::idx({4, 2}, {2, 0}))
-                                         .contract(env2R, Textra::idx({0, 2, 3}, {0, 2, 3}))
-                                         .shuffle(Textra::array3{1, 0, 2});
+        H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
+                                                   .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+                                                   .contract(mpo, Textra::idx({4, 2}, {2, 0}))
+                                                   .contract(env2R, Textra::idx({0, 2, 3}, {0, 2, 3}))
+                                                   .shuffle(Textra::array3{1, 0, 2});
     }
 
     t_vH2->toc();
@@ -195,18 +185,18 @@ void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
         if(print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
 
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-        Hv_tensor.device(*Textra::omp::dev)      = theta.contract(envL, Textra::idx({0}, {0}))
-                                        .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-                                        .contract(envR, Textra::idx({0, 2}, {0, 2}))
-                                        .shuffle(Textra::array3{1, 0, 2});
+        Hv_tensor.device(*Textra::omp::dev) = theta.contract(envL, Textra::idx({0}, {0}))
+                                                  .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+                                                  .contract(envR, Textra::idx({0, 2}, {0, 2}))
+                                                  .shuffle(Textra::array3{1, 0, 2});
     } else {
         if(print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
 
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
-        Hv_tensor.device(*Textra::omp::dev)      = theta.contract(envR, Textra::idx({0}, {0}))
-                                        .contract(mpo, Textra::idx({0, 3}, {2, 1}))
-                                        .contract(envL, Textra::idx({0, 2}, {0, 2}))
-                                        .shuffle(Textra::array3{1, 2, 0});
+        Hv_tensor.device(*Textra::omp::dev) = theta.contract(envR, Textra::idx({0}, {0}))
+                                                  .contract(mpo, Textra::idx({0, 3}, {2, 1}))
+                                                  .contract(envL, Textra::idx({0, 2}, {0, 2}))
+                                                  .shuffle(Textra::array3{1, 2, 0});
     }
 
     t_vH->toc();
