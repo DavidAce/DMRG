@@ -1,7 +1,7 @@
 //
 // Created by david on 2019-12-10.
 //
-#include "ceres_rosenbrock.h"
+#include "test-ceres_rosenbrock.h"
 #include <tensors/state/class_state_finite.h>
 
 
