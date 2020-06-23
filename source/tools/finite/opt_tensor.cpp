@@ -155,7 +155,6 @@ void opt_tensor::set_tensor_real(const double *data, const Eigen::DSizes<long, 3
 }
 
 bool opt_tensor::operator<(const opt_tensor &rhs) const {
-    bool overlap_eqvl = this->get_overlap() == rhs.get_overlap();
     if(this->get_overlap() < rhs.get_overlap()) return true;
     else if(this->get_overlap() > rhs.get_overlap())
         return false;

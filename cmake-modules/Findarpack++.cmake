@@ -75,7 +75,6 @@ if(TARGET arpack::arpack++)
 else()
     unset(ARPACKPP_COMPILES)
     unset(ARPACKPP_COMPILES CACHE)
-    unset(ARPACKPP_COMPILES PARENT_SCOPE)
 endif()
 
 include(FindPackageHandleStandardArgs)
