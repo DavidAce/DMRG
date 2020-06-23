@@ -7,8 +7,10 @@
 #include "general/nmspc_tensor_extra.h"
 #include <iomanip>
 #include <optional>
+#include <io/nmspc_logger.h>
 
 namespace svd {
+    inline std::shared_ptr<spdlog::logger> log;
     class solver {
         private:
         double SVDThreshold         = 1e-12;
@@ -33,7 +35,7 @@ namespace svd {
         }
 
         public:
-        solver()=default;
+        solver(size_t logLevel = 2);
         bool   use_lapacke          = false;
         double get_truncation_error();
         void setThreshold(double newThreshold);

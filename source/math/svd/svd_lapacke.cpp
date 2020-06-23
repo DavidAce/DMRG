@@ -16,12 +16,12 @@
 
 #include <Eigen/Core>
 #include <math/svd.h>
-
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>,svd::solver::MatrixType<Scalar> , long>
 svd::solver::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
     if(not rank_max.has_value()) rank_max = std::min(rows,cols);
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>> (mat_ptr,rows,cols);
+    svd::log->trace("Starting SVD with lapacke");
 
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
     if (cols <= 0)              throw std::runtime_error("SVD error: cols() == 0");
@@ -45,25 +45,32 @@ svd::solver::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::o
     VectorType<Scalar> work(1);
 
     if constexpr (std::is_same<Scalar,double>::value){
+        svd::log->trace("Querying dgesvd");
         info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), -1);
-        int lwork  = (int) work(0);
+        int lwork  = static_cast<int>(work(0));
+        svd::log->trace("Resizing work array");
         work.resize(lwork);
+        svd::log->trace("Running dgesvd");
         info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), lwork);
     }
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
-        int lrwork = (int) (5 * std::min(rows,cols));
+        int lrwork = static_cast<int>(5 * std::min(rows,cols));
         VectorType<double> rwork(lrwork);
         auto Ap      =  reinterpret_cast< lapack_complex_double *>(A.data());
         auto Up      =  reinterpret_cast< lapack_complex_double *>(U.data());
         auto VTp     =  reinterpret_cast< lapack_complex_double *>(VT.data());
         auto Wp_qry  =  reinterpret_cast< lapack_complex_double *>(work.data());
+        svd::log->trace("Querying zgesvd");
 
         info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp_qry, -1,rwork.data());
-        int lwork  = (int) std::real(work(0));
+        int lwork  = static_cast<int>(std::real(work(0)));
+        svd::log->trace("Resizing work array");
         work.resize(lwork);
         auto Wp  =  reinterpret_cast< lapack_complex_double *>(work.data());
+        svd::log->trace("Running zgesvd");
         info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
     }
+    svd::log->trace("Truncation singular values");
 
     long max_size    =  std::min(S.size(),rank_max.value());
     long rank        = (S.head(max_size).array() >= SVDThreshold).count();
@@ -88,6 +95,7 @@ svd::solver::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::o
                     << "  Lapacke info     = " << info << '\n';
         throw std::runtime_error("SVD lapacke error:  Erroneous results");
     }
+    svd::log->trace("SVD with lapacke finished successfully");
 
     return std::make_tuple(
             U.leftCols(rank),
