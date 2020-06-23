@@ -60,7 +60,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>,svd:
 svd::solver::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
     if (use_lapacke) return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
     if(not rank_max.has_value()) rank_max = std::min(rows,cols);
-
+    svd::log->trace("Starting SVD with Eigen");
     Eigen::Map<const MatrixType<Scalar>> mat (mat_ptr, rows,cols);
 
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
@@ -77,9 +77,11 @@ svd::solver::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
+    svd::log->trace("Running BDCSVD");
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long max_size =  std::min(SVD.singularValues().size(),rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
+    svd::log->trace("Truncation singular values");
     if(rank == SVD.singularValues().size()){
         truncation_error = 0;
     }else{
@@ -102,6 +104,7 @@ svd::solver::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<
                     << "Trying SVD with LAPACKE instead \n";
         return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
     }
+    svd::log->trace("SVD with Eigen finished successfully");
 
     return std::make_tuple(
             SVD.matrixU().leftCols(rank),
