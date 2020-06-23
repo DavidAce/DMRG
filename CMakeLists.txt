@@ -210,6 +210,8 @@ include(cmake-modules/SetupDependenciesConan.cmake)
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
+#target_link_libraries(project-settings INTERFACE /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/83b377af2053f637540e812f25798c29f53e4921/lib/libfmt.a)
+#
 target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${NATIVE_TARGETS}) # Order is important here
 
 

@@ -52,6 +52,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             // Copy the initial guess and operate directly on it
             optimized_tensor.set_tensor(initial_tensor.get_tensor());
             auto *                 functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
+
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct cplx");
             ceres::Solve(options, problem, optimized_tensor.get_vector_cplx_as_2xreal().data(), &summary);

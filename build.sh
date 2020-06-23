@@ -206,7 +206,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
             module load imkl
         fi
         if [[ "$download_method" =~ find ]] ; then
-                module load HDF5/1.10.5-GCCcore-8.3.0
+                module load HDF5
                 if [ "$enable_mkl" = "OFF" ] ; then
                     module load OpenBLAS
                 fi
