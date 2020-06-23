@@ -12,31 +12,45 @@ endif()
 
 
 
-if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+mark_as_advanced(ARPACK_DIRECTORY_HINTS)
+
+function(find_arpack_ng REQUIRED)
     unset(arpack_ng_LIBRARIES)
     unset(arpack_ng_INCLUDE_DIRS)
-    find_package(arpack-ng
-            # This fixes a find_package search bug
-            # where it would search for paths such as
-            # install/arpack-ng/lib/cmake/arpack-ng-config.cmake/arpack-ng-config.cmake
-            PATH_SUFFIXES arpack-ng/lib/cmake arpack-ng/lib64/cmake
-            NO_CMAKE_PACKAGE_REGISTRY)
-    if(NOT arpack_ng_LIBRARIES)
-        # The bundled arpack-ng-config.cmake fails silently on lib64 systems
-        unset(arpack_ng_LIBRARIES)
-        unset(arpack_ng_LIBRARIES CACHE)
-        find_library(arpack_ng_LIBRARIES
-                arpack
-                HINTS
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib64
-                ${CMAKE_INSTALL_PREFIX}
-                ${CMAKE_INSTALL_PREFIX}/lib
-                ${CMAKE_INSTALL_PREFIX}/lib64
-                NO_CMAKE_PACKAGE_REGISTRY
-                )
+    list(APPEND ARPACK_DIRECTORY_HINTS
+            ${CMAKE_INSTALL_PREFIX}/arpack-ng
+            ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib
+            ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib64
+            ${CMAKE_INSTALL_PREFIX}
+            ${CMAKE_INSTALL_PREFIX}/lib
+            ${CMAKE_INSTALL_PREFIX}/lib64
+            )
+    find_library(arpack_ng_LIBRARIES
+            arpack
+            HINTS ${ARPACK_DIRECTORY_HINTS}
+            ${REQUIRED}
+            NO_CMAKE_PACKAGE_REGISTRY
+            )
+    find_path(arpack_ng_INCLUDE_DIRS
+            arpack/debug.h
+            HINTS ${ARPACK_DIRECTORY_HINTS}
+            PATH_SUFFIXES include
+            NO_CMAKE_PACKAGE_REGISTRY
+            )
+    if(arpack_ng_LIBRARIES)
+        set(arpack_ng_LIBRARIES PARENT_SCOPE)
     endif()
+    if(arpack_ng_INCLUDE_DIRS)
+        set(arpack_ng_INCLUDE_DIRS PARENT_SCOPE)
+    endif()
+endfunction()
+
+
+
+
+
+if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+    find_arpack_ng("")
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Found arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
@@ -48,10 +62,7 @@ endif()
 
 if (NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
     message(STATUS "Looking for arpack-ng in system")
-    find_library(arpack_ng_LIBRARIES
-            NAMES arpack
-            REQUIRED
-            )
+    find_arpack_ng(REQUIRED)
     if(NOT arpack_ng_LIBRARIES)
         message(STATUS "Looking for arpack-ng in system - not found")
     else()
@@ -92,34 +103,7 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     mark_as_advanced(ARPACK_CMAKE_OPTIONS)
     mark_as_advanced(ARPACK_FLAGS)
     build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}" "${ARPACK_CMAKE_OPTIONS}")
-
-    find_package(arpack-ng 3.7.0
-            # This fixes a find_package search bug
-            # where it would search for paths such as
-            # install/arpack-ng/lib/cmake/arpack-ng-config.cmake/arpack-ng-config.cmake
-            PATH_SUFFIXES
-            arpack-ng/lib/cmake
-            arpack-ng/lib64/cmake
-            lib/cmake
-            lib64/cmake
-            REQUIRED
-            NO_CMAKE_PACKAGE_REGISTRY)
-    if(NOT arpack_ng_LIBRARIES)
-        # The bundled arpack-ng-config.cmake fails silently on lib64 systems
-        unset(arpack_ng_LIBRARIES)
-        unset(arpack_ng_LIBRARIES CACHE)
-        find_library(arpack_ng_LIBRARIES
-                arpack
-                HINTS
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib64
-                ${CMAKE_INSTALL_PREFIX}
-                ${CMAKE_INSTALL_PREFIX}/lib
-                ${CMAKE_INSTALL_PREFIX}/lib64
-                NO_CMAKE_PACKAGE_REGISTRY
-                )
-    endif()
+    find_arpack_ng(REQUIRED)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Successfully installed arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)

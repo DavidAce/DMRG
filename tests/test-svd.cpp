@@ -1,5 +1,4 @@
 #define CATCH_CONFIG_MAIN
-
 #include "catch.hpp"
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
