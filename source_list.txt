@@ -68,7 +68,6 @@ source/tools/finite/opt_tensor.cpp
 source/tools/finite/opt-internal/ceres_base.cpp
 source/tools/finite/opt-internal/ceres_direct.cpp
 source/tools/finite/opt-internal/ceres_direct_functor.cpp
-source/tools/finite/opt-internal/ceres_rosenbrock.cpp
 source/tools/finite/opt-internal/ceres_subspace.cpp
 source/tools/finite/opt-internal/ceres_subspace_diag_full.cpp
 source/tools/finite/opt-internal/ceres_subspace_diag_part.cpp
@@ -156,7 +155,6 @@ source/tools/finite/multisite.h
 source/tools/finite/ops.h
 source/tools/finite/opt_tensor.h
 source/tools/finite/opt-internal/ceres_direct_functor.h
-source/tools/finite/opt-internal/ceres_rosenbrock.h
 source/tools/finite/opt-internal/ceres_subspace_functor.h
 source/tools/finite/opt-internal/enum_classes.h
 source/tools/finite/opt.h
