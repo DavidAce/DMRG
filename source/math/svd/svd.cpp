@@ -29,6 +29,13 @@
 #include <Eigen/SVD>
 #include <math/svd.h>
 
+svd::solver::solver(size_t logLevel) {
+    if(not svd::log){
+        Logger::setLogger(svd::log,"svd",logLevel);
+    }
+}
+
+
 double svd::solver::get_truncation_error(){
     return truncation_error;
 }

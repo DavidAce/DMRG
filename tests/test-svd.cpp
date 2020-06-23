@@ -7,7 +7,7 @@
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Test all svd decompositions") {
         using reciter = h5pp::fs::recursive_directory_iterator;
-        svd::solver svd;
+        svd::solver svd(0);
         for(auto &item : reciter(std::string(TEST_MATRIX_DIR))) {
             if(item.path().filename().string().find("svdmatrix") == std::string::npos) continue;
             if(item.path().extension() != ".h5") continue;
