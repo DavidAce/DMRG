@@ -304,21 +304,6 @@ if [ -z "$dry_run" ] ;then
             exit "$exit_code"
     fi
 
-    if [ "$enable_tests" = "ON" ] ;then
-        if [[ "$target" == *"test-"* ]]; then
-            ctest --build-and-test ../../ tests --build-generator $generator --build-config $build_type --verbose  --build-target $target -R $target
-        else
-            ctest --build-and-test ../../ tests --build-generator $generator --build-config $build_type --verbose  --output-on-failure
-        fi
-    fi
-
-    exit_code=$?
-    if [ "$exit_code" != "0" ]; then
-            echo "Exit code: $exit_code"
-            exit "$exit_code"
-    fi
-
-
     cmake --build . --target $target --parallel $make_threads
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
@@ -329,6 +314,22 @@ if [ -z "$dry_run" ] ;then
 #            cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
+
+
+    if [ "$enable_tests" = "ON" ] ;then
+        if [[ "$target" == *"test-"* ]]; then
+            ctest --build-config $build_type --verbose  --build-target $target -R $target
+        else
+            ctest --build-config $build_type --verbose  --output-on-failure
+        fi
+    fi
+
+    exit_code=$?
+    if [ "$exit_code" != "0" ]; then
+            echo "Exit code: $exit_code"
+            exit "$exit_code"
+    fi
+
 fi
 
 
