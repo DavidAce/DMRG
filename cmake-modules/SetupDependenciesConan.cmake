@@ -117,10 +117,20 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
             target_link_libraries         (CONAN_PKG::Eigen3 INTERFACE  CONAN_PKG::openblas)
         endif()
-        # Use this flag if Ceres is giving you trouble!
-        # For some reason it starts mixing aligned and hand-made aligned malloc and freeing them willy nilly
-        # This flag forces its hand and avoids a segfault in some cases.
-        #    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
+
+
+
+            message(STATUS "Applying special Eigen compile definitions")
+            # AVX aligns 32 bytes (AVX512 aligns 64 bytes).
+            # When running on Tetralith, with march=native, there can be alignment mismatch
+            # in ceres which results in a segfault on free memory.
+            # Something like "double free or corruption ..."
+            #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
+            cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+            if(${_host_name} MATCHES "etralith|riolith")
+                #target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
+                target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
+            endif()
     endif()
 
     if(TARGET openmp::openmp)
