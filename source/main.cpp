@@ -42,6 +42,7 @@ Usage                       : DMRG++ [-option <value>].
 -h                          : Help. Shows this text.
 -b <positive integer>       : Integer whose bitfield sets the initial product state. Negative is unused (default -1)
 -c <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
+-i <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
 -s <seed>                   : Positive number that seeds the random number generator (default = 1)
 -t <num threads>            : Number of OpenMP threads
 -o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
@@ -145,14 +146,15 @@ int main(int argc, char *argv[]) {
     long        num_threads = -1;
 
     while(true) {
-        char opt = static_cast<char>(getopt(argc, argv, "hb:c:s:t:o:vx"));
+        char opt = static_cast<char>(getopt(argc, argv, "hb:c:i:s:t:o:vx"));
         if(opt == EOF) break;
         if(optarg == nullptr) tools::log->info("Parsing input argument: -{}", opt);
         else
             tools::log->info("Parsing input argument: -{} {}", opt, optarg);
         switch(opt) {
             case 'b': bitfield = std::strtol(optarg, nullptr, 10); continue;
-            case 'c': config = std::string(optarg); continue;
+            case 'c':
+            case 'i': config = std::string(optarg); continue;
             case 's': seed = std::strtol(optarg, nullptr, 10); continue;
             case 't': num_threads = std::strtol(optarg, nullptr, 10); continue;
             case 'o': output = std::string(optarg); continue;
