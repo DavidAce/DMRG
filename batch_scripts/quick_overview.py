@@ -9,6 +9,7 @@ import subprocess
 import colored
 from colored import stylize
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
+parser.add_argument('-a', '--algorithms',action='append', type=str, help='Consider these algorithms', default=[])
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
 parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
@@ -47,6 +48,12 @@ if args.save:
     file = open(args.outdir + '/'+ args.filename + args.suffix, 'w')
     file.write(git_rev + '\n')
 
+if not args.algorithms:
+    args.algorithms = ['xDMRG']
+
+if args.algorithms:
+    print("Checking algorithms: ", args.algorithms)
+
 for dirName, subdirList, fileList in os.walk(args.directory):
     if subdirList:
         subdirList.sort()
@@ -57,6 +64,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
 
     fileList.sort()
+    algorithm = []
+    state     = []
     chainlen  = []
     seed      = []
     iter      = []
@@ -76,7 +85,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
+        header = "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Algorithm", "State" ,"Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
         print(header)
@@ -95,98 +104,107 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         # Collect the number of states present.
         state_keys = []
         try:
-            if 'xDMRG' in h5file:
-                state_keys = [str(x) for x in h5file['xDMRG'].keys() if 'state' in x]
+            algo_keys = [str(x) for x in args.algorithms if x in h5file]
         except Exception as err:
             print("Could not read keys in h5file. Reason:", err)
-        entry = []
-        ententrp_zero = []
-        state_keys.sort()
-        for state_num,state_key in enumerate(state_keys):
-            if len(args.state) > 0 and not args.state in state_key:
-                continue
+        for algo_key in algo_keys:
             try:
-                algorithm_prefix = 'xDMRG'
-                state_prefix = algorithm_prefix + '/' + state_key
-
-                finished.append(h5file[algorithm_prefix].attrs[state_prefix])
-                if (args.finished and finished[-1] == 0):
+                if algo_key in h5file:
+                    state_keys = [str(x) for x in h5file[algo_key].keys() if 'state' in x]
+            except Exception as err:
+                print("Could not read keys in h5file. Reason:", err)
+            entry = []
+            ententrp_zero = []
+            state_keys.sort()
+            for state_num,state_key in enumerate(state_keys):
+                if len(args.state) > 0 and not args.state in state_key:
                     continue
-                msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
-                status_last_entry = h5file[state_prefix].get('status')[-1]
-                realization_name = h5path.replace('.h5', '')
-                chainlen.append(msrmnt_last_entry['length'])
-                seed.append([int(x) for x in regex.findall(realization_name)][-1])
-                iter.append(status_last_entry['iter'])
-                step.append(status_last_entry['step'])
-                energy.append(msrmnt_last_entry['energy_per_site'])
-                variance.append(msrmnt_last_entry['energy_variance_per_site'])
-                variancel.append(status_last_entry['lowest_recorded_variance_per_site'])
-                ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
-                walltime.append(status_last_entry['wall_time'])
-                resets.append(status_last_entry['num_resets'])
-                got_stuck.append(status_last_entry['algorithm_has_got_stuck'])
-                saturated.append(status_last_entry['algorithm_has_saturated'])
-                converged.append(status_last_entry['algorithm_has_converged'])
-                succeeded.append(status_last_entry['algorithm_has_succeeded'])
+                try:
+                    algorithm_prefix = algo_key
+                    state_prefix = algorithm_prefix + '/' + state_key
 
-                style = ''
-                if finished[-1] == 1:
-                    if variance[-1] < 1e-12 or succeeded[-1] == 1:
-                        style = colored.bg("green_4")
-                    elif variance[-1] < 1e-10:
-                        style = colored.bg("dark_green_sea")
-                    elif variance[-1] < 1e-8:
-                        style = colored.bg("dark_orange")
-                    else:
-                        style = colored.bg("red_3b")
-                elif finished[-1] == 0 and got_stuck[-1] == 1:
-                    style = colored.fg("red_3b")
-                    if variance[-1] < 1e-10:
-                        style = colored.fg("dark_green_sea")
-                    else:
-                        style = colored.fg("dark_orange")
-                elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
+                    finished.append(h5file[algorithm_prefix].attrs[state_prefix])
+                    if (args.finished and finished[-1] == 0):
+                        continue
+                    msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
+                    status_last_entry = h5file[state_prefix].get('status')[-1]
+                    realization_name = h5path.replace('.h5', '')
+                    algorithm.append(algo_key)
+                    state.append(state_key)
+                    chainlen.append(msrmnt_last_entry['length'])
+                    seed.append([int(x) for x in regex.findall(realization_name)][-1])
+                    iter.append(status_last_entry['iter'])
+                    step.append(status_last_entry['step'])
+                    energy.append(msrmnt_last_entry['energy_per_site'])
+                    variance.append(msrmnt_last_entry['energy_variance_per_site'])
+                    variancel.append(status_last_entry['lowest_recorded_variance_per_site'])
+                    ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
+                    walltime.append(status_last_entry['wall_time'])
+                    resets.append(status_last_entry['num_resets'])
+                    got_stuck.append(status_last_entry['algorithm_has_got_stuck'])
+                    saturated.append(status_last_entry['algorithm_has_saturated'])
+                    converged.append(status_last_entry['algorithm_has_converged'])
+                    succeeded.append(status_last_entry['algorithm_has_succeeded'])
+
                     style = ''
-                elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
-                    style = colored.fg("green_4")
+                    if finished[-1] == 1:
+                        if variance[-1] < 1e-12 or succeeded[-1] == 1:
+                            style = colored.bg("green_4")
+                        elif variance[-1] < 1e-10:
+                            style = colored.bg("dark_green_sea")
+                        elif variance[-1] < 1e-8:
+                            style = colored.bg("dark_orange")
+                        else:
+                            style = colored.bg("red_3b")
+                    elif finished[-1] == 0 and got_stuck[-1] == 1:
+                        style = colored.fg("red_3b")
+                        if variance[-1] < 1e-10:
+                            style = colored.fg("dark_green_sea")
+                        else:
+                            style = colored.fg("dark_orange")
+                    elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
+                        style = ''
+                    elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
+                        style = colored.fg("green_4")
 
-                if not args.summary:
-                    entry.append(
-                        "{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
-                            chainlen[-1],
-                            seed[-1],
-                            iter[-1],
-                            step[-1],
-                            energy[-1],
-                            np.log10(variance[-1]),
-                            np.log10(variancel[-1]),
-                            ententrp[-1],
-                            walltime[-1] / 60,
-                            resets[-1],
-                            got_stuck[-1],
-                            saturated[-1],
-                            converged[-1],
-                            succeeded[-1],
-                            finished[-1]))
-                    print(stylize(entry[-1], style))
+                    if not args.summary:
+                        entry.append(
+                            "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                                algorithm[-1],
+                                state[-1],
+                                chainlen[-1],
+                                seed[-1],
+                                iter[-1],
+                                step[-1],
+                                energy[-1],
+                                np.log10(variance[-1]),
+                                np.log10(variancel[-1]),
+                                ententrp[-1],
+                                walltime[-1] / 60,
+                                resets[-1],
+                                got_stuck[-1],
+                                saturated[-1],
+                                converged[-1],
+                                succeeded[-1],
+                                finished[-1]))
+                        print(stylize(entry[-1], style))
 
-                    if args.save:
-                        file.write(entry[-1] + '\n')
+                        if args.save:
+                            file.write(entry[-1] + '\n')
 
-            except Exception as er:
-                print("Could not read dataset. Reason: ", er)
-                continue
+                except Exception as er:
+                    print("Could not read dataset. Reason: ", er)
+                    continue
         h5file.close()
     if not fileList:
         continue
     if len(chainlen) == 0:
         continue
 
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
+    header = "{:<23} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("","Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    entry = "{:<23} {:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format( "",
         np.nanmax(chainlen),
         len(seed),
         np.nanmean(iter),
