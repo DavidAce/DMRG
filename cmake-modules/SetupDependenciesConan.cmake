@@ -127,10 +127,12 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             # Something like "double free or corruption ..."
             #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
             cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-            if(${_host_name} MATCHES "etralith|riolith")
+            if(_host_name MATCHES "tetralith|triolith")
+                message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
                 #target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
-                target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
+                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
             endif()
+
     endif()
 
     if(TARGET openmp::openmp)
