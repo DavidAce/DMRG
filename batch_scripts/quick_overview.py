@@ -131,10 +131,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 succeeded.append(status_last_entry['algorithm_has_succeeded'])
 
                 style = ''
-                if finished[-1] == 1 and succeeded[-1] == 1:
-                    style = colored.bg("green_4")
-                elif finished[-1] == 1:
-                    if variance[-1] < 1e-10:
+                if finished[-1] == 1:
+                    if variance[-1] < 1e-12 or succeeded[-1] == 1:
+                        style = colored.bg("green_4")
+                    elif variance[-1] < 1e-10:
                         style = colored.bg("dark_green_sea")
                     elif variance[-1] < 1e-8:
                         style = colored.bg("dark_orange")
