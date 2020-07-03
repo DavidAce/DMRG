@@ -689,10 +689,10 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Entanglement entropies Sₑ          = {}", tools::finite::measure::entanglement_entropies(*tensors.state));
     tools::log->info("Entanglement entropiy Sₑ (mid)     = {}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     tools::log->info("Truncation Errors                  = {}", tensors.state->get_truncation_errors());
-    tools::log->info("Simulation converged               = {:<}", status.algorithm_has_converged);
-    tools::log->info("Simulation saturated               = {:<}", status.algorithm_has_saturated);
-    tools::log->info("Simulation succeeded               = {:<}", status.algorithm_has_succeeded);
-    tools::log->info("Simulation got stuck               = {:<}", status.algorithm_has_got_stuck);
+    tools::log->info("Algorithm has converged            = {:<}", status.algorithm_has_converged);
+    tools::log->info("Algorithm has saturated            = {:<}", status.algorithm_has_saturated);
+    tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
+    tools::log->info("Algorithm has got stuck            = {:<}", status.algorithm_has_got_stuck);
     tools::log->info("σ²                                 = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged,
                      status.variance_mpo_has_saturated);
     tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,

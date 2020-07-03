@@ -78,7 +78,7 @@ void class_xdmrg::run_default_task_list() {
 
     // Insert requested number of excited states
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
-        default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE);
+        default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_FROM_CURRENT_STATE);
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
