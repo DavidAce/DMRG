@@ -54,41 +54,6 @@ mkdir -p $outdir/$simbase
 
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
-#
-#cleanup() {
-#    sleep 5
-#    echo "Starting cleanup"
-#    # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
-#    if [ "$num_cols" -eq 2 ]; then
-#        cat $simfile | cut -d " " -f2  | while read -r seed ; do
-#            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
-#            if [ -z "$target" ]; then
-#                continue
-#            fi
-#            rm $target
-#        done
-#    elif [ "$num_cols" -eq 3 ]; then
-#        cat $simfile | cut -d " " -f2,3  | while read -r seed ; do
-#            seed1=$(cut -d " " -f1 $seed)
-#            seed2=$(cut -d " " -f2 $seed)
-#            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
-#            if [ -z "$target" ]; then
-#                continue
-#            fi
-#            rm $target
-#        done
-#    else
-#        echo "Case not implemented"
-#    fi
-#
-#
-#}
-#
-#trap cleanup EXIT
-
-
-
-
 if [ "$num_cols" -eq 2 ]; then
     cat $simfile | parallel --max-procs $SLURM_NTASKS --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -c {1} -s {2} &> $outdir/${simbase}/{1/.}_{2}.out"
 elif [ "$num_cols" -eq 3 ]; then
