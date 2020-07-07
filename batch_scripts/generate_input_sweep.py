@@ -30,7 +30,7 @@ for num_L in sites:
                 input_filename = location + '/' + basename + '_L'+ str(num_L) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '.cfg'
                 settings = {
                     "output::output_filepath"            : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5',
-                    "threading::num_threads"             : str(1),
+                    "threading::num_threads"             : "1",
                     "model::model_size"                  : str(num_L),
                     "model::ising_sdual::J_mean"         : "{:.2f}".format(J_mean[num_j]),
                     "model::ising_sdual::h_mean"         : "{:.2f}".format(h_mean[num_h]),
@@ -38,7 +38,7 @@ for num_L in sites:
                     "model::ising_sdual::J_stdv"         : "1.0",
                     "model::ising_sdual::h_stdv"         : "1.0",
                     "xdmrg::chi_lim_max"                 : "512",
-                    "xdmrg::max_states "                 : str(2),
+                    "xdmrg::max_states "                 : "4",
                 }
                 num_total = num_total + 1
                 generate_input_file(settings, input_filename, template_filename)
