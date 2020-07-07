@@ -78,7 +78,12 @@ void class_xdmrg::run_default_task_list() {
 
     // Insert requested number of excited states
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
-        default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_FROM_CURRENT_STATE);
+        switch (settings::strategy::secondary_states){
+            case StateType::RANDOM_PRODUCT_STATE:  default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
+            case StateType::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
+            case StateType::PRODUCT_STATE:  throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateType::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+        }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
@@ -97,7 +102,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_PRODUCT_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOMIZE_GIVEN_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOMIZE_PREVIOUS_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN:
                 randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
                 break;
@@ -111,7 +116,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
                 //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
             case xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_PRODUCT_STATE); break;
             case xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOMIZE_GIVEN_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOMIZE_PREVIOUS_STATE); break;
             case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:

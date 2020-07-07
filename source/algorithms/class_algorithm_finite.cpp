@@ -203,7 +203,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
     if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
-        randomize_state(ResetReason::CHI_UPDATE, StateType::RANDOMIZE_GIVEN_STATE, std::nullopt, status.chi_lim);
+        randomize_state(ResetReason::CHI_UPDATE, StateType::RANDOMIZE_PREVIOUS_STATE, std::nullopt, status.chi_lim);
 
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
     status.chi_lim *= 2;
@@ -232,14 +232,14 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     }
     if(not sector) sector = settings::strategy::target_sector;
     if(not chi_lim) {
-        if(state_type == StateType::RANDOMIZE_GIVEN_STATE)
+        if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
         else
             chi_lim = cfg_chi_lim_init();
     }
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
-    if(not svd_threshold and state_type == StateType::RANDOMIZE_GIVEN_STATE) svd_threshold = 1e-4;
+    if(not svd_threshold and state_type == StateType::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
 
     tensors.randomize_state(state_type, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, svd_threshold);
     while(tensors.state->get_position() != 0 and tensors.state->get_direction() != 1) move_center_point();

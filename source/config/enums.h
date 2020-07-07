@@ -15,8 +15,7 @@ enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
 enum class StateType {
     RANDOM_PRODUCT_STATE,
-    RANDOM_ENTANGLED_STATE,
-    RANDOMIZE_GIVEN_STATE,
+    RANDOM_ENTANGLED_STATE, RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE
 };
 
@@ -58,7 +57,7 @@ enum class xdmrg_task {
     INIT_DEFAULT,
     NEXT_RANDOMIZE_INTO_PRODUCT_STATE,
     NEXT_RANDOMIZE_INTO_ENTANGLED_STATE,
-    NEXT_RANDOMIZE_FROM_CURRENT_STATE,
+    NEXT_RANDOMIZE_PREVIOUS_STATE,
     NEXT_RANDOMIZE_INTO_STATE_IN_WIN,
     FIND_ENERGY_RANGE,
     FIND_EXCITED_STATE,
@@ -127,7 +126,7 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, StateType>) {
         if(item == StateType::RANDOM_PRODUCT_STATE)     return "RANDOM_PRODUCT_STATE";
         if(item == StateType::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
-        if(item == StateType::RANDOMIZE_GIVEN_STATE)    return "RANDOMIZE_GIVEN_STATE";
+        if(item == StateType::RANDOMIZE_PREVIOUS_STATE)    return "RANDOMIZE_GIVEN_STATE";
         if(item == StateType::PRODUCT_STATE)            return "PRODUCT_STATE";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
@@ -214,7 +213,7 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StateType>) {
         if(item == "RANDOM_PRODUCT_STATE")     return StateType::RANDOM_PRODUCT_STATE;
         if(item == "RANDOM_ENTANGLED_STATE")   return StateType::RANDOM_ENTANGLED_STATE;
-        if(item == "RANDOMIZE_GIVEN_STATE")    return StateType::RANDOMIZE_GIVEN_STATE;
+        if(item == "RANDOMIZE_GIVEN_STATE")    return StateType::RANDOMIZE_PREVIOUS_STATE;
         if(item == "PRODUCT_STATE")            return StateType::PRODUCT_STATE;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
