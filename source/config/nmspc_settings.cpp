@@ -69,6 +69,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::multisite_max_sites"                , strategy::multisite_max_sites);
     dmrg_config.load_parameter("strategy::multisite_move"                     , strategy::multisite_move);
     dmrg_config.load_parameter("strategy::target_sector"                      , strategy::target_sector);
+    dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
+    dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);
     dmrg_config.load_parameter("precision::eig_max_iter"                      , precision::eig_max_iter);
     dmrg_config.load_parameter("precision::eig_threshold"                     , precision::eig_threshold);
     dmrg_config.load_parameter("precision::eig_max_ncv"                       , precision::eig_max_ncv);
