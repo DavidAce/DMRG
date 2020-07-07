@@ -180,7 +180,7 @@ void tools::finite::mps::randomize_state (class_state_finite & state, const std:
     switch(state_type){
         case StateType::RANDOM_PRODUCT_STATE: return internal::random_product_state(state,sector,use_eigenspinors,bitfield);
         case StateType::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state,sector,chi_lim, use_eigenspinors, real);
-        case StateType::RANDOMIZE_GIVEN_STATE: return internal::randomize_given_state(state);
+        case StateType::RANDOMIZE_PREVIOUS_STATE: return internal::randomize_given_state(state);
         case StateType::PRODUCT_STATE: return internal::set_product_state(state,sector);
     }
 }
