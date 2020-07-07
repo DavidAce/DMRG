@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     signal(SIGHUP, signal_callback_handler);
     signal(SIGQUIT, signal_callback_handler);
 
-    // Make sure to move back the file from temp location
+    // Make sure to move the file back from temp location
     std::atexit(clean_up);
     std::at_quick_exit(clean_up);
 
