@@ -19,7 +19,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel on each node per job (default = 32)
 -N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
--p <partition>                      : Partition name (default = all)
+-p <partition>                      : Partition name (default = dedicated)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
 -s <sims per sbatch>                : Number of tasks/realizations per invocation of sbatch  (default = 10)
 -S <start seed>                     : Starting seed, if you don't want to start from 0.
