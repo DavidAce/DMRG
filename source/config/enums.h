@@ -126,7 +126,7 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, StateType>) {
         if(item == StateType::RANDOM_PRODUCT_STATE)     return "RANDOM_PRODUCT_STATE";
         if(item == StateType::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
-        if(item == StateType::RANDOMIZE_PREVIOUS_STATE)    return "RANDOMIZE_GIVEN_STATE";
+        if(item == StateType::RANDOMIZE_PREVIOUS_STATE) return "RANDOMIZE_PREVIOUS_STATE";
         if(item == StateType::PRODUCT_STATE)            return "PRODUCT_STATE";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
@@ -213,7 +213,7 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StateType>) {
         if(item == "RANDOM_PRODUCT_STATE")     return StateType::RANDOM_PRODUCT_STATE;
         if(item == "RANDOM_ENTANGLED_STATE")   return StateType::RANDOM_ENTANGLED_STATE;
-        if(item == "RANDOMIZE_GIVEN_STATE")    return StateType::RANDOMIZE_PREVIOUS_STATE;
+        if(item == "RANDOMIZE_PREVIOUS_STATE") return StateType::RANDOMIZE_PREVIOUS_STATE;
         if(item == "PRODUCT_STATE")            return StateType::PRODUCT_STATE;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
