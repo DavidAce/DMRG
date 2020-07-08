@@ -82,7 +82,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
             target_link_libraries         (Eigen3::Eigen INTERFACE blas::blas)
         endif()
 
-        # AVX aligns 32 bytes (AVX512 aligns 64 bytes).
+        # AVX2 aligns 32 bytes (AVX512 aligns 64 bytes).
         # When running on Tetralith, with march=native, there can be alignment mismatch
         # in ceres which results in a segfault on free memory.
         # Something like "double free or corruption ..."
@@ -90,8 +90,12 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
         cmake_host_system_information(RESULT _host_name  QUERY HOSTNAME)
         if(_host_name MATCHES "tetralith|triolith")
             message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
-            #target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
             target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
+        else()
+            message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=32)
         endif()
 
     endif()

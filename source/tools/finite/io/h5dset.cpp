@@ -29,7 +29,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
 void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                           const class_state_finite &state) {
     if(storage_level == StorageLevel::NONE) return;
-
+    if(h5ppFile.getCompressionLevel() != 4) throw std::runtime_error(fmt::format("Detected wrong compression level: {}",h5ppFile.getCompressionLevel() ) );
     /*! Writes down midchain and/or all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. */
     tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();

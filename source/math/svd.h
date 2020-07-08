@@ -96,6 +96,15 @@ namespace svd {
             if (dL*chiL * dR*chiR != tensor.size())
                 throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
+            std::cout << "dL      : " << dL    << std::endl;
+            std::cout << "chiL    : " << chiL  << std::endl;
+            std::cout << "dR      : " << dR    << std::endl;
+            std::cout << "chiR    : " << chiR  << std::endl;
+            std::cout << "rank    : " << rank  << std::endl;
+            std::cout << "rank_max: " << rank_max.value()  << std::endl;
+            std::cout << "U       : \n" << U << std::endl;
+            std::cout << "S       : \n" << S << std::endl;
+            std::cout << "V       : \n" << V << std::endl;
             return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
                                    Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
                                    Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
