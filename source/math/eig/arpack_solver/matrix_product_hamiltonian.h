@@ -3,18 +3,6 @@
 //
 
 #pragma once
-//#ifdef EIGEN_USE_BLAS
-//#define EIGEN_USE_BLAS_SUSPEND
-//#undef EIGEN_USE_BLAS
-//#endif
-//#ifdef EIGEN_USE_MKL_ALL
-//#define EIGEN_USE_MKL_ALL_SUSPEND
-//#undef EIGEN_USE_MKL_ALL
-//#endif
-//#ifdef EIGEN_USE_LAPACKE_STRICT
-//#define EIGEN_USE_LAPACKE_STRICT_SUSPEND
-//#undef EIGEN_USE_LAPACKE_STRICT
-//#endif
 #include "math/eig/enums.h"
 #include <array>
 #include <general/class_tic_toc.h>

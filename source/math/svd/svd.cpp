@@ -3,27 +3,8 @@
 //
 
 
-
-//#define EIGEN_USE_MKL_ALL
-//#define EIGEN_USE_BLAS
-//#define EIGEN_USE_LAPACKE_STRICT
-
-//#define EIGEN_DONT_VECTORIZE
-//#define EIGEN_DONT_ALIGN_STATICALLY
-
-//#define EIGEN_MAX_ALIGN_BYTES 0
-//#define EIGEN_ENABLE_AVX512
-//#define EIGEN_UNALIGNED_VECTORIZE 0
-//#define EIGEN_DONT_ALIGN
-//#define EIGEN_MALLOC_ALREADY_ALIGNED 0
-
-
 #include <complex.h>
 #undef I
-
-//For svd debugging
-//#include <h5pp/h5pp.h>
-//#include <config/nmspc_settings.h>
 
 #include <Eigen/QR>
 #include <Eigen/SVD>
