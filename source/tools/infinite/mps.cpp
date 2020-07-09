@@ -11,8 +11,8 @@
 using Scalar = std::complex<double>;
 
 
-void tools::infinite::mps::random_product_state(const class_state_infinite &state, [[maybe_unused]] const std::string &sector, [[maybe_unused]] long bitfield, bool use_eigenspinors) {
-    throw std::runtime_error("You need to implement set random state for infinite state");
+void tools::infinite::mps::random_product_state([[maybe_unused]] const class_state_infinite &state, [[maybe_unused]] const std::string &sector, [[maybe_unused]] long bitfield,  [[maybe_unused]] bool use_eigenspinors) {
+    throw std::runtime_error("random product state for infinite state not implemented yet");
 }
 
 
