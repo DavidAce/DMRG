@@ -14,12 +14,13 @@
 #endif
 
 namespace Logger{
-    extern void enableTimeStamp(std::shared_ptr<spdlog::logger> &log);
-    extern void disableTimeStamp(std::shared_ptr<spdlog::logger> &log);
-    extern void setLogLevel(std::shared_ptr<spdlog::logger> &log, size_t levelZeroToSix);
+    extern void enableTimestamp(std::shared_ptr<spdlog::logger> &log);
+    extern void disableTimestamp(std::shared_ptr<spdlog::logger> &log);
     extern size_t getLogLevel(std::shared_ptr<spdlog::logger> &log);
-    extern void setLogger(std::shared_ptr<spdlog::logger> &log, const std::string & name, size_t levelZeroToSix = 2, bool timestamp = true);
-    extern std::shared_ptr<spdlog::logger>  setLogger( const std::string & name, size_t levelZeroToSix = 2, bool timestamp = true);
-    extern std::shared_ptr<spdlog::logger>  getLogger( const std::string & name );
+    template<typename levelType>
+    extern void setLogLevel(std::shared_ptr<spdlog::logger> &log, levelType levelZeroToFive);
+    extern void setLogger(std::shared_ptr<spdlog::logger> &log,const std::string &name, std::optional<size_t> levelZeroToFive = std::nullopt, std::optional<bool> timestamp = std::nullopt);
+    extern std::shared_ptr<spdlog::logger>  setLogger(const std::string &name, std::optional<size_t> levelZeroToFive = std::nullopt, std::optional<bool> timestamp = std::nullopt);
+    extern std::shared_ptr<spdlog::logger>  getLogger(const std::string & name );
 }
 
