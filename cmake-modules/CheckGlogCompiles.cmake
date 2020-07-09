@@ -4,7 +4,7 @@ function(check_glog_compiles TARGETS LIBS INCS OPTS DEFS)
     endif()
     list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
-    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
+    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
 
     list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"

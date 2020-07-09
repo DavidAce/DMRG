@@ -265,11 +265,11 @@ cat << EOF >&2
           -DDMRG_PRINT_INFO=$verbose
           -DDMRG_DOWNLOAD_METHOD=$download_method
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
-          -DDMRG_MARCH=$march
+          -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_OPENMP=$enable_openmp
-          -DDMRG_ENABLE_MKL=$enable_mkl \
-          -DDMRG_ENABLE_LTO=$enable_lto \
+          -DDMRG_ENABLE_MKL=$enable_mkl
+          -DDMRG_ENABLE_LTO=$enable_lto
           $extra_flags
            -G $generator
            ../../
@@ -286,7 +286,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_PRINT_CHECKS=$verbose \
           -DDMRG_DOWNLOAD_METHOD=$download_method \
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
-          -DDMRG_MARCH=$march \
+          -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \

@@ -4,7 +4,7 @@ function(check_arpackpp_compiles TARGETS LIBS INCS OPTS DEFS)
     endif()
     list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
-    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
+    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
 
 

@@ -71,28 +71,10 @@ endif()
 include(cmake-modules/PrintHostInfo.cmake)
 include(cmake-modules/PrintOptionInfo.cmake)
 
-
-
-############################################################
-### Set  the same microarchitecture for c++ and OpenBLAS ###
-############################################################
-
-if(NOT DMRG_MARCH)
-    set(DMRG_MARCH "native")
-endif()
-if(DMRG_MARCH)
-    if (${DMRG_MARCH} STREQUAL "zen")
-        string(TOUPPER ${DMRG_MARCH} OPENBLAS_MARCH)
-        set(CXX_MARCH znver1)
-    elseif (${DMRG_MARCH} STREQUAL "native")
-        set(OPENBLAS_MARCH HASWELL)
-        set(CXX_MARCH native)
-    else()
-        string(TOUPPER ${DMRG_MARCH} OPENBLAS_MARCH)
-        string(TOLOWER ${DMRG_MARCH} CXX_MARCH)
-    endif()
-endif()
-
+###########################################
+###  Apply RELEASE/DEBUG compile flags  ###
+###########################################
+include(cmake-modules/CompilerFlags.cmake)
 
 
 
@@ -133,16 +115,14 @@ CheckCXXOptional()
 
 
 
-###########################################
-###  Apply RELEASE/DEBUG compile flags  ###
-###########################################
-# Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres, but -D_GLIBCXX_DEBUG fixes gdb incomplete types
-message(STATUS "Using microarchitechture: ${CXX_MARCH}")
-target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g3 -DNDEBUG>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -Wpedantic -Wextra -Wconversion -fstack-protector -D_FORTIFY_SOURCE=2>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O3 -g3 -DNDEBUG>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g3 -DNDEBUG  -lprofiler  -ftime-report>)
+##################################################
+###  Add optional RELEASE/DEBUG compile flags  ###
+##################################################
+target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: >)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
 
 #######################################
@@ -214,7 +194,6 @@ include(cmake-modules/SetupDependenciesConan.cmake)
 #
 target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${NATIVE_TARGETS}) # Order is important here
 
-
 if(NOT TARGET openmp::openmp)
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
@@ -243,6 +222,7 @@ if (DMRG_PRINT_INFO)
     expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
     message(STATUS "| DMRG TARGET SUMMARY")
     message(STATUS "|--------------------")
+    print_compiler_info("| ")
     foreach(tgt ${DMRG_TARGETS_EXPANDED})
         print_target_info(${tgt} "| ")
     endforeach()
