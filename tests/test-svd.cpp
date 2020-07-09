@@ -49,7 +49,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
 int main(int argc, char **argv){
 
 // Set the number of threads to be used
-    int num_threads = 1;
+    [[maybe_unused]] int num_threads = 1;
 #ifdef _OPENMP
     omp_set_num_threads(num_threads);
     Eigen::setNbThreads(num_threads);
