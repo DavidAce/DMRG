@@ -93,26 +93,6 @@ if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
         message(FATAL_ERROR "Could not extract gflags libraries: ${GFLAGS_LIBRARIES}")
     endif()
 
-    message(STATUS "GLOG_LIBRARIES   : ${GLOG_LIBRARIES}")
-    message(STATUS "GFLAGS_LIBRARIES : ${GFLAGS_LIBRARIES}")
-    unset(CERES_FLAGS CACHE)
-    unset(CERES_FLAGS)
-    if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-        set(CERES_FLAGS "${CERES_FLAGS} -O0 -g3 -fstack-protector -D_FORTIFY_SOURCE=2")
-    elseif("${CMAKE_BUILD_TYPE}" MATCHES "RelWithDebInfo")
-        set(CERES_FLAGS "${CERES_FLAGS} -O1 -g -fstack-protector  -D_FORTIFY_SOURCE=2")
-    else()
-        set(CERES_FLAGS "${CERES_FLAGS} -O3 -g -DNDEBUG")
-    endif()
-    # It is VERY IMPORTANT to set this flag when using CERES
-    # For some reason the Eigen destructor starts calling std::free instead of
-    # the handmade allocator free in calls inside CERES. I do not know the reason.
-    # Setting this flag here or globally helps.
-#    set(CERES_FLAGS "${CERES_FLAGS} -DEIGEN_MALLOC_ALREADY_ALIGNED=0")
-
-#    set(CERES_FLAGS "${CERES_FLAGS} -I${GLOG_INCLUDE_DIR} -I${GFLAGS_INCLUDE_DIR} -DEIGEN_MALLOC_ALREADY_ALIGNED=0")
-    string (REPLACE ";" " " CERES_FLAGS "${CERES_FLAGS}")
-    list(APPEND CERES_CMAKE_OPTIONS  -DCMAKE_CXX_FLAGS:STRING=${CERES_FLAGS})
     list(APPEND CERES_CMAKE_OPTIONS  -DEIGEN_INCLUDE_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
     list(APPEND CERES_CMAKE_OPTIONS  -DEigen3_DIR:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3/share/eigen3/cmake)
     list(APPEND CERES_CMAKE_OPTIONS  -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
@@ -123,69 +103,69 @@ if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
     list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_INCLUDE_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
     list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_LIBRARY_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
     list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_LIBRARY:PATH=${GLOG_LIBRARIES})
-
-#    message(STATUS "ceres flags  : ${CERES_FLAGS}")
+    list(APPEND CERES_CMAKE_OPTIONS  -DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE})
     message(STATUS "ceres options: ${CERES_CMAKE_OPTIONS}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(ceres "${CMAKE_INSTALL_PREFIX}" "${CERES_CMAKE_OPTIONS}" )
     find_package(Ceres HINTS ${CMAKE_INSTALL_PREFIX} NO_DEFAULT_PATH)
-    if(TARGET ceres)
-        message(STATUS "ceres installed successfully")
+    if(TARGET Ceres::ceres)
+        message(STATUS "Ceres installed successfully")
     else()
-        message(FATAL_ERROR "ceres could not be installed")
+        message(FATAL_ERROR "Ceres could not be installed")
     endif()
 endif()
 
 
 
-if(TARGET ceres AND NOT TARGET ceres::ceres )
-    # Use this for the ceres targets defined by CONFIG mode find_package
-    # These find_packages have the tendency to do the wrong thing, like
-    #   - injecting shared libraries into static builds
-    #   - using "-lpthread" instead of "pthread"
-
-    get_target_property(CERES_TYPE ceres TYPE)
-    if(CERES_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
-        include(cmake-modules/PrintTargetProperties.cmake)
-        print_target_properties(ceres)
-        message(FATAL_ERROR "Found shared ceres library on a static build!")
-    endif()
-
-    #Remove any shared libraries like unwind etc which pollute static builds
-    # As a matter of fact... just relink it entirely
-    include(cmake-modules/TargetFilters.cmake)
-    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
-
-#    if(NOT BUILD_SHARED_LIBS)
-#    include(cmake-modules/TargetFilters.cmake)
-#    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|unwind|glog|gflags")
-#    target_link_libraries(ceres INTERFACE gcc_eh unwind lzma glog::glog gflags::gflags pthread )
+#if(TARGET ceres AND NOT TARGET ceres::ceres )
+#    # Use this for the ceres targets defined by CONFIG mode find_package
+#    # These find_packages have the tendency to do the wrong thing, like
+#    #   - injecting shared libraries into static builds
+#    #   - using "-lpthread" instead of "pthread"
+#
+#    get_target_property(CERES_TYPE ceres TYPE)
+#    if(CERES_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
+#        include(cmake-modules/PrintTargetProperties.cmake)
+#        print_target_properties(ceres)
+#        message(FATAL_ERROR "Found shared ceres library on a static build!")
 #    endif()
+#
+#    #Remove any shared libraries like unwind etc which pollute static builds
+#    # As a matter of fact... just relink it entirely
+#    include(cmake-modules/TargetFilters.cmake)
+#    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
+#
+##    if(NOT BUILD_SHARED_LIBS)
+##    include(cmake-modules/TargetFilters.cmake)
+##    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|unwind|glog|gflags")
+##    target_link_libraries(ceres INTERFACE gcc_eh unwind lzma glog::glog gflags::gflags pthread )
+##    endif()
+#
+#    # Modernize
+##    get_property(imp_loc_set TARGET ceres PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
+##    get_property(loc_set     TARGET ceres PROPERTY LOCATION SET) # Returns a boolean if set
+##    if(loc_set AND NOT imp_loc_set)
+##        get_target_property(imp_loc ceres LOCATION)
+##        set_target_properties(ceres PROPERTIES IMPORTED_LOCATION ${imp_loc})
+##    endif()
+#
+#
+#    # Copy ceres to ceres::ceres to follow proper naming convention
+#    include(cmake-modules/CopyTarget.cmake)
+#    copy_target(ceres::ceres ceres)
+#endif()
 
-    # Modernize
-    get_property(imp_loc_set TARGET ceres PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
-    get_property(loc_set     TARGET ceres PROPERTY LOCATION SET) # Returns a boolean if set
-    if(loc_set AND NOT imp_loc_set)
-        get_target_property(imp_loc ceres LOCATION)
-        set_target_properties(ceres PROPERTIES IMPORTED_LOCATION ${imp_loc})
-    endif()
 
-
-    # Copy ceres to ceres::ceres to follow proper naming convention
-    include(cmake-modules/CopyTarget.cmake)
-    copy_target(ceres::ceres ceres)
-endif()
-
-
-if(TARGET ceres::ceres)
-    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen pthread )
-    if(TARGET openmp::openmp)
-        target_link_libraries(ceres::ceres INTERFACE openmp::openmp )
-    endif()
-    check_ceres_compiles("ceres::ceres" "" "" "${CERES_FLAGS}" "")
+if(TARGET Ceres::ceres)
+#    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen pthread )
+#    if(TARGET openmp::openmp)
+#        target_link_libraries(ceres::ceres INTERFACE openmp::openmp )
+#    endif()
+    include(cmake-modules/CheckCeresCompiles.cmake)
+    check_ceres_compiles("Ceres::ceres" "" "" "" "")
     if(NOT CERES_COMPILES)
         include(cmake-modules/PrintTargetProperties.cmake)
-        print_target_properties(ceres::ceres)
+        print_target_properties(Ceres::ceres)
         message(FATAL_ERROR "Could not compile simple ceres program")
     endif()
 endif()

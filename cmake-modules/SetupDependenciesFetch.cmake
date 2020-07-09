@@ -38,8 +38,8 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     ##################################################################
     ### Link all the things!                                       ###
     ##################################################################
-    if(TARGET ceres::ceres)
-        list(APPEND NATIVE_TARGETS ceres::ceres)
+    if(TARGET Ceres::ceres)
+        list(APPEND NATIVE_TARGETS Ceres::ceres)
     endif()
     if(TARGET Eigen3::Eigen)
         list(APPEND NATIVE_TARGETS Eigen3::Eigen)
@@ -93,7 +93,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
             target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
             target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
         else()
-            message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
+            message(STATUS "Applying special Eigen compile definitions for general machines")
 #            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
 #            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=32)
         endif()

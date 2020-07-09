@@ -14,6 +14,14 @@ function(build_dependency dep_name install_dir extra_flags)
             -DCMAKE_INSTALL_PREFIX:PATH=${install_dir}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+            -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+            -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+            -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+            -DCMAKE_CXX_FLAGS_INIT:STRING=${CMAKE_CXX_FLAGS}
+            -DCMAKE_CXX_FLAGS_RELEASE_INIT:STRING=${CMAKE_CXX_FLAGS_RELEASE}
+            -DCMAKE_CXX_FLAGS_DEBUG_INIT:STRING=${CMAKE_CXX_FLAGS_DEBUG}
+            -DCMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT:STRING=${CMAKE_CXX_FLAGS_RELWITHDEBINFO}
+            -DCMAKE_CXX_FLAGS_MINSIZEREL_INIT:STRING=${CMAKE_CXX_FLAGS_MINSIZEREL}
             ${extra_flags}
             -G "${CMAKE_GENERATOR}"
             -DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
@@ -33,6 +41,7 @@ function(build_dependency dep_name install_dir extra_flags)
 
 
     set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${num_threads})
+    message(STATUS "Starting build with ${num_threads} threads")
     execute_process(COMMAND  ${CMAKE_COMMAND} --build . --parallel ${num_threads}
             WORKING_DIRECTORY "${build_dir}"
             RESULT_VARIABLE build_result

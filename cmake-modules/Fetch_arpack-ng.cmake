@@ -15,8 +15,9 @@ endif()
 mark_as_advanced(ARPACK_DIRECTORY_HINTS)
 
 function(find_arpack_ng REQUIRED)
-    unset(arpack_ng_LIBRARIES)
-    unset(arpack_ng_INCLUDE_DIRS)
+    unset(arpack_ng_LIBRARIES CACHE)
+    unset(arpack_ng_INCLUDE_DIRS CACHE)
+
     list(APPEND ARPACK_DIRECTORY_HINTS
             ${CMAKE_INSTALL_PREFIX}/arpack-ng
             ${CMAKE_INSTALL_PREFIX}/arpack-ng/lib
@@ -52,7 +53,7 @@ endfunction()
 if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     find_arpack_ng("")
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
-        message(STATUS "Found arpack-ng")
+        message(STATUS "Found arpack-ng: ${arpack_ng_LIBRARIES}")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
         set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
         target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})

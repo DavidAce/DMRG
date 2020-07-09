@@ -1,6 +1,5 @@
 function(CheckCXXOptional)
     include(CheckIncludeFileCXX)
-    set(CMAKE_REQUIRED_FLAGS     "-std=c++17")
     check_include_file_cxx(optional    has_optional)
     check_include_file_cxx(experimental/optional has_experimental_optional )
 
