@@ -7,9 +7,7 @@
 #include <general/nmspc_sfinae.h>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-//#include <iomanip>
 #include <iostream>
-//#include <iterator>
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
