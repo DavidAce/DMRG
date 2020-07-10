@@ -99,7 +99,7 @@ if(TARGET glog::glog)
         set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION ${imp_loc})
     endif()
 
-    check_glog_compiles("glog::glog" "" "" "${GLOG_FLAGS}" "")
+    check_glog_compiles("glog::glog" "" "" "" "")
     if(NOT GLOG_COMPILES)
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(glog::glog)

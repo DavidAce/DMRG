@@ -3,6 +3,7 @@
 //
 
 #include "nmspc_logger.h"
+#include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -70,6 +71,7 @@ void Logger::setLogger(std::shared_ptr<spdlog::logger> &log, const std::string &
 }
 
 std::shared_ptr<spdlog::logger> Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToFive, std::optional<bool> timestamp) {
+    std::cout << "Creating new logger with name " << name << std::endl;
     std::shared_ptr<spdlog::logger> log;
     if(spdlog::get(name) == nullptr) {
         log = spdlog::stdout_color_mt(name);
@@ -79,6 +81,7 @@ std::shared_ptr<spdlog::logger> Logger::setLogger(const std::string &name, std::
     Logger::setLogLevel(log,levelZeroToFive);
     if(timestamp and timestamp.value())
         Logger::enableTimestamp(log);
+    log->warn("testing my new logger with name {} ({}) and address {}", log->name(),name,log);
     return log;
 }
 

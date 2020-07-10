@@ -1,8 +1,4 @@
 cmake_minimum_required(VERSION 3.12)
-#include(../GetNumThreads.cmake)
-#get_num_threads(NUM_THREADS)
-#set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
-
 project(external-glog)
 
 include(ExternalProject)
@@ -24,6 +20,7 @@ ExternalProject_Add(external_glog
         -DCMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT:STRING=${CMAKE_CXX_FLAGS_RELWITHDEBINFO}
         -DCMAKE_CXX_FLAGS_MINSIZEREL_INIT:STRING=${CMAKE_CXX_FLAGS_MINSIZEREL}
         -Dgflags_DIR:BOOL:PATH=${gflags_DIR}
+        -DBUILD_TESTING:BOOL=FALSE
         -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         )
