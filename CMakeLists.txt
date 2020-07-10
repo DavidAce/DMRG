@@ -118,7 +118,7 @@ CheckCXXOptional()
 ##################################################
 ###  Add optional RELEASE/DEBUG compile flags  ###
 ##################################################
-target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: >)
+target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)

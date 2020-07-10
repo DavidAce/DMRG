@@ -15,6 +15,8 @@ endif()
 mark_as_advanced(ARPACK_DIRECTORY_HINTS)
 
 function(find_arpack_ng REQUIRED)
+    unset(arpack_ng_LIBRARIES)
+    unset(arpack_ng_INCLUDE_DIRS)
     unset(arpack_ng_LIBRARIES CACHE)
     unset(arpack_ng_INCLUDE_DIRS CACHE)
 

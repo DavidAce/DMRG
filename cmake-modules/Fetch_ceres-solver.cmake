@@ -11,7 +11,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
 endif()
 
 
-if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     include(cmake-modules/CheckCeresCompiles.cmake)
 
     # Can't use conda here since they only have shared libraries.
@@ -56,25 +56,25 @@ if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
                         add_library(ceres::${lib} ${LINK_TYPE} IMPORTED)
                         set_target_properties(ceres::${lib} PROPERTIES IMPORTED_LOCATION "${${LIB}_LIB}")
                         if(NOT "${lib}" MATCHES "ceres")
-                            target_link_libraries(ceres::ceres INTERFACE ceres::${lib})
+                            target_link_libraries(Ceres::ceres INTERFACE ceres::${lib})
                         endif()
                         if(NOT "${lib}" MATCHES "ceres|suitesparse")
                             target_link_libraries(ceres::${lib} INTERFACE ceres::suitesparse)
                         endif()
                     endif()
                 endforeach()
-                target_include_directories(ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
-                target_include_directories(ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
+                target_include_directories(Ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
+                target_include_directories(Ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
             endif()
         endif()
     endif()
-    if(TARGET ceres::ceres OR TARGET ceres)
+    if(TARGET Ceres::ceres OR TARGET ceres)
         message(STATUS "Found Ceres")
     endif()
 endif()
 
 
-if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
@@ -117,7 +117,7 @@ endif()
 
 
 
-#if(TARGET ceres AND NOT TARGET ceres::ceres )
+#if(TARGET ceres AND NOT TARGET Ceres::ceres )
 #    # Use this for the ceres targets defined by CONFIG mode find_package
 #    # These find_packages have the tendency to do the wrong thing, like
 #    #   - injecting shared libraries into static builds
@@ -150,17 +150,13 @@ endif()
 ##    endif()
 #
 #
-#    # Copy ceres to ceres::ceres to follow proper naming convention
+#    # Copy ceres to Ceres::ceres to follow proper naming convention
 #    include(cmake-modules/CopyTarget.cmake)
-#    copy_target(ceres::ceres ceres)
+#    copy_target(Ceres::ceres ceres)
 #endif()
 
 
 if(TARGET Ceres::ceres)
-#    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen pthread )
-#    if(TARGET openmp::openmp)
-#        target_link_libraries(ceres::ceres INTERFACE openmp::openmp )
-#    endif()
     include(cmake-modules/CheckCeresCompiles.cmake)
     check_ceres_compiles("Ceres::ceres" "" "" "" "")
     if(NOT CERES_COMPILES)
