@@ -4,7 +4,6 @@
 #pragma once
 
 #include <memory>
-#include <spdlog/spdlog.h>
 namespace h5pp{class File;}
 
 class class_algorithm_launcher  {
