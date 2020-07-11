@@ -1,3 +1,8 @@
+
+message(STATUS "C compiler ${CMAKE_C_COMPILER}")
+message(STATUS "FC compiler ${CMAKE_Fortran_COMPILER}")
+message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
+
 ############################################################
 ### Set  the same microarchitecture for c++ and OpenBLAS ###
 ############################################################
@@ -27,7 +32,7 @@ if(CXX_MARCH)
     list(APPEND CMAKE_CXX_FLAGS            -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 endif()
 list(APPEND CMAKE_CXX_FLAGS                )
-list(APPEND CMAKE_CXX_FLAGS_RELEASE        -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC)
+list(APPEND CMAKE_CXX_FLAGS_RELEASE        )
 list(APPEND CMAKE_CXX_FLAGS_DEBUG          -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC)
 list(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO )
 list(APPEND CMAKE_CXX_FLAGS_MINSIZEREL)
@@ -50,7 +55,6 @@ string (REPLACE ";" " " CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEAS
 string (REPLACE ";" " " CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG_LIST}")
 string (REPLACE ";" " " CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO_LIST}")
 string (REPLACE ";" " " CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_MINSIZEREL_LIST}")
-
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
