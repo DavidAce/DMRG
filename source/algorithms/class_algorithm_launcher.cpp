@@ -19,14 +19,9 @@
 //#include <stdlib.h>
 #include <cstdlib>
 
-namespace s = settings;
-using namespace std;
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_): h5pp_file(std::move(h5ppFile_)){
     tools::log = Logger::setLogger("DMRG++ launch",  settings::console::verbosity, settings::console::timestamp);
-    tools::log->warn("This should print1");
-    std::cout << "tools::log  name " << tools::log->name() << " address " << tools::log << std::endl;
-
     setup_temp_path();
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
@@ -36,9 +31,6 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
 
 class_algorithm_launcher::class_algorithm_launcher(){
     tools::log = Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
-    if(tools::log->name() != "DMRG++ launch") throw std::runtime_error("Name mismatch");
-    tools::log->warn("This should print2");
-    std::cout << "tools::log  name " << tools::log->name() << " address " << tools::log << std::endl;
     start_h5pp_file();
     setup_temp_path();
 
@@ -97,12 +89,6 @@ void class_algorithm_launcher::start_h5pp_file(){
     }else{
         h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::COLLISION_FAIL);
     }
-    std::cout << "h5pp_file log level: " << h5pp_file->getLogLevel() << std::endl;
-    h5pp::logger::log->debug("This should not print: name {}: address {}", h5pp::logger::log->name(),h5pp::logger::log);
-    tools::log->debug("This should print: name {}: address {}", tools::log->name(),tools::log);
-    std::cout << "tools::log  name " << tools::log->name() << " address " << tools::log << std::endl;
-    exit(0);
-
     h5pp_file->setCompressionLevel(settings::output::compression_level);
     if (not h5pp_file->linkExists("git")){
         //Put git metadata in file
