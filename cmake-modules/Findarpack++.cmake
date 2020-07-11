@@ -21,9 +21,12 @@ function(find_Arpackpp)
         set(NO_CMAKE_PACKAGE_REGISTRY NO_CMAKE_PACKAGE_REGISTRY)
     endif()
 
-
     if (NOT TARGET arpack::arpack++)
         include(GNUInstallDirs)
+        unset(ARPACKPP_LIBRARY)
+        unset(ARPACKPP_LIBRARY CACHE)
+        unset(ARPACKPP_INCLUDE_DIR)
+        unset(ARPACKPP_INCLUDE_DIR CACHE)
         arpackpp_message(STATUS "Looking for arpack++")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
@@ -47,11 +50,10 @@ function(find_Arpackpp)
             set(ARPACKPP_LIBRARY "")
         endif()
         if(NOT ARPACKPP_INCLUDE_DIR)
-            message(WARNING "Could not find arpack++ headers")
             set(ARPACKPP_INCLUDE_DIR "")
         endif()
         check_arpackpp_compiles("lapack::lapack;arpack::arpack" "${ARPACKPP_LIBRARY}"  "${ARPACKPP_INCLUDE_DIR}"  "" "" "")
-        if(ARPACKPP_COMPILES)
+        if(ARPACKPP_COMPILES AND ARPACKPP_INCLUDE_DIR AND EXISTS ${ARPACKPP_INCLUDE_DIR})
             arpackpp_message(STATUS "Looking for arpack++ - found: ${ARPACKPP_INCLUDE_DIR}")
             if(ARPACKPP_LIBRARY)
                 add_library(arpack::arpack++ ${LINK_TYPE} IMPORTED)
@@ -66,6 +68,7 @@ function(find_Arpackpp)
         endif()
     endif()
 endfunction()
+
 
 
 find_Arpackpp()
