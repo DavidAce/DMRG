@@ -1,21 +1,16 @@
-//
-// Created by david on 2019-10-16.
-//
 
 #include "nmspc_logger.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/stdout_sinks.h>
-
-void Logger::enableTimestamp(std::shared_ptr <spdlog::logger> &log) {
+void Logger::enableTimestamp(const std::shared_ptr <spdlog::logger> &log) {
     if (log != nullptr) {
         log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
         log->trace("Enabled timestamp");
     }
 }
 
-void Logger::disableTimestamp(std::shared_ptr<spdlog::logger> &log){
+void Logger::disableTimestamp(const std::shared_ptr<spdlog::logger> &log){
     if(log != nullptr){
         log->set_pattern("[%n]%^[%=8l]%$ %v");
         log->trace("Disabled timestamp");
@@ -24,7 +19,7 @@ void Logger::disableTimestamp(std::shared_ptr<spdlog::logger> &log){
 
 
 template<typename levelType>
-void Logger::setLogLevel(std::shared_ptr<spdlog::logger> &log, levelType levelZeroToFive) {
+void Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &log, levelType levelZeroToFive) {
     if constexpr(std::is_same_v<levelType, spdlog::level::level_enum>)
         log->set_level(levelZeroToFive);
     else if constexpr(std::is_integral_v<levelType>) {
@@ -45,13 +40,13 @@ void Logger::setLogLevel(std::shared_ptr<spdlog::logger> &log, levelType levelZe
     log->debug("Log verbosity level: {}", static_cast<int>(log->level()));
 }
 
-template void Logger::setLogLevel(std::shared_ptr<spdlog::logger> &log, size_t levelZeroToFive);
-template void Logger::setLogLevel(std::shared_ptr<spdlog::logger> &log, std::optional<size_t> levelZeroToFive);
-template void Logger::setLogLevel(std::shared_ptr<spdlog::logger> &log, std::optional<spdlog::level::level_enum> levelZeroToFive);
+template void Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &log, size_t levelZeroToFive);
+template void Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &log, std::optional<size_t> levelZeroToFive);
+template void Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &log, std::optional<spdlog::level::level_enum> levelZeroToFive);
 
 
 
-size_t Logger::getLogLevel(std::shared_ptr<spdlog::logger> &log) {
+size_t Logger::getLogLevel(const std::shared_ptr<spdlog::logger> &log) {
     if(log != nullptr)
         return static_cast<size_t>(log->level());
     else
@@ -71,17 +66,19 @@ void Logger::setLogger(std::shared_ptr<spdlog::logger> &log, const std::string &
 }
 
 std::shared_ptr<spdlog::logger> Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToFive, std::optional<bool> timestamp) {
-    std::cout << "Creating new logger with name " << name << std::endl;
     std::shared_ptr<spdlog::logger> log;
     if(spdlog::get(name) == nullptr) {
+        std::cout << "Creating new logger with name " << name << std::endl;
         log = spdlog::stdout_color_mt(name);
-    } else
+    } else {
+        std::cout << "Getting existing logger with name " << name << std::endl;
         log = spdlog::get(name);
-    log->set_pattern("[%n]%^[%=8l]%$ %v"); // Disabled timestamp is the default
+    }
     Logger::setLogLevel(log,levelZeroToFive);
-    if(timestamp and timestamp.value())
+    if(not timestamp or (timestamp and timestamp.value()))
         Logger::enableTimestamp(log);
-    log->warn("testing my new logger with name {} ({}) and address {}", log->name(),name,log);
+    else if(timestamp and not timestamp.value())
+        Logger::disableTimestamp(log);
     return log;
 }
 
