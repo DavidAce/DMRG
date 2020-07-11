@@ -413,7 +413,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
-        binary[rnd::uniform_integer_box<size_t>(0, sites)] *= -1;
+        binary[rnd::uniform_integer_box<size_t>(0, sites-1)] *= -1;
         sum = std::accumulate(binary.begin(), binary.end(), 0);
         if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
