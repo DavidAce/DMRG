@@ -22,7 +22,7 @@ if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
             PATH_SUFFIXES ceres ceres/lib
             NO_DEFAULT_PATH)
 
-    if(NOT TARGET ceres)
+    if(NOT TARGET ceres) # New versions of Ceres defines target "ceres" for backwards compatibility
         message(STATUS "Looking for ceres in system")
         find_path   (CERES_INCLUDE_DIR        NAMES  ceres/ceres.h                   )
         find_path   (SUITESPARSE_INCLUDE_DIR  NAMES  suitesparse/SuiteSparse_config.h)
@@ -76,33 +76,9 @@ endif()
 
 if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
-    get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-    list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
-    get_target_property(GFLAGS_LIBRARIES    gflags::gflags  IMPORTED_LOCATION)
-    get_target_property(GFLAGS_INCLUDE_DIR  gflags::gflags  INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(GLOG_LIBRARIES      glog::glog      IMPORTED_LOCATION)
-    get_target_property(GLOG_INCLUDE_DIR    glog::glog      INTERFACE_INCLUDE_DIRECTORIES)
-    if(NOT GLOG_LIBRARIES)
-        include(cmake-modules/PrintTargetProperties.cmake)
-        print_target_properties(glog::glog)
-        message(FATAL_ERROR "Could not extract glog libraries: ${GLOG_LIBRARIES}")
-    endif()
-    if(NOT GFLAGS_LIBRARIES)
-        include(cmake-modules/PrintTargetInfo.cmake)
-        print_target_info(gflags::gflags)
-        message(FATAL_ERROR "Could not extract gflags libraries: ${GFLAGS_LIBRARIES}")
-    endif()
-
-    list(APPEND CERES_CMAKE_OPTIONS  -DEIGEN_INCLUDE_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
-    list(APPEND CERES_CMAKE_OPTIONS  -DEigen3_DIR:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3/share/eigen3/cmake)
-    list(APPEND CERES_CMAKE_OPTIONS  -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
-    list(APPEND CERES_CMAKE_OPTIONS  -DGFLAGS_INCLUDE_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
-    list(APPEND CERES_CMAKE_OPTIONS  -DGFLAGS_LIBRARY_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
-    list(APPEND CERES_CMAKE_OPTIONS  -DGFLAGS_LIBRARY:PATH=${GFLAGS_LIBRARIES})
-    list(APPEND CERES_CMAKE_OPTIONS  -Dglog_DIR:PATH=${CMAKE_INSTALL_PREFIX}/glog)
-    list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_INCLUDE_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
-    list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_LIBRARY_DIR_HINTS:PATH=${CMAKE_INSTALL_PREFIX})
-    list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_LIBRARY:PATH=${GLOG_LIBRARIES})
+    list(APPEND CERES_CMAKE_OPTIONS  -DEigen3_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3)
+    list(APPEND CERES_CMAKE_OPTIONS  -Dgflags_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
+    list(APPEND CERES_CMAKE_OPTIONS  -Dglog_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/glog)
     list(APPEND CERES_CMAKE_OPTIONS  -DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE})
     message(STATUS "ceres options: ${CERES_CMAKE_OPTIONS}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
@@ -116,44 +92,33 @@ if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
 endif()
 
 
+if(TARGET ceres AND NOT TARGET Ceres::ceres)
+    # Copy ceres to Ceres::ceres to follow proper naming convention
+    include(cmake-modules/CopyTarget.cmake)
+    copy_target(ceres Ceres::ceres)
+endif()
 
-#if(TARGET ceres AND NOT TARGET Ceres::ceres )
-#    # Use this for the ceres targets defined by CONFIG mode find_package
-#    # These find_packages have the tendency to do the wrong thing, like
-#    #   - injecting shared libraries into static builds
-#    #   - using "-lpthread" instead of "pthread"
-#
-#    get_target_property(CERES_TYPE ceres TYPE)
-#    if(CERES_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
-#        include(cmake-modules/PrintTargetProperties.cmake)
-#        print_target_properties(ceres)
-#        message(FATAL_ERROR "Found shared ceres library on a static build!")
-#    endif()
-#
-#    #Remove any shared libraries like unwind etc which pollute static builds
-#    # As a matter of fact... just relink it entirely
-#    include(cmake-modules/TargetFilters.cmake)
-#    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
-#
-##    if(NOT BUILD_SHARED_LIBS)
-##    include(cmake-modules/TargetFilters.cmake)
-##    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|unwind|glog|gflags")
-##    target_link_libraries(ceres INTERFACE gcc_eh unwind lzma glog::glog gflags::gflags pthread )
-##    endif()
-#
-#    # Modernize
-##    get_property(imp_loc_set TARGET ceres PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
-##    get_property(loc_set     TARGET ceres PROPERTY LOCATION SET) # Returns a boolean if set
-##    if(loc_set AND NOT imp_loc_set)
-##        get_target_property(imp_loc ceres LOCATION)
-##        set_target_properties(ceres PROPERTIES IMPORTED_LOCATION ${imp_loc})
-##    endif()
-#
-#
-#    # Copy ceres to Ceres::ceres to follow proper naming convention
-#    include(cmake-modules/CopyTarget.cmake)
-#    copy_target(Ceres::ceres ceres)
-#endif()
+if(TARGET Ceres::ceres) # The new target name
+    # Use this for the ceres targets defined by CONFIG mode find_package
+    # These find_packages have the tendency to do the wrong thing, like
+    #   - injecting shared libraries into static builds
+    #   - using "-lpthread" instead of "pthread"
+    get_target_property(CERES_TYPE ceres TYPE)
+    if(CERES_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
+        include(cmake-modules/PrintTargetProperties.cmake)
+        print_target_properties(Ceres::ceres)
+        message(FATAL_ERROR "Target Ceres::ceres contains a shared library on a static build!")
+    endif()
+    #Remove any shared libraries like unwind etc which pollute static builds
+    # Or... just relink it entirely
+    include(cmake-modules/TargetFilters.cmake)
+    remove_library_shallow(Ceres::ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
+    target_link_libraries(Ceres::ceres INTERFACE glog::glog gflags::gflags pthread )
+
+endif()
+
+
+
 
 
 if(TARGET Ceres::ceres)

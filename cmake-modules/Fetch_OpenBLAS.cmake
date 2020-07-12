@@ -10,7 +10,7 @@ if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     find_package(OpenBLAS)
 endif()
 
-if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
+if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     message(STATUS "OpenBLAS will be installed into ${CMAKE_INSTALL_PREFIX}/OpenBLAS")
     set(OPENBLAS_MULTITHREADED 1 )
     if(TARGET openmp::openmp AND BUILD_SHARED_LIBS)

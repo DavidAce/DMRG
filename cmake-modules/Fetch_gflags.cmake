@@ -1,5 +1,5 @@
 
-if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     # Gflags comes in static flavor in conda also!
     find_package(gflags COMPONENTS nothreads_static
             NO_CMAKE_PACKAGE_REGISTRY)
@@ -8,7 +8,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
     endif()
 endif()
 
-if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native" )
+if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch" )
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
@@ -26,7 +26,7 @@ if(TARGET gflags)
     if(GFLAGS_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(gflags)
-        message(FATAL_ERROR "Found shared gflags library on a static build!")
+        message(FATAL_ERROR "Target gflags contains a shared library on a static build!")
     endif()
 
     if(NOT BUILD_SHARED_LIBS)
@@ -45,6 +45,6 @@ if(TARGET gflags)
     if(NOT TARGET gflags::gflags)
         # Copy gflags to gflags::gflags to follow proper naming convention
         include(cmake-modules/CopyTarget.cmake)
-        copy_target(gflags::gflags gflags)
+        copy_target(gflags gflags::gflags)
     endif()
 endif()
