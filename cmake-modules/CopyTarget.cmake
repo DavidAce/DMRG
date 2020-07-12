@@ -1,4 +1,4 @@
-function(copy_target target_new target_old )
+function(copy_target target_old target_new)
     if(NOT TARGET ${target_old})
         message(STATUS "There is no target named '${target_old}'")
         return()
