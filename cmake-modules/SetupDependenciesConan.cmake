@@ -39,7 +39,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                     OPTIONS ceres-solver:blas_libraries=${MKL_LIBRARIES}
                     OPTIONS ceres-solver:lapack_libraries=${MKL_LIBRARIES}
                     )
-            list(APPEND NATIVE_TARGETS mkl::mkl)
+            list(APPEND FOUND_TARGETS mkl::mkl)
         endif()
     else()
         cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
@@ -49,7 +49,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                     OPTIONS openblas:dynamic_arch=True)
         endif()
         find_package(Fortran REQUIRED)
-        list(APPEND NATIVE_TARGETS gfortran::gfortran)
+        list(APPEND FOUND_TARGETS gfortran::gfortran)
     endif()
 
 
@@ -138,6 +138,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     endif()
 
     if(TARGET openmp::openmp)
-        list(APPEND NATIVE_TARGETS openmp::openmp)
+        list(APPEND FOUND_TARGETS openmp::openmp)
     endif()
 endif()
