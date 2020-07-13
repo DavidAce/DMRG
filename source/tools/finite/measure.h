@@ -42,18 +42,18 @@ namespace tools::finite::measure{
 
 
     template<typename state_or_mps_type>
-    extern double energy_minus_energy_reduced             (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
+    double energy_minus_energy_reduced             (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
     template<typename state_or_mps_type>
-    extern double energy                                  (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
+    double energy                                  (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
     template<typename state_or_mps_type>
-    extern double energy_per_site                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
+    double energy_per_site                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
     template<typename state_or_mps_type>
-    extern double energy_variance                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
+    double energy_variance                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
     template<typename state_or_mps_type>
-    extern double energy_variance_per_site                (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
+    double energy_variance_per_site                (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, tensors_measure_finite * measurements = nullptr);
 
     template<typename state_or_mps_type>
-    extern double energy_normalized                       (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, double energy_minimum, double energy_maximum, tensors_measure_finite * measurements = nullptr);
+    double energy_normalized                       (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, double energy_minimum, double energy_maximum, tensors_measure_finite * measurements = nullptr);
 
 
     extern double energy_minus_energy_reduced(const class_tensors_finite & tensors);

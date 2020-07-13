@@ -11,6 +11,7 @@
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>

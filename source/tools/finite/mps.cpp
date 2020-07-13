@@ -9,6 +9,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/log.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
@@ -35,8 +36,8 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
         long   chiR = mpsR.get_chiR();
         // Store the special LC bond in a temporary. It needs to be put back afterwards
         // Do the same with its truncation error
-        Eigen::Tensor<Scalar, 1> LC = mps.get_LC();
-        double truncation_error_LC = mps.get_truncation_error_LC();
+        Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
+        double                   truncation_error_LC = mps.get_truncation_error_LC();
         Eigen::Tensor<Scalar, 3> twosite_tensor;
         if(state.get_direction() == 1) {
             // Here both M_bare are B's
@@ -64,9 +65,9 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 
         // Put LC where it belongs.
         // Recall that mpsL, mpsR are on the new position, not the old one!
-        if(state.get_direction() == 1) mpsL.set_L(LC,truncation_error_LC);
+        if(state.get_direction() == 1) mpsL.set_L(LC, truncation_error_LC);
         else
-            mpsR.set_L(LC,truncation_error_LC);
+            mpsR.set_L(LC, truncation_error_LC);
     }
 }
 
@@ -81,7 +82,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     if(multisite_mps.dimension(2) != state.get_mps_site(sites.back()).get_chiR())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
-    long            spin_prod = 1;
+    long              spin_prod = 1;
     std::vector<long> spin_dims;
     for(const auto &site : sites) {
         spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
@@ -119,12 +120,11 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     // NOTE! It may be important to start with the current position.
 
     // We may want to make a quick check on release builds, but more thorough on debug, for performance.
-    if(norm_policy == NormPolicy::IFNEEDED){
-        const double norm = [state]{
-          if(state.all_sites_updated())
-              return tools::finite::measure::norm(state);
-          else
-              return tools::finite::measure::norm_fast(state);
+    if(norm_policy == NormPolicy::IFNEEDED) {
+        const double norm = [state] {
+            if(state.all_sites_updated()) return tools::finite::measure::norm(state);
+            else
+                return tools::finite::measure::norm_fast(state);
         }();
 
         // We may only go ahead with a normalization if its really needed.
@@ -132,7 +132,7 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     }
     // Otherwise we just do the normalization
     tools::log->trace("Normalizing state");
-    if constexpr (settings::debug) {
+    if constexpr(settings::debug) {
         state.clear_measurements();
         tools::log->info("Position             before normalization: {}", state.get_position());
         tools::log->info("Direction            before normalization: {}", state.get_direction());
@@ -157,7 +157,7 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
 
     // Now we can move around the chain
     for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
-    if constexpr (settings::debug) {
+    if constexpr(settings::debug) {
         state.clear_measurements();
         tools::log->info("Position             after  normalization: {}", state.get_position());
         tools::log->info("Direction            after  normalization: {}", state.get_direction());
@@ -174,24 +174,20 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     return true;
 }
 
-
-void tools::finite::mps::randomize_state (class_state_finite & state, const std::string & sector, StateType state_type, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield){
+void tools::finite::mps::randomize_state(class_state_finite &state, const std::string &sector, StateType state_type, long chi_lim, bool use_eigenspinors,
+                                         std::optional<long> bitfield) {
     bool real = true;
-    switch(state_type){
-        case StateType::RANDOM_PRODUCT_STATE: return internal::random_product_state(state,sector,use_eigenspinors,bitfield);
-        case StateType::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state,sector,chi_lim, use_eigenspinors, real);
+    switch(state_type) {
+        case StateType::RANDOM_PRODUCT_STATE: return internal::random_product_state(state, sector, use_eigenspinors, bitfield);
+        case StateType::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state, sector, chi_lim, use_eigenspinors, real);
         case StateType::RANDOMIZE_PREVIOUS_STATE: return internal::randomize_given_state(state);
-        case StateType::PRODUCT_STATE: return internal::set_product_state(state,sector);
+        case StateType::PRODUCT_STATE: return internal::set_product_state(state, sector);
     }
 }
-
-
-
 
 bool tools::finite::mps::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
-
 
 void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
     std::vector<Eigen::Matrix2cd> paulimatrices;

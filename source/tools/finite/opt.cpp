@@ -7,14 +7,15 @@
 #include <string>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_tensor.h>
 
-tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
-                                                  OptType optType) {
+tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status,
+                                                                      OptMode optMode, OptSpace optSpace, OptType optType) {
     tools::common::profile::t_opt->tic();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
                       tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());

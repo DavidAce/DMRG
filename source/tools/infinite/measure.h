@@ -1,6 +1,5 @@
 #pragma once
 
-#include <general/nmspc_tensor_omp.h>
 class class_tensors_infinite;
 class class_state_infinite;
 class class_model_infinite;
@@ -19,15 +18,15 @@ namespace tools::infinite::measure{
     extern double entanglement_entropy            (const class_state_infinite & state);
 
     template<typename state_or_mps_type>
-    extern double energy_minus_energy_reduced     (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
+    double energy_minus_energy_reduced     (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
     template<typename state_or_mps_type>
-    extern double energy_mpo                      (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
+    double energy_mpo                      (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
     template<typename state_or_mps_type>
-    extern double energy_per_site_mpo             (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
+    double energy_per_site_mpo             (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
     template<typename state_or_mps_type>
-    extern double energy_variance_mpo             (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
+    double energy_variance_mpo             (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
     template<typename state_or_mps_type>
-    extern double energy_variance_per_site_mpo    (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
+    double energy_variance_per_site_mpo    (const state_or_mps_type & state, const class_model_infinite & model, const class_edges_infinite & edges);
 
     extern double energy_mpo                      (const class_tensors_infinite & tensors);
     extern double energy_per_site_mpo             (const class_tensors_infinite & tensors);

@@ -8,6 +8,7 @@
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/multisite.h>

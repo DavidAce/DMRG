@@ -6,9 +6,6 @@
 #include <general/nmspc_tensor_omp.h>
 #include <general/nmspc_sfinae.h>
 #include <Eigen/Core>
-#ifndef DMRG_EXTERN
-    #define DMRG_EXTERN extern
-#endif
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -383,5 +380,3 @@ namespace Textra {
     }
 }
 /*clang-format on */
-
-#include <general/nmspc_tensor_extra.tpp>
