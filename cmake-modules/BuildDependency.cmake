@@ -11,6 +11,7 @@ function(build_dependency dep_name install_dir extra_flags)
     execute_process(
             COMMAND  ${CMAKE_COMMAND}
             --parallel ${num_threads}
+            -DCMAKE_EXE_LINKER_FLAGS_INIT=${CMAKE_EXE_LINKER_FLAGS}
             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
             -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
