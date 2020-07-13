@@ -7,10 +7,9 @@
 #include "class_mpo_parameters.h"
 #include <any>
 #include <config/enums.h>
-#include <io/nmspc_logger.h>
 #include <map>
 #include <memory>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/nmspc_tensor_extra.h>
 
 namespace h5pp {
     class File;

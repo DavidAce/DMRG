@@ -1,7 +1,7 @@
 #pragma once
 #include <complex>
 #include <optional>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/nmspc_tensor_extra.h>
 
 namespace tools::finite::opt {
     class opt_tensor {

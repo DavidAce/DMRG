@@ -5,7 +5,6 @@
 #include <h5pp/h5pp.h>
 #include <io/class_config_reader.h>
 #include <io/nmspc_filesystem.h>
-#include <io/nmspc_logger.h>
 #include <iostream>
 #include <math/rnd.h>
 #include <tools/common/log.h>
@@ -52,16 +51,13 @@ Usage                       : DMRG++ [-option <value>].
 )";
 }
 
-
 void clean_up() {
     if(not settings::output::use_temp_dir) return;
-    if(fs::exists(settings::output::tmp::hdf5_temp_path)){
-        try{
+    if(fs::exists(settings::output::tmp::hdf5_temp_path)) {
+        try {
             tools::log->info("Cleaning up temporary file: [{}]", settings::output::tmp::hdf5_temp_path);
-            h5pp::hdf5::moveFile(settings::output::tmp::hdf5_temp_path,settings::output::tmp::hdf5_final_path,h5pp::FilePermission::REPLACE);
-        }catch(const std::exception & err){
-            tools::log->info("Cleaning not needed: {}", err.what());
-        }
+            h5pp::hdf5::moveFile(settings::output::tmp::hdf5_temp_path, settings::output::tmp::hdf5_final_path, h5pp::FilePermission::REPLACE);
+        } catch(const std::exception &err) { tools::log->info("Cleaning not needed: {}", err.what()); }
     }
     H5garbage_collect();
     H5Eprint(H5E_DEFAULT, stderr);
@@ -95,8 +91,6 @@ void signal_callback_handler(int signum) {
     std::quick_exit(signum);
 }
 
-
-
 std::string filename_append_number(const std::string &filename, const long number) {
     if(number < 0) return filename;
     // Append the seed_model to the output filename
@@ -125,8 +119,7 @@ int main(int argc, char *argv[]) {
     std::atexit(clean_up);
     std::at_quick_exit(clean_up);
 
-
-    tools::log = Logger::setLogger("DMRG++ main", 0, true);
+    tools::log = tools::Logger::setLogger("DMRG++ main", 0, true);
     using namespace tools;
     // print current Git status
     tools::log->info("Git branch      : {}", GIT::BRANCH);
@@ -210,7 +203,7 @@ int main(int argc, char *argv[]) {
     if(num_threads >= 0) settings::threading::num_threads = static_cast<int>(num_threads);
     if(not output.empty()) settings::output::output_filepath = output;
     if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
-    tools::log = Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
 
     // C: Generate the correct output filename based on given seeds
     if(append_seed) {

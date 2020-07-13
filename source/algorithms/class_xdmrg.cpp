@@ -12,6 +12,7 @@
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <tools/common/prof.h>
 #include <tools/finite/debug.h>
 #include <tools/finite/io.h>
@@ -481,16 +482,16 @@ void class_xdmrg::find_energy_range() {
     class_fdmrg           fdmrg(h5pp_file);
     *fdmrg.tensors.model = *tensors.model; // Copy the model
     // Find loewst energy state
-    tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(gs_tasks);
     status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
     // Find highest energy state
-    tools::log = Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(hs_tasks);
     status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
 
-    tools::log = Logger::getLogger(std::string(enum2str(algo_type)));
+    tools::log = tools::Logger::getLogger(std::string(enum2str(algo_type)));
 }
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }

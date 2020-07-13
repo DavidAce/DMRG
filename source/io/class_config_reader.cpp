@@ -18,7 +18,6 @@ class_config_reader::class_config_reader(const std::string &file_path_): file_pa
                 file.open(found_file.c_str());
             }
             catch(std::exception &ex){
-                tools::log->critical("Could not open file [ {} ]: {}", found_file.string(), std::string(ex.what()) );
                 throw std::runtime_error("Could not open file [ " + found_file.string() + "]: " + std::string(ex.what()));
             }
         }

@@ -17,7 +17,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     algo_name  = enum2str(algo_type_);
     state_name = "state";
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
-    tools::log = Logger::setLogger(std::string(enum2str(algo_type)), settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)), settings::console::verbosity, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
 }

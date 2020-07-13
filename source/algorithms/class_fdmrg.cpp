@@ -7,10 +7,10 @@
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
 

@@ -6,12 +6,11 @@
 
 #include <algorithm>
 #include <cctype>
+#include <config/enums.h>
 #include <fstream>
 #include <io/nmspc_filesystem.h>
-#include <io/nmspc_logger.h>
 #include <iomanip>
 #include <iostream>
-#include <config/enums.h>
 #include <string>
 #include <tools/common/log.h>
 
@@ -42,8 +41,7 @@ class class_config_reader {
         try {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
-            if constexpr(std::is_enum_v<T>)
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2str<T>(param_value));
+            if constexpr(std::is_enum_v<T>) tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2str<T>(param_value));
             else
                 tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
@@ -70,9 +68,7 @@ class class_config_reader {
                 throw std::runtime_error(fmt::format("Expected true or false, got {}", param_val));
             }
             throw std::runtime_error("Type mismatch on parameter: " + param_val);
-        } catch(std::exception &ex) {
-            throw std::runtime_error("Error parsing param: " + std::string(ex.what()));
-        } catch(...) {
+        } catch(std::exception &ex) { throw std::runtime_error("Error parsing param: " + std::string(ex.what())); } catch(...) {
             throw std::runtime_error("Error parsing param: Unknown error");
         }
     }
@@ -86,9 +82,7 @@ class class_config_reader {
                 return parse_param<T>(param_map[param_requested], param_requested);
             } else
                 throw std::range_error(fmt::format("Config file does not specify the requested parameter: [{}]", param_requested));
-        } catch(std::range_error &ex) {
-            throw std::runtime_error(ex.what());
-        } catch(std::exception &ex) {
+        } catch(std::range_error &ex) { throw std::runtime_error(ex.what()); } catch(std::exception &ex) {
             throw std::runtime_error(fmt::format("Error parsing the requested parameter: [{}]: {}", param_requested, ex.what()));
         }
     }

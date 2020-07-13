@@ -1,6 +1,9 @@
 #pragma once
 #include <type_traits>
-
+#include <string_view>
+#include <array>
+#include <vector>
+#include <complex>
 /*!
  * \brief A collection of type-detection and type-analysis utilities using SFINAE
  */

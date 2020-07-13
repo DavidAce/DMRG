@@ -1,7 +1,5 @@
-#include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_tensor_omp.h>
-#include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <tools/common/moments.h>
 
 using cplx = std::complex<double>;
@@ -40,7 +38,6 @@ extern double tools::common::moments::first(const mps_type &mps, const mpo_type 
     /* clang-format on */
 
     if(abs(std::imag(M1(0))) > 1e-10) {
-        tools::log->critical(fmt::format("First moment has an imaginary part: {:.16f} + i {:.16f}", std::real(M1(0)), std::imag(M1(0))));
         throw std::runtime_error(fmt::format("First moment has an imaginary part: {:.16f} + i {:.16f}", std::real(M1(0)), std::imag(M1(0))));
     }
     double moment = std::real(M1(0));
@@ -105,7 +102,6 @@ extern double tools::common::moments::second(const mps_type &mps, const mpo_type
     }
     /* clang-format on */
     if(abs(std::imag(M2(0))) > 1e-10) {
-        tools::log->critical(fmt::format("Second moment has an imaginary part: {:.16f} + i {:.16f}", std::real(M2(0)), std::imag(M2(0))));
         throw std::runtime_error(fmt::format("Second moment has an imaginary part: {:.16f} + i {:.16f}", std::real(M2(0)), std::imag(M2(0))));
     }
     double moment = std::real(M2(0));

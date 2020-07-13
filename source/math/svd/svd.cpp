@@ -2,28 +2,20 @@
 // Created by david on 2019-05-27.
 //
 
-
 #include <complex.h>
 #undef I
 
 #include <Eigen/QR>
 #include <Eigen/SVD>
+#include <iostream>
 #include <math/svd.h>
-
 svd::solver::solver(size_t logLevel) {
-    if(not svd::log){
-        Logger::setLogger(svd::log,"svd",logLevel);
-    }
+    if(not svd::log) { tools::Logger::setLogger(svd::log, "svd", logLevel); }
 }
 
+double svd::solver::get_truncation_error() { return truncation_error; }
 
-double svd::solver::get_truncation_error(){
-    return truncation_error;
-}
-
-void svd::solver::setThreshold(double newThreshold) {
-    SVDThreshold = newThreshold;
-}
+void svd::solver::setThreshold(double newThreshold) { SVDThreshold = newThreshold; }
 
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
@@ -37,96 +29,77 @@ void svd::solver::setThreshold(double newThreshold) {
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>,svd::solver::MatrixType<Scalar> , long>
-svd::solver::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
-    if (use_lapacke) return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
-    if(not rank_max.has_value()) rank_max = std::min(rows,cols);
+std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
+    svd::solver::do_svd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    if(use_lapacke) return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
     svd::log->trace("Starting SVD with Eigen");
-    Eigen::Map<const MatrixType<Scalar>> mat (mat_ptr, rows,cols);
+    Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
 
-    if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
-    if (cols <= 0)              throw std::runtime_error("SVD error: cols() == 0");
+    if(rows <= 0) throw std::runtime_error("SVD error: rows() == 0");
+    if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
     // These are more expensive debugging operations
-    if (not mat.allFinite())    throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
+    if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
+    if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
     if(mat.isZero(1e-12))
         std::cerr << "SVD Warning\n"
                   << "  Given matrix elements are all close to zero (prec 1e-12)" << std::endl;
-    #endif
+#endif
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     svd::log->trace("Running BDCSVD");
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long max_size =  std::min(SVD.singularValues().size(),rank_max.value());
+    long max_size = std::min(SVD.singularValues().size(), rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
     svd::log->trace("Truncation singular values");
-    if(rank == SVD.singularValues().size()){
+    if(rank == SVD.singularValues().size()) {
         truncation_error = 0;
-    }else{
+    } else {
         truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
     }
 
-    if (SVD.rank() <= 0
-    or rank == 0
-    or not SVD.matrixU().leftCols(rank).allFinite()
-    or not SVD.singularValues().head(rank).allFinite()
-    or not SVD.matrixV().leftCols(rank).allFinite() )
-    {
-        std::cerr   << "SVD error \n"
-                    << "  svd_threshold    = " << SVDThreshold << '\n'
-                    << "  Truncation Error = " << truncation_error << '\n'
-                    << "  Rank             = " << rank << '\n'
-                    << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
-                    << "  S all finite     : " << std::boolalpha << SVD.singularValues().head(rank).allFinite() << '\n'
-                    << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n'
-                    << "Trying SVD with LAPACKE instead \n";
-        return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
+    if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
+       not SVD.matrixV().leftCols(rank).allFinite()) {
+        std::cerr << "SVD error \n"
+                  << "  svd_threshold    = " << SVDThreshold << '\n'
+                  << "  Truncation Error = " << truncation_error << '\n'
+                  << "  Rank             = " << rank << '\n'
+                  << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
+                  << "  S all finite     : " << std::boolalpha << SVD.singularValues().head(rank).allFinite() << '\n'
+                  << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n'
+                  << "Trying SVD with LAPACKE instead \n";
+        return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
     }
     svd::log->trace("SVD with Eigen finished successfully");
 
-    return std::make_tuple(
-            SVD.matrixU().leftCols(rank),
-            SVD.singularValues().head(rank),
-            SVD.matrixV().leftCols(rank).adjoint(),
-            rank
-            );
+    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 }
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>,svd::solver::MatrixType<double> , long>
-svd::solver::do_svd(const double *, long, long, std::optional<long>);
-
-
-
+template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
+    svd::solver::do_svd(const double *, long, long, std::optional<long>);
 
 using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>,svd::solver::MatrixType<cplx> , long>
-svd::solver::do_svd(const cplx *, long, long, std::optional<long>);
-
-
-
-
+template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
+    svd::solver::do_svd(const cplx *, long, long, std::optional<long>);
 
 template<typename Scalar>
-Eigen::Tensor<Scalar, 2>
-svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
-    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
-    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
-    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    return Textra::MatrixTensorMap(mat.completeOrthogonalDecomposition().pseudoInverse() );
+Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {
+    if(tensor.dimension(0) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)"); }
+    if(tensor.dimension(1) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)"); }
+    Eigen::Map<const MatrixType<Scalar>> mat(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    return Textra::MatrixTensorMap(mat.completeOrthogonalDecomposition().pseudoInverse());
 }
-
-
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of pseudo_inverse for type 'double'
 template Eigen::Tensor<double, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<double, 2> &tensor);
 //! \relates svd::class_SVD
 //! \brief force instantiation of pseudo_inverse for type 'std::complex<double>'
-template Eigen::Tensor<cplx, 2>   svd::solver::pseudo_inverse(const Eigen::Tensor<cplx  , 2> &tensor);
+template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<cplx, 2> &tensor);

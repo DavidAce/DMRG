@@ -25,8 +25,8 @@ source/math/svd/svd_lapacke.cpp
 source/math/rnd/rnd.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
+source/general/nmspc_tensor_extra.cpp
 source/io/class_config_reader.cpp
-source/io/nmspc_logger.cpp
 source/main.cpp
 source/tensors/class_tensors_finite.cpp
 source/tensors/class_tensors_infinite.cpp
@@ -117,7 +117,6 @@ source/general/nmspc_sfinae.h
 source/general/nmspc_sfinae_eigen.h
 source/io/class_config_reader.h
 source/io/nmspc_filesystem.h
-source/io/nmspc_logger.h
 source/io/table_types.h
 source/main.h
 source/math/svd.h

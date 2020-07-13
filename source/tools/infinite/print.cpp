@@ -6,7 +6,6 @@
 #include <tensors/state/class_state_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
-#include <tools/common/log.h>
 
 void tools::infinite::print::print_hamiltonians(const class_model_infinite &model) {
     model.get_mpo_siteA().print_parameter_names();
@@ -14,4 +13,4 @@ void tools::infinite::print::print_hamiltonians(const class_model_infinite &mode
     model.get_mpo_siteB().print_parameter_values();
 }
 
-void tools::infinite::print::print_state([[maybe_unused]] const class_state_infinite &state) { tools::log->warn("Print state not implemented yet"); }
+void tools::infinite::print::print_state([[maybe_unused]] const class_state_infinite &state) { throw std::runtime_error("Print state not implemented yet");}

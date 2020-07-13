@@ -1,7 +1,6 @@
 #pragma once
 #include <complex>
-#include <io/nmspc_logger.h>
-
+#include <tools/common/log.h>
 namespace eig {
     using real      = double;
     using cplx      = std::complex<double>;

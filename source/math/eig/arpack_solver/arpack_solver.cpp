@@ -60,8 +60,8 @@ eig::arpack_solver<MatrixType>::arpack_solver(MatrixType &matrix_, eig::settings
 
 template<typename MatrixType>
 void eig::arpack_solver<MatrixType>::eigs() {
-    auto loglevel = Logger::getLogLevel(eig::log);
-    eig::log      = Logger::setLogger("eigs", loglevel);
+    auto loglevel = tools::Logger::getLogLevel(eig::log);
+    eig::log      = tools::Logger::setLogger("eigs", loglevel);
 
     result.reset();
     nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev.value()));
@@ -81,7 +81,7 @@ void eig::arpack_solver<MatrixType>::eigs() {
         else
             eigs_nsym();
     }
-    eig::log = Logger::setLogger("eigs", loglevel);
+    eig::log = tools::Logger::setLogger("eigs", loglevel);
 }
 
 template<typename MatrixType>
