@@ -5,7 +5,7 @@
 #include <general/nmspc_tensor_extra.h>
 // textra must appear first
 #include "class_mps_site.h"
-#include <io/nmspc_logger.h>
+#include <tools/common/fmt.h>
 
 using Scalar = class_mps_site::Scalar;
 

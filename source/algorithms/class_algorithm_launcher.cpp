@@ -21,7 +21,7 @@
 
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_): h5pp_file(std::move(h5ppFile_)){
-    tools::log = Logger::setLogger("DMRG++ launch",  settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger("DMRG++ launch",  settings::console::verbosity, settings::console::timestamp);
     setup_temp_path();
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
@@ -30,7 +30,7 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
 
 
 class_algorithm_launcher::class_algorithm_launcher(){
-    tools::log = Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
     start_h5pp_file();
     setup_temp_path();
 

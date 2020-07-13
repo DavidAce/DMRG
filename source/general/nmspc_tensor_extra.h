@@ -5,9 +5,10 @@
 #pragma once
 #include <general/nmspc_tensor_omp.h>
 #include <general/nmspc_sfinae.h>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-#include <iostream>
+#include <Eigen/Core>
+#ifndef DMRG_EXTERN
+    #define DMRG_EXTERN extern
+#endif
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -18,55 +19,47 @@
  *  The contents of this namespace is co clear it is self-documenting ;)
  */
 
-
+/*clang-format off */
 namespace Textra {
     using cdouble       = std::complex<double>;
-
-
-    template<typename Scalar> using MatrixType          = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    template<typename Scalar> using VectorType          = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    template<typename Scalar> using SparseMatrixType    = Eigen::SparseMatrix<Scalar>;
-    template<long rank>       using array               = Eigen::array<long, rank>;
+    template<typename Scalar> using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename Scalar> using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    template<long rank>       using array      = Eigen::array<long, rank>;
 
     //Shorthand for the list of index pairs.
     template <typename Scalar, long length>
     using idxlistpair = Eigen::array<Eigen::IndexPair<Scalar>,length>;
 
-    constexpr idxlistpair<long,0> idx(){
+    inline constexpr idxlistpair<long,0> idx(){
         Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
         return empty_index_list;
     }
 
 
-    template<typename T, std::size_t N>
-    constexpr idxlistpair<long,N> idx (const T (&list1)[N], const T (&list2)[N]){
+    template<std::size_t N>
+    constexpr idxlistpair<Eigen::Index,N> idx (const Eigen::Index (&list1)[N], const Eigen::Index (&list2)[N]){
         //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
         //tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
-        static_assert(std::is_integral_v<T>);
-        Eigen::array<Eigen::IndexPair<long>,N> pairlistOut;
-        for(unsigned long i = 0; i < N; i++){
-            pairlistOut[i] = Eigen::IndexPair<long>{list1[i], list2[i]};
+        Eigen::array<Eigen::IndexPair<Eigen::Index>,N> pairlistOut;
+        for(Eigen::Index i = 0; i < N; i++){
+            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{list1[i], list2[i]};
         }
         return pairlistOut;
     }
 
 
-
-
-
-    template<typename T>
     struct idx_dim_pair{
-        T idxA;
-        T idxB;
-        T dimB;
+        Eigen::Index idxA;
+        Eigen::Index idxB;
+        Eigen::Index dimB;
     };
 
     template<std::size_t NB, std::size_t N>
-    constexpr idxlistpair<long,N> sortIdx (const Eigen::array<long,NB> &dimensions, const long (&idx_ctrct_A)[N],const long (&idx_ctrct_B)[N]){
+    constexpr idxlistpair<Eigen::Index,N> sortIdx (const Eigen::array<Eigen::Index,NB> &dimensions, const Eigen::Index (&idx_ctrct_A)[N],const Eigen::Index (&idx_ctrct_B)[N]){
         //When doing contractions, some indices may be larger than others. For performance, you want to
         // contract the largest indices first. This will return a sorted index list in decreasing order.
-        Eigen::array<idx_dim_pair<long>,N> idx_dim_pair_list;
-        for (unsigned long i = 0; i < N; i++ ){
+        Eigen::array<idx_dim_pair,N> idx_dim_pair_list;
+        for (Eigen::Index i = 0; i < N; i++ ){
             idx_dim_pair_list[i] = {idx_ctrct_A[i], idx_ctrct_B[i], dimensions[idx_ctrct_B[i]]};
         }
         std::sort(idx_dim_pair_list.begin(), idx_dim_pair_list.end(), [](const auto& i, const auto& j) { return i.dimB > j.dimB; } );
@@ -128,7 +121,6 @@ namespace Textra {
     constexpr auto asDiagonalInversed(const Eigen::Tensor<Scalar,2> &tensor) {
         assert(tensor.dimension(0) == tensor.dimension(1) and "Textra::asDiagonalInversed expects a square tensor");
         Eigen::Tensor<Scalar,2> inversed = asDiagonalInversed(extractDiagonal(tensor));
-        std::cout << "inversed:\n" << inversed << std::endl;
         return inversed;
     }
 
@@ -249,12 +241,6 @@ namespace Textra {
         return Eigen::Map<const VectorType<Scalar>> (tensor.data(), tensor.size());
     }
 
-    template <typename Scalar>
-    constexpr SparseMatrixType<Scalar> Tensor2_to_SparseMatrix(const Eigen::Tensor<Scalar,2> &tensor, double prune_threshold = 1e-15) {
-        return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)).sparseView().pruned(prune_threshold);
-    }
-
-
     template<typename Scalar,auto rank, typename sizeType>
     constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
@@ -360,8 +346,6 @@ namespace Textra {
                 angles.emplace_back(std::arg(v.col(i)(0)));
                 Scalar inv_phase = Scalar(0.0,-1.0) * angles.back();
                 Scalar exp_inv_phase = std::exp(inv_phase);
-//                    std::cout << std::setprecision(20) << std::fixed << "inv_phase    : " << inv_phase << std::endl;
-//                    std::cout << std::setprecision(20) << std::fixed << "exp_inv_phase: " << exp_inv_phase << std::endl;
                 v.col(i) *= exp_inv_phase;
                 v.col(i) = (v.col(i).array().imag().cwiseAbs() > 1e-15  ).select(v.col(i), v.col(i).real());
             }
@@ -397,55 +381,7 @@ namespace Textra {
         auto map = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(tensor.data(),tensor.size());
         add_phase(map,angles);
     }
-
-//******************************************************//
-//std::cout overloads for dimension() and array objects //
-//******************************************************//
-
-//    template <typename T, int L>
-//    std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {
-//        if ( !v.empty() ) {
-//            out << "[ ";
-//            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-//            out << "]";
-//        }
-//        return out;
-//    }
-//
-//
-//    template <typename T, int L>
-//    std::ostream& operator<< (std::ostream& out, const Eigen::array<T,L>& v) {
-//        if ( !v.empty() ) {
-//            out << "[ ";
-//            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-//            out << "]";
-//        }
-//        return out;
-//    }
-//
-//
-///*! \brief Prints the content of a list nicely */
-//    template<typename T>
-//    std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
-//        if (!v.empty()) {
-//            out << "[ ";
-//            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-//            out << "]";
-//        }
-//        return out;
-//    }
-//
-///*! \brief Prints the content of a list nicely */
-//    template<typename T>
-//    std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
-//        if (!v.empty()) {
-//            out << "[ ";
-//            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-//            out << "]";
-//        }
-//        return out;
-//    }
-
 }
+/*clang-format on */
 
-
+#include <general/nmspc_tensor_extra.tpp>

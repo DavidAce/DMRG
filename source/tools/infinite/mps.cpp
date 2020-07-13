@@ -5,7 +5,6 @@
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
-#include <tools/common/log.h>
 #include <tools/infinite/mps.h>
 
 using Scalar = std::complex<double>;

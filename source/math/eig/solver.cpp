@@ -9,10 +9,10 @@
 #include "arpack_solver/matrix_product_sparse.h"
 
 eig::solver::solver() {
-    if(not eig::log) eig::log = Logger::setLogger("eig", 2, true);
+    if(not eig::log) eig::log = tools::Logger::setLogger("eig", 2, true);
 }
 
-eig::solver::solver(size_t logLevel) : solver() { Logger::setLogLevel(eig::log, logLevel); }
+eig::solver::solver(size_t logLevel) : solver() { tools::Logger::setLogLevel(eig::log, logLevel); }
 eig::solver::solver(std::shared_ptr<spdlog::logger> logger) { eig::log = std::move(logger); }
 
 template<typename Scalar>

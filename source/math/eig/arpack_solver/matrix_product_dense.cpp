@@ -4,7 +4,6 @@
 
 #include "matrix_product_dense.h"
 #include <Eigen/Core>
-#include <Eigen/Dense>
 #include <Eigen/LU>
 #include <general/class_tic_toc.h>
 #include <memory>
