@@ -38,7 +38,7 @@ namespace Textra {
         //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
         //tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
         Eigen::array<Eigen::IndexPair<Eigen::Index>,N> pairlistOut;
-        for(Eigen::Index i = 0; i < N; i++){
+        for(size_t i = 0; i < N; i++){
             pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{list1[i], list2[i]};
         }
         return pairlistOut;
@@ -56,12 +56,12 @@ namespace Textra {
         //When doing contractions, some indices may be larger than others. For performance, you want to
         // contract the largest indices first. This will return a sorted index list in decreasing order.
         Eigen::array<idx_dim_pair,N> idx_dim_pair_list;
-        for (Eigen::Index i = 0; i < N; i++ ){
+        for (size_t i = 0; i < N; i++ ){
             idx_dim_pair_list[i] = {idx_ctrct_A[i], idx_ctrct_B[i], dimensions[idx_ctrct_B[i]]};
         }
         std::sort(idx_dim_pair_list.begin(), idx_dim_pair_list.end(), [](const auto& i, const auto& j) { return i.dimB > j.dimB; } );
         idxlistpair<long,N> pairlistOut;
-        for(unsigned long i = 0; i< N; i++){
+        for(size_t i = 0; i< N; i++){
             pairlistOut[i] = Eigen::IndexPair<long>{idx_dim_pair_list[i].idxA, idx_dim_pair_list[i].idxB};
         }
         return pairlistOut;
