@@ -113,9 +113,9 @@ namespace tools::finite::opt::internal{
 //        template <typename T>
 //        extern Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_model_finite & model, const class_edges_finite & edges);
     template <typename T>
-    extern Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
     template <typename T>
-    extern Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const std::vector<opt_tensor> & candidate_list);
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const std::vector<opt_tensor> & candidate_list);
 
 
     inline ceres::GradientProblemSolver::Options ceres_default_options;

@@ -82,7 +82,39 @@ include(cmake-modules/CompilerFlags.cmake)
 ###  Add all source files    ###
 ################################
 include(source_list.txt)
-target_include_directories(${PROJECT_NAME} PUBLIC source)
+add_executable(${PROJECT_NAME} ${DMRG_SOURCES} ${DMRG_HEADERS})
+add_library(dmrg-eig OBJECT
+        source/math/eig/settings.cpp
+        source/math/eig/solver.cpp
+        source/math/eig/solver_dgeev.cpp
+        source/math/eig/solver_dsyevd.cpp
+        source/math/eig/solver_zgeev.cpp
+        source/math/eig/solver_zheevd.cpp
+        source/math/eig/solution.cpp
+        source/math/eig/arpack_solver/arpack_solver.cpp
+        source/math/eig/arpack_solver/matrix_product_dense.cpp
+        source/math/eig/arpack_solver/matrix_product_sparse.cpp
+        source/math/eig/arpack_solver/matrix_product_hamiltonian.cpp
+
+        source/math/eig.h
+        source/math/eig/settings.h
+        source/math/eig/solver.h
+        source/math/eig/solution.h
+        source/math/eig/view.h
+        source/math/eig/arpack_solver/arpack_solver.h
+        source/math/eig/arpack_solver/matrix_product_dense.h
+        source/math/eig/arpack_solver/matrix_product_sparse.h
+        source/math/eig/arpack_solver/matrix_product_hamiltonian.h
+        )
+add_library(dmrg-svd OBJECT
+        source/math/svd/svd.cpp
+        source/math/svd/svd_lapacke.cpp
+
+        source/math/svd.h
+        )
+target_include_directories(${PROJECT_NAME} PRIVATE source)
+target_include_directories(dmrg-eig PRIVATE source)
+target_include_directories(dmrg-svd PRIVATE source)
 
 
 add_library(project-settings INTERFACE)
@@ -199,8 +231,27 @@ if(NOT TARGET openmp::openmp)
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
 target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
-target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project
+target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
+target_link_libraries(dmrg-svd PRIVATE project-settings )  # Link everything to main project
+target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig dmrg-svd project-settings )  # Link everything to main project
 
+# Speed up with precompiled headers
+if(COMMAND target_precompile_headers)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <spdlog/spdlog.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <fmt/core.h> <fmt/format.h> <fmt/ostream.h> <fmt/ranges.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <vector> <complex> <map> <optional> <iostream> <iomanip>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_quantum_mechanics.h>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
+endif()
 
 
 

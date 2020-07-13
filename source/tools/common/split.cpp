@@ -1,11 +1,10 @@
 #include "split.h"
 #include "prof.h"
 #include <config/nmspc_settings.h>
-#include <math/num.h>
 #include <math/svd.h>
 #include <optional>
 #include <tensors/state/class_mps_site.h>
-#include <tools/common/log.h>
+#include <tools/common/fmt.h>
 
 std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
                                                         const std::vector<size_t> &sites, size_t center_position, long chi_limit,
@@ -276,11 +275,6 @@ tools::common::split::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 
             .reshape(mps_sites.back().dimensions());
 
     mps_sites.back().set_M(USV);
-
-
-//    for(const auto & mps : mps_sites)
-//        tools::log->debug("Split mps site from left {}", mps.get_position());
-
     return mps_sites;
 }
 
@@ -402,10 +396,5 @@ std::list<class_mps_site>
                             .reshape(mps_sites.front().dimensions());
 
     mps_sites.front().set_M(USV);
-
-    // More sanity checks
-//    for(const auto & mps : mps_sites)
-//        tools::log->debug("Split mps site from right {}", mps.get_position());
-
     return mps_sites;
 }

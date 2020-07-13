@@ -2,15 +2,6 @@
 #include <tools/common/fmt.h>
 #include <tools/common/moments.h>
 
-using cplx = std::complex<double>;
-using real = double;
-template<typename Scalar>
-using T3 = Eigen::Tensor<Scalar, 3>;
-template<typename Scalar>
-using T4 = Eigen::Tensor<Scalar, 4>;
-template<typename T>
-using TM = Eigen::TensorMap<T>;
-
 template<typename mps_type, typename mpo_type, typename env_type>
 extern double tools::common::moments::first(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
     // This measures the expectation value <M> of some multisite operator M given multisite mps', mpos and corresponding environments.
@@ -45,10 +36,10 @@ extern double tools::common::moments::first(const mps_type &mps, const mpo_type 
     return moment;
 }
 
-template double tools::common::moments::first(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
+//template double tools::common::moments::first(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
 template double tools::common::moments::first(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-template double tools::common::moments::first(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
-template double tools::common::moments::first(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+//template double tools::common::moments::first(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
+//template double tools::common::moments::first(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
 
 template<typename mps_type, typename mpo_type, typename env_type>
 extern double tools::common::moments::second(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
@@ -109,7 +100,7 @@ extern double tools::common::moments::second(const mps_type &mps, const mpo_type
     return moment;
 }
 
-template double tools::common::moments::second(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
+//template double tools::common::moments::second(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
 template double tools::common::moments::second(const T3<cplx> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
-template double tools::common::moments::second(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
-template double tools::common::moments::second(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
+//template double tools::common::moments::second(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
+//template double tools::common::moments::second(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);

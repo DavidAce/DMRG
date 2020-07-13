@@ -6,10 +6,9 @@
 
 #ifdef _OPENMP
     #include <omp.h>
+    #include <thread>
 #endif
 
-// Make sure EIGEN_USE_THREADS is defined globally already
-#include <thread>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace Textra::omp {

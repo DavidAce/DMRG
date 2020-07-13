@@ -1,5 +1,11 @@
 #pragma once
-#if !defined(SPDLOG_FMT_EXTERNAL) && __has_include(<spdlog/fmt/fmt.h>) && __has_include(<spdlog/fmt/bundled/ranges.h>) &&  __has_include(<spdlog/fmt/bundled/ostream.h>)
+
+#if defined (SPDLOG_FMT_EXTERNAL) && __has_include(<fmt/core.h>) &&  __has_include(<fmt/format.h>) && __has_include(<fmt/ranges.h>) &&  __has_include(<fmt/ostream.h>)
+    #include <fmt/core.h>
+    #include <fmt/format.h>
+    #include <fmt/ostream.h>
+    #include <fmt/ranges.h>
+#elif !defined(SPDLOG_FMT_EXTERNAL) && __has_include(<spdlog/fmt/fmt.h>) && __has_include(<spdlog/fmt/bundled/ranges.h>) &&  __has_include(<spdlog/fmt/bundled/ostream.h>)
 #ifdef FMT_HEADER_ONLY
         #pragma message "{fmt} has been included as header-only library. This causes large compile-time overhead"
 #endif

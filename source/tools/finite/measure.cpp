@@ -18,6 +18,7 @@
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <tools/common/moments.h>
 #include <tools/common/prof.h>
 
