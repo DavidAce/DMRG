@@ -2,9 +2,12 @@
 //#include <complex.h>
 //#undef I
 
+#ifndef lapack_complex_float
 #define lapack_complex_float  std::complex<float>
+#endif
+#ifndef lapack_complex_double
 #define lapack_complex_double std::complex<double>
-
+#endif
 #if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
 #elif __has_include(<lapacke.h>)
