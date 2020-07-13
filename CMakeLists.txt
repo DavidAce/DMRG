@@ -94,7 +94,7 @@ if(BUILD_SHARED_LIBS)
 else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
-    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+#    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()
 
 
@@ -120,12 +120,12 @@ CheckCXXOptional()
 ##################################################
 # -fsanitize=leak -fsanitize=undefined -fsanitize=alignment  -fsanitize=leak -fsanitize=undefined -fsanitize=alignment
 target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g -fsanitize=address   -fno-omit-frame-pointer>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion  -fsanitize=address -fno-omit-frame-pointer>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
-target_link_libraries(project-settings INTERFACE -fsanitize=address)
+#target_link_libraries(project-settings INTERFACE -fsanitize=address)
 #######################################
 ### Compiler-dependent linker flags ###
 #######################################
