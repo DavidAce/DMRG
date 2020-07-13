@@ -10,7 +10,7 @@
 #endif
 
 #include <unsupported/Eigen/CXX11/Tensor>
-
+#include <memory>
 namespace Textra::omp {
 
 #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
