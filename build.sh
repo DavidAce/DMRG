@@ -22,6 +22,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
+   | --enable-sanitizers        : Enable -fsanitize=address
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
@@ -53,6 +54,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 enable-openmp\
                 enable-mkl\
                 enable-lto\
+                enable-sanitizers\
                 no-modules\
                 prefer-conda\
                 verbose\
@@ -75,6 +77,7 @@ enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
 enable_lto="OFF"
+enable_sanitizers="OFF"
 make_threads=8
 prefer_conda="OFF"
 verbose="OFF"
@@ -103,6 +106,7 @@ do
        --enable-openmp)             enable_openmp="ON"              ; echo " * OpenMP                  : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL               : ON"      ; shift   ;;
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization  : ON"      ; shift   ;;
+       --enable-sanitizers)         enable_sanitizers="ON"          ; echo " * Compiler sanitizers     : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load     : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs    : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles       : ON"      ; shift   ;;
@@ -121,6 +125,13 @@ if  [ -n "$clear_cmake" ] ; then
     echo "Clearing CMake files from build."
 	rm -rf ./build/$build_type/CMakeCache.txt
 fi
+
+if  [ -n "$enable_sanitizers" ] ; then
+    echo "Enabling sanitizer flags: -fsanitize=address, etc"
+    sanitizer_flags="-fsanitize=address  -fsanitize=leak -fsanitize=undefined -fsanitize=alignment  -fno-omit-frame-pointer"
+    sanitizer_link_flags="-fsanitize=address"
+fi
+
 
 build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
 for lib in "${clear_libs[@]}"; do
@@ -270,6 +281,8 @@ cat << EOF >&2
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
           -DDMRG_ENABLE_LTO=$enable_lto
+          -DCMAKE_CXX_FLAGS_INIT=$sanitizer_flags
+          -DCMAKE_EXE_LINKER_FLAGS_INIT=$sanitizer_link_flags
           $extra_flags
            -G $generator
            ../../
@@ -291,6 +304,8 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
           -DDMRG_ENABLE_LTO=$enable_lto \
+          -DCMAKE_CXX_FLAGS_INIT=$sanitizer_flags \
+          -DCMAKE_EXE_LINKER_FLAGS_INIT=$sanitizer_link_flags \
           $extra_flags \
            -G "$generator" \
            ../../
