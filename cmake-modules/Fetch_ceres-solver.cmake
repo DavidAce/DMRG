@@ -1,5 +1,5 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
-    foreach (tgt glog::glog;gflags::gflags;Eigen3::Eigen)
+    foreach (tgt glog::glog;gflags;Eigen3::Eigen)
         if(NOT TARGET ${tgt})
             list(APPEND CERES_MISSING_TARGET ${tgt})
             mark_as_advanced(CERES_MISSING_TARGETS)
@@ -94,8 +94,9 @@ endif()
 
 if(TARGET ceres AND NOT TARGET Ceres::ceres)
     # Copy ceres to Ceres::ceres to follow proper naming convention
-    include(cmake-modules/CopyTarget.cmake)
-    copy_target(ceres Ceres::ceres)
+    add_library(Ceres::ceres ALIAS ceres)
+#    include(cmake-modules/CopyTarget.cmake)
+#    copy_target(ceres Ceres::ceres)
 endif()
 
 if(TARGET Ceres::ceres) # The new target name
@@ -112,8 +113,8 @@ if(TARGET Ceres::ceres) # The new target name
     #Remove any shared libraries like unwind etc which pollute static builds
     # Or... just relink it entirely
     include(cmake-modules/TargetFilters.cmake)
-    remove_library_shallow(Ceres::ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
-    target_link_libraries(Ceres::ceres INTERFACE glog::glog gflags::gflags pthread )
+    remove_library_shallow(Ceres::ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread")
+    target_link_libraries(Ceres::ceres INTERFACE pthread )
 
 endif()
 
