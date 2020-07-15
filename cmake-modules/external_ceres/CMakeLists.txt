@@ -60,6 +60,8 @@ ExternalProject_Add(external_ceres
         -DCMAKE_CXX_FLAGS_MINSIZEREL_INIT:STRING=${CMAKE_CXX_FLAGS_MINSIZEREL}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=TRUE
         # ceres flags
         -DEigen3_ROOT:PATH=${Eigen3_ROOT}
         -Dgflags_ROOT:PATH=${gflags_ROOT}
@@ -74,4 +76,5 @@ ExternalProject_Add(external_ceres
         -DCXSPARSE:BOOL=OFF
         -DSCHUR_SPECIALIZATIONS:BOOL=OFF
         -DCUSTOM_BLAS:BOOL=ON
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
         )

@@ -64,14 +64,20 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT CMAKE_EXE_LINKER_FLAGS MATCHES "f
     set(CMAKE_EXE_LINKER_FLAGS "-fuse-ld=gold ${CMAKE_EXE_LINKER_FLAGS}")
 endif()
 
+###############################
+# Settings for shared builds
 
 # use, i.e. don't skip the full RPATH for the build tree
-#set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
-# when building, don't use the install RPATH already
-# (but later on when installing)
-#set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+# when building, don't use the install RPATH already (but later on when installing)
+# Note: Since DMRG++ is often run from the build folder we want to keep the build-folder RPATH in the executable.
+#       Therefore itt makes sense to keep this setting "FALSE" here but "TRUE" for dependencies that are
+#       installed with in "fetch" mode with externalproject_add
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
-#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+
