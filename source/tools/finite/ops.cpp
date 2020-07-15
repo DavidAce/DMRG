@@ -87,7 +87,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
                 .reshape(Textra::array2{Ldim * mpoDimL, Ldim})                          // Merge the legs
                 .contract(state.mps_sites.front()->get_M_bare(), Textra::idx({0}, {1})) // Contract with A which already has the mpo on it
                 .shuffle(Textra::array3{1, 0, 2});                                      // Shuffle back to convention
-        auto one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
+        Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
         state.mps_sites.front()->set_mps(M_temp, one, 0);
     }
     {
@@ -110,7 +110,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
                                               .reshape(Textra::array2{Rdim * mpoDimR, Rdim})
                                               .contract(state.mps_sites.back()->get_M_bare(), Textra::idx({0}, {2}))
                                               .shuffle(Textra::array3{1, 2, 0});
-        auto one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
+        Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
         state.mps_sites.back()->set_mps(M_temp, one, 0);
     }
 
