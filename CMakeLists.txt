@@ -17,7 +17,7 @@ option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"           
 option(DMRG_BUILD_EXAMPLES           "Build examples"                                               OFF)
 option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
 option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
-
+option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitize=address"          OFF)
 
 
 # Make an "enum" for valid download methods
@@ -163,7 +163,7 @@ target_compile_features(project-settings INTERFACE cxx_std_17)
 #######################################
 # Settings for sanitizers           ###
 #######################################
-if(DMRG_SANITIZERS)
+if(DMRG_ENABLE_ASAN)
     target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -fsanitize=address -fno-omit-frame-pointer>)
     target_link_options(project-settings INTERFACE -fsanitize=address)
 endif()
