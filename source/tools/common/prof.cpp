@@ -209,19 +209,19 @@ double tools::common::profile::mem_usage_in_mb(std::string_view name) {
             if(key == name) {
                 std::string value_str;
                 if(std::getline(is_line, value_str)) {
-                    // Filter non alphanumeric characters
+                    // Filter non-digit characters
                     value_str.erase(std::remove_if(value_str.begin(), value_str.end(),
                                            []( auto const& c ) -> bool { return not std::isdigit(c); } ), value_str.end());
                     // Extract the number
-                    int value = 0;
+                    long long value = 0;
                     try{
                         std::string::size_type sz; // alias of size_t
-                        value = std::stoi(value_str, &sz);
+                        value = std::stoll(value_str, &sz);
                     }catch(const std::exception & ex){
                         tools::log->error("Could not read mem usage from /proc/self/status: Failed to parse string [{}]: {}", value_str,ex.what());
                     }
                     // Now we have the value in kb
-                    return value / 1024.0;
+                    return static_cast<double>(value) / 1024.0;
 
                 }
             }
