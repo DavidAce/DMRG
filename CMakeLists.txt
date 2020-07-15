@@ -164,7 +164,7 @@ target_compile_features(project-settings INTERFACE cxx_std_17)
 # Settings for sanitizers           ###
 #######################################
 if(DMRG_ENABLE_ASAN)
-    target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -fsanitize=address -fno-omit-frame-pointer>)
+    target_compile_options(project-settings INTERFACE -fsanitize=address -fno-omit-frame-pointer)
     target_link_options(project-settings INTERFACE -fsanitize=address)
 endif()
 
