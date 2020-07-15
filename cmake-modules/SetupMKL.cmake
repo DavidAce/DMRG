@@ -62,7 +62,7 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
 
         find_package(Fortran REQUIRED)
         find_package(Threads REQUIRED)
-        target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran Threads::Threads dl)
+        target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran Threads::Threads)
 
 
         # Make the rest of the build structure aware of blas and lapack included in MKL.

@@ -372,6 +372,8 @@ function(find_mkl_libraries)
                             mkl::mkl_core
                             -Wl,--end-group
                             -Wl,--as-needed
+                            m
+                            dl
                             )
                     target_include_directories(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
                     set_target_properties(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} PROPERTIES INTERFACE_LINK_DIRECTORIES  ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
