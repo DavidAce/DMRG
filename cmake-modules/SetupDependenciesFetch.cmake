@@ -10,8 +10,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
         set(FIND_LIBRARY_USE_LIB32_PATHS ON)
     endif()
 
-    message(STATUS "CMAKE_LIBRARY_ARCHITECTURE :${CMAKE_LIBRARY_ARCHITECTURE}")
-
 
     ##############################################################################
     ###  Optional OpenMP support                                               ###

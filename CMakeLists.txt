@@ -157,6 +157,17 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
+
+
+
+#######################################
+# Settings for sanitizers           ###
+#######################################
+if(DMRG_SANITIZERS)
+    target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -fsanitize=address -fno-omit-frame-pointer>)
+    target_link_options(project-settings INTERFACE -fsanitize=address)
+endif()
+
 #######################################
 ### Compiler-dependent linker flags ###
 #######################################

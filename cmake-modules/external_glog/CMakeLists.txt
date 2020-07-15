@@ -34,6 +34,8 @@ ExternalProject_Add(external_glog
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
         -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
         -DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=TRUE
         # glog flags
         -Dgflags_ROOT:PATH=${gflags_ROOT}
         -Dgflags_DIR:PATH=${gflags_DIR}
