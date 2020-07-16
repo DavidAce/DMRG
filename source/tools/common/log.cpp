@@ -1,6 +1,4 @@
 #include <tools/common/log.h>
-#include <tools/common/fmt.h>
-#include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -69,10 +67,8 @@ void tools::Logger::setLogger(std::shared_ptr<spdlog::logger> &other_log, const 
 std::shared_ptr<spdlog::logger> tools::Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToFive, std::optional<bool> timestamp) {
     std::shared_ptr<spdlog::logger> other_log;
     if(spdlog::get(name) == nullptr) {
-        std::cout << "Creating new logger with name " << name << std::endl;
         other_log = spdlog::stdout_color_mt(name);
     } else {
-        std::cout << "Getting existing logger with name " << name << std::endl;
         other_log = spdlog::get(name);
     }
     tools::Logger::setLogLevel(other_log,levelZeroToFive);
