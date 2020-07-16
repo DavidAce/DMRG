@@ -248,8 +248,8 @@ namespace Textra {
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), tensor.dimension(0),tensor.dimension(1));
     }
 
-    template<typename Scalar>
-    constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar,2> &tensor){
+    template<typename Scalar,auto rank>
+    constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar,rank> &tensor){
         return Eigen::Map<const VectorType<Scalar>> (tensor.data(), tensor.size());
     }
 
