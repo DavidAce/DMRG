@@ -18,6 +18,7 @@ namespace tools::common::split{
     namespace internal{
 
         extern std::list<class_mps_site>
+//            extern std::pair<std::list<class_mps_site>,Eigen::Tensor<Scalar,3>>
                     split_mps_from_left(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                         std::vector<long>               spin_dims,
                                         std::vector<size_t>             positions,
@@ -25,7 +26,8 @@ namespace tools::common::split{
                                         std::optional<double>           svd_threshold = std::nullopt);
 
         extern std::list<class_mps_site>
-                    split_mps_from_right(const Eigen::Tensor<Scalar,3> & multisite_mps,
+//            extern std::pair<Eigen::Tensor<Scalar,3>,std::list<class_mps_site>>
+            split_mps_from_right(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                          std::vector<long>               spin_dims,
                                          std::vector<size_t>             positions,
                                          long                            chi_limit,
