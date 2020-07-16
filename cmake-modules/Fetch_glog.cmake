@@ -91,15 +91,6 @@ if(TARGET glog::glog)
     remove_library_shallow(glog::glog "Threads::Threads|pthread|unwind")
     target_link_libraries(glog::glog INTERFACE unwind::full pthread )
 
-    # Modernize
-#    get_property(imp_loc_set TARGET glog::glog PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
-#    get_property(loc_set     TARGET glog::glog PROPERTY LOCATION SET) # Returns a boolean if set
-#    if(loc_set AND NOT imp_loc_set)
-#        get_target_property(imp_loc glog::glog LOCATION)
-#        set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION ${imp_loc})
-#    endif()
-    include(cmake-modules/PrintTargetProperties.cmake)
-    print_target_properties(glog::glog)
     check_glog_compiles("glog::glog" "" "" "" "")
     if(NOT GLOG_COMPILES)
         include(cmake-modules/PrintTargetProperties.cmake)
