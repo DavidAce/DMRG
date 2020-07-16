@@ -39,6 +39,7 @@ namespace tools::finite::measure{
     extern std::vector<double> entanglement_entropies         (const class_state_finite & state);
     extern std::array<double,3> spin_components               (const class_state_finite & state);
     extern std::vector<double> truncation_errors              (const class_state_finite & state);
+    extern std::vector<double> truncation_errors_active       (const class_state_finite & state);
 
 
     template<typename state_or_mps_type>

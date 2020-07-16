@@ -203,6 +203,16 @@ std::vector<double> tools::finite::measure::truncation_errors(const class_state_
     return state.measurements.truncation_errors.value();
 }
 
+std::vector<double> tools::finite::measure::truncation_errors_active(const class_state_finite &state) {
+    std::vector<double> truncation_errors;
+    for(const auto &site : state.active_sites) {
+        const auto & mps = state.get_mps_site(site);
+        truncation_errors.emplace_back(mps.get_truncation_error());
+        if(mps.isCenter()) truncation_errors.emplace_back(mps.get_truncation_error_LC());
+    }
+    return truncation_errors;;
+}
+
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
     Eigen::Tensor<Scalar, 2> chain(1, 1);
     chain.setConstant(1.0);
