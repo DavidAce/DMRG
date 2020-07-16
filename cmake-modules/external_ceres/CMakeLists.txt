@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
+cmake_policy(SET CMP0074 NEW)
 project(external-ceres)
 
 option(CMAKE_VERBOSE_MAKEFILE "Verbosity" OFF)
@@ -38,7 +39,7 @@ ExternalProject_Add(external_ceres
         CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
         CMAKE_ARGS
         # CMake flags
-        -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
+        -DCMAKE_POLICY_DEFAULT_CMP0074=${CMAKE_POLICY_DEFAULT_CMP0074}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -59,7 +60,7 @@ ExternalProject_Add(external_ceres
         -DCMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT:STRING=${CMAKE_CXX_FLAGS_RELWITHDEBINFO}
         -DCMAKE_CXX_FLAGS_MINSIZEREL_INIT:STRING=${CMAKE_CXX_FLAGS_MINSIZEREL}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+        -DCMAKE_INSTALL_MESSAGE=${CMAKE_INSTALL_MESSAGE}
         -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=TRUE
         # ceres flags
