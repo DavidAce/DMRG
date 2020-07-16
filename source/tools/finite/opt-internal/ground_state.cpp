@@ -19,7 +19,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
 }
 
 Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
-    tools::log->trace("Ground state optimization with ritz {} ...", ritzstring);
+    tools::log->debug("Ground state optimization with ritz {} ...", ritzstring);
     using namespace internal;
     using namespace settings::precision;
 
