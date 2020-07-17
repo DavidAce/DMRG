@@ -10,6 +10,8 @@ source/algorithms/class_xdmrg.cpp
 source/config/class_dmrg_config.cpp
 source/config/nmspc_settings.cpp
 source/math/rnd/rnd.cpp
+source/math/svd/svd.cpp
+source/math/svd/svd_lapacke.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
 source/io/class_config_reader.cpp
@@ -89,7 +91,6 @@ source/algorithms/class_xdmrg.h
 source/config/class_dmrg_config.h
 source/config/enums.h
 source/config/nmspc_settings.h
-
 source/general/class_tic_toc.h
 source/general/nmspc_quantum_mechanics.h
 source/general/nmspc_tensor_extra.h
@@ -100,9 +101,9 @@ source/io/class_config_reader.h
 source/io/nmspc_filesystem.h
 source/io/table_types.h
 source/main.h
-
 source/math/num.h
 source/math/rnd.h
+source/math/svd.h
 source/tensors/class_tensors_finite.h
 source/tensors/class_tensors_infinite.h
 source/tensors/edges/class_env_base.h
