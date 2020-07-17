@@ -13,7 +13,7 @@
 #endif
 #include <general/nmspc_tensor_omp.h>
 
-#ifdef OpenBLAS_AVAILABLE
+#ifdef OPENBLAS_AVAILABLE
     #include <cblas.h>
     #include <openblas_config.h>
 #endif
@@ -218,30 +218,22 @@ int main(int argc, char *argv[]) {
 // Set the number of threads to be used
 #ifdef _OPENMP
     if(settings::threading::num_threads <= 0) { settings::threading::num_threads = (int) std::thread::hardware_concurrency(); }
-
     omp_set_num_threads(settings::threading::num_threads);
     Eigen::setNbThreads(settings::threading::num_threads);
     Textra::omp::setNumThreads(settings::threading::num_threads);
     tools::log->info("Using Eigen Tensor with {} threads", Textra::omp::tp->NumThreads());
     tools::log->info("Using Eigen  with {} threads", Eigen::nbThreads());
     tools::log->info("Using OpenMP with {} threads", omp_get_max_threads());
-    #ifdef OpenBLAS_AVAILABLE
+    #ifdef OPENBLAS_AVAILABLE
     openblas_set_num_threads(settings::threading::num_threads);
     tools::log->info("{} compiled with parallel mode {} for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,
                      openblas_get_parallel(), openblas_get_corename(), openblas_get_config(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, openblas_get_num_threads());
-        //                std::cout << OPENBLAS_VERSION
-        //                          << " compiled with parallel mode " << openblas_get_parallel()
-        //                          << " for target " << openblas_get_corename()
-        //                          << " with config " << openblas_get_config()
-        //                          << " with multithread threshold " << OPENBLAS_GEMM_MULTITHREAD_THRESHOLD
-        //                          << ". Running with " << openblas_get_num_threads() << " thread(s)" << std::endl;
     #endif
 
     #ifdef MKL_AVAILABLE
     mkl_set_num_threads(settings::threading::num_threads);
     tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
     #endif
-
 #endif
 
     // Initialize the algorithm class
