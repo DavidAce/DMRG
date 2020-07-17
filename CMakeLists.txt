@@ -106,15 +106,9 @@ add_library(dmrg-eig OBJECT
         source/math/eig/arpack_solver/matrix_product_sparse.h
         source/math/eig/arpack_solver/matrix_product_hamiltonian.h
         )
-add_library(dmrg-svd OBJECT
-        source/math/svd/svd.cpp
-        source/math/svd/svd_lapacke.cpp
 
-        source/math/svd.h
-        )
 target_include_directories(${PROJECT_NAME} PRIVATE source)
 target_include_directories(dmrg-eig PRIVATE source)
-target_include_directories(dmrg-svd PRIVATE source)
 
 
 add_library(project-settings INTERFACE)
@@ -242,8 +236,7 @@ if(NOT TARGET openmp::openmp)
 endif()
 target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
-target_link_libraries(dmrg-svd PRIVATE project-settings )  # Link everything to main project
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig dmrg-svd project-settings )  # Link everything to main project
+target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
 
 # Speed up with precompiled headers
 if(COMMAND target_precompile_headers)
