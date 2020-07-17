@@ -311,13 +311,10 @@ void class_xdmrg::single_xDMRG_step() {
 
     if(max_num_sites_list.empty()) max_num_sites_list = {2};
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
-    std::cout << "log name: " << tools::log->name() << std::endl;
-    std::cout << "log levl: " << tools::log->level() << std::endl;
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
     double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
-        std::cout << "max_num_sites " << max_num_sites << std::endl;
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
 
         auto old_num_sites = tensors.active_sites.size();
