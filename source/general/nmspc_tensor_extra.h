@@ -24,22 +24,18 @@ namespace Textra {
     template<long rank>       using array      = Eigen::array<long, rank>;
 
     //Shorthand for the list of index pairs.
-    template <typename Scalar, long length>
-    using idxlistpair = Eigen::array<Eigen::IndexPair<Scalar>,length>;
+    template <auto N>
+    using idxlistpair = Eigen::array<Eigen::IndexPair<Eigen::Index>,N>;
 
-    inline constexpr idxlistpair<long,0> idx(){
-        Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
-        return empty_index_list;
-    }
+    inline constexpr idxlistpair<0> idx(){return {};}
 
-
-    template<std::size_t N>
-    constexpr idxlistpair<Eigen::Index,N> idx (const Eigen::Index (&list1)[N], const Eigen::Index (&list2)[N]){
+    template<std::size_t N, typename idxType>
+    constexpr idxlistpair<N> idx (const idxType (&list1)[N], const idxType (&list2)[N]){
         //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
         //tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
-        Eigen::array<Eigen::IndexPair<Eigen::Index>,N> pairlistOut;
+        idxlistpair<N> pairlistOut;
         for(size_t i = 0; i < N; i++){
-            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{list1[i], list2[i]};
+            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{static_cast<Eigen::Index>(list1[i]), static_cast<Eigen::Index>(list2[i])};
         }
         return pairlistOut;
     }
@@ -52,7 +48,7 @@ namespace Textra {
     };
 
     template<std::size_t NB, std::size_t N>
-    constexpr idxlistpair<Eigen::Index,N> sortIdx (const Eigen::array<Eigen::Index,NB> &dimensions, const Eigen::Index (&idx_ctrct_A)[N],const Eigen::Index (&idx_ctrct_B)[N]){
+    constexpr idxlistpair<N> sortIdx (const Eigen::array<Eigen::Index,NB> &dimensions, const Eigen::Index (&idx_ctrct_A)[N],const Eigen::Index (&idx_ctrct_B)[N]){
         //When doing contractions, some indices may be larger than others. For performance, you want to
         // contract the largest indices first. This will return a sorted index list in decreasing order.
         Eigen::array<idx_dim_pair,N> idx_dim_pair_list;
@@ -60,23 +56,21 @@ namespace Textra {
             idx_dim_pair_list[i] = {idx_ctrct_A[i], idx_ctrct_B[i], dimensions[idx_ctrct_B[i]]};
         }
         std::sort(idx_dim_pair_list.begin(), idx_dim_pair_list.end(), [](const auto& i, const auto& j) { return i.dimB > j.dimB; } );
-        idxlistpair<long,N> pairlistOut;
+        idxlistpair<N> pairlistOut;
         for(size_t i = 0; i< N; i++){
             pairlistOut[i] = Eigen::IndexPair<long>{idx_dim_pair_list[i].idxA, idx_dim_pair_list[i].idxB};
         }
         return pairlistOut;
     }
 
-
-
-    using array8        = Eigen::array<long,8>;
-    using array7        = Eigen::array<long,7>;
-    using array6        = Eigen::array<long,6>;
-    using array5        = Eigen::array<long,5>;
-    using array4        = Eigen::array<long,4>;
-    using array3        = Eigen::array<long,3>;
-    using array2        = Eigen::array<long,2>;
-    using array1        = Eigen::array<long,1>;
+    using array8        = Eigen::array<Eigen::Index,8>;
+    using array7        = Eigen::array<Eigen::Index,7>;
+    using array6        = Eigen::array<Eigen::Index,6>;
+    using array5        = Eigen::array<Eigen::Index,5>;
+    using array4        = Eigen::array<Eigen::Index,4>;
+    using array3        = Eigen::array<Eigen::Index,3>;
+    using array2        = Eigen::array<Eigen::Index,2>;
+    using array1        = Eigen::array<Eigen::Index,1>;
 
 
 
