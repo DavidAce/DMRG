@@ -350,4 +350,4 @@ before_script:
   - cmake --version
 
 script:
-  - ./build.sh --verbose --enable-tests  -a haswell  -j 2 --build-type=Debug ${FLAGS}
+  - ./build.sh --enable-tests  -a haswell  -j 2 --build-type=Debug ${FLAGS}
