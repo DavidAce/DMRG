@@ -2,6 +2,20 @@ cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0074 NEW)
 project(external-h5pp)
 
+
+option(BUILD_SHARED_LIBS               "Builds shared libraries"                                     OFF)
+option(H5PP_BUILD_EXAMPLES             "Builds examples"                                             OFF)
+option(H5PP_ENABLE_TESTS               "Enable testing"                                              ON)
+option(H5PP_DEPS_IN_SUBDIR             "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"    ON)
+option(H5PP_PREFER_CONDA_LIBS          "Search for dependencies from anaconda first"                 OFF)
+option(H5PP_PRINT_INFO                 "Print info during cmake configuration"                       ON)
+option(H5PP_ENABLE_EIGEN3              "Enables Eigen3 linear algebra library"                       ON)
+option(H5PP_ENABLE_SPDLOG              "Enables Spdlog for logging h5pp internal info to stdout"     ON)
+option(H5PP_ENABLE_MPI                 "Enables use of MPI (work in progress)"                       ON)
+option(H5PP_ENABLE_ASAN                "Enable runtime address sanitizer -fsanitize=address"         OFF)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries"                   ON)
+
+
 include(ExternalProject)
 ExternalProject_Add(external_h5pp
         GIT_REPOSITORY https://github.com/DavidAce/h5pp.git
@@ -13,6 +27,7 @@ ExternalProject_Add(external_h5pp
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS
         # CMake flags
+        ${CMAKE_CXX_COMPILER_LOADED}
         -DCMAKE_POLICY_DEFAULT_CMP0074=${CMAKE_POLICY_DEFAULT_CMP0074}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
@@ -41,15 +56,17 @@ ExternalProject_Add(external_h5pp
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=TRUE
 #        -DCMAKE_FIND_DEBUG_MODE:BOOL=ON
         # h5pp flags
-        -DH5PP_ENABLE_TESTS:BOOL=ON
-        -DH5PP_BUILD_EXAMPLES:BOOL=OFF
-        -DH5PP_DEPS_IN_SUBDIR:BOOL=ON
-        -DH5PP_PRINT_INFO:BOOL=ON
-        -DH5PP_DOWNLOAD_METHOD:STRING=${H5PP_DOWNLOAD_METHOD}
-        -DH5PP_ENABLE_EIGEN3:BOOL=ON
-        -DH5PP_ENABLE_SPDLOG:BOOL=ON
-        -DH5PP_ENABLE_MPI:BOOL=${H5PP_ENABLE_MPI}
-        -DH5PP_DIRECTORY_HINTS:PATH=${H5PP_DIRECTORY_HINTS}
+        -DH5PP_BUILD_EXAMPLES:BOOL=${H5PP_BUILD_EXAMPLES}
+        -DH5PP_ENABLE_TESTS:BOOL=${H5PP_ENABLE_TESTS}
+        -DH5PP_DEPS_IN_SUBDIR:BOOL=${H5PP_DEPS_IN_SUBDIR}
         -DH5PP_PREFER_CONDA_LIBS:BOOL=${H5PP_PREFER_CONDA_LIBS}
+        -DH5PP_PRINT_INFO:BOOL=${H5PP_PRINT_INFO}
+        -DH5PP_ENABLE_EIGEN3:BOOL=${H5PP_ENABLE_EIGEN3}
+        -DH5PP_ENABLE_SPDLOG:BOOL=${H5PP_ENABLE_SPDLOG}
+        -DH5PP_ENABLE_MPI:BOOL=${H5PP_ENABLE_MPI}
+        -DH5PP_ENABLE_ASAN:BOOL=${H5PP_ENABLE_ASAN}
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=${CMAKE_POSITION_INDEPENDENT_CODE}
+        -DH5PP_DOWNLOAD_METHOD:STRING=${H5PP_DOWNLOAD_METHOD}
+        -DH5PP_DIRECTORY_HINTS:PATH=${H5PP_DIRECTORY_HINTS}
         -DEigen3_ROOT:PATH=${Eigen3_ROOT}
         )
