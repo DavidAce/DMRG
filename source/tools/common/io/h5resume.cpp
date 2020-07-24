@@ -5,6 +5,7 @@
 #include <config/enums.h>
 #include <h5pp/h5pp.h>
 #include <tools/common/io.h>
+#include <tools/common/log.h>
 
 
 std::string tools::common::io::h5resume::extract_state_name (const std::string & state_prefix) {
