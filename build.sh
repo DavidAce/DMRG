@@ -27,7 +27,9 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
    | --no-modules               : Disable use of "module load"
--v | --verbose                  : Verbose makefiles
+-v | --verbose                  : Verbose CMake and Makefiles
+-v | --verbose-make             : Verbose Makefiles
+-v | --verbose-cmake            : Verbose CMake
 EXAMPLE:
 ./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-method=find
 EOF
@@ -58,6 +60,8 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 no-modules\
                 prefer-conda\
                 verbose\
+                verbose-make\
+                verbose-cmake\
                 generator\
                 extra-flags:\
                 "  -- "$@")
@@ -81,6 +85,8 @@ enable_asan="OFF"
 make_threads=8
 prefer_conda="OFF"
 verbose="OFF"
+verbose_make="OFF"
+verbose_cmake="OFF"
 generator="CodeBlocks - Unix Makefiles"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
@@ -109,7 +115,9 @@ do
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers      : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load     : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs    : ON"      ; shift   ;;
-    -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles       : ON"      ; shift   ;;
+    -v|--verbose)                   verbose="ON"                    ; echo " * Verbose cmake & make    : ON"      ; shift   ;;
+       --verbose-make)              verbose_make="ON"               ; echo " * Verbose make            : ON"      ; shift   ;;
+       --verbose-cmake)             verbose_cmake="ON"              ; echo " * Verbose cmake           : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -126,6 +134,10 @@ if  [ -n "$clear_cmake" ] ; then
 	rm -rf ./build/$build_type/CMakeCache.txt
 fi
 
+if [[ "$verbose" =~ ON|on|On|TRUE|True|true ]]
+    verbose_make="ON"
+    verbose_cmake="ON"
+fi
 
 build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
 for lib in "${clear_libs[@]}"; do
@@ -266,8 +278,9 @@ cat << EOF >&2
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
           -DBUILD_SHARED_LIBS=$enable_shared
-          -DCMAKE_VERBOSE_MAKEFILE=$verbose
-          -DDMRG_PRINT_INFO=$verbose
+          -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
+          -DDMRG_PRINT_INFO=$verbose_cmake
+          -DDMRG_PRINT_CHECKS=$verbose_cmake
           -DDMRG_DOWNLOAD_METHOD=$download_method
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
           -DDMRG_MICROARCH=$march
@@ -287,9 +300,9 @@ if [ -z "$dry_run" ] ;then
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type \
           -DBUILD_SHARED_LIBS=$enable_shared \
-          -DCMAKE_VERBOSE_MAKEFILE=$verbose \
-          -DDMRG_PRINT_INFO=$verbose \
-          -DDMRG_PRINT_CHECKS=$verbose \
+          -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
+          -DDMRG_PRINT_INFO=$verbose_cmake \
+          -DDMRG_PRINT_CHECKS=$verbose_cmake \
           -DDMRG_DOWNLOAD_METHOD=$download_method \
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
           -DDMRG_MICROARCH=$march \
