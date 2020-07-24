@@ -64,6 +64,22 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT CMAKE_EXE_LINKER_FLAGS MATCHES "f
     set(CMAKE_EXE_LINKER_FLAGS "-fuse-ld=gold ${CMAKE_EXE_LINKER_FLAGS}")
 endif()
 
+
+###########################################
+###  Transmit compiler to dependencies  ###
+###########################################
+
+if(NOT DEFINED ENV{CC} AND DEFINED CMAKE_C_COMPILER)
+    set(ENV{CC} ${CMAKE_C_COMPILER})
+endif()
+if(NOT DEFINED ENV{CXX} AND DEFINED CMAKE_CXX_COMPILER)
+    set(ENV{CXX} ${CMAKE_CXX_COMPILER})
+endif()
+if(NOT DEFINED ENV{FC} AND DEFINED CMAKE_Fortran_COMPILER)
+    set(ENV{FC} ${CMAKE_Fortran_COMPILER})
+endif()
+
+
 ###############################
 # Settings for shared builds
 
