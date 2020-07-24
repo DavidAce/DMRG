@@ -89,7 +89,7 @@ void eig::arpack_solver<MatrixType>::eigs_sym() {
     if constexpr(std::is_same<Scalar, double>::value) {
         assert(config.form == Form::SYMM and "ERROR: config not SYMMETRIC");
         assert(matrix.get_form() == Form::SYMM and "ERROR: matrix not SYMMETRIC");
-        ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
+        ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
                                                config.eigThreshold.value(), static_cast<int>(config.eigMaxIter.value()), residual);
 
         if(config.sigma) {
@@ -127,7 +127,7 @@ void eig::arpack_solver<MatrixType>::eigs_nsym() {
         assert(matrix.get_form() == Form::NSYM and "ERROR: matrix not NSYM");
         if(nev_internal == 1) { nev_internal++; }
 
-        ARNonSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
+        ARNonSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
                                                   config.eigThreshold.value(), config.eigMaxIter.value(), residual);
 
         if(config.sigma) {
@@ -160,7 +160,7 @@ void eig::arpack_solver<MatrixType>::eigs_nsym() {
 template<typename MatrixType>
 void eig::arpack_solver<MatrixType>::eigs_comp() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
-        ARCompStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().c_str(), ncv_internal,
+        ARCompStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
                                                 config.eigThreshold.value(), config.eigMaxIter.value(), residual);
         if(config.sigma) {
             if(config.shift_invert == Shinv::ON) {
