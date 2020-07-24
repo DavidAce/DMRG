@@ -11,7 +11,7 @@ option(H5PP_PREFER_CONDA_LIBS          "Search for dependencies from anaconda fi
 option(H5PP_PRINT_INFO                 "Print info during cmake configuration"                       ON)
 option(H5PP_ENABLE_EIGEN3              "Enables Eigen3 linear algebra library"                       ON)
 option(H5PP_ENABLE_SPDLOG              "Enables Spdlog for logging h5pp internal info to stdout"     ON)
-option(H5PP_ENABLE_MPI                 "Enables use of MPI (work in progress)"                       ON)
+option(H5PP_ENABLE_MPI                 "Enables use of MPI (work in progress)"                       OFF)
 option(H5PP_ENABLE_ASAN                "Enable runtime address sanitizer -fsanitize=address"         OFF)
 option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries"                   ON)
 
