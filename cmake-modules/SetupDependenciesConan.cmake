@@ -46,7 +46,8 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
             message(STATUS "Setting dynamic arch for openblas")
             list(APPEND DMRG_CONAN_OPTIONS
-                    OPTIONS openblas:dynamic_arch=True)
+                    OPTIONS openblas:dynamic_arch=False
+                    OPTIONS openblas:arch=HASWELL)
         endif()
         find_package(Fortran REQUIRED)
         list(APPEND FOUND_TARGETS gfortran::gfortran)
