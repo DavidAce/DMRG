@@ -10,8 +10,8 @@
 #include <config/nmspc_settings.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
+#include <tools/common/fmt.h>
 #include <chrono>
-
 std::string get_dirname(){
     return "DMRG." + std::string(getenv("USER"));
 }
@@ -182,7 +182,7 @@ void tools::common::io::h5tmp::copy_file(const std::string & src, const std::str
 
 
 void tools::common::io::h5tmp::remove_from_tmp(const std::string &filepath){
-    if(filepath.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
+    if(filepath.empty()) {tools::log->trace("Nothing to delete\n"); return;}
     const auto &[orig,temp] = internal::get_paths(filepath);
     if(temp == orig) {
         tools::log->debug("Final path and temporary paths are identical. Skipping removal: [{}] == [{}]", orig,temp);
