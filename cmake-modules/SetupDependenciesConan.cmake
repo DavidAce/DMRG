@@ -79,13 +79,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     conan_add_remote(NAME bincrafters        URL https://api.bintray.com/conan/bincrafters/public-conan)
     conan_add_remote(NAME conan-dmrg INDEX 1 URL https://api.bintray.com/conan/davidace/conan-dmrg)
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
-        # Let it autodetect libcxx
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        # There is no libcxx
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        list(APPEND DMRG_CONAN_SETTINGS SETTINGS compiler.libcxx=libstdc++11)
-    endif()
     conan_cmake_run(
             CONANFILE conanfile.txt
             CONAN_COMMAND ${CONAN_COMMAND}
@@ -93,7 +86,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             BASIC_SETUP CMAKE_TARGETS
             SETTINGS compiler.cppstd=17
             SETTINGS compiler.libcxx=libstdc++11
-            ${DMRG_CONAN_SETTINGS}
+            PROFILE_AUTO ALL
             ${DMRG_CONAN_OPTIONS}
             BUILD missing
     )
