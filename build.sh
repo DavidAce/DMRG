@@ -134,7 +134,7 @@ if  [ -n "$clear_cmake" ] ; then
 	rm -rf ./build/$build_type/CMakeCache.txt
 fi
 
-if [[ "$verbose" =~ ON|on|On|TRUE|True|true ]]
+if [[ "$verbose" =~ ON|on|On|TRUE|True|true ]]; then
     verbose_make="ON"
     verbose_cmake="ON"
 fi
