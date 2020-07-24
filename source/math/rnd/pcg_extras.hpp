@@ -427,7 +427,7 @@ SrcIter uneven_copy_impl(
 
         for (size_t i = 0; i < SCALE; ++i) {
             value |= dest_t(*src_first++) << shift;
-            shift += SRC_BITS;
+            shift += static_cast<unsigned int>(SRC_BITS);
         }
 
         *dest_first++ = value;
