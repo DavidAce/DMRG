@@ -1,7 +1,14 @@
 
+if(NOT BUILD_SHARED_LIBS)
+    set(COMPONENTS COMPONENTS)
+    set(ITEMS nothreads_static)
+endif()
+
+
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     # Gflags comes in static flavor in conda also!
     find_package(gflags
+            ${COMPONENTS} ${ITEMS}
             NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)
         message(STATUS "Found gflags")
@@ -13,6 +20,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch" )
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
     find_package(gflags
+            ${COMPONENTS} ${ITEMS}
             HINTS ${CMAKE_INSTALL_PREFIX}/gflags
             NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)
@@ -35,6 +43,7 @@ if(TARGET gflags)
         replace_or_remove_shared(gflags)
         replace_pthread_shallow(gflags)
     endif()
+
     # Modernize
     get_property(imp_loc_set TARGET gflags PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
     get_property(loc_set     TARGET gflags PROPERTY LOCATION SET) # Returns a boolean if set
