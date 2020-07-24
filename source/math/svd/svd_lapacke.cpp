@@ -12,10 +12,13 @@
 #define lapack_complex_double std::complex<double>
 #endif
 
+// complex must be included before lapacke!
 #if __has_include(<mkl_lapacke.h>)
-    #include <mkl_lapacke.h>
-#elif __has_include(<lapacke.h>)
-    #include <lapacke.h>
+#include <mkl_lapacke.h>
+#elif __has_include(<openblas/lapacke.h>)
+#include <openblas/lapacke.h>
+#else
+#include <lapacke.h>
 #endif
 
 #include <Eigen/Core>
