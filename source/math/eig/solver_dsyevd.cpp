@@ -1,10 +1,9 @@
 #if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
-#elif __has_include(<lapacke.h>)
+#else
 #include <lapacke.h>
 #endif
 
-#include <math/eig.h>
 #include "solver.h"
 
 using namespace eig;
