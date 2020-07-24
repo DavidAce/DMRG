@@ -28,7 +28,7 @@ std::optional<size_t> tools::common::io::h5resume::extract_state_number (const s
         size_t number = std::stoul(state_number);
         return number;
     }catch(const std::exception & err){
-        std::cout << "Could not convert [" << state_number << "] to a number: " << err.what() << std::endl;
+        tools::log->info("Could not convert {} to a number: {}",state_number, err.what());
         return std::nullopt;
     }
 

@@ -28,6 +28,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Test all svd decompositions") {
         using reciter = h5pp::fs::recursive_directory_iterator;
         svd::solver svd(0);
+        [[maybe_unused]] Eigen::MatrixXcd U1,V1,U2,V2;
+        Eigen::VectorXcd S1,S2;
         for(auto &item : reciter(std::string(TEST_MATRIX_DIR))) {
             if(item.path().filename().string().find("svdmatrix") == std::string::npos) continue;
             if(item.path().extension() != ".h5") continue;
@@ -35,12 +37,12 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
             h5pp::File file(item.path().string(), h5pp::FilePermission::READONLY, logLevel);
             auto       matrix = file.readDataset<Eigen::MatrixXcd>("svdmatrix");
             svd.use_lapacke   = false;
-            auto [U1, S1, V1] = svd.decompose(matrix);
+            std::tie(U1, S1, V1) = svd.decompose(matrix);
             svd.use_lapacke   = true;
-            auto [U2, S2, V2] = svd.decompose(matrix);
-            double difference = std::log10((S2.array() - S1.array()).cwiseAbs().sum());
-            fmt::print("{:<32} diff {:.24f}\n", item.path().filename().string(), difference);
-            REQUIRE(difference < -12);
+            std::tie(U2, S2, V2) = svd.decompose(matrix);
+            double differenceS = std::log10((S2.array() - S1.array()).cwiseAbs().sum());
+            fmt::print("S {:<32} diff {:.24f}\n", item.path().filename().string(), differenceS);
+            REQUIRE(differenceS < -12);
         }
     }
 }
