@@ -4,7 +4,7 @@
 #include <lapacke.h>
 #endif
 
-#include "math/eig.h"
+#include <math/eig.h>
 #include "solver.h"
 
 using namespace eig;

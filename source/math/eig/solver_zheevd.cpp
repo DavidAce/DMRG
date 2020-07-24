@@ -14,7 +14,7 @@
 #include <lapacke.h>
 #endif
 
-#include "math/eig.h"
+#include <math/eig.h>
 #include "solver.h"
 
 int eig::solver::zheevd(const cplx* matrix, size_type L){
