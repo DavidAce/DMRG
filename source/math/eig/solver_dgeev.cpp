@@ -1,6 +1,5 @@
 #include <complex>
-//#include <complex.h>
-//#undef I
+
 #ifndef lapack_complex_float
 #define lapack_complex_float  std::complex<float>
 #endif
