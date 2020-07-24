@@ -96,7 +96,6 @@ void MatrixProductSparse<Scalar, sparseLU>::FactorOP()
 
     t_factorOP->toc();
     readyFactorOp = true;
-    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOP->get_last_time_interval() * 1000 << '\n';
 }
 
 template<typename Scalar, bool sparseLU>
@@ -185,7 +184,6 @@ void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) 
 template<typename Scalar, bool sparseLU>
 void MatrixProductSparse<Scalar, sparseLU>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
-    std::cout << "A_matrix: \n" << A_matrix << std::endl;
 }
 
 template<typename Scalar, bool sparseLU>
