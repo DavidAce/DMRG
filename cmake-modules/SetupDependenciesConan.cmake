@@ -42,9 +42,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             list(APPEND FOUND_TARGETS mkl::mkl)
         endif()
     else()
-        list(APPEND DMRG_CONAN_OPTIONS
-                OPTIONS openblas:dynamic_arch=False
-                OPTIONS openblas:arch=${OPENBLAS_MARCH})
+        list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
 #        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
 #        if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
 #            message(STATUS "Setting dynamic arch=False for openblas")
