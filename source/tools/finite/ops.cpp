@@ -20,18 +20,6 @@
 using Scalar = std::complex<double>;
 using namespace Textra;
 
-// std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_site>> & mpos_L, const
-// std::list<std::unique_ptr<class_mpo_site>> & mpos_R){
-//    std::list<Eigen::Tensor<Scalar,4>> mpos;
-//    for(auto &mpo_L : mpos_L){
-//        mpos.push_back(mpo_L->MPO());
-//    }
-//    for(auto &mpo_R : mpos_R){
-//        mpos.push_back(mpo_R->MPO());
-//    }
-//    return mpos;
-//}
-
 void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
                                    const Eigen::Tensor<Scalar, 3> &Redge) {
     std::list<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
