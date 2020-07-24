@@ -35,8 +35,8 @@ endif ()
 if (CMAKE_VERSION VERSION_LESS 3.12)
     message(STATUS "Not setting policies")
 else()
-    cmake_policy(SET CMP0074 NEW)
-    cmake_policy(SET CMP0075 NEW)
+    cmake_policy(SET CMP0074 NEW) # To let find_package calls use <PackageName>_ROOT variables
+    cmake_policy(SET CMP0075 NEW) # Include file check macros honor CMAKE_REQUIRED_LIBRARIES
     # Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
     # See here https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
     cmake_policy(SET CMP0067 NEW)
