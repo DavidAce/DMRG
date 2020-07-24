@@ -1,6 +1,7 @@
 #pragma once
 #include <complex>
 #include <tools/common/log.h>
+
 namespace eig {
     using real      = double;
     using cplx      = std::complex<double>;
