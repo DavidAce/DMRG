@@ -3,10 +3,11 @@
 //
 
 #pragma once
-#include "math/eig/enums.h"
 #include <array>
-#include <general/class_tic_toc.h>
 #include <vector>
+
+#include "math/eig/enums.h"
+#include <general/class_tic_toc.h>
 
 #define profile_matrix_product_hamiltonian 0
 

@@ -3,14 +3,14 @@
 //
 
 #pragma once
+#include <complex>
+#include <vector>
 
 #include "math/eig/enums.h"
 #include "math/eig/settings.h"
 #include "math/eig/sfinae.h"
 #include "math/eig/solution.h"
-#include <complex>
 #include <general/class_tic_toc.h>
-#include <vector>
 
 #define profile_arpack 0
 

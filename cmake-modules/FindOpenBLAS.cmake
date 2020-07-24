@@ -86,8 +86,8 @@ if(TARGET openblas::openblas)
     # Fix for OpenBLAS 0.3.9, which otherwise includes <complex> inside of an extern "C" scope.
     target_compile_definitions(openblas::openblas INTERFACE OPENBLAS_AVAILABLE)
     target_compile_definitions(openblas::openblas INTERFACE LAPACK_COMPLEX_CUSTOM)
-    target_compile_definitions(openblas::openblas INTERFACE lapack_complex_float=std::complex<float>)
-    target_compile_definitions(openblas::openblas INTERFACE lapack_complex_double=std::complex<double>)
+#    target_compile_definitions(openblas::openblas INTERFACE lapack_complex_float=std::complex<float>)
+#    target_compile_definitions(openblas::openblas INTERFACE lapack_complex_double=std::complex<double>)
 
     if(OpenBLAS_INCLUDE_DIRS MATCHES "conda")
         find_package(OpenMP)
