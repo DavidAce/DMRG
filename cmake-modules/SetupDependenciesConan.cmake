@@ -42,13 +42,16 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             list(APPEND FOUND_TARGETS mkl::mkl)
         endif()
     else()
-        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-        if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
-            message(STATUS "Setting dynamic arch for openblas")
-            list(APPEND DMRG_CONAN_OPTIONS
-                    OPTIONS openblas:dynamic_arch=False
-                    OPTIONS openblas:arch=HASWELL)
-        endif()
+        list(APPEND DMRG_CONAN_OPTIONS
+                OPTIONS openblas:dynamic_arch=False
+                OPTIONS openblas:arch=${OPENBLAS_MARCH})
+#        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+#        if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
+#            message(STATUS "Setting dynamic arch=False for openblas")
+#            list(APPEND DMRG_CONAN_OPTIONS
+#                    OPTIONS openblas:dynamic_arch=False
+#                    OPTIONS openblas:arch=HASWELL)
+#        endif()
         find_package(Fortran REQUIRED)
         list(APPEND FOUND_TARGETS gfortran::gfortran)
     endif()
