@@ -7,10 +7,15 @@ function(build_dependency dep_name install_dir extra_flags)
     include(cmake-modules/GetNumThreads.cmake)
     get_num_threads(num_threads)
 
-
-    set(ENV{CC} ${CMAKE_C_COMPILER})
-    set(ENV{CXX} ${CMAKE_CXX_COMPILER})
-    set(ENV{FC} ${CMAKE_Fortran_COMPILER})
+    if(NOT DEFINED ENV{CC} AND DEFINED CMAKE_C_COMPILER)
+        set(ENV{CC} ${CMAKE_C_COMPILER})
+    endif()
+    if(NOT DEFINED ENV{CXX} AND DEFINED CMAKE_CXX_COMPILER)
+        set(ENV{CXX} ${CMAKE_CXX_COMPILER})
+    endif()
+    if(NOT DEFINED ENV{FC} AND DEFINED CMAKE_Fortran_COMPILER)
+        set(ENV{FC} ${CMAKE_Fortran_COMPILER})
+    endif()
 
     execute_process( COMMAND  ${CMAKE_COMMAND} -E remove ${build_dir}/CMakeCache.txt)
     execute_process( COMMAND  ${CMAKE_COMMAND} -E make_directory ${build_dir})
@@ -19,9 +24,6 @@ function(build_dependency dep_name install_dir extra_flags)
             --parallel ${num_threads}
             # CMake flags
             -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
-#            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-#            -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-#            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             -DCMAKE_EXE_LINKER_FLAGS_INIT=${CMAKE_EXE_LINKER_FLAGS}
             -DCMAKE_SHARED_LINKER_FLAGS_INIT=${CMAKE_SHARED_LINKER_FLAGS}
             -DCMAKE_STATIC_LINKER_FLAGS_INIT=${CMAKE_STATIC_LINKER_FLAGS}
