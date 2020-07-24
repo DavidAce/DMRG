@@ -153,7 +153,6 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_features(project-settings INTERFACE cxx_std_17)
 
 
-
 #######################################
 # Settings for sanitizers           ###
 #######################################
@@ -165,7 +164,6 @@ endif()
 #######################################
 ### Compiler-dependent linker flags ###
 #######################################
-target_link_libraries(project-settings INTERFACE  -lstdc++fs)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
     target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
 endif()
@@ -227,8 +225,8 @@ include(cmake-modules/SetupDependenciesConan.cmake)
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-#target_link_libraries(project-settings INTERFACE /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/83b377af2053f637540e812f25798c29f53e4921/lib/libfmt.a)
-#
+find_package(Filesystem COMPONENTS Final Experimental REQUIRED)
+target_link_libraries(project-settings INTERFACE  std::filesystem)
 target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${FOUND_TARGETS}) # Order is important here
 
 if(NOT TARGET openmp::openmp)
