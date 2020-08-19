@@ -218,7 +218,7 @@ endif()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-include(cmake-modules/SetupDependenciesFind.cmake)
+include(cmake-modules/SetupSearchPaths.cmake)
 include(cmake-modules/SetupDependenciesFetch.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
@@ -240,7 +240,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Lin
 if(COMMAND target_precompile_headers)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <spdlog/spdlog.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <fmt/core.h> <fmt/format.h> <fmt/ostream.h> <fmt/ranges.h>)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)

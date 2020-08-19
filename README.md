@@ -85,8 +85,8 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
   2. **Manually**: install the libraries yourself with your favorite package manager (e.g. `conda`,`apt` in ubuntu or `brew` in OSX). The build attempts to find libraries in your local system. 
   3. **Manual with modules from [Easybuild](https://easybuild.readthedocs.io/en/latest/)** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules* or *Lmod*.  CMake will look for environment variables such as `EBROOT<libname>` that are defined when loading Easybuild modules.
  
- If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from other sources package manager, or select conan as the preferred download method. This is done
- with the flag `./build.sh --download-method=conan` or directly as a CMake cli parameter `-DDOWNLOAD_METHOD=conan`. This requires conan to be installed in your system e.g., through apt/pip/conda.
+ If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from other sources package manager, or select Conan as the preferred download method. This is done
+ with the flag `./build.sh --download-method=conan` or directly as a CMake cli parameter `-DDOWNLOAD_METHOD=conan`. This requires Conan to be installed in your system e.g., with apt, pip or conda.
  
 #### List of libraries
  
