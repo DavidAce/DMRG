@@ -43,11 +43,19 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         endif()
     else()
         cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-        if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
-            message(STATUS "Setting dynamic arch=False for openblas")
+        if(_host_name MATCHES "travis|TRAVIS|Travis|fv-")
+            message(STATUS "Setting OpenBLAS dynamic_arch=False")
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
-        else()
+        elseif(_host_name MATCHES "raken")
+            message(STATUS
+                    "Setting OpenBLAS dynamic_arch=True"
+                    "Remember to set environment variable"
+                    "   OPENBLAS_CORETYPE=<microarch>"
+                    "before launching the executable")
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=True)
+        else(_host_name MATCHES "raken")
+            message(STATUS "Setting OpenBLAS dynamic_arch=False")
+            list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
         endif()
         find_package(Fortran REQUIRED)
         list(APPEND FOUND_TARGETS gfortran::gfortran)

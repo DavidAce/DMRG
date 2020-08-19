@@ -1,5 +1,7 @@
 if(NOT TARGET h5pp::h5pp AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
-    find_package(h5pp 1.8.0 QUIET NO_CMAKE_PACKAGE_REGISTRY)
+    find_package(h5pp
+            HINTS ${CMAKE_INSTALL_PREFIX}
+            1.8.0 QUIET NO_CMAKE_PACKAGE_REGISTRY)
     if(h5pp_FOUND AND TARGET h5pp::h5pp)
         message(STATUS "Found h5pp")
     endif()
@@ -7,6 +9,7 @@ endif()
 
 if(NOT TARGET h5pp::h5pp AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     find_package(h5pp  1.8.0
+            HINTS ${CMAKE_INSTALL_PREFIX}
             NO_CMAKE_PACKAGE_REGISTRY)
     if(h5pp_FOUND AND TARGET h5pp::h5pp)
         message(STATUS "Found h5pp")
@@ -22,6 +25,7 @@ if(NOT TARGET h5pp::h5pp AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     list(APPEND H5PP_CMAKE_OPTIONS  -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE})
     build_dependency(h5pp "${CMAKE_INSTALL_PREFIX}" "${H5PP_CMAKE_OPTIONS}")
     find_package(h5pp 1.8.0
+            HINTS ${CMAKE_INSTALL_PREFIX}
             NO_CMAKE_PACKAGE_REGISTRY)
     if(h5pp_FOUND AND TARGET h5pp::h5pp)
         message(STATUS "h5pp installed successfully")

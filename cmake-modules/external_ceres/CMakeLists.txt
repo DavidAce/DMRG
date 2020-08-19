@@ -30,7 +30,7 @@ message(STATUS "-Dgflags_DIR:PATH=${gflags_DIR}")
 include(ExternalProject)
 ExternalProject_Add(external_ceres
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
-        GIT_TAG "e39d9ed1d60dfeb58dd2a0df4622c683f87b28e3"
+        GIT_TAG 2.0.0rc1
         GIT_PROGRESS TRUE
         GIT_SHALLOW TRUE
         BUILD_ALWAYS TRUE # <- True will detect changes in dependencies of ceres

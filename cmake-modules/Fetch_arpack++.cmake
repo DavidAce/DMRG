@@ -35,6 +35,3 @@ if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
         message(STATUS "Successfully installed arpack++")
     endif()
 endif()
-
-
-

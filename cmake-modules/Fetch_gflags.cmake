@@ -4,10 +4,14 @@ if(NOT BUILD_SHARED_LIBS AND NOT DMRG_PREFER_CONDA_LIBS)
     set(ITEMS nothreads_static)
 endif()
 
+if(BUILD_SHARED_LIBS AND DMRG_PREFER_CONDA_LIBS)
+    list(APPEND GFLAGS_CONDA_PREFIX ${DMRG_CONDA_CANDIDATE_PATHS})
+endif()
 
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     # Gflags comes in static flavor in conda also!
     find_package(gflags
+            HINTS ${GFLAGS_CONDA_PREFIX}
             ${COMPONENTS} ${ITEMS}
             NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)
@@ -20,6 +24,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch" )
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
     find_package(gflags
+            HINTS ${GFLAGS_CONDA_PREFIX}
             ${COMPONENTS} ${ITEMS}
             HINTS ${CMAKE_INSTALL_PREFIX}/gflags
             NO_CMAKE_PACKAGE_REGISTRY)
@@ -35,6 +40,7 @@ if(TARGET gflags)
     if(GFLAGS_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(gflags)
+        message(STATUS "${CMAKE_PREFIX_PATH}" )
         message(FATAL_ERROR "Target gflags contains a shared library on a static build!")
     endif()
 
