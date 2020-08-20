@@ -136,14 +136,14 @@ void class_mpo_site::read_mpo(const h5pp::File &file, const std::string &model_p
     if(file.linkExists(mpo_dset)) {
         auto param_names = file.getAttributeNames(mpo_dset);
         for(auto &param_name : param_names) {
-            auto param_type = file.getAttributeTypeInfo(mpo_dset, param_name);
-            if(param_type.cpp_type_index) {
-                if(param_type.cpp_type_index.value() == typeid(double)) map[param_name] = file.readAttribute<double>(mpo_dset, param_name);
-                if(param_type.cpp_type_index.value() == typeid(size_t)) map[param_name] = file.readAttribute<size_t>(mpo_dset, param_name);
-                if(param_type.cpp_type_index.value() == typeid(uint64_t)) map[param_name] = file.readAttribute<uint64_t>(mpo_dset, param_name);
-                if(param_type.cpp_type_index.value() == typeid(int)) map[param_name] = file.readAttribute<int>(mpo_dset, param_name);
-                if(param_type.cpp_type_index.value() == typeid(bool)) map[param_name] = file.readAttribute<bool>(mpo_dset, param_name);
-                if(param_type.cpp_type_index.value() == typeid(std::string)) map[param_name] = file.readAttribute<std::string>(mpo_dset, param_name);
+            auto param_type = file.getTypeInfoAttribute(mpo_dset, param_name);
+            if(param_type.cppTypeIndex) {
+                if(param_type.cppTypeIndex.value() == typeid(double)) map[param_name] = file.readAttribute<double>(mpo_dset, param_name);
+                if(param_type.cppTypeIndex.value() == typeid(size_t)) map[param_name] = file.readAttribute<size_t>(mpo_dset, param_name);
+                if(param_type.cppTypeIndex.value() == typeid(uint64_t)) map[param_name] = file.readAttribute<uint64_t>(mpo_dset, param_name);
+                if(param_type.cppTypeIndex.value() == typeid(int)) map[param_name] = file.readAttribute<int>(mpo_dset, param_name);
+                if(param_type.cppTypeIndex.value() == typeid(bool)) map[param_name] = file.readAttribute<bool>(mpo_dset, param_name);
+                if(param_type.cppTypeIndex.value() == typeid(std::string)) map[param_name] = file.readAttribute<std::string>(mpo_dset, param_name);
             }
         }
         set_parameters(map);
