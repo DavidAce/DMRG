@@ -74,7 +74,8 @@ void class_algorithm_finite::run()
             resume();
         } catch(std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
-            run_default_task_list();
+            exit(1);
+//            run_default_task_list();
         }
     } else {
         run_default_task_list();

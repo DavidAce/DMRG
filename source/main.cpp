@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
     tools::log->info("Git branch      : {}", GIT::BRANCH);
     tools::log->info("    commit hash : {}", GIT::COMMIT_HASH);
     tools::log->info("    revision    : {}", GIT::REVISION);
-
+    exit(0);
     // Here we use getopt to parse CLI input
     // Note that CLI input always override config-file values
     // wherever they are found (config file, h5 file)

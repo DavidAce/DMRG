@@ -37,7 +37,7 @@ void class_xdmrg::resume() {
     auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
     if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::io::h5resume::load_tensors(*h5pp_file, state_prefix, tensors, status);
+    tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
 
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to inferr it from the state prefix itself
@@ -308,9 +308,7 @@ void class_xdmrg::single_xDMRG_step() {
     std::sort(max_num_sites_list.begin(), max_num_sites_list.end());
     std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
     std::remove_if(max_num_sites_list.begin(), max_num_sites_list.end(), [](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
-
     if(max_num_sites_list.empty()) max_num_sites_list = {2};
-    if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
     tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
     double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
