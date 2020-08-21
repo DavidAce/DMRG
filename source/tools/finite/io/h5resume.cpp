@@ -22,7 +22,7 @@
 using Scalar = std::complex<double>;
 
 // Load model, state and simulation status from HDF5
-void tools::finite::io::h5resume::load_tensors(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite & tensors, class_algorithm_status &status) {
+void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite & tensors, class_algorithm_status &status) {
     try {
         tensors.clear_measurements();
         tensors.clear_cache();

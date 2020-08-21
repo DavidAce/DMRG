@@ -7,49 +7,53 @@
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 
-
-std::string tools::common::io::h5resume::extract_state_name (const std::string & state_prefix) {
-    std::string_view state_pattern = "state_";
-    std::string state_name;
+std::string tools::common::io::h5resume::extract_state_name(const std::string &state_prefix) {
+    std::string_view       state_pattern = "state_";
+    std::string            state_name;
     std::string::size_type start_pos = state_prefix.find(state_pattern);
-    if(start_pos != std::string::npos){
+    if(start_pos != std::string::npos) {
         std::string::size_type len = state_prefix.find('/', start_pos) - start_pos;
-        state_name = state_prefix.substr(start_pos,len); // E.g. "/xDMRG/state_0/results/..." would match state_0
+        state_name                 = state_prefix.substr(start_pos, len); // E.g. "/xDMRG/state_0/results/..." would match state_0
     }
     return state_name;
 }
 
-std::optional<size_t> tools::common::io::h5resume::extract_state_number (const std::string & state_prefix) {
+std::optional<size_t> tools::common::io::h5resume::extract_state_number(const std::string &state_prefix) {
     std::string state_name = extract_state_name(state_prefix);
     std::string state_number;
-    for(const auto & c : state_name){
+    for(const auto &c : state_name) {
         if(std::isdigit(c)) state_number.push_back(c);
     }
-    try{
+    try {
         size_t number = std::stoul(state_number);
         return number;
-    }catch(const std::exception & err){
-        tools::log->info("Could not convert {} to a number: {}",state_number, err.what());
+    } catch(const std::exception &err) {
+        tools::log->info("Could not convert {} to a number: {}", state_number, err.what());
         return std::nullopt;
     }
-
 }
 
 std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, const std::string &search) {
-    std::string_view algo_name = enum2str(algo_type);
+    std::string_view         algo_name = enum2str(algo_type);
     std::vector<std::string> state_prefix_candidates;
+
+    if(search.empty()) tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5ppFile.getFilePath());
+    else
+        tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5ppFile.getFilePath());
+
     for(const auto &candidate : h5ppFile.getAttributeNames("common/storage_level"))
         if(candidate.find(algo_name) != std::string::npos and h5ppFile.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
             state_prefix_candidates.push_back(candidate);
 
-    // Filter states belonging to other algorithm types
-    auto algo_filter = [algo_name](std::string_view x) { return x.find(algo_name) != std::string::npos; };
-    state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), algo_filter), state_prefix_candidates.end());
+    tools::log->info("Found state candidates: {}", state_prefix_candidates);
 
 
     // Apply the search filter
-    auto search_filter = [search](std::string_view x) { return x.find(search) == std::string::npos; };
-    state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), search_filter), state_prefix_candidates.end());
+    if(not search.empty()){
+        auto search_filter = [search](std::string_view x) { return x.find(search) == std::string::npos; };
+        state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), search_filter), state_prefix_candidates.end());
+        tools::log->info("States matching keyword [{}]:  {}", search, state_prefix_candidates);
+    }
 
     // Return the results if done
     if(state_prefix_candidates.empty()) return "";

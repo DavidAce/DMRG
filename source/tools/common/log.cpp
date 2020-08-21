@@ -35,8 +35,8 @@ void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log
     } else {
         throw std::runtime_error("Given wrong type for spdlog verbosity level");
     }
-//        other_log->info("Log verbosity level: {}   | trace:0 | debug:1 | info:2 | warn:3 | error:4 | critical:5 |", static_cast<int>(other_log->level()));
-    other_log->debug("Log verbosity level: {}", static_cast<int>(other_log->level()));
+//    other_log->info("Log verbosity level: {}   | trace:0 | debug:1 | info:2 | warn:3 | error:4 | critical:5 |", static_cast<int>(other_log->level()));
+//    other_log->debug("Log verbosity level: {}", static_cast<int>(other_log->level()));
 }
 
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, size_t levelZeroToFive);
