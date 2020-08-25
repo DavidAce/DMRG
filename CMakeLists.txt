@@ -120,7 +120,7 @@ if(BUILD_SHARED_LIBS)
 else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
-#    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()
 
 
