@@ -21,7 +21,7 @@ bool class_env_ene::has_block() const { return block.size() != 0; }
 
 void class_env_ene::assert_validity() const {
     if(Textra::hasNaN(block, "env " + side)) {
-        throw std::runtime_error("environment " + side + " at position " + std::to_string(get_position()) + " has NAN's");
+        throw std::runtime_error(fmt::format("Environment {} at position {} has NAN's",side,get_position()));
     }
 }
 

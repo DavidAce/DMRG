@@ -176,7 +176,8 @@ void tools::common::io::h5tmp::copy_file(const std::string & src, const std::str
         }
     }
     tools::log->debug("Copying file: {} -> {}",src,tgt);
-    fs::copy(source_path, target_path, fs::copy_options::overwrite_existing);
+    h5pp::hdf5::copyFile(source_path,target_path, h5pp::FilePermission::REPLACE);
+//    fs::copy(source_path, target_path, fs::copy_options::overwrite_existing);
 }
 
 

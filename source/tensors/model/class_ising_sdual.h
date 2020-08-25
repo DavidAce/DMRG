@@ -48,6 +48,6 @@ class class_ising_sdual : public class_mpo_site {
     void build_mpo() override;
     void randomize_hamiltonian() override;
     void set_averages(std::vector<TableMap> all_parameters, bool reverse = false) override;
-    void write_hamiltonian(h5pp::File &file, const std::string &table_path) const override;
-    void read_hamiltonian(const h5pp::File &file, const std::string &model_prefix) override;
+    void save_hamiltonian(h5pp::File &file, const std::string &hamiltonian_table_path) const override;
+    void load_hamiltonian(const h5pp::File &file, const std::string &hamiltonian_table_path) override;
 };

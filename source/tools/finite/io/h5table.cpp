@@ -16,25 +16,23 @@
 #include <tools/finite/measure.h>
 
 /*! Write down the Hamiltonian model type and site info as attributes */
-void tools::finite::io::h5table::write_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                              const class_model_finite &model) {
     if(storage_level == StorageLevel::NONE) return;
-    std::string table_path = model_prefix + "/Hamiltonian";
     if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
     tools::log->trace("Storing table: [{}]", table_path);
     tools::common::profile::t_hdf->tic();
-    for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).write_hamiltonian(h5ppFile, table_path);
+    for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5ppFile, table_path);
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", table_path);
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
 
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                     const class_tensors_finite &tensors, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
-    std::string table_path = table_prefix + "/measurements";
     log->trace("Appending to table: {}", table_path);
     h5pp_table_measurements_finite::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
@@ -62,21 +60,21 @@ void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const 
     measurement_entry.total_time                      = status.wall_time;
     measurement_entry.algorithm_time                  = status.algo_time;
     tools::common::profile::t_hdf->tic();
-    h5ppFile.appendTableEntries(measurement_entry, table_path);
+    h5ppFile.appendTableRecords(measurement_entry, table_path);
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::finite::io::h5table::write_sim_status(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                   const class_algorithm_status &status) {
-    tools::common::io::h5table::write_sim_status(h5ppFile, table_prefix, storage_level, status);
+    tools::common::io::h5table::save_sim_status(h5ppFile, table_prefix, storage_level, status);
 }
 
-void tools::finite::io::h5table::write_profiling(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::save_profiling(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                  const class_algorithm_status &status) {
-    tools::common::io::h5table::write_profiling(h5ppFile, table_prefix, storage_level, status);
+    tools::common::io::h5table::save_profiling(h5ppFile, table_prefix, storage_level, status);
 }
 
-void tools::finite::io::h5table::write_mem_usage(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                  const class_algorithm_status &status) {
-    tools::common::io::h5table::write_mem_usage(h5ppFile, table_prefix, storage_level, status);
+    tools::common::io::h5table::save_mem_usage(h5ppFile, table_prefix, storage_level, status);
 }

@@ -117,9 +117,9 @@ void class_algorithm_launcher::setup_temp_path(){
 
     tools::common::io::h5tmp::register_new_file(settings::output::output_filepath);
     settings::output::tmp::hdf5_final_path  = tools::common::io::h5tmp::get_original_filepath(h5pp_file->getFilePath());
-    settings::output::tmp::hdf5_temp_path   = tools::common::io::h5tmp::get_temporary_filepath(h5pp_file->getFileName());
-    h5pp_file->copyFileTo(tools::common::io::h5tmp::get_temporary_filepath(h5pp_file->getFilePath()), h5pp::FilePermission::REPLACE);
-    tools::log->info("Copied to temporary path [{}] --> [{}]",settings::output::tmp::hdf5_final_path , settings::output::tmp::hdf5_temp_path);
+    settings::output::tmp::hdf5_temp_path   = tools::common::io::h5tmp::get_temporary_filepath(h5pp_file->getFilePath());
+    tools::log->info("Copying to temporary path [{}] --> [{}]",settings::output::tmp::hdf5_final_path , settings::output::tmp::hdf5_temp_path);
+    h5pp_file->moveFileTo(settings::output::tmp::hdf5_temp_path, h5pp::FilePermission::REPLACE);
 }
 
 

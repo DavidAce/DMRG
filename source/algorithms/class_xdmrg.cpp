@@ -10,9 +10,9 @@
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
-#include <tools/common/fmt.h>
 #include <tools/common/prof.h>
 #include <tools/finite/debug.h>
 #include <tools/finite/io.h>
@@ -40,7 +40,7 @@ void class_xdmrg::resume() {
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
 
     // Our first task is to decide on a state name for the newly loaded state
-    // The simplest is to inferr it from the state prefix itself
+    // The simplest is to infer it from the state prefix itself
     auto name   = tools::common::io::h5resume::extract_state_name(state_prefix);
     auto number = tools::common::io::h5resume::extract_state_number(state_prefix);
     if(number) excited_state_number = number.value();
@@ -52,22 +52,37 @@ void class_xdmrg::resume() {
         // This could be a checkpoint state
         // Simply "continue" the algorithm until convergence
         task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT};
-        run_task_list(task_list);
     }
 
     // If we reached this point the current state has finished for one reason or another.
     // We may still have some more things to do, e.g. the config may be asking for more states
-    // Note that if max_states = 4 we are asking for 4 unbiased states, the 0th does not count (it's a seed!)
-    // Example:
+    // Example 1:
     //      max_states = 4
     //      excited_state_number = 1
-    //      missing_state_number = 4 - 1 = 3
-    auto missing_state_number = settings::xdmrg::max_states >= excited_state_number ? settings::xdmrg::max_states - excited_state_number : 0;
-    for(size_t new_state_num = 0; new_state_num < missing_state_number; new_state_num++) {
-        task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE);
+    //      excited_states = excited_state_number + 1 = 2  <-- Due to counting from 0
+    //      missing_states = max_states - excited_states  = 2
+    // Example 2:
+    //      max_states = 2
+    //      excited_state_number = 1
+    //      excited_states = excited_state_number + 1 = 2  <-- Due to counting from 0
+    //      missing_states = max_states - excited_states  = 0
+    auto excited_states = excited_state_number + 1;
+    auto missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
+    for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
+        switch(settings::strategy::secondary_states) {
+            case StateType::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
+            case StateType::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
+            case StateType::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateType::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+        }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
+
+    tools::log->info("Resuming task list:");
+    for(const auto &task : task_list) tools::log->info(" -- {}", enum2str(task));
+
+    run_task_list(task_list);
 }
 
 void class_xdmrg::run_default_task_list() {
@@ -79,21 +94,16 @@ void class_xdmrg::run_default_task_list() {
 
     // Insert requested number of excited states
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
-        switch (settings::strategy::secondary_states){
-            case StateType::RANDOM_PRODUCT_STATE:  default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
+        switch(settings::strategy::secondary_states) {
+            case StateType::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateType::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateType::PRODUCT_STATE:  throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateType::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
             case StateType::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
     }
-
     run_task_list(default_task_list);
-    if(not default_task_list.empty()) {
-        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
-        throw std::runtime_error("Simulation ended with unfinished tasks");
-    }
 }
 
 void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
@@ -129,6 +139,10 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
         }
         task_list.pop_front();
+    }
+    if(not task_list.empty()) {
+        for(auto &task : task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
+        throw std::runtime_error("Simulation ended with unfinished tasks");
     }
 }
 
@@ -177,16 +191,16 @@ void class_xdmrg::run_preprocessing() {
 
 void class_xdmrg::run_algorithm() {
     if(state_name.empty()) fmt::format("state_{}", excited_state_number);
-    tools::common::profile::reset_for_run_algorithm();
+    if(status.step == 0) tools::common::profile::reset_for_run_algorithm(); // Avoids reset if resuming
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::t_sim->tic();
     while(true) {
         single_xDMRG_step();
+        check_convergence();
         print_status_update();
         write_to_file();
-        check_convergence();
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
         try_bond_dimension_quench();
         try_disorder_damping();
@@ -262,7 +276,7 @@ void class_xdmrg::single_xDMRG_step() {
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(status.chi_lim <= 8 or status.iter < 2 or status.step < 2*tensors.get_length()) {
+    if(status.chi_lim <= 8 or status.iter < 2 or status.step < 2 * tensors.get_length()) {
         // TODO: We may not want to do this on states post randomization
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
@@ -476,7 +490,7 @@ void class_xdmrg::find_energy_range() {
                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
     class_fdmrg           fdmrg(h5pp_file);
     *fdmrg.tensors.model = *tensors.model; // Copy the model
-    // Find loewst energy state
+    // Find lowest energy state
     tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(gs_tasks);
     status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);

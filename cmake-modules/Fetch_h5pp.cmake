@@ -1,7 +1,7 @@
 if(NOT TARGET h5pp::h5pp AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
     find_package(h5pp
             HINTS ${CMAKE_INSTALL_PREFIX}
-            1.8.0 QUIET NO_CMAKE_PACKAGE_REGISTRY)
+            1.8.0 NO_CMAKE_PACKAGE_REGISTRY)
     if(h5pp_FOUND AND TARGET h5pp::h5pp)
         message(STATUS "Found h5pp")
     endif()

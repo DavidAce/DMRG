@@ -19,8 +19,8 @@ void class_env_var::clear() {
 bool class_env_var::has_block() const { return block.size() != 0; }
 
 void class_env_var::assert_validity() const {
-    if(Textra::hasNaN(block, "env2" + side)) {
-        throw std::runtime_error("enrironment2 " + side + " at position " + std::to_string(get_position()) + " has NAN's");
+    if(Textra::hasNaN(block, "env2 " + side)) {
+        throw std::runtime_error(fmt::format("Environment2 {} at position {} has NAN's", side , get_position()));
     }
 }
 

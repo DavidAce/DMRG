@@ -23,12 +23,12 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 #ifdef _OPENMP
     tools::log->trace("- Detected {} OpenMP threads", Textra::omp::tp->NumThreads());
 #endif
-    tools::log->trace("- Generating multisite components");
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
 
     if constexpr(std::is_same<Scalar, double>::value) {
+        tools::log->trace("- Generating real-valued multisite components");
         mpo                 = model.get_multisite_tensor().real();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
@@ -39,6 +39,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     }
 
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
+        tools::log->trace("- Generating complex-valued multisite components");
         mpo                 = model.get_multisite_tensor();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
@@ -47,7 +48,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
         env2L               = env_var.L;
         env2R               = env_var.R;
     }
-
+    tools::log->trace("- Allocating memory for matrix-vector products");
     dsizes = state.active_dimensions();
     Hv_tensor.resize(dsizes);
     H2v_tensor.resize(dsizes);

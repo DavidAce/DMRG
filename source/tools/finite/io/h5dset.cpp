@@ -26,7 +26,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
         return H5D_CHUNKED;
 }
 
-void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                           const class_state_finite &state) {
     if(storage_level == StorageLevel::NONE) return;
     if(h5ppFile.getCompressionLevel() != 4) throw std::runtime_error(fmt::format("Detected wrong compression level: {}",h5ppFile.getCompressionLevel() ) );
@@ -51,7 +51,7 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
     std::string mps_prefix = state_prefix + "/mps";
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = mps_prefix + "/L_" + std::to_string(pos);
+        dsetName = fmt::format("{}/L_{}", mps_prefix, pos);
         h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
         h5ppFile.writeAttribute(pos, "position", dsetName);
         h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
@@ -74,7 +74,7 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = mps_prefix + "/M_" + std::to_string(pos);
+        dsetName = fmt::format("{}/M_{}",mps_prefix,pos);
         h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
         h5ppFile.writeAttribute(pos, "position", dsetName);
         h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);
@@ -83,24 +83,23 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
 }
 
 /*! Write all the MPO's with site info in attributes */
-void tools::finite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::string &mpo_path, const StorageLevel &storage_level,
                                           const class_model_finite &model) {
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
-    if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix + "/mpo");
+    if(h5ppFile.linkExists(mpo_path)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_path);
 
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
-    for(size_t pos = 0; pos < model.get_length(); pos++) {
-        model.get_mpo(pos).write_mpo(h5ppFile, model_prefix);
+    for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, mpo_path);
     }
-    h5ppFile.writeAttribute(settings::model::model_size, "model_size", model_prefix + "/mpo");
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix + "/mpo");
+    h5ppFile.writeAttribute(settings::model::model_size, "model_size", mpo_path);
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_path);
     tools::common::profile::t_hdf->toc();
 }
 
 /*! Write down measurements that can't fit in a table */
-void tools::finite::io::h5dset::write_ent(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5dset::save_bonds(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                           const class_state_finite &state) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();

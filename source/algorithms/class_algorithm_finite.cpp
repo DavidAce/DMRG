@@ -75,7 +75,7 @@ void class_algorithm_finite::run()
         } catch(std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
             exit(1);
-//            run_default_task_list();
+            //            run_default_task_list();
         }
     } else {
         run_default_task_list();
@@ -261,53 +261,6 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
     tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
 }
-
-// void class_algorithm_finite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
-//                                                          std::optional<bool> use_eigenspinors) {
-//    tools::log->info("Randomizing into product state: [{}] | Reason {} ...", state_name, enum2str(reason));
-//    if(reason == ResetReason::SATURATED) {
-//        if(status.num_resets >= settings::strategy::max_resets)
-//            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
-//        else
-//            status.num_resets++; // Only increment if doing it for saturation reasons
-//    }
-//    if(not sector) sector = settings::strategy::target_sector;
-//    if(not bitfield) bitfield = settings::input::bitfield;
-//    if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
-//
-//    tensors.randomize_state(sector.value(), bitfield.value(), use_eigenspinors.value());
-//    clear_convergence_status();
-//    status.lowest_recorded_variance_per_site = 1;
-//    status.iter                     = tensors.state->reset_iter();
-//    status.step                     = tensors.state->reset_step();
-//    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
-//    tools::log->info("Randomizing into product state: [{}] | Reason {} ... OK! | spin components {}", state_name, enum2str(reason), spin_components);
-//}
-//
-// void class_algorithm_finite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
-//                                                          std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-//    tools::log->info("Randomizing from current state: [{}] ...", state_name);
-//    if(not pauli_strings) pauli_strings = {"x", "z"};
-//    if(not sector) sector = settings::strategy::target_sector;
-//    if(not chi_lim) chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-//    if(not svd_threshold) svd_threshold = 1e-4; // A lower one improves performance: Most of the entanglement details will become irrelevant anyway
-//    // Randomize state
-//    tensors.randomize_from_current_state(pauli_strings.value(), sector.value(), chi_lim.value(), svd_threshold.value());
-//    clear_convergence_status();
-//    excited_state_number++;
-//    status.reset();
-//    status.iter      = tensors.state->reset_iter();
-//    status.step      = tensors.state->reset_step();
-//    status.position  = tensors.state->get_position();
-//    status.direction = tensors.state->get_direction();
-//    if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
-//    tools::log->info("Randomizing from current state: [{}] ... OK!", state_name);
-//    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
-//    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
-//    if(tensors.state->find_largest_chi() > chi_lim.value())
-//        throw std::runtime_error(
-//            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
-//}
 
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_any_edge()) return;
@@ -529,38 +482,50 @@ void class_algorithm_finite::clear_convergence_status() {
 void class_algorithm_finite::write_to_file(StorageReason storage_reason) { write_to_file(storage_reason, *tensors.state); }
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection, const std::string &given_prefix) {
-    StorageLevel      storage_level;
-    const std::string state_root   = algo_name + "/" + state_name;
-    const std::string table_prefix = state_root;
-    std::string       state_prefix = state_root; // May get modified
-    std::string       model_prefix = algo_name + "/model";
-    if(not given_prefix.empty()) state_prefix = given_prefix;
+    // We can avoid repeated entries by only allowing fresh step numbers.
+    static std::map<StorageReason, size_t> last_save;
+    if(last_save.find(storage_reason) != last_save.end() and last_save[storage_reason] == status.step) return;
 
+    // Setup this save
+    StorageLevel             storage_level;
+    std::string              state_prefix = algo_name + '/' + state_name; // May get modified
+    std::string              model_prefix = algo_name + '/' + "/model";
+    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"};
+    if(not given_prefix.empty()) state_prefix = given_prefix;
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
             // If we have finished we may want to write a projection too
-            state_prefix.append("/finished");
+            state_prefix += "/finished";
+            // Check if checkpoint already wrote this round down.
+            if(last_save.find(StorageReason::CHECKPOINT) != last_save.end() and last_save[StorageReason::CHECKPOINT] == status.step){
+                // Checkpoint wrote to common tables already
+                table_prefxs = {state_prefix}; // Only add to your own
+            }else{
+                table_prefxs.emplace_back(state_prefix); // Add to common tables
+            }
             break;
         }
         case StorageReason::CHECKPOINT: {
             if(not state.position_is_any_edge()) return;
             if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
-            state_prefix.append("/checkpoint");
+            state_prefix += "/checkpoint";
             storage_level = settings::output::storage_level_checkpoint;
-            if(settings::output::checkpoint_keep_newest_only) state_prefix.append("/iter_last");
+            if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
             else
-                state_prefix.append("/iter_" + std::to_string(status.iter));
+                state_prefix += fmt::format("/iter_{}", status.iter);
+            table_prefxs.emplace_back(state_prefix);
             break;
         }
         case StorageReason::CHI_UPDATE: {
             if(not cfg_chi_lim_grow()) return;
             // If we have updated chi we may want to write a projection too
             storage_level = settings::output::storage_level_checkpoint;
-            state_prefix.append("/checkpoint");
-            state_prefix.append("/chi_" + std::to_string(status.chi_lim));
+            state_prefix += "/checkpoint";
+            state_prefix += fmt::format("/chi_{}", status.chi_lim);
+            table_prefxs = {state_prefix}; // Should not pollute other tables than its own
             break;
         }
         case StorageReason::PROJ_STATE: {
@@ -570,51 +535,53 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
                 write_to_file(storage_reason, state_projected, true, state_prefix);
                 return;
             }
-            state_prefix.append("/projection");
+            state_prefix += "/projection";
+            table_prefxs = {state_prefix}; // Should not pollute other tables than its own
             break;
         }
         case StorageReason::INIT_STATE: {
             storage_level = settings::output::storage_level_init_state;
-            state_prefix.append("/state_init");
+            state_prefix += "/state_init";
+            table_prefxs.emplace_back(state_prefix);
             break;
         }
         case StorageReason::EMIN_STATE: {
             storage_level = settings::output::storage_level_emin_state;
             state_prefix  = algo_name + "/state_emin";
+            table_prefxs.emplace_back(state_prefix);
             break;
         }
         case StorageReason::EMAX_STATE: {
             storage_level = settings::output::storage_level_emax_state;
             state_prefix  = algo_name + "/state_emax";
+            table_prefxs.emplace_back(state_prefix);
             break;
         }
         case StorageReason::MODEL: {
             storage_level = settings::output::storage_level_model;
-            tools::finite::io::h5table::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
-            tools::finite::io::h5dset::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
+            tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
+            tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
             copy_from_tmp(storage_reason);
             return;
         }
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::finite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, state);
-    tools::finite::io::h5dset::write_ent(*h5pp_file, state_prefix, storage_level, state);
-    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
+
+    // Start saving tensors and metadata
+    tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state);
+    tools::finite::io::h5dset::save_bonds(*h5pp_file, state_prefix, storage_level, state);
+    tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
+                                         state_name, state_prefix, model_prefix, status);
 
     // The main results have now been written. Next we append data to tables
-    // Some storage reasons should not do this however. Like projection.
-    // Also we can avoid repeated entries by only allowing fresh step numbers.
-    if(storage_reason == StorageReason::PROJ_STATE) return;
-    static size_t last_step_written = 0;
-    if(status.step == last_step_written and last_step_written > 0) return;
-
-    //    tools::finite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, state, status);
-    tools::finite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, tensors, status);
-    tools::finite::io::h5table::write_sim_status(*h5pp_file, table_prefix, storage_level, status);
-    tools::finite::io::h5table::write_profiling(*h5pp_file, table_prefix, storage_level, status);
-    tools::finite::io::h5table::write_mem_usage(*h5pp_file, table_prefix, storage_level, status);
-    last_step_written = status.step;
+    for(const auto &table_prefix : table_prefxs) {
+        tools::finite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, tensors, status);
+        tools::finite::io::h5table::save_sim_status(*h5pp_file, table_prefix + "/status", storage_level, status);
+        tools::finite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
+        tools::finite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
+    }
+    last_save[storage_reason] = status.step;
     copy_from_tmp(storage_reason);
 }
 
