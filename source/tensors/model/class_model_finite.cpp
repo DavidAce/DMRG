@@ -48,7 +48,7 @@ class_model_finite &class_model_finite::operator=(const class_model_finite &othe
 }
 
 void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
-    tools::log->trace("Initializing model with {} sites", model_size);
+    tools::log->info("Initializing model with {} sites", model_size);
     if(model_size < 2) throw std::logic_error("Tried to initialize model with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize model with more than 2048 sites");
     if(not MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
@@ -61,7 +61,7 @@ void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
 }
 
 void class_model_finite::randomize(){
-    tools::log->trace("Randomizing model");
+    tools::log->info("Randomizing model");
     std::vector<class_mpo_site::TableMap> all_params;
     for(auto &mpo : MPO) {
         mpo->randomize_hamiltonian();
@@ -166,7 +166,7 @@ Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return to
 Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
-    tools::log->trace("Contracting multisite mpo tensor with {} sites ...", sites.size());
+    tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
     tools::common::profile::t_mpo->tic();
     Eigen::Tensor<Scalar, 4> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};

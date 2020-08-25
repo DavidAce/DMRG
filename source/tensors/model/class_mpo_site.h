@@ -7,9 +7,9 @@
 #include "class_mpo_parameters.h"
 #include <any>
 #include <config/enums.h>
+#include <general/nmspc_tensor_extra.h>
 #include <map>
 #include <memory>
-#include <general/nmspc_tensor_extra.h>
 
 namespace h5pp {
     class File;
@@ -73,8 +73,8 @@ class class_mpo_site {
     virtual void build_mpo()                                                                  = 0;
     virtual void randomize_hamiltonian()                                                      = 0;
     virtual void set_averages(std::vector<TableMap> all_parameters, bool reverse = false)     = 0;
-    virtual void write_hamiltonian(h5pp::File &file, const std::string &model_prefix) const   = 0;
-    virtual void read_hamiltonian(const h5pp::File &file, const std::string &model_prefix)    = 0;
-    void         write_mpo(h5pp::File &file, const std::string &model_prefix) const;
-    void         read_mpo(const h5pp::File &file, const std::string &model_prefix);
+    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const    = 0;
+    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)    = 0;
+    void         save_mpo(h5pp::File &file, const std::string &model_prefix) const;
+    void         load_mpo(const h5pp::File &file, const std::string &model_prefix);
 };

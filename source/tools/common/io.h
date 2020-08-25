@@ -17,23 +17,23 @@ namespace tools::common::io {
     }
 
     namespace h5table{
-        extern void write_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
-        extern void write_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
-        extern void write_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void save_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void save_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void save_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void load_sim_status   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_algorithm_status & status);
+        extern void load_profiling    (const h5pp::File & h5ppFile, const std::string & state_prefix);
     }
 
     namespace h5attr{
-        extern void write_meta (h5pp::File & h5ppFile,
-                                const std::string & algo_name,const std::string & state_name, const std::string &state_prefix, const std::string &model_prefix, ModelType model_type,
-                                const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void save_meta (h5pp::File &h5ppFile, const StorageLevel &storage_level, const StorageReason &storage_reason,const ModelType & model_type, size_t model_size,
+                               const AlgorithmType &algo_type, const std::string & state_name, const std::string &state_prefix, const std::string &model_prefix,
+                               const class_algorithm_status &status);
     }
 
     namespace h5resume{
         extern std::optional<size_t>   extract_state_number     (const std::string & state_prefix);
         extern std::string             extract_state_name       (const std::string & state_prefix);
         extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, AlgorithmType algo_type, const std::string & search = "");
-        extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & state_prefix, class_algorithm_status & status);
-        extern void                    load_profiling_from_hdf5 (const h5pp::File & h5ppFile, const std::string & state_prefix);
     }
 
     namespace h5tmp{

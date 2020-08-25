@@ -43,10 +43,10 @@ class class_dmrg_config {
     template<typename T>
     [[nodiscard]] T parse_param(const std::string &param_val, const std::string &param_name) {
         try {
-            if(param_val.empty()) throw std::range_error("Parameter [" + param_name + "] has no value");
+            if(param_val.empty()) throw std::range_error(fmt::format("Parameter [{}] has no value", param_name));
             if constexpr(std::is_same_v<T, unsigned int>) {
                 auto val = static_cast<int>(std::stoi(param_val));
-                if(val < 0) throw std::runtime_error("Read negative value for unsigned parameter: " + std::to_string(val));
+                if(val < 0) throw std::runtime_error(fmt::format("Read negative value for unsigned parameter: {}", val));
                 return static_cast<T> (val);
             }
             if constexpr(std::is_same_v<T, unsigned long>) return std::stoul(param_val);

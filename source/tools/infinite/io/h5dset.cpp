@@ -60,13 +60,14 @@ void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::s
 
 void tools::infinite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_model_infinite &model){
     if(storage_level < StorageLevel::FULL) return;
-    if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The model has already been written to [{}]", model_prefix + "/mpo");
+    std::string mpo_prefix = fmt::format("{}/mpo", model_prefix);
+    if(h5ppFile.linkExists(mpo_prefix)) return tools::log->trace("The model has already been written to [{}]", mpo_prefix);
 
     tools::common::profile::t_hdf->tic();
-    model.get_mpo_siteA().write_mpo(h5ppFile,model_prefix);
-    model.get_mpo_siteB().write_mpo(h5ppFile,model_prefix);
-    h5ppFile.writeAttribute(2, "model_size", model_prefix + "/mpo");
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix + "/mpo");
+    model.get_mpo_siteA().save_mpo(h5ppFile, mpo_prefix);
+    model.get_mpo_siteB().save_mpo(h5ppFile, mpo_prefix);
+    h5ppFile.writeAttribute(2, "model_size", mpo_prefix);
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_prefix);
     tools::common::profile::t_hdf->toc();
 }
 

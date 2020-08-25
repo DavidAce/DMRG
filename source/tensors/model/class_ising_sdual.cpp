@@ -121,7 +121,7 @@ void class_ising_sdual::build_mpo()
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
-        throw std::runtime_error("MPO at position " + std::to_string(get_position()) + " has been constructed with NAN's");
+        throw std::runtime_error(fmt::format("MPO at position {} has NAN's",get_position()));
     }
 }
 
@@ -184,7 +184,7 @@ void class_ising_sdual::set_perturbation(double coupling_ptb, double field_ptb, 
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw std::runtime_error("MPO(" + std::to_string(get_position()) + ": Should have become unperturbed!");
+        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!",get_position()));
 }
 
 bool class_ising_sdual::is_perturbed() const { return h5tb.param.J_pert != 0.0 or h5tb.param.h_pert != 0.0; }
@@ -283,38 +283,30 @@ void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool 
     set_parameters(all_parameters[get_position()]);
 }
 
-void class_ising_sdual::write_hamiltonian(h5pp::File &file, const std::string &table_path) const {
-    if(not file.linkExists(table_path)) file.createTable(h5tb_ising_sdual::h5_type, table_path, "Selfdual Ising");
-    file.appendTableEntries(h5tb, table_path);
+void class_ising_sdual::save_hamiltonian(h5pp::File &file, const std::string &hamiltonian_table_path) const {
+    if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb_ising_sdual::h5_type, hamiltonian_table_path, "Selfdual Ising");
+    file.appendTableRecords(h5tb, hamiltonian_table_path);
     // Position 0 is also responsible for writing attributes
     if(position.value() != 0) return;
-    file.writeAttribute(h5tb.param.J_mean, "J_mean",table_path);
-    file.writeAttribute(h5tb.param.J_stdv, "J_stdv",table_path);
-    file.writeAttribute(h5tb.param.J_avrg, "J_avrg",table_path);
-    file.writeAttribute(h5tb.param.h_mean, "h_mean",table_path);
-    file.writeAttribute(h5tb.param.h_stdv, "h_stdv",table_path);
-    file.writeAttribute(h5tb.param.h_avrg, "h_avrg",table_path);
-    file.writeAttribute(h5tb.param.lambda, "lambda",table_path);
-    file.writeAttribute(h5tb.param.delta, "delta", table_path);
-    file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
-    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
+    file.writeAttribute(h5tb.param.J_mean, "J_mean", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.J_stdv, "J_stdv", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.J_avrg, "J_avrg", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.h_mean, "h_mean", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.h_stdv, "h_stdv", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.h_avrg, "h_avrg", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.lambda, "lambda", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.delta, "delta", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.distribution, "distribution", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", hamiltonian_table_path);
 }
 
-void class_ising_sdual::read_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
-    std::string ham_prefix = model_prefix + "/Hamiltonian";
-    if(file.linkExists(ham_prefix)) {
-        h5tb.param                       = file.readTableEntries<h5tb_ising_sdual::table>(ham_prefix, position);
+void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::string &hamiltonian_table_path) {
+    if(file.linkExists(hamiltonian_table_path)) {
+        h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(hamiltonian_table_path, position);
         all_mpo_parameters_have_been_set = true;
         build_mpo();
-    } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_prefix));
-    }
-    // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = model_prefix + "/mpo/H_" + std::to_string(get_position());
-    if(file.linkExists(mpo_dset)) {
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
-            throw std::runtime_error("Built MPO does not match the MPO on file");
-    }
+    } else
+        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", hamiltonian_table_path));
 
     // Check that we are on the same point of the phase diagram
     if(std::abs(h5tb.param.J_mean - settings::model::ising_sdual::J_mean) > 1e-6) throw std::runtime_error("J_mean != settings::model::ising_sdual::J_mean");

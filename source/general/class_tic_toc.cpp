@@ -10,7 +10,7 @@ class_tic_toc::class_tic_toc() : class_tic_toc(true, 5, "") {}
 
 class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text) : name(output_text), enable(on_off), print_precision(prec) {
     if(enable) {
-        if(!name.empty()) { name = name + ": "; }
+        if(!name.empty()) { name += ": "; }
         reset();
     }
 }

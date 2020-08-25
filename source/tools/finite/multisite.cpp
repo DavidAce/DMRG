@@ -87,13 +87,13 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
             break;
         }
         if(c <= threshold and sites.size() <= max_sites) {
-            reason = "good threshold found: " + std::to_string(c);
+            reason = fmt::format("good threshold found: {}",c);
             break;
         } else if(sites.size() <= min_sites) {
-            reason = "at least " + std::to_string(min_sites) + " sites were kept";
+            reason = fmt::format("at least {} sites were kept", min_sites);
             break;
         } else if(allequal and sites.size() <= max_sites) {
-            reason = "equal costs: " + std::to_string(c);
+            reason = fmt::format("equal costs: {}",c);
             break;
         } else if(sites.size() == 1) {
             throw std::logic_error("At least two sites required!");

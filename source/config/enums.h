@@ -151,6 +151,44 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == h5pp::FilePermission::REPLACE)           return "REPLACE";
     }
 
+    if constexpr(std::is_same_v<T,fdmrg_task>){
+        if(item == fdmrg_task::INIT_RANDOMIZE_MODEL)                    return "INIT_RANDOMIZE_MODEL";
+        if(item == fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)       return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
+        if(item == fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)     return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
+        if(item == fdmrg_task::INIT_BOND_DIM_LIMITS)                    return "INIT_BOND_DIM_LIMITS";
+        if(item == fdmrg_task::INIT_WRITE_MODEL)                        return "INIT_WRITE_MODEL";
+        if(item == fdmrg_task::INIT_CLEAR_STATUS)                       return "INIT_CLEAR_STATUS";
+        if(item == fdmrg_task::INIT_DEFAULT)                            return "INIT_DEFAULT";
+        if(item == fdmrg_task::FIND_GROUND_STATE)                       return "FIND_GROUND_STATE";
+        if(item == fdmrg_task::FIND_HIGHEST_STATE)                      return "FIND_HIGHEST_STATE";
+        if(item == fdmrg_task::POST_WRITE_RESULT)                       return "POST_WRITE_RESULT";
+        if(item == fdmrg_task::POST_PRINT_RESULT)                       return "POST_PRINT_RESULT";
+        if(item == fdmrg_task::POST_DEFAULT)                            return "POST_DEFAULT";
+
+    }
+
+    if constexpr(std::is_same_v<T,xdmrg_task>){
+        if(item == xdmrg_task::INIT_RANDOMIZE_MODEL)                   return "INIT_RANDOMIZE_MODEL";
+        if(item == xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)      return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
+        if(item == xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)    return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
+        if(item == xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN)       return "INIT_RANDOMIZE_INTO_STATE_IN_WIN";
+        if(item == xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE)      return "INIT_RANDOMIZE_FROM_CURRENT_STATE";
+        if(item == xdmrg_task::INIT_BOND_DIM_LIMITS)                   return "INIT_BOND_DIM_LIMITS";
+        if(item == xdmrg_task::INIT_ENERGY_LIMITS)                     return "INIT_ENERGY_LIMITS";
+        if(item == xdmrg_task::INIT_WRITE_MODEL)                       return "INIT_WRITE_MODEL";
+        if(item == xdmrg_task::INIT_CLEAR_STATUS)                      return "INIT_CLEAR_STATUS";
+        if(item == xdmrg_task::INIT_DEFAULT)                           return "INIT_DEFAULT";
+        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE)      return "NEXT_RANDOMIZE_INTO_PRODUCT_STATE";
+        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE)    return "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE";
+        if(item == xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE)          return "NEXT_RANDOMIZE_PREVIOUS_STATE";
+        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN)       return "NEXT_RANDOMIZE_INTO_STATE_IN_WIN";
+        if(item == xdmrg_task::FIND_ENERGY_RANGE)                      return "FIND_ENERGY_RANGE";
+        if(item == xdmrg_task::FIND_EXCITED_STATE)                     return "FIND_EXCITED_STATE";
+        if(item == xdmrg_task::POST_WRITE_RESULT)                      return "POST_WRITE_RESULT";
+        if(item == xdmrg_task::POST_PRINT_RESULT)                      return "POST_PRINT_RESULT";
+        if(item == xdmrg_task::POST_DEFAULT)                           return "POST_DEFAULT";
+    }
+
     throw std::runtime_error("Given invalid enum item");
 }
 
@@ -236,6 +274,45 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "BACKUP")            return h5pp::FilePermission::BACKUP;
         if(item == "REPLACE")           return h5pp::FilePermission::REPLACE;
     }
+
+    if constexpr(std::is_same_v<T,fdmrg_task>){
+        if(item == "INIT_RANDOMIZE_MODEL")                    return fdmrg_task::INIT_RANDOMIZE_MODEL;
+        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")       return fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")     return fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "INIT_BOND_DIM_LIMITS")                    return fdmrg_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_WRITE_MODEL")                        return fdmrg_task::INIT_WRITE_MODEL;
+        if(item == "INIT_CLEAR_STATUS")                       return fdmrg_task::INIT_CLEAR_STATUS;
+        if(item == "INIT_DEFAULT")                            return fdmrg_task::INIT_DEFAULT;
+        if(item == "FIND_GROUND_STATE")                       return fdmrg_task::FIND_GROUND_STATE;
+        if(item == "FIND_HIGHEST_STATE")                      return fdmrg_task::FIND_HIGHEST_STATE;
+        if(item == "POST_WRITE_RESULT")                       return fdmrg_task::POST_WRITE_RESULT;
+        if(item == "POST_PRINT_RESULT")                       return fdmrg_task::POST_PRINT_RESULT;
+        if(item == "POST_DEFAULT")                            return fdmrg_task::POST_DEFAULT;
+    }
+
+    if constexpr(std::is_same_v<T,xdmrg_task>){
+        if(item == "INIT_RANDOMIZE_MODEL")                   return xdmrg_task::INIT_RANDOMIZE_MODEL;
+        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")      return xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")    return xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_STATE_IN_WIN")       return xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN;
+        if(item == "INIT_RANDOMIZE_FROM_CURRENT_STATE")      return xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE;
+        if(item == "INIT_BOND_DIM_LIMITS")                   return xdmrg_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_ENERGY_LIMITS")                     return xdmrg_task::INIT_ENERGY_LIMITS;
+        if(item == "INIT_WRITE_MODEL")                       return xdmrg_task::INIT_WRITE_MODEL;
+        if(item == "INIT_CLEAR_STATUS")                      return xdmrg_task::INIT_CLEAR_STATUS;
+        if(item == "INIT_DEFAULT")                           return xdmrg_task::INIT_DEFAULT;
+        if(item == "NEXT_RANDOMIZE_INTO_PRODUCT_STATE")      return xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE")    return xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "NEXT_RANDOMIZE_PREVIOUS_STATE")          return xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE;
+        if(item == "NEXT_RANDOMIZE_INTO_STATE_IN_WIN")       return xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN;
+        if(item == "FIND_ENERGY_RANGE")                      return xdmrg_task::FIND_ENERGY_RANGE;
+        if(item == "FIND_EXCITED_STATE")                     return xdmrg_task::FIND_EXCITED_STATE;
+        if(item == "POST_WRITE_RESULT")                      return xdmrg_task::POST_WRITE_RESULT;
+        if(item == "POST_PRINT_RESULT")                      return xdmrg_task::POST_PRINT_RESULT;
+        if(item == "POST_DEFAULT")                           return xdmrg_task::POST_DEFAULT;
+    }
+
+
 
     throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
 }

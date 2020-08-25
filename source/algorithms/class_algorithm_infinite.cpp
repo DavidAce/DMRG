@@ -4,6 +4,8 @@
 #include "class_algorithm_infinite.h"
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
+#include <iomanip>
+#include <iostream>
 #include <math/num.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/io.h>
@@ -13,8 +15,6 @@
 #include <tools/infinite/io.h>
 #include <tools/infinite/measure.h>
 #include <tools/infinite/mps.h>
-#include <iostream>
-#include <iomanip>
 class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType sim_type)
     : class_algorithm_base(std::move(h5ppFile_), sim_type) {
     tools::log->trace("Constructing algorithm infinite");
@@ -47,7 +47,6 @@ void class_algorithm_infinite::run_postprocessing() {
     tools::common::profile::t_pos->toc();
     tools::common::profile::print_profiling();
 }
-
 
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {
@@ -158,7 +157,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //}
 
 void class_algorithm_infinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
-                                                             std::optional<bool> use_eigenspinors) {
+                                               std::optional<bool> use_eigenspinors) {
     tools::log->trace("Resetting to random product state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -177,7 +176,7 @@ void class_algorithm_infinite::randomize_state(ResetReason reason, std::optional
     clear_convergence_status();
 }
 
-//void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
+// void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
 //                                                       std::optional<long> chi_lim, std::optional<double> svd_threshold) {
 //    tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
 //    throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
@@ -300,42 +299,43 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
 
 void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     StorageLevel      storage_level;
-    const std::string table_prefix = algo_name + "/" + state_name;
-    std::string       state_prefix = algo_name + "/" + state_name; // May get modified
+    const std::string table_prefix = algo_name + '/' + state_name;
+    std::string       state_prefix = algo_name + '/' + state_name; // May get modified
     std::string       model_prefix = algo_name + "/model";
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
-            state_prefix.append("/finished");
+            state_prefix += "/finished";
             break;
         }
         case StorageReason::CHECKPOINT: {
             if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
-            state_prefix.append("/checkpoint");
+            state_prefix += "/checkpoint";
             storage_level = settings::output::storage_level_checkpoint;
-            if(settings::output::checkpoint_keep_newest_only) state_prefix.append("/iter_last");
+            if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
             else
-                state_prefix.append("/iter_" + std::to_string(status.iter));
+                state_prefix += fmt::format("/iter_{}",status.iter);
             break;
         }
 
         case StorageReason::CHI_UPDATE: {
             if(not cfg_chi_lim_grow()) return;
             storage_level = settings::output::storage_level_checkpoint;
-            state_prefix.append("/checkpoint");
-            state_prefix.append("/chi_" + std::to_string(tensors.state->get_chi_lim()));
+            state_prefix += "/checkpoint";
+            state_prefix += fmt::format("/chi_{}",tensors.state->get_chi_lim());
+
             break;
         }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::output::storage_level_proj_state;
-            state_prefix.append("/projection");
+            state_prefix += "/projection";
             break;
         }
         case StorageReason::INIT_STATE: {
             storage_level = settings::output::storage_level_init_state;
-            state_prefix.append("/state_init");
+            state_prefix += "/state_init";
             break;
         }
         case StorageReason::EMIN_STATE: {
@@ -351,7 +351,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
         case StorageReason::MODEL: {
             storage_level = settings::output::storage_level_model;
             tools::infinite::io::h5table::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
-            tools::infinite::io::h5dset::write_model(*h5pp_file,  model_prefix, storage_level, *tensors.model);
+            tools::infinite::io::h5dset::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
             copy_from_tmp(storage_reason);
             return;
         }
@@ -360,8 +360,8 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::infinite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, *tensors.state);
     tools::infinite::io::h5dset::write_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
-    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_name,state_prefix, model_prefix, settings::model::model_type, storage_level, status);
-
+    tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
+                                         state_name, state_prefix, model_prefix, status);
     // The main results have now been written. Next we append data to tables
     // Some storage reasons should not do this however. Like projection.
     // Also we can avoid repeated entries by only allowing fresh step numbers.

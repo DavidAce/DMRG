@@ -158,7 +158,8 @@ target_compile_features(project-settings INTERFACE cxx_std_17)
 #######################################
 if(DMRG_ENABLE_ASAN)
     target_compile_options(project-settings INTERFACE -fsanitize=address -fno-omit-frame-pointer)
-    target_link_options(project-settings INTERFACE -fsanitize=address)
+    target_link_libraries(project-settings INTERFACE -fsanitize=address)
+    target_link_libraries(project-settings INTERFACE -static-libasan)
 endif()
 
 #######################################

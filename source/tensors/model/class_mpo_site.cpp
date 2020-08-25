@@ -12,8 +12,7 @@
 using namespace qm;
 using Scalar = std::complex<double>;
 
-class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_)
-    : model_type(model_type_), position(position_){}
+class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
 const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
     if(all_mpo_parameters_have_been_set) {
@@ -23,14 +22,12 @@ const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
     }
 }
 
-bool class_mpo_site:: is_real() const { return Textra::isReal(MPO(), "MPO"); }
+bool class_mpo_site::is_real() const { return Textra::isReal(MPO(), "MPO"); }
 
-bool class_mpo_site:: has_nan() const {
+bool class_mpo_site::has_nan() const {
     for(auto &param : get_parameters()) {
         if(param.second.type() == typeid(double))
-            if(std::isnan(std::any_cast<double>(param.second))) {
-                return true;
-            }
+            if(std::isnan(std::any_cast<double>(param.second))) { return true; }
     }
     return (Textra::hasNaN(mpo_internal, "MPO"));
 }
@@ -41,11 +38,10 @@ void class_mpo_site::assert_validity() const {
             if(std::isnan(std::any_cast<double>(param.second))) {
                 print_parameter_names();
                 print_parameter_values();
-                throw std::runtime_error("Param [" + param.first + "] = " + std::to_string(std::any_cast<double>(param.second)) + "");
+                throw std::runtime_error(fmt::format("Param [{}] = {}", param.first,std::any_cast<double>(param.second)));
             }
-    if(Textra::hasNaN(mpo_internal, "MPO")) throw std::runtime_error("MPO has NAN on position " + std::to_string(get_position()));
+    if(Textra::hasNaN(mpo_internal, "MPO")) throw std::runtime_error(fmt::format("MPO has NAN on position {}",get_position()));
 }
-
 
 void class_mpo_site::set_position(size_t position_) { position = position_; }
 
@@ -79,7 +75,6 @@ void class_mpo_site::set_reduced_energy(double site_energy) {
     mpo_internal = MPO_reduced_view();
 }
 
-
 void class_mpo_site::print_parameter_names() const {
     std::cout << std::setprecision(10);
     for(auto &item : get_parameters()) std::cout << std::setw(16) << std::left << item.first;
@@ -98,14 +93,14 @@ void class_mpo_site::print_parameter_values() const {
     std::cout << std::endl;
 }
 //
-//const std::any &class_model_base::find_val(const Parameters &parameters, std::string_view key) const {
+// const std::any &class_model_base::find_val(const Parameters &parameters, std::string_view key) const {
 //    for(auto &param : parameters) {
 //        if(key == param.first) return param.second;
 //    }
 //    throw std::runtime_error("No parameter named [" + std::string(key) + "]");
 //}
 //
-//std::any &class_model_base::find_val(Parameters &parameters, std::string_view key) const {
+// std::any &class_model_base::find_val(Parameters &parameters, std::string_view key) const {
 //    for(auto &param : parameters) {
 //        if(key == param.first) return param.second;
 //    }
@@ -114,10 +109,8 @@ void class_mpo_site::print_parameter_values() const {
 //
 //
 
-
-void class_mpo_site::write_mpo(h5pp::File &file, const std::string &model_prefix) const {
-    std::string mpo_prefix   = model_prefix + "/mpo";
-    std::string dataset_name = mpo_prefix + "/H_" + std::to_string(get_position());
+void class_mpo_site::save_mpo(h5pp::File &file, const std::string &mpo_prefix) const {
+    std::string dataset_name = fmt::format("{}/H_{}" ,mpo_prefix, get_position());
     file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_COMPACT);
     file.writeAttribute(get_position(), "position", dataset_name);
     for(auto &params : get_parameters()) {
@@ -130,8 +123,8 @@ void class_mpo_site::write_mpo(h5pp::File &file, const std::string &model_prefix
     }
 }
 
-void class_mpo_site::read_mpo(const h5pp::File &file, const std::string &model_prefix) {
-    std::string mpo_dset = model_prefix + "/mpo"+ "H_" + std::to_string(get_position());
+void class_mpo_site::load_mpo(const h5pp::File &file, const std::string &mpo_prefix) {
+    std::string mpo_dset = fmt::format("{}/H_{}", mpo_prefix, get_position());
     TableMap    map;
     if(file.linkExists(mpo_dset)) {
         auto param_names = file.getAttributeNames(mpo_dset);
@@ -148,9 +141,9 @@ void class_mpo_site::read_mpo(const h5pp::File &file, const std::string &model_p
         }
         set_parameters(map);
         build_mpo();
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar,4>>(mpo_dset)))
+        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
-    }else{
+    } else {
         throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));
     }
 }

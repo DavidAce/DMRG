@@ -47,11 +47,11 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
 
     tools::log->info("Found state candidates: {}", state_prefix_candidates);
 
-
     // Apply the search filter
-    if(not search.empty()){
+    if(not search.empty()) {
         auto search_filter = [search](std::string_view x) { return x.find(search) == std::string::npos; };
-        state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), search_filter), state_prefix_candidates.end());
+        state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), search_filter),
+                                      state_prefix_candidates.end());
         tools::log->info("States matching keyword [{}]:  {}", search, state_prefix_candidates);
     }
 
@@ -79,6 +79,8 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
                                       state_prefix_candidates.end());
     }
 
+    tools::log->info("Highest state number candidates: {}", state_prefix_candidates);
+
     // Return the results if done
     if(state_prefix_candidates.empty()) return "";
     if(state_prefix_candidates.size() == 1) return state_prefix_candidates[0];
@@ -92,7 +94,26 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
 
     // Sort according to step number in decreasing order
     std::sort(step_sorted_candidates.begin(), step_sorted_candidates.end(), [](auto &left, auto &right) { return left.first > right.first; });
+    for(const auto &candidate : step_sorted_candidates) tools::log->info("Candidate step {} : [{}]", candidate.first, candidate.second);
 
-    // Return the first element, which should contain the latest possible state
+
+    // Remove all candidates that have a lower step than the latest ones
+    auto latest_step = step_sorted_candidates.front().first;
+    step_sorted_candidates.erase(std::remove_if(step_sorted_candidates.begin(), step_sorted_candidates.end(),
+                                                [latest_step](const std::pair<size_t, std::string> &candidate) { return candidate.first < latest_step; }),
+                                 step_sorted_candidates.end());
+
+    // We may now have repeated step numbers.
+    // For instance if the state has actually finished we expect to find a state in "finished", "checkpoint/iter_..." or "projection" in the path
+
+    // First, if any candidate has "finished" in its path, return it
+    for(const auto &candidate : step_sorted_candidates)
+        if(candidate.second.find("finished") != std::string::npos) return candidate.second;
+
+    // Next, if any candidate has "iter" in its path, return that
+    for(const auto &candidate : step_sorted_candidates)
+        if(candidate.second.find("iter") != std::string::npos) return candidate.second;
+
+    // Otherwise just return whatever is first the first element, which should contain the latest possible state
     return step_sorted_candidates.front().second;
 }
