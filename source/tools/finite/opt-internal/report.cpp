@@ -8,14 +8,14 @@
 void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
-    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<16} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
-    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
+    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
+    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:+<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
     tools::log->debug(format_hdr.c_str(),
                       "Optimization report",
                       "size",
                       "space",
                       "energy",
-                      "log₁₀ var", // Subscript needs 3 extra characters
+                      "log₁₀ var", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
                       "iter",
@@ -34,13 +34,13 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
 void tools::finite::opt::internal::reports::print_eigs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (eigs_log.empty()) return;
-    std::string format_hdr = "- {:<5} {:<22} {:<23} {:<23} {:<12} {:<12} {:<12}";
-    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<21.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
+    std::string format_hdr = "- {:<5} {:<20} {:<20} {:<20} {:<12} {:<12} {:<12}";
+    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<20.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
     tools::log->debug(format_hdr.c_str(),
                        "nev",
                        "max <θ_i|θ>",
                        "min <θ_i|θ>",
-                       "log₁₀(1-Σ|<θ_i|θ>|²)", // Subscripts and superscripts need 3 more characters
+                       "log₁₀(1-Σ|<θ_i|θ>|²)",  // Special characters are counted properly in fmt 1.7.0
                        "Eig Time[ms]",
                        "Ham Time[ms]",
                        "LU Time[ms]");
