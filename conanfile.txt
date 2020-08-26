@@ -14,5 +14,30 @@ cmake
 [options]
 *:shared=False
 openblas:build_lapack=True
-ceres-solver:eigen_malloc_already_aligned=1
-ceres-solver:eigen_max_align_bytes=32
+ceres-solver:march=native
+ceres-solver:verbose=True
+
+
+
+### NOTE August 26 2020 ####
+#
+# Ceres started crashing on Tetralith again using -march=native.
+# Tried to solve this issue once and for all.
+# I've tried the following flags during compilation of DMRG++ and ceres-solver:
+#
+#           -DEIGEN_MALLOC_ALREADY_ALIGNED=[none,0,1]
+#           -DEIGEN_MAX_ALIGN_BYTES=[none,16,32]
+#           -march=[none,native]
+#           -std=[none,c++17]
+#
+# Up until now, [0,16,none,none] has worked but now for some reason it stopped now.
+# I noticed the stdc++=17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
+# I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
+# When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
+# In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
+# It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
+# make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
+# lets Eigen do its thing in the same way everywhere.
+
+# ceres-solver:eigen_malloc_already_aligned=1
+# ceres-solver:eigen_max_align_bytes=32

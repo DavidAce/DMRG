@@ -128,13 +128,34 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                 # in ceres which results in a segfault on free memory.
                 # Something like "double free or corruption ..."
                 #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
+
+                ### NOTE August 26 2020 ####
+                #
+                # Ceres started crashing on Tetralith again using -march=native.
+                # Tried to solve this issue once and for all.
+                # I've tried the following flags during compilation of DMRG++ and ceres-solver:
+                #
+                #           -DEIGEN_MALLOC_ALREADY_ALIGNED=[none,0,1]
+                #           -DEIGEN_MAX_ALIGN_BYTES=[none,16,32]
+                #           -march=[none,native]
+                #           -std=[none,c++17]
+                #
+                # Up until now, [0,16,none,none] has worked but now for some reason it stopped now.
+                # I noticed the stdc++=17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
+                # I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
+                # When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
+                # In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
+                # It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
+                # make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
+                # lets Eigen do its thing in the same way everywhere.
+
 #                message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
-#                target_compile_definitions(CONAN_PKG::Eigen3INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=16)
+#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfault?
+#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
             else()
 #                message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
 #                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=32)
+#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=32)  # May work to fix CERES segfault?
             endif()
 
     endif()
