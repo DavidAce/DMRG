@@ -14,3 +14,5 @@ cmake
 [options]
 *:shared=False
 openblas:build_lapack=True
+ceres-solver:eigen_malloc_already_aligned=1
+ceres-solver:eigen_max_align_bytes=32
