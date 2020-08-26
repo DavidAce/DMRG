@@ -119,7 +119,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 continue
             state_keys.append(candidate)
         state_keys.sort()
-        print(state_keys)
         for state_num,state_prefix in enumerate(state_keys):
             entry = []
             ententrp_zero = []
