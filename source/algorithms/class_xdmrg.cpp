@@ -323,7 +323,11 @@ void class_xdmrg::single_xDMRG_step() {
     std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
     std::remove_if(max_num_sites_list.begin(), max_num_sites_list.end(), [](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
     if(max_num_sites_list.empty()) max_num_sites_list = {2};
-    tools::log->debug("Possible multisite step sizes: {}", max_num_sites_list);
+
+    tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {} | mode [{}] | space [{}] | type [{}] | multisite step sizes: {}", status.step,
+                      status.iter, status.position, status.direction, optMode, optSpace, optType, max_num_sites_list);
+
+
     double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
