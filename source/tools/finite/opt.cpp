@@ -25,7 +25,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
     if(not googleLogginghasInitialized) {
         google::InitGoogleLogging(tools::log->name().c_str());
         googleLogginghasInitialized = true;
-        google::SetStderrLogging(3);
+        google::SetStderrLogging(-3);
     }
 
     /* clang-format off */
