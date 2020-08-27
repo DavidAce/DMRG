@@ -14,6 +14,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -e                                  : Enable --exclusive mode. (default = off)
 -f <config file/path>               : File or path to files containing simulation config files (suffixed .cfg) (default = input/ )
 -g <seeds  file/path>               : File or path to files containing a list of seeds (suffixed .seed). Basenames should match the corresponding input files in -f (default = )
+-j                                  : Enable job-array mode with a certain array size.(default = "OFF")
 -J <job name>                       : Job name. (default = DMRG)
 -m <memory (MB)>                    : Reserved amount of ram for each task in MB.
 -n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel on each node per job (default = 32)
@@ -21,7 +22,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = dedicated)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
--s <sims per sbatch>                : Number of tasks/realizations per invocation of sbatch  (default = 10)
+-s <sims per sbatch>                : Number of tasks/simulations (or job-array size) per invocation of sbatch  (default = 10)
 -S <start seed>                     : Starting seed, if you don't want to start from 0.
 -t <time>                           : Time for each run (default = 1:00:00, i.e. 1 hour)
 -v <vv...>                          : Sets verbosity for sbatch
@@ -39,7 +40,7 @@ ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
 
-while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t:v: o; do
+while getopts ha:b:c:def:g:j:J:m:n:N:o:p:rs:S:t:v: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
@@ -49,6 +50,7 @@ while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t:v: o; do
         (e) exclusive=--exclusive;;
         (f) configpath=$OPTARG;;
         (g) seedpath=$OPTARG;;
+        (j) jobarray="ON";;
         (J) jobname=$OPTARG;;
         (m) mempercpu="--mem-per-cpu=$OPTARG";;
         (n) ntasks_parallel=$OPTARG;;
@@ -256,6 +258,12 @@ fi
 for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
         echo "sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity --job-name=$jobname --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
+    elif [ -n "$jobarray" ]; do
+        sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
+            --job-name=$jobname \
+            --ntasks=$ntasks_parallel \
+            --array=1-$simspersbatch
+            run_jobarray.sh -e $exec -f $simfile
     else
         sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
