@@ -103,7 +103,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         # Collect the number of states present.
-        state_keys = [x for x in h5file["common/state_root"].attrs.keys() if "common/state_root" in h5file and args.algorithms and any(algo in x for algo in args.algorithms)]
+        if not "common/state_root" in h5file:
+            continue
+        state_keys = [x for x in h5file["common/state_root"].attrs.keys() if any(algo in x for algo in args.algorithms)]
 #         state_keys = [x.key for x in h5file["common/finished"].attrs if args.algorithms and any(algo in x for algo in args.algorithms)]
         state_keys = []
         for candidate in h5file["common/finished"].attrs.keys():
