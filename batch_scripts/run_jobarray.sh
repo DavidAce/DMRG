@@ -54,14 +54,14 @@ echo "MEM PER NODE : $SLURM_MEM_PER_NODE"
 if [ "$num_cols" -eq 2 ]; then
     config=$(echo $arg_line | cut -d " " -f1)
     model_seed=$(echo $arg_line | cut -d " " -f2)
-    echo "Executing    : $exec -c $config -s $seed"
-    $exec -c $config -s $seed
+    echo "Executing    : $exec -c $config -s $model_seed"
+    $exec -c $config -s $model_seed
 elif [ "$num_cols" -eq 3 ]; then
     config=$(echo $arg_line | cut -d " " -f1)
     model_seed=$(echo $arg_line | cut -d " " -f2)
     bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "Executing    : $exec -c $config -s $seed -b $bit_field"
-    $exec -c $config -s $seed -b $bit_field
+    echo "Executing    : $exec -c $config -s $model_seed -b $bit_field"
+    $exec -c $config -s $model_seed -b $bit_field
 else
     echo "Case not implemented"
     exit 1
