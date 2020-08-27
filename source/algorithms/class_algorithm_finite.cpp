@@ -388,13 +388,13 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->debug(" -- relative slope    = {} %", report.slope);
         tools::log->debug(" -- tolerance         = {} %", slope_threshold.value());
         tools::log->debug(" -- last var average  = {} ", report.avgY);
-        tools::log->debug(" -- check from        = {} ", report.check_from);
-        tools::log->debug(" -- var history       = {} ", V_mpo_vec);
-        tools::log->debug(" -- slope history     = {} ", V_mpo_slopes);
+        tools::log->debug(" -- check from iter   = {} ", report.check_from);
+        tools::log->debug(" -- var history       = {:.6f} ", fmt::join(V_mpo_vec,", "));
+        tools::log->debug(" -- slope history     = {:.3f} ", fmt::join(V_mpo_slopes,", "));
         tools::log->debug(" -- has saturated     = {} ", status.variance_mpo_has_saturated);
-        tools::log->debug(" -- has saturated for = {} ", status.variance_mpo_saturated_for);
+        tools::log->debug(" -- has saturated for = {} iters", status.variance_mpo_saturated_for);
         tools::log->debug(" -- has converged     = {} ", status.variance_mpo_has_converged);
-        tools::log->debug(" -- has converged for = {} ", converged_count);
+        tools::log->debug(" -- has converged for = {} iters", converged_count);
         if(V_mpo_vec.back() < threshold and status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
         if(V_mpo_vec.back() < threshold and not status.variance_mpo_has_converged) throw std::logic_error("Variance should have converged");
     }
@@ -440,13 +440,13 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         tools::log->debug(" -- site              = {}", idx_max_slope);
         tools::log->debug(" -- relative slope    = {} %", reports[idx_max_slope].slope);
         tools::log->debug(" -- tolerance         = {} %", slope_threshold.value());
-        tools::log->debug(" -- check from        = {} ", reports[idx_max_slope].check_from);
-        tools::log->debug(" -- ent history       = {} ", S_mat[idx_max_slope]);
-        tools::log->debug(" -- slope history     = {} ", S_slopes);
+        tools::log->debug(" -- check from iter   = {} ", reports[idx_max_slope].check_from);
+        tools::log->debug(" -- ent history       = {:.6f} ", fmt::join(S_mat[idx_max_slope], ", "));
+        tools::log->debug(" -- slope history     = {:.3f} ", fmt::join(S_slopes, ", "));
         tools::log->debug(" -- has saturated     = {} ", status.entanglement_has_saturated);
-        tools::log->debug(" -- has saturated for = {} (site {} )", status.entanglement_saturated_for, saturated_count);
-        tools::log->debug(" -- all averages      = {} ", all_avergs);
-        tools::log->debug(" -- all slopes        = {} ", all_slopes);
+        tools::log->debug(" -- has saturated for = {} iters (site {} )", status.entanglement_saturated_for, saturated_count);
+        tools::log->debug(" -- all averages      = {:.6f} ", fmt::join(all_avergs, ", "));
+        tools::log->debug(" -- all slopes        = {:.3f} ", fmt::join(all_slopes, ", "));
         if(reports[idx_max_slope].slope > slope_threshold and status.entanglement_has_saturated) throw std::logic_error("Not supposed to be saturated!!");
     }
     status.entanglement_has_converged = status.entanglement_has_saturated;
@@ -654,9 +654,9 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Bond dimension maximum χmax        = {}", cfg_chi_lim_max());
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    tools::log->info("Entanglement entropies Sₑ          = {}", tools::finite::measure::entanglement_entropies(*tensors.state));
-    tools::log->info("Entanglement entropiy Sₑ (mid)     = {}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-    tools::log->info("Truncation Errors                  = {}", tensors.state->get_truncation_errors());
+    tools::log->info("Entanglement entropies Sₑ          = {:.6f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
+    tools::log->info("Entanglement entropiy Sₑ (mid)     = {:.5f}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
+    tools::log->info("Truncation Errors                  = {:.3e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has converged            = {:<}", status.algorithm_has_converged);
     tools::log->info("Algorithm has saturated            = {:<}", status.algorithm_has_saturated);
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
