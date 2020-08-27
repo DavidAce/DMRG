@@ -262,7 +262,7 @@ for simfile in $simfiles; do
         sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
-            --array=1-$simspersbatch
+            --array=1-$simspersbatch \
             run_jobarray.sh -e $exec -f $simfile
     else
         sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
