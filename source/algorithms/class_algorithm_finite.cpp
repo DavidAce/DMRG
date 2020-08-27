@@ -636,15 +636,18 @@ void class_algorithm_finite::print_status_update() {
 }
 
 void class_algorithm_finite::print_status_full() {
+    tensors.do_all_measurements();
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
     tools::log->info("{:=^60}", "");
     tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
     tools::log->info("Sites                              = {}", tensors.state->get_length());
-    tools::log->info("Iterations (sweeps)                = {}", status.iter);
-    tools::log->info("Steps                              = {}", status.step);
-    tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_age(),
-                     tools::common::profile::t_tot->get_age() / 60);
+    tools::log->info("Position                           = {}", tensors.state->get_position());
+    tools::log->info("Direction                          = {}", tensors.state->get_direction());
+    tools::log->info("Iterations (full chain sweeps)     = {}", status.iter);
+    tools::log->info("Steps (moves along the chain)      = {}", status.step);
+    tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_measured_time(),
+                     tools::common::profile::t_tot->get_measured_time() / 60);
     tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) {
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
