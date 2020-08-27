@@ -249,8 +249,6 @@ void class_xdmrg::run_algorithm() {
 }
 
 void class_xdmrg::single_xDMRG_step() {
-    tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {}", status.step, status.iter, status.position, status.direction);
-
     using namespace tools::finite;
     using namespace tools::finite::opt;
 
