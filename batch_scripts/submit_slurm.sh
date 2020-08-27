@@ -258,7 +258,7 @@ fi
 for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
         echo "sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity --job-name=$jobname --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
-    elif [ -n "$jobarray" ]; do
+    elif [ -n "$jobarray" ]; then
         sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
