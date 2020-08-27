@@ -128,9 +128,9 @@ class class_state_finite {
     size_t num_bonds_reached_chi(long chi_level) const;
     bool   is_bond_limited(long chi_limit, double truncation_threshold) const;
 
-    void clear_measurements() const;
+    void clear_measurements(LogPolicy log_policy = LogPolicy::ON) const;
     void do_all_measurements() const;
-    void clear_cache() const;
+    void clear_cache(LogPolicy log_policy = LogPolicy::ON) const;
 
     void tag_active_sites_have_been_updated(bool tag) const;
     void tag_all_sites_have_been_updated(bool tag) const;

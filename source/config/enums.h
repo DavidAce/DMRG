@@ -12,6 +12,7 @@ enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_ST
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE};
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
+enum class LogPolicy { ON,OFF }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
 enum class StateType {
     RANDOM_PRODUCT_STATE,
@@ -106,6 +107,10 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == NormPolicy::ALWAYS)      return "ALWAYS";
         if(item == NormPolicy::IFNEEDED)    return "IFNEEDED";
+    }
+    if constexpr(std::is_same_v<T, LogPolicy>) {
+        if(item == LogPolicy::ON)      return "ON";
+        if(item == LogPolicy::OFF)    return "OFF";
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
@@ -231,6 +236,10 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS") return NormPolicy::ALWAYS;
         if(item == "IFNEEDED") return NormPolicy::IFNEEDED;
+    }
+    if constexpr(std::is_same_v<T, LogPolicy>) {
+        if(item == "ON")      return LogPolicy::ON;
+        if(item == "OFF")    return LogPolicy::OFF;
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == "NONE")      return StorageLevel::NONE;
