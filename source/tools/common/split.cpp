@@ -182,7 +182,6 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
 
     site_it = sites.begin();
     for(const auto &mps : mps_sites_left) {
-        tools::log->trace("Performing sanity check on site {} | is center {}", mps.get_position(), mps.isCenter());
         if(*site_it != mps.get_position())
             throw std::runtime_error(fmt::format("Could not split multisite tensor: Position mismatch: expected site {} != mps pos {} | sites to merge {}",
                                                  *site_it, mps.get_position(), sites));
