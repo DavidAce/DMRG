@@ -38,12 +38,13 @@ if [ ! -f $simfile ]; then
     exit 1
 fi
 
-mkdir -p logs
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
 arg_line=$(tail -n+$SLURM_ARRAY_TASK_ID $simfile | head -1)
 config_file=$(echo $arg_line | cut -d " " -f1)
 config_base=$(basename $config_file .cfg)
 model_seed=$(echo $arg_line | cut -d " " -f2)
+mkdir -p logs/$config_base
+
 
 echo "HOSTNAME          : $HOSTNAME"
 echo "CPUS ON  NODE     : $SLURM_CPUS_ON_NODE"
