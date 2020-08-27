@@ -38,7 +38,7 @@ for num_L in sites:
                     "model::ising_sdual::J_stdv"         : "1.0",
                     "model::ising_sdual::h_stdv"         : "1.0",
                     "xdmrg::chi_lim_max"                 : "512",
-                    "xdmrg::max_states "                 : "2",
+                    "xdmrg::max_states "                 : "3",
                 }
                 num_total = num_total + 1
                 generate_input_file(settings, input_filename, template_filename)
