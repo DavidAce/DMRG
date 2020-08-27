@@ -17,7 +17,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -j                                  : Enable job-array mode with a certain array size.(default = "OFF")
 -J <job name>                       : Job name. (default = DMRG)
 -m <memory (MB)>                    : Reserved amount of ram for each task in MB.
--n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel on each node per job (default = 32)
+-n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel by GNU Parallel (set to 1 for job arrays) (default = 32)
 -N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = dedicated)
@@ -40,7 +40,7 @@ ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
 
-while getopts ha:b:c:def:g:j:J:m:n:N:o:p:rs:S:t:v: o; do
+while getopts ha:b:c:def:g:jJ:m:n:N:o:p:rs:S:t:v: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
