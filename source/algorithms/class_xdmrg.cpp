@@ -313,11 +313,11 @@ void class_xdmrg::single_xDMRG_step() {
     // Here we define a list of trials, where each entry determines
     // how many sites to try.
     std::vector<size_t> max_num_sites_list;
-    if(status.algorithm_has_stuck_for > 0) max_num_sites_list = {4};
-    else if(status.algorithm_has_stuck_for > 1 or chi_quench_steps > 0)
-        max_num_sites_list = {4, settings::strategy::multisite_max_sites};
+    if(status.algorithm_has_stuck_for > 0 or optMode == OptMode::OVERLAP or chi_quench_steps > 0)
+        max_num_sites_list = {settings::strategy::multisite_max_sites};
     else
         max_num_sites_list = {2};
+
     // Make sure the site list is sane by sorting and filtering out repeated/invalid entries.
     std::sort(max_num_sites_list.begin(), max_num_sites_list.end());
     std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
