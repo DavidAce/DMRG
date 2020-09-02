@@ -410,10 +410,11 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
         tools::common::profile::t_opt_sub_bfgs->toc();
         reports::time_add_sub_entry();
-        auto lbfgstime = static_cast<std::time_t>(summary.total_time_in_seconds);
-        tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", *std::gmtime(&lbfgstime),
-            summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
-
+        int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
+        int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
+        double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
+        tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
+                          ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
         if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_tensor, subspace_size); }
 
