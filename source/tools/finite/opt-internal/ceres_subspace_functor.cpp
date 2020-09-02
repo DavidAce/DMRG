@@ -60,8 +60,10 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
-    energy_per_site                = std::real(ene + energy_reduced) / static_cast<double>(length);
-    variance_per_site              = std::abs(var) / static_cast<double>(length);
+    energy                         = std::real(ene + energy_reduced);
+    energy_per_site                = energy / static_cast<double>(length);
+    variance                       = std::abs(var);
+    variance_per_site              = variance / static_cast<double>(length);
     norm_offset                    = std::abs(vv) - 1.0;
     std::tie(norm_func, norm_grad) = windowed_func_grad(norm_offset, 0.05);
     log10var_per_site              = std::log10(variance_per_site);
