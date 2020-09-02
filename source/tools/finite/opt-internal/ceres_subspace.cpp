@@ -394,6 +394,16 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
         optimized_tensor.set_time(summary.total_time_in_seconds);
         optimized_tensor.set_overlap(std::abs(initial_tensor.get_vector().dot(optimized_tensor.get_vector())));
 
+        if constexpr(settings::debug) {
+            // Check that Ceres results are correct
+            double energy_check   = tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors);
+            double variance_check = tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors);
+            if(std::abs(1.0 - std::abs(optimized_tensor.get_energy() / energy_check)) > 1e-3)
+                tools::log->error("Energy mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_energy(), energy_check);
+            if(std::abs(1.0 - std::abs(optimized_tensor.get_variance() / variance_check)) > 1e-3)
+                tools::log->error("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_variance(), variance_check);
+        }
+
         tools::common::profile::t_opt_sub_bfgs->toc();
         reports::time_add_sub_entry();
 
