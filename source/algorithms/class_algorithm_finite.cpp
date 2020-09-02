@@ -387,9 +387,9 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->debug("Variance slope details:");
         tools::log->debug(" -- relative slope    = {} %", report.slope);
         tools::log->debug(" -- tolerance         = {} %", slope_threshold.value());
-        tools::log->debug(" -- last var average  = {} ", report.avgY);
+        tools::log->debug(" -- last var average  = {:.6e} ", report.avgY);
         tools::log->debug(" -- check from iter   = {} ", report.check_from);
-        tools::log->debug(" -- var history       = {:.6f} ", fmt::join(V_mpo_vec,", "));
+        tools::log->debug(" -- var history       = {:.4e} ", fmt::join(V_mpo_vec,", "));
         tools::log->debug(" -- slope history     = {:.3f} ", fmt::join(V_mpo_slopes,", "));
         tools::log->debug(" -- has saturated     = {} ", status.variance_mpo_has_saturated);
         tools::log->debug(" -- has saturated for = {} iters", status.variance_mpo_saturated_for);
