@@ -19,7 +19,7 @@
 #include <tools/common/prof.h>
 #include <tools/common/split.h>
 
-void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold,LogPolicy log_policy) {
+void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     if(state.position_is_any_edge()) {
         // Instead of moving out of the chain, just flip the direction and return
         state.flip_direction();
@@ -59,7 +59,7 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
 
-        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold,log_policy);
+        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
         state.clear_cache();
         state.clear_measurements();
 
@@ -72,8 +72,9 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 }
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
-                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold, LogPolicy log_policy) {
-    if(log_policy == LogPolicy::ON) tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
+                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold) {
+
+    tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -110,8 +111,8 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
         mps_tgt.merge_mps(mps_src);
         mps_ptr++;
     }
-    state.clear_cache(log_policy);
-    state.clear_measurements(log_policy);
+    state.clear_cache();
+    state.clear_measurements();
 }
 
 bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
@@ -144,10 +145,10 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     long                     chiR      = mpsR.get_chiR();
     Eigen::Tensor<Scalar, 3> twosite_tensor =
         mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
-    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::OFF);
+    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
 
     // Now we can move around the chain
-    for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold,LogPolicy::OFF);
+    for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
     state.assert_validity();
