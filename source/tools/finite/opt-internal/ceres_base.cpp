@@ -37,7 +37,6 @@ double ceres_base_functor::get_energy() const { return energy; }
 double ceres_base_functor::get_energy_per_site() const { return energy_per_site; }
 double ceres_base_functor::get_variance() const { return variance; }
 double ceres_base_functor::get_variance_per_site() const { return variance_per_site; }
-double ceres_base_functor::get_energy_per_site() const { return energy_per_site; }
 size_t ceres_base_functor::get_count() const { return counter; }
 double ceres_base_functor::get_norm() const { return norm; }
 int    ceres_base_functor::NumParameters() const { return num_parameters; }
