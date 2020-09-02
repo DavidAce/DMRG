@@ -489,7 +489,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     // Setup this save
     StorageLevel             storage_level;
     std::string              state_prefix = algo_name + '/' + state_name; // May get modified
-    std::string              model_prefix = algo_name + '/' + "/model";
+    std::string              model_prefix = algo_name + "/model";
     std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"};
     if(not given_prefix.empty()) state_prefix = given_prefix;
     switch(storage_reason) {
