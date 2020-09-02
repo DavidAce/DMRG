@@ -7,7 +7,6 @@
 #include "ceres_direct_functor.h"
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
-#include <fmt/chrono.h>
 #include <general/class_tic_toc.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
@@ -94,10 +93,10 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     optimized_tensor.set_iter(summary.iterations.size());
     optimized_tensor.set_time(summary.total_time_in_seconds);
     optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
-
     tools::common::profile::t_opt_dir_bfgs->toc();
     reports::time_add_dir_entry();
-    tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", fmt::gmtime(summary.total_time_in_seconds),
+    auto lbfgstime = static_cast<std::time_t>(summary.total_time_in_seconds);
+    tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", *std::gmtime(&lbfgstime),
                       summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
 
     reports::bfgs_add_entry("Direct", "opt", optimized_tensor);

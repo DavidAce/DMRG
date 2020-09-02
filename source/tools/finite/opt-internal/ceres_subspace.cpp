@@ -6,7 +6,6 @@
 #include "ceres_subspace_functor.h"
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
-#include <fmt/chrono.h>
 #include <math/rnd.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
@@ -411,8 +410,9 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
         tools::common::profile::t_opt_sub_bfgs->toc();
         reports::time_add_sub_entry();
-        tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", fmt::gmtime(summary.total_time_in_seconds),
-                          summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+        auto lbfgstime = static_cast<std::time_t>(summary.total_time_in_seconds);
+        tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", *std::gmtime(&lbfgstime),
+            summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
 
         //    std::cout << summary.FullReport() << "\n";
         if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_tensor, subspace_size); }
