@@ -16,8 +16,8 @@
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
-#include <tools/common/log.h>
 #include <tools/common/fmt.h>
+#include <tools/common/log.h>
 #include <tools/common/moments.h>
 #include <tools/common/prof.h>
 
@@ -39,21 +39,15 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
     state.measurements.bond_dimension_current        = measure::bond_dimension_current(state);
     state.measurements.bond_dimension_midchain       = measure::bond_dimension_midchain(state);
     state.measurements.bond_dimensions               = measure::bond_dimensions(state);
-    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
-    state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
-    state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
-    state.measurements.spin_components               = measure::spin_components(state);
-
-    state.measurements.length                        = measure::length(state);
-    state.measurements.bond_dimension_midchain       = measure::bond_dimension_midchain(state);
-    state.measurements.bond_dimension_current        = measure::bond_dimension_current(state);
-    state.measurements.bond_dimensions               = measure::bond_dimensions(state);
-    state.measurements.norm                          = measure::norm(state);
-    state.measurements.spin_components               = measure::spin_components(state);
-    state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
-    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
-    state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
     state.measurements.truncation_errors             = measure::truncation_errors(state);
+    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
+    state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
+    state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
+    state.measurements.renyi_2                       = measure::renyi_entropies(state, 2);
+    state.measurements.renyi_3                       = measure::renyi_entropies(state, 3);
+    state.measurements.renyi_4                       = measure::renyi_entropies(state, 4);
+    state.measurements.renyi_100                     = measure::renyi_entropies(state, 100);
+    state.measurements.spin_components               = measure::spin_components(state);
 }
 
 size_t tools::finite::measure::length(const class_tensors_finite &tensors) { return tensors.get_length(); }
@@ -159,6 +153,45 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
     return state.measurements.entanglement_entropies.value();
 }
 
+std::vector<double> tools::finite::measure::renyi_entropies(const class_state_finite &state, double q) {
+    if(q == 1.0) return entanglement_entropies(state);
+    if(q == 2.0 and state.measurements.renyi_2) return state.measurements.renyi_2.value();
+    if(q == 3.0 and state.measurements.renyi_3) return state.measurements.renyi_3.value();
+    if(q == 4.0 and state.measurements.renyi_4) return state.measurements.renyi_4.value();
+    if(q == 100.0 and state.measurements.renyi_100) return state.measurements.renyi_100.value();
+    tools::common::profile::t_ent->tic();
+    std::vector<double> renyi_q;
+    for(size_t pos = 0; pos < state.get_length(); pos++) {
+        const auto &             L = state.get_mps_site(pos).get_L();
+        Eigen::Tensor<Scalar, 0> RE;
+        RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
+        renyi_q.emplace_back(std::real(RE(0)));
+        if(state.get_mps_site(pos).isCenter()) {
+            const auto &LC = state.get_mps_site(pos).get_LC();
+            RE             = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
+            renyi_q.emplace_back(std::real(RE(0)));
+        }
+    }
+    tools::common::profile::t_ent->toc();
+    if(q == 2.0) {
+        state.measurements.renyi_2 = renyi_q;
+        return state.measurements.renyi_2.value();
+    }
+    if(q == 3.0) {
+        state.measurements.renyi_3 = renyi_q;
+        return state.measurements.renyi_3.value();
+    }
+    if(q == 4.0) {
+        state.measurements.renyi_4 = renyi_q;
+        return state.measurements.renyi_4.value();
+    }
+    if(q == 100.0) {
+        state.measurements.renyi_100 = renyi_q;
+        return state.measurements.renyi_100.value();
+    }
+    return renyi_q;
+}
+
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
     if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
     double spin_x                      = measure::spin_component(state, qm::spinOneHalf::sx);
@@ -205,11 +238,12 @@ std::vector<double> tools::finite::measure::truncation_errors(const class_state_
 std::vector<double> tools::finite::measure::truncation_errors_active(const class_state_finite &state) {
     std::vector<double> truncation_errors;
     for(const auto &site : state.active_sites) {
-        const auto & mps = state.get_mps_site(site);
+        const auto &mps = state.get_mps_site(site);
         truncation_errors.emplace_back(mps.get_truncation_error());
         if(mps.isCenter()) truncation_errors.emplace_back(mps.get_truncation_error_LC());
     }
-    return truncation_errors;;
+    return truncation_errors;
+    ;
 }
 
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
@@ -277,7 +311,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const clas
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
     double energy;
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>)
-        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges,measurements) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges, measurements) + model.get_energy_reduced();
     else
         energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements) + model.get_energy_reduced();
 
@@ -370,14 +404,14 @@ template double tools::finite::measure::energy_variance_per_site(const Eigen::Te
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_normalized(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
-                                                 double energy_min_per_site, double energy_max_per_site,tensors_measure_finite *measurements) {
+                                                 double energy_min_per_site, double energy_max_per_site, tensors_measure_finite *measurements) {
     return (tools::finite::measure::energy_per_site(state, model, edges, measurements) - energy_min_per_site) / (energy_max_per_site - energy_min_per_site);
 }
 
 template double tools::finite::measure::energy_normalized(const class_state_finite &, const class_model_finite &model, const class_edges_finite &edges, double,
-                                                          double,tensors_measure_finite *measurements);
+                                                          double, tensors_measure_finite *measurements);
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
-                                                          double, double,tensors_measure_finite *measurements);
+                                                          double, double, tensors_measure_finite *measurements);
 
 double tools::finite::measure::energy_minus_energy_reduced(const class_tensors_finite &tensors) {
     return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
