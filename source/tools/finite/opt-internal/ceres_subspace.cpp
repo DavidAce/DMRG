@@ -364,6 +364,8 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 // Copy the results from the functor
                 optimized_tensor.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_tensor.get_tensor().dimensions());
                 optimized_tensor.set_counter(functor->get_count());
+                optimized_tensor.set_energy(functor->get_energy());
+                optimized_tensor.set_variance(functor->get_variance());
                 *tools::common::profile::t_opt_sub_vH2 += *functor->t_vH2;
                 *tools::common::profile::t_opt_sub_vH2v += *functor->t_vH2v;
                 *tools::common::profile::t_opt_sub_vH += *functor->t_vH;
@@ -382,6 +384,8 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 subspace_vector = subspace_vector_cast.normalized().cast<Scalar>();
                 optimized_tensor.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_tensor.get_tensor().dimensions());
                 optimized_tensor.set_counter(functor->get_count());
+                optimized_tensor.set_energy(functor->get_energy());
+                optimized_tensor.set_variance(functor->get_variance());
                 *tools::common::profile::t_opt_sub_vH2 += *functor->t_vH2;
                 *tools::common::profile::t_opt_sub_vH2v += *functor->t_vH2v;
                 *tools::common::profile::t_opt_sub_vH += *functor->t_vH;
