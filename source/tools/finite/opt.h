@@ -209,7 +209,59 @@ namespace tools::finite::opt::internal{
         std::unique_ptr<class_tic_toc> t_vH;
         std::unique_ptr<class_tic_toc> t_vHv;
     };
+    /* clang-format on */
 
+    template<typename FunctorType>
+    class CustomLogCallback : public ceres::IterationCallback {
+        public:
+        std::shared_ptr<spdlog::logger> log;
+        const FunctorType &             functor;
+        int    freq_log_iter = 5; //Wait at least this many iterations between logs
+        int    last_log_iter = 0;
+        int    init_log_iter = 0;
+        double last_log_time = 0;
+        double freq_log_time = 5; //Wait at least this many seconds between logs
+        double init_log_time = 5;
+        size_t last_count    = 0;
+
+        explicit CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
+            if(not log) log = tools::Logger::setLogger("xDMRG][LBFGS");
+            log->set_level(tools::log->level());
+            if(log->level() == spdlog::level::debug){
+                freq_log_iter = 10;
+                freq_log_time = 10;
+                init_log_time = 1;
+            }
+        }
+        ceres::CallbackReturnType operator()(const ceres::IterationSummary &summary) {
+            if(not log) return ceres::SOLVER_CONTINUE;
+            if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;
+            if(summary.iteration - last_log_iter  < freq_log_iter and summary.iteration > init_log_iter  ) return ceres::SOLVER_CONTINUE;
+            if(summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time) return ceres::SOLVER_CONTINUE;
+            last_log_time = summary.cumulative_time_in_seconds;
+            last_log_iter = summary.iteration;
+            /* clang-format off */
+            log->debug("iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
+                      "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:<2} ({:<4}) "
+                      "t_step {:>4.0f}ms t_iter {:>4.0f}ms t_tot {:>5.3f}s | energy {:<18.15f} log₁₀var {:<6.6f}",
+                      summary.iteration,
+                      summary.cost,
+                      summary.cost_change,
+                      summary.gradient_max_norm,
+                      summary.step_norm, // By lbfgs
+                      summary.step_size, // By line search
+                      functor.get_count() - last_count,
+                      functor.get_count(),
+                      summary.step_solver_time_in_seconds * 1000,
+                      summary.iteration_time_in_seconds * 1000,
+                      summary.cumulative_time_in_seconds,
+                      functor.get_energy_per_site(),
+                      std::log10(functor.get_variance_per_site())
+            );
+            last_count = functor.get_count();
+            /* clang-format on */
+            return ceres::SOLVER_CONTINUE;
+        }
+    };
 
 }
-
