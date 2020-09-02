@@ -166,7 +166,7 @@ bool class_tensors_finite::position_is_left_edge() const { return state->positio
 bool class_tensors_finite::position_is_right_edge() const { return state->position_is_right_edge(); }
 bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
-void class_tensors_finite::move_center_point(long chi_lim) { tools::finite::mps::move_center_point(*state, chi_lim); }
+void class_tensors_finite::move_center_point(long chi_lim,std::optional<double> svd_threshold) { tools::finite::mps::move_center_point(*state, chi_lim, svd_threshold); }
 void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
