@@ -170,6 +170,9 @@ namespace tools::finite::opt::internal{
 
     class ceres_base_functor : public ceres::FirstOrderFunction{
     protected:
+        mutable double energy;
+        mutable double energy_per_site;
+        mutable double variance;
         mutable double variance_per_site;
         mutable double energy_per_site  ;
         mutable double energy_reduced;
@@ -193,8 +196,10 @@ namespace tools::finite::opt::internal{
     public:
         explicit ceres_base_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);
 
-        double get_variance_per_site   () const;
+        double get_energy              () const;
         double get_energy_per_site     () const;
+        double get_variance            () const;
+        double get_variance_per_site   () const;
         size_t get_count               () const;
         double get_norm                () const;
         int    NumParameters           () const final;
