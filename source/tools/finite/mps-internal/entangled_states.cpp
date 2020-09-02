@@ -75,7 +75,6 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         auto &                                                            mps  = *mps_ptr;
         auto                                                              chiL = bond_dimensions[mps.get_position()];
         auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
-        auto                                                              size = spin_dim * chiL * chiR;
         auto                                                              rows = past_center ? chiL : chiL * spin_dim;
         auto                                                              cols = past_center ? chiR * spin_dim : chiR;
         Eigen::Tensor<Scalar, 1>                                          L = Textra::MatrixTensorMap(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
