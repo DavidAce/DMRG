@@ -152,7 +152,7 @@ void class_algorithm_finite::reduce_mpo_energy() {
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle
     if(settings::precision::use_reduced_energy and tensors.position_is_any_edge()) {
-        tools::log->info("Reducing MPO energy");
+        tools::log->debug("Reducing MPO energy");
         tensors.reduce_mpo_energy();
     }
 }
