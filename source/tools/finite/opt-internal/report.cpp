@@ -9,7 +9,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
     std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
-    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:+<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
+    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
     tools::log->debug(format_hdr.c_str(),
                       "Optimization report",
                       "size",
@@ -62,11 +62,11 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
 
 
 void tools::finite::opt::internal::reports::print_time_report(){
-    if (tools::log->level() > spdlog::level::debug) return;
+    if (tools::log->level() > spdlog::level::trace) return;
     if(time_log.empty()) return;
     std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
     std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
-    tools::log->debug(format_hdr.c_str(),
+    tools::log->trace(format_hdr.c_str(),
                       "vH2v",
                       "vHv",
                       "vH2",
@@ -74,7 +74,7 @@ void tools::finite::opt::internal::reports::print_time_report(){
                       "sum",
                       "l-bfgs");
     for(auto &entry : time_log){
-    tools::log->debug(format_num.c_str(),
+    tools::log->trace(format_num.c_str(),
                      1000 * entry.vH2v,
                      1000 * entry.vHv,
                      1000 * entry.vH2,
@@ -105,13 +105,13 @@ void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & m
 }
 
 void tools::finite::opt::internal::reports::time_add_dir_entry(){
-    if (tools::log->level() > spdlog::level::debug) return;
+    if (tools::log->level() > spdlog::level::trace) return;
     time_log.push_back({tools::common::profile::t_opt_dir_vH2v->get_last_time_interval(), tools::common::profile::t_opt_dir_vHv->get_last_time_interval(),
                           tools::common::profile::t_opt_dir_vH2->get_last_time_interval() , tools::common::profile::t_opt_dir_vH->get_last_time_interval(),
                           tools::common::profile::t_opt_dir_bfgs->get_last_time_interval()});
 }
 void tools::finite::opt::internal::reports::time_add_sub_entry(){
-    if (tools::log->level() > spdlog::level::debug) return;
+    if (tools::log->level() > spdlog::level::trace) return;
     time_log.push_back ({tools::common::profile::t_opt_sub_vH2v->get_last_time_interval(), tools::common::profile::t_opt_sub_vHv->get_last_time_interval(),
                           tools::common::profile::t_opt_sub_vH2->get_last_time_interval() , tools::common::profile::t_opt_sub_vH->get_last_time_interval(),
                           tools::common::profile::t_opt_sub_bfgs->get_last_time_interval()});
