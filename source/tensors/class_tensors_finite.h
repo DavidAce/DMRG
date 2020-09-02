@@ -61,7 +61,7 @@ class class_tensors_finite {
     void activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 2);
     long active_problem_size() const;
     void do_all_measurements() const;
-    void move_center_point(long chi_lim);
+    void move_center_point(long chi_lim,std::optional<double> svd_threshold=std::nullopt);
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim,std::optional<double> svd_threshold = std::nullopt);
 
     void rebuild_edges();
