@@ -92,14 +92,18 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     optimized_tensor.normalize();
     optimized_tensor.set_iter(summary.iterations.size());
     optimized_tensor.set_time(summary.total_time_in_seconds);
+    //    optimized_tensor.set_energy(tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors));
+    //    optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
     optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
+
     tools::common::profile::t_opt_dir_bfgs->toc();
     reports::time_add_dir_entry();
-    auto lbfgstime = static_cast<std::time_t>(summary.total_time_in_seconds);
-    tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", *std::gmtime(&lbfgstime),
-                      summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
-
-    reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
+    int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
+    int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
+    double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
+    tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
+                      ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+   reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
 
     tools::log->trace("Returning theta from optimization mode {} space {}", optMode, optSpace);
     tools::common::profile::t_opt_dir->toc();
