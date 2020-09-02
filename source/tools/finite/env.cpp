@@ -17,7 +17,7 @@ void tools::finite::env::rebuild_edges(const class_state_finite &state, const cl
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
-
+    tools::log->trace("Rebuilding edges...");
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
