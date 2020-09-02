@@ -25,7 +25,7 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     tools::log->trace("Finding subspace");
     MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges);
     const auto &       multisite_tensor = state.get_multisite_tensor();
-    auto   dbl_length    = static_cast<double>(state.get_length());
+    auto               dbl_length       = static_cast<double>(state.get_length());
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -41,8 +41,8 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
             tools::log->trace("Energy reduce = {:.16f} | per site = {:.16f}", model.get_energy_reduced(), model.get_energy_per_site_reduced());
             tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
             tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
-            tools::log->trace("Eigval target + Energy reduce = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length, model.get_energy_per_site_reduced(),
-                              energy_target / dbl_length);
+            tools::log->trace("Eigval target + Energy reduce = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
+                              model.get_energy_per_site_reduced(), energy_target / dbl_length);
         } else {
             eigval_target = energy_target;
         }
@@ -50,9 +50,9 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     }
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
     tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_reduced(),
-                      eigvals.maxCoeff() + model.get_energy_reduced()) ;
-    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff()/dbl_length + model.get_energy_per_site_reduced(),
-                      eigvals.maxCoeff()/dbl_length + model.get_energy_per_site_reduced());
+                      eigvals.maxCoeff() + model.get_energy_reduced());
+    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_per_site_reduced(),
+                      eigvals.maxCoeff() / dbl_length + model.get_energy_per_site_reduced());
     reports::print_eigs_report();
 
     if constexpr(std::is_same<Scalar, double>::value) {
@@ -340,9 +340,8 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
          *
          */
 
-        auto                                  options = internal::ceres_default_options;
-        ceres::GradientProblemSolver::Summary summary;
-        using namespace tools::finite::opt::internal;
+        auto options = internal::ceres_default_options;
+        auto summary = ceres::GradientProblemSolver::Summary();
         optimized_results.emplace_back(opt_tensor());
         auto &optimized_tensor = optimized_results.back();
         optimized_tensor.set_name(candidate.get_name());
@@ -393,15 +392,11 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
         optimized_tensor.normalize();
         optimized_tensor.set_iter(summary.iterations.size());
         optimized_tensor.set_time(summary.total_time_in_seconds);
-        optimized_tensor.set_energy(tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors));
-        optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
         optimized_tensor.set_overlap(std::abs(initial_tensor.get_vector().dot(optimized_tensor.get_vector())));
 
         tools::common::profile::t_opt_sub_bfgs->toc();
         reports::time_add_sub_entry();
 
-        tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}", summary.total_time_in_seconds, summary.iterations.size(),
-                          ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
         if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_tensor, subspace_size); }
 
