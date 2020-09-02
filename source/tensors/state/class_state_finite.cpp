@@ -508,12 +508,12 @@ size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
 
 bool class_state_finite::is_bond_limited(long chi_lim, double truncation_threshold) const { return num_sites_truncated(truncation_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
 
-void class_state_finite::clear_measurements(LogPolicy log_policy) const {
-    if(log_policy == LogPolicy::ON) tools::log->trace("Clearing state measurements");
+void class_state_finite::clear_measurements() const {
+    if constexpr (settings::debug) tools::log->trace("Clearing state measurements");
     measurements = state_measure_finite(); }
 
-void class_state_finite::clear_cache(LogPolicy log_policy) const {
-    if(log_policy == LogPolicy::ON) tools::log->trace("Clearing state cache");
+void class_state_finite::clear_cache() const {
+    if constexpr (settings::debug) tools::log->trace("Clearing state cache");
     cache = Cache();
 }
 
