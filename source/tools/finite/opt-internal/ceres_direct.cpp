@@ -60,6 +60,8 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             ceres::Solve(options, problem, optimized_tensor.get_vector_cplx_as_2xreal().data(), &summary);
             // Copy the results from the functor
             optimized_tensor.set_counter(functor->get_count());
+            optimized_tensor.set_energy(functor->get_energy());
+            optimized_tensor.set_variance(functor->get_variance());
             *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
             *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
             *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
@@ -78,6 +80,8 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             // Copy the results from the functor
             optimized_tensor.set_counter(functor->get_count());
             optimized_tensor.set_tensor_real(initial_tensor_real.data(), initial_tensor.get_tensor().dimensions());
+            optimized_tensor.set_energy(functor->get_energy());
+            optimized_tensor.set_variance(functor->get_variance());
             *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
             *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
             *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
