@@ -349,20 +349,21 @@ void class_xdmrg::single_xDMRG_step() {
         // We can now decide if we are happy with the result or not.
         double percent = 100 * results.back().get_variance_per_site() / variance_old_per_site;
         if(percent < 99) {
-            tools::log->debug("State improved during {} optimization. Variance: new/old: {:.4f} %", optSpace, percent);
+            tools::log->debug("State improved during {} optimization. Variance new/old = {:.3f} %", optSpace, percent);
             break;
         } else {
-            tools::log->debug("State did not improve during {} optimization. Variance new/old: {:.4f} %", optSpace, percent);
+            tools::log->debug("State did not improve during {} optimization. Variance new/old = {:.3f} %", optSpace, percent);
             continue;
         }
     }
     // Sort the results in order of increasing variance
     std::sort(results.begin(), results.end(), [](const opt_tensor &lhs, const opt_tensor &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
-    for(auto &candidate : results)
-        tools::log->debug("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-                          candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance_per_site()),
-                          candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
+    if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
+        for(auto &candidate : results)
+            tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
+                              candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance_per_site()),
+                              candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
 
     // Take the best result
     const auto &winner   = results.front();
