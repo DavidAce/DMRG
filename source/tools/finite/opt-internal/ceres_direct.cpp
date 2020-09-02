@@ -52,8 +52,9 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
         case OptType::CPLX: {
             // Copy the initial guess and operate directly on it
             optimized_tensor.set_tensor(initial_tensor.get_tensor());
-            auto *                 functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
-
+            auto *            functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
+            CustomLogCallback ceres_logger(*functor);
+            options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct cplx");
             ceres::Solve(options, problem, optimized_tensor.get_vector_cplx_as_2xreal().data(), &summary);
@@ -67,8 +68,10 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
         }
         case OptType::REAL: {
             // Here we make a temporary
-            auto                   initial_tensor_real = initial_tensor.get_vector_cplx_as_1xreal();
-            auto *                 functor             = new ceres_direct_functor<double>(tensors, status);
+            auto              initial_tensor_real = initial_tensor.get_vector_cplx_as_1xreal();
+            auto *            functor             = new ceres_direct_functor<double>(tensors, status);
+            CustomLogCallback ceres_logger(*functor);
+            options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct real");
             ceres::Solve(options, problem, initial_tensor_real.data(), &summary);

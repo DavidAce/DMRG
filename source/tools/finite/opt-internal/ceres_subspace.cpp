@@ -353,7 +353,9 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
             case OptType::CPLX: {
                 Eigen::VectorXd subspace_vector_cast =
                     Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
-                auto *                 functor = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
+                auto *            functor = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
+                CustomLogCallback ceres_logger(*functor);
+                options.callbacks.emplace_back(&ceres_logger);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running LBFGS subspace cplx");
                 ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
@@ -369,9 +371,11 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 break;
             }
             case OptType::REAL: {
-                Eigen::VectorXd        subspace_vector_cast = subspace_vector.real();
-                Eigen::MatrixXd        H2_subspace_real     = H2_subspace.real();
-                auto *                 functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
+                Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
+                Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
+                auto *            functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
+                CustomLogCallback ceres_logger(*functor);
+                options.callbacks.emplace_back(&ceres_logger);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running LBFGS subspace real");
                 ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
