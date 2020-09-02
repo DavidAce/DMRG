@@ -20,14 +20,13 @@
 tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &  tensors,
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
-    std::vector<size_t> sites (tensors.active_sites.begin(),tensors.active_sites.end());
-    opt_tensor initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
-                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                                       tensors.model->get_energy_reduced(), // Energy reduced for full system
-                                       tools::finite::measure::energy_variance(tensors),
-                                       1.0, // Overlap
-                                       tensors.get_length());
-
+    std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
+    opt_tensor          initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+                              tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                              tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                              tools::finite::measure::energy_variance(tensors),
+                              1.0, // Overlap
+                              tensors.get_length());
 
     return ceres_direct_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
@@ -39,11 +38,11 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     tools::common::profile::t_opt_dir->tic();
 
     reports::bfgs_add_entry("Direct", "init", initial_tensor);
-    const auto & current_tensor = tensors.state->get_multisite_tensor();
-    const auto   current_vector = Eigen::Map<const Eigen::VectorXcd>(current_tensor.data(),current_tensor.size());
-    auto       options = ceres_default_options;
-    auto       summary = ceres::GradientProblemSolver::Summary();
-    opt_tensor optimized_tensor;
+    const auto &current_tensor = tensors.state->get_multisite_tensor();
+    const auto  current_vector = Eigen::Map<const Eigen::VectorXcd>(current_tensor.data(), current_tensor.size());
+    auto        options        = internal::ceres_default_options;
+    auto        summary        = ceres::GradientProblemSolver::Summary();
+    opt_tensor  optimized_tensor;
     optimized_tensor.set_name(initial_tensor.get_name());
     optimized_tensor.set_sites(initial_tensor.get_sites());
     optimized_tensor.set_length(initial_tensor.get_length());
@@ -89,15 +88,12 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     optimized_tensor.normalize();
     optimized_tensor.set_iter(summary.iterations.size());
     optimized_tensor.set_time(summary.total_time_in_seconds);
-    optimized_tensor.set_energy(tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors));
-    optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
     optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
 
     tools::common::profile::t_opt_dir_bfgs->toc();
     reports::time_add_dir_entry();
-
-    tools::log->debug("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}", summary.total_time_in_seconds, summary.iterations.size(),
-                      ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+    tools::log->debug("Finished LBFGS in time {:%T} and {} iters. Exit status: {}. Message: {}", fmt::gmtime(summary.total_time_in_seconds),
+                      summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
 
     reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
 
