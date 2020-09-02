@@ -48,8 +48,9 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
     ceres_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
     ceres_default_options.gradient_tolerance                         = 1e-4; // Not tested yet
     ceres_default_options.parameter_tolerance                        = 1e-6;
-    ceres_default_options.minimizer_progress_to_stdout               = tools::log->level() <= spdlog::level::trace;
+    ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
+
     if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations                        = 8000;
         ceres_default_options.function_tolerance                        = 1e-8;
@@ -57,7 +58,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
         ceres_default_options.parameter_tolerance                       = 1e-8;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
-        ceres_default_options.minimizer_progress_to_stdout              = tools::log->level() <= spdlog::level::debug;
+        ceres_default_options.minimizer_progress_to_stdout              = false;// tools::log->level() <= spdlog::level::debug;
     }
     if(status.algorithm_has_stuck_for > 1){
         ceres_default_options.parameter_tolerance                       = 1e-10;
