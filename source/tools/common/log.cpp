@@ -55,7 +55,7 @@ size_t tools::Logger::getLogLevel(const std::shared_ptr<spdlog::logger> &other_l
 
 void tools::Logger::setLogger(std::shared_ptr<spdlog::logger> &other_log, const std::string &name, std::optional<size_t> levelZeroToFive , std::optional<bool> timestamp) {
     if(spdlog::get(name) == nullptr)
-        other_log = spdlog::stdout_color_mt(name);
+        other_log = spdlog::stdout_color_st(name,spdlog::color_mode::always);
     else
         other_log = spdlog::get(name);
     other_log->set_pattern("[%n]%^[%=8l]%$ %v"); // Disabled timestamp is the default
