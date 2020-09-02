@@ -51,7 +51,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
     auto mpo_prefix  = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_prefix");
     auto hamiltonian = h5ppFile.readAttribute<std::string>(state_prefix, "common/hamiltonian");
     if(h5ppFile.linkExists(hamiltonian)) {
-        tools::log->info("Loading model data from hamiltonian table: [{}]", hamiltonian);
+        tools::log->debug("Loading model data from hamiltonian table: [{}]", hamiltonian);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", hamiltonian);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", hamiltonian);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
@@ -72,7 +72,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
             }
         }
     } else if(h5ppFile.linkExists(mpo_prefix)) {
-        tools::log->info("Loading model data from MPO in: [{}]", mpo_prefix);
+        tools::log->debug("Loading model data from MPO in: [{}]", mpo_prefix);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", mpo_prefix);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", mpo_prefix);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
@@ -106,7 +106,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         throw std::runtime_error(
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
     state.initialize(str2enum<ModelType>(model_type), model_size, position);
-    tools::log->info("Loading state data from MPS in [{}]", mps_prefix);
+    tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
     for(size_t pos = 0; pos < model_size; pos++) {
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
@@ -138,13 +138,13 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
 void compare(double val1, double val2, double tol, const std::string &tag) {
     if(std::abs(val1 - val2) > tol) throw std::runtime_error(fmt::format("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2, std::abs(val1-val2),tol));
     else
-        tools::log->info("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}",tag,val1,val2, std::abs(val1-val2),tol);
+        tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}",tag,val1,val2, std::abs(val1-val2),tol);
 }
 
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors,
                                            const class_algorithm_status &status) {
     tools::finite::debug::check_integrity(tensors);
-    tools::log->info("Validating resumed state: Measurements should match those on file");
+    tools::log->debug("Validating resumed state: Measurements should match those on file");
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tensors.do_all_measurements();
     compare(tensors.measurements.energy_variance_per_site.value(), expected_measurements.energy_variance_per_site, 1e-8, "Energy variance per site");
