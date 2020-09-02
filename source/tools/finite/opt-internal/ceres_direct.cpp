@@ -7,6 +7,7 @@
 #include "ceres_direct_functor.h"
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
+#include <fmt/chrono.h>
 #include <general/class_tic_toc.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
