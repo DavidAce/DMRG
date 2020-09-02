@@ -6,6 +6,9 @@ endif()
 
 if(BUILD_SHARED_LIBS AND DMRG_PREFER_CONDA_LIBS)
     list(APPEND GFLAGS_CONDA_PREFIX ${DMRG_CONDA_CANDIDATE_PATHS})
+elseif(DMRG_PREFER_CONDA_LIBS)
+    # Static build should avoid conda gflags since it only offers a shared version
+    set(NO_SYSTEM_ENVIRONMENT_PATH NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
 
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
@@ -13,7 +16,9 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     find_package(gflags
             HINTS ${GFLAGS_CONDA_PREFIX}
             ${COMPONENTS} ${ITEMS}
-            NO_CMAKE_PACKAGE_REGISTRY)
+            NO_CMAKE_PACKAGE_REGISTRY
+            ${NO_SYSTEM_ENVIRONMENT_PATH}
+            )
     if(TARGET gflags)
         message(STATUS "Found gflags")
     endif()
@@ -27,7 +32,9 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch" )
             HINTS ${GFLAGS_CONDA_PREFIX}
             ${COMPONENTS} ${ITEMS}
             HINTS ${CMAKE_INSTALL_PREFIX}/gflags
-            NO_CMAKE_PACKAGE_REGISTRY)
+            NO_CMAKE_PACKAGE_REGISTRY
+            ${NO_SYSTEM_ENVIRONMENT_PATH}
+            )
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
     else()
