@@ -87,7 +87,7 @@ void tools::finite::mps::internal::random_product_state(class_state_finite &stat
 */
 {
     if(sector == "none") return; // a)
-    tools::log->debug("Setting random product state in sector {}", sector);
+    tools::log->info("Setting random product state in sector {}", sector);
     state.clear_measurements();
     state.clear_cache();
     if(sector == "random") {
@@ -112,14 +112,14 @@ void tools::finite::mps::internal::set_product_state(class_state_finite &state, 
     int         sign      = get_sign(sector);
     int         last_sign = 1;
     auto        spinor    = Textra::MatrixTensorMap(get_spinor(axis, last_sign).normalized(), 2, 1, 1);
-    tools::log->info("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
+    tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         mps.set_mps(spinor, L);
         if(mps.isCenter()) mps.set_LC(L);
     }
     state.clear_measurements();
-    tools::log->info("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
+    tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
 }
 
 void tools::finite::mps::internal::set_random_product_state_with_spinors_in_c2(class_state_finite &state) {
@@ -146,7 +146,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
 
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
-    tools::log->info("Initializing product state from bitfield of number {} with eigenspinors of σ{}: {}", bitfield, axis, bs_vec);
+    tools::log->debug("Initializing product state from bitfield of number {} with eigenspinors of σ{}: {}", bitfield, axis, bs_vec);
     int carry_sign = 1;
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
@@ -157,7 +157,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
         ud_vec.emplace_back(arrow);
         if(mps.isCenter()) mps.set_LC(L);
     }
-    tools::log->info("Initialized state from bitfield of number {} with eigenspinors of σ{} in sector {}: {}", bitfield, sector, carry_sign, ud_vec);
+    tools::log->debug("Initialized state from bitfield of number {} with eigenspinors of σ{} in sector {}: {}", bitfield, sector, carry_sign, ud_vec);
 }
 
 void tools::finite::mps::internal::set_random_product_state_in_sector_using_eigenspinors(class_state_finite &state, const std::string &sector) {
@@ -166,7 +166,7 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     std::string axis      = get_axis(sector);
     int         sign      = get_sign(sector);
     int         last_sign = 1;
-    tools::log->info("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
+    tools::log->debug("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         last_sign = 2 * rnd::uniform_integer_01() - 1;
@@ -180,7 +180,7 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
-    tools::log->info("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}... global spin component {}: OK", sector, axis,
+    tools::log->debug("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}... global spin component {}: OK", sector, axis,
                      spin_component);
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
 }
@@ -189,7 +189,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis = get_axis(sector);
-    tools::log->info("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}...", sector, axis);
+    tools::log->debug("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}...", sector, axis);
     auto spinor_up = internal::get_spinor(axis, 1);
     auto spinor_dn = internal::get_spinor(axis, -1);
     for(auto &mps_ptr : state.mps_sites) {
