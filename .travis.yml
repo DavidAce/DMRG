@@ -159,41 +159,14 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "bionic gcc-7 | static | conda-forge | find-or-fetch"
-      dist: bionic
-      os: linux
-      compiler: gcc
-      env:
-        - CACHE_NAME=bionic-gcc-7-static-conda-forge-ff
-        - CXX=g++-7
-        - CC=gcc-7
-        - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch --prefer-conda"
-        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
-      addons:
-        apt:
-          update: true
-          sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-          packages:
-            - gcc-7
-            - g++-7
-            - gfortran-7
-      cache:
-        pip: true
-        directories:
-          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
-          - $HOME/miniconda
-
-    - name: "bionic clang-7 | static | conda-forge | find-or-fetch"
+    - name: "bionic clang | static | conan"
       dist: bionic
       os: linux
       compiler: clang
       env:
-        - CACHE_NAME=bionic-clang-7-static--conda-forge-ff
+        - CACHE_NAME=bionic-clang-static-conan
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --prefer-conda"
-        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
+        - FLAGS="--download-method=conan"
       addons:
         apt:
           update: true
@@ -206,54 +179,6 @@ matrix:
         pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
-          - $HOME/miniconda
-
-    - name: "bionic clang | shared | conda-forge | find-or-fetch"
-      dist: bionic
-      os: linux
-      compiler: clang
-      env:
-        - CACHE_NAME=bionic-clang-shared-conda-forge-ff
-        - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-shared"
-        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
-      addons:
-        apt:
-          update: true
-          sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-          packages:
-            - libstdc++-8-dev
-            - gfortran-8
-      cache:
-        pip: true
-        directories:
-          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
-          - $HOME/miniconda
-
-
-    - name: "bionic clang | static | conda-forge | conan"
-      dist: bionic
-      os: linux
-      compiler: clang
-      env:
-        - CACHE_NAME=bionic-clang-static-conda-forge-conan
-        - FC=gfortran-8
-        - FLAGS="--download-method=conan --prefer-conda"
-        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
-      addons:
-        apt:
-          update: true
-          sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-          packages:
-            - libstdc++-8-dev
-            - gfortran-8
-      cache:
-        pip: true
-        directories:
-          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
-          - $HOME/miniconda
           - $HOME/.conan/data
 
     - name: "bionic gcc-8 | static | conan"
@@ -280,7 +205,6 @@ matrix:
         pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
-          - $HOME/miniconda
           - $HOME/.conan/data
 
 
