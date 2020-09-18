@@ -137,8 +137,7 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
         tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}",tag,val1,val2, std::abs(val1-val2),tol);
 }
 
-void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors,
-                                           const class_algorithm_status &status) {
+void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
     tools::finite::debug::check_integrity(tensors);
     tools::log->debug("Validating resumed state: Measurements should match those on file");
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
