@@ -40,12 +40,12 @@ void tools::infinite::debug::check_integrity(const class_state_infinite &state){
 
 
 
-void tools::infinite::debug::check_integrity(const class_model_infinite &model){
+void tools::infinite::debug::check_integrity([[maybe_unused]] const class_model_infinite &model){
     tools::log->debug("Checking integrity of model");
    }
 
 
-void tools::infinite::debug::check_integrity(const class_edges_infinite &edges){
+void tools::infinite::debug::check_integrity([[maybe_unused]] const class_edges_infinite &edges){
     tools::log->debug("Checking integrity of edges");
 
 }
