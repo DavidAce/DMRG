@@ -8,9 +8,7 @@
 #include <iostream>
 #include <math/rnd.h>
 #include <tools/common/log.h>
-#if __has_include(<omp.h>)
-    #include <omp.h>
-#endif
+#include <general/nmspc_tensor_omp.h>
 
 #ifdef OPENBLAS_AVAILABLE
     #include <cblas.h>
