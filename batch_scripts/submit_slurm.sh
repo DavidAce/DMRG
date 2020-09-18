@@ -21,6 +21,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = dedicated)
+-q <qos>                            : Select Quality Of Service (default = )
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
 -s <sims per sbatch>                : Number of tasks/simulations (or job-array size) per invocation of sbatch  (default = 10)
 -S <start seed>                     : Starting seed, if you don't want to start from 0.
@@ -57,6 +58,7 @@ while getopts ha:b:c:def:g:jJ:m:n:N:o:p:rs:S:t:v: o; do
         (N) simspercfg=$OPTARG;;
         (o) other=$OPTARG;;
         (p) partition="--partition=$OPTARG";;
+        (q) qos="--qos=$OPTARG";;
         (r) requeue=--requeue;;
         (s) simspersbatch=$OPTARG;;
         (S) startseed=$OPTARG;;
@@ -259,13 +261,13 @@ for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
         echo "sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity --job-name=$jobname --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
     elif [ -n "$jobarray" ]; then
-        sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
+        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
             --array=1-$simspersbatch \
             run_jobarray.sh -e $exec -f $simfile
     else
-        sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
+        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
             run_parallel.sh -e $exec -f $simfile
