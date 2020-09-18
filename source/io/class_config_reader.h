@@ -5,12 +5,8 @@
 #pragma once
 
 #include <algorithm>
-#include <cctype>
 #include <config/enums.h>
-#include <fstream>
 #include <io/nmspc_filesystem.h>
-#include <iomanip>
-#include <iostream>
 #include <string>
 #include <tools/common/log.h>
 
@@ -25,8 +21,8 @@ class class_config_reader {
     [[nodiscard]] std::string            remove_spaces(std::string str);
     [[nodiscard]] std::string            remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
     [[nodiscard]] bool                   has_only_digits(const std::string &s);
-    [[nodiscard]] bool                   is_parameterline(const std::string &s);
-    [[nodiscard]] std::string::size_type find_comment_character(const std::string &s);
+    [[nodiscard]] static bool                   is_parameterline(const std::string &s);
+    [[nodiscard]] static std::string::size_type find_comment_symbols(const std::string &str);
 
     public:
     bool found_file       = false;

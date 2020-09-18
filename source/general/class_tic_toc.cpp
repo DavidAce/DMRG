@@ -5,6 +5,7 @@
 #include "class_tic_toc.h"
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 
 class_tic_toc::class_tic_toc() : class_tic_toc(true, 5, "") {}
 

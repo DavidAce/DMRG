@@ -5,7 +5,6 @@
 #pragma once
 
 #include "class_mpo_site.h"
-#include <iostream>
 #include <memory>
 
 class class_mpo_factory {

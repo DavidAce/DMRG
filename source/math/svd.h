@@ -5,9 +5,9 @@
 #pragma once
 
 #include "general/nmspc_tensor_extra.h"
-#include <iomanip>
 #include <optional>
 #include <tools/common/log.h>
+
 #ifndef DMRG_EXTERN
     #define DMRG_EXTERN extern
 #endif
@@ -83,17 +83,8 @@ namespace svd {
              * if this is not the case!
              * The function call argument order dL, chiL, dR,chiR is meant as a hint for how to use this function.
              */
-
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-
-            //            Eigen::Tensor<Scalar, 3> U_map = Textra::MatrixTensorMap(U, dL, chiL, rank);
-            //            Eigen::Tensor<Scalar, 1> S_map = Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank);
-            //            Eigen::Tensor<Scalar, 3> V_map = Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 });
-            //            return std::make_tuple(U_map,
-            //            S_map,
-            //            V_map );
-
             return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
                                    Textra::MatrixTensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
         }

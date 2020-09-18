@@ -5,7 +5,6 @@
 #pragma once
 
 #include <chrono>
-#include <iostream>
 #include <string>
 
 class class_tic_toc {

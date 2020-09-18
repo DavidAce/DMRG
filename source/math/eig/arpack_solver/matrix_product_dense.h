@@ -5,8 +5,6 @@
 #pragma once
 
 #include "math/eig/enums.h"
-#include <iomanip>
-#include <iostream>
 #include <vector>
 class class_tic_toc;
 

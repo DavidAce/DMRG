@@ -3,7 +3,6 @@
 //
 #include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <iostream>
 #include <math/num.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
