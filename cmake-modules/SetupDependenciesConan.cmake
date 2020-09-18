@@ -100,66 +100,72 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             BUILD missing
     )
 
-
-
-    if(TARGET CONAN_PKG::Eigen3 AND TARGET openmp::openmp)
-        target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_THREADS)
+    if(TARGET CONAN_PKG:Eigen3)
+        set(eigen_target CONAN_PKG::Eigen3)
+    elseif(TARGET CONAN_PKG::eigen)
+        set(eigen_target CONAN_PKG::eigen)
     endif()
-    if(TARGET CONAN_PKG::Eigen3)
-        if(TARGET mkl::mkl)
-            message(STATUS "Eigen3 will use MKL")
+
+
+    if(TARGET ${eigen_target})
+        if(TARGET openmp::openmp)
+            target_compile_definitions    (${eigen_target} INTERFACE -DEIGEN_USE_THREADS)
+        endif()
+        if(TB_EIGEN3_BLAS)
             set(EIGEN3_USING_BLAS ON)
-            target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_MKL_ALL)
-            target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-            target_link_libraries         (CONAN_PKG::Eigen3 INTERFACE mkl::mkl)
-        else ()
-            message(STATUS "Eigen3 will use OpenBLAS")
-            set(EIGEN3_USING_BLAS ON)
-            target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_BLAS)
-            target_compile_definitions    (CONAN_PKG::Eigen3 INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-            target_link_libraries         (CONAN_PKG::Eigen3 INTERFACE  CONAN_PKG::openblas)
+            if(TARGET mkl::mkl)
+                message(STATUS "Eigen3 will use MKL")
+                target_compile_definitions    (${eigen_target} INTERFACE -DEIGEN_USE_MKL_ALL)
+                target_compile_definitions    (${eigen_target} INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+                target_link_libraries         (${eigen_target} INTERFACE mkl::mkl)
+            elseif(TARGET blas::blas)
+                message(STATUS "Eigen3 will use OpenBLAS")
+                target_compile_definitions    (${eigen_target} INTERFACE -DEIGEN_USE_BLAS)
+                target_compile_definitions    (${eigen_target} INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+                target_link_libraries         (${eigen_target} INTERFACE CONAN_PKG::openblas)
+            endif()
         endif()
 
+        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+        if(_host_name MATCHES "tetralith|triolith")
+            # AVX aligns 32 bytes (AVX512 aligns 64 bytes).
+            # When running on Tetralith, with march=native, there can be alignment mismatch
+            # in ceres which results in a segfault on free memory.
+            # Something like "double free or corruption ..."
+            #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
 
-            cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-            if(_host_name MATCHES "tetralith|triolith")
-                # AVX aligns 32 bytes (AVX512 aligns 64 bytes).
-                # When running on Tetralith, with march=native, there can be alignment mismatch
-                # in ceres which results in a segfault on free memory.
-                # Something like "double free or corruption ..."
-                #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
+            ### NOTE August 26 2020 ####
+            #
+            # Ceres started crashing on Tetralith again using -march=native.
+            # Tried to solve this issue once and for all.
+            # I've tried the following flags during compilation of DMRG++ and ceres-solver:
+            #
+            #           -DEIGEN_MALLOC_ALREADY_ALIGNED=[none,0,1]
+            #           -DEIGEN_MAX_ALIGN_BYTES=[none,16,32]
+            #           -march=[none,native]
+            #           -std=[none,c++17]
+            #
+            # Up until now, [0,16,none,none] has worked but now for some reason it stopped now.
+            # I noticed the stdc++=17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
+            # I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
+            # When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
+            # In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
+            # It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
+            # make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
+            # lets Eigen do its thing in the same way everywhere.
 
-                ### NOTE August 26 2020 ####
-                #
-                # Ceres started crashing on Tetralith again using -march=native.
-                # Tried to solve this issue once and for all.
-                # I've tried the following flags during compilation of DMRG++ and ceres-solver:
-                #
-                #           -DEIGEN_MALLOC_ALREADY_ALIGNED=[none,0,1]
-                #           -DEIGEN_MAX_ALIGN_BYTES=[none,16,32]
-                #           -march=[none,native]
-                #           -std=[none,c++17]
-                #
-                # Up until now, [0,16,none,none] has worked but now for some reason it stopped now.
-                # I noticed the stdc++=17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
-                # I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
-                # When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
-                # In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
-                # It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
-                # make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
-                # lets Eigen do its thing in the same way everywhere.
-
-#                message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfault?
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
-            else()
-#                message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
-#                target_compile_definitions(CONAN_PKG::Eigen3 INTERFACE EIGEN_MAX_ALIGN_BYTES=32)  # May work to fix CERES segfault?
-            endif()
+            #                message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
+            #                target_compile_definitions(${eigen_target} INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfault?
+            #                target_compile_definitions(${eigen_target} INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
+        else()
+            #                message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
+            #                target_compile_definitions(${eigen_target} INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
+            #                target_compile_definitions(${eigen_target} INTERFACE EIGEN_MAX_ALIGN_BYTES=32)  # May work to fix CERES segfault?
+        endif()
 
     endif()
 
+    # Needs to be linked last
     if(TARGET openmp::openmp)
         list(APPEND FOUND_TARGETS openmp::openmp)
     endif()
