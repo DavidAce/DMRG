@@ -19,10 +19,6 @@ template<typename Scalar>
 ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &tensors, const class_algorithm_status &status)
     : ceres_base_functor(tensors, status) {
     tools::log->trace("Constructing direct functor");
-
-#ifdef _OPENMP
-    tools::log->trace("- Detected {} OpenMP threads", Textra::omp::tp->NumThreads());
-#endif
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
