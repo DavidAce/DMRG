@@ -24,16 +24,41 @@ if(DMRG_MICROARCH)
 endif()
 
 
-###########################################
-###  Apply RELEASE/DEBUG compile flags  ###
-###########################################
+######################################################################################
+###                   Apply RELEASE/DEBUG compile flags                            ###
+######################################################################################
+# I have benchmarked the compiler flags below
+#        -fstack-protector
+#        -D_FORTIFY_SOURCE=2
+#        -fno-omit-frame-pointer
+#        -fno-strict-aliasing
+# and found that there is NO significant performance difference in tensor contractions.
+# These were the results from Tensorbench, best of 2 runs,
+# variability between runs ~0.3 seconds.
+# (all with -O3 -mfma -DNDEBUG -march=native -mtune=native):
+# 19.3789 s: -fstack-protector
+# 19.2768 s: -fstack-protector -fno-omit-frame-pointer -fno-strict-aliasing
+# 19.6200 s: -fstack-protector -fno-omit-frame-pointer -fno-strict-aliasing -D_FORTIFY_SOURCE=2
+# 19.3540 s: (none)
+#
+# In particular, -fno-strict-aliasing fixes a bug in tensor shuffle using -O3 -DNDEBUG
+# in gcc 10.0.1. The bug causes the dimensions to blow up when assigning the shuffling
+# operation to a new tensor, such as in:
+#       Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(Textra::array3{1, 0, 2});
+# Since the dimensions become kind of random (and not near the limits of int/long),
+# I believe gcc-10 is simply reordering something it shouldn't, thus assigning
+# uninitialized values on these dimensions.
+# The bug was hard to track down, and could be fixed by various other flags that
+# hurt performance more, like -mno-avx, removing -DNDEBUG, or lowering -O3 to -O2.
+######################################################################################
 if(CXX_MARCH)
     message(STATUS "Using microarchitechture: ${CXX_MARCH}")
     list(APPEND CMAKE_CXX_FLAGS            -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 endif()
+
 list(APPEND CMAKE_CXX_FLAGS                )
-list(APPEND CMAKE_CXX_FLAGS_RELEASE        )
-list(APPEND CMAKE_CXX_FLAGS_DEBUG          -fstack-protector -D_FORTIFY_SOURCE=2) #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+list(APPEND CMAKE_CXX_FLAGS_RELEASE  -g -O3 -fno-omit-frame-pointer -fno-strict-aliasing -fstack-protector -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wpedantic)
+list(APPEND CMAKE_CXX_FLAGS_DEBUG    -g -O0 -fno-omit-frame-pointer -fno-strict-aliasing -fstack-protector -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wpedantic) #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 list(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO )
 list(APPEND CMAKE_CXX_FLAGS_MINSIZEREL)
 
