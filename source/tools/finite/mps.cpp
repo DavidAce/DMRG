@@ -193,15 +193,15 @@ void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_
     }
 
     tools::log->trace("Truncated all sites");
-    std::cerr << "MUST REBUILD EDGES AFTER TRUNCATING ALL SITES" << std::endl;
+    tools::log->warn("MUST REBUILD EDGES AFTER TRUNCATING ALL SITES");
 }
 
-void tools::finite::mps::truncate_active_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+void tools::finite::mps::truncate_active_sites([[maybe_unused]] class_state_finite &state, [[maybe_unused]] long chi_lim, [[maybe_unused]] std::optional<double> svd_threshold) {
     tools::log->warn("Truncate active sites needs an implementation");
     throw std::runtime_error("Truncate active sites needs an implementation");
 }
 
-void tools::finite::mps::truncate_next_sites(class_state_finite &state, long chi_lim, size_t num_sites, std::optional<double> svd_threshold) {
+void tools::finite::mps::truncate_next_sites([[maybe_unused]] class_state_finite &state,[[maybe_unused]] long chi_lim,[[maybe_unused]] size_t num_sites,[[maybe_unused]] std::optional<double> svd_threshold) {
     tools::log->warn("Truncate next sites needs an implementation");
     throw std::runtime_error("Truncate next sites needs an implementation");
 }
