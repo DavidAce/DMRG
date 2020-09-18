@@ -6,6 +6,8 @@
 
 #include <any>
 #include <array>
+#include <stdexcept>
+
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
@@ -14,20 +16,20 @@
 class h5tb_ising_sdual {
     public:
     struct table {
-        double   J_mean           = 0;         /*!< Mean for the distrbution of J_rnd */
-        double   J_stdv           = 0;         /*!< Standard deviation for the distribution of J_rnd */
-        double   J_rand           = 0;         /*!< Randomly distributed nearest neighbour coupling */
-        double   J_avrg           = 0;         /*!< Average of J_rnd between all sites*/
-        double   J_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
-        double   h_mean           = 0;         /*!< Mean for the distrbution of h_rnd */
-        double   h_stdv           = 0;         /*!< Standard deviation for the distribution of h_rnd */
-        double   h_rand           = 0;         /*!< Randomly distributed on-site field */
-        double   h_avrg           = 0;         /*!< Average of h_rnd on all sites */
-        double   h_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
-        double   lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
-        double   delta            = 0;         /*!< Difference J_mean - h_mean  */
-        long     spin_dim         = 2;         /*!< Spin dimension */
-        char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double J_mean           = 0;         /*!< Mean for the distrbution of J_rnd */
+        double J_stdv           = 0;         /*!< Standard deviation for the distribution of J_rnd */
+        double J_rand           = 0;         /*!< Randomly distributed nearest neighbour coupling */
+        double J_avrg           = 0;         /*!< Average of J_rnd between all sites*/
+        double J_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+        double h_mean           = 0;         /*!< Mean for the distrbution of h_rnd */
+        double h_stdv           = 0;         /*!< Standard deviation for the distribution of h_rnd */
+        double h_rand           = 0;         /*!< Randomly distributed on-site field */
+        double h_avrg           = 0;         /*!< Average of h_rnd on all sites */
+        double h_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+        double lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
+        double delta            = 0;         /*!< Difference J_mean - h_mean  */
+        long   spin_dim         = 2;         /*!< Spin dimension */
+        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
     static inline h5pp::hid::h5t h5_type;
     table                        param;
@@ -81,20 +83,19 @@ class h5tb_ising_sdual {
 class h5tb_ising_tf_rf {
     public:
     struct table {
-        double   J1               = 0; /*!< Nearest neighbor coupling */
-        double   J2               = 0; /*!< Next-nearest neighbor coupling */
-        double   h_tran           = 0; /*!< Transverse field strength */
-        double   h_mean           = 0; /*!< Random field mean of distribution */
-        double   h_stdv           = 0; /*!< Random field standard deviation. In distribution this is N(h_mean,h_stdv) or U(h_mean-h_stdv,h_mean+h_stdv) */
-        double   h_rand           = 0; /*!< Random field value */
-        double   h_pert           = 0; /*!< Perturbation */
-        long     spin_dim         = 2; /*!< Spin dimension */
-        char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double J1               = 0;         /*!< Nearest neighbor coupling */
+        double J2               = 0;         /*!< Next-nearest neighbor coupling */
+        double h_tran           = 0;         /*!< Transverse field strength */
+        double h_mean           = 0;         /*!< Random field mean of distribution */
+        double h_stdv           = 0;         /*!< Random field standard deviation. In distribution this is N(h_mean,h_stdv) or U(h_mean-h_stdv,h_mean+h_stdv) */
+        double h_rand           = 0;         /*!< Random field value */
+        double h_pert           = 0;         /*!< Perturbation */
+        long   spin_dim         = 2;         /*!< Spin dimension */
+        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
 
     static inline h5pp::hid::h5t h5_type;
     table                        param;
-
 
     h5tb_ising_tf_rf() { register_table_type(); }
 
