@@ -8,10 +8,9 @@
 #include <iostream>
 #include <math/rnd.h>
 #include <tools/common/log.h>
-#ifdef _OPENMP
+#if __has_include(<omp.h>)
     #include <omp.h>
 #endif
-#include <general/nmspc_tensor_omp.h>
 
 #ifdef OPENBLAS_AVAILABLE
     #include <cblas.h>
@@ -221,7 +220,7 @@ int main(int argc, char *argv[]) {
     rnd::seed(settings::input::seed);
 
 // Set the number of threads to be used
-#ifdef _OPENMP
+#if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     if(settings::threading::num_threads <= 0) { settings::threading::num_threads = (int) std::thread::hardware_concurrency(); }
     omp_set_num_threads(settings::threading::num_threads);
     Eigen::setNbThreads(settings::threading::num_threads);
