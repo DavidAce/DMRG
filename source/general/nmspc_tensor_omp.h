@@ -4,7 +4,7 @@
 
 #pragma once
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     #include <omp.h>
     #include <thread>
 #endif
