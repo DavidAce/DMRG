@@ -31,21 +31,17 @@ void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, co
             throw std::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
         tools::common::io::h5table::load_sim_status(h5ppFile, state_prefix, status);
         tools::common::io::h5table::load_profiling(h5ppFile, state_prefix);
-        tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model, status);
+        tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
         tensors.activate_sites(settings::precision::max_size_full_diag,2);
         tensors.rebuild_edges();
-        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors, status);
+        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors);
     } catch(std::exception &ex) { throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
 }
 
-void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const std::string &state_prefix, class_model_finite &model,
-                                             const class_algorithm_status &status) {
+void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const std::string &state_prefix, class_model_finite &model) {
     if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2str(StorageLevel::FULL))
         throw std::runtime_error("Given prefix to model data with StorageLevel < FULL. The model can only be resumed from FULL storage");
-    //    auto position = h5pp_file.readAttribute<size_t>("position", state_prefix);
-    //    if(position != status.position)
-    //        throw std::runtime_error(fmt::format("Mismatch when loading MPO: State position [{}] != status.position [{}]", position, status.position));
 
     // Find the path to the MPO
     auto mpo_prefix  = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_prefix");
