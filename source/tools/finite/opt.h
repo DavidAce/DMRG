@@ -244,8 +244,8 @@ namespace tools::finite::opt::internal{
             last_log_iter = summary.iteration;
             /* clang-format off */
             log->debug("iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
-                      "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:<2} ({:<4}) "
-                      "t_step {:>4.0f}ms t_iter {:>4.0f}ms t_tot {:>5.3f}s | energy {:<18.15f} log₁₀var {:<6.6f}",
+                      "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
+                      "t_step {:<6} t_iter {:<6} t_tot {:<5} | energy {:<18.15f} log₁₀var {:<6.6f}",
                       summary.iteration,
                       summary.cost,
                       summary.cost_change,
@@ -254,9 +254,10 @@ namespace tools::finite::opt::internal{
                       summary.step_size, // By line search
                       functor.get_count() - last_count,
                       functor.get_count(),
-                      summary.step_solver_time_in_seconds * 1000,
-                      summary.iteration_time_in_seconds * 1000,
-                      summary.cumulative_time_in_seconds,
+
+                      fmt::format("{:>.0f} ms",summary.step_solver_time_in_seconds * 1000),
+                      fmt::format("{:>.0f} ms",summary.iteration_time_in_seconds * 1000),
+                      fmt::format("{:>.3f} s",summary.cumulative_time_in_seconds),
                       functor.get_energy_per_site(),
                       std::log10(functor.get_variance_per_site())
             );
