@@ -36,8 +36,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     svd::log->trace("Starting SVD with Eigen");
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
 
-    if(rows <= 0) throw std::runtime_error("SVD error: rows() == 0");
-    if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
+    if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}",rows));
+    if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}",cols));
 
 #ifndef NDEBUG
     // These are more expensive debugging operations
