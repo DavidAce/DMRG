@@ -18,6 +18,7 @@ option(DMRG_BUILD_EXAMPLES           "Build examples"                           
 option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
 option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
 option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitize=address"          OFF)
+option(DMRG_ENABLE_USAN              "Enable undefined behavior sanitizer -fsanitize=undefined"     OFF)
 
 
 # Make an "enum" for valid download methods
@@ -120,7 +121,9 @@ if(BUILD_SHARED_LIBS)
 else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
-    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+    if(NOT DMRG_ENABLE_ASAN)
+        target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+    endif()
 endif()
 
 
@@ -159,8 +162,15 @@ target_compile_features(project-settings INTERFACE cxx_std_17)
 if(DMRG_ENABLE_ASAN)
     target_compile_options(project-settings INTERFACE -fsanitize=address -fno-omit-frame-pointer)
     target_link_libraries(project-settings INTERFACE -fsanitize=address)
-    target_link_libraries(project-settings INTERFACE -static-libasan)
+    if(NOT BUILD_SHARED_LIBS)
+        target_link_libraries(project-settings INTERFACE -static-libasan)
+    endif()
 endif()
+if(DMRG_ENABLE_USAN)
+    target_compile_options(project-settings INTERFACE -fsanitize=undefined -fno-omit-frame-pointer)
+    target_link_libraries(project-settings INTERFACE -fsanitize=undefined)
+endif()
+
 
 #######################################
 ### Compiler-dependent linker flags ###
@@ -233,27 +243,51 @@ target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${FOUND_TARGE
 if(NOT TARGET openmp::openmp)
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
-target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
-target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
 
 # Speed up with precompiled headers
 if(COMMAND target_precompile_headers)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
+    target_precompile_headers(${PROJECT_NAME} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/rnd.h>)
     target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <spdlog/spdlog.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <vector> <array> <complex> <map> <optional> <iostream> <iomanip> <memory>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_quantum_mechanics.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/prof.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/class_tic_toc.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <config/nmspc_settings.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <config/enums.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
 endif()
 
+
+# Speed up with precompiled headers
+#if(COMMAND target_precompile_headers)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <spdlog/spdlog.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <vector> <array> <complex> <map> <optional> <iostream> <iomanip> <memory>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_quantum_mechanics.h>)
+#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
+#endif()
+
+
+
+
+target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
+target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
+target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
 
 
 # Uninstall target
