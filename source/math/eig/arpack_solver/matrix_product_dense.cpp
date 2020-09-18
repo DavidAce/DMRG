@@ -137,7 +137,6 @@ void MatrixProductDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
 template<typename Scalar>
 void MatrixProductDense<Scalar>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
-    std::cout << "A_matrix: \n" << A_matrix << std::endl;
 }
 
 template<typename Scalar>
