@@ -73,6 +73,8 @@ source/tools/infinite/env.cpp
 source/tools/infinite/io/h5dset.cpp
 source/tools/infinite/io/h5table.cpp
 source/tools/infinite/measure.cpp
+source/tools/infinite/measure_ham.cpp
+source/tools/infinite/measure_mom.cpp
 source/tools/infinite/mps.cpp
 source/tools/infinite/opt.cpp
 source/tools/infinite/print.cpp
