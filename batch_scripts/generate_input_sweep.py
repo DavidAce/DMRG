@@ -11,9 +11,9 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.array([28,32,36]) #np.linspace(16,36,6, dtype=int)
+sites        = np.array([14]) #np.linspace(16,36,6, dtype=int)
 # sites        = np.linspace(16,36,6, dtype=int)
-lambdas      = [0] # np.linspace(0,0.2,3)
+lambdas      = [0.01] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_mean   = np.array([1])
 h_mean   = J_mean - deltas
