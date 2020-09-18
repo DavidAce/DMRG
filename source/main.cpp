@@ -66,28 +66,32 @@ void clean_up() {
 void signal_callback_handler(int signum) {
     switch(signum) {
         case SIGTERM: {
-            std::cout << "Caught SIGTERM" << std::endl;
+            std::cout << "Caught SIGTERM\n";
             break;
         }
         case SIGKILL: {
-            std::cout << "Caught SIGKILL" << std::endl;
+            std::cout << "Caught SIGKILL\n";
             break;
         }
         case SIGINT: {
-            std::cout << "Caught SIGINT" << std::endl;
+            std::cout << "Caught SIGINT\n";
             break;
         }
         case SIGHUP: {
-            std::cout << "Caught SIGHUP" << std::endl;
+            std::cout << "Caught SIGHUP\n";
             break;
         }
         case SIGQUIT: {
-            std::cout << "Caught SIGQUIT" << std::endl;
+            std::cout << "Caught SIGQUIT\n";
+            break;
+        }
+        case SIGABRT: {
+            std::cout << "Caught SIGABRT\n";
             break;
         }
         default: break;
     }
-    std::cout << "Exiting" << std::endl << std::flush;
+    std::cout << "Exiting" << std::endl;
     std::quick_exit(signum);
 }
 
@@ -110,10 +114,11 @@ std::string filename_append_number(const std::string &filename, const long numbe
 int main(int argc, char *argv[]) {
     // Register termination codes and what to do in those cases
     signal(SIGTERM, signal_callback_handler);
-    signal(SIGINT, signal_callback_handler);
     signal(SIGKILL, signal_callback_handler);
+    signal(SIGINT, signal_callback_handler);
     signal(SIGHUP, signal_callback_handler);
     signal(SIGQUIT, signal_callback_handler);
+    signal(SIGABRT, signal_callback_handler);
 
     // Make sure to move the file back from temp location
     std::atexit(clean_up);
