@@ -41,7 +41,7 @@ ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
 
-while getopts ha:b:c:def:g:jJ:m:n:N:o:p:rs:S:t:v: o; do
+while getopts ha:b:c:def:g:jJ:m:n:N:o:p:q:rs:S:t:v: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
