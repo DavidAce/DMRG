@@ -227,7 +227,7 @@ namespace tools::finite::opt::internal{
         size_t last_count    = 0;
 
         explicit CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
-            if(not log) log = tools::Logger::setLogger("xDMRG][LBFGS");
+            if(not log) log = tools::Logger::setLogger("xDMRG");
             log->set_level(tools::log->level());
             if(log->level() == spdlog::level::debug){
                 freq_log_iter = 10;
@@ -243,7 +243,7 @@ namespace tools::finite::opt::internal{
             last_log_time = summary.cumulative_time_in_seconds;
             last_log_iter = summary.iteration;
             /* clang-format off */
-            log->debug("iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
+            log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
                       "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
                       "t_step {:<6} t_iter {:<6} t_tot {:<5} | energy {:<18.15f} log₁₀var {:<6.6f}",
                       summary.iteration,
