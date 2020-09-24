@@ -122,13 +122,12 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     endif()
 
 
-
-    if(TARGET CONAN_PKG:Eigen3)
+    if(TARGET CONAN_PKG::Eigen3)
         set(eigen_target CONAN_PKG::Eigen3)
     elseif(TARGET CONAN_PKG::eigen)
         set(eigen_target CONAN_PKG::eigen)
     endif()
-
+    message(STATUS "NAME OF EIGEN TARGET ${eigen_target}")
 
     if(TARGET ${eigen_target})
         if(TARGET openmp::openmp)

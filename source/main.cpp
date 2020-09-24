@@ -10,12 +10,12 @@
 #include <tools/common/log.h>
 #include <general/nmspc_tensor_omp.h>
 
-#ifdef OPENBLAS_AVAILABLE
+#if defined(OPENBLAS_AVAILABLE)
     #include <cblas.h>
     #include <openblas_config.h>
 #endif
 
-#ifdef MKL_AVAILABLE
+#if defined(MKL_AVAILABLE)
     #define MKL_Complex8 std::complex<float>
     #define MKL_Complex16 std::complex<double>
     #include <mkl.h>
