@@ -104,10 +104,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         endif()
 
         include(${CMAKE_BINARY_DIR}/conan.cmake)
-        conan_add_remote(NAME conan-center       URL https://conan.bintray.com)
-        conan_add_remote(NAME conan-community    URL https://api.bintray.com/conan/conan-community/conan)
-        conan_add_remote(NAME bincrafters        URL https://api.bintray.com/conan/bincrafters/public-conan)
-        conan_add_remote(NAME conan-dmrg INDEX 1 URL https://api.bintray.com/conan/davidace/conan-dmrg)
+        conan_add_remote(NAME conan-dmrg URL https://api.bintray.com/conan/davidace/conan-dmrg)
 
         conan_cmake_run(
                 CONANFILE conanfile.txt
