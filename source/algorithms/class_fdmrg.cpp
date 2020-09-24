@@ -166,7 +166,7 @@ void class_fdmrg::single_fdmrg_step() {
      */
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
 
-    tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_max_sites);
+    tensors.activate_sites(settings::precision::max_size_part_diag, 2);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
     if constexpr (settings::debug)
         tools::log->debug("Variance after opt: {:.8f}",std::log10(tools::finite::measure::energy_variance_per_site(multisite_tensor,tensors)));
