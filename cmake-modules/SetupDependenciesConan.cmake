@@ -58,7 +58,8 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
 
 
 
-
+    unset(CONAN_BUILD_INFO)
+    unset(CONAN_BUILD_INFO CACHE)
     find_file(CONAN_BUILD_INFO
             conanbuildinfo.cmake
             HINTS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}
