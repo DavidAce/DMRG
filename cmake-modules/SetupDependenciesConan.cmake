@@ -1,5 +1,6 @@
 
 if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
+
     #  Make sure we use DMRG's own find modules
     list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
     ##############################################################################
@@ -11,15 +12,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     ##############################################################################
     find_package(OpenMP REQUIRED) # Uses DMRG's own find module
 
-
-    ##################################################################
-    ### Install conan-modules/conanfile.txt dependencies          ###
-    ### This uses conan to get spdlog,eigen3,h5pp,ceres-solver    ###
-    ###    ceres-solver/2.0.0@davidace/development                ###
-    ###    h5pp/1.7.3@davidace/stable                             ###
-    ###    eigen/3.3.7@davidace/patched                           ###
-    ##################################################################
-
+    ##############################################################################
+    ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
+    ##############################################################################
     if(DMRG_ENABLE_MKL)
         find_package(Fortran REQUIRED)
         include(cmake-modules/SetupMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
@@ -62,43 +57,73 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     endif()
 
 
-    find_program (
-            CONAN_COMMAND
-            conan
-            HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
-            PATHS $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
-            PATH_SUFFIXES bin envs/dmrg/bin
-    )
-    if(NOT CONAN_COMMAND)
-        message(FATAL_ERROR "Could not find conan program executable")
+
+
+    find_file(CONAN_BUILD_INFO
+            conanbuildinfo.cmake
+            HINTS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}
+            NO_DEFAULT_PATH)
+
+    if(CONAN_BUILD_INFO)
+        ##################################################################
+        ### Use pre-existing conanbuildinfo.cmake                      ###
+        ### This avoids having to run conan again                      ###
+        ##################################################################
+        message(STATUS "Detected Conan build info: ${CONAN_BUILD_INFO}")
+        include(${CONAN_BUILD_INFO})
+        conan_basic_setup(TARGETS)
     else()
-        message(STATUS "Found conan: ${CONAN_COMMAND}")
+
+        ##################################################################
+        ### Use cmake-conan integration to launch conan                ###
+        ### Install dependencies from conanfile.txt                    ###
+        ### This uses conan to get spdlog,eigen3,h5pp,ceres-solver     ###
+        ###    ceres-solver/2.0.0@davidace/development                 ###
+        ###    h5pp/1.7.3@davidace/stable                              ###
+        ###    eigen/3.3.7@davidace/patched                            ###
+        ##################################################################
+
+        find_program (
+                CONAN_COMMAND
+                conan
+                HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
+                PATHS $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
+                PATH_SUFFIXES bin envs/dmrg/bin
+        )
+        if(NOT CONAN_COMMAND)
+            message(FATAL_ERROR "Could not find conan program executable")
+        else()
+            message(STATUS "Found conan: ${CONAN_COMMAND}")
+        endif()
+
+        # Download cmake-conan automatically, you can also just copy the conan.cmake file
+        if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+            message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+            file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+                    "${CMAKE_BINARY_DIR}/conan.cmake")
+        endif()
+
+        include(${CMAKE_BINARY_DIR}/conan.cmake)
+        conan_add_remote(NAME conan-center       URL https://conan.bintray.com)
+        conan_add_remote(NAME conan-community    URL https://api.bintray.com/conan/conan-community/conan)
+        conan_add_remote(NAME bincrafters        URL https://api.bintray.com/conan/bincrafters/public-conan)
+        conan_add_remote(NAME conan-dmrg INDEX 1 URL https://api.bintray.com/conan/davidace/conan-dmrg)
+
+        conan_cmake_run(
+                CONANFILE conanfile.txt
+                CONAN_COMMAND ${CONAN_COMMAND}
+                BUILD_TYPE ${CMAKE_BUILD_TYPE}
+                BASIC_SETUP CMAKE_TARGETS
+                SETTINGS compiler.cppstd=17
+                SETTINGS compiler.libcxx=libstdc++11
+                PROFILE_AUTO ALL
+                ${DMRG_CONAN_OPTIONS}
+                BUILD missing
+        )
+
     endif()
 
-    # Download cmake-conan automatically, you can also just copy the conan.cmake file
-    if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-        message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-        file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
-                "${CMAKE_BINARY_DIR}/conan.cmake")
-    endif()
 
-    include(${CMAKE_BINARY_DIR}/conan.cmake)
-    conan_add_remote(NAME conan-center       URL https://conan.bintray.com)
-    conan_add_remote(NAME conan-community    URL https://api.bintray.com/conan/conan-community/conan)
-    conan_add_remote(NAME bincrafters        URL https://api.bintray.com/conan/bincrafters/public-conan)
-    conan_add_remote(NAME conan-dmrg INDEX 1 URL https://api.bintray.com/conan/davidace/conan-dmrg)
-
-    conan_cmake_run(
-            CONANFILE conanfile.txt
-            CONAN_COMMAND ${CONAN_COMMAND}
-            BUILD_TYPE ${CMAKE_BUILD_TYPE}
-            BASIC_SETUP CMAKE_TARGETS
-            SETTINGS compiler.cppstd=17
-            SETTINGS compiler.libcxx=libstdc++11
-            PROFILE_AUTO ALL
-            ${DMRG_CONAN_OPTIONS}
-            BUILD missing
-    )
 
     if(TARGET CONAN_PKG:Eigen3)
         set(eigen_target CONAN_PKG::Eigen3)
