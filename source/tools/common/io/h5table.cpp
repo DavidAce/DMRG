@@ -192,8 +192,9 @@ void tools::common::io::h5table::load_sim_status(const h5pp::File &h5ppFile, con
     if(h5ppFile.linkExists(table_path)) {
         tools::log->info("Loading status from table: [{}]", table_path);
         h5ppFile.readTableRecords(status, table_path); // Reads the last entry by default
-    }else{
-        throw std::runtime_error(fmt::format("Could not find table [status] in file [{}] at prefix [{}] at path [{}]", h5ppFile.getFilePath(), state_prefix, table_path));
+    } else {
+        throw std::runtime_error(
+            fmt::format("Could not find table [status] in file [{}] at prefix [{}] at path [{}]", h5ppFile.getFilePath(), state_prefix, table_path));
     }
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
@@ -202,12 +203,10 @@ void tools::common::io::h5table::load_profiling(const h5pp::File &h5ppFile, cons
     if(not settings::profiling::on) return;
     if(not algo_type) algo_type = tools::common::profile::get_current_algo_type();
     std::string table_path = state_prefix + std::string("/profiling");
-    if(h5ppFile.linkExists(table_path)) {
-        tools::log->info("Loading profiling from table: [{}]", table_path);
-        h5ppFile.readTableRecords(prof_entry, table_path); // Reads the last entry by default
-    }else
-        throw std::runtime_error(fmt::format("Could not find table [profiling] in file [{}] at prefix [{}] at path [{}]", h5ppFile.getFilePath(),state_prefix, table_path));
-    tools::common::profile::t_hdf->toc();
+    if(h5ppFile.linkExists(table_path)) tools::log->info("Loading profiling from table: [{}]", table_path);
+    else
+        throw std::runtime_error(
+            fmt::format("Could not find table [profiling] in file [{}] at prefix [{}] at path [{}]", h5ppFile.getFilePath(), state_prefix, table_path));
 
     auto table_info = h5ppFile.getTableInfo(table_path);
     for(const auto &t_name : table_info.fieldNames.value()) {

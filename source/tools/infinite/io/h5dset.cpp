@@ -23,7 +23,7 @@ int tools::infinite::io::h5dset::decide_layout(std::string_view prefix_path) {
 }
 
 
-void tools::infinite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::string &state_prefix,const StorageLevel & storage_level, const class_state_infinite &state){
+void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix,const StorageLevel & storage_level, const class_state_infinite &state){
     if(storage_level == StorageLevel::NONE) return;
     tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
@@ -71,7 +71,7 @@ void tools::infinite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::s
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::infinite::io::h5dset::write_edges(h5pp::File &h5ppFile, const std::string &edges_prefix, const StorageLevel & storage_level, const class_edges_infinite &edges){
+void tools::infinite::io::h5dset::save_edges(h5pp::File &h5ppFile, const std::string &edges_prefix, const StorageLevel & storage_level, const class_edges_infinite &edges){
     if(storage_level < StorageLevel::NORMAL) return;
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
     const auto & ene = edges.get_ene_blk();

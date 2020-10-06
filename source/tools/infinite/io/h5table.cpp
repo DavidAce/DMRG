@@ -15,7 +15,7 @@
 #include <tools/infinite/measure.h>
 
 /*! Write down the Hamiltonian model type and site info as attributes */
-void tools::infinite::io::h5table::write_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,const class_model_infinite &model){
+void tools::infinite::io::h5table::save_model(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,const class_model_infinite &model){
     if(storage_level < StorageLevel::LIGHT) return;
     tools::log->trace("Writing Hamiltonian model");
     std::string table_path = model_prefix + "/hamiltonian";
@@ -31,7 +31,7 @@ void tools::infinite::io::h5table::write_model(h5pp::File &h5ppFile, const std::
 }
 
 
-void tools::infinite::io::h5table::write_measurements(h5pp::File & h5ppFile, const std::string &table_prefix, const StorageLevel & storage_level, const class_tensors_infinite & tensors, const class_algorithm_status & status) {
+void tools::infinite::io::h5table::save_measurements(h5pp::File & h5ppFile, const std::string &table_path, const StorageLevel & storage_level, const class_tensors_infinite & tensors, const class_algorithm_status & status) {
     if(storage_level == StorageLevel::NONE) return;
     std::string table_path = table_prefix + "/measurements";
     log->trace("Appending to table: {}", table_path);
@@ -71,15 +71,15 @@ void tools::infinite::io::h5table::write_measurements(h5pp::File & h5ppFile, con
 
 
 
-void tools::infinite::io::h5table::write_sim_status(h5pp::File & h5ppFile, const std::string &table_prefix, const StorageLevel & storage_level, const class_algorithm_status &status) {
-    tools::common::io::h5table::save_sim_status(h5ppFile, table_prefix, storage_level, status);
+void tools::infinite::io::h5table::save_sim_status(h5pp::File & h5ppFile, const std::string &table_path, const StorageLevel & storage_level, const class_algorithm_status &status) {
+    tools::common::io::h5table::save_sim_status(h5ppFile, table_path, storage_level, status);
 }
 
-void tools::infinite::io::h5table::write_profiling(h5pp::File & h5ppFile, const std::string &table_prefix, const StorageLevel & storage_level, const class_algorithm_status &status) {
-    tools::common::io::h5table::save_profiling(h5ppFile, table_prefix, storage_level, status);
+void tools::infinite::io::h5table::save_profiling(h5pp::File & h5ppFile, const std::string &table_path, const StorageLevel & storage_level, const class_algorithm_status &status) {
+    tools::common::io::h5table::save_profiling(h5ppFile, table_path, storage_level, status);
 }
 
-void tools::infinite::io::h5table::write_mem_usage(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::infinite::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                  const class_algorithm_status &status) {
-    tools::common::io::h5table::save_mem_usage(h5ppFile, table_prefix, storage_level, status);
+    tools::common::io::h5table::save_mem_usage(h5ppFile, table_path, storage_level, status);
 }

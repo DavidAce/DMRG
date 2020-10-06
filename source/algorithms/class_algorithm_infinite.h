@@ -44,20 +44,20 @@ class class_algorithm_infinite : public class_algorithm_base {
     std::vector<bool>   B_mpo_vec; // History of saturation true/false
     std::vector<double> V_mpo_vec; // History of variances
     std::vector<size_t> X_mpo_vec; // History of moves numbers
-    double            V_mpo_slope = 0;
+    double              V_mpo_slope = 0;
 
     std::vector<bool>   B_ham_vec; // History of saturation true/false
     std::vector<double> V_ham_vec;
     std::vector<size_t> X_ham_vec;
-    double            V_ham_slope = 0;
+    double              V_ham_slope = 0;
 
     std::vector<bool>   B_mom_vec; // History of saturation true/false
     std::vector<double> V_mom_vec;
     std::vector<size_t> X_mom_vec;
-    double            V_mom_slope = 0;
+    double              V_mom_slope = 0;
 
     std::vector<bool>   BS_vec; // History of saturation true/false
     std::vector<double> S_vec;
     std::vector<size_t> XS_vec;
-    double            S_slope = 0;
+    double              S_slope = 0;
 };

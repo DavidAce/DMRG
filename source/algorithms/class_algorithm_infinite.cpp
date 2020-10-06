@@ -348,9 +348,9 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
         }
         case StorageReason::MODEL: {
             storage_level = settings::output::storage_level_model;
-            tools::infinite::io::h5table::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
-            tools::infinite::io::h5dset::write_model(*h5pp_file, model_prefix, storage_level, *tensors.model);
-            copy_from_tmp(storage_reason);
+            tools::infinite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
+            tools::infinite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
+            copy_from_tmp(storage_reason, CopyPolicy::TRY);
             return;
         }
     }
@@ -367,11 +367,15 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     static size_t last_step_written = 0;
     if(status.step == last_step_written and last_step_written > 0) return;
 
-    tools::infinite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, tensors, status);
-    tools::infinite::io::h5table::write_sim_status(*h5pp_file, table_prefix, storage_level, status);
-    tools::infinite::io::h5table::write_profiling(*h5pp_file, table_prefix, storage_level, status);
-    tools::infinite::io::h5table::write_mem_usage(*h5pp_file, table_prefix, storage_level, status);
-    last_step_written = status.step;
+    // The main results have now been written. Next we append data to tables
+    for(const auto &table_prefix : table_prefxs) {
+        tools::infinite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, tensors, status);
+        tools::infinite::io::h5table::save_sim_status(*h5pp_file, table_prefix + "/status", storage_level, status);
+        tools::infinite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
+        tools::infinite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
+    }
+    // Copy from temporary location to destination depending on given policy
+    copy_from_tmp(storage_reason, copy_policy);
 }
 
 void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
