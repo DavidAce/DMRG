@@ -39,4 +39,5 @@ double ceres_base_functor::get_variance() const { return variance; }
 double ceres_base_functor::get_variance_per_site() const { return variance_per_site; }
 size_t ceres_base_functor::get_count() const { return counter; }
 double ceres_base_functor::get_norm() const { return norm; }
+long   ceres_base_functor::get_ops() const { return ops; }
 int    ceres_base_functor::NumParameters() const { return num_parameters; }
