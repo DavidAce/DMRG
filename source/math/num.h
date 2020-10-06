@@ -5,7 +5,6 @@
 #include <cmath>
 #include <numeric>
 #include <optional>
-#include <Eigen/Core>
 
 /*!
  *  \namespace num
