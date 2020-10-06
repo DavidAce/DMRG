@@ -236,6 +236,7 @@ class h5pp_table_fdmrg_profiling {
         double   t_ent     = 0;
         double   t_ene     = 0;
         double   t_var     = 0;
+        double   t_prj     = 0;
         double   t_chk     = 0;
         double   t_hdf     = 0;
         double   t_mps     = 0;
@@ -261,6 +262,7 @@ class h5pp_table_fdmrg_profiling {
         H5Tinsert(h5_type, "t_ent",            HOFFSET(table, t_ent         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_ene",            HOFFSET(table, t_ene         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_var",            HOFFSET(table, t_var         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_prj",            HOFFSET(table, t_prj         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_chk",            HOFFSET(table, t_chk         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_hdf",            HOFFSET(table, t_hdf         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_mps",            HOFFSET(table, t_mps         ), H5T_NATIVE_DOUBLE);

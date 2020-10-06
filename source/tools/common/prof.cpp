@@ -132,6 +132,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::fDMRG]["t_ent"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  ");
     prof[AlgorithmType::fDMRG]["t_ene"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                ");
     prof[AlgorithmType::fDMRG]["t_var"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              ");
+    prof[AlgorithmType::fDMRG]["t_prj"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Projections           ");
     prof[AlgorithmType::fDMRG]["t_chk"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                ");
     prof[AlgorithmType::fDMRG]["t_hdf"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          ");
     prof[AlgorithmType::fDMRG]["t_mps"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         ");
