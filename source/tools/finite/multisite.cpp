@@ -83,7 +83,6 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     while(true) {
         bool allequal = std::all_of(sizes.begin(), sizes.end(), [sizes](long c) { return c == sizes.front(); });
         auto size     = sizes.back();
-        auto dims     = shape.back();
         if(size < threshold and sites.size() == max_sites) {
             reason = "reached max sites";
             break;
