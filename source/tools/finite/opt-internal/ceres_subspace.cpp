@@ -98,7 +98,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                                                                      const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                      OptSpace optSpace) {
     tools::log->trace("Optimizing in SUBSPACE mode");
-    tools::common::profile::t_opt_sub->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic();
 
     /*
      * Subspace optimization
@@ -240,13 +240,13 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                                   std::log10(candidate_max_overlap.get_variance_per_site()));
             }
             state.tag_active_sites_have_been_updated(true);
-            tools::common::profile::t_opt_sub->toc();
+            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             return candidate_max_overlap;
         } else {
             // (OB)
             tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
             state.tag_active_sites_have_been_updated(false);
-            tools::common::profile::t_opt_sub->toc();
+            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             return initial_tensor;
         }
     }
@@ -268,7 +268,6 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
     // Also make sure you do this before prepending the current state. All candidates here should be basis vectors
     Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<Scalar>(model, edges, candidate_list);
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
-    //    double t_H2_subspace = tools::common::profile::t_opt->get_last_time_interval();
 
     // Find the best candidates and compute their variance
     auto candidate_list_top_idx =
@@ -301,7 +300,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
             if constexpr(settings::debug) {
                 if(tools::log->level() == spdlog::level::trace) {
                     // Check using explicit matrix
-                    tools::common::profile::t_chk->tic();
+                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->tic();
                     Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_tensor.get_vector());
                     double           overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
                     Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
@@ -313,23 +312,24 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                     Scalar           var                 = vH2v / vv - ene * ene;
                     double           ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
                     double           var_init_san        = std::real(var) / static_cast<double>(state.get_length());
-                    tools::common::profile::t_chk->toc();
+                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->toc();
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "matrix check");
                     internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_size, ene_init_san, var_init_san, overlap_sbsp,
-                                                      subspace_vector.norm(), 1, 1, tools::common::profile::t_chk->get_last_time_interval());
+                                                      subspace_vector.norm(), 1, 1,
+                                                      tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->get_last_interval());
                 }
                 if(tools::log->level() == spdlog::level::trace) {
                     // Check current tensor
-                    tools::common::profile::t_chk->tic();
+                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->tic();
                     Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
                     auto             theta_0_tensor = Textra::MatrixTensorMap(theta_0, state.active_dimensions());
                     double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                     double           variance_0     = tools::finite::measure::energy_variance_per_site(theta_0_tensor, tensors);
                     double           overlap_0      = std::abs(initial_tensor.get_vector().dot(theta_0));
-                    tools::common::profile::t_chk->toc();
+                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->toc();
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");
                     internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_size, energy_0, variance_0, overlap_0, theta_0.norm(), 1, 1,
-                                                      tools::common::profile::t_chk->get_last_time_interval());
+                                                      tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->get_last_interval());
                 }
             }
         }
@@ -347,7 +347,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
         optimized_tensor.set_name(candidate.get_name());
         optimized_tensor.set_sites(candidate.get_sites());
         optimized_tensor.set_length(candidate.get_length());
-        tools::common::profile::t_opt_sub_bfgs->tic();
+        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic();
         switch(optType) {
             case OptType::CPLX: {
                 Eigen::VectorXd subspace_vector_cast =
@@ -365,10 +365,10 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 optimized_tensor.set_counter(functor->get_count());
                 optimized_tensor.set_energy(functor->get_energy());
                 optimized_tensor.set_variance(functor->get_variance());
-                *tools::common::profile::t_opt_sub_vH2 += *functor->t_vH2;
-                *tools::common::profile::t_opt_sub_vH2v += *functor->t_vH2v;
-                *tools::common::profile::t_opt_sub_vH += *functor->t_vH;
-                *tools::common::profile::t_opt_sub_vHv += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
                 break;
             }
             case OptType::REAL: {
@@ -385,10 +385,10 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 optimized_tensor.set_counter(functor->get_count());
                 optimized_tensor.set_energy(functor->get_energy());
                 optimized_tensor.set_variance(functor->get_variance());
-                *tools::common::profile::t_opt_sub_vH2 += *functor->t_vH2;
-                *tools::common::profile::t_opt_sub_vH2v += *functor->t_vH2v;
-                *tools::common::profile::t_opt_sub_vH += *functor->t_vH;
-                *tools::common::profile::t_opt_sub_vHv += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
                 break;
             }
         }
@@ -408,7 +408,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
                 tools::log->error("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_variance(), variance_check);
         }
 
-        tools::common::profile::t_opt_sub_bfgs->toc();
+        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->toc();
         reports::time_add_sub_entry();
         int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
         int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
@@ -420,9 +420,9 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT) {
             tools::log->trace("SUBSPACE optimization done. Starting fine tuning with DIRECT optimization");
-            tools::common::profile::t_opt_sub->toc(); // Suspend subspace timer
+            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc(); // Suspend subspace timer
             optimized_tensor = ceres_direct_optimization(tensors, optimized_tensor, status, optType, optMode, optSpace);
-            tools::common::profile::t_opt_sub->tic(); // Resume subspace timer
+            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic(); // Resume subspace timer
         }
         candidate_count++;
     }
@@ -432,6 +432,6 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
               [](const opt_tensor &lhs, const opt_tensor &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
     // Return the best theta
-    tools::common::profile::t_opt_sub->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
     return optimized_results.front();
 }

@@ -167,7 +167,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_t
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
     tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
-    tools::common::profile::t_mpo->tic();
+    tools::common::profile::get_default_prof()["t_mpo"]->tic();
     Eigen::Tensor<Scalar, 4> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = Textra::idx({1}, {0});
@@ -190,7 +190,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_t
         temp.device(*Textra::omp::dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_tensor     = temp;
     }
-    tools::common::profile::t_mpo->toc();
+    tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_tensor;
 }
 

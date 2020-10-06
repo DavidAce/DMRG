@@ -29,20 +29,20 @@ void class_algorithm_infinite::run() {
 }
 
 void class_algorithm_infinite::run_preprocessing() {
-    tools::common::profile::t_pre->tic();
+    tools::common::profile::prof[algo_type]["t_pre"]->tic();
     tensors.state->set_chi_max(cfg_chi_lim_max());
     status.chi_lim_max = cfg_chi_lim_max();
     update_bond_dimension_limit(cfg_chi_lim_init());
     write_to_file(StorageReason::MODEL);
-    tools::common::profile::t_pre->toc();
+    tools::common::profile::prof[algo_type]["t_pre"]->toc();
 }
 
 void class_algorithm_infinite::run_postprocessing() {
-    tools::common::profile::t_pos->tic();
+    tools::common::profile::prof[algo_type]["t_pos"]->tic();
     write_to_file(StorageReason::FINISHED);
     copy_from_tmp(StorageReason::FINISHED);
     print_status_full();
-    tools::common::profile::t_pos->toc();
+    tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::common::profile::print_profiling();
 }
 

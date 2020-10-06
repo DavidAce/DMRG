@@ -71,6 +71,7 @@ void class_xdmrg::resume() {
     auto excited_states = excited_state_number + 1;
     auto missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
     for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
+        task_list.emplace_back(xdmrg_task::PROF_RESET);
         switch(settings::strategy::secondary_states) {
             case StateType::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateType::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
@@ -96,6 +97,7 @@ void class_xdmrg::run_default_task_list() {
 
     // Insert requested number of excited states
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
+        default_task_list.emplace_back(xdmrg_task::PROF_RESET);
         switch(settings::strategy::secondary_states) {
             case StateType::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateType::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
@@ -139,6 +141,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
+            case xdmrg_task::PROF_RESET: tools::common::profile::reset_profiling(algo_type); break;
         }
         task_list.pop_front();
     }
@@ -177,7 +180,7 @@ void class_xdmrg::init_energy_limits(std::optional<double> energy_density_target
 
 void class_xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    tools::common::profile::t_pre->tic();
+    tools::common::profile::prof[algo_type]["t_pre"]->tic();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
@@ -187,19 +190,19 @@ void class_xdmrg::run_preprocessing() {
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     write_to_file(StorageReason::MODEL);
-    tools::common::profile::t_pre->toc();
+    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_xdmrg::run_algorithm() {
     if(state_name.empty()) fmt::format("state_{}", excited_state_number);
-    if(status.step == 0) tools::common::profile::reset_for_run_algorithm(); // Avoids reset if resuming
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
-    tools::common::profile::t_sim->tic();
+    tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(true) {
         single_xDMRG_step();
         check_convergence();
         print_status_update();
+        print_profiling();
         write_to_file();
 
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
@@ -245,7 +248,7 @@ void class_xdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
-    tools::common::profile::t_sim->toc();
+    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_xdmrg::single_xDMRG_step() {
@@ -389,11 +392,11 @@ void class_xdmrg::single_xDMRG_step() {
         (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.algo_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
 void class_xdmrg::check_convergence() {
-    tools::common::profile::t_con->tic();
+    tools::common::profile::prof[algo_type]["t_con"]->tic();
     if(tensors.state->position_is_any_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -444,7 +447,7 @@ void class_xdmrg::check_convergence() {
         tools::log->debug("Simulation has to stop  : {}", status.algorithm_has_to_stop);
     }
 
-    tools::common::profile::t_con->toc();
+    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateType state_type, std::optional<std::string> sector) {
@@ -504,8 +507,10 @@ void class_xdmrg::find_energy_range() {
     tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(hs_tasks);
     status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
+    tools::log                 = tools::Logger::getLogger(std::string(enum2str(algo_type)));
 
-    tools::log = tools::Logger::getLogger(std::string(enum2str(algo_type)));
+    // Set the default profile back to xDMRG because the constructor of class_fdmrg changed it
+    tools::common::profile::set_default_prof(AlgorithmType::xDMRG);
 }
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }

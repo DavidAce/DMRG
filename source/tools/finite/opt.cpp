@@ -16,7 +16,7 @@
 
 tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status,
                                                                       OptMode optMode, OptSpace optSpace, OptType optType) {
-    tools::common::profile::t_opt->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
                       tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());
 
@@ -82,7 +82,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
-    tools::common::profile::t_opt->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
     reports::print_bfgs_report();
     reports::print_time_report();

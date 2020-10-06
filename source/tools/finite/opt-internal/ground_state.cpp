@@ -31,7 +31,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
 //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     auto        nev       = static_cast<eig::size_type>(1);
     auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
-    tools::common::profile::t_eig->tic();
+    tools::common::profile::get_default_prof()["t_eig"]->tic();
     tools::log->trace("Defining Hamiltonian matrix-vector product");
     MatrixProductHamiltonian<Scalar>  matrix (
             env.L.data(),
@@ -46,6 +46,6 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
     // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
     tools::log->trace("Finding ground state");
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0,  eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
-    tools::common::profile::t_eig->toc();
+    tools::common::profile::get_default_prof()["t_eig"]->toc();
     return eig::view::get_eigvec<Scalar>(solver.result,shape_mps, 0);
 }

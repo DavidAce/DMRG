@@ -7,6 +7,7 @@
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
+#include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
@@ -15,12 +16,47 @@ using Scalar = class_algorithm_base::Scalar;
 class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_)
     : h5pp_file(std::move(h5ppFile_)), algo_type(algo_type_) {
     algo_name  = enum2str(algo_type_);
+    tools::common::profile::set_default_prof(algo_type);
     state_name = "state";
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)), settings::console::verbosity, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
 }
+
+
+void class_algorithm_base::copy_from_tmp(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    if(not h5pp_file) return;
+    if(not settings::output::use_temp_dir) return;
+    if(not copy_policy) return copy_from_tmp(storage_reason,CopyPolicy::TRY);
+    if(copy_policy == CopyPolicy::OFF) return;
+
+    // Check if we already copied the file this iteration and step
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto save_point = std::make_pair(status.iter,status.step);
+
+    if(copy_policy == CopyPolicy::TRY){
+        if(save_log[h5pp_file->getFilePath()] == save_point) return;
+        switch(storage_reason) {
+            case StorageReason::CHECKPOINT:
+                if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
+            case StorageReason::FINISHED:
+            case StorageReason::CHI_UPDATE:
+            case StorageReason::PROJ_STATE:
+            case StorageReason::INIT_STATE:
+            case StorageReason::EMIN_STATE:
+            case StorageReason::EMAX_STATE:
+            case StorageReason::MODEL: break;
+        }
+        tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+    }else if (copy_policy == CopyPolicy::FORCE)
+        tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+
+    save_log[h5pp_file->getFilePath()] = save_point;
+}
+
+
+
 
 void class_algorithm_base::init_bond_dimension_limits() {
     status.chi_lim_init = cfg_chi_lim_init();
@@ -84,3 +120,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     return report;
 }
 
+void class_algorithm_base::print_profiling(){
+    if(not settings::profiling::extra) return;
+    tools::common::profile::print_profiling_laps();
+}

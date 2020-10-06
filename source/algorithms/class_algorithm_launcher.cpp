@@ -25,7 +25,7 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
     setup_temp_path();
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
-    std::atexit(tools::common::profile::print_profiling);
+    std::atexit(tools::common::profile::print_profiling_all);
 }
 
 
@@ -36,9 +36,9 @@ class_algorithm_launcher::class_algorithm_launcher(){
 
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
-    std::atexit(tools::common::profile::print_profiling);
+    std::atexit(tools::common::profile::print_profiling_all);
     std::at_quick_exit(tools::common::profile::print_mem_usage);
-    std::at_quick_exit(tools::common::profile::print_profiling);
+    std::at_quick_exit(tools::common::profile::print_profiling_all);
 }
 
 

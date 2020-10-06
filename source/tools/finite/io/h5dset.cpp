@@ -90,12 +90,11 @@ void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::stri
     if(h5ppFile.linkExists(mpo_path)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_path);
 
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
-    tools::common::profile::t_hdf->tic();
-    for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, mpo_path);
-    }
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, mpo_path); }
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", mpo_path);
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_path);
-    tools::common::profile::t_hdf->toc();
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 /*! Write down measurements that can't fit in a table */
@@ -103,7 +102,7 @@ void tools::finite::io::h5dset::save_bonds(h5pp::File &h5ppFile, const std::stri
                                           const class_state_finite &state) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
-    tools::common::profile::t_hdf->tic();
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
     tools::log->trace("Storing [{: ^6}]: bond dims", enum2str(storage_level));
     h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), state_prefix + "/bond_dimensions");
     tools::log->trace("Storing [{: ^6}]: entanglement entropies", enum2str(storage_level));
@@ -114,5 +113,5 @@ void tools::finite::io::h5dset::save_bonds(h5pp::File &h5ppFile, const std::stri
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state,100), state_prefix + "/renyi_100");
     tools::log->trace("Storing [{: ^6}]: truncation errors", enum2str(storage_level));
     h5ppFile.writeDataset(state.get_truncation_errors(), state_prefix + "/truncation_errors");
-    tools::common::profile::t_hdf->toc();
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }

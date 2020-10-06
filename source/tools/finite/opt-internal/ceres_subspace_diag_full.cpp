@@ -10,12 +10,12 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
                                                                                                          const TensorType<cplx, 3> &multisite_tensor) {
     tools::log->trace("Finding subspace -- full");
     if(H_local.rows() != H_local.cols()) throw std::runtime_error(fmt::format("H_local is not square: rows [{}] | cols [{}]", H_local.rows(), H_local.cols()));
-    tools::common::profile::t_opt_sub_eig->tic();
-    eig::solver  solver;
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic();
+    eig::solver solver;
     solver.eig<eig::Form::SYMM>(H_local.data(), H_local.rows(), eig::Vecs::ON, eig::Dephase::OFF);
     auto eigvals = eig::view::get_eigvals<double>(solver.result);
     auto eigvecs = eig::view::get_eigvecs<Scalar>(solver.result);
-    tools::common::profile::t_opt_sub_eig->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
 
     Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_tensor.data(), multisite_tensor.size());
@@ -26,8 +26,9 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
     double                             sq_sum_overlap = overlaps.cwiseAbs2().sum();
     double                             subspace_error = 1.0 - sq_sum_overlap;
     long                               nev            = eigvecs.cols();
-    reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), tools::common::profile::t_opt_sub_ham->get_last_time_interval(),
-                                   tools::common::profile::t_opt_sub_eig->get_last_time_interval(), 0);
+    reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error),
+                            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->get_last_interval(),
+                            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(), 0);
     return std::make_tuple(eigvecs, eigvals);
 }
 

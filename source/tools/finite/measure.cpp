@@ -115,27 +115,27 @@ std::vector<long> tools::finite::measure::bond_dimensions(const class_state_fini
 
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite &state) {
     if(state.measurements.entanglement_entropy_current) { return state.measurements.entanglement_entropy_current.value(); }
-    tools::common::profile::t_ent->tic();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     auto &                   LC                     = state.current_bond();
     Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
     state.measurements.entanglement_entropy_current = std::real(SE(0));
-    tools::common::profile::t_ent->toc();
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy_current.value();
 }
 
 double tools::finite::measure::entanglement_entropy_midchain(const class_state_finite &state) {
     if(state.measurements.entanglement_entropy_midchain) { return state.measurements.entanglement_entropy_midchain.value(); }
-    tools::common::profile::t_ent->tic();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     auto &                   LC                      = state.midchain_bond();
     Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
     state.measurements.entanglement_entropy_midchain = std::real(SE(0));
-    tools::common::profile::t_ent->toc();
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy_midchain.value();
 }
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_state_finite &state) {
     if(state.measurements.entanglement_entropies) { return state.measurements.entanglement_entropies.value(); }
-    tools::common::profile::t_ent->tic();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     std::vector<double> entanglement_entropies;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         auto &                   L  = state.get_mps_site(pos).get_L();
@@ -149,7 +149,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
         }
     }
     state.measurements.entanglement_entropies = entanglement_entropies;
-    tools::common::profile::t_ent->toc();
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropies.value();
 }
 
@@ -159,7 +159,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
     if(q == 3.0 and state.measurements.renyi_3) return state.measurements.renyi_3.value();
     if(q == 4.0 and state.measurements.renyi_4) return state.measurements.renyi_4.value();
     if(q == 100.0 and state.measurements.renyi_100) return state.measurements.renyi_100.value();
-    tools::common::profile::t_ent->tic();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     std::vector<double> renyi_q;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         const auto &             L = state.get_mps_site(pos).get_L();
@@ -172,7 +172,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
             renyi_q.emplace_back(std::real(RE(0)));
         }
     }
-    tools::common::profile::t_ent->toc();
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     if(q == 2.0) {
         state.measurements.renyi_2 = renyi_q;
         return state.measurements.renyi_2.value();
@@ -287,9 +287,9 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         const auto &mpo = model.get_multisite_tensor();
         const auto &env = edges.get_multisite_ene_blk();
         tools::log->trace("Measuring energy");
-        tools::common::profile::t_ene->tic();
+        tools::common::profile::get_default_prof()["t_ene"]->tic();
         double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
-        tools::common::profile::t_ene->toc();
+        tools::common::profile::get_default_prof()["t_ene"]->toc();
         if(measurements != nullptr) measurements->energy_minus_energy_reduced = e_minus_ered;
         return e_minus_ered;
     }
@@ -375,9 +375,9 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(state.dimension(0) != mpo.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo.dimension(2)));
-        tools::common::profile::t_var->tic();
+        tools::common::profile::get_default_prof()["t_var"]->tic();
         double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
-        tools::common::profile::t_var->toc();
+        tools::common::profile::get_default_prof()["t_var"]->toc();
         double var = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;
         return var;
