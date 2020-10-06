@@ -54,8 +54,8 @@ long tools::finite::multisite::get_problem_size(const class_state_finite &state,
 
 std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, long threshold, size_t max_sites, const size_t min_sites) {
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
-    tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}", state.get_position(),
-                      state.get_direction(), threshold, max_sites, min_sites);
+    tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {}", state.get_position(),
+                      state.get_direction(),min_sites, max_sites, threshold);
     using namespace Textra;
     int                                 direction = state.get_direction();
     int                                 position  = static_cast<int>(state.get_position());
@@ -86,14 +86,14 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
             reason = "reached max sites";
             break;
         }
-        if(c <= threshold and sites.size() <= max_sites) {
-            reason = fmt::format("good threshold found: {}",c);
+        if(size <= threshold and sites.size() <= max_sites) {
+            reason = fmt::format("good problem shape found");
             break;
         } else if(sites.size() <= min_sites) {
-            reason = fmt::format("at least {} sites were kept", min_sites);
+            reason = fmt::format("at least {} sites had to be kept", min_sites);
             break;
         } else if(allequal and sites.size() <= max_sites) {
-            reason = fmt::format("equal costs: {}",c);
+            reason = fmt::format("problem sizes are equal: {}", size);
             break;
         } else if(sites.size() == 1) {
             throw std::logic_error("At least two sites required!");
@@ -105,13 +105,10 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
         }
     }
     std::sort(sites.begin(), sites.end());
-    //    if (direction == -1){std::reverse(sites.begin(),sites.end());}
     tools::log->debug(
-        "Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
-        state.get_position(), state.get_direction(), threshold, max_sites, min_sites, sites, costs.back(), reason);
-
+        "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}", state.get_position(),
+                      state.get_direction(),min_sites, max_sites, threshold, sites, shape.back(), sizes.back(),reason);
     if(sites.size() < 2) throw std::runtime_error("Less than 2 active sites");
-
     return sites;
 }
 
