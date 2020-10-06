@@ -403,14 +403,11 @@ void class_algorithm_infinite::print_status_update() {
 
     switch(algo_type) {
         case AlgorithmType::iDMRG:
-            report += fmt::format("E/L: mpo {:<20.16f} ham {:<20.16f} mom {:<20.16f}",
-                                  tools::infinite::measure::energy_per_site_mpo(tensors),
-                                  tools::infinite::measure::energy_per_site_ham(tensors),
-                                  tools::infinite::measure::energy_per_site_mom(tensors));
+            report += fmt::format("E/L: mpo {:<20.16f} ham {:<20.16f} mom {:<20.16f}", tools::infinite::measure::energy_per_site_mpo(tensors),
+                                  tools::infinite::measure::energy_per_site_ham(tensors), tools::infinite::measure::energy_per_site_mom(tensors));
             break;
         case AlgorithmType::iTEBD:
-            report += fmt::format("E/L: ham {:<20.16f} mom {:<20.16f}",
-                                  tools::infinite::measure::energy_per_site_ham(tensors),
+            report += fmt::format("E/L: ham {:<20.16f} mom {:<20.16f}", tools::infinite::measure::energy_per_site_ham(tensors),
                                   tools::infinite::measure::energy_per_site_mom(tensors));
             break;
         default: throw std::runtime_error("Wrong simulation type");
@@ -418,25 +415,20 @@ void class_algorithm_infinite::print_status_update() {
 
     switch(algo_type) {
         case AlgorithmType::iDMRG:
-            report += fmt::format("log₁₀ σ²(E): mpo {:<10.6f} ham {:<10.6f} mom {:<10.6f}",
-                                  tools::infinite::measure::energy_variance_per_site_mpo(tensors),
-                                  tools::infinite::measure::energy_variance_per_site_ham(tensors),
-                                  tools::infinite::measure::energy_variance_per_site_mom(tensors));
+            report +=
+                fmt::format("log₁₀ σ²(E): mpo {:<10.6f} ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_mpo(tensors),
+                            tools::infinite::measure::energy_variance_per_site_ham(tensors), tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         case AlgorithmType::iTEBD:
-            report += fmt::format("log₁₀ σ²(E): ham {:<10.6f} mom {:<10.6f}",
-                                  tools::infinite::measure::energy_variance_per_site_ham(tensors),
+            report += fmt::format("log₁₀ σ²(E): ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_ham(tensors),
                                   tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    report +=
-        fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::infinite::measure::bond_dimension(*tensors.state));
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::infinite::measure::bond_dimension(*tensors.state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tools::infinite::measure::truncation_error(*tensors.state)));
     report += fmt::format("Sites: {:6}", tensors.get_length());
-
-
 
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
@@ -444,8 +436,7 @@ void class_algorithm_infinite::print_status_update() {
         case AlgorithmType::iDMRG:
             report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
             break;
-        case AlgorithmType::iTEBD:
-            report += fmt::format("sat: [Sₑ {:<1}] ", status.entanglement_saturated_for); break;
+        case AlgorithmType::iTEBD: report += fmt::format("sat: [Sₑ {:<1}] ", status.entanglement_saturated_for); break;
         default: throw std::runtime_error("Wrong simulation type");
     }
     report += fmt::format("con: {:<5} ", status.algorithm_has_converged);

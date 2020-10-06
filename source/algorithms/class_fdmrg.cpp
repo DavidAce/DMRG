@@ -127,8 +127,9 @@ void class_fdmrg::run_algorithm() {
         try_projection();
         reduce_mpo_energy();
 
-        // It's important not to perform the last move.
-        // That last state would not get optimized
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+
+        // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(tensors.position_is_any_edge()) {
             if(status.iter >= settings::fdmrg::max_iters) {
                 stop_reason = StopReason::MAX_ITERS;

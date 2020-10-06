@@ -199,18 +199,14 @@ void class_xdmrg::run_algorithm() {
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(true) {
+        tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
         check_convergence();
         print_status_update();
         print_profiling();
         write_to_file();
 
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
-        try_projection();
-        try_bond_dimension_quench();
-        try_disorder_damping();
-        try_hamiltonian_perturbation();
-        reduce_mpo_energy();
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move.
         // That last state would not get optimized
@@ -254,7 +250,7 @@ void class_xdmrg::run_algorithm() {
 void class_xdmrg::single_xDMRG_step() {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-
+    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
     //    IDEA:
     //        Try converging to some state from a product state.
     //        We know this is a biased state because it was generated  from a product state of low entanglement.
@@ -326,10 +322,7 @@ void class_xdmrg::single_xDMRG_step() {
     std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
     std::remove_if(max_num_sites_list.begin(), max_num_sites_list.end(), [](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
     if(max_num_sites_list.empty()) max_num_sites_list = {2};
-
-    tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {} | mode [{}] | space [{}] | type [{}] | multisite step sizes: {}", status.step,
-                      status.iter, status.position, status.direction, optMode, optSpace, optType, max_num_sites_list);
-
+    tools::log->debug("Multisite try max sites {}", max_num_sites_list);
 
     double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
@@ -439,12 +432,9 @@ void class_xdmrg::check_convergence() {
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
     if(tensors.state->position_is_any_edge()) {
-        tools::log->debug("Simulation has converged: {}", status.algorithm_has_converged);
-        tools::log->debug("Simulation has saturated: {}", status.algorithm_has_saturated);
-        tools::log->debug("Simulation has succeeded: {}", status.algorithm_has_succeeded);
-        tools::log->debug("Simulation has got stuck: {}", status.algorithm_has_got_stuck);
-        tools::log->debug("Simulation has stuck for: {}", status.algorithm_has_stuck_for);
-        tools::log->debug("Simulation has to stop  : {}", status.algorithm_has_to_stop);
+        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}", status.algorithm_has_converged,
+                          status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck, status.algorithm_has_stuck_for,
+                          status.algorithm_has_to_stop);
     }
 
     tools::common::profile::prof[algo_type]["t_con"]->toc();
