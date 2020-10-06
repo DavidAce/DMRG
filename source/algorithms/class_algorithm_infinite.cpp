@@ -383,23 +383,6 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
     copy_from_tmp(storage_reason, copy_policy);
 }
 
-void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
-    if(not h5pp_file) return;
-    if(not settings::output::use_temp_dir) return;
-    switch(storage_reason) {
-        case StorageReason::CHECKPOINT:
-            if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
-        case StorageReason::FINISHED:
-        case StorageReason::CHI_UPDATE:
-        case StorageReason::PROJ_STATE:
-        case StorageReason::INIT_STATE:
-        case StorageReason::EMIN_STATE:
-        case StorageReason::EMAX_STATE:
-        case StorageReason::MODEL: break;
-    }
-    tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
-}
-
 void class_algorithm_infinite::print_status_update() {
     if(num::mod(status.iter, cfg_print_freq()) != 0) { return; }
     //    if (not tensors.state->position_is_the_middle()) {return;}
