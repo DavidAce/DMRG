@@ -295,17 +295,19 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     }
 }
 
-void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
-    StorageLevel      storage_level;
-    const std::string table_prefix = algo_name + '/' + state_name;
-    std::string       state_prefix = algo_name + '/' + state_name; // May get modified
-    std::string       model_prefix = algo_name + "/model";
+void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    StorageLevel             storage_level;
+    std::string              state_prefix = algo_name + '/' + state_name; // May get modified
+    std::string              model_prefix = algo_name + "/model";
+    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"}; // Common tables
+
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
             state_prefix += "/finished";
+            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
         case StorageReason::CHECKPOINT: {
@@ -314,7 +316,8 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
             storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
             else
-                state_prefix += fmt::format("/iter_{}",status.iter);
+                state_prefix += fmt::format("/iter_{}", status.iter);
+            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
 
@@ -322,28 +325,32 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
             if(not cfg_chi_lim_grow()) return;
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix += "/checkpoint";
-            state_prefix += fmt::format("/chi_{}",tensors.state->get_chi_lim());
-
+            state_prefix += fmt::format("/chi_{}", status.chi_lim);
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::output::storage_level_proj_state;
             state_prefix += "/projection";
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::INIT_STATE: {
             storage_level = settings::output::storage_level_init_state;
             state_prefix += "/state_init";
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMIN_STATE: {
             storage_level = settings::output::storage_level_emin_state;
             state_prefix  = algo_name + "/state_emin";
+            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMAX_STATE: {
             storage_level = settings::output::storage_level_emax_state;
             state_prefix  = algo_name + "/state_emax";
+            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::MODEL: {
@@ -356,16 +363,14 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason) {
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::infinite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, *tensors.state);
-    tools::infinite::io::h5dset::write_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
+    tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
+    // Start saving tensors and metadata
+    tools::infinite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, *tensors.state);
+    tools::infinite::io::h5dset::save_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
                                          state_name, state_prefix, model_prefix, status);
-    // The main results have now been written. Next we append data to tables
-    // Some storage reasons should not do this however. Like projection.
-    // Also we can avoid repeated entries by only allowing fresh step numbers.
+    // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;
-    static size_t last_step_written = 0;
-    if(status.step == last_step_written and last_step_written > 0) return;
 
     // The main results have now been written. Next we append data to tables
     for(const auto &table_prefix : table_prefxs) {
