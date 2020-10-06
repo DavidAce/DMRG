@@ -40,28 +40,29 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
     ceres_default_options.max_line_search_step_contraction           = 1e-3;
     ceres_default_options.min_line_search_step_contraction           = 0.6;
     ceres_default_options.max_line_search_step_expansion             = 10;
-    ceres_default_options.max_num_line_search_step_size_iterations   = 40;//20;
-    ceres_default_options.max_num_line_search_direction_restarts     = 50;//2;
-    ceres_default_options.line_search_sufficient_function_decrease   = 1e-3; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
-    ceres_default_options.line_search_sufficient_curvature_decrease  = 0.8; //This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit.
+    ceres_default_options.max_num_line_search_step_size_iterations   = 20;//20;
+    ceres_default_options.max_num_line_search_direction_restarts     = 5;//2;
+    ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9; // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*10;//60*2;
-    ceres_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-4; // Not tested yet
-    ceres_default_options.parameter_tolerance                        = 1e-6;
+    ceres_default_options.function_tolerance                         = 1e-4; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance                         = 1e-1; // Not tested yet
+    ceres_default_options.parameter_tolerance                        = 1e-10;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
-
     if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations                        = 8000;
-        ceres_default_options.function_tolerance                        = 1e-8;
-        ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 1e-8;
+        ceres_default_options.function_tolerance                        = 1e-6;
+        ceres_default_options.gradient_tolerance                        = 1e-4;
+        ceres_default_options.parameter_tolerance                       = 1e-12;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
         ceres_default_options.minimizer_progress_to_stdout              = false;// tools::log->level() <= spdlog::level::debug;
     }
     if(status.algorithm_has_stuck_for > 1){
-        ceres_default_options.parameter_tolerance                       = 1e-10;
+        ceres_default_options.function_tolerance                        = 1e-8;
+        ceres_default_options.gradient_tolerance                        = 1e-6;
+        ceres_default_options.parameter_tolerance                       = 1e-16;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration. May not always be optimal according to library.
     }
     /* clang-format on */
