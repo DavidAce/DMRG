@@ -9,6 +9,7 @@
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 void tools::finite::env::rebuild_edges(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
