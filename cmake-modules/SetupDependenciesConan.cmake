@@ -156,6 +156,11 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             # Something like "double free or corruption ..."
             #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
 
+            ### NOTE October 4 2020 ####
+            #
+            # Another flag that seems to fix weird release-only bugs is
+            #       -fno-strict-aliasing
+
             ### NOTE August 26 2020 ####
             #
             # Ceres started crashing on Tetralith again using -march=native.
