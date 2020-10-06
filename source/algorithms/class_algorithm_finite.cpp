@@ -482,13 +482,12 @@ void class_algorithm_finite::clear_convergence_status() {
     has_damped                         = false;
 }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason) { write_to_file(storage_reason, *tensors.state); }
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    write_to_file(storage_reason, *tensors.state, copy_policy);
+}
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, bool is_projection, const std::string &given_prefix) {
-    // We can avoid repeated entries by only allowing fresh step numbers.
-    static std::map<StorageReason, size_t> last_save;
-    if(last_save.find(storage_reason) != last_save.end() and last_save[storage_reason] == status.step) return;
-
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy,
+                                           bool is_projection, const std::string &given_prefix) {
     // Setup this save
     StorageLevel             storage_level;
     std::string              state_prefix = algo_name + '/' + state_name; // May get modified
@@ -564,8 +563,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             storage_level = settings::output::storage_level_model;
             tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
             tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
-            copy_from_tmp(storage_reason);
-            return;
+            return copy_from_tmp(storage_reason, CopyPolicy::TRY);
         }
     }
     if(storage_level == StorageLevel::NONE) return;
@@ -584,26 +582,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         tools::finite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
         tools::finite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
     }
-    last_save[storage_reason] = status.step;
-    copy_from_tmp(storage_reason);
-}
-
-void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
-    if(not h5pp_file) return;
-    if(not settings::output::use_temp_dir) return;
-    if(not tensors.state->position_is_any_edge()) return;
-    switch(storage_reason) {
-        case StorageReason::CHECKPOINT:
-            if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
-        case StorageReason::FINISHED:
-        case StorageReason::CHI_UPDATE:
-        case StorageReason::PROJ_STATE:
-        case StorageReason::INIT_STATE:
-        case StorageReason::EMIN_STATE:
-        case StorageReason::EMAX_STATE:
-        case StorageReason::MODEL: break;
-    }
-    tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+    // Copy from temporary location to destination depending on given policy
+    copy_from_tmp(storage_reason, copy_policy);
 }
 
 void class_algorithm_finite::print_status_update() {
