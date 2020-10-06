@@ -201,6 +201,13 @@ void class_xdmrg::run_algorithm() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
+        // Update record holder
+        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
+            tools::log->trace("Updating variance record holder");
+            auto var = tools::finite::measure::energy_variance_per_site(tensors);
+            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
+        }
+
         check_convergence();
         print_status_update();
         print_profiling();
@@ -232,13 +239,14 @@ void class_xdmrg::run_algorithm() {
                 break;
             }
         }
-        // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
-            tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance_per_site(tensors);
-            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
-        }
-        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+
+        // Prepare for next step
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        try_projection();
+        try_bond_dimension_quench();
+        try_disorder_damping();
+        try_hamiltonian_perturbation();
+        reduce_mpo_energy();
         move_center_point();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));

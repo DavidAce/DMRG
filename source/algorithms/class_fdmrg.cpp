@@ -119,13 +119,17 @@ void class_fdmrg::run_algorithm() {
 
     while(true) {
         single_fdmrg_step();
+        // Update record holder
+        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
+            tools::log->trace("Updating variance record holder");
+            auto var = tools::finite::measure::energy_variance_per_site(tensors);
+            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
+        }
+
+        check_convergence();
         print_status_update();
         print_profiling();
         write_to_file();
-        check_convergence();
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
-        try_projection();
-        reduce_mpo_energy();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -148,14 +152,10 @@ void class_fdmrg::run_algorithm() {
                 break;
             }
         }
-        // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
-            tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance_per_site(tensors);
-            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
-        }
 
-        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        try_projection();
+        reduce_mpo_energy();
         move_center_point();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
