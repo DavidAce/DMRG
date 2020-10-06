@@ -208,8 +208,7 @@ void class_xdmrg::run_algorithm() {
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        // It's important not to perform the last move.
-        // That last state would not get optimized
+        // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
             if(status.iter >= settings::xdmrg::max_iters) {
                 stop_reason = StopReason::MAX_ITERS;
@@ -327,7 +326,7 @@ void class_xdmrg::single_xDMRG_step() {
     double                  variance_old_per_site = 1;
     std::vector<opt_tensor> results;
     for(auto &max_num_sites : max_num_sites_list) {
-        if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
+        if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         auto old_num_sites = tensors.active_sites.size();
         auto old_prob_size = tensors.active_problem_size();
@@ -381,6 +380,8 @@ void class_xdmrg::single_xDMRG_step() {
     }
 
     debug::check_integrity(*tensors.state);
+
+    // Update current energy density ε
     status.energy_dens =
         (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
 

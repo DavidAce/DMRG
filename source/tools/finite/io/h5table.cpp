@@ -17,7 +17,7 @@
 
 /*! Write down the Hamiltonian model type and site info as attributes */
 void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
-                                             const class_model_finite &model) {
+                                            const class_model_finite &model) {
     if(storage_level == StorageLevel::NONE) return;
     if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
@@ -30,7 +30,7 @@ void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::str
 }
 
 void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
-                                                    const class_tensors_finite &tensors, const class_algorithm_status &status) {
+                                                   const class_tensors_finite &tensors, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
     log->trace("Appending to table: {}", table_path);
     h5pp_table_measurements_finite::register_table_type();
@@ -65,16 +65,16 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
 }
 
 void tools::finite::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
-                                                  const class_algorithm_status &status) {
+                                                 const class_algorithm_status &status) {
     tools::common::io::h5table::save_sim_status(h5ppFile, table_prefix, storage_level, status);
 }
 
 void tools::finite::io::h5table::save_profiling(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
-                                                 const class_algorithm_status &status) {
+                                                const class_algorithm_status &status) {
     tools::common::io::h5table::save_profiling(h5ppFile, table_prefix, storage_level, status);
 }
 
 void tools::finite::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
-                                                 const class_algorithm_status &status) {
+                                                const class_algorithm_status &status) {
     tools::common::io::h5table::save_mem_usage(h5ppFile, table_prefix, storage_level, status);
 }

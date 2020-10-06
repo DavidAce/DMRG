@@ -74,8 +74,8 @@ void tools::finite::env::rebuild_edges(const class_state_finite &state, const cl
             var_prev = var_curr.enlarge(state.get_mps_site(pos), model.get_mpo(pos));
         }
     }
-    std::reverse(ene_pos_log.begin(),ene_pos_log.end());
-    std::reverse(var_pos_log.begin(),var_pos_log.end());
+    std::reverse(ene_pos_log.begin(), ene_pos_log.end());
+    std::reverse(var_pos_log.begin(), var_pos_log.end());
     if(not ene_pos_log.empty()) tools::log->trace("Rebuilt R ene edges: {}", ene_pos_log);
     if(not var_pos_log.empty()) tools::log->trace("Rebuilt R var edges: {}", var_pos_log);
     if(not edges.get_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));

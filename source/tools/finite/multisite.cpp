@@ -60,19 +60,20 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     int                                 direction = state.get_direction();
     int                                 position  = static_cast<int>(state.get_position());
     int                                 length    = static_cast<int>(state.get_length());
-    std::vector<long>                   costs;
+    std::vector<long>                   sizes;
     std::vector<size_t>                 sites;
-    std::vector<Eigen::DSizes<long, 3>> dims;
+    std::vector<Eigen::DSizes<long, 3>> shape;
     if(direction == -1) position = std::min(position + 1, length - 1); // If going to the left, take position to be the site on the right of the center bond.
     while(true) {
         sites.emplace_back(position);
-        costs.emplace_back(get_problem_size(state, sites));
+        sizes.emplace_back(get_problem_size(state, sites));
+        shape.emplace_back(get_dimensions(state,sites));
         position += direction;
         if(sites.size() >= max_sites) break;
         if(position == -1 or position == length) break;
     }
-    tools::log->trace("Activation candidates: {}", sites);
-    tools::log->trace("Activation costs     : {}", costs);
+    tools::log->trace("Candidate sites {}", sites);
+    tools::log->trace("Candidate sizes {}", sizes);
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
@@ -80,9 +81,10 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
 
     std::string reason;
     while(true) {
-        bool allequal = std::all_of(costs.begin(), costs.end(), [costs](long c) { return c == costs.front(); });
-        auto c        = costs.back();
-        if(c < threshold and sites.size() == max_sites) {
+        bool allequal = std::all_of(sizes.begin(), sizes.end(), [sizes](long c) { return c == sizes.front(); });
+        auto size     = sizes.back();
+        auto dims     = shape.back();
+        if(size < threshold and sites.size() == max_sites) {
             reason = "reached max sites";
             break;
         }
@@ -101,7 +103,8 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
             throw std::logic_error("No sites for a jump");
         } else {
             sites.pop_back();
-            costs.pop_back();
+            sizes.pop_back();
+            shape.pop_back();
         }
     }
     std::sort(sites.begin(), sites.end());

@@ -114,9 +114,8 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
             num_moves = std::max(1ul, (tensors.active_sites.size()) / 2);
         else if(settings::strategy::multisite_move == MultisiteMove::MAX)
             num_moves = std::max(1ul, tensors.active_sites.size() - 2ul);
-        else {
+        else
             throw std::logic_error("Could not determine how many sites to move");
-        }
     }
 
     tools::log->debug("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
