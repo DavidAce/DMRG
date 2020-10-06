@@ -494,22 +494,15 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     StorageLevel             storage_level;
     std::string              state_prefix = algo_name + '/' + state_name; // May get modified
     std::string              model_prefix = algo_name + "/model";
-    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"};
+    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"}; // Common tables
     if(not given_prefix.empty()) state_prefix = given_prefix;
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
-            // If we have finished we may want to write a projection too
             state_prefix += "/finished";
-            // Check if checkpoint already wrote this round down.
-            if(last_save.find(StorageReason::CHECKPOINT) != last_save.end() and last_save[StorageReason::CHECKPOINT] == status.step){
-                // Checkpoint wrote to common tables already
-                table_prefxs = {state_prefix}; // Only add to your own
-            }else{
-                table_prefxs.emplace_back(state_prefix); // Add to common tables
-            }
+            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
         case StorageReason::CHECKPOINT: {
@@ -520,7 +513,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
-            table_prefxs.emplace_back(state_prefix);
+            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
         case StorageReason::CHI_UPDATE: {
@@ -529,36 +522,35 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix += "/checkpoint";
             state_prefix += fmt::format("/chi_{}", status.chi_lim);
-            table_prefxs = {state_prefix}; // Should not pollute other tables than its own
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::output::storage_level_proj_state;
             if(not is_projection and storage_level != StorageLevel::NONE) {
                 auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(*tensors.state, settings::strategy::target_sector);
-                write_to_file(storage_reason, state_projected, true, state_prefix);
-                return;
+                return write_to_file(storage_reason, state_projected, copy_policy, true, state_prefix);
             }
             state_prefix += "/projection";
-            table_prefxs = {state_prefix}; // Should not pollute other tables than its own
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::INIT_STATE: {
             storage_level = settings::output::storage_level_init_state;
             state_prefix += "/state_init";
-            table_prefxs.emplace_back(state_prefix);
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMIN_STATE: {
             storage_level = settings::output::storage_level_emin_state;
             state_prefix  = algo_name + "/state_emin";
-            table_prefxs.emplace_back(state_prefix);
+            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMAX_STATE: {
             storage_level = settings::output::storage_level_emax_state;
             state_prefix  = algo_name + "/state_emax";
-            table_prefxs.emplace_back(state_prefix);
+            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::MODEL: {
