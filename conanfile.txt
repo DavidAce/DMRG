@@ -20,8 +20,8 @@ ceres-solver:verbose=True
 
 
 ### NOTE October 4 2020 ####
-Another flag that seems to fix weird release-only bugs is
-            -fno-strict-aliasing
+# Another flag that seems to fix weird release-only bugs is
+#            -fno-strict-aliasing
 
 ### NOTE August 26 2020 ####
 #
