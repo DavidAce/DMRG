@@ -58,17 +58,17 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
-void tools::infinite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_model_infinite &model){
+void tools::infinite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::string &mpo_path, const StorageLevel & storage_level, const class_model_infinite &model){
     if(storage_level < StorageLevel::FULL) return;
-    std::string mpo_prefix = fmt::format("{}/mpo", model_prefix);
-    if(h5ppFile.linkExists(mpo_prefix)) return tools::log->trace("The model has already been written to [{}]", mpo_prefix);
-
-    tools::common::profile::t_hdf->tic();
-    model.get_mpo_siteA().save_mpo(h5ppFile, mpo_prefix);
-    model.get_mpo_siteB().save_mpo(h5ppFile, mpo_prefix);
-    h5ppFile.writeAttribute(2, "model_size", mpo_prefix);
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_prefix);
-    tools::common::profile::t_hdf->toc();
+    // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
+    if(h5ppFile.linkExists(mpo_path)) return tools::log->trace("The model has already been written to [{}]", mpo_path);
+    tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    model.get_mpo_siteA().save_mpo(h5ppFile, mpo_path);
+    model.get_mpo_siteB().save_mpo(h5ppFile, mpo_path);
+    h5ppFile.writeAttribute(2, "model_size", mpo_path);
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_path);
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 void tools::infinite::io::h5dset::save_edges(h5pp::File &h5ppFile, const std::string &edges_prefix, const StorageLevel & storage_level, const class_edges_infinite &edges){

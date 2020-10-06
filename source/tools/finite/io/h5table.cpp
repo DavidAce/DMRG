@@ -32,6 +32,11 @@ void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::str
 void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                    const class_tensors_finite &tensors, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
+    // Check if the current entry has already been appended
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto save_point = std::make_pair(status.iter,status.step);
+    if(save_log[table_path] == save_point) return;
+
     log->trace("Appending to table: {}", table_path);
     h5pp_table_measurements_finite::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");

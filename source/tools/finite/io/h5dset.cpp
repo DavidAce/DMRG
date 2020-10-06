@@ -36,50 +36,69 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
 
     /*! Writes down the center "Lambda" bond matrix (singular values). */
     std::string dsetName = state_prefix + "/schmidt_midchain";
-    h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
-    h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetName);
-    h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
-    h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
-    h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
-    tools::common::profile::t_hdf->toc();
+    if(save_log[dsetName] != save_point) {
+        tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
+        tools::common::profile::get_default_prof()["t_hdf"]->tic();
+        h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
+        h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetName);
+        h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
+        h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
+        h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
+        tools::common::profile::get_default_prof()["t_hdf"]->toc();
+        save_log[dsetName] = save_point;
+    }
 
     if(storage_level < StorageLevel::NORMAL) return;
-    tools::log->trace("Storing [{: ^6}]: all bond matrices", enum2str(storage_level));
-    tools::common::profile::t_hdf->tic();
-    // There should be one more sites+1 number of L's, because there is also a center bond
-    // However L_i always belongs M_i. Stick to this rule!
-    // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
+
     std::string mps_prefix = state_prefix + "/mps";
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = fmt::format("{}/L_{}", mps_prefix, pos);
-        h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
-        h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
-        if(state.get_mps_site(pos).isCenter()) {
-            dsetName = mps_prefix + "/L_C";
-            h5ppFile.writeDataset(state.get_mps_site(pos).get_LC(), dsetName, layout);
+    if(save_log[mps_prefix] != save_point) {
+        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
+        tools::common::profile::get_default_prof()["t_hdf"]->tic();
+        // There should be one more sites+1 number of L's, because there is also a center bond
+        // However L_i always belongs M_i. Stick to this rule!
+        // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
+        for(size_t pos = 0; pos < state.get_length(); pos++) {
+            dsetName = fmt::format("{}/L_{}", mps_prefix, pos);
+            if(save_log[dsetName] == save_point) continue;
+            h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
             h5ppFile.writeAttribute(pos, "position", dsetName);
-            h5ppFile.writeAttribute(state.get_mps_site(pos).get_LC().dimensions(), "dimensions", dsetName);
+            h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
+            if(state.get_mps_site(pos).isCenter()) {
+                dsetName = mps_prefix + "/L_C";
+                h5ppFile.writeDataset(state.get_mps_site(pos).get_LC(), dsetName, layout);
+                h5ppFile.writeAttribute(pos, "position", dsetName);
+                h5ppFile.writeAttribute(state.get_mps_site(pos).get_LC().dimensions(), "dimensions", dsetName);
+            }
+            save_log[dsetName] = save_point;
         }
+        h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
+        h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
+        h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_prefix);
+        h5ppFile.writeAttribute(state.get_step(), "step", mps_prefix);
+        h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
+        tools::common::profile::get_default_prof()["t_hdf"]->toc();
     }
-    h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
-    h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
-    h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_prefix);
-    h5ppFile.writeAttribute(state.get_step(), "step", mps_prefix);
-    h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
-    tools::common::profile::t_hdf->toc();
 
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
-    if(storage_level < StorageLevel::FULL) return;
-    tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
-    tools::common::profile::t_hdf->tic();
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        dsetName = fmt::format("{}/M_{}",mps_prefix,pos);
-        h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
-        h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);
+    if(storage_level < StorageLevel::FULL) {
+        save_log[mps_prefix] = save_point;
+        return;
     }
-    tools::common::profile::t_hdf->toc();
+
+    if(save_log[mps_prefix] != save_point){
+        tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
+        tools::common::profile::get_default_prof()["t_hdf"]->tic();
+        for(size_t pos = 0; pos < state.get_length(); pos++) {
+            dsetName = fmt::format("{}/M_{}", mps_prefix, pos);
+            if(save_log[dsetName] == save_point) continue;
+            h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
+            h5ppFile.writeAttribute(pos, "position", dsetName);
+            h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);
+            save_log[dsetName] = save_point;
+        }
+        tools::common::profile::get_default_prof()["t_hdf"]->toc();
+        save_log[mps_prefix] = save_point;
+    }
 }
 
 /*! Write all the MPO's with site info in attributes */
