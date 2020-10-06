@@ -5,7 +5,6 @@
 #pragma once
 
 #include <config/nmspc_settings.h>
-#include <general/class_tic_toc.h>
 #include <general/nmspc_tensor_extra.h>
 #include <list>
 #include <measure/state_measure_infinite.h>

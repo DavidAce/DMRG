@@ -52,11 +52,11 @@ double tools::infinite::measure::truncation_error(const class_state_infinite &st
 }
 
 double tools::infinite::measure::entanglement_entropy(const class_state_infinite &state) {
-    tools::common::profile::t_ent->tic();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     if(state.measurements.entanglement_entropy) return state.measurements.entanglement_entropy.value();
     const auto &             LC = state.LC();
     Eigen::Tensor<Scalar, 0> SA = -LC.square().contract(LC.square().log().eval(), Textra::idx({0}, {0}));
-    tools::common::profile::t_ent->toc();
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     state.measurements.entanglement_entropy = std::real(SA(0));
     return state.measurements.entanglement_entropy.value();
 }
@@ -70,9 +70,9 @@ double tools::infinite::measure::energy_minus_energy_reduced(const state_or_mps_
         tools::log->trace("Measuring energy mpo");
         const auto &mpo = model.get_2site_tensor();
         const auto &env = edges.get_ene_blk();
-        tools::common::profile::t_ene->tic();
+        tools::common::profile::get_default_prof()["t_ene"]->tic();
         double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
-        tools::common::profile::t_ene->toc();
+        tools::common::profile::get_default_prof()["t_ene"]->toc();
         return e_minus_ered;
     }
 }
@@ -130,9 +130,9 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         const auto &mpo = model.get_2site_tensor();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
-        tools::common::profile::t_ene->tic();
+        tools::common::profile::get_default_prof()["t_ene"]->tic();
         double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
-        tools::common::profile::t_ene->toc();
+        tools::common::profile::get_default_prof()["t_ene"]->toc();
         double var = std::abs(H2 - E2);
         return var;
     }

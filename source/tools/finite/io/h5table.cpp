@@ -22,12 +22,11 @@ void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::str
     if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
     tools::log->trace("Storing table: [{}]", table_path);
-    tools::common::profile::t_hdf->tic();
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
     for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5ppFile, table_path);
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", table_path);
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
-
-    tools::common::profile::t_hdf->toc();
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
@@ -59,9 +58,10 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     measurement_entry.truncation_error                = tensors.state->get_truncation_error_midchain();
     measurement_entry.total_time                      = status.wall_time;
     measurement_entry.algorithm_time                  = status.algo_time;
-    tools::common::profile::t_hdf->tic();
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
     h5ppFile.appendTableRecords(measurement_entry, table_path);
-    tools::common::profile::t_hdf->toc();
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
+    save_log[table_path] = save_point;
 }
 
 void tools::finite::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,

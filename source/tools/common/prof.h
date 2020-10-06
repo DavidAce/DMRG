@@ -1,57 +1,72 @@
 #pragma once
 
 #include <general/class_tic_toc.h>
+#include <map>
 #include <memory>
 #include <optional>
+#include <vector>
+#include <tools/common/fmt.h>
+
 class class_tic_toc;
 enum class AlgorithmType;
-namespace tools::common::profile{
+namespace tools::common::profile {
     // Profiling
-    inline std::unique_ptr<class_tic_toc> t_tot;             // + Total Time
-    inline std::unique_ptr<class_tic_toc> t_pre;             // |- Preprocessing
-    inline std::unique_ptr<class_tic_toc> t_pos;             // |- Postprocessing
-    inline std::unique_ptr<class_tic_toc> t_sim;             // |+ Simulation
-    inline std::unique_ptr<class_tic_toc> t_con;             //  |- Convergence checks
-    inline std::unique_ptr<class_tic_toc> t_eig;             //  |- Eig. decomp.
-    inline std::unique_ptr<class_tic_toc> t_svd;             //  |- Svd. decomp.
-    inline std::unique_ptr<class_tic_toc> t_evo;             //  |- Time evolution
-    inline std::unique_ptr<class_tic_toc> t_env;             //  |- Environment upd.
-    inline std::unique_ptr<class_tic_toc> t_ent;             //  |- Entanglement entropy
-    inline std::unique_ptr<class_tic_toc> t_ene;             //  |- Energy
-    inline std::unique_ptr<class_tic_toc> t_var;             //  |- Variance
-    inline std::unique_ptr<class_tic_toc> t_prj;             //  |- Projections
-    inline std::unique_ptr<class_tic_toc> t_chk;             //  |- Checks
-    inline std::unique_ptr<class_tic_toc> t_hdf;             //  |- h5pp storage
-    inline std::unique_ptr<class_tic_toc> t_ene_ham;         //  |- Energy (HAM)
-    inline std::unique_ptr<class_tic_toc> t_ene_mom;         //  |- Energy (MOM)
-    inline std::unique_ptr<class_tic_toc> t_var_ham;         //  |- Variance (HAM)
-    inline std::unique_ptr<class_tic_toc> t_var_mom;         //  |- Variance (MOM)
-    inline std::unique_ptr<class_tic_toc> t_mps;             //  |- Multisite-MPS
-    inline std::unique_ptr<class_tic_toc> t_mpo;             //  |- Multisite-MPO
-    inline std::unique_ptr<class_tic_toc> t_opt;             //  |+ Optimization (xdmrg)
-    inline std::unique_ptr<class_tic_toc> t_opt_dir;         //  ||+ Direct
-    inline std::unique_ptr<class_tic_toc> t_opt_dir_bfgs;    //  |||+ L-BFGS steps
-    inline std::unique_ptr<class_tic_toc> t_opt_dir_vH2;     //  || |- vH2
-    inline std::unique_ptr<class_tic_toc> t_opt_dir_vH2v;    //  || |- vH2v
-    inline std::unique_ptr<class_tic_toc> t_opt_dir_vH;      //  || |- vH
-    inline std::unique_ptr<class_tic_toc> t_opt_dir_vHv;     //  || |- vHv
-    inline std::unique_ptr<class_tic_toc> t_opt_sub;         //  ||+ Subspace
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_ham;     //  | |- Hamiltonian Matrix
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_hsq;     //  | |- Hamiltonian Matrix²
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_lu;      //  | |- LU decomposition
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_eig;     //  | |- Eigenvalue decomp
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_bfgs;    //  | |+ L-BFGS steps
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_vH2;     //  |  |- vH2
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_vH2v;    //  |  |- vH2v
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_vH;      //  |  |- vH
-    inline std::unique_ptr<class_tic_toc> t_opt_sub_vHv;     //  |  |- vHv
+    inline std::unique_ptr<class_tic_toc> t_tot;          // + Total Time
+    namespace internal {
+        template<typename KeyT, typename ValT>
+        class insert_ordered_map {
+            private:
+            std::vector<std::pair<KeyT, ValT>> data;
 
+            public:
+            const ValT &operator[](const KeyT &key) const {
+                auto it = find(key);
+                if(it == data.end()){
+                    if constexpr(std::is_convertible_v<KeyT,std::string>)
+                        throw std::runtime_error(fmt::format("Invalid key: {}",key));
+                    else throw std::runtime_error("Invalid key");
+                }
+                return it->second;
+            }
+            ValT &operator[](const KeyT &key) {
+                auto it = find(key);
+                if(it == data.end()) {
+                    data.emplace_back(std::make_pair(key, ValT()));
+                    return data.back().second;
+                } else
+                    return it->second;
+            }
 
-    extern void print_profiling();
-    extern void print_profiling(std::optional<AlgorithmType> algo_type);
+            [[nodiscard]] auto begin() { return data.begin(); }
+            [[nodiscard]] auto end() { return data.end(); }
+            [[nodiscard]] auto begin() const { return data.begin(); }
+            [[nodiscard]] auto end() const { return data.end(); }
+            [[nodiscard]] auto find(const KeyT & key){
+                return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
+            }
+            [[nodiscard]] auto find(const KeyT & key) const {
+                return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
+            }
+        };
+        using MapTicTocUnique   = insert_ordered_map<std::string, std::unique_ptr<class_tic_toc>>;
+        using MapTicTocShared   = insert_ordered_map<std::string, std::shared_ptr<class_tic_toc>>;
+        using AlgoProf    = insert_ordered_map<AlgorithmType, MapTicTocUnique>;
+        inline std::optional<AlgorithmType> default_algo_type = std::nullopt;
+    }
+
+    inline internal::AlgoProf prof;
+    extern internal::MapTicTocUnique & get_default_prof();
+    extern void set_default_prof(AlgorithmType algo_type);
+    AlgorithmType get_current_algo_type();
+
+    extern void print_profiling_all();
+    extern void print_profiling(std::optional<AlgorithmType> algo_type = std::nullopt);
+    extern void print_profiling_delta();
+    extern void print_profiling_laps(std::optional<AlgorithmType> algo_type = std::nullopt);
     extern void init_profiling();
-    extern void reset_profiling();
-    extern void reset_for_run_algorithm();
+    //    extern void reset_profiling();
+    extern void reset_profiling(std::optional<AlgorithmType> algo_type = std::nullopt, const std::vector<std::string> & excl = {});
+//    extern void reset_for_run_algorithm(std::optional<AlgorithmType> algo_type = std::nullopt, const std::vector<std::string> & excl = {"t_pre","t_pos"});
 
     extern void print_mem_usage();
 

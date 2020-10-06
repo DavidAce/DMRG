@@ -68,7 +68,6 @@ void MatrixProductDense<Scalar>::FactorOP()
 
     readyFactorOp = true;
     t_factorOP->toc();
-    //    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOP.get_last_time_interval() * 1000 << '\n';
 }
 
 template<typename Scalar>

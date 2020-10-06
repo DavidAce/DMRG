@@ -28,7 +28,7 @@ void class_idmrg::run_simulation() {
     if(ritz == StateRitz::SR) state_name = "state_emin";
     else state_name = "state_emax";
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
-    tools::common::profile::t_sim->tic();
+    tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(true){
         single_iDMRG_step();
         print_status_update();
@@ -66,7 +66,7 @@ void class_idmrg::run_simulation() {
         status.step++;
     }
     tools::log->info("Finished {} simulation -- reason: {}", algo_name,enum2str(stop_reason));
-    tools::common::profile::t_sim->toc();
+    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 
@@ -78,14 +78,14 @@ void class_idmrg::single_iDMRG_step(){
     Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
     tensors.merge_multisite_tensor(twosite_tensor);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.algo_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
 
 
 void class_idmrg::check_convergence(){
     tools::log->trace("Checking convergence");
-    tools::common::profile::t_con->tic();
+    tools::common::profile::prof[algo_type]["t_con"]->tic();
     check_convergence_entg_entropy();
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
@@ -95,7 +95,7 @@ void class_idmrg::check_convergence(){
     {
         status.algorithm_has_converged = true;
     }
-    tools::common::profile::t_con->toc();
+    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 

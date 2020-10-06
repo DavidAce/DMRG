@@ -7,7 +7,6 @@
 #include <algorithms/class_algorithm_status.h>
 #include <complex>
 #include <config/enums.h>
-#include <general/class_tic_toc.h>
 #include <list>
 #include <map>
 #include <memory>
@@ -35,22 +34,23 @@ class class_algorithm_base {
     static constexpr double     quietNaN = std::numeric_limits<double>::quiet_NaN();
 
     // Virtual Functions
-    virtual void   run()                                                                        = 0;
-    virtual void   check_convergence()                                                          = 0;
-    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT)      = 0;
-    virtual void   copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT)      = 0;
-    virtual bool   cfg_algorithm_is_on()                                                        = 0;
-    virtual size_t cfg_print_freq()                                                             = 0;
-    virtual long   cfg_chi_lim_max()                                                            = 0;
-    virtual bool   cfg_chi_lim_grow()                                                           = 0;
-    virtual long   cfg_chi_lim_init()                                                           = 0;
-    virtual void   print_status_update()                                                        = 0;
-    virtual void   print_status_full()                                                          = 0;
-    virtual void   clear_convergence_status()                                                   = 0;
-    virtual void   update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt) = 0;
+    virtual void   run()                                                                                                                         = 0;
+    virtual void   check_convergence()                                                                                                           = 0;
+    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt) = 0;
+    virtual bool   cfg_algorithm_is_on()                                                                                                         = 0;
+    virtual size_t cfg_print_freq()                                                                                                              = 0;
+    virtual long   cfg_chi_lim_max()                                                                                                             = 0;
+    virtual bool   cfg_chi_lim_grow()                                                                                                            = 0;
+    virtual long   cfg_chi_lim_init()                                                                                                            = 0;
+    virtual void   print_status_update()                                                                                                         = 0;
+    virtual void   print_status_full()                                                                                                           = 0;
+    virtual void   clear_convergence_status()                                                                                                    = 0;
+    virtual void   update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                                                  = 0;
 
     // common functions
+    void copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
     void init_bond_dimension_limits();
+    void print_profiling();
 
     protected:
     //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from

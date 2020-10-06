@@ -65,8 +65,8 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
         return tensors.measurements.energy_per_site_mom.value();
     }
     tools::log->trace("Measuring energy mom");
+    tools::common::profile::get_default_prof()["t_ene_mom"]->tic();
 
-    tools::common::profile::t_ene_mom->tic();
     Scalar a      = Scalar(0.0, 1.0) * 5e-3;
     auto   SX     = qm::gen_manybody_spin(qm::spinOneHalf::sx, 2);
     auto   SY     = qm::gen_manybody_spin(qm::spinOneHalf::sy, 2);
@@ -85,7 +85,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
     Scalar VarO                                       = 2.0 * std::log(abs(G)) / (a * a);
     tensors.measurements.energy_per_site_mom          = std::real(O);
     tensors.measurements.energy_variance_per_site_mom = std::real(VarO);
-    tools::common::profile::t_ene_mom->toc();
+    tools::common::profile::get_default_prof()["t_ene_mom"]->toc();
     return tensors.measurements.energy_per_site_mom.value();
 }
 

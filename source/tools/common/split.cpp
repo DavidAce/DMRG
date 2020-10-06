@@ -128,9 +128,9 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
     svd.setThreshold(svd_threshold.value());
-    tools::common::profile::t_svd->tic();
+    tools::common::profile::get_default_prof()["t_svd"]->tic();
     auto [U, S, V] = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
-    tools::common::profile::t_svd->toc();
+    tools::common::profile::get_default_prof()["t_svd"]->toc();
     if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from main svd");
     auto mps_sites_left = internal::split_mps_from_left(U, spin_dims_left, sites_left, chi_limit, svd_threshold);
     //    tools::log->debug("SV dims: {} {} {}", SV.dimension(0),SV.dimension(1), SV.dimension(2));
@@ -278,9 +278,9 @@ std::list<class_mps_site>
          */
         if(sites.empty()) throw std::logic_error("Could not split multisite tensor from the right: Site list became empty");
 
-        tools::common::profile::t_svd->tic();
+        tools::common::profile::get_default_prof()["t_svd"]->tic();
         std::tie(U, S, V) = svd.schmidt_from_left(V, spin_dim, chi_limit);
-        tools::common::profile::t_svd->toc();
+        tools::common::profile::get_default_prof()["t_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
         // Now we have the three components
@@ -389,9 +389,9 @@ std::list<class_mps_site>
 
         if(sites.empty()) throw std::logic_error("Could not split multisite tensor from the right: No sites left");
 
-        tools::common::profile::t_svd->tic();
+        tools::common::profile::get_default_prof()["t_svd"]->tic();
         std::tie(U, S, V) = svd.schmidt_from_right(U, spin_dim, chi_limit);
-        tools::common::profile::t_svd->toc();
+        tools::common::profile::get_default_prof()["t_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
         // Now we have the three components

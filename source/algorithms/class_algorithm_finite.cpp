@@ -85,24 +85,25 @@ void class_algorithm_finite::run()
 
 void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Running default preprocessing for {}", algo_name);
-    tools::common::profile::t_pre->tic();
+    tools::common::profile::prof[algo_type]["t_pre"]->tic();
     status.clear();
     randomize_model();
     init_bond_dimension_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
                     settings::strategy::use_eigenspinors);
     write_to_file(StorageReason::MODEL);
-    tools::common::profile::t_pre->toc();
+    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished default preprocessing for {}", algo_name);
 }
 
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
-    tools::common::profile::t_pos->tic();
-    write_to_file(StorageReason::FINISHED);
-    write_to_file(StorageReason::PROJ_STATE);
+    tools::common::profile::prof[algo_type]["t_pos"]->tic();
+    write_to_file(StorageReason::CHECKPOINT,CopyPolicy::OFF);
+    write_to_file(StorageReason::PROJ_STATE,CopyPolicy::OFF);
+    write_to_file(StorageReason::FINISHED,CopyPolicy::FORCE);
     print_status_full();
-    tools::common::profile::t_pos->toc();
+    tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::log->info("Finished default postprocessing for {}", algo_name);
 }
 
@@ -231,6 +232,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
         else
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
+    tools::common::profile::prof[algo_type]["t_rnd"]->tic();
     if(not sector) sector = settings::strategy::target_sector;
     if(not chi_lim) {
         if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE)
@@ -260,6 +262,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_type), enum2str(reason));
     tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
     tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::common::profile::prof[algo_type]["t_rnd"]->toc();
 }
 
 void class_algorithm_finite::try_projection() {

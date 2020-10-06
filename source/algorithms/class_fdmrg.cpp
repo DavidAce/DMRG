@@ -79,6 +79,7 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
+            case fdmrg_task::PROF_RESET: tools::common::profile::reset_profiling(algo_type); break;
         }
         task_list.pop_front();
     }
@@ -100,25 +101,26 @@ void class_fdmrg::run_default_task_list() {
 
 void class_fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    tools::common::profile::t_pre->tic();
+    tools::common::profile::prof[algo_type]["t_pre"]->tic();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     auto spin_components = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Initial spin components: {}", spin_components);
-    tools::common::profile::t_pre->toc();
+    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_fdmrg::run_algorithm() {
     if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
-    tools::common::profile::reset_for_run_algorithm();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
-    tools::common::profile::t_sim->tic();
+    tools::common::profile::prof[algo_type]["t_sim"]->tic();
+
     while(true) {
         single_fdmrg_step();
         print_status_update();
+        print_profiling();
         write_to_file();
         check_convergence();
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
@@ -157,7 +159,7 @@ void class_fdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
-    tools::common::profile::t_sim->toc();
+    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_fdmrg::single_fdmrg_step() {
@@ -177,12 +179,11 @@ void class_fdmrg::single_fdmrg_step() {
         tools::log->debug("Variance after svd: {:.8f} | trunc: {}",std::log10(tools::finite::measure::energy_variance_per_site(tensors)), tools::finite::measure::truncation_errors_active(*tensors.state));
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.algo_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
 void class_fdmrg::check_convergence() {
-    tools::common::profile::t_con->tic();
-
+    tools::common::profile::prof[algo_type]["t_con"]->tic();
     if(tensors.position_is_any_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -202,7 +203,7 @@ void class_fdmrg::check_convergence() {
         tools::log->debug("Algorithm has stuck for: {}", status.algorithm_has_stuck_for);
         tools::log->debug("Algorithm has to stop  : {}", status.algorithm_has_to_stop);
     }
-    tools::common::profile::t_con->toc();
+    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 bool   class_fdmrg::cfg_algorithm_is_on() { return settings::fdmrg::on; }

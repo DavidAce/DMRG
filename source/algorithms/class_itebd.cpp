@@ -27,15 +27,15 @@ class_itebd::class_itebd(std::shared_ptr<h5pp::File> h5ppFile_)
 }
 
 void class_itebd::run_preprocessing() {
-    tools::common::profile::t_pre->tic();
+    tools::common::profile::prof[algo_type]["t_pre"]->tic();
     status.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-    tools::common::profile::t_pre->toc();
+    tools::common::profile::prof[algo_type]["t_pre"]->toc();
 }
 
 void class_itebd::run_simulation()    {
     tools::log->info("Starting {} simulation", algo_name);
-    tools::common::profile::t_sim->tic();
+    tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(status.iter < settings::itebd::max_iters and not status.algorithm_has_converged) {
         single_TEBD_step();
         status.phys_time += status.delta_t;
@@ -45,13 +45,13 @@ void class_itebd::run_simulation()    {
         check_convergence();
         status.iter++;
     }
-    tools::common::profile::t_sim->toc();
+    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_itebd::run_postprocessing(){
-    tools::common::profile::t_pos->tic();
+    tools::common::profile::prof[algo_type]["t_pos"]->tic();
     print_status_full();
-    tools::common::profile::t_pos->toc();
+    tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::common::profile::print_profiling();
 }
 
@@ -68,13 +68,13 @@ void class_itebd::single_TEBD_step(){
     }
     tensors.clear_measurements();
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
-    status.algo_time = tools::common::profile::t_sim->get_measured_time();
+    status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
 
 
 void class_itebd::check_convergence(){
-    tools::common::profile::t_con->tic();
+    tools::common::profile::prof[algo_type]["t_con"]->tic();
     check_convergence_entg_entropy();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
@@ -85,7 +85,7 @@ void class_itebd::check_convergence(){
     {
         status.algorithm_has_converged = true;
     }
-    tools::common::profile::t_con->toc();
+    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 void class_itebd::check_convergence_time_step(){

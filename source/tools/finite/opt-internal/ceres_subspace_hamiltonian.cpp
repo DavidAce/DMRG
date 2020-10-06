@@ -22,7 +22,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     const auto &mpo = model.get_multisite_tensor();
     const auto &env = edges.get_multisite_ene_blk();
     tools::log->trace("Contracting multisite hamiltonian");
-    tools::common::profile::t_opt_sub_ham->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic();
 
     long dim0 = mpo.dimension(2);
     long dim1 = env.L.dimension(0);
@@ -45,7 +45,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
     tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
-    tools::common::profile::t_opt_sub_ham->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->toc();
     if constexpr(std::is_same_v<T,double>){
         return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
     }else{
@@ -68,7 +68,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 
     const auto &mpo = model.get_multisite_tensor();
     const auto &env = edges.get_multisite_var_blk();
-    tools::common::profile::t_opt_sub_hsq->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->tic();
     tools::log->trace("Contracting subspace hamiltonian squared new");
     long   dim0     = mpo.dimension(2);
     long   dim1     = env.L.dimension(0);
@@ -139,7 +139,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(H2.hasNaN()) throw std::runtime_error("subspace hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
-    tools::common::profile::t_opt_sub_hsq->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->toc();
     if constexpr(std::is_same_v<T, double>) return H2.real();
     else
         return H2;

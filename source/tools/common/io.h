@@ -18,10 +18,10 @@ namespace tools::common::io {
 
     namespace h5table{
         extern void save_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
-        extern void save_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void save_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status, std::optional<AlgorithmType> algo_type = std::nullopt);
         extern void save_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
         extern void load_sim_status   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_algorithm_status & status);
-        extern void load_profiling    (const h5pp::File & h5ppFile, const std::string & state_prefix);
+        extern void load_profiling    (const h5pp::File & h5ppFile, const std::string & state_prefix,std::optional<AlgorithmType> algo_type = std::nullopt);
     }
 
     namespace h5attr{

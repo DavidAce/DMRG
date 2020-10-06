@@ -7,7 +7,6 @@
 #include "ceres_direct_functor.h"
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
-#include <general/class_tic_toc.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -35,7 +34,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
-    tools::common::profile::t_opt_dir->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic();
 
     reports::bfgs_add_entry("Direct", "init", initial_tensor);
     const auto &current_tensor = tensors.state->get_multisite_tensor();
@@ -46,7 +45,8 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     optimized_tensor.set_name(initial_tensor.get_name());
     optimized_tensor.set_sites(initial_tensor.get_sites());
     optimized_tensor.set_length(initial_tensor.get_length());
-    tools::common::profile::t_opt_dir_bfgs->tic();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic();
+
     switch(optType) {
         case OptType::CPLX: {
             // Copy the initial guess and operate directly on it
@@ -61,10 +61,10 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             optimized_tensor.set_counter(functor->get_count());
             optimized_tensor.set_energy(functor->get_energy());
             optimized_tensor.set_variance(functor->get_variance());
-            *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
-            *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
-            *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
-            *tools::common::profile::t_opt_dir_vHv += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
             break;
         }
         case OptType::REAL: {
@@ -81,10 +81,10 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
             optimized_tensor.set_tensor_real(initial_tensor_real.data(), initial_tensor.get_tensor().dimensions());
             optimized_tensor.set_energy(functor->get_energy());
             optimized_tensor.set_variance(functor->get_variance());
-            *tools::common::profile::t_opt_dir_vH2 += *functor->t_vH2;
-            *tools::common::profile::t_opt_dir_vH2v += *functor->t_vH2v;
-            *tools::common::profile::t_opt_dir_vH += *functor->t_vH;
-            *tools::common::profile::t_opt_dir_vHv += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
             break;
         }
     }
@@ -96,16 +96,16 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     //    optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
     optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
 
-    tools::common::profile::t_opt_dir_bfgs->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->toc();
     reports::time_add_dir_entry();
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
     int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
     double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
     tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
-   reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
+    reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
 
     tools::log->trace("Returning theta from optimization mode {} space {}", optMode, optSpace);
-    tools::common::profile::t_opt_dir->toc();
+    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->toc();
     return optimized_tensor;
 }
