@@ -33,6 +33,13 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     // -- iteration      | state_prefix -> iteration
     // -- step           | state_prefix -> step
     // -- position       | state_prefix -> position of the mps
+
+    // Checks if the current entries have already been written
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto save_point = std::make_pair(status.iter,status.step);
+    if(save_log[state_prefix] == save_point) return;
+
+
     std::string storage_level_str(enum2str(storage_level));
     std::string storage_reason_str(enum2str(storage_reason));
     std::string model_name(enum2str(model_type));
@@ -56,4 +63,5 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     save_attr(h5ppFile, status.iter, state_prefix, "common/iteration", "Maps state_prefix -> iteration");
     save_attr(h5ppFile, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
     save_attr(h5ppFile, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
+    save_log[state_prefix] = save_point;
 }
