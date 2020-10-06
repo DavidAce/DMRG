@@ -131,3 +131,31 @@ std::pair<double, double> tools::finite::opt::internal::windowed_func_grad(doubl
     }
     return std::make_pair(func, grad);
 }
+
+
+long tools::finite::opt::internal::get_ops_v1(long d, long chiL, long chiR, long m) {
+    // d first
+    // This is the one chosen by eigen whenever d > m
+    long step1   = chiL * chiL * chiR * m * m * d;
+    long step2_d = chiL * chiR * d * m * m * m * (d * m + 1);
+    long step3   = chiL * chiR * d * m * m * m * (chiR * m + 1);
+    long step4_d = chiL * chiR * d * m * (d * m * m * m + m * m + 1);
+    return step1 + step2_d + step3 + step4_d;
+}
+
+long tools::finite::opt::internal::get_ops_v2(long d, long chiL, long chiR, long m) {
+    // d first
+    // This is the one chosen by eigen whenever d > m
+    // Same as v1, just swap chiL and chiR
+    return tools::finite::opt::internal::get_ops_v1(d,chiR,chiL,m);
+}
+
+long tools::finite::opt::internal::get_ops_v3(long d, long chiL, long chiR,long m) {
+    // d first
+    // This is the one chosen by eigen whenever d > m
+    long step1   = chiL * chiL * chiR * m * m * d;
+    long step2_d = chiL * chiR * d * m * m * m * (d * m + 1);
+    long step3_d = chiL * chiR * d * m * m * m * (d * m + 1);
+    long step4   = chiL * chiR * d * m * (chiR * m * m * m + m * m + 1);
+    return step1 + step2_d + step3_d + step4;
+}

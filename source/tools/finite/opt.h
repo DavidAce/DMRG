@@ -134,7 +134,9 @@ namespace tools::finite::opt::internal{
     extern double windowed_grad_pow(double x,double window);
     extern std::pair<double,double> windowed_func_grad(double x,double window);
 
-
+    extern long get_ops_v1(long d, long chiL, long chiR, long m);
+    extern long get_ops_v2(long d, long chiL, long chiR, long m);
+    extern long get_ops_v3(long d, long chiL, long chiR, long m);
 
     namespace reports{
         struct bfgs_entry {
@@ -189,6 +191,7 @@ namespace tools::finite::opt::internal{
         mutable double norm_offset;
         mutable double norm;
         mutable size_t counter = 0;
+        mutable long  ops = 0;
         size_t length;
         size_t iteration;
         int    num_parameters;
@@ -203,6 +206,7 @@ namespace tools::finite::opt::internal{
         double get_variance_per_site   () const;
         size_t get_count               () const;
         double get_norm                () const;
+        long   get_ops                 () const;
         int    NumParameters           () const final;
 
         std::unique_ptr<class_tic_toc> t_bfgs;
@@ -245,7 +249,7 @@ namespace tools::finite::opt::internal{
             /* clang-format off */
             log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
                       "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
-                      "t_step {:<6} t_iter {:<6} t_tot {:<5} | energy {:<18.15f} log₁₀var {:<6.6f}",
+                      "t_step {:<6} t_iter {:<6} t_tot {:<5} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                       summary.iteration,
                       summary.cost,
                       summary.cost_change,
@@ -258,6 +262,7 @@ namespace tools::finite::opt::internal{
                       fmt::format("{:>.0f} ms",summary.step_solver_time_in_seconds * 1000),
                       fmt::format("{:>.0f} ms",summary.iteration_time_in_seconds * 1000),
                       fmt::format("{:>.3f} s",summary.cumulative_time_in_seconds),
+                      functor.get_ops() / functor.t_vH2->get_last_interval()/1e9,
                       functor.get_energy_per_site(),
                       std::log10(functor.get_variance_per_site())
             );

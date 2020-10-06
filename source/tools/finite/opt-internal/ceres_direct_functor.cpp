@@ -138,9 +138,60 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     auto log2chiR = std::log2(dsizes[2]);
     auto log2spin = std::log2(dsizes[0]);
 
+    /*
+     * NOTE 2020-10-05
+     * I ran some benchmarks to figure out if the order of indices matter, for instance
+     * if we should list "spin" dimensions before mpo dimension or vice versa.
+     * It turns out there is a large difference in favor of taking spin dimensions before
+     * mpo dimensions. The number of operations increases with the number of sites.
+     * The percentages below are 100*(ops_m - ops_d) / ops_d, where _d and _m denote
+     * taking spin dim "d" first or mpo dim "m" first.
+     *
+     *          chi=256          chi=512
+     * l = 2:    -0.65%           -0.32%
+     * l = 3:     3.68%            1.84%
+     * l = 4:    25.17%           12.97%
+     * l = 5:   110.31%           59.80%
+     * l = 6:   399.50% (*)      234.72%
+     * l = 7:  1243.46%          815.45%
+     * l = 8:  3370.13%         2498.57%
+     *
+     * However, it turns out that Eigen already switches the order around to take the fastest route
+     * So it does not matter for us in which order we do it... i.e. a line like
+     *      .contract(mpo, Textra::idx({0, 3}, {2, 0}))
+     * is equivalent to
+     *      .contract(mpo, Textra::idx({3, 0}, {0, 2}))
+     *
+     * The following benchmark result revealed this fact:
+     *
+     * [2020-10-05 15:21:26][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {4, 256, 256} | iter 1/3 |  time   0.4296 s | GOp/s 104.1811
+     * [2020-10-05 15:21:27][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {4, 256, 256} | iter 2/3 |  time   0.4258 s | GOp/s 105.0995
+     * [2020-10-05 15:21:27][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {4, 256, 256} | iter 3/3 |  time   0.4179 s | GOp/s 107.0952
+     * [2020-10-05 15:21:27][tensorbench][  info  ] H²|Ψ> version cpu3 m | total time 1.2733 s
+     * [2020-10-05 15:21:28][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {4, 256, 256} | iter 1/3 |  time   0.4572 s | GOp/s 98.4875
+     * [2020-10-05 15:21:28][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {4, 256, 256} | iter 2/3 |  time   0.4225 s | GOp/s 106.5780
+     * [2020-10-05 15:21:29][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {4, 256, 256} | iter 3/3 |  time   0.4460 s | GOp/s 100.9666
+     * [2020-10-05 15:21:29][tensorbench][  info  ] H²|Ψ> version cpu3 d | total time 1.3257 s
+     *
+     *
+     * [2020-10-05 15:23:06][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {64, 256, 256} | iter 1/3 |  time   9.7150 s | GOp/s 515.3747
+     * [2020-10-05 15:23:16][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {64, 256, 256} | iter 2/3 |  time   9.7767 s | GOp/s 512.1229
+     * [2020-10-05 15:23:25][tensorbench][  info  ] H²|Ψ> version cpu3 m | psi dimensions {64, 256, 256} | iter 3/3 |  time   9.5951 s | GOp/s 521.8139
+     * [2020-10-05 15:23:25][tensorbench][  info  ] H²|Ψ> version cpu3 m | total time 29.0868 s
+     * [2020-10-05 15:23:35][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {64, 256, 256} | iter 1/3 |  time   9.7333 s | GOp/s 106.3428
+     * [2020-10-05 15:23:45][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {64, 256, 256} | iter 2/3 |  time   9.7678 s | GOp/s 105.9679
+     * [2020-10-05 15:23:55][tensorbench][  info  ] H²|Ψ> version cpu3 d | psi dimensions {64, 256, 256} | iter 3/3 |  time   9.7425 s | GOp/s 106.2432
+     * [2020-10-05 15:23:55][tensorbench][  info  ] H²|Ψ> version cpu3 d | total time 29.2436 s
+     *
+     * Notice how in the case d^6=64 and chi = 256 the supposed expected improvement should be ~400% which agrees with point (*) above
+     *
+     */
+
+
     if(log2spin >= std::max(log2chiL, log2chiR)) {
         if(log2chiL > log2chiR) {
             if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL > log2chiR ");
+            ops = get_ops_v1(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
             H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
@@ -152,6 +203,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
 
         else {
             if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL <= log2chiR ");
+            ops = get_ops_v2(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
             Eigen::Tensor<Scalar, 3> theta =
                 Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
             H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2R, Textra::idx({0}, {0}))
@@ -163,6 +215,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
 
     } else {
         if(print_path) tools::log->trace("get_H2v path: log2spin < std::max(log2chiL, log2chiR)");
+        ops = get_ops_v3(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
         Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
         H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
                                                    .contract(mpo, Textra::idx({0, 3}, {2, 0}))
