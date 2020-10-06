@@ -30,6 +30,7 @@ void class_tic_toc::toc() {
         toc_timepoint = std::chrono::high_resolution_clock::now();
         delta_time    = toc_timepoint - tic_timepoint;
         measured_time += delta_time;
+        lap_time += delta_time;
         is_measuring = false;
     }
 }
@@ -38,8 +39,13 @@ void class_tic_toc::set_properties(bool on_off, int prec, std::string output_tex
 
 void class_tic_toc::set_label(std::string output_text) { *this = class_tic_toc(enable, print_precision, output_text); }
 
-void class_tic_toc::set_time(double other_time_in_seconds) {
+void class_tic_toc::set_measured_time(double other_time_in_seconds) {
     measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+}
+
+void class_tic_toc::start_lap() {
+    lap_time      = std::chrono::high_resolution_clock::duration::zero();
+    lap_timepoint = std::chrono::high_resolution_clock::now();
 }
 
 std::string class_tic_toc::get_name() const { return name; }
@@ -54,7 +60,26 @@ double class_tic_toc::get_measured_time() const {
     } else
         return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count();
 }
-double class_tic_toc::get_last_time_interval() const { return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count(); }
+
+double class_tic_toc::get_last_interval() const { return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count(); }
+
+double class_tic_toc::get_lap() const {
+    if(is_measuring) {
+        // From the measured time, subtract the time since the lap time point
+        auto measured_time_since_tic = std::chrono::high_resolution_clock::now() - tic_timepoint;
+        auto measured_time_until_lap = lap_timepoint >= tic_timepoint ? lap_timepoint - tic_timepoint : std::chrono::high_resolution_clock::duration::zero();
+        auto measured_time_since_lap =
+            std::chrono::duration_cast<std::chrono::duration<double>>(lap_time + measured_time_since_tic - measured_time_until_lap).count();
+        return measured_time_since_lap;
+    } else
+        return std::chrono::duration_cast<std::chrono::duration<double>>(lap_time).count();
+}
+
+double class_tic_toc::restart_lap() {
+    double lap = std::chrono::duration_cast<std::chrono::duration<double>>(lap_time).count();
+    start_lap();
+    return lap;
+}
 
 void class_tic_toc::print_age() const {
     if(enable) { std::cout << string_age() << std::endl; }
@@ -65,7 +90,7 @@ void class_tic_toc::print_measured_time() const {
 }
 
 void class_tic_toc::print_last_time_interval() const {
-    if(enable) { std::cout << string_last_time_interval() << std::endl; }
+    if(enable) { std::cout << string_last_interval() << std::endl; }
 }
 
 void class_tic_toc::print_measured_time_w_percent(double cmp) const {
@@ -88,7 +113,7 @@ std::string class_tic_toc::string_age() const { return class_tic_toc::string(get
 
 std::string class_tic_toc::string_measured_time() const { return class_tic_toc::string(); }
 
-std::string class_tic_toc::string_last_time_interval() const {
+std::string class_tic_toc::string_last_interval() const {
     return class_tic_toc::string(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
 }
 
@@ -101,7 +126,9 @@ void class_tic_toc::reset() {
     if(enable) {
         measured_time   = std::chrono::high_resolution_clock::duration::zero();
         delta_time      = std::chrono::high_resolution_clock::duration::zero();
+        lap_time        = std::chrono::high_resolution_clock::duration::zero();
         start_timepoint = std::chrono::high_resolution_clock::now();
+        lap_timepoint   = std::chrono::high_resolution_clock::now();
         is_measuring    = false;
     }
 }
