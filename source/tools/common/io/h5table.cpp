@@ -11,16 +11,33 @@
 
 void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                  const class_algorithm_status &status) {
-    if(storage_level < StorageLevel::LIGHT) return;
+    if(storage_level == StorageLevel::NONE) return;
+    // Check if the current entry has already been appended
+    // Status is special, flags can be updated without changing iter or step
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto                                                                  save_point = std::make_pair(status.iter, status.step);
     tools::log->trace("Appending to table: {}", table_path);
     h5pp_table_algorithm_status::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
-    h5ppFile.appendTableRecords(status, table_path);
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    if(save_log[table_path] == save_point) {
+        auto tableInfo = h5ppFile.getTableInfo(table_path);
+        h5ppFile.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
+    } else
+        h5ppFile.appendTableRecords(status, table_path);
+
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
+    save_log[table_path] = save_point;
 }
 
 void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
-                                                const class_algorithm_status &status) {
-    if(storage_level < StorageLevel::LIGHT) return;
+                                                const class_algorithm_status &status, std::optional<AlgorithmType> algo_type) {
+    if(storage_level == StorageLevel::NONE) return;
+    // Check if the current entry has already been appended
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto                                                                  save_point = std::make_pair(status.iter, status.step);
+    if(save_log[table_path] == save_point) return;
+
     tools::log->trace("Appending to table: {}", table_path);
     if(not algo_type) algo_type = tools::common::profile::get_current_algo_type();
     switch(algo_type.value()) {
@@ -168,7 +185,11 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
 
 void tools::common::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                 const class_algorithm_status &status) {
-    if(storage_level < StorageLevel::LIGHT) return;
+    if(storage_level == StorageLevel::NONE) return;
+    // Check if the current entry has already been appended
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    auto                                                                  save_point = std::make_pair(status.iter, status.step);
+    if(save_log[table_path] == save_point) return;
     log->trace("Appending to table: {}", table_path);
 
     h5pp_table_memory_usage::register_table_type();
