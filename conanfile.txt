@@ -14,6 +14,7 @@ cmake
 [options]
 *:shared=False
 openblas:build_lapack=True
+openblas:dynamic_arch=False
 ceres-solver:march=native
 ceres-solver:verbose=True
 
