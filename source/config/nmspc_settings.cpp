@@ -19,7 +19,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     input::config_filename      = dmrg_config.file_path.string();
     input::config_file_contents = dmrg_config.get_config_file_as_string();
     /* clang-format off */
-    dmrg_config.load_parameter                    ("input::seed"                                  , input::seed);
+    dmrg_config.load_parameter("input::seed"                                  , input::seed);
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
     dmrg_config.load_parameter("output::output_filepath"                      , output::output_filepath);
     dmrg_config.load_parameter("output::save_profiling"                       , output::save_profiling);

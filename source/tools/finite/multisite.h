@@ -1,7 +1,6 @@
 #pragma once
 
-#include <general/nmspc_tensor_omp.h>
-#include <list>
+#include <general/nmspc_tensor_extra.h>
 #include <optional>
 
 class class_state_finite;

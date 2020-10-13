@@ -102,16 +102,16 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
 }
 
 /*! Write all the MPO's with site info in attributes */
-void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::string &mpo_path, const StorageLevel &storage_level,
+void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
                                            const class_model_finite &model) {
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
-    if(h5ppFile.linkExists(mpo_path)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_path);
+    if(h5ppFile.linkExists(model_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix);
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
-    for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, mpo_path); }
-    h5ppFile.writeAttribute(settings::model::model_size, "model_size", mpo_path);
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_path);
+    for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, model_prefix); }
+    h5ppFile.writeAttribute(settings::model::model_size, "model_size", model_prefix);
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix);
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 

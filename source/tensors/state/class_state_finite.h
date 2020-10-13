@@ -42,9 +42,9 @@ class class_state_finite {
         std::optional<Eigen::Tensor<Scalar, 3>> multisite_tensor = std::nullopt;
     };
 
-    size_t                    iter      = 0;
-    size_t                    step      = 0;
-    int                       direction = 1;
+    size_t              iter      = 0;
+    size_t              step      = 0;
+    int                 direction = 1;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;
 
@@ -76,12 +76,6 @@ class class_state_finite {
     void   set_step(size_t step_);
     void   increment_step();
 
-    //    long                   get_chi_lim() const;
-    //    void                   set_chi_lim(long chi_lim_);
-    //    long                   get_chi_lim_max() const;
-    //    void                   set_chi_lim_max(long chi_max_);
-    //    long                   get_chi_lim_init() const;
-    //    void                   set_chi_lim_init(long chi_max_);
     long find_largest_chi() const;
 
     void                   set_positions();

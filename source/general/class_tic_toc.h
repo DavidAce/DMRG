@@ -18,18 +18,18 @@ class class_tic_toc {
     hresclock::duration   measured_time = std::chrono::high_resolution_clock::duration::zero();
     hresclock::duration   lap_time;
 
-    std::string name            = "";
+    std::string name;
     bool        enable          = true; // Whether we are profiling or not.
-    bool        is_measuring    = false;
     int         print_precision = 5;
     int         padding         = 5;
 
     public:
+    bool is_measuring = false;
     class_tic_toc(bool on_off, int prec, std::string output_text); // Constructor
     class_tic_toc();
-    void tic();
-    void toc();
-
+    void                      tic();
+    void                      toc();
+    void                      reset();
     void                      set_properties(bool on_off, int prec, std::string output_text);
     void                      set_label(std::string output_text);
     void                      set_measured_time(double measured_time);
@@ -50,8 +50,6 @@ class class_tic_toc {
     [[nodiscard]] std::string string_measured_time() const;
     [[nodiscard]] std::string string_last_interval() const;
     [[nodiscard]] std::string string_measured_time_w_percent(double cmp = std::numeric_limits<double>::quiet_NaN()) const;
-
-    void reset();
 
     class_tic_toc &      operator=(double other_time_in_seconds);
     class_tic_toc &      operator+=(double other_time_in_seconds);

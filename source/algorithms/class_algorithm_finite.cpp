@@ -99,9 +99,9 @@ void class_algorithm_finite::run_preprocessing() {
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
     tools::common::profile::prof[algo_type]["t_pos"]->tic();
-    write_to_file(StorageReason::CHECKPOINT,CopyPolicy::OFF);
-    write_to_file(StorageReason::PROJ_STATE,CopyPolicy::OFF);
-    write_to_file(StorageReason::FINISHED,CopyPolicy::FORCE);
+    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);
+    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
+    write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);
     print_status_full();
     tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::log->info("Finished default postprocessing for {}", algo_name);
@@ -443,8 +443,8 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         for(auto &r : reports) all_avergs.push_back(r.avgY);
         for(auto &r : reports) all_slopes.push_back(r.slope);
         if(tools::log->level() == spdlog::level::debug)
-            tools::log->debug("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f}", idx_max_slope, reports[idx_max_slope].slope,
-                              slope_threshold.value());
+            tools::log->debug("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f}", idx_max_slope,
+                              reports[idx_max_slope].slope, slope_threshold.value());
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Entanglement slope details:");
             tools::log->trace(" -- site              = {}", idx_max_slope);
