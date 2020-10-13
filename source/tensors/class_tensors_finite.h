@@ -58,6 +58,7 @@ class class_tensors_finite {
 
     void sync_active_sites();
     void activate_sites(long threshold, size_t max_sites, size_t min_sites = 2);
+    void activate_sites(const std::vector<size_t> & sites);
     void activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 2);
     long active_problem_size() const;
     void do_all_measurements() const;
