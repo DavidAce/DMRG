@@ -132,6 +132,23 @@ void class_tensors_finite::activate_sites(long threshold, size_t max_sites, size
     clear_measurements();
 }
 
+void class_tensors_finite::activate_sites(const std::vector<size_t> & sites){
+    if(active_sites == sites) {
+        state->active_sites = active_sites;
+        model->active_sites = active_sites;
+        edges->active_sites = active_sites;
+        return;
+    }
+
+    active_sites = sites;
+    state->active_sites = active_sites;
+    model->active_sites = active_sites;
+    edges->active_sites = active_sites;
+    rebuild_edges();
+    clear_cache();
+    clear_measurements();
+}
+
 void class_tensors_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
     active_sites        = tools::finite::multisite::generate_truncated_site_list(*state, threshold, chi_lim, max_sites, min_sites);
     state->active_sites = active_sites;
