@@ -7,29 +7,12 @@
 #include <vector>
 
 std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {
-    int max_nev;
-    if(shape <= 512) max_nev = shape / 2;
-    else if(shape > 512 and shape <= 1024)
-        max_nev = shape / 4;
-    // should do full diag
-    else if(shape > 1024 and shape <= 2048)
-        max_nev = shape / 4;
-    // should do full diag
-    else if(shape > 2048 and shape <= 4096)
-        max_nev = 64;
-    else if(shape > 4096 and shape <= 8192)
-        max_nev = 32;
-    else
-        max_nev = 16;
-
-    int min_nev = std::min(std::min(8, (int) shape), max_nev);
-
-    std::vector<int> nev_list = {min_nev};
-    int              tmp_nev  = min_nev;
-    while(tmp_nev < max_nev) {
-        tmp_nev = std::min(4 * tmp_nev, max_nev);
-        nev_list.push_back(tmp_nev);
-    }
+    std::vector<int> nev_list = {8};
+    if(shape <= 512) nev_list = {32,128};
+    if(512 < shape and shape <= 1024) nev_list = {64,128,256};
+    if(1024 < shape and shape <= 2048) nev_list = {8,64,256};
+    if(2048 < shape and shape <= 3072)  nev_list = {8,128,256};
+    if(3072 < shape and shape <= 4096)  nev_list = {8,128};
     return nev_list;
 }
 
