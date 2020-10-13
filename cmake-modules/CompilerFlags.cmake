@@ -51,14 +51,15 @@ endif()
 # The bug was hard to track down, and could be fixed by various other flags that
 # hurt performance more, like -mno-avx, removing -DNDEBUG, or lowering -O3 to -O2.
 ######################################################################################
+
 if(CXX_MARCH)
     message(STATUS "Using microarchitechture: ${CXX_MARCH}")
     list(APPEND CMAKE_CXX_FLAGS            -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 endif()
 
 list(APPEND CMAKE_CXX_FLAGS                )
-list(APPEND CMAKE_CXX_FLAGS_RELEASE  -g -O3 -fno-omit-frame-pointer -fno-strict-aliasing -fstack-protector -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wpedantic)
-list(APPEND CMAKE_CXX_FLAGS_DEBUG    -g -O0 -fno-omit-frame-pointer -fno-strict-aliasing -fstack-protector -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wpedantic) #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+list(APPEND CMAKE_CXX_FLAGS_RELEASE  -g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic)
+list(APPEND CMAKE_CXX_FLAGS_DEBUG    -g -O0 -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer) #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 list(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO )
 list(APPEND CMAKE_CXX_FLAGS_MINSIZEREL)
 
