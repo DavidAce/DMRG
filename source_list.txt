@@ -62,7 +62,6 @@ source/tools/finite/opt-internal/ceres_subspace_diag_part.cpp
 source/tools/finite/opt-internal/ceres_subspace_filter.cpp
 source/tools/finite/opt-internal/ceres_subspace_functor.cpp
 source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp
-source/tools/finite/opt-internal/enum_classes.cpp
 source/tools/finite/opt-internal/ground_state.cpp
 source/tools/finite/opt-internal/report.cpp
 source/tools/finite/opt.cpp
@@ -139,7 +138,6 @@ source/tools/finite/ops.h
 source/tools/finite/opt_state.h
 source/tools/finite/opt-internal/ceres_direct_functor.h
 source/tools/finite/opt-internal/ceres_subspace_functor.h
-source/tools/finite/opt-internal/enum_classes.h
 source/tools/finite/opt.h
 source/tools/finite/print.h
 source/tools/finite/views.h

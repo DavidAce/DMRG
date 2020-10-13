@@ -15,6 +15,20 @@ class class_xdmrg : public class_algorithm_finite {
     private:
     double energy_window_growth_factor = 1.0;
 
+    struct OptConf {
+        OptMode             optMode          = OptMode::VARIANCE;
+        OptSpace            optSpace         = OptSpace::DIRECT;
+        OptType             optType          = OptType::CPLX;
+        OptInit             optInit          = OptInit::CURRENT_STATE;
+        size_t              max_sites        = 2;
+        size_t              min_sites        = 2;
+        long                max_problem_size = 0;
+        long                problem_size     = 0;
+        std::array<long, 3> problem_dims;
+        std::vector<size_t> chosen_sites;
+    };
+    std::vector<OptConf> get_opt_conf_list();
+
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;

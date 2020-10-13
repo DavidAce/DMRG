@@ -17,6 +17,7 @@
 #include <tools/finite/debug.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
+#include <tools/finite/multisite.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_state.h>
 
@@ -252,6 +253,104 @@ void class_xdmrg::run_algorithm() {
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
     tools::common::profile::prof[algo_type]["t_sim"]->toc();
+}
+
+std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
+    tools::log->trace("Configuring xDMRG optimization trial");
+    std::vector<OptConf> configs;
+
+    /*
+     *
+     *  First trial
+     *
+     */
+    OptConf c1;
+
+    // The first decision is easy. Real or complex optimization
+    if(tensors.is_real()) c1.optType = OptType::REAL;
+
+    // Next we setup the mode at the early stages of the simulation
+    // Note that we make stricter requirements as we go down the if-list
+
+    // If the bond dimension is small enough we should give subspace a shot
+    if(tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+
+    // Very early in the simulation it is worth just following the overlap to get the
+    // overal structure of the final state
+    if(status.iter < 2) {
+        c1.optMode  = OptMode::OVERLAP;
+        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+
+    // Setup strong overrides to normal conditions, e.g.,
+    //      - for experiments like perturbation or chi quench
+    //      - when the algorithm has already converged
+    if(status.variance_mpo_has_converged) {
+        // No need to do expensive operations -- just finish
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::DIRECT;
+    }
+
+    // Setup the maximum problem size here
+    switch(c1.optSpace) {
+        case OptSpace::DIRECT: c1.max_problem_size = settings::precision::max_size_direct; break;
+        case OptSpace::SUBSPACE_ONLY:
+        case OptSpace::SUBSPACE_AND_DIRECT: c1.max_problem_size = settings::precision::max_size_part_diag; break;
+    }
+    // Make sure not to use SUBSPACE if the 2-site problem size is huge
+    // When this happens, we can't use SUBSPACE even with two sites,
+    // so we might as well give it to DIRECT, which handles larger problems.
+    if(tensors.state->size_2site() > c1.max_problem_size) {
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::DIRECT;
+    }
+
+    // We can make trials with different number of sites.
+    // Eg if the simulation is stuck we may try with 4 or 8 sites.
+    if(status.algorithm_has_got_stuck) c1.max_sites = std::min<size_t>(4, settings::strategy::multisite_max_sites);
+    if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(c1.optMode == OptMode::OVERLAP) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
+
+    c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
+    c1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c1.chosen_sites);
+    c1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c1.chosen_sites);
+
+    configs.emplace_back(c1);
+
+    /*
+     *
+     *  Second trial
+     *
+     */
+    OptConf c2 = c1; // Start with c1 as a baseline
+                     //    c2.optWhen = OptWhen::PREV_FAIL; // Only run if the previous was unsuccessful
+
+//    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::OVERLAP) {
+//        // I.e. if we did an SUBSPACE OVERLAP run that failed, do the following
+//        c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
+//        c2.optSpace = OptSpace::DIRECT;
+//        c2.optMode  = OptMode::VARIANCE;
+//        configs.emplace_back(c2);
+//    } else
+    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE) {
+        // I.e. if we did a SUBSPACE VARIANCE run that failed, do the following
+        c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
+        c2.optSpace = OptSpace::DIRECT;
+        c2.optMode  = OptMode::VARIANCE;
+        configs.emplace_back(c2);
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c1.max_sites != settings::strategy::multisite_max_sites) {
+        c2.max_sites    = settings::strategy::multisite_max_sites;
+        c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
+        c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
+        c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
+        if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
+    }
+
+    return configs;
 }
 
 void class_xdmrg::single_xDMRG_step() {
@@ -515,9 +614,9 @@ void class_xdmrg::check_convergence() {
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
     if(tensors.state->position_is_any_edge()) {
-        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}", status.algorithm_has_converged,
-                          status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck, status.algorithm_has_stuck_for,
-                          status.algorithm_has_to_stop);
+        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
+                          status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
+                          status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
 
     tools::common::profile::prof[algo_type]["t_con"]->toc();

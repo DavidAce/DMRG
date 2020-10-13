@@ -11,7 +11,6 @@
 #include <ceres/ceres.h>
 #include <config/enums.h>
 #include <general/nmspc_tensor_omp.h>
-#include <tools/finite/opt-internal/enum_classes.h>
 #include <tools/common/log.h>
 
 class class_state_finite;
