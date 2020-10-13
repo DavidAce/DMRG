@@ -11,15 +11,17 @@ enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
-enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE};
+enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
-enum class StateType {
-    RANDOM_PRODUCT_STATE,
-    RANDOM_ENTANGLED_STATE, RANDOMIZE_PREVIOUS_STATE,
-    PRODUCT_STATE
-};
+enum class OptType { REAL, CPLX };
+enum class OptMode { VARIANCE, OVERLAP };
+enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
+enum class OptWhen { ALWAYS,NEVER, PREV_FAIL,  };
+enum class OptMark { PASS,FAIL, };
+enum class OptInit { CURRENT_STATE, LAST_RESULT };
 
+enum class StateType { RANDOM_PRODUCT_STATE, RANDOM_ENTANGLED_STATE, RANDOMIZE_PREVIOUS_STATE, PRODUCT_STATE };
 
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -27,8 +29,6 @@ enum class PerturbMode {
     UNIFORM_RANDOM_PERCENTAGE, // J_ptb = std::random_uniform(-couplingPtb, couplingPtb) * J_rnd
     UNIFORM_RANDOM_ABSOLUTE,   // J_ptb = std::random_uniform(-couplingPtb, couplingPtb)
 };
-
-
 
 enum class fdmrg_task {
     INIT_RANDOMIZE_MODEL,
@@ -199,6 +199,32 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == CopyPolicy::TRY)                                    return "TRY";
         if(item == CopyPolicy::OFF)                                    return "OFF";
     }
+    if constexpr(std::is_same_v<T,OptType>){
+        if(item == OptType::REAL)                                      return "REAL";
+        if(item == OptType::CPLX)                                      return "CPLX";
+    }
+    if constexpr(std::is_same_v<T,OptMode>){
+        if(item == OptMode::VARIANCE)                                  return "VARIANCE";
+        if(item == OptMode::OVERLAP)                                   return "OVERLAP";
+    }
+    if constexpr(std::is_same_v<T,OptSpace>){
+        if(item == OptSpace::SUBSPACE_ONLY)                            return "SUBSPACE_ONLY";
+        if(item == OptSpace::SUBSPACE_AND_DIRECT)                      return "SUBSPACE_AND_DIRECT";
+        if(item == OptSpace::DIRECT)                                   return "DIRECT";
+    }
+    if constexpr(std::is_same_v<T,OptWhen>){
+        if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
+        if(item == OptWhen::NEVER)                                     return "NEVER";
+        if(item == OptWhen::PREV_FAIL)                                 return "PREV_FAIL";
+    }
+    if constexpr(std::is_same_v<T,OptMark>){
+        if(item == OptMark::PASS)                                      return "PASS";
+        if(item == OptMark::FAIL)                                      return "FAIL";
+    }
+    if constexpr(std::is_same_v<T,OptInit>){
+        if(item == OptInit::CURRENT_STATE)                             return "CURRENT_STATE";
+        if(item == OptInit::LAST_RESULT)                               return "LAST_RESULT";
+    }
     throw std::runtime_error("Given invalid enum item");
 }
 
@@ -303,34 +329,58 @@ constexpr auto str2enum(std::string_view item) {
     }
 
     if constexpr(std::is_same_v<T,xdmrg_task>){
-        if(item == "INIT_RANDOMIZE_MODEL")                   return xdmrg_task::INIT_RANDOMIZE_MODEL;
-        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")      return xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
-        if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")    return xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "INIT_RANDOMIZE_INTO_STATE_IN_WIN")       return xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN;
-        if(item == "INIT_RANDOMIZE_FROM_CURRENT_STATE")      return xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE;
-        if(item == "INIT_BOND_DIM_LIMITS")                   return xdmrg_task::INIT_BOND_DIM_LIMITS;
-        if(item == "INIT_ENERGY_LIMITS")                     return xdmrg_task::INIT_ENERGY_LIMITS;
-        if(item == "INIT_WRITE_MODEL")                       return xdmrg_task::INIT_WRITE_MODEL;
-        if(item == "INIT_CLEAR_STATUS")                      return xdmrg_task::INIT_CLEAR_STATUS;
-        if(item == "INIT_DEFAULT")                           return xdmrg_task::INIT_DEFAULT;
-        if(item == "NEXT_RANDOMIZE_INTO_PRODUCT_STATE")      return xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE;
-        if(item == "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE")    return xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "NEXT_RANDOMIZE_PREVIOUS_STATE")          return xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE;
-        if(item == "NEXT_RANDOMIZE_INTO_STATE_IN_WIN")       return xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN;
-        if(item == "FIND_ENERGY_RANGE")                      return xdmrg_task::FIND_ENERGY_RANGE;
-        if(item == "FIND_EXCITED_STATE")                     return xdmrg_task::FIND_EXCITED_STATE;
-        if(item == "POST_WRITE_RESULT")                      return xdmrg_task::POST_WRITE_RESULT;
-        if(item == "POST_PRINT_RESULT")                      return xdmrg_task::POST_PRINT_RESULT;
-        if(item == "POST_DEFAULT")                           return xdmrg_task::POST_DEFAULT;
-        if(item == "PROF_RESET")                             return xdmrg_task::PROF_RESET;
+        if(item == "INIT_RANDOMIZE_MODEL")                    return xdmrg_task::INIT_RANDOMIZE_MODEL;
+        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")       return xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")     return xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_STATE_IN_WIN")        return xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN;
+        if(item == "INIT_RANDOMIZE_FROM_CURRENT_STATE")       return xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE;
+        if(item == "INIT_BOND_DIM_LIMITS")                    return xdmrg_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_ENERGY_LIMITS")                      return xdmrg_task::INIT_ENERGY_LIMITS;
+        if(item == "INIT_WRITE_MODEL")                        return xdmrg_task::INIT_WRITE_MODEL;
+        if(item == "INIT_CLEAR_STATUS")                       return xdmrg_task::INIT_CLEAR_STATUS;
+        if(item == "INIT_DEFAULT")                            return xdmrg_task::INIT_DEFAULT;
+        if(item == "NEXT_RANDOMIZE_INTO_PRODUCT_STATE")       return xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE")     return xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "NEXT_RANDOMIZE_PREVIOUS_STATE")           return xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE;
+        if(item == "NEXT_RANDOMIZE_INTO_STATE_IN_WIN")        return xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN;
+        if(item == "FIND_ENERGY_RANGE")                       return xdmrg_task::FIND_ENERGY_RANGE;
+        if(item == "FIND_EXCITED_STATE")                      return xdmrg_task::FIND_EXCITED_STATE;
+        if(item == "POST_WRITE_RESULT")                       return xdmrg_task::POST_WRITE_RESULT;
+        if(item == "POST_PRINT_RESULT")                       return xdmrg_task::POST_PRINT_RESULT;
+        if(item == "POST_DEFAULT")                            return xdmrg_task::POST_DEFAULT;
+        if(item == "PROF_RESET")                              return xdmrg_task::PROF_RESET;
     }
     if constexpr(std::is_same_v<T,CopyPolicy>){
-        if(item == "FORCE")                                  return CopyPolicy::FORCE;
-        if(item == "TRY")                                    return CopyPolicy::TRY;
-        if(item == "OFF")                                    return CopyPolicy::OFF;
+        if(item == "FORCE")                                   return CopyPolicy::FORCE;
+        if(item == "TRY")                                     return CopyPolicy::TRY;
+        if(item == "OFF")                                     return CopyPolicy::OFF;
     }
-
-
+    if constexpr(std::is_same_v<T,OptType>){
+        if(item == "REAL")                                    return OptType::REAL;
+        if(item == "CPLX")                                    return OptType::CPLX;
+    }
+    if constexpr(std::is_same_v<T,OptMode>){
+        if(item == "VARIANCE")                                return OptMode::VARIANCE;
+        if(item == "OVERLAP")                                 return OptMode::OVERLAP;
+    }
+    if constexpr(std::is_same_v<T,OptSpace>){
+        if(item == "SUBSPACE_ONLY")                           return OptSpace::SUBSPACE_ONLY;
+        if(item == "SUBSPACE_AND_DIRECT")                     return OptSpace::SUBSPACE_AND_DIRECT;
+        if(item == "DIRECT")                                  return OptSpace::DIRECT;
+    }
+    if constexpr(std::is_same_v<T,OptWhen>){
+        if(item == "ALWAYS")                                  return OptWhen::ALWAYS;
+        if(item == "NEVER")                                   return OptWhen::NEVER;
+        if(item == "PREV_FAIL")                               return OptWhen::PREV_FAIL;
+    }
+    if constexpr(std::is_same_v<T,OptMark>){
+        if(item == "PASS")                                    return OptMark::PASS;
+        if(item == "FAIL")                                    return OptMark::FAIL;
+    }
+    if constexpr(std::is_same_v<T,OptInit>){
+        if(item == "CURRENT_STATE")                           return OptInit::CURRENT_STATE;
+        if(item == "LAST_RESULT")                             return OptInit::LAST_RESULT;
+    }
     throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
 }
 /* clang-format on */
