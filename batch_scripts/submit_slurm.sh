@@ -41,7 +41,7 @@ time=--time=0-1:00:00
 ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
-openmode=append
+openmode="--open-mode=append"
 
 while getopts ha:b:c:def:g:jJ:m:n:N:o:O:p:q:rs:S:t:v: o; do
     case $o in
