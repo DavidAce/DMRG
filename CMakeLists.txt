@@ -9,17 +9,18 @@ project(DMRG++
 list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 # Set options this build
-option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
 option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                                   ON)
 option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                             OFF)
-option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
 option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                               OFF)
+option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitize=address"          OFF)
+option(DMRG_ENABLE_USAN              "Enable undefined behavior sanitizer -fsanitize=undefined"     OFF)
+option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
+option(DMRG_ENABLE_PCH               "Enable precompiled headers to speed up compilation"           ON)
+option(DMRG_ENABLE_CCACHE            "Enable ccache to speed up compilation"                        ON)
 option(DMRG_BUILD_EXAMPLES           "Build examples"                                               OFF)
 option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
 option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
-option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitize=address"          OFF)
-option(DMRG_ENABLE_USAN              "Enable undefined behavior sanitizer -fsanitize=undefined"     OFF)
-
+option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
 
 # Make an "enum" for valid download methods
 set(DMRG_DOWNLOAD_METHODS_VALID find fetch find-or-fetch conan)
@@ -244,50 +245,38 @@ if(NOT TARGET openmp::openmp)
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
 
+
+
 # Speed up with precompiled headers
-if(COMMAND target_precompile_headers)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/rnd.h>)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/prof.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/class_tic_toc.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <config/nmspc_settings.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <config/enums.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
+if(DMRG_ENABLE_PCH)
+    if(COMMAND target_precompile_headers)
+        target_precompile_headers(${PROJECT_NAME} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
+        target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
+    endif()
 endif()
-
-
-# Speed up with precompiled headers
-#if(COMMAND target_precompile_headers)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <spdlog/spdlog.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/eig.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <math/svd.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/log.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/common/fmt.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_tensor_extra.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Dense>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <Eigen/Core>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <unsupported/Eigen/CXX11/Tensor>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <vector> <array> <complex> <map> <optional> <iostream> <iomanip> <memory>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <general/nmspc_quantum_mechanics.h>)
-#    target_precompile_headers(${PROJECT_NAME} PRIVATE <tools/finite/opt.h>)
-#endif()
-
-
-
 
 target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
 target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
+
+
+#######################################
+# Settings for ccache               ###
+#######################################
+if(DMRG_ENABLE_CCACHE)
+    find_program(CCACHE_PROGRAM ccache)
+    if(CCACHE_PROGRAM)
+        set_target_properties(${PROJECT_NAME} PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+        set_target_properties(dmrg-eig PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+        message(STATUS "Using ccache ${CCACHE_PROGRAM}")
+        if(DMRG_ENABLE_PCH AND COMMAND target_precompile_headers)
+            message(STATUS "Detected ccache + pch: Remember to set --> sloppiness = include_file_mtime,pch_defines,time_macros <-- in your ccache.conf")
+        endif()
+    else()
+        message(STATUS "ccache program could not be found")
+    endif()
+endif()
+
 
 
 # Uninstall target
