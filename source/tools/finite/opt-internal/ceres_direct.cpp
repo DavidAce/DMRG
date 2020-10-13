@@ -14,13 +14,13 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/opt_tensor.h>
+#include <tools/finite/opt_state.h>
 
-tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &  tensors,
+tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &  tensors,
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
-    opt_tensor          initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
                               tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                               tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                               tools::finite::measure::energy_variance(tensors),
@@ -30,7 +30,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     return ceres_direct_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
-tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const opt_tensor &initial_tensor,
+tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const opt_state &initial_tensor,
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
@@ -41,7 +41,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::internal::ceres_direct_optimi
     const auto  current_vector = Eigen::Map<const Eigen::VectorXcd>(current_tensor.data(), current_tensor.size());
     auto        options        = internal::ceres_default_options;
     auto        summary        = ceres::GradientProblemSolver::Summary();
-    opt_tensor  optimized_tensor;
+    opt_state   optimized_tensor;
     optimized_tensor.set_name(initial_tensor.get_name());
     optimized_tensor.set_sites(initial_tensor.get_sites());
     optimized_tensor.set_length(initial_tensor.get_length());

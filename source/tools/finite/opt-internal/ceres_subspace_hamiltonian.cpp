@@ -10,7 +10,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt.h>
-#include <tools/finite/opt_tensor.h>
+#include <tools/finite/opt_state.h>
 using Scalar = std::complex<double>;
 using real   = double;
 using cplx   = std::complex<double>;
@@ -59,7 +59,7 @@ template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonia
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &model, const class_edges_finite &edges,
-                                                                                              const std::vector<opt_tensor> &candidate_list) {
+                                                                                              const std::vector<opt_state> &candidate_list) {
     // First, make sure every candidate is actually a basis vector, otherwise this computation would turn difficult if we have to skip rows and columns
     for(const auto &candidate : candidate_list)
         if(not candidate.is_basis_vector)
@@ -148,10 +148,10 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 // Explicit instantiations
 template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &           model,
                                                                                                           const class_edges_finite &           edges,
-                                                                                                          const std::vector<opt_tensor> &candidate_list);
+                                                                                                          const std::vector<opt_state> &candidate_list);
 template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &           model,
                                                                                                           const class_edges_finite &           edges,
-                                                                                                          const std::vector<opt_tensor> &candidate_list);
+                                                                                                          const std::vector<opt_state> &candidate_list);
 
 // Eigen::Tensor<std::complex<double>, 6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_model_finite
 // &model,

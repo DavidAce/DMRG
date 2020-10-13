@@ -52,7 +52,7 @@ source/tools/finite/mps-internal/entangled_states.cpp
 source/tools/finite/mps.cpp
 source/tools/finite/multisite.cpp
 source/tools/finite/ops.cpp
-source/tools/finite/opt_tensor.cpp
+source/tools/finite/opt_state.cpp
 source/tools/finite/opt-internal/ceres_base.cpp
 source/tools/finite/opt-internal/ceres_direct.cpp
 source/tools/finite/opt-internal/ceres_direct_functor.cpp
@@ -136,7 +136,7 @@ source/tools/finite/measure.h
 source/tools/finite/mps.h
 source/tools/finite/multisite.h
 source/tools/finite/ops.h
-source/tools/finite/opt_tensor.h
+source/tools/finite/opt_state.h
 source/tools/finite/opt-internal/ceres_direct_functor.h
 source/tools/finite/opt-internal/ceres_subspace_functor.h
 source/tools/finite/opt-internal/enum_classes.h
