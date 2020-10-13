@@ -63,6 +63,10 @@ list(APPEND CMAKE_CXX_FLAGS_DEBUG    -g -O0 -fno-strict-aliasing -Wall -Wextra -
 list(APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO )
 list(APPEND CMAKE_CXX_FLAGS_MINSIZEREL)
 
+# For time tracing using ClangBuildAnalyzer
+#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#    list(APPEND CMAKE_CXX_FLAGS -ftime-trace)
+#endif()
 
 string (REPLACE " " ";" CMAKE_CXX_FLAGS_LIST                "${CMAKE_CXX_FLAGS}")
 string (REPLACE " " ";" CMAKE_CXX_FLAGS_RELEASE_LIST        "${CMAKE_CXX_FLAGS_RELEASE}")

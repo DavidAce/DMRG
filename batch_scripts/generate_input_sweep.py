@@ -11,9 +11,9 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.array([28,32,36]) #np.linspace(16,36,6, dtype=int)
+sites        = np.array([40,48,56,64]) #np.linspace(16,36,6, dtype=int)
 # sites        = np.linspace(16,36,6, dtype=int)
-lambdas      = [0.01] # np.linspace(0,0.2,3)
+lambdas      = [0.01,0.02,0.03] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_mean   = np.array([1])
 h_mean   = J_mean - deltas
@@ -42,8 +42,8 @@ for num_L,val_L in enumerate(sites):
                     "model::ising_sdual::lambda"         : str_l,
                     "model::ising_sdual::J_stdv"         : "1.0",
                     "model::ising_sdual::h_stdv"         : "1.0",
-                    "xdmrg::chi_lim_max"                 : "512",
-                    "xdmrg::max_states "                 : "2",
+                    "xdmrg::chi_lim_max"                 : "320",
+                    "xdmrg::max_states "                 : "4",
                 }
                 num_total = num_total + 1
                 generate_input_file(settings, input_filename, template_filename)
