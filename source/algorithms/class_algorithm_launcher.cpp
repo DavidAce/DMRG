@@ -90,11 +90,11 @@ void class_algorithm_launcher::start_h5pp_file(){
         h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::COLLISION_FAIL);
     }
     h5pp_file->setCompressionLevel(settings::output::compression_level);
-    if (not h5pp_file->linkExists("git")){
+    if (not h5pp_file->linkExists("git/DMRG++")){
         //Put git metadata in file
-        h5pp_file->writeDataset(GIT::BRANCH      , "git/branch");
-        h5pp_file->writeDataset(GIT::COMMIT_HASH , "git/commit");
-        h5pp_file->writeDataset(GIT::REVISION    , "git/revision");
+        h5pp_file->writeDataset(GIT::BRANCH      , "git/DMRG++/branch");
+        h5pp_file->writeDataset(GIT::COMMIT_HASH , "git/DMRG++/commit");
+        h5pp_file->writeDataset(GIT::REVISION    , "git/DMRG++/revision");
     }
 
     if(not h5pp_file->linkExists("common")) {
