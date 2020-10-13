@@ -5,8 +5,6 @@
 #pragma once
 
 #include "class_algorithm_finite.h"
-#include <Eigen/Core>
-#include <unsupported/Eigen/CXX11/Tensor>
 
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.

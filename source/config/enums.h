@@ -9,7 +9,7 @@ enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground s
 enum class ModelType { ising_tf_rf, ising_sdual };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
-enum class CopyPolicy {FORCE,TRY, OFF};
+enum class CopyPolicy { FORCE, TRY, OFF };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE};
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement

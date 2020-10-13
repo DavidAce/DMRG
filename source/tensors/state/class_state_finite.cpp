@@ -123,43 +123,6 @@ size_t class_state_finite::reset_step() { return step = 0; }
 void   class_state_finite::set_step(size_t step_) { step = step_; }
 void   class_state_finite::increment_step() { step++; }
 
-
-//long class_state_finite::get_chi_lim() const {
-//    // Should get the the current limit on allowed bond dimension
-//    if(not chi_lim) throw std::runtime_error("Chi limit has not been set yet");
-//    return chi_lim.value();
-//}
-//void class_state_finite::set_chi_lim(long chi_lim_) {
-//    // Should set the the current limit on allowed bond dimension
-//    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
-//    chi_lim = chi_lim_;
-//}
-//
-//
-//long class_state_finite::get_chi_lim_init() const {
-//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-//    if(not cfg_chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
-//    return cfg_chi_lim_max.value();
-//}
-//
-//void class_state_finite::set_chi_lim_init(long chi_max_) {
-//    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
-//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-//    cfg_chi_lim_max = chi_max_;
-//}
-//
-//long class_state_finite::get_chi_lim_max() const {
-//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-//    if(not cfg_chi_lim_max) throw std::runtime_error("Chi maximum has not been set yet");
-//    return cfg_chi_lim_max.value();
-//}
-//
-//void class_state_finite::set_chi_lim_max(long chi_max_) {
-//    // Should set the the highest limit on allowed bond dimension for the duration of the simulation
-//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-//    cfg_chi_lim_max = chi_max_;
-//}
-
 long class_state_finite::find_largest_chi() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));

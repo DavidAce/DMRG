@@ -250,7 +250,7 @@ namespace tools::finite::opt::internal{
             last_log_iter = summary.iteration;
             /* clang-format off */
             log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
-                      "|∇f|ₘₐₓ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
+                      "|∇f|∞ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
                       "t_step {:<6} t_iter {:<6} t_tot {:<5} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                       summary.iteration,
                       summary.cost,

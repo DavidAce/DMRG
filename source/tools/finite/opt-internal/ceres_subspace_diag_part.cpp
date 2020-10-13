@@ -64,7 +64,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
             break;
         }
         if(optSpace == OptSpace::SUBSPACE_ONLY and optMode == OptMode::OVERLAP and max_overlap >= 1.0 / std::sqrt(2.0)) {
-            reason = fmt::format("Overlap sufficient for OVERLAP and SUBSPACE_ONLY mode:  {:.16f} >= threshold {:.16f}", max_overlap , 1.0 / std::sqrt(2.0) );
+            reason = fmt::format("Overlap sufficient for SUBSPACE_ONLY OVERLAP mode:  {:.16f} >= threshold {:.16f}", max_overlap , 1.0 / std::sqrt(2.0) );
             break;
         }
     }

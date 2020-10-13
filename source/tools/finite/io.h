@@ -14,9 +14,9 @@ namespace tools::finite::io {
     /* clang-format off */
     namespace h5dset{
         extern int decide_layout(std::string_view prefix_path);
-        extern void save_state            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_finite & state);
-        extern void save_bonds            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_finite & state);
-        extern void save_model            (h5pp::File & h5ppFile, const std::string & mpo_path, const StorageLevel & storage_level, const class_model_finite & model);
+        extern void save_state            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_finite & state, const class_algorithm_status & status);
+        extern void save_model            (h5pp::File & h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_model_finite & model);
+        extern void save_entgm            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_finite & state, const class_algorithm_status & status);
 
     }
 

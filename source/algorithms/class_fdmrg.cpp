@@ -197,12 +197,9 @@ void class_fdmrg::check_convergence() {
     if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
     if(tensors.state->position_is_any_edge()) {
-        tools::log->debug("Algorithm has converged: {}", status.algorithm_has_converged);
-        tools::log->debug("Algorithm has saturated: {}", status.algorithm_has_saturated);
-        tools::log->debug("Algorithm has succeeded: {}", status.algorithm_has_succeeded);
-        tools::log->debug("Algorithm has got stuck: {}", status.algorithm_has_got_stuck);
-        tools::log->debug("Algorithm has stuck for: {}", status.algorithm_has_stuck_for);
-        tools::log->debug("Algorithm has to stop  : {}", status.algorithm_has_to_stop);
+        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
+                          status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
+                          status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
     tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
