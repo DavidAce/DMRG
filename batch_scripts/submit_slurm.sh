@@ -20,6 +20,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel by GNU Parallel (set to 1 for job arrays) (default = 32)
 -N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
+-O <append|truncate>                : Open mode for logs (default append)
 -p <partition>                      : Partition name (default = dedicated)
 -q <qos>                            : Select Quality Of Service (default = )
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
@@ -40,8 +41,9 @@ time=--time=0-1:00:00
 ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
+openmode=append
 
-while getopts ha:b:c:def:g:jJ:m:n:N:o:p:q:rs:S:t:v: o; do
+while getopts ha:b:c:def:g:jJ:m:n:N:o:O:p:q:rs:S:t:v: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
@@ -57,6 +59,7 @@ while getopts ha:b:c:def:g:jJ:m:n:N:o:p:q:rs:S:t:v: o; do
         (n) ntasks_parallel=$OPTARG;;
         (N) simspercfg=$OPTARG;;
         (o) other=$OPTARG;;
+        (o) openmode="--open-mode=$OPTARG";;
         (p) partition="--partition=$OPTARG";;
         (q) qos="--qos=$OPTARG";;
         (r) requeue=--requeue;;
@@ -261,13 +264,13 @@ for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
         echo "sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity --job-name=$jobname --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
     elif [ -n "$jobarray" ]; then
-        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $verbosity \
+        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
             --array=1-$simspersbatch \
             run_jobarray.sh -e $exec -f $simfile
     else
-        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $verbosity \
+        sbatch $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity \
             --job-name=$jobname \
             --ntasks=$ntasks_parallel \
             run_parallel.sh -e $exec -f $simfile
