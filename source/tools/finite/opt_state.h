@@ -4,7 +4,7 @@
 #include <general/nmspc_tensor_extra.h>
 
 namespace tools::finite::opt {
-    class opt_tensor {
+    class opt_state {
         using cplx = std::complex<double>;
         using real = double;
 
@@ -27,12 +27,12 @@ namespace tools::finite::opt {
         public:
         bool is_basis_vector = false;
 
-        opt_tensor() = default;
+        opt_state() = default;
         // Constructor used for candidates
-        opt_tensor(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+        opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
                    std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for solutions
-        opt_tensor(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+        opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                    double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
         [[nodiscard]] const std::string &                get_name() const;
@@ -73,7 +73,7 @@ namespace tools::finite::opt {
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
 
-        bool operator<(const opt_tensor &rhs) const;
-        bool operator>(const opt_tensor &rhs) const;
+        bool operator<(const opt_state &rhs) const;
+        bool operator>(const opt_state &rhs) const;
     };
 }

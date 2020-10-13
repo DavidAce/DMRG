@@ -12,9 +12,25 @@
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/opt.h>
-#include <tools/finite/opt_tensor.h>
+#include <tools/finite/opt_state.h>
 
-tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status,
+tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &  tensors,
+                                                                                       const class_algorithm_status &status, OptMode optMode, OptSpace optSpace, OptType optType) {
+    std::vector<size_t> sites = tensors.active_sites;
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                                       tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                                       tools::finite::measure::energy_variance(tensors),
+                                       1.0, // Overlap
+                                       tensors.get_length());
+
+    return find_excited_state(tensors, initial_tensor, status, optMode, optSpace, optType);
+}
+
+
+
+
+tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_state & initial_tensor, const class_algorithm_status &status,
                                                                       OptMode optMode, OptSpace optSpace, OptType optType) {
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", optMode, optSpace, optType,
@@ -75,7 +91,7 @@ tools::finite::opt::opt_tensor tools::finite::opt::find_excited_state(const clas
     //    s is the optimal step length computed by the line search.
     //    it is the time take by the current iteration.
     //    tt is the total time taken by the minimizer.
-    opt_tensor result;
+    opt_state result;
     switch(optSpace) {
             /* clang-format off */
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace); break;

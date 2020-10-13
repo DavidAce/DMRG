@@ -13,11 +13,11 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/opt_tensor.h>
+#include <tools/finite/opt_state.h>
 using namespace tools::finite::opt;
 
 template<typename Scalar>
-std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
+std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
                                                             OptSpace optSpace) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
@@ -66,7 +66,7 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     auto            energy_reduced       = model.get_energy_reduced();
     Eigen::VectorXd overlaps             = (multisite_mps_vector.adjoint() * eigvecs).cwiseAbs().real();
 
-    std::vector<opt_tensor> candidate_list;
+    std::vector<opt_state> candidate_list;
     for(long idx = 0; idx < eigvals.size(); idx++) {
         auto tensor_map = Textra::MatrixTensorMap(eigvecs.col(idx), state.active_dimensions());
         candidate_list.emplace_back(fmt::format("eigenvector {}", idx), tensor_map, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
@@ -76,16 +76,16 @@ std::vector<opt_tensor> internal::subspace::find_candidates(const class_tensors_
     return candidate_list;
 }
 
-template std::vector<opt_tensor> internal::subspace::find_candidates<cplx>(const class_tensors_finite &tensors, double subspace_error_threshold,
+template std::vector<opt_state> internal::subspace::find_candidates<cplx>(const class_tensors_finite &tensors, double subspace_error_threshold,
                                                                            OptMode optMode, OptSpace optSpace);
 
-template std::vector<opt_tensor> internal::subspace::find_candidates<real>(const class_tensors_finite &tensors, double subspace_error_threshold,
+template std::vector<opt_state> internal::subspace::find_candidates<real>(const class_tensors_finite &tensors, double subspace_error_threshold,
                                                                            OptMode optMode, OptSpace optSpace);
 
-opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
+opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
                                                                      OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
-    opt_tensor          initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
                               tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                               tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                               tools::finite::measure::energy_variance(tensors),
@@ -94,7 +94,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
     return ceres_subspace_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
-opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const opt_tensor &initial_tensor,
+opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const opt_state &initial_tensor,
                                                                      const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                      OptSpace optSpace) {
     tools::log->trace("Optimizing in SUBSPACE mode");
@@ -210,7 +210,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
      *  Step 0) Find the subspace
      */
 
-    std::vector<opt_tensor> candidate_list;
+    std::vector<opt_state> candidate_list;
     switch(optType) {
         case OptType::CPLX:
             candidate_list = internal::subspace::find_candidates<Scalar>(tensors, settings::precision::min_subspace_error, optMode, optSpace);
@@ -286,7 +286,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
     candidate_list_top_idx.emplace_back(candidate_list.size() - 1);
 
     tools::log->debug("Optimizing with {} initial guesses", candidate_list_top_idx.size());
-    std::vector<opt_tensor> optimized_results;
+    std::vector<opt_state> optimized_results;
     size_t                  candidate_count = 0;
     for(auto &idx : candidate_list_top_idx) {
         const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
@@ -342,7 +342,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
         auto options = internal::ceres_default_options;
         auto summary = ceres::GradientProblemSolver::Summary();
-        optimized_results.emplace_back(opt_tensor());
+        optimized_results.emplace_back(opt_state());
         auto &optimized_tensor = optimized_results.back();
         optimized_tensor.set_name(candidate.get_name());
         optimized_tensor.set_sites(candidate.get_sites());
@@ -429,7 +429,7 @@ opt_tensor tools::finite::opt::internal::ceres_subspace_optimization(const class
 
     // Sort thetas in ascending order in variance
     std::sort(optimized_results.begin(), optimized_results.end(),
-              [](const opt_tensor &lhs, const opt_tensor &rhs) { return lhs.get_variance() < rhs.get_variance(); });
+              [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
     // Return the best theta
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();

@@ -22,7 +22,7 @@ class class_algorithm_status;
 class class_tic_toc;
 
 namespace tools::finite::opt {
-    class opt_tensor;
+    class opt_state;
 
     using cplx = std::complex<double>;
     using real = double;
@@ -33,7 +33,9 @@ namespace tools::finite::opt {
     using TensorType = Eigen::Tensor<T, rank>;
 
     using Scalar = std::complex<double>;
-    extern opt_tensor find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
+    extern opt_state find_excited_state(const class_tensors_finite &tensors, const opt_state &initial_tensor, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
+                                         OptType optType);
+    extern opt_state find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
                                          OptType optType);
     extern Eigen::Tensor<Scalar, 3> find_ground_state(const class_tensors_finite &tensors, StateRitz ritz);
 }
@@ -41,18 +43,18 @@ namespace tools::finite::opt {
 /* clang-format off */
 namespace tools::finite::opt::internal{
 
-    extern opt_tensor
+    extern opt_state
            ceres_direct_optimization(const class_tensors_finite & tensors, const class_algorithm_status &status, OptType optType, OptMode optMode,OptSpace optSpace);
 
-    extern opt_tensor
-           ceres_direct_optimization(const class_tensors_finite & tensors, const opt_tensor &initial_tensor,
+    extern opt_state
+           ceres_direct_optimization(const class_tensors_finite & tensors, const opt_state &initial_tensor,
                                      const class_algorithm_status &status, OptType optType, OptMode optMode,OptSpace optSpace);
 
-    extern opt_tensor
+    extern opt_state
            ceres_subspace_optimization (const class_tensors_finite & tensors, const class_algorithm_status & status, OptType optType, OptMode optMode,OptSpace optSpace);
 
-    extern opt_tensor
-            ceres_subspace_optimization(const class_tensors_finite & tensors, const opt_tensor &initial_tensor,
+    extern opt_state
+            ceres_subspace_optimization(const class_tensors_finite & tensors, const opt_state &initial_tensor,
                                       const class_algorithm_status &status, OptType optType, OptMode optMode,OptSpace optSpace);
 
 
@@ -77,26 +79,26 @@ namespace tools::finite::opt::internal{
         find_subspace(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
 
         template<typename Scalar>
-        extern std::vector<opt_tensor>
+        extern std::vector<opt_state>
         find_candidates(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
 
         extern void
-        filter_candidates(std::vector<opt_tensor> & candidate_list, double maximum_subspace_error, size_t max_accept);
+        filter_candidates(std::vector<opt_state> & candidate_list, double maximum_subspace_error, size_t max_accept);
 
 
-        extern std::optional<size_t> get_idx_to_candidate_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site);
-        extern std::vector<size_t> get_idx_to_candidates_with_highest_overlap(const std::vector<opt_tensor> & candidate_list, size_t max_candidates, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::optional<size_t> get_idx_to_candidate_with_highest_overlap(const std::vector<opt_state> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::vector<size_t> get_idx_to_candidates_with_highest_overlap(const std::vector<opt_state> & candidate_list, size_t max_candidates, double energy_llim_per_site, double energy_ulim_per_site);
 
-        extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_tensor> & candidate_list);
-        extern Eigen::VectorXd get_eigvals(const std::vector<opt_tensor> & candidate_list);
-        extern Eigen::VectorXd get_energies(const std::vector<opt_tensor> & candidate_list);
-        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_tensor> & candidate_list);
-        extern Eigen::VectorXd get_overlaps(const std::vector<opt_tensor> & candidate_list);
-        extern double get_subspace_error(const std::vector<opt_tensor> & candidate_list);
+        extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_state> & candidate_list);
+        extern Eigen::VectorXd get_eigvals(const std::vector<opt_state> & candidate_list);
+        extern Eigen::VectorXd get_energies(const std::vector<opt_state> & candidate_list);
+        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_state> & candidate_list);
+        extern Eigen::VectorXd get_overlaps(const std::vector<opt_state> & candidate_list);
+        extern double get_subspace_error(const std::vector<opt_state> & candidate_list);
         extern double get_subspace_error(const std::vector<double> &overlaps);
-        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_tensor> & candidate_list, size_t idx);
-        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_tensor> & candidate_list, const Eigen::VectorXcd & subspace_vector);
-        extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_tensor> & candidate_list, const Eigen::VectorXcd & subspace_vector);
+        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_state> & candidate_list, size_t idx);
+        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_state> & candidate_list, const Eigen::VectorXcd & subspace_vector);
+        extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_state> & candidate_list, const Eigen::VectorXcd & subspace_vector);
     }
 
 
@@ -117,7 +119,7 @@ namespace tools::finite::opt::internal{
     template <typename T>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
     template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const std::vector<opt_tensor> & candidate_list);
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const std::vector<opt_state> & candidate_list);
 
 
     inline ceres::GradientProblemSolver::Options ceres_default_options;
@@ -164,7 +166,7 @@ namespace tools::finite::opt::internal{
 
         void bfgs_add_entry(const std::string & description, long size,long space, double energy, double variance,
                             double overlap, double norm, size_t iter, size_t counter, double time);
-        void bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_tensor & tensor, std::optional<long> space = std::nullopt);
+        void bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_state & tensor, std::optional<long> space = std::nullopt);
         void time_add_dir_entry();
         void time_add_sub_entry();
         void eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time);
