@@ -35,7 +35,7 @@ for num_L,val_L in enumerate(sites):
                 input_filename = location + '/' + basename + '_L'+ str_L + '_l' + str_l + '_J'+ str_j + '_h'+ str_h + '.cfg'
                 settings = {
                     "output::output_filepath"            : 'output/L_'+ str_L + '/l_'+ str_l + '/J_' + str_j + '/h_'+ str_h + '/' + basename + '.h5',
-                    "threading::num_threads"             : "1",
+                    "threading::num_threads"             : "4",
                     "model::model_size"                  : str_L,
                     "model::ising_sdual::J_mean"         : str_j,
                     "model::ising_sdual::h_mean"         : str_h,
