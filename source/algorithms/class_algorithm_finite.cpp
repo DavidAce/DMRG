@@ -109,12 +109,18 @@ void class_algorithm_finite::run_postprocessing() {
 
 void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {
     if(not num_moves.has_value()) {
-        if(tensors.active_sites.empty() or settings::strategy::multisite_move == MultisiteMove::ONE) num_moves = 1ul;
+        if(tensors.active_sites.empty()) num_moves = 1ul;
+        else if(settings::strategy::multisite_move == MultisiteMove::ONE)
+            num_moves = 1ul;
         else if(settings::strategy::multisite_move == MultisiteMove::MID)
-            num_moves = std::max(1ul, (tensors.active_sites.size()) / 2);
-        else if(settings::strategy::multisite_move == MultisiteMove::MAX)
-            num_moves = std::max(1ul, tensors.active_sites.size() - 2ul);
-        else
+            num_moves = std::max<size_t>(1, (tensors.active_sites.size()) / 2);
+        else if(settings::strategy::multisite_move == MultisiteMove::MAX) {
+            size_t offset = 1ul;
+            if(tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length() - 1) offset = 2ul;
+            if(tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0) offset = 2ul;
+            num_moves = std::max<size_t>(1, tensors.active_sites.size() - offset);
+
+        } else
             throw std::logic_error("Could not determine how many sites to move");
     }
 
