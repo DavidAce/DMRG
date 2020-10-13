@@ -570,8 +570,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
     // Start saving tensors and metadata
-    tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state);
-    tools::finite::io::h5dset::save_bonds(*h5pp_file, state_prefix, storage_level, state);
+    tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state, status);
+    tools::finite::io::h5dset::save_entgm(*h5pp_file, state_prefix, storage_level, state, status);
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
                                          state_name, state_prefix, model_prefix, status);
 

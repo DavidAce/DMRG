@@ -26,7 +26,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
 }
 
 void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
-                                           const class_state_finite &state) {
+                                           const class_state_finite &state, const class_algorithm_status & status) {
     if(storage_level == StorageLevel::NONE) return;
     // Checks if the current entry has already been saved
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
@@ -44,6 +44,8 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
         h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
         h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
+        h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetName);
+        h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
         tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[dsetName] = save_point;
     }
@@ -116,19 +118,24 @@ void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::stri
 }
 
 /*! Write down measurements that can't fit in a table */
-void tools::finite::io::h5dset::save_bonds(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
-                                           const class_state_finite &state) {
+void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+                                           const class_state_finite &state, const class_algorithm_status & status) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
-    tools::log->trace("Storing [{: ^6}]: bond dims", enum2str(storage_level));
+
+    tools::log->trace("Storing [{: ^6}]: bond dimensions", enum2str(storage_level));
     h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), state_prefix + "/bond_dimensions");
+    h5ppFile.writeAttribute(status.chi_lim, "chi_lim", state_prefix + "/bond_dimensions");
+    h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", state_prefix + "/bond_dimensions");
+
     tools::log->trace("Storing [{: ^6}]: entanglement entropies", enum2str(storage_level));
     h5ppFile.writeDataset(tools::finite::measure::entanglement_entropies(state), state_prefix + "/entanglement_entropies");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 2), state_prefix + "/renyi_2");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 3), state_prefix + "/renyi_3");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 4), state_prefix + "/renyi_4");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 100), state_prefix + "/renyi_100");
+
     tools::log->trace("Storing [{: ^6}]: truncation errors", enum2str(storage_level));
     h5ppFile.writeDataset(state.get_truncation_errors(), state_prefix + "/truncation_errors");
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
