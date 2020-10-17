@@ -317,7 +317,7 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //    tools::finite::mpo::perturb_model_params(*this, coupling_ptb, field_ptb, perturbMode);
 //}
 //
-// void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp);
+// void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_model_disorder(*this, coupling_damp, field_damp);
 // }
 //
 // bool class_state_finite::is_perturbed() const {
