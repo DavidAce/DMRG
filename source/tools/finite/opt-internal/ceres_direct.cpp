@@ -20,7 +20,7 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
-    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
                               tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                               tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                               tools::finite::measure::energy_variance(tensors),
@@ -37,7 +37,7 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic();
 
     reports::bfgs_add_entry("Direct", "init", initial_tensor);
-    const auto &current_tensor = tensors.state->get_multisite_tensor();
+    const auto &current_tensor = tensors.state->get_multisite_mps();
     const auto  current_vector = Eigen::Map<const Eigen::VectorXcd>(current_tensor.data(), current_tensor.size());
     auto        options        = internal::ceres_default_options;
     auto        summary        = ceres::GradientProblemSolver::Summary();

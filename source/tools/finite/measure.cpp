@@ -282,9 +282,9 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                                  model.active_sites, edges.active_sites));
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges, measurements);
+        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements);
     } else {
-        const auto &mpo = model.get_multisite_tensor();
+        const auto &mpo = model.get_multisite_mpo();
         const auto &env = edges.get_multisite_ene_blk();
         tools::log->trace("Measuring energy");
         tools::common::profile::get_default_prof()["t_ene"]->tic();
@@ -311,7 +311,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const clas
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
     double energy;
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>)
-        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_tensor(), model, edges, measurements) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements) + model.get_energy_reduced();
     else
         energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements) + model.get_energy_reduced();
 
@@ -357,7 +357,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
                                                  state.active_sites, model.active_sites, edges.active_sites));
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
-        return tools::finite::measure::energy_variance(state.get_multisite_tensor(), model, edges, measurements);
+        return tools::finite::measure::energy_variance(state.get_multisite_mps(), model, edges, measurements);
     } else {
         double energy = 0;
         if(model.is_reduced()) energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements);

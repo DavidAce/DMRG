@@ -17,7 +17,7 @@
 tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &  tensors,
                                                                                        const class_algorithm_status &status, OptMode optMode, OptSpace optSpace, OptType optType) {
     std::vector<size_t> sites = tensors.active_sites;
-    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
                                        tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                                        tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                                        tools::finite::measure::energy_variance(tensors),

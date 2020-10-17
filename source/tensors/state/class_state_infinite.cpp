@@ -137,7 +137,7 @@ const Eigen::Tensor<Scalar, 1> &class_state_infinite::LA() const { return MPS_A-
 const Eigen::Tensor<Scalar, 1> &class_state_infinite::LB() const { return MPS_B->get_L(); }
 /* clang-format on */
 
-const Eigen::Tensor<Scalar, 3> &class_state_infinite::get_2site_tensor(Scalar norm) const {
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::get_2site_mps(Scalar norm) const {
     /*!
  * Returns a two-site tensor
      @verbatim
@@ -154,12 +154,12 @@ const Eigen::Tensor<Scalar, 3> &class_state_infinite::get_2site_tensor(Scalar no
      @endverbatim
  */
 
-    if(cache.twosite_tensor) return cache.twosite_tensor.value();
+    if(cache.twosite_mps) return cache.twosite_mps.value();
     long dim0            = MPS_A->spin_dim() * MPS_B->spin_dim();
     long dim1            = MPS_A->get_chiL();
     long dim2            = MPS_B->get_chiR();
-    cache.twosite_tensor = A().contract(B(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2}) / norm;
-    return cache.twosite_tensor.value();
+    cache.twosite_mps    = A().contract(B(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2}) / norm;
+    return cache.twosite_mps.value();
 }
 
 void class_state_infinite::assert_validity() const {

@@ -26,7 +26,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
 
     auto        shape_mps = tensors.state->dimensions();
     auto        shape_mpo = tensors.model->dimensions();
-    const auto &mpo       = tensors.model->get_2site_tensor();
+    const auto &mpo       = tensors.model->get_2site_mpo();
     const auto &env       = tensors.edges->get_ene_blk();
     auto        nev       = static_cast<eig::size_type>(1);
     auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);

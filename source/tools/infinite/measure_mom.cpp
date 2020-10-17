@@ -21,7 +21,7 @@ class_state_infinite::Scalar moment_generating_function(const class_state_infini
     //    long cfg_chi_lim_max = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
-        Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_tensor(), Textra::idx({0}, {0}));
+        Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_mps(), Textra::idx({0}, {0}));
         state_evolved.set_mps(mps_evo);
         if(&Op != &Op_vec.back()) { state_evolved.swap_AB(); }
     }

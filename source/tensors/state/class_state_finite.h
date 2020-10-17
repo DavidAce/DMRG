@@ -39,7 +39,7 @@ class class_state_finite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 3>> multisite_tensor = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>> multisite_mps = std::nullopt;
     };
 
     size_t              iter      = 0;
@@ -105,8 +105,8 @@ class class_state_finite {
     Eigen::DSizes<long, 3> active_dimensions() const;
     long                   active_problem_size() const;
 
-    Eigen::Tensor<Scalar, 3>        get_multisite_tensor(const std::vector<size_t> &sites) const;
-    const Eigen::Tensor<Scalar, 3> &get_multisite_tensor() const;
+    Eigen::Tensor<Scalar, 3>        get_multisite_mps(const std::vector<size_t> &sites) const;
+    const Eigen::Tensor<Scalar, 3> &get_multisite_mps() const;
 
     public:
     void                set_truncation_error(size_t pos, double error);

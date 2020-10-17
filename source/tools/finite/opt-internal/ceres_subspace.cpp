@@ -24,7 +24,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     const auto &edges = *tensors.edges;
     tools::log->trace("Finding subspace");
     MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges);
-    const auto &       multisite_tensor = state.get_multisite_tensor();
+    const auto &       multisite_tensor = state.get_multisite_mps();
     auto               dbl_length       = static_cast<double>(state.get_length());
 
     Eigen::MatrixXcd eigvecs;
@@ -61,7 +61,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
         eigvecs = eigvecs.real();
     }
 
-    const auto &    multisite_mps_tensor = state.get_multisite_tensor();
+    const auto &    multisite_mps_tensor = state.get_multisite_mps();
     const auto      multisite_mps_vector = Eigen::Map<const Eigen::VectorXcd>(multisite_mps_tensor.data(), multisite_mps_tensor.size());
     auto            energy_reduced       = model.get_energy_reduced();
     Eigen::VectorXd overlaps             = (multisite_mps_vector.adjoint() * eigvecs).cwiseAbs().real();
@@ -85,7 +85,7 @@ template std::vector<opt_state> internal::subspace::find_candidates<real>(const 
 opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
                                                                      OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
-    opt_state           initial_tensor("current state", tensors.state->get_multisite_tensor(), sites,
+    opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
                               tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                               tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                               tools::finite::measure::energy_variance(tensors),

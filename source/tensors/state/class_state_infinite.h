@@ -24,7 +24,7 @@ class class_state_infinite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 3>> twosite_tensor  = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>> twosite_mps     = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 4>> theta           = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 3>> GA              = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 3>> GB              = std::nullopt;
@@ -95,7 +95,7 @@ class class_state_infinite {
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LA() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LB() const;
 
-    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_2site_tensor(Scalar norm = 1.0) const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_2site_mps(Scalar norm = 1.0) const;
     void                                          set_chi_lim(long chi_lim_);
     void                                          set_chi_max(long chi_max_);
     void                                          set_positions(size_t position);

@@ -35,7 +35,7 @@ size_t tools::infinite::measure::length(const class_edges_infinite &edges) { ret
 
 double tools::infinite::measure::norm(const class_state_infinite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    Eigen::Tensor<Scalar, 0> norm = state.get_2site_tensor().contract(state.get_2site_tensor().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
+    Eigen::Tensor<Scalar, 0> norm = state.get_2site_mps().contract(state.get_2site_mps().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
     return std::abs(norm(0));
 }
 
@@ -65,10 +65,10 @@ template<typename state_or_mps_type>
 double tools::infinite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const class_model_infinite &model,
                                                              const class_edges_infinite &edges) {
     if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) {
-        return tools::infinite::measure::energy_minus_energy_reduced(state.get_2site_tensor(), model, edges);
+        return tools::infinite::measure::energy_minus_energy_reduced(state.get_2site_mps(), model, edges);
     } else {
         tools::log->trace("Measuring energy mpo");
-        const auto &mpo = model.get_2site_tensor();
+        const auto &mpo = model.get_2site_mpo();
         const auto &env = edges.get_ene_blk();
         tools::common::profile::get_default_prof()["t_ene"]->tic();
         double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
@@ -84,7 +84,7 @@ template double tools::infinite::measure::energy_minus_energy_reduced(const Eige
 
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
-    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) return tools::infinite::measure::energy_mpo(state.get_2site_tensor(), model, edges);
+    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) return tools::infinite::measure::energy_mpo(state.get_2site_mps(), model, edges);
     else
         return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) +
                model.get_energy_per_site_reduced() * static_cast<double>(edges.get_length());
@@ -117,7 +117,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
     if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) {
-        auto var = tools::infinite::measure::energy_variance_mpo(state.get_2site_tensor(), model, edges);
+        auto var = tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
         if(var < state.lowest_recorded_variance) state.lowest_recorded_variance = var;
         return var;
     } else {
@@ -127,7 +127,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         else
             energy = tools::infinite::measure::energy_mpo(state, model, edges);
         double      E2  = energy * energy;
-        const auto &mpo = model.get_2site_tensor();
+        const auto &mpo = model.get_2site_mpo();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
         tools::common::profile::get_default_prof()["t_ene"]->tic();
