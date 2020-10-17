@@ -47,6 +47,24 @@ Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions(const class_mode
     return dimensions;
 }
 
+Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions_squared(const class_model_finite &model, std::optional<std::vector<size_t>> active_sites) {
+    if(not active_sites) active_sites = model.active_sites;
+    if(active_sites.value().empty()) return Eigen::DSizes<long, 4>{0, 0, 0, 0};
+    if(active_sites.value().front() > active_sites.value().back())
+        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
+    Eigen::DSizes<long, 4> dimensions;
+    dimensions[0] = model.get_mpo(active_sites.value().front()).MPO2().dimension(0);
+    dimensions[1] = model.get_mpo(active_sites.value().back()).MPO2().dimension(1);
+    dimensions[2] = 1;
+    dimensions[3] = 1;
+    for(auto &site : active_sites.value()) {
+        dimensions[2] *= model.get_mpo(site).MPO2().dimension(2);
+        dimensions[3] *= model.get_mpo(site).MPO2().dimension(3);
+    }
+    return dimensions;
+}
+
+
 long tools::finite::multisite::get_problem_size(const class_state_finite &state, std::optional<std::vector<size_t>> active_sites) {
     auto dims = get_dimensions(state, std::move(active_sites));
     return (dims[0] * dims[1] * dims[2]);

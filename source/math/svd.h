@@ -5,9 +5,9 @@
 #pragma once
 
 #include "general/nmspc_tensor_extra.h"
+#include <math/num.h>
 #include <optional>
 #include <tools/common/log.h>
-
 #ifndef DMRG_EXTERN
     #define DMRG_EXTERN extern
 #endif
@@ -16,8 +16,9 @@ namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
     class solver {
         private:
-        double SVDThreshold     = 1e-12;
-        double truncation_error = 0;
+        std::optional<double> threshold        = std::nullopt;
+        std::optional<size_t> switchsize       = std::nullopt;
+        double                truncation_error = 0;
         template<typename Scalar>
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         template<typename Scalar>
@@ -42,7 +43,8 @@ namespace svd {
         solver(size_t logLevel = 2);
         bool   use_lapacke = false;
         double get_truncation_error();
-        void   setThreshold(double newThreshold);
+        void   setThreshold(double newThreshold, std::optional<double> overrideThreshold = std::nullopt);
+        void   setSwitchSize(size_t newSwitchSize, std::optional<size_t> overrideSwitchSize = std::nullopt);
 
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
@@ -222,6 +224,121 @@ namespace svd {
             long chiL = tensor.dimension(1);
             long chiR = tensor.dimension(2);
             return schmidt_multisite(tensor, dL, dR, chiL, chiR, rank_max);
+        }
+
+        template<typename Scalar>
+        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                                               std::optional<long> rank_max = std::nullopt) {
+            /*
+             * Compress an MPO left to right using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
+             *
+             *          (2) d
+             *             |
+             *  (0) m ---[mpo]--- (1) m
+             *            |
+             *        (3) d
+             *
+             * is shuffled into
+             *
+             *          (0) d
+             *             |
+             *  (2) m ---[mpo]--- (3) m
+             *            |
+             *        (1) d
+             *
+             * and reshaped like
+             *
+             * ddm (012) ---[mpo]--- (3) m
+             *
+             * and subjected to the typical SVD so mpo = USV. This is then reshaped back into
+             *
+             *             d
+             *             |
+             *     m ---[mpo]---  m'   m'---[S]---'m m'---[V]---m
+             *            |
+             *            d
+             *
+             * where hopefully m' < m and the transfer matrix T = SV is multiplied onto the mpo on the right later.
+             *
+             * To stablize the compression, it is useful to insert avgS *  1/avgS, where one factor is put into U and the other into S.
+             *
+             *
+             */
+
+            auto dim0    = mpo.dimension(2);
+            auto dim1    = mpo.dimension(3);
+            auto dim2    = mpo.dimension(0);
+            auto dim3    = mpo.dimension(1);
+            auto dim_ddm = dim0 * dim1 * dim2;
+
+            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{2, 3, 0, 1}).reshape(Textra::array2{dim_ddm, dim3}).real();
+            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), rank_max);
+            auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
+            U *= avgS;
+            S /= avgS;
+            /* clang-format off */
+            return std::make_tuple(
+                Textra::MatrixTensorMap(U).reshape(Textra::array4{dim0, dim1, dim2, rank}).shuffle(Textra::array4{2, 3, 0, 1}).template cast<Scalar>(),
+                Textra::MatrixTensorMap(S).template cast<Scalar>(),
+                Textra::MatrixTensorMap(V).template cast<Scalar>());
+            /* clang-format off */
+        }
+        template<typename Scalar>
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                                               std::optional<long> rank_max = std::nullopt) {
+            /*
+             * Splits an MPO right to left using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
+             *
+             *          (2) d
+             *             |
+             *  (0) m ---[mpo]--- (1) m
+             *            |
+             *        (3) d
+             *
+             * is shuffled into
+             *
+             *          (1) d
+             *             |
+             *  (0) m ---[mpo]--- (3) m
+             *            |
+             *        (2) d
+             *
+             * and reshaped like
+             *
+             * d (0) ---[mpo]--- (123) ddm
+             *
+             * and subjected to the typical SVD so mpo = USV. This is then reshaped back into
+             *
+             *                                          d
+             *                                          |
+             *   m---[U]---m'   m'---[S]---'m   m' ---[mpo]---  m
+             *                                          |
+             *                                          d
+             *
+             * where hopefully m' < m and the transfer matrix T = US is multiplied onto the mpo on the left later.
+             *
+             * To stablize the compression, it is useful to insert avgS *  1/avgS, where one factor is put into V and the other into S.
+             *
+             *
+             */
+
+            auto dim0    = mpo.dimension(0);
+            auto dim1    = mpo.dimension(2);
+            auto dim2    = mpo.dimension(3);
+            auto dim3    = mpo.dimension(1);
+            auto dim_ddm = dim1 * dim2 * dim3;
+
+            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{0, 2, 3, 1}).reshape(Textra::array2{dim0, dim_ddm}).real();
+            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), rank_max);
+            auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
+            V *= avgS;                                            // Rescaled singular values
+            S /= avgS;                                            // Rescaled singular values
+            /* clang-format off */
+            return std::make_tuple(
+                Textra::MatrixTensorMap(U).template cast<Scalar>(),
+                Textra::MatrixTensorMap(S).template cast<Scalar>(),
+                Textra::MatrixTensorMap(V).reshape(Textra::array4{rank, dim1, dim2, dim3}).shuffle(Textra::array4{0, 3, 1, 2}).template cast<Scalar>());
+            /* clang-format off */
         }
     };
 }

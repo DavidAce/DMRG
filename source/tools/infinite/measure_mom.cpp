@@ -1,6 +1,5 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <math/eig.h>
-#include <math/svd.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
@@ -14,9 +13,6 @@ class_state_infinite::Scalar moment_generating_function(const class_state_infini
                                                         std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {
     using Scalar                       = class_state_infinite::Scalar;
     class_state_infinite state_evolved = state_original;
-
-    svd::solver SVD;
-    SVD.setThreshold(settings::precision::svd_threshold);
 
     //    long cfg_chi_lim_max = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {

@@ -33,6 +33,8 @@ class class_ising_sdual : public class_mpo_site {
     [[nodiscard]] Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 1>          get_MPO_edge_left() const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 1>          get_MPO_edge_right() const override;
+    [[nodiscard]] Eigen::Tensor<Scalar, 1>          get_MPO2_edge_left() const override;
+    [[nodiscard]] Eigen::Tensor<Scalar, 1>          get_MPO2_edge_right() const override;
     [[nodiscard]] long                              get_spin_dimension() const override;
     [[nodiscard]] TableMap                          get_parameters() const override;
     [[nodiscard]] bool                              is_perturbed() const override;

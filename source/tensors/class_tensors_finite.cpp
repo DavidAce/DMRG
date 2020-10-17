@@ -1,5 +1,6 @@
 
 #include "class_tensors_finite.h"
+#include <config/nmspc_settings.h>
 #include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
@@ -25,9 +26,9 @@ class_tensors_finite::class_tensors_finite()
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_tensors_finite::~class_tensors_finite()                                        = default; // default dtor
-class_tensors_finite::class_tensors_finite(class_tensors_finite &&other)             = default; // default move ctor
-class_tensors_finite &class_tensors_finite::operator=(class_tensors_finite &&other)  = default; // default move assign
+class_tensors_finite::~class_tensors_finite()                            = default;            // default dtor
+class_tensors_finite::class_tensors_finite(class_tensors_finite &&other) = default;            // default move ctor
+class_tensors_finite &class_tensors_finite::operator=(class_tensors_finite &&other) = default; // default move assign
 
 class_tensors_finite::class_tensors_finite(const class_tensors_finite &other)
     : state(std::make_unique<class_state_finite>(*other.state)), model(std::make_unique<class_model_finite>(*other.model)),
@@ -51,24 +52,27 @@ void class_tensors_finite::initialize(ModelType model_type, size_t model_size, s
 }
 
 void class_tensors_finite::randomize_model() {
-    eject_all_edges();
     model->randomize();
+    model->rebuild_mpo_squared();
+    eject_all_edges();
     rebuild_edges();
 }
 
-void class_tensors_finite::randomize_state(StateType state_type,const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
-    clear_measurements();
-    tools::finite::mps::randomize_state(*state, sector,state_type, chi_lim, use_eigenspinors, bitfield);
+void class_tensors_finite::randomize_state(StateType state_type, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
+                                           std::optional<double> svd_threshold) {
+    state->clear_measurements();
+    tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
     if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE or state_type == StateType::RANDOM_ENTANGLED_STATE)
-        project_to_nearest_sector(sector,chi_lim,svd_threshold);
+        project_to_nearest_sector(sector, chi_lim, svd_threshold);
     else
-        normalize_state(chi_lim,svd_threshold,NormPolicy::ALWAYS);
+        normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);
 }
 
 void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
     // Normalize if unity was lost for some reason (numerical error buildup)
     auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold, norm_policy);
     if(has_normalized) {
+        state->clear_cache();
         clear_measurements();
         eject_all_edges();
         rebuild_edges();
@@ -76,42 +80,87 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     }
 }
 
-
 void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
     clear_measurements();
-    if (not chi_lim) chi_lim =  state->find_largest_chi();
+    if(not chi_lim) chi_lim = state->find_largest_chi();
     tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
     tools::finite::ops::project_to_nearest_sector(*state, sector);
-    normalize_state(chi_lim.value(),svd_threshold, NormPolicy::ALWAYS);
+    normalize_state(chi_lim.value(), svd_threshold, NormPolicy::ALWAYS);
 }
 
 void class_tensors_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
     measurements = tensors_measure_finite(); // State measurements can remain
+    model->clear_cache();
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
+    model->rebuild_mpo_squared();
+    model->assert_validity();
     eject_all_edges();
     rebuild_edges();
-    model->assert_validity();
 }
 
 void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) {
-    if(not site_energy)
-        site_energy = tools::finite::measure::energy_per_site(*this);
-    measurements = tensors_measure_finite(); // State measurements can remain
+    [[maybe_unused]] double var_bef_reset     = 1.0;
+    [[maybe_unused]] double var_aft_compr     = 1.0;
+    [[maybe_unused]] double ene_bef_reset     = 1.0;
+    [[maybe_unused]] double ene_aft_compr_lap = 1.0;
+
+    if constexpr(settings::debug) {
+        ene_bef_reset = tools::finite::measure::energy_per_site(*state, *model, *edges);
+        var_bef_reset = tools::finite::measure::energy_variance_per_site(*state, *model, *edges);
+        clear_cache();
+        clear_measurements();
+    }
+
+    if(not site_energy) site_energy = tools::finite::measure::energy_per_site(*state, *model, *edges);
+    if(site_energy.value() == model->get_energy_per_site_reduced()) return;
+
+    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
+    model->clear_cache();
     model->set_reduced_energy_per_site(site_energy.value());
-    clear_cache();
-    clear_measurements();
+    model->rebuild_mpo_squared();
+    model->assert_validity();
     eject_all_edges();
     rebuild_edges();
-    model->assert_validity();
 
+    if constexpr(settings::debug) {
+        ene_aft_compr_lap = tools::finite::measure::energy_per_site(*state, *model, *edges);
+        var_aft_compr     = tools::finite::measure::energy_variance_per_site(*state, *model, *edges);
+        clear_cache();
+        clear_measurements();
+    }
+
+    if constexpr(settings::debug) {
+        tools::log->debug("Energy   before mpo reset       {:>20.16f}", ene_bef_reset);
+        tools::log->debug("Energy   after  mpo compression {:>20.16f}", ene_aft_compr_lap);
+        tools::log->debug("Variance before mpo reset       {:>20.16f}", std::log10(var_bef_reset));
+        tools::log->debug("Variance after  mpo compression {:>20.16f}", std::log10(var_aft_compr));
+        double critical_cancellation_max_decimals = 15.0 - std::log10(std::pow(static_cast<double>(get_length()) * site_energy.value(), 2));
+        double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
+        double variance_change                    = std::abs(var_bef_reset - var_aft_compr);
+        if(variance_change > 100 * critical_cancellation_error) {
+            tools::log->warn("Energy reduction changed the variance significantly: {:.4f}%", variance_change / var_bef_reset * 100);
+            throw std::runtime_error("Energy reduction changed the variance significantly");
+        }
+    }
+}
+
+void class_tensors_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
+    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
+    model->clear_cache();
+    model->rebuild_mpo_squared(svdMode);
+    model->assert_validity();
+    eject_all_edges();
+    rebuild_edges();
 }
 
 void class_tensors_finite::damp_model_disorder(double coupling_damp, double field_damp) {
-    measurements = tensors_measure_finite(); // State measurements can remain
-    model->damp_hamiltonian(coupling_damp, field_damp);
+    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
+    model->clear_cache();
+    model->damp_model_disorder(coupling_damp, field_damp);
+    model->rebuild_mpo_squared();
+    model->assert_validity();
     eject_all_edges();
     rebuild_edges();
-    model->assert_validity();
 }
 
 // Active sites
@@ -132,7 +181,7 @@ void class_tensors_finite::activate_sites(long threshold, size_t max_sites, size
     clear_measurements();
 }
 
-void class_tensors_finite::activate_sites(const std::vector<size_t> & sites){
+void class_tensors_finite::activate_sites(const std::vector<size_t> &sites) {
     if(active_sites == sites) {
         state->active_sites = active_sites;
         model->active_sites = active_sites;
@@ -140,7 +189,7 @@ void class_tensors_finite::activate_sites(const std::vector<size_t> & sites){
         return;
     }
 
-    active_sites = sites;
+    active_sites        = sites;
     state->active_sites = active_sites;
     model->active_sites = active_sites;
     edges->active_sites = active_sites;
@@ -156,6 +205,7 @@ void class_tensors_finite::activate_truncated_sites(long threshold, long chi_lim
     edges->active_sites = active_sites;
     rebuild_edges(); // will only produce missing edges
     clear_cache();   // clear multisite tensors and mpos which become invalid
+    clear_measurements();
     // TODO: Should measurements be cleared here? Probably not
     //    clear_measurements();
 }
@@ -183,22 +233,23 @@ bool class_tensors_finite::position_is_left_edge() const { return state->positio
 bool class_tensors_finite::position_is_right_edge() const { return state->position_is_right_edge(); }
 bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
-void class_tensors_finite::move_center_point(long chi_lim,std::optional<double> svd_threshold) { tools::finite::mps::move_center_point(*state, chi_lim, svd_threshold); }
+void class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
+    tools::finite::mps::move_center_point(*state, chi_lim, svd_threshold);
+}
 void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
     tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim);
-    normalize_state(chi_lim, svd_threshold,NormPolicy::IFNEEDED);
+    normalize_state(chi_lim, svd_threshold, NormPolicy::IFNEEDED);
 }
 
 void class_tensors_finite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }
-void class_tensors_finite::eject_all_edges() { edges->eject_all_edges(); }
-void class_tensors_finite::eject_inactive_edges() { edges->eject_inactive_edges(); }
+void class_tensors_finite::eject_all_edges() { edges->eject_edges_all(); }
+void class_tensors_finite::eject_inactive_edges() { edges->eject_edges_inactive(); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
-    tools::log->trace("Clearing tensor measurements");
     measurements = tensors_measure_finite();
     state->clear_measurements();
 }

@@ -19,9 +19,9 @@ class_edges_finite::class_edges_finite() = default; // Can't initialize lists si
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_edges_finite::~class_edges_finite()                                       = default;            // default dtor
-class_edges_finite::class_edges_finite(class_edges_finite &&other)              = default;            // default move ctor
-class_edges_finite &class_edges_finite::operator=(class_edges_finite &&other)   = default; // default move assign
+class_edges_finite::~class_edges_finite()                          = default;            // default dtor
+class_edges_finite::class_edges_finite(class_edges_finite &&other) = default;            // default move ctor
+class_edges_finite &class_edges_finite::operator=(class_edges_finite &&other) = default; // default move assign
 
 class_edges_finite::class_edges_finite(const class_edges_finite &other) : active_sites(other.active_sites) {
     eneL.clear();
@@ -106,55 +106,77 @@ void class_edges_finite::assert_validity() const {
 }
 /* clang-format on */
 
-void class_edges_finite::eject_inactive_edges(std::optional<std::vector<size_t>> sites) {
+void class_edges_finite::eject_edges_inactive_ene(std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = active_sites;
     if(not sites or sites->empty()) {
-        throw std::runtime_error("Could not eject inactive edges: There are no active sites");
+        throw std::runtime_error("Could not eject inactive ene edges: There are no active sites");
         // If there are no active sites we may just as well
         // eject everything and let the next rebuild take
         // care of it.
-        eject_all_edges();
+        eject_edges_all();
         return;
     }
     for(auto &env : eneL)
         if(env->get_position() > sites->front()) env->clear();
-    for(auto &env : varL)
-        if(env->get_position() > sites->front()) env->clear();
     for(auto &env : eneR)
         if(env->get_position() < sites->back()) env->clear();
+}
+
+void class_edges_finite::eject_edges_inactive_var(std::optional<std::vector<size_t>> sites) {
+    if(not sites) sites = active_sites;
+    if(not sites or sites->empty()) {
+        throw std::runtime_error("Could not eject inactive var edges: There are no active sites");
+        // If there are no active sites we may just as well
+        // eject everything and let the next rebuild take
+        // care of it.
+        eject_edges_all();
+        return;
+    }
+    for(auto &env : varL)
+        if(env->get_position() > sites->front()) env->clear();
     for(auto &env : varR)
         if(env->get_position() < sites->back()) env->clear();
 }
 
-void class_edges_finite::eject_all_edges() {
+void class_edges_finite::eject_edges_inactive(std::optional<std::vector<size_t>> sites) {
+    eject_edges_inactive_ene(sites);
+    eject_edges_inactive_var(sites);
+}
+void class_edges_finite::eject_edges_all_ene() {
     for(auto &env : eneL) env->clear();
-    for(auto &env : varL) env->clear();
     for(auto &env : eneR) env->clear();
+}
+void class_edges_finite::eject_edges_all_var() {
+    for(auto &env : varL) env->clear();
     for(auto &env : varR) env->clear();
+}
+void class_edges_finite::eject_edges_all() {
+    eject_edges_all_ene();
+    eject_edges_all_var();
 }
 
 const class_env_ene &class_edges_finite::get_eneL(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_eneL(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    const auto & env = **std::next(eneL.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_eneL(pos:{}): position mismatch {}", pos,env.get_position()));
+    const auto &env = **std::next(eneL.begin(), static_cast<long>(pos));
+    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_eneL(pos:{}): position mismatch {}", pos, env.get_position()));
     return env;
 }
 const class_env_ene &class_edges_finite::get_eneR(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_eneR(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    const auto & env = **std::next(eneR.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_eneR(pos:{}): position mismatch {}", pos,env.get_position()));
+    const auto &env = **std::next(eneR.begin(), static_cast<long>(pos));
+    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_eneR(pos:{}): position mismatch {}", pos, env.get_position()));
     return env;
 }
 const class_env_var &class_edges_finite::get_varL(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_varL(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    const auto & env = **std::next(varL.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_varL(pos:{}): position mismatch {}", pos,env.get_position()));
+    const auto &env = **std::next(varL.begin(), static_cast<long>(pos));
+    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_varL(pos:{}): position mismatch {}", pos, env.get_position()));
     return env;
 }
 const class_env_var &class_edges_finite::get_varR(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_varR(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    const auto & env = **std::next(varR.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_varR(pos:{}): position mismatch {}", pos,env.get_position()));
+    const auto &env = **std::next(varR.begin(), static_cast<long>(pos));
+    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_varR(pos:{}): position mismatch {}", pos, env.get_position()));
     return env;
 }
 
@@ -187,19 +209,19 @@ class_edges_finite::env_pair<class_env_ene>       class_edges_finite::get_ene(si
 class_edges_finite::env_pair<class_env_var>       class_edges_finite::get_var(size_t pos) { return {get_varL(pos), get_varR(pos)}; }
 
 class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_ene_blk(size_t posL, size_t posR) const {
-    return {get_ene(posL).L.block, get_ene(posR).R.block};
+    return {get_ene(posL).L.get_block(), get_ene(posR).R.get_block()};
 }
 
-class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 4>> class_edges_finite::get_var_blk(size_t posL, size_t posR) const {
-    return {get_var(posL).L.block, get_var(posR).R.block};
+class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_var_blk(size_t posL, size_t posR) const {
+    return {get_var(posL).L.get_block(), get_var(posR).R.get_block()};
 }
 
 class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_ene_blk(size_t posL, size_t posR) {
-    return {get_ene(posL).L.block, get_ene(posR).R.block};
+    return {get_ene(posL).L.get_block(), get_ene(posR).R.get_block()};
 }
 
-class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 4>> class_edges_finite::get_var_blk(size_t posL, size_t posR) {
-    return {get_var(posL).L.block, get_var(posR).R.block};
+class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_var_blk(size_t posL, size_t posR) {
+    return {get_var(posL).L.get_block(), get_var(posR).R.get_block()};
 }
 
 class_edges_finite::env_pair<const class_env_ene> class_edges_finite::get_multisite_ene(std::optional<std::vector<size_t>> sites) const {
@@ -229,21 +251,21 @@ class_edges_finite::env_pair<class_env_var> class_edges_finite::get_multisite_va
 class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>>
     class_edges_finite::get_multisite_ene_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_ene(std::move(sites));
-    return {envs.L.block, envs.R.block};
+    return {envs.L.get_block(), envs.R.get_block()};
 }
 
-class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 4>>
+class_edges_finite::env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>>
     class_edges_finite::get_multisite_var_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_var(std::move(sites));
-    return {envs.L.block, envs.R.block};
+    return {envs.L.get_block(), envs.R.get_block()};
 }
 
 class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_multisite_ene_blk(std::optional<std::vector<size_t>> sites) {
     auto envs = get_multisite_ene(std::move(sites));
-    return {envs.L.block, envs.R.block};
+    return {envs.L.get_block(), envs.R.get_block()};
 }
 
-class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 4>> class_edges_finite::get_multisite_var_blk(std::optional<std::vector<size_t>> sites) {
+class_edges_finite::env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_multisite_var_blk(std::optional<std::vector<size_t>> sites) {
     auto envs = get_multisite_var(std::move(sites));
-    return {envs.L.block, envs.R.block};
+    return {envs.L.get_block(), envs.R.get_block()};
 }

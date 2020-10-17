@@ -6,8 +6,8 @@
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/state/class_state_infinite.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
-#include <tools/common/moments.h>
 #include <tools/common/prof.h>
 #include <tools/infinite/measure.h>
 
@@ -71,7 +71,7 @@ double tools::infinite::measure::energy_minus_energy_reduced(const state_or_mps_
         const auto &mpo = model.get_2site_mpo();
         const auto &env = edges.get_ene_blk();
         tools::common::profile::get_default_prof()["t_ene"]->tic();
-        double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
+        double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         tools::common::profile::get_default_prof()["t_ene"]->toc();
         return e_minus_ered;
     }
@@ -131,7 +131,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
         tools::common::profile::get_default_prof()["t_ene"]->tic();
-        double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
+        double H2 = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         tools::common::profile::get_default_prof()["t_ene"]->toc();
         double var = std::abs(H2 - E2);
         return var;

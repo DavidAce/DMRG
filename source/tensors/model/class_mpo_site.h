@@ -30,10 +30,11 @@ class class_mpo_site {
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
 
-    Eigen::array<long, 4>    extent4;  /*!< Extent of pauli matrices in a rank-4 tensor */
-    Eigen::array<long, 2>    extent2;  /*!< Extent of pauli matrices in a rank-2 tensor */
-    std::optional<size_t>    position; /*!< Position on a finite chain */
-    Eigen::Tensor<Scalar, 4> mpo_internal;
+    Eigen::array<long, 4>                   extent4;  /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2>                   extent2;  /*!< Extent of pauli matrices in a rank-2 tensor */
+    std::optional<size_t>                   position; /*!< Position on a finite chain */
+    Eigen::Tensor<Scalar, 4>                mpo_internal;
+    std::optional<Eigen::Tensor<Scalar, 4>> mpo_squared = std::nullopt;
 
     public:
     explicit class_mpo_site(ModelType model_type_, size_t position_);
@@ -42,8 +43,12 @@ class class_mpo_site {
     void set_position(size_t new_pos);
     void assert_validity() const;
     void set_reduced_energy(double site_energy);
-
+    void build_mpo_squared();
+    void set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq);
+    [[nodiscard]] Eigen::Tensor<Scalar, 4> get_uncompressed_mpo() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO2() const;
+    [[nodiscard]] Eigen::Tensor<Scalar, 4> &      MPO2();
     [[nodiscard]] size_t                          get_position() const;
     [[nodiscard]] std::vector<std::string>        get_parameter_names() const;
     [[nodiscard]] std::vector<std::any>           get_parameter_values() const;
@@ -58,6 +63,8 @@ class class_mpo_site {
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view(double single_site_energy) const = 0;
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_left() const                         = 0;
     [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_right() const                        = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_left() const                        = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_right() const                       = 0;
     [[nodiscard]] virtual long                            get_spin_dimension() const                        = 0;
     [[nodiscard]] virtual TableMap                        get_parameters() const                            = 0;
     [[nodiscard]] virtual bool                            is_perturbed() const                              = 0;

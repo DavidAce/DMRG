@@ -53,6 +53,7 @@ void class_ising_tf_rf::set_parameters(TableMap &parameters) {
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     if(h5tb.param.J2 != 0.0) throw std::runtime_error("Use of [J2] - Next-nearest neighbor coupling - is not implemented yet");
     all_mpo_parameters_have_been_set = true;
+    build_mpo();
 }
 
 class_ising_tf_rf::TableMap class_ising_tf_rf::get_parameters() const {
@@ -96,6 +97,12 @@ void class_ising_tf_rf::build_mpo()
     mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
     mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
+    if(Textra::hasNaN(mpo_internal)) {
+        print_parameter_names();
+        print_parameter_values();
+        throw std::runtime_error(fmt::format("MPO at position {} has NAN's",get_position()));
+    }
+    build_mpo_squared();
 }
 
 void class_ising_tf_rf::randomize_hamiltonian() {
@@ -109,6 +116,7 @@ void class_ising_tf_rf::randomize_hamiltonian() {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform>");
     }
     all_mpo_parameters_have_been_set = false;
+    mpo_squared = std::nullopt;
 }
 
 void class_ising_tf_rf::set_coupling_damping(double alpha_) { alpha = alpha_; }
@@ -116,6 +124,7 @@ void class_ising_tf_rf::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
+        mpo_squared = std::nullopt;
     }
 }
 
@@ -140,6 +149,7 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
     }
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
+        mpo_squared = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
@@ -187,6 +197,18 @@ Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO_edge_right() const {
     return redge;
 }
 
+Eigen::Tensor<Scalar,1> class_ising_tf_rf::get_MPO2_edge_left() const {
+    auto edge = get_MPO_edge_left();
+    auto dim = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+}
+Eigen::Tensor<Scalar,1> class_ising_tf_rf::get_MPO2_edge_right() const  {
+    auto edge = get_MPO_edge_right();
+    auto dim = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+}
+
+
 void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool reverse) {
     if(reverse) {
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());
@@ -223,8 +245,6 @@ void class_ising_tf_rf::save_hamiltonian(h5pp::File &file, const std::string &ta
     file.writeAttribute(h5tb.param.h_tran, "h_tran", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
-
-
 }
 
 void class_ising_tf_rf::load_hamiltonian(const h5pp::File &file, const std::string &table_path) {

@@ -117,12 +117,12 @@ void class_ising_sdual::build_mpo()
     mpo_internal.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h5tb.param.lambda * h5tb.param.h_avrg) * sx);
     mpo_internal.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h5tb.param.lambda * h5tb.param.J_avrg) * sz);
     mpo_internal.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
-
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
         throw std::runtime_error(fmt::format("MPO at position {} has NAN's",get_position()));
     }
+    build_mpo_squared();
 }
 
 void class_ising_sdual::randomize_hamiltonian() {
@@ -140,18 +140,21 @@ void class_ising_sdual::randomize_hamiltonian() {
     }
 
     all_mpo_parameters_have_been_set = false;
+    mpo_squared = std::nullopt;
 }
 
 void class_ising_sdual::set_coupling_damping(double alpha_) {
     alpha = alpha_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
+        mpo_squared = std::nullopt;
     }
 }
 void class_ising_sdual::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
+        mpo_squared = std::nullopt;
     }
 }
 
@@ -182,6 +185,7 @@ void class_ising_sdual::set_perturbation(double coupling_ptb, double field_ptb, 
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
+        mpo_squared = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!",get_position()));
@@ -235,6 +239,19 @@ Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_right() const {
         return redge;
     }
 }
+
+Eigen::Tensor<Scalar,1> class_ising_sdual::get_MPO2_edge_left() const {
+    auto edge = get_MPO_edge_left();
+    auto dim = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+}
+Eigen::Tensor<Scalar,1> class_ising_sdual::get_MPO2_edge_right() const  {
+    auto edge = get_MPO_edge_right();
+    auto dim = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+}
+
+
 
 Eigen::MatrixXcd class_ising_sdual::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
                                                             std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {
