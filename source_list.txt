@@ -32,12 +32,14 @@ source/tensors/model/class_model_infinite.cpp
 source/tensors/state/class_mps_site.cpp
 source/tensors/state/class_state_finite.cpp
 source/tensors/state/class_state_infinite.cpp
+source/tools/common/contraction/expectation_value.cpp
+source/tools/common/contraction/matrix_vector_product.cpp
+source/tools/common/contraction/second_moment.cpp
 source/tools/common/io/h5attr.cpp
 source/tools/common/io/h5table.cpp
 source/tools/common/io/h5tmp.cpp
 source/tools/common/io/h5resume.cpp
 source/tools/common/log.cpp
-source/tools/common/moments.cpp
 source/tools/common/prof.cpp
 source/tools/common/views.cpp
 source/tools/common/split.cpp
@@ -124,7 +126,7 @@ source/tensors/state/class_state_infinite.h
 source/tools/common/io.h
 source/tools/common/fmt.h
 source/tools/common/log.h
-source/tools/common/moments.h
+source/tools/common/contraction.h
 source/tools/common/prof.h
 source/tools/common/views.h
 source/tools/common/split.h
