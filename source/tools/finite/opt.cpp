@@ -13,6 +13,8 @@
 #include <tools/finite/measure.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_state.h>
+#include <tools/finite/opt-internal/ceres_subspace_functor.h>
+#include <tools/finite/opt-internal/ceres_direct_functor.h>
 
 tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &  tensors,
                                                                                        const class_algorithm_status &status, OptMode optMode, OptSpace optSpace, OptType optType) {
@@ -150,7 +152,6 @@ std::pair<double, double> tools::finite::opt::internal::windowed_func_grad(doubl
 }
 
 
-
 long tools::finite::opt::internal::get_ops_R(long d, long chiL, long chiR, long m) {
     // Same as L, just swap chiL and chiR
     if(chiR > chiL)
@@ -187,3 +188,42 @@ tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(
         init_log_time = 1;
     }
 }
+
+
+template<typename FunctorType>
+ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
+    if(not log) return ceres::SOLVER_CONTINUE;
+    if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;
+    if(summary.iteration - last_log_iter  < freq_log_iter and summary.iteration > init_log_iter  ) return ceres::SOLVER_CONTINUE;
+    if(summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time) return ceres::SOLVER_CONTINUE;
+    last_log_time = summary.cumulative_time_in_seconds;
+    last_log_iter = summary.iteration;
+    /* clang-format off */
+    log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
+               "|∇f|∞ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
+               "t_step {:<6} t_iter {:<6} t_tot {:<5} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
+               summary.iteration,
+               summary.cost,
+               summary.cost_change,
+               summary.gradient_max_norm,
+               summary.step_norm, // By lbfgs
+               summary.step_size, // By line search
+               functor.get_count() - last_count,
+               functor.get_count(),
+
+               fmt::format("{:>.0f} ms",summary.step_solver_time_in_seconds * 1000),
+               fmt::format("{:>.0f} ms",summary.iteration_time_in_seconds * 1000),
+               fmt::format("{:>.3f} s",summary.cumulative_time_in_seconds),
+               static_cast<double>(functor.get_ops()) / functor.t_vH2->get_last_interval()/1e9,
+               functor.get_energy_per_site(),
+               std::log10(functor.get_variance_per_site())
+    );
+    last_count = functor.get_count();
+    /* clang-format on */
+    return ceres::SOLVER_CONTINUE;
+}
+
+template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_subspace_functor<double>>;
+template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_direct_functor<double>>;
+template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_subspace_functor<std::complex<double>>>;
+template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>>;
