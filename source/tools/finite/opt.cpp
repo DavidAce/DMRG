@@ -150,29 +150,40 @@ std::pair<double, double> tools::finite::opt::internal::windowed_func_grad(doubl
 }
 
 
-long tools::finite::opt::internal::get_ops_v1(long d, long chiL, long chiR, long m) {
-    // d first
-    // This is the one chosen by eigen whenever d > m
-    long step1   = chiL * chiL * chiR * m * m * d;
-    long step2_d = chiL * chiR * d * m * m * m * (d * m + 1);
-    long step3   = chiL * chiR * d * m * m * m * (chiR * m + 1);
-    long step4_d = chiL * chiR * d * m * (d * m * m * m + m * m + 1);
-    return step1 + step2_d + step3 + step4_d;
+
+long tools::finite::opt::internal::get_ops_R(long d, long chiL, long chiR, long m) {
+    // Same as L, just swap chiL and chiR
+    if(chiR > chiL)
+    return tools::finite::opt::internal::get_ops(d,chiR,chiL,m);
+    else
+        return tools::finite::opt::internal::get_ops(d,chiL,chiR,m);
 }
 
-long tools::finite::opt::internal::get_ops_v2(long d, long chiL, long chiR, long m) {
-    // d first
-    // This is the one chosen by eigen whenever d > m
-    // Same as v1, just swap chiL and chiR
-    return tools::finite::opt::internal::get_ops_v1(d,chiR,chiL,m);
+long tools::finite::opt::internal::get_ops(long d, long chiL, long chiR,long m) {
+    if(chiR > chiL) return get_ops_R(d,chiL,chiR,m);
+    if(d > m){
+        // d first
+        long step1 = chiL * chiL * chiR * m * m * d;
+        long step2 = chiL * chiR * d * m * m * m * (d * m + 1);
+        long step3 = chiL * chiR * d * m * (chiR * m * m * m + m * m + 1);
+        return step1 + step2 + step3;
+    } else {
+        // m first
+        long step1 = chiL * chiL * chiR * m * d;
+        long step2 = chiL * chiR * d * m * m * (d * m + 1);
+        long step3 = chiL * chiR * chiR * d * m * (m + 1);
+        return step1 + step2 + step3;
+    }
 }
 
-long tools::finite::opt::internal::get_ops_v3(long d, long chiL, long chiR,long m) {
-    // d first
-    // This is the one chosen by eigen whenever d > m
-    long step1   = chiL * chiL * chiR * m * m * d;
-    long step2_d = chiL * chiR * d * m * m * m * (d * m + 1);
-    long step3_d = chiL * chiR * d * m * m * m * (d * m + 1);
-    long step4   = chiL * chiR * d * m * (chiR * m * m * m + m * m + 1);
-    return step1 + step2_d + step3_d + step4;
+
+template<typename FunctorType>
+tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
+    if(not log) log = tools::Logger::setLogger("xDMRG");
+    log->set_level(tools::log->level());
+    if(log->level() == spdlog::level::debug){
+        freq_log_iter = 10;
+        freq_log_time = 10;
+        init_log_time = 1;
+    }
 }

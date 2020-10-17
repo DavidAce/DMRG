@@ -135,9 +135,8 @@ namespace tools::finite::opt::internal{
     extern double windowed_grad_pow(double x,double window);
     extern std::pair<double,double> windowed_func_grad(double x,double window);
 
-    extern long get_ops_v1(long d, long chiL, long chiR, long m);
-    extern long get_ops_v2(long d, long chiL, long chiR, long m);
-    extern long get_ops_v3(long d, long chiL, long chiR, long m);
+    extern long get_ops(long d, long chiL, long chiR, long m);
+    extern long get_ops_R(long d, long chiL, long chiR, long m);
 
     namespace reports{
         struct bfgs_entry {
