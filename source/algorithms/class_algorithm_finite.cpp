@@ -345,7 +345,7 @@ void class_algorithm_finite::try_disorder_damping() {
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()) {
         tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-        tensors.model->damp_hamiltonian(damping_exponents.back(), 0);
+        tensors.damp_model_disorder(damping_exponents.back(), 0);
         damping_exponents.pop_back();
         if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
     }
@@ -366,7 +366,7 @@ void class_algorithm_finite::try_disorder_damping() {
     has_damped = true;
     clear_convergence_status();
     tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-    tensors.model->damp_hamiltonian(damping_exponents.back(), 0);
+    tensors.damp_model_disorder(damping_exponents.back(), 0);
     damping_exponents.pop_back();
     if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
