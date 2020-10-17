@@ -109,7 +109,7 @@ void   class_model_infinite::set_reduced_energy_per_site(double site_energy){
 
 
 
-const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_tensor() const {
+const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_mpo() const {
     if(cache.twosite_tensor) return cache.twosite_tensor.value();
     long dim0 = HA->MPO().dimension(0);
     long dim1 = HB->MPO().dimension(1);

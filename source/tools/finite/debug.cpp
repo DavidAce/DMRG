@@ -85,8 +85,8 @@ void tools::finite::debug::check_integrity(const class_state_finite & state){
 //
 //            auto & mps_left = state.get_mps_site(pos - 1);
 //            auto & mps_here = state.get_mps_site(pos);
-//            auto & mpo_left = state.get_2site_tensor(pos-1);
-//            auto & mpo_here = state.get_2site_tensor(pos);
+//            auto & mpo_left = state.get_2site_mps(pos-1);
+//            auto & mpo_here = state.get_2site_mps(pos);
 //
 //            // Check for validity
 //            if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {
@@ -323,8 +323,8 @@ void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //
 //            auto & mps_left = state.get_mps_site(pos - 1);
 //            auto & mps_here = state.get_mps_site(pos);
-//            auto & mpo_left = state.get_2site_tensor(pos-1);
-//            auto & mpo_here = state.get_2site_tensor(pos);
+//            auto & mpo_left = state.get_2site_mps(pos-1);
+//            auto & mpo_here = state.get_2site_mps(pos);
 //
 //            // Check for validity
 //            if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {

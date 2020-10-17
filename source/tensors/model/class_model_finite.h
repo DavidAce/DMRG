@@ -12,8 +12,9 @@ class class_model_finite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 4>> multisite_tensor = std::nullopt;
-        std::optional<std::vector<size_t>>        cached_sites     = std::nullopt;
+        std::optional<std::vector<size_t>>      cached_sites          = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo         = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo_squared = std::nullopt;
     };
     mutable Cache cache;
 

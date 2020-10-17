@@ -26,7 +26,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground
     eig::Ritz ritz = eig::stringToRitz(ritzstring);
     auto shape_mps = tensors.state->active_dimensions();
     auto shape_mpo = tensors.model->active_dimensions();
-    const auto & mpo = tensors.model->get_multisite_tensor();
+    const auto & mpo = tensors.model->get_multisite_mpo();
     const auto & env = tensors.edges->get_multisite_ene_blk();
 //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     auto        nev       = static_cast<eig::size_type>(1);

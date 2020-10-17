@@ -25,7 +25,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
     if constexpr(std::is_same<Scalar, double>::value) {
         tools::log->trace("- Generating real-valued multisite components");
-        mpo                 = model.get_multisite_tensor().real();
+        mpo                 = model.get_multisite_mpo().real();
+        mpo2                 = model.get_multisite_mpo_squared().real();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
         envL                = env_ene.L.real();
@@ -36,7 +37,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         tools::log->trace("- Generating complex-valued multisite components");
-        mpo                 = model.get_multisite_tensor();
+        mpo                 = model.get_multisite_mpo();
+        mpo2                 = model.get_multisite_mpo_squared();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
         envL                = env_ene.L;

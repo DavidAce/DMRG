@@ -163,12 +163,12 @@ bool class_model_finite::is_damped() const {
 
 Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
+Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_mpo(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
-    if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
+    if(sites == active_sites and cache.multisite_mpo) return cache.multisite_mpo.value();
     tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
     tools::common::profile::get_default_prof()["t_mpo"]->tic();
-    Eigen::Tensor<Scalar, 4> multisite_tensor;
+    Eigen::Tensor<Scalar, 4> multisite_mpo;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = Textra::idx({1}, {0});
     Textra::array4           new_dims;
@@ -176,22 +176,22 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_t
     bool                     first = true;
     for(auto &site : sites) {
         if(first) {
-            multisite_tensor = get_mpo(site).MPO();
+            multisite_mpo    = get_mpo(site).MPO();
             first            = false;
             continue;
         }
         const auto &M    = get_mpo(site).MPO();
-        long        dim0 = multisite_tensor.dimension(0);
+        long        dim0 = multisite_mpo.dimension(0);
         long        dim1 = M.dimension(1);
-        long        dim2 = multisite_tensor.dimension(2) * M.dimension(2);
-        long        dim3 = multisite_tensor.dimension(3) * M.dimension(3);
+        long        dim2 = multisite_mpo.dimension(2) * M.dimension(2);
+        long        dim3 = multisite_mpo.dimension(3) * M.dimension(3);
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(*Textra::omp::dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_tensor     = temp;
+        temp.device(*Textra::omp::dev) = multisite_mpo.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        multisite_mpo                  = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
-    return multisite_tensor;
+    return multisite_mpo;
 }
 
 const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_tensor() const {

@@ -210,25 +210,25 @@ const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
 //
-// const class_mpo_site &class_state_finite::get_2site_tensor(size_t pos) const {
-//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_2site_tensor(pos) pos out of range: {}", pos));
+// const class_mpo_site &class_state_finite::get_2site_mps(size_t pos) const {
+//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_2site_mps(pos) pos out of range: {}", pos));
 //    if(pos <= MPO_L.back()->get_position()) {
 //        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
 //        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_2site_tensor(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//            throw std::range_error(fmt::format("get_2site_mps(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
 //        return *mpo_it;
 //    } else {
 //        if(pos < MPO_R.front()->get_position())
 //            throw std::range_error(fmt::format("get_mps_site(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
 //        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
 //        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_2site_tensor(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//            throw std::range_error(fmt::format("get_2site_mps(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
 //        return *mpo_it;
 //    }
 //}
 //
-// class_mpo_site &class_state_finite::get_2site_tensor(size_t pos) {
-//    return const_cast<class_mpo_site &>(static_cast<const class_state_finite &>(*this).get_2site_tensor(pos));
+// class_mpo_site &class_state_finite::get_2site_mps(size_t pos) {
+//    return const_cast<class_mpo_site &>(static_cast<const class_state_finite &>(*this).get_2site_mps(pos));
 //}
 //
 // const class_environment &class_state_finite::get_ENVL(size_t pos) const {
@@ -322,14 +322,14 @@ class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_pos
 //
 // bool class_state_finite::is_perturbed() const {
 //    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_2site_tensor(pos).is_perturbed()) return true;
+//        if(get_2site_mps(pos).is_perturbed()) return true;
 //    }
 //    return false;
 //}
 //
 // bool class_state_finite::is_damped() const {
 //    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_2site_tensor(pos).is_damped()) return true;
+//        if(get_2site_mps(pos).is_damped()) return true;
 //    }
 //    return false;
 //}
@@ -348,9 +348,9 @@ Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return to
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
-Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_tensor(const std::vector<size_t> &sites) const {
+Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
-    if(sites == active_sites and cache.multisite_tensor) return cache.multisite_tensor.value();
+    if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
     tools::log->trace("Contracting multisite mps tensor with {} sites", sites.size());
     tools::common::profile::get_default_prof()["t_mps"]->tic();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
@@ -387,49 +387,12 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_t
     return multisite_tensor;
 }
 
-const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_tensor() const {
-    if(cache.multisite_tensor) return cache.multisite_tensor.value();
-    cache.multisite_tensor = get_multisite_tensor(active_sites);
-    return cache.multisite_tensor.value();
+const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_mps() const {
+    if(cache.multisite_mps) return cache.multisite_mps.value();
+    cache.multisite_mps = get_multisite_mps(active_sites);
+    return cache.multisite_mps.value();
 }
 
-// const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
-//    if(cache.multimpo) return cache.multimpo.value();
-//    tools::common::profile::t_mpo->tic();
-//    tools::log->trace("Contracting multi mpo");
-//    if(active_sites.empty()) {
-//        throw std::runtime_error("No active sites on which to build multimpo");
-//    }
-//    Eigen::Tensor<Scalar, 4> multimpo;
-//    bool                     first = true;
-//    for(auto &site : active_sites) {
-//        if(first) {
-//            multimpo = get_2site_tensor(site).MPO();
-//            first    = false;
-//            continue;
-//        }
-//        auto &                   mpo  = get_2site_tensor(site).MPO();
-//        long                     dim0 = multimpo.dimension(0);
-//        long                     dim1 = mpo.dimension(1);
-//        long                     dim2 = multimpo.dimension(2) * mpo.dimension(2);
-//        long                     dim3 = multimpo.dimension(3) * mpo.dimension(3);
-//        Eigen::Tensor<Scalar, 4> temp(dim0, dim1, dim2, dim3);
-//        temp     = multimpo.contract(mpo, Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
-//        multimpo = temp;
-//    }
-//    tools::common::profile::t_mpo->toc();
-//    cache.multimpo = multimpo;
-//    return cache.multimpo.value();
-//}
-
-// std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>> class_state_finite::get_multienv() const {
-//    return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
-//}
-//
-// std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> class_state_finite::get_multienv2() const
-// {
-//    return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
-//}
 
 void class_state_finite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }
 void class_state_finite::set_truncation_error(double error) { set_truncation_error(get_position(), error); }

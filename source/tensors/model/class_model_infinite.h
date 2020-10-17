@@ -39,7 +39,7 @@ class class_model_infinite {
     [[nodiscard]] const class_mpo_site &get_mpo_siteB() const;
     [[nodiscard]] class_mpo_site &      get_mpo_siteA();
     [[nodiscard]] class_mpo_site &      get_mpo_siteB();
-    const Eigen::Tensor<Scalar, 4> &    get_2site_tensor() const;
+    const Eigen::Tensor<Scalar, 4> &    get_2site_mpo() const;
     Eigen::DSizes<long, 4>              dimensions() const;
 
     [[nodiscard]] bool   is_reduced() const;

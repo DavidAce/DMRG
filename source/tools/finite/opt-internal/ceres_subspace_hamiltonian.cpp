@@ -19,7 +19,7 @@ using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const class_model_finite &model, const class_edges_finite &edges) {
-    const auto &mpo = model.get_multisite_tensor();
+    const auto &mpo = model.get_multisite_mpo();
     const auto &env = edges.get_multisite_ene_blk();
     tools::log->trace("Contracting multisite hamiltonian");
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic();
@@ -66,7 +66,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
             throw std::runtime_error("One candidate is not a basis vector. When constructing a hamiltonian subspace matrix, make sure the candidates are all "
                                      "eigenvectors/basis vectors");
 
-    const auto &mpo = model.get_multisite_tensor();
+    const auto &mpo = model.get_multisite_mpo_squared();
     const auto &env = edges.get_multisite_var_blk();
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->tic();
     tools::log->trace("Contracting subspace hamiltonian squared new");
