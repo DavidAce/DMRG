@@ -372,5 +372,19 @@ namespace Textra {
         auto map = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(tensor.data(),tensor.size());
         add_phase(map,angles);
     }
+
+
+
+    // Compute sparcity
+    template<typename Scalar, auto rank>
+    double sparcity(const Eigen::Tensor<Scalar,rank> &tensor){
+        auto map = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(tensor.data(),tensor.size());
+        return static_cast<double>((map.array() != 0.0).count()) / static_cast<double>(map.size());
+    }
+    template<typename Derived>
+    double sparcity(const Eigen::EigenBase<Derived> &matrix){
+        return static_cast<double>((matrix.derived().array() != 0.0).count()) / static_cast<double>(matrix.derived().size());
+    }
+
 }
 /*clang-format on */
