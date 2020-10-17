@@ -364,8 +364,6 @@ void class_xdmrg::single_xDMRG_step() {
     for(auto &conf : optConf) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
-        auto old_num_sites = tensors.active_sites.size();
-        auto old_prob_size = tensors.active_problem_size();
         tensors.activate_sites(conf.chosen_sites);
 
         variance_old_per_site = measure::energy_variance_per_site(tensors); // Should just take value from cache
@@ -427,148 +425,6 @@ void class_xdmrg::single_xDMRG_step() {
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
-//void class_xdmrg::single_xDMRG_step_old() {
-//    using namespace tools::finite;
-//    using namespace tools::finite::opt;
-//    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
-//    //    IDEA:
-//    //        Try converging to some state from a product state.
-//    //        We know this is a biased state because it was generated  from a product state of low entanglement.
-//    //        After converging, apply randomly either identity or pauli_x MPO operators on some sites, to generate
-//    //        a new initial guess for some other state. Make sure the parity sector is honored. Converging again now
-//    //        should erase the any biasing that may have occurred due to the selection of initial product state.
-//
-//    // Setup optpmization mode and space.
-//    //      - Start from the most general condition
-//    //      - Override later with narrower conditions
-//
-//    // Set the fastest mode by default
-//    OptMode  optMode  = OptMode::VARIANCE;
-//    OptSpace optSpace = OptSpace::DIRECT;
-//    OptType  optType  = OptType::CPLX;
-//
-//    // The first decision is easy. Real or complex optimization
-//    if(tensors.is_real()) optType = OptType::REAL;
-//
-//    if(status.chi_lim <= 12) {
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-//    }
-//
-//    if(status.chi_lim <= 8 or status.iter < 2 or status.step < 2 * tensors.get_length()) {
-//        // TODO: We may not want to do this on states post randomization
-//        optMode  = OptMode::OVERLAP;
-//        optSpace = OptSpace::SUBSPACE_ONLY;
-//    }
-//
-//    // Setup strong overrides to normal conditions, e.g.,
-//    //      - for experiments like perturbation or chi quench
-//    //      - when the algorithm has already converged
-//
-//    if(status.variance_mpo_has_converged) {
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::DIRECT;
-//    }
-//
-//    // Setup the maximum problem size
-//    long max_problem_size = 0;
-//    switch(optSpace) {
-//        case OptSpace::DIRECT: max_problem_size = settings::precision::max_size_direct; break;
-//        case OptSpace::SUBSPACE_ONLY:
-//        case OptSpace::SUBSPACE_AND_DIRECT: max_problem_size = settings::precision::max_size_part_diag; break;
-//    }
-//
-//    // Make sure not to use SUBSPACE if the 2-site problem size is huge
-//    // When this happens, we can't use SUBSPACE even with two sites,
-//    // so we might as well give it to DIRECT, which handles larger problems.
-//    if(tensors.state->size_2site() > max_problem_size) {
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::DIRECT;
-//    }
-//
-//    // We can optionally make many optimization trials with different
-//    // number of sites. I.e., if a 2 site optimization did not give
-//    // any significant improvement we may try with 4 or 8 sites.
-//    // Here we define a list of trials, where each entry determines
-//    // how many sites to try.
-//    std::vector<size_t> max_num_sites_list;
-//    if(status.algorithm_has_stuck_for > 0 or optMode == OptMode::OVERLAP or chi_quench_steps > 0)
-//        max_num_sites_list = {settings::strategy::multisite_max_sites};
-//    else
-//        max_num_sites_list = {2};
-//
-//    // Make sure the site list is sane by sorting and filtering out repeated/invalid entries.
-//    std::sort(max_num_sites_list.begin(), max_num_sites_list.end());
-//    std::unique(max_num_sites_list.begin(), max_num_sites_list.end());
-//    std::remove_if(max_num_sites_list.begin(), max_num_sites_list.end(), [](auto &elem) { return elem > settings::strategy::multisite_max_sites; });
-//    if(max_num_sites_list.empty()) max_num_sites_list = {2};
-//    tools::log->debug("Multisite try max sites {}", max_num_sites_list);
-//
-//    double                 variance_old_per_site = 1;
-//    std::vector<opt_state> results;
-//    for(auto &max_num_sites : max_num_sites_list) {
-//        if(optMode == OptMode::OVERLAP and optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
-//
-//        auto old_num_sites = tensors.active_sites.size();
-//        auto old_prob_size = tensors.active_problem_size();
-//        tensors.activate_sites(max_problem_size, max_num_sites);
-//
-//        // Check that we are not about to solve the same problem again
-//        if(not results.empty() and tensors.active_sites.size() == old_num_sites and tensors.active_problem_size() == old_prob_size) {
-//            // If we reached this point we have exhausted the number of sites available
-//            tools::log->debug("Can't activate more sites");
-//            break;
-//        }
-//        variance_old_per_site = measure::energy_variance_per_site(tensors); // Should just take value from cache
-//        results.emplace_back(opt::find_excited_state(tensors, status, optMode, optSpace, optType));
-//
-//        // We can now decide if we are happy with the result or not.
-//        double percent = 100 * results.back().get_variance_per_site() / variance_old_per_site;
-//        if(percent < 99) {
-//            tools::log->debug("State improved during {} optimization. Variance new/old = {:.3f} %", enum2str(optSpace), percent);
-//            break;
-//        } else {
-//            tools::log->debug("State did not improve during {} optimization. Variance new/old = {:.3f} %", enum2str(optSpace), percent);
-//            continue;
-//        }
-//    }
-//    // Sort the results in order of increasing variance
-//    std::sort(results.begin(), results.end(), [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
-//
-//    if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
-//        for(auto &candidate : results)
-//            tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-//                              candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance_per_site()),
-//                              candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
-//
-//    // Take the best result
-//    const auto &winner   = results.front();
-//    tensors.active_sites = results.front().get_sites();
-//    tensors.sync_active_sites();
-//    if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
-//
-//    // Truncate even more if doing chi quench
-//    //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
-//
-//    // Do the truncation with SVD
-//    tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
-//    if constexpr(settings::debug) {
-//        auto variance_per_site_before_svd = winner.get_variance_per_site();
-//        auto variance_per_site_after_svd  = tools::finite::measure::energy_variance_per_site(tensors);
-//        tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_per_site_before_svd));
-//        tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_per_site_after_svd));
-//        tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_per_site_after_svd - variance_per_site_before_svd) / variance_per_site_after_svd);
-//    }
-//
-//    debug::check_integrity(*tensors.state);
-//
-//    // Update current energy density ε
-//    status.energy_dens =
-//        (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
-//
-//    status.wall_time = tools::common::profile::t_tot->get_measured_time();
-//    status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
-//}
 
 void class_xdmrg::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
@@ -578,9 +434,6 @@ void class_xdmrg::check_convergence() {
     }
 
     // TODO: Move this reset block away from here
-
-    //    status.energy_dens = (tools::finite::measure::energy_per_site(*tensors.state) - status.energy_min_per_site ) / (status.energy_max_per_site -
-    //    status.energy_min_per_site);
     bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
     if(status.iter > 2 and tensors.state->position_is_any_edge()) {
         if(outside_of_window and
@@ -593,17 +446,6 @@ void class_xdmrg::check_convergence() {
             status.energy_dens_window = new_energy_dens_window;
             randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
         }
-        //        else
-        //        if( not     tensors.state->all_sites_updated()
-        //            and     status.algorithm_has_got_stuck
-        //            and     tools::finite::measure::energy_variance_per_site(*tensors.state) > 1e-4)
-        //        {
-        //            status.energy_dens_window = std::min(energy_window_growth_factor*status.energy_dens_window, 0.5);
-        //            std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
-        //                     status.energy_dens, status.energy_dens_window, std::min(energy_window_growth_factor*status.energy_dens_window, 0.5)
-        //                     );
-        //                     randomize_into_state_in_energy_window(ResetReason::SATURATED,settings::strategy::target_sector);
-        //        }
     }
 
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
