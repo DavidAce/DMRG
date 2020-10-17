@@ -58,5 +58,5 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::time_evolve_state(const class_sta
 @endverbatim
 */
 {
-    return U.contract(state.get_2site_tensor(), Textra::idx({0}, {0}));
+    return U.contract(state.get_2site_mps(), Textra::idx({0}, {0}));
 }
