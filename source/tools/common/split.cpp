@@ -127,7 +127,8 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     // Set up the SVD
     if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
-    svd.setThreshold(svd_threshold.value());
+    svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
+    svd.setSwitchSize(settings::precision::svd_switchsize);
     tools::common::profile::get_default_prof()["t_svd"]->tic();
     auto [U, S, V] = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
     tools::common::profile::get_default_prof()["t_svd"]->toc();
@@ -259,7 +260,8 @@ std::list<class_mps_site>
     // Set up the SVD
     if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
-    svd.setThreshold(svd_threshold.value());
+    svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
+    svd.setSwitchSize(settings::precision::svd_switchsize);
 
     // Declare the tensors that will catch the schmidt (SVD) decompositions
     Eigen::Tensor<Scalar, 3>                U;                      // This will become the first site extracted
@@ -367,9 +369,9 @@ std::list<class_mps_site>
     std::reverse(spin_dims.begin(), spin_dims.end());
 
     // Set up the SVD
-    if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
-    svd.setThreshold(svd_threshold.value());
+    svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
+    svd.setSwitchSize(settings::precision::svd_switchsize);
 
     // Declare the the tensors that will catch the schmidt (SVD) decompositions
     Eigen::Tensor<Scalar, 3>                U = multisite_mps;     // This side contains all the sites

@@ -151,10 +151,12 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
     Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_odd =
         Textra::MatrixTensorMap(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
         (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
-    svd::solver SVD;
-    SVD.setThreshold(settings::precision::svd_threshold);
-    Eigen::Tensor<Scalar, 4> E_evn_pinv = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(Textra::array4{sizeLB, sizeLB, sizeLA, sizeLA});
-    Eigen::Tensor<Scalar, 4> E_odd_pinv = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(Textra::array4{sizeLA, sizeLA, sizeLB, sizeLB});
+    svd::solver svd;
+    svd.setThreshold(settings::precision::svd_threshold);
+    svd.setSwitchSize(settings::precision::svd_switchsize);
+
+    Eigen::Tensor<Scalar, 4> E_evn_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(Textra::array4{sizeLB, sizeLB, sizeLA, sizeLA});
+    Eigen::Tensor<Scalar, 4> E_odd_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(Textra::array4{sizeLA, sizeLA, sizeLB, sizeLB});
     Eigen::Tensor<Scalar, 0> E2LRP_ABAB = E2d_L_evn.contract(E_evn_pinv, Textra::idx({0, 1}, {0, 1})).contract(E2d_R_evn, Textra::idx({0, 1}, {0, 1}));
     Eigen::Tensor<Scalar, 0> E2LRP_ABBA = E2d_L_evn.contract(transfer_matrix_LAGA, Textra::idx({0, 1}, {0, 1}))
                                               .contract(E_odd_pinv, Textra::idx({0, 1}, {0, 1}))

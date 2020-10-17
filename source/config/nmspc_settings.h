@@ -124,6 +124,7 @@ namespace settings {
 
     // Options for strategy that affect convergence and targeted state
     namespace strategy {
+        inline bool          compress_mpo_squared      = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */
         inline bool          chi_quench_when_stuck     = false;                                  /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck        = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck        = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
@@ -148,6 +149,7 @@ namespace settings {
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
+        inline size_t   svd_switchsize                  = 2048  ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/

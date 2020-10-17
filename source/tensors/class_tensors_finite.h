@@ -43,6 +43,7 @@ class class_tensors_finite {
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void damp_model_disorder(double coupling_damp, double field_damp);
     void reduce_mpo_energy(std::optional<double> site_energy = std::nullopt);
+    void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
 
     void                 assert_validity() const;
     [[nodiscard]] bool   is_real() const;

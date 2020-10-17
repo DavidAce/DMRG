@@ -6,6 +6,7 @@
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
+enum class SVDMode {EIGEN,LAPACKE};
 enum class ModelType { ising_tf_rf, ising_sdual };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
@@ -86,6 +87,10 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, StateRitz>) {
         if(item == StateRitz::SR) return "SR";
         if(item == StateRitz::LR) return "LR";
+    }
+    if constexpr(std::is_same_v<T, SVDMode>) {
+        if(item == SVDMode::EIGEN)   return "EIGEN";
+        if(item == SVDMode::LAPACKE) return "LAPACKE";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf) return "ising_tf_rf";
@@ -244,6 +249,10 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StateRitz>) {
         if(item == "SR") return StateRitz::SR;
         if(item == "LR") return StateRitz::LR;
+    }
+    if constexpr(std::is_same_v<T, SVDMode>) {
+        if(item == "EIGEN")   return SVDMode::EIGEN;
+        if(item == "LAPACKE") return SVDMode::LAPACKE;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf") return ModelType::ising_tf_rf;

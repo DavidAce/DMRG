@@ -50,7 +50,7 @@ class class_edges_infinite {
     [[nodiscard]] env_pair<class_env_var>       get_var();
 
     [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 4>> get_var_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_var_blk() const;
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_ene_blk();
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 4>>       get_var_blk();
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_var_blk();
 };

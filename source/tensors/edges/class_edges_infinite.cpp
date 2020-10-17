@@ -78,10 +78,10 @@ void class_edges_infinite::env_pair<env_type>::assert_validity() const {
 }
 
 size_t class_edges_infinite::get_length() const {
-    if(not num::all_equal(eneL->sites, eneR->sites, varL->sites, varR->sites))
+    if(not num::all_equal(eneL->get_sites(), eneR->get_sites(), varL->get_sites(), varR->get_sites()))
         throw std::runtime_error(
-            fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->sites, eneR->sites, varL->sites, varR->sites));
-    return eneL->sites + eneR->sites + 2;
+            fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->get_sites(), eneR->get_sites(), varL->get_sites(), varR->get_sites()));
+    return eneL->get_sites() + eneR->get_sites() + 2;
 }
 
 size_t class_edges_infinite::get_position() const {
@@ -120,7 +120,7 @@ class_edges_infinite::env_pair<const class_env_var> class_edges_infinite::get_va
 class_edges_infinite::env_pair<class_env_ene> class_edges_infinite::get_ene() { return {*eneL, *eneR}; }
 class_edges_infinite::env_pair<class_env_var> class_edges_infinite::get_var() { return {*varL, *varR}; }
 
-class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() const { return {eneL->block, eneR->block}; }
-class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,4>> class_edges_infinite::get_var_blk() const { return {varL->block, varR->block}; }
-class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() { return {eneL->block, eneR->block}; }
-class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,4>> class_edges_infinite::get_var_blk() { return {varL->block, varR->block}; }
+class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() const { return {eneL->get_block(), eneR->get_block()}; }
+class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_var_blk() const { return {varL->get_block(), varR->get_block()}; }
+class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() { return {eneL->get_block(), eneR->get_block()}; }
+class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_var_blk() { return {varL->get_block(), varR->get_block()}; }

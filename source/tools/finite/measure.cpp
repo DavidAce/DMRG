@@ -16,9 +16,9 @@
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/contraction.h>
 #include <tools/common/fmt.h>
 #include <tools/common/log.h>
-#include <tools/common/moments.h>
 #include <tools/common/prof.h>
 
 using namespace std;
@@ -288,7 +288,7 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         const auto &env = edges.get_multisite_ene_blk();
         tools::log->trace("Measuring energy");
         tools::common::profile::get_default_prof()["t_ene"]->tic();
-        double e_minus_ered = tools::common::moments::first(state, mpo, env.L, env.R);
+        double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         tools::common::profile::get_default_prof()["t_ene"]->toc();
         if(measurements != nullptr) measurements->energy_minus_energy_reduced = e_minus_ered;
         return e_minus_ered;
@@ -369,14 +369,14 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
 
-        const auto &mpo = model.get_multisite_tensor();
+        const auto &mpo = model.get_multisite_mpo_squared();
         const auto &env = edges.get_multisite_var_blk();
         tools::log->trace("Measuring energy variance");
         if(state.dimension(0) != mpo.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo.dimension(2)));
         tools::common::profile::get_default_prof()["t_var"]->tic();
-        double H2 = tools::common::moments::second(state, mpo, env.L, env.R);
+        double H2 = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         tools::common::profile::get_default_prof()["t_var"]->toc();
         double var = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;

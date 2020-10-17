@@ -56,6 +56,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("model::ising_sdual::parity_sep"               , model::ising_sdual::parity_sep);
     dmrg_config.load_parameter("model::ising_sdual::distribution"             , model::ising_sdual::distribution);
     dmrg_config.load_parameter("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
+    dmrg_config.load_parameter("strategy::compress_mpo_squared"               , strategy::compress_mpo_squared);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
     dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
@@ -75,6 +76,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::eig_threshold"                     , precision::eig_threshold);
     dmrg_config.load_parameter("precision::eig_max_ncv"                       , precision::eig_max_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
+    dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_slope_threshold"          , precision::variance_slope_threshold);
     dmrg_config.load_parameter("precision::entropy_slope_threshold"           , precision::entropy_slope_threshold);
