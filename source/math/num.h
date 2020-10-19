@@ -64,6 +64,13 @@ namespace num {
         return std::sqrt(sum / n);
     }
 
+    template<typename ContainerType>
+    double sterr(const ContainerType & X,
+                 std::optional<size_t> start_point = std::nullopt,
+                 std::optional<size_t> end_point   = std::nullopt){
+        return stdev(X,start_point,end_point)/std::sqrt(X.size());
+    }
+
     template<typename ContainerType1, typename ContainerType2>
     double slope(ContainerType1 &X, ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         if(X.size() != Y.size()) throw std::range_error("slope: Size mismatch in arrays");
