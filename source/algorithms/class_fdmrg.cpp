@@ -5,9 +5,9 @@
 #include "class_fdmrg.h"
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
-#include <tools/common/fmt.h>
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
@@ -154,13 +154,13 @@ void class_fdmrg::single_fdmrg_step() {
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
-    if constexpr (settings::debug)
-        tools::log->debug("Variance after opt: {:.8f}",std::log10(tools::finite::measure::energy_variance_per_site(multisite_tensor,tensors)));
-
+    if constexpr(settings::debug)
+        tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors)));
 
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
-    if constexpr (settings::debug)
-        tools::log->debug("Variance after svd: {:.8f} | trunc: {}",std::log10(tools::finite::measure::energy_variance_per_site(tensors)), tools::finite::measure::truncation_errors_active(*tensors.state));
+    if constexpr(settings::debug)
+        tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
+                          tools::finite::measure::truncation_errors_active(*tensors.state));
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
