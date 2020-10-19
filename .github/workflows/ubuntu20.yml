@@ -10,30 +10,30 @@ on:
 
 jobs:
   ci:
-    name: ${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
+    name: ${{ matrix.compiler }}-${{ matrix.shared }}-${{ matrix.source }}
     runs-on: ubuntu-20.04
     env:
-      cache-name: ubuntu-20.04-cache-${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
+      cache-name: ubuntu-20.04-cache-${{ matrix.compiler }}-${{ matrix.shared }}-${{ matrix.source }}
     strategy:
       fail-fast: true # True stops all on first error. Stick to false when debugging
       matrix:
         include:
-          - { compiler: gcc,   source: fetch        , shared: ''               }
-          - { compiler: gcc,   source: fetch        , shared: --enable-shared  }
-          - { compiler: gcc,   source: conan        , shared: ''               }
-          - { compiler: gcc,   source: conan        , shared: --enable-shared  }
-          - { compiler: gcc,   source: find-or-fetch, shared: ''               }
-          - { compiler: gcc,   source: find-or-fetch, shared: --enable-shared  }
-          - { compiler: gcc,   source: find-or-fetch, shared: ''               }
-          - { compiler: gcc,   source: find-or-fetch, shared: --enable-shared  }
-          - { compiler: clang, source: fetch        , shared: ''               }
-          - { compiler: clang, source: fetch        , shared: --enable-shared  }
-          - { compiler: clang, source: conan        , shared: ''               }
-          - { compiler: clang, source: conan        , shared: --enable-shared  }
-          - { compiler: clang, source: find-or-fetch, shared: ''               }
-          - { compiler: clang, source: find-or-fetch, shared: --enable-shared  }
-          - { compiler: clang, source: find-or-fetch, shared: ''               }
-          - { compiler: clang, source: find-or-fetch, shared: --enable-shared  }
+          - { compiler: gcc,   source: fetch        , shared: ''             }
+          - { compiler: gcc,   source: fetch        , shared: --enable-shared}
+          - { compiler: gcc,   source: conan        , shared: ''             }
+          - { compiler: gcc,   source: conan        , shared: --enable-shared}
+          - { compiler: gcc,   source: find-or-fetch, shared: ''             }
+          - { compiler: gcc,   source: find-or-fetch, shared: --enable-shared}
+          - { compiler: gcc,   source: find-or-fetch, shared: ''             }
+          - { compiler: gcc,   source: find-or-fetch, shared: --enable-shared}
+          - { compiler: clang, source: fetch        , shared: ''             }
+          - { compiler: clang, source: fetch        , shared: --enable-shared}
+          - { compiler: clang, source: conan        , shared: ''             }
+          - { compiler: clang, source: conan        , shared: --enable-shared}
+          - { compiler: clang, source: find-or-fetch, shared: ''             }
+          - { compiler: clang, source: find-or-fetch, shared: --enable-shared}
+          - { compiler: clang, source: find-or-fetch, shared: ''             }
+          - { compiler: clang, source: find-or-fetch, shared: --enable-shared}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -75,7 +75,7 @@ jobs:
 
       - name: Build
         run: |
-          ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=Debug -j 2 --verbose --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} ${{ matrix.shared }}
+          ./build.sh  --enable-tests -a haswell --build-type=Debug -j 2 --verbose --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} ${{ matrix.shared }}
 
       - name: Test
         run: |
