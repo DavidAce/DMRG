@@ -1,0 +1,86 @@
+name: Ubuntu 20.04
+# INSPIRATION https://github.com/onqtam/doctest/pull/285/files/875052e18cf5f5f0b9176e59f847b6205f3efb78#
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - development
+
+jobs:
+  ci:
+    name: ${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
+    runs-on: ubuntu-20.04
+    env:
+      cache-name: ubuntu-20.04-cache-${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
+    strategy:
+      fail-fast: true # True stops all on first error. Stick to false when debugging
+      matrix:
+        include:
+          - { compiler: gcc,   shared: OFF, source: fetch }
+          - { compiler: gcc,   shared: ON , source: fetch }
+          - { compiler: gcc,   shared: OFF, source: conan }
+          - { compiler: gcc,   shared: ON , source: conan }
+          - { compiler: gcc,   shared: OFF, source: find-or-fetch }
+          - { compiler: gcc,   shared: ON , source: find-or-fetch }
+          - { compiler: gcc,   shared: OFF, source: find-or-fetch }
+          - { compiler: gcc,   shared: ON , source: find-or-fetch }
+          - { compiler: clang, shared: OFF, source: fetch }
+          - { compiler: clang, shared: ON , source: fetch }
+          - { compiler: clang, shared: OFF, source: conan }
+          - { compiler: clang, shared: ON , source: conan }
+          - { compiler: clang, shared: OFF, source: find-or-fetch }
+          - { compiler: clang, shared: ON , source: find-or-fetch }
+          - { compiler: clang, shared: OFF, source: find-or-fetch }
+          - { compiler: clang, shared: ON , source: find-or-fetch }
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        if: contains(matrix.source, 'conan')
+        with:
+          python-version: '3.x'
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.conan/data
+            build/Debug/install
+          key: ${{ env.cache-name }}
+
+      - name: Setup gcc # compilers are already installed on the CI
+        if: matrix.compiler == 'gcc'
+        run: |
+          sudo apt-get install gcc-10 g++-10 gfortran -y
+          echo "::set-env name=FC::gfortran"
+          echo "::set-env name=CC::gcc-10"
+          echo "::set-env name=CXX::g++-10"
+
+      - name: Setup clang
+        if: matrix.compiler == 'clang' # compilers are already installed on the CI # sudo apt-get install libclang-10-dev gfortran -y
+        run: |
+          echo "::set-env name=FC::gfortran"
+          echo "::set-env name=CC::clang-10"
+          echo "::set-env name=CXX::clang++-10"
+
+      - name: Setup apt packages
+        if: contains(matrix.source,'find')
+        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev -y
+
+      - name: Setup conan
+        if: matrix.source == 'conan'
+        run: |
+          pip install conan
+          conan user
+
+      - name: Build
+        run: |
+          ./build.sh --enable-tests -a haswell --build-type=Debug -j 2 --verbose-cmake --download-mode=${{ matrix.source }} --compiler=${{ matrix.compiler }} --enable-shared=${{ matrix.shared }}
+
+      - name: Test
+        run: |
+          cd build/Debug
+          ctest -C Debug --output-on-failure
+
+
+
