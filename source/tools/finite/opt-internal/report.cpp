@@ -64,14 +64,15 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
 void tools::finite::opt::internal::reports::print_time_report(){
     if (tools::log->level() > spdlog::level::trace) return;
     if(time_log.empty()) return;
-    std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
-    std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
+    std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
+    std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
     tools::log->trace(format_hdr.c_str(),
                       "vH2v",
                       "vHv",
                       "vH2",
                       "vH",
                       "sum",
+                      "step",
                       "l-bfgs");
     for(auto &entry : time_log){
     tools::log->trace(format_num.c_str(),
@@ -83,6 +84,7 @@ void tools::finite::opt::internal::reports::print_time_report(){
                           + entry.vHv
                           + entry.vH2
                           + entry.vH),
+                     1000 * entry.step,
                      1000 * entry.bfgs);
     }
     time_log.clear();
@@ -110,7 +112,8 @@ void tools::finite::opt::internal::reports::time_add_dir_entry(){
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"]->get_last_interval(),
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"]->get_last_interval() ,
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"]->get_last_interval(),
-                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->get_last_interval()});
+                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->get_last_interval(),
+                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_step"]->get_last_interval()});
 }
 void tools::finite::opt::internal::reports::time_add_sub_entry(){
     if (tools::log->level() > spdlog::level::trace) return;
@@ -118,7 +121,8 @@ void tools::finite::opt::internal::reports::time_add_sub_entry(){
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"]->get_last_interval(),
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"]->get_last_interval(),
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"]->get_last_interval(),
-                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->get_last_interval()});
+                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->get_last_interval(),
+                          tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"]->get_last_interval()});
 }
 void tools::finite::opt::internal::reports::eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time){
     if (tools::log->level() > spdlog::level::debug) return;

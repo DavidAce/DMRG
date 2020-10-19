@@ -155,6 +155,7 @@ class h5pp_table_xdmrg_profiling {
         double   t_opt             = 0;
         double   t_opt_dir         = 0;
         double   t_opt_dir_bfgs    = 0;
+        double   t_opt_dir_step    = 0;
         double   t_opt_dir_vH2     = 0;
         double   t_opt_dir_vH2v    = 0;
         double   t_opt_dir_vH      = 0;
@@ -165,6 +166,7 @@ class h5pp_table_xdmrg_profiling {
         double   t_opt_sub_lu      = 0;
         double   t_opt_sub_eig     = 0;
         double   t_opt_sub_bfgs    = 0;
+        double   t_opt_sub_step    = 0;
         double   t_opt_sub_vH2     = 0;
         double   t_opt_sub_vH2v    = 0;
         double   t_opt_sub_vH      = 0;
@@ -198,6 +200,7 @@ class h5pp_table_xdmrg_profiling {
         H5Tinsert(h5_type, "t_opt",            HOFFSET(table, t_opt         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_dir",        HOFFSET(table, t_opt_dir     ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_dir_bfgs",   HOFFSET(table, t_opt_dir_bfgs), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_dir_step",   HOFFSET(table, t_opt_dir_step), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_dir_vH2",    HOFFSET(table, t_opt_dir_vH2 ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_dir_vH2v",   HOFFSET(table, t_opt_dir_vH2v), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_dir_vH",     HOFFSET(table, t_opt_dir_vH  ), H5T_NATIVE_DOUBLE);
@@ -208,6 +211,7 @@ class h5pp_table_xdmrg_profiling {
         H5Tinsert(h5_type, "t_opt_sub_lu",     HOFFSET(table, t_opt_sub_lu  ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_sub_eig",    HOFFSET(table, t_opt_sub_eig ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_sub_bfgs",   HOFFSET(table, t_opt_sub_bfgs), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_opt_sub_step",   HOFFSET(table, t_opt_sub_step), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_sub_vH2",    HOFFSET(table, t_opt_sub_vH2 ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_sub_vH2v",   HOFFSET(table, t_opt_sub_vH2v), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt_sub_vH",     HOFFSET(table, t_opt_sub_vH  ), H5T_NATIVE_DOUBLE);

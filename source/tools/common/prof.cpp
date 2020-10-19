@@ -105,6 +105,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::xDMRG]["t_opt"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |+ Optimization          ");
     prof[AlgorithmType::xDMRG]["t_opt_dir"]         = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " ||+ Direct               ");
     prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |||+ L-BFGS              ");
+    prof[AlgorithmType::xDMRG]["t_opt_dir_step"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " || |- step               ");
     prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"]     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " || |- vH2                ");
     prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " || |- vH2v               ");
     prof[AlgorithmType::xDMRG]["t_opt_dir_vH"]      = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " || |- vH                 ");
@@ -115,6 +116,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::xDMRG]["t_opt_sub_lu"]      = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " | |- LU decomposition    ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " | |- Eigenvalue decomp   ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " | |+ L-BFGS              ");
+    prof[AlgorithmType::xDMRG]["t_opt_sub_step"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- step               ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"]     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- vH2                ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"]    = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- vH2v               ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_vH"]      = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- vH                 ");
