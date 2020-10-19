@@ -34,7 +34,7 @@ void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, co
         tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
         tensors.activate_sites(settings::precision::max_size_full_diag,2);
-        tensors.rebuild_edges();
+        tensors.reduce_mpo_energy();
         tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors);
     } catch(std::exception &ex) { throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
 }
