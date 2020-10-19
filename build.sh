@@ -19,6 +19,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -j | --make-threads [=num]      : Number of threads used by Make build (default = 8)
 -l | --clear-libs [=args]       : Clear libraries in comma separated list 'lib1,lib2...'. "all" deletes all.
 -s | --enable-shared            : Enable shared library linking (default is static)
+     --shared [=ON/OFF]         : Alternative to --enable-shared (default is OFF).
    | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
@@ -38,7 +39,7 @@ EOF
 
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
+PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 --long "\
                 help\
                 arch:\
@@ -51,6 +52,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 download-method:\
                 enable-tests\
                 enable-shared\
+                shared:\
                 gcc-toolchain:\
                 make-threads:\
                 enable-openmp\
@@ -107,6 +109,7 @@ do
     -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
+       --shared)                    enable_shared=$2                ; echo " * Link shared libraries    : $2"      ; shift 2 ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * OpenMP                   : ON"      ; shift   ;;
@@ -122,6 +125,8 @@ do
   esac
 done
 
+echo "enable_shared: $enable_shared"
+exit 0
 
 if [ $OPTIND -eq 0 ] ; then
     echo "No flags were passed"; usage ;exit 1;
@@ -318,9 +323,13 @@ if [ -z "$dry_run" ] ;then
     if [ "$exit_code" != "0" ]; then
             echo ""
             echo "Exit code: $exit_code"
+            echo "==================================================================="
+            echo "CMakeFiles/CMakeOutput.log:"
+            cat CMakeFiles/CMakeOutput.log
+            echo "==================================================================="
             echo "CMakeFiles/CMakeError.log:"
-            echo ""
             cat CMakeFiles/CMakeError.log
+            echo "==================================================================="
             exit "$exit_code"
     fi
 
@@ -329,9 +338,13 @@ if [ -z "$dry_run" ] ;then
     if [ "$exit_code" != "0" ]; then
             echo ""
             echo "Exit code: $exit_code"
+            echo "==================================================================="
+            echo "CMakeFiles/CMakeOutput.log:"
+            cat CMakeFiles/CMakeOutput.log
+            echo "==================================================================="
             echo "CMakeFiles/CMakeError.log:"
-            echo ""
             cat CMakeFiles/CMakeError.log
+            echo "==================================================================="
             exit "$exit_code"
     fi
 
