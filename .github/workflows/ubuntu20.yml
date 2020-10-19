@@ -10,10 +10,10 @@ on:
 
 jobs:
   ci:
-    name: ${{ matrix.compiler }}-${{ matrix.shared }}-${{ matrix.source }}
+    name: ${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
     runs-on: ubuntu-20.04
     env:
-      cache-name: ubuntu-20.04-cache-${{ matrix.compiler }}-${{ matrix.shared }}-${{ matrix.source }}
+      cache-name: ubuntu-20.04-cache-${{ matrix.compiler }}-shared-${{ matrix.shared }}-${{ matrix.source }}
     strategy:
       fail-fast: true # True stops all on first error. Stick to false when debugging
       matrix:

@@ -125,9 +125,6 @@ do
   esac
 done
 
-echo "enable_shared: $enable_shared"
-exit 0
-
 if [ $OPTIND -eq 0 ] ; then
     echo "No flags were passed"; usage ;exit 1;
 fi
