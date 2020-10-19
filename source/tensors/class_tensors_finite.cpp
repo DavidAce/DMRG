@@ -63,7 +63,7 @@ void class_tensors_finite::randomize_state(StateType state_type, const std::stri
     state->clear_measurements();
     tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
     if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE or state_type == StateType::RANDOM_ENTANGLED_STATE)
-        project_to_nearest_sector(sector, chi_lim, svd_threshold);
+        project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection anyway
     else
         normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);
 }
