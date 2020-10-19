@@ -39,6 +39,7 @@ void class_xdmrg::resume() {
     if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
+    clear_convergence_status();
 
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to infer it from the state prefix itself
