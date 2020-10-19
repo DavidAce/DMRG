@@ -75,7 +75,7 @@ jobs:
 
       - name: Build
         run: |
-          ./build.sh --enable-tests -a haswell --build-type=Debug -j 2 --verbose-cmake --download-mode=${{ matrix.source }} --compiler=${{ matrix.compiler }} --enable-shared=${{ matrix.shared }}
+          ./build.sh --enable-tests -a haswell --build-type=Debug -j 2 --verbose-cmake --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} --enable-shared=${{ matrix.shared }}
 
       - name: Test
         run: |
