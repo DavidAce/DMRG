@@ -6,11 +6,29 @@
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 
-template<typename AttrType>
-void save_attr(h5pp::File &file, const AttrType &attrData, const std::string &attrName, const std::string &dsetPath, const std::string &dsetText) {
-    tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", attrName, attrData, dsetPath);
-    if(not file.linkExists(dsetPath)) file.writeDataset(dsetText, dsetPath);
-    file.writeAttribute(attrData, attrName, dsetPath);
+namespace tools::common::io::h5attr {
+    template<typename AttrType>
+    void save_attr(h5pp::File &file, const AttrType &attrData, const std::string &attrName, const std::string &dsetPath, const std::string &dsetText) {
+        tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", attrName, attrData, dsetPath);
+        if(not file.linkExists(dsetPath)) file.writeDataset(dsetText, dsetPath);
+        file.writeAttribute(attrData, attrName, dsetPath);
+    }
+}
+
+namespace tools::common::io::h5attr {
+    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5ppFile,
+                            const std::string &state_prefix) {
+        if(save_log.empty()) {
+            try {
+                uint64_t step = 0;
+                uint64_t iter = 0;
+                if(h5ppFile.linkExists("common/step")) step = h5ppFile.readAttribute<uint64_t>(state_prefix, "common/step");
+                if(h5ppFile.linkExists("common/iteration")) iter = h5ppFile.readAttribute<uint64_t>(state_prefix, "common/iteration");
+                save_log[state_prefix] = std::make_pair(iter, step);
+
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
+        }
+    }
 }
 
 void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLevel &storage_level, const StorageReason &storage_reason,
@@ -36,9 +54,10 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
 
     // Checks if the current entries have already been written
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto save_point = std::make_pair(status.iter,status.step);
-    if(save_log[state_prefix] == save_point) return;
+    bootstrap_save_log(save_log, h5ppFile, state_prefix);
 
+    auto save_point = std::make_pair(status.iter, status.step);
+    if(save_log[state_prefix] == save_point) return;
 
     std::string storage_level_str(enum2str(storage_level));
     std::string storage_reason_str(enum2str(storage_reason));

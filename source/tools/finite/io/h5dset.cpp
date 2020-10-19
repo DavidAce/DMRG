@@ -16,6 +16,26 @@
 #include <tools/finite/measure.h>
 using Scalar = std::complex<double>;
 
+namespace tools::finite::io::h5dset{
+    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> & save_log, const h5pp::File &h5ppFile, const std::vector<std::string> & links){
+        if(save_log.empty()){
+            try {
+                for(auto &link : links) {
+                    if(h5ppFile.linkExists(link)) {
+                        auto step      = h5ppFile.readAttribute<uint64_t>("step", link);
+                        auto iter      = h5ppFile.readAttribute<uint64_t>("iteration", link);
+                        save_log[link] = std::make_pair(iter, step);
+                    }
+                }
+            }catch(const std::exception & ex){
+                tools::log->warn("Could not bootstrap save_log: {}", ex.what());
+            }
+        }
+    }
+}
+
+
+
 int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
     std::string str(prefix_path);
     std::regex  rx(R"(checkpoint/iter_[0-9])"); // Declare the regex with a raw string literal
@@ -26,11 +46,15 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
 }
 
 void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
-                                           const class_state_finite &state, const class_algorithm_status & status) {
+                                           const class_state_finite &state, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
+
     // Checks if the current entry has already been saved
+    // If it is empty because we are resuming, check if there is a log entry on file already
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  save_point = std::make_pair(state.get_iteration(), state.get_step());
+    bootstrap_save_log(save_log,h5ppFile,{state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
+
+    auto save_point = std::make_pair(state.get_iteration(), state.get_step());
 
     auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
@@ -87,7 +111,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         return;
     }
 
-    if(save_log[mps_prefix] != save_point){
+    if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
         tools::common::profile::get_default_prof()["t_hdf"]->tic();
         for(size_t pos = 0; pos < state.get_length(); pos++) {
@@ -119,7 +143,7 @@ void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::stri
 
 /*! Write down measurements that can't fit in a table */
 void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
-                                           const class_state_finite &state, const class_algorithm_status & status) {
+                                           const class_state_finite &state, const class_algorithm_status &status) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
