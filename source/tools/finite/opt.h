@@ -147,7 +147,7 @@ namespace tools::finite::opt::internal{
             double time;
         };
         struct time_entry{
-            double vH2v,vHv,vH2,vH,bfgs;
+            double vH2v,vHv,vH2,vH,bfgs,step;
         };
         struct eigs_entry{
             long nev;
@@ -209,7 +209,7 @@ namespace tools::finite::opt::internal{
         long   get_ops                 () const;
         int    NumParameters           () const final;
 
-        std::unique_ptr<class_tic_toc> t_bfgs;
+        std::unique_ptr<class_tic_toc> t_step;
         std::unique_ptr<class_tic_toc> t_vH2;
         std::unique_ptr<class_tic_toc> t_vH2v;
         std::unique_ptr<class_tic_toc> t_vH;
@@ -222,7 +222,7 @@ namespace tools::finite::opt::internal{
         public:
         std::shared_ptr<spdlog::logger> log;
         const FunctorType &             functor;
-        int    freq_log_iter = 5; //Wait at least this many iterations between logs
+        int    freq_log_iter = 10; //Wait at least this many iterations between logs
         int    last_log_iter = 0;
         int    init_log_iter = 0;
         double last_log_time = 0;
