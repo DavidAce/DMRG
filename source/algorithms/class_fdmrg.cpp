@@ -134,24 +134,7 @@ void class_fdmrg::run_algorithm() {
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
-        if(tensors.position_is_any_edge()) {
-            if(status.iter >= settings::fdmrg::max_iters) {
-                stop_reason = StopReason::MAX_ITERS;
-                break;
-            }
-            if(status.algorithm_has_succeeded) {
-                stop_reason = StopReason::SUCCEEDED;
-                break;
-            }
-            if(status.algorithm_has_to_stop) {
-                stop_reason = StopReason::SATURATED;
-                break;
-            }
-            if(status.num_resets > settings::strategy::max_resets) {
-                stop_reason = StopReason::MAX_RESET;
-                break;
-            }
-        }
+        if(stop_reason != StopReason::NONE) break;
 
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
@@ -190,17 +173,30 @@ void class_fdmrg::check_convergence() {
         check_convergence_entg_entropy();
     }
 
+    status.algorithm_has_saturated =
+        (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters) or
+        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-    status.algorithm_has_saturated = status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters;
-    status.algorithm_has_succeeded = status.algorithm_has_converged and status.algorithm_has_saturated;
-    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_succeeded;
+    status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
+    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
+
     if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
+
     if(tensors.state->position_is_any_edge()) {
         tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
                           status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
+
+    if(tensors.position_is_any_edge()) {
+        stop_reason = StopReason::NONE;
+        if(status.iter >= settings::fdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
+        if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
+        if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
+        if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
+    }
+
     tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 

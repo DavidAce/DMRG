@@ -217,29 +217,7 @@ void class_xdmrg::run_algorithm() {
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
-        if(tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
-            if(status.iter >= settings::xdmrg::max_iters) {
-                stop_reason = StopReason::MAX_ITERS;
-                break;
-            }
-            if(status.algorithm_has_succeeded) {
-                stop_reason = StopReason::SUCCEEDED;
-                break;
-            }
-            if(status.algorithm_has_to_stop) {
-                stop_reason = StopReason::SATURATED;
-                break;
-            }
-            if(status.num_resets > settings::strategy::max_resets) {
-                stop_reason = StopReason::MAX_RESET;
-                break;
-            }
-            if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_chi() >= 32 and
-               tools::finite::measure::energy_variance(tensors) < 1e-4) {
-                stop_reason = StopReason::RANDOMIZE;
-                break;
-            }
-        }
+        if(stop_reason != StopReason::NONE) break;
 
         // Prepare for next step
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
@@ -272,8 +250,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    // If the bond dimension is small enough we should give subspace a shot
-    if(tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+    // If early in the simulation, or stuck, and the bond dimension is small enough we should give subspace optimization a shot
+    if((status.iter < 6 or status.algorithm_has_got_stuck) and tensors.state->size_2site() <= settings::precision::max_size_full_diag) {
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
     }
 
@@ -329,13 +307,13 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     OptConf c2 = c1; // Start with c1 as a baseline
                      //    c2.optWhen = OptWhen::PREV_FAIL; // Only run if the previous was unsuccessful
 
-//    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::OVERLAP) {
-//        // I.e. if we did an SUBSPACE OVERLAP run that failed, do the following
-//        c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
-//        c2.optSpace = OptSpace::DIRECT;
-//        c2.optMode  = OptMode::VARIANCE;
-//        configs.emplace_back(c2);
-//    } else
+    //    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::OVERLAP) {
+    //        // I.e. if we did an SUBSPACE OVERLAP run that failed, do the following
+    //        c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
+    //        c2.optSpace = OptSpace::DIRECT;
+    //        c2.optMode  = OptMode::VARIANCE;
+    //        configs.emplace_back(c2);
+    //    } else
     if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE) {
         // I.e. if we did a SUBSPACE VARIANCE run that failed, do the following
         c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
@@ -379,12 +357,12 @@ void class_xdmrg::single_xDMRG_step() {
         // We can now decide if we are happy with the result or not.
         double percent = 100 * results.back().get_variance_per_site() / variance_old_per_site;
         if(percent < 99) {
-            tools::log->debug("State improved during {} optimization. Variance Variance new {:.4f} / old {:.4f} = {:.3f} %",
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
+            tools::log->debug("State improved during {} optimization. Variance Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
+                              std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
             break;
         } else {
-            tools::log->debug("State did not improve during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %",
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
+            tools::log->debug("State did not improve during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
+                              std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
             continue;
         }
     }
@@ -398,7 +376,7 @@ void class_xdmrg::single_xDMRG_step() {
                               candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
 
     // Take the best result
-    const auto &winner   = results.front();
+    const auto &winner = results.front();
     tensors.activate_sites(winner.get_sites());
     if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
 
@@ -425,7 +403,6 @@ void class_xdmrg::single_xDMRG_step() {
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
-
 void class_xdmrg::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
     if(tensors.state->position_is_any_edge()) {
@@ -448,10 +425,14 @@ void class_xdmrg::check_convergence() {
         }
     }
 
+
+    status.algorithm_has_saturated =
+        (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters) or
+        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-    status.algorithm_has_saturated = status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters;
-    status.algorithm_has_succeeded = status.algorithm_has_converged and status.algorithm_has_saturated;
-    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_succeeded;
+    status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
+    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
+
     if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
@@ -459,6 +440,17 @@ void class_xdmrg::check_convergence() {
         tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
                           status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
+    }
+
+    if(tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
+        stop_reason = StopReason::NONE;
+        if(status.iter >= settings::xdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
+        if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
+        if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
+        if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
+        if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_chi() >= 32 and
+           tools::finite::measure::energy_variance(tensors) < 1e-4)
+            stop_reason = StopReason::RANDOMIZE;
     }
 
     tools::common::profile::prof[algo_type]["t_con"]->toc();
