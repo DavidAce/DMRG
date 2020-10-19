@@ -9,13 +9,28 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
+namespace tools::common::io::h5table {
+    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5ppFile, const std::string &link) {
+        if(save_log.empty()) {
+            try {
+                if(h5ppFile.linkExists(link)) {
+                    auto step      = h5ppFile.readAttribute<uint64_t>("step", link);
+                    auto iter      = h5ppFile.readAttribute<uint64_t>("iteration", link);
+                    save_log[link] = std::make_pair(iter, step);
+                }
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
+        }
+    }
+}
+
 void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                                  const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
     // Check if the current entry has already been appended
     // Status is special, flags can be updated without changing iter or step
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  save_point = std::make_pair(status.iter, status.step);
+    bootstrap_save_log(save_log, h5ppFile, table_path);
+    auto save_point = std::make_pair(status.iter, status.step);
     tools::log->trace("Appending to table: {}", table_path);
     h5pp_table_algorithm_status::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
@@ -25,6 +40,8 @@ void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std
         h5ppFile.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
     } else
         h5ppFile.appendTableRecords(status, table_path);
+    h5ppFile.writeAttribute(status.iter, "iteration", table_path);
+    h5ppFile.writeAttribute(status.step, "step", table_path);
 
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
@@ -35,7 +52,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
     if(storage_level == StorageLevel::NONE) return;
     // Check if the current entry has already been appended
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  save_point = std::make_pair(status.iter, status.step);
+    bootstrap_save_log(save_log, h5ppFile, table_path);
+    auto save_point = std::make_pair(status.iter, status.step);
     if(save_log[table_path] == save_point) return;
 
     tools::log->trace("Appending to table: {}", table_path);
@@ -69,6 +87,7 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_opt           = tools::common::profile::prof[algo_type.value()]["t_opt"]->get_measured_time();
             profiling_entry.t_opt_dir       = tools::common::profile::prof[algo_type.value()]["t_opt_dir"]->get_measured_time();
             profiling_entry.t_opt_dir_bfgs  = tools::common::profile::prof[algo_type.value()]["t_opt_dir_bfgs"]->get_measured_time();
+            profiling_entry.t_opt_dir_step  = tools::common::profile::prof[algo_type.value()]["t_opt_dir_step"]->get_measured_time();
             profiling_entry.t_opt_dir_vH2   = tools::common::profile::prof[algo_type.value()]["t_opt_dir_vH2"]->get_measured_time();
             profiling_entry.t_opt_dir_vH2v  = tools::common::profile::prof[algo_type.value()]["t_opt_dir_vH2v"]->get_measured_time();
             profiling_entry.t_opt_dir_vH    = tools::common::profile::prof[algo_type.value()]["t_opt_dir_vH"]->get_measured_time();
@@ -79,6 +98,7 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_opt_sub_lu    = tools::common::profile::prof[algo_type.value()]["t_opt_sub_lu"]->get_measured_time();
             profiling_entry.t_opt_sub_eig   = tools::common::profile::prof[algo_type.value()]["t_opt_sub_eig"]->get_measured_time();
             profiling_entry.t_opt_sub_bfgs  = tools::common::profile::prof[algo_type.value()]["t_opt_sub_bfgs"]->get_measured_time();
+            profiling_entry.t_opt_sub_step  = tools::common::profile::prof[algo_type.value()]["t_opt_sub_step"]->get_measured_time();
             profiling_entry.t_opt_sub_vH2   = tools::common::profile::prof[algo_type.value()]["t_opt_sub_vH2"]->get_measured_time();
             profiling_entry.t_opt_sub_vH2v  = tools::common::profile::prof[algo_type.value()]["t_opt_sub_vH2v"]->get_measured_time();
             profiling_entry.t_opt_sub_vH    = tools::common::profile::prof[algo_type.value()]["t_opt_sub_vH"]->get_measured_time();
@@ -181,6 +201,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             break;
         }
     }
+    h5ppFile.writeAttribute(status.iter, "iteration", table_path);
+    h5ppFile.writeAttribute(status.step, "step", table_path);
     save_log[table_path] = save_point;
 }
 
@@ -189,7 +211,8 @@ void tools::common::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std:
     if(storage_level == StorageLevel::NONE) return;
     // Check if the current entry has already been appended
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  save_point = std::make_pair(status.iter, status.step);
+    bootstrap_save_log(save_log, h5ppFile, table_path);
+    auto save_point = std::make_pair(status.iter, status.step);
     if(save_log[table_path] == save_point) return;
     log->trace("Appending to table: {}", table_path);
 
@@ -204,6 +227,8 @@ void tools::common::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std:
     mem_usage_entry.vm   = tools::common::profile::mem_vm_in_mb();
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
     h5ppFile.appendTableRecords(mem_usage_entry, table_path);
+    h5ppFile.writeAttribute(status.iter, "iteration", table_path);
+    h5ppFile.writeAttribute(status.step, "step", table_path);
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
 }

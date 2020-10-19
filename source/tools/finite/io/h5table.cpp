@@ -15,6 +15,21 @@
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
 
+namespace tools::finite::io::h5table {
+    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5ppFile, const std::string &link) {
+        if(save_log.empty()) {
+            try {
+                if(h5ppFile.linkExists(link)) {
+                    auto step      = h5ppFile.readAttribute<uint64_t>("step", link);
+                    auto iter      = h5ppFile.readAttribute<uint64_t>("iteration", link);
+                    save_log[link] = std::make_pair(iter, step);
+                }
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
+        }
+    }
+}
+
+
 /*! Write down the Hamiltonian model type and site info as attributes */
 void tools::finite::io::h5table::save_model(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
                                             const class_model_finite &model) {
@@ -34,6 +49,7 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     if(storage_level == StorageLevel::NONE) return;
     // Check if the current entry has already been appended
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    bootstrap_save_log(save_log, h5ppFile, table_path);
     auto save_point = std::make_pair(status.iter,status.step);
     if(save_log[table_path] == save_point) return;
 
@@ -65,6 +81,8 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     measurement_entry.algorithm_time                  = status.algo_time;
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
     h5ppFile.appendTableRecords(measurement_entry, table_path);
+    h5ppFile.writeAttribute(status.iter, "iteration", table_path);
+    h5ppFile.writeAttribute(status.step, "step", table_path);
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
 }
