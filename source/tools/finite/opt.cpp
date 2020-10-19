@@ -47,12 +47,29 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     }
 
     /* clang-format off */
+
+    /* Alglib has a good read comparing NCG and LBFGS https://www.alglib.net/optimization/lbfgsandcg.php
+     * Some noteworthy points:
+     *      "L-BFGS algorithm is quite easy to tune.
+     *       The only parameter to tune is number of correction pairs M - number of function/gradient pairs
+     *       used to build quadratic model (i.e. rank). This parameter is passed to the function which is used
+     *       to create optimizer object. Increase of M decreases number of function evaluations and iterations
+     *       needed to converge, but increases computational overhead associated with iteration. On well-conditioned
+     *       problems M can be as small as 3-10. If function changes rapidly in some directions and slowly in
+     *       other ones, then you can try increasing M in order to increase convergence."
+     *
+     *  Testing here shows that lbfgs is much better than NCG.
+     *  Testing also shows that increasing lbfgs rank can give better results at some cost in some cases,
+     *  in particular when a problem is ill-conditioned.
+     *
+     */
+
     ceres_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
     ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
-    ceres_default_options.nonlinear_conjugate_gradient_type          = ceres::NonlinearConjugateGradientType::FLETCHER_REEVES;
+    ceres_default_options.nonlinear_conjugate_gradient_type          = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
     ceres_default_options.max_num_iterations                         = 4000;
-    ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+    ceres_default_options.max_lbfgs_rank                             = 8; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-64;//  std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3;
@@ -70,20 +87,13 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
     if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations                        = 8000;
+        ceres_default_options.max_lbfgs_rank                            = 40; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         ceres_default_options.function_tolerance                        = 1e-6;
         ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 1e-12;
+        ceres_default_options.parameter_tolerance                       = 1e-14;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
-        ceres_default_options.minimizer_progress_to_stdout              = false;// tools::log->level() <= spdlog::level::debug;
     }
-    if(status.algorithm_has_stuck_for > 1){
-        ceres_default_options.function_tolerance                        = 1e-7;
-        ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 1e-16;
-        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration. May not always be optimal according to library.
-    }
-    /* clang-format on */
 
     //    Progress log definitions:
     //    f is the value of the objective function.
@@ -93,13 +103,39 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     //    s is the optimal step length computed by the line search.
     //    it is the time take by the current iteration.
     //    tt is the total time taken by the minimizer.
+
+    /* clang-format on */
+
+
+
     opt_state result;
     switch(optSpace) {
-            /* clang-format off */
+        /* clang-format off */
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
-            /* clang-format on */
+        /* clang-format on */
+//        case OptSpace::DIRECT: {
+//            result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            opt_state result1,result2,result3,result4,result5;
+//
+//            ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+//            result1 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            ceres_default_options.max_lbfgs_rank                             = 24; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+//            result2 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            ceres_default_options.max_lbfgs_rank                             = 32; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+//            result3 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            ceres_default_options.max_lbfgs_rank                             = 40; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+//            result4 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            ceres_default_options.max_lbfgs_rank                             = 48; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+//            result5 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
+//            if(result1.get_variance_per_site() < result.get_variance_per_site()) result = result1;
+//            if(result2.get_variance_per_site() < result.get_variance_per_site()) result = result2;
+//            if(result3.get_variance_per_site() < result.get_variance_per_site()) result = result3;
+//            if(result4.get_variance_per_site() < result.get_variance_per_site()) result = result4;
+//            if(result5.get_variance_per_site() < result.get_variance_per_site()) result = result5;
+//            break;
+//        }
     }
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
@@ -201,7 +237,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     /* clang-format off */
     log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
                "|∇f|∞ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
-               "t_step {:<6} t_iter {:<6} t_tot {:<5} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
+               "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                summary.iteration,
                summary.cost,
                summary.cost_change,
@@ -211,9 +247,9 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                functor.get_count() - last_count,
                functor.get_count(),
 
-               fmt::format("{:>.0f} ms",summary.step_solver_time_in_seconds * 1000),
-               fmt::format("{:>.0f} ms",summary.iteration_time_in_seconds * 1000),
-               fmt::format("{:>.3f} s",summary.cumulative_time_in_seconds),
+               fmt::format("{:>6.0f} ms",summary.step_solver_time_in_seconds * 1000),
+               fmt::format("{:>6.0f} ms",summary.iteration_time_in_seconds * 1000),
+               fmt::format("{:>5.3f} s",summary.cumulative_time_in_seconds),
                static_cast<double>(functor.get_ops()) / functor.t_vH2->get_last_interval()/1e9,
                functor.get_energy_per_site(),
                std::log10(functor.get_variance_per_site())
