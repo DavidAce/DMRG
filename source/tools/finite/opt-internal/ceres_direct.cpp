@@ -65,6 +65,7 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_step"] += *functor->t_step;
             break;
         }
         case OptType::REAL: {
@@ -85,6 +86,7 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_step"] += *functor->t_step;
             break;
         }
     }

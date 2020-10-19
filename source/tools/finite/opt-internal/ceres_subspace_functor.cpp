@@ -20,7 +20,7 @@ tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_fun
 
 template<typename Scalar>
 bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
-    t_bfgs->tic();
+    t_step->tic();
     Scalar     vH2v, vHv;
     Scalar     ene, ene2, var;
     double     vv, log10var_per_site;
@@ -92,7 +92,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     }
 
     counter++;
-    t_bfgs->toc();
+    t_step->toc();
     return true;
 }
 

@@ -57,7 +57,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
 template<typename Scalar>
 bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
-    t_bfgs->tic();
+    t_step->tic();
     Scalar ene, ene2, var;
     Scalar vHv, vH2v;
     double vv, log10var_per_site;
@@ -130,7 +130,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     }
 
     counter++;
-    t_bfgs->toc();
+    t_step->toc();
     return true;
 }
 

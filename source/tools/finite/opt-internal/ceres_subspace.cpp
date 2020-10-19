@@ -369,6 +369,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
                 break;
             }
             case OptType::REAL: {
@@ -389,6 +390,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
                 break;
             }
         }
