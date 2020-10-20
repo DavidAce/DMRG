@@ -115,27 +115,6 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
         /* clang-format on */
-//        case OptSpace::DIRECT: {
-//            result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            opt_state result1,result2,result3,result4,result5;
-//
-//            ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
-//            result1 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            ceres_default_options.max_lbfgs_rank                             = 24; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
-//            result2 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            ceres_default_options.max_lbfgs_rank                             = 32; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
-//            result3 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            ceres_default_options.max_lbfgs_rank                             = 40; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
-//            result4 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            ceres_default_options.max_lbfgs_rank                             = 48; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
-//            result5 = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace);
-//            if(result1.get_variance_per_site() < result.get_variance_per_site()) result = result1;
-//            if(result2.get_variance_per_site() < result.get_variance_per_site()) result = result2;
-//            if(result3.get_variance_per_site() < result.get_variance_per_site()) result = result3;
-//            if(result4.get_variance_per_site() < result.get_variance_per_site()) result = result4;
-//            if(result5.get_variance_per_site() < result.get_variance_per_site()) result = result5;
-//            break;
-//        }
     }
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
