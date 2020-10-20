@@ -321,9 +321,6 @@ if [ -z "$dry_run" ] ;then
             echo ""
             echo "Exit code: $exit_code"
             echo "==================================================================="
-            echo "CMakeFiles/CMakeOutput.log:"
-            cat CMakeFiles/CMakeOutput.log
-            echo "==================================================================="
             echo "CMakeFiles/CMakeError.log:"
             cat CMakeFiles/CMakeError.log
             echo "==================================================================="
@@ -335,9 +332,6 @@ if [ -z "$dry_run" ] ;then
     if [ "$exit_code" != "0" ]; then
             echo ""
             echo "Exit code: $exit_code"
-            echo "==================================================================="
-            echo "CMakeFiles/CMakeOutput.log:"
-            cat CMakeFiles/CMakeOutput.log
             echo "==================================================================="
             echo "CMakeFiles/CMakeError.log:"
             cat CMakeFiles/CMakeError.log

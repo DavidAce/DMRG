@@ -3,7 +3,6 @@
 #SBATCH --kill-on-invalid-dep=yes
 #SBATCH --output=logs/%x-%A_%a.out
 #SBATCH --error=logs/%x-%A_%a.err
-#!#SBATCH --ntasks-per-core=1
 
 
 PROGNAME=$0
