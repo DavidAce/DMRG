@@ -27,7 +27,6 @@ function(check_omp_compiles omp_tgt)
         list(APPEND CMAKE_REQUIRED_LIBRARIES -static)
     endif()
     list(APPEND CMAKE_REQUIRED_LIBRARIES ${omp_tgt}) # Can be a ;list
-#    set(CMAKE_REQUIRED_DEFINITIONS "${omp_def}") # Can be a ;list
     if(DMRG_PRINT_CHECKS)
         message(STATUS "OPENMP COMPILE TEST required      ${CMAKE_REQUIRED_LIBRARIES}")
         message(STATUS "OPENMP COMPILE TEST target        ${omp_tgt}")
