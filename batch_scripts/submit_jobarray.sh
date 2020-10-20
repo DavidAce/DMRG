@@ -120,8 +120,9 @@ if [ $OPTIND -eq 0 ] ; then
 fi
 shift "$((OPTIND - 1))"
 
-
-export OMP_NUM_THREADS=1
+if [ "$sims-per-sbatch" -gt "$sims-per-cfg" ]; then
+    echo "Cannot have sims-per-sbatch ($sims-per-sbatch) greater than sims-per-cfg ($sims-per-cfg)"
+fi
 
 
 exec=../build/$build_type/$execname
