@@ -120,8 +120,9 @@ if [ $OPTIND -eq 0 ] ; then
 fi
 shift "$((OPTIND - 1))"
 
-if [ "$sims-per-sbatch" -gt "$sims-per-cfg" ]; then
-    echo "Cannot have sims-per-sbatch ($sims-per-sbatch) greater than sims-per-cfg ($sims-per-cfg)"
+if [ "$simspersbatch" -gt "$simspercfg" ]; then
+    echo "Cannot have sims-per-sbatch ($simspersbatch) greater than sims-per-cfg ($simspercfg)"
+    exit 1
 fi
 
 
