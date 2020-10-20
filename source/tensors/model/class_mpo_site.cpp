@@ -117,7 +117,6 @@ void class_mpo_site::set_reduced_energy(double site_energy) {
 }
 
 void class_mpo_site::print_parameter_names() const {
-    std::cout << std::setprecision(10);
     for(auto &item : get_parameters()) fmt::print("{:<16}", item.first);
     fmt::print("\n");
 }
