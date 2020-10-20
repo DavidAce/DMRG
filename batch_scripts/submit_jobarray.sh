@@ -90,7 +90,7 @@ do
   case "$1" in
     -h|--help)                      usage                                                                            ; shift   ;;
     -b|--build-type)                build_type=$2                     ; echo " * Build type               : $2"      ; shift 2 ;;
-    -c|--cluster)                   cluster=$2                        ; echo " * Cluster                  : $2"      ; shift 2 ;;
+    -c|--cluster)                   cluster="--cluster=$2"            ; echo " * Cluster                  : $2"      ; shift 2 ;;
        --cpus-per-task)             cpuspertask="--cpus-per-task=$2"  ; echo " * Cpus per task            : $2"      ; shift 2 ;;
     -d|--dry-run)                   dryrun="ON"                       ; echo " * Dry run                  : ON"      ; shift   ;;
     -e|--exclusive)                 exclusive=--exclusive             ; echo " * Exclusive                : ON"      ; shift   ;;
