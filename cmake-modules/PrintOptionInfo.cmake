@@ -2,6 +2,7 @@ if(DMRG_PRINT_INFO)
     # Print CMake options
     message(STATUS  "|----------------\n"
             "-- | CMAKE_INSTALL_PREFIX   : ${CMAKE_INSTALL_PREFIX}\n"
+            "-- | CMAKE_VERBOSE_MAKEFILE : ${CMAKE_VERBOSE_MAKEFILE}\n"
             "-- | BUILD_SHARED_LIBS      : ${BUILD_SHARED_LIBS}\n"
             "-- | DMRG_ENABLE_OPENMP     : ${DMRG_ENABLE_OPENMP}\n"
             "-- | DMRG_ENABLE_MKL        : ${DMRG_ENABLE_MKL}\n"
@@ -14,6 +15,7 @@ if(DMRG_PRINT_INFO)
             "-- | DMRG_BUILD_EXAMPLES    : ${DMRG_BUILD_EXAMPLES}\n"
             "-- | DMRG_DOWNLOAD_METHOD   : ${DMRG_DOWNLOAD_METHOD}\n"
             "-- | DMRG_PRINT_INFO        : ${DMRG_PRINT_INFO}\n"
+            "-- | DMRG_PRINT_CHECKS      : ${DMRG_PRINT_CHECKS}\n"
             "-- | DMRG_DEPS_IN_SUBDIR    : ${DMRG_DEPS_IN_SUBDIR}\n"
             "-- | DMRG_PREFER_CONDA_LIBS : ${DMRG_PREFER_CONDA_LIBS}\n")
 endif ()
