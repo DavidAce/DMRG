@@ -13,27 +13,28 @@ function(strip_genex input_string output_string)
 endfunction()
 
 
-function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
+function(check_omp_compiles omp_tgt)
+    if(NOT TARGET ${omp_tgt})
+        message(FATAL_ERROR "Given OpenMP target [${omp_tgt}] is not a target")
+    endif()
     include(CheckIncludeFileCXX)
     include(cmake-modules/getExpandedTarget.cmake)
-    expand_target_libs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_libs)
-    expand_target_incs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_incs)
-    expand_target_opts("${REQUIRED_LIBRARIES_UNPARSED}" expanded_opts)
-
-    strip_genex("${expanded_libs}"     expanded_libs)
-    strip_genex("${expanded_incs}"     expanded_incs)
-    strip_genex("${expanded_opts}"     expanded_opts)
-    strip_genex("${REQUIRED_INCLUDES}" REQUIRED_INCLUDES)
-    strip_genex("${REQUIRED_FLAGS}"    REQUIRED_FLAGS)
-
-    set(CMAKE_REQUIRED_LIBRARIES "${expanded_libs}") # Can be a ;list
-    set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES};${expanded_incs}") # Can be a ;list
-    string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${REQUIRED_FLAGS} ${expanded_opts}") # Needs to be a space-separated list
+    expand_target_libs("${omp_tgt}" omp_lib)
+    expand_target_incs("${omp_tgt}" omp_inc)
+    expand_target_opts("${omp_tgt}" omp_opt)
+    expand_target_defs("${omp_tgt}" omp_def)
+    if(NOT BUILD_SHARED_LIBS)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES -static)
+    endif()
+    list(APPEND CMAKE_REQUIRED_LIBRARIES ${omp_tgt}) # Can be a ;list
+#    set(CMAKE_REQUIRED_DEFINITIONS "${omp_def}") # Can be a ;list
     if(DMRG_PRINT_CHECKS)
-        message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
-        message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
-        message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
-        message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
+        message(STATUS "OPENMP COMPILE TEST required      ${CMAKE_REQUIRED_LIBRARIES}")
+        message(STATUS "OPENMP COMPILE TEST target        ${omp_tgt}")
+        message(STATUS "OPENMP COMPILE TEST libraries     ${omp_lib}")
+        message(STATUS "OPENMP COMPILE TEST options       ${omp_opt}")
+        message(STATUS "OPENMP COMPILE TEST includes      ${omp_inc}")
+        message(STATUS "OPENMP COMPILE TEST definitions   ${omp_def}")
     endif()
     unset(has_omp_h)
     unset(has_omp_h CACHE)
@@ -63,11 +64,16 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
             }
             " OMP_COMPILES
             )
+    set(OMP_COMPILES ${OMP_COMPILES} PARENT_SCOPE)
     if(NOT OMP_COMPILES)
-        set(OMP_COMPILES FALSE PARENT_SCOPE)
-    else()
-        set(OMP_COMPILES TRUE PARENT_SCOPE)
+        unset(OMP_COMPILES CACHE)
+        unset(OMP_COMPILES PARENT_SCOPE)
+        if(DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+            file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+            message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+        endif()
     endif()
+
 endfunction()
 
 
@@ -80,12 +86,22 @@ if(NOT OpenMP_FOUND AND NOT TARGET openmp::openmp AND BUILD_SHARED_LIBS)
     find_package(OpenMP)
     list(APPEND CMAKE_MODULE_PATH ${BACKUP})
     unset(BACKUP)
+    if(OpenMP_FOUND AND TARGET OpenMP::OpenMP_CXX)
+        include (cmake-modules/PrintTargetProperties.cmake)
+        set_target_properties(OpenMP::OpenMP_CXX PROPERTIES INTERFACE_COMPILE_DEFINITIONS "_OPENMP")
+        print_target_properties(OpenMP::OpenMP_CXX)
+        check_omp_compiles(OpenMP::OpenMP_CXX)
+        if(OMP_COMPILES AND TARGET OpenMP::OpenMP_CXX)
+            add_library(openmp::openmp INTERFACE IMPORTED)
+            target_link_libraries(openmp::openmp INTERFACE OpenMP::OpenMP_CXX)
+        endif()
+    endif()
 endif()
 
 
 
 if(NOT OpenMP_FOUND)
-
+    find_package(Threads)
     list(APPEND omp_lib_candidates gomp omp iomp5)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         # MKL comes with a useable iomp5 library
@@ -111,6 +127,8 @@ if(NOT OpenMP_FOUND)
 
         find_library(omp_lib_iomp5 NAMES iomp5
                 PATHS
+                /usr/lib/llvm-11
+                /usr/lib/llvm-10
                 /usr/lib/llvm-9
                 /usr/lib/llvm-8
                 /usr/lib/llvm-7
@@ -128,9 +146,19 @@ if(NOT OpenMP_FOUND)
 
 
     foreach(lib ${omp_lib_candidates})
-        check_omp_compiles("-D_OPENMP" "-static;${lib};pthread;rt;dl" "")
+        # Make a target wrapper for a library
+        if(NOT TARGET openmp::openmp)
+            add_library(openmp::openmp INTERFACE IMPORTED)
+        endif()
+        if(IS_ABSOLUTE lib)
+            set_target_properties(openmp::openmp PROPERTIES IMPORTED_LOCATION ${lib})
+            set_target_properties(openmp::openmp PROPERTIES INTERFACE_LINK_LIBRARIES "Threads::Threads;rt;dl")
+        else()
+            set_target_properties(openmp::openmp PROPERTIES INTERFACE_LINK_LIBRARIES "${lib};Threads::Threads;rt;dl")
+        endif()
+        set_target_properties(openmp::openmp PROPERTIES INTERFACE_COMPILE_DEFINITIONS "_OPENMP")
+        check_omp_compiles(openmp::openmp)
         if(OMP_COMPILES)
-            set(OMP_LIBRARY ${lib})
             break()
         endif()
     endforeach()
@@ -141,12 +169,3 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(OpenMP DEFAULT_MSG OMP_COMPILES)
 
 
-
-if(OMP_COMPILES AND NOT TARGET openmp::openmp)
-    add_library(openmp::openmp INTERFACE IMPORTED)
-    target_link_libraries(openmp::openmp INTERFACE ${OMP_LIBRARY} Threads::Threads rt dl)
-    target_compile_definitions(openmp::openmp INTERFACE -D_OPENMP)
-elseif(TARGET OpenMP::OpenMP_CXX)
-    add_library(openmp::openmp INTERFACE IMPORTED)
-    target_link_libraries(openmp::openmp INTERFACE OpenMP::OpenMP_CXX)
-endif()
