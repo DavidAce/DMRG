@@ -286,17 +286,29 @@ if [ -z "$jobfiles" ] ; then
     exit 1
 fi
 
+
+if [ -z "$dryrun" ]; then
+  git log -1 >> job_report.txt
+fi
+
 for jobfile in $jobfiles; do
+
+  numseeds=$(cat $jobfile | wc -l)
+
   if [ -n "$dryrun" ]; then
 cat << EOF >&2
 sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
---array=1-$simspersbatch \
+--array=1-$numseeds \
 run_jobarray.sh -e $exec -f $jobfile
 EOF
   bash run_jobarray.sh -e $exec -f $jobfile -d
   else
+    echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+      --array=1-$numseeds \
+      run_jobarray.sh -e $exec -f $jobfile" >> job_report.txt
+
     sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
-      --array=1-$simspersbatch \
+      --array=1-$numseeds \
       run_jobarray.sh -e $exec -f $jobfile
   fi
 done

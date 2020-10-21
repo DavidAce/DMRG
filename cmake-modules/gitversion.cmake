@@ -27,6 +27,8 @@ execute_process(
         OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+
+
 configure_file(
 ${CMAKE_SOURCE_DIR}/cmake-modules/gitversion.h.in
 ${CMAKE_BINARY_DIR}/gitversion/gitversion.h
