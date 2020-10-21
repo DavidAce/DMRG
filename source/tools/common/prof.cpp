@@ -26,6 +26,8 @@ void tools::common::profile::print_profiling_all() { tools::common::profile::pri
 void tools::common::profile::print_profiling(std::optional<AlgorithmType> algo_type) {
     if(t_tot == nullptr) return;
     if(settings::profiling::on) {
+        static double last_print_time = 0;
+        if(std::abs(t_tot->get_measured_time() - last_print_time) < 5.0) return; // Do not print if there's already been a print within the last 5 seconds
         auto t_tot_percent = 100.0 / std::max(1.0, t_tot->get_measured_time());
         //        auto t_sim_percent = 100.0 / std::max(1.0, t_sim->get_measured_time());
 
@@ -45,6 +47,8 @@ void tools::common::profile::print_profiling(std::optional<AlgorithmType> algo_t
                     tools::log->info("{:<8}  {:<30}{:>10.3f} s ({:<3.2f} % of total)", enum2str(a_key), t_val->get_name(), t_val->get_measured_time(),
                                      t_val->get_measured_time() * t_tot_percent);
                 }
+
+        last_print_time = t_tot->get_measured_time();
     }
 }
 
