@@ -15,6 +15,7 @@ Usage            : $PROGNAME [-option | --option ] [=]<argument>
 -e | --exclusive                   : Use nodes in exclusive node
      --exec-name <str>             : Name of the executable to run (default = DMRG++)
 -f | --config <path or file>       : File or path to files containing simulation config files (suffixed .cfg) (default: input/ )
+-j | --job-file <path or file>     : File containing config-seed pairs. Use for resuming failed runs
 -J | --job-name <str>              : Slurm job name. (default = DMRG)
 -m | --mem-per-cpu <int[suffix]>   : Memory per cpu core, e.g. 2000, 2000M, 2G (default: 2000)
 -N | --sims-per-cfg <int>          : Number of simulations per config file. Can be split up into chunks with -n (default: 10)
@@ -36,7 +37,7 @@ EOF
 }
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:J:m:N:n:O:p:q:rs:t:v \
+PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:O:p:q:r:s:t:v \
                 --long "\
                 help\
                 build-type:\
@@ -46,6 +47,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:J:m:N:n:O:p:q:rs:t:v \
                 exclusive\
                 exec-name:\
                 config:\
+                job-file:\
                 job-name:\
                 mem-per-cpu:\
                 sims-per-cfg:\
@@ -55,7 +57,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:J:m:N:n:O:p:q:rs:t:v \
                 open-mode:\
                 partition:\
                 qos:\
-                requeue:\
+                requeue\
                 seed:\
                 start-seed:\
                 shuffle\
@@ -96,6 +98,7 @@ do
     -e|--exclusive)                 exclusive=--exclusive             ; echo " * Exclusive                : ON"      ; shift   ;;
        --exec-name)                 execname=$2                       ; echo " * Executable name          : $2"      ; shift 2 ;;
     -f|--config)                    configpath=$2                     ; echo " * Configs                  : $2"      ; shift 2 ;;
+    -j|--job-file)                  jobfile=$2                        ; echo " * Job file                 : $2"      ; shift 2 ;;
     -J|--job-name)                  jobname="--job-name=$2"           ; echo " * Job name                 : $2"      ; shift 2 ;;
     -m|--mem-per-cpu)               mempercpu="--mem-per-cpu=$2"      ; echo " * Mem per cpu              : $2"      ; shift 2 ;;
     -N|--sims-per-cfg)              simspercfg=$2                     ; echo " * Sims per cfg             : $2"      ; shift 2 ;;
@@ -106,7 +109,7 @@ do
     -p|--partition)                 partition="--partition=$2"        ; echo " * Partition                : $2"      ; shift 2 ;;
     -q|--qos)                       qos="--qos=$2"                    ; echo " * Quality of service (QOS) : $2"      ; shift 2 ;;
     -r|--requeue)                   requeue="--requeue"               ; echo " * Requeue                  : ON"      ; shift   ;;
-    -s|--seed)                      seedpath=$2                       ; echo " * Seed path                : $2"      ; shift   ;;
+    -s|--seed)                      seedpath=$2                       ; echo " * Seed path                : $2"      ; shift 2 ;;
        --start-seed)                startseed=$2                      ; echo " * Start seed               : $2"      ; shift 2 ;;
        --shuffle)                   shuffle="ON"                      ; echo " * Shuffle                  : ON"      ; shift   ;;
     -t|--time)                      time="--time=0-$2"                ; echo " * Time                     : $2"      ; shift 2 ;;
@@ -142,18 +145,69 @@ else
 fi
 
 
+# If we are using a job-file we can use it directly and then skip generating one
+#      split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase-
+
+if [ -f "$jobfile" ]; then
+  numseeds=$(cat $jobfile | wc -l)
+  jobbase=$(basename $jobfile)
+  jobdir=$(dirname $jobfile)
+  split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $jobfile $jobdir/$jobbase-
+  mv "$jobfile" "$(basename $jobfile).bak"
+
+  jobfiles=$(find -L $jobdir -type f -name '*.job' |  sort -g )
+  if [ -z "$jobfiles" ] ; then
+      echo "No simulation files found!"
+      exit 1
+  fi
+
+  if [ -z "$dryrun" ]; then
+    git log -1 >> job_report.txt
+  fi
+
+  for file in $jobfiles; do
+
+    numseeds=$(cat file | wc -l)
+
+    if [ -n "$dryrun" ]; then
+cat << EOF >&2
+sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+--array=1-$numseeds \
+run_jobarray.sh -e $exec -f file
+EOF
+    bash run_jobarray.sh -e $exec -f file -d
+    else
+      echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+        --array=1-$numseeds \
+        run_jobarray.sh -e $exec -f file" >> job_report.txt
+
+      sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+        --array=1-$numseeds \
+        run_jobarray.sh -e $exec -f file
+    fi
+  done
+  exit 0
+fi
+
+
+
+
+
+
+
 # The point from now on will be to generate one massive list with 2 columns: configs and seeds
 # After generating that list, we shuffle it, and then split it into chunks
 
 # Parse config path
-echo "Finding config path..."
 if [ -d "$configpath" ];then
+   echo "Finding config path..."
    configfiles=$(find -L $configpath -type f -name '*.cfg' |  sort -g )
    if [ -z "$configfiles" ]; then
         echo "No config files found"
         exit 1
     fi
 elif [ -f "$configpath" ]; then
+    echo "Finding config path..."
     configfiles=$configpath
     if [ ! -e "$configfiles" ]; then
         echo "Config file does not exist: $configfiles"
