@@ -168,23 +168,23 @@ if [ -f "$jobfile" ]; then
   fi
 
   for file in $jobfiles; do
-    numseeds=$(cat file | wc -l)
+    numseeds=$(cat $file | wc -l)
 
     if [ -n "$dryrun" ]; then
 cat << EOF >&2
 sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
 --array=1-$numseeds \
-run_jobarray.sh -e $exec -f file
+run_jobarray.sh -e $exec -f $file
 EOF
-    bash run_jobarray.sh -e $exec -f file -d
+    bash run_jobarray.sh -e $exec -f $file -d
     else
       echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
         --array=1-$numseeds \
-        run_jobarray.sh -e $exec -f file" >> job_report.txt
+        run_jobarray.sh -e $exec -f $file" >> job_report.txt
 
       sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
         --array=1-$numseeds \
-        run_jobarray.sh -e $exec -f file
+        run_jobarray.sh -e $exec -f $file
     fi
   done
   exit 0
