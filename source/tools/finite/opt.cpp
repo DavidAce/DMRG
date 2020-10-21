@@ -107,7 +107,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     /* clang-format on */
 
 
-
+    initial_tensor.validate_candidate();
     opt_state result;
     switch(optSpace) {
         /* clang-format off */
@@ -120,6 +120,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     // Finish up and print reports
     reports::print_bfgs_report();
     reports::print_time_report();
+    result.validate_result();
     return result;
 }
 

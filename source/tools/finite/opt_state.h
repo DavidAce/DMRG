@@ -31,7 +31,7 @@ namespace tools::finite::opt {
         // Constructor used for candidates
         opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
                    std::optional<double> variance_, double overlap_, size_t length);
-        // Constructor used for solutions
+        // Constructor used for results
         opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                    double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
@@ -42,6 +42,7 @@ namespace tools::finite::opt {
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
         [[nodiscard]] const std::vector<size_t> &        get_sites() const;
         [[nodiscard]] double                             get_energy() const;
+        [[nodiscard]] double                             get_energy_reduced() const;
         [[nodiscard]] double                             get_energy_per_site() const;
         [[nodiscard]] double                             get_eigval() const;
         [[nodiscard]] double                             get_variance() const;
@@ -72,7 +73,8 @@ namespace tools::finite::opt {
         void set_time(double time_);
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
-
+        void validate_candidate() const;
+        void validate_result() const;
         bool operator<(const opt_state &rhs) const;
         bool operator>(const opt_state &rhs) const;
     };

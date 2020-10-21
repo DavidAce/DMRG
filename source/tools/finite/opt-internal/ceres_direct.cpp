@@ -45,6 +45,7 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
     optimized_tensor.set_name(initial_tensor.get_name());
     optimized_tensor.set_sites(initial_tensor.get_sites());
     optimized_tensor.set_length(initial_tensor.get_length());
+    optimized_tensor.set_energy_reduced(initial_tensor.get_energy_reduced());
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic();
 
     switch(optType) {
