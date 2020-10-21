@@ -253,6 +253,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // If early in the simulation, or stuck, and the bond dimension is small enough we should give subspace optimization a shot
     if((status.iter < 6 or status.algorithm_has_got_stuck) and tensors.state->size_2site() <= settings::precision::max_size_full_diag) {
+        c1.optMode  = OptMode::VARIANCE;
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
     }
 
@@ -287,8 +288,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
 
     // We can make trials with different number of sites.
-    // Eg if the simulation is stuck we may try with 4 or 8 sites.
-    if(status.algorithm_has_got_stuck) c1.max_sites = std::min<size_t>(4, settings::strategy::multisite_max_sites);
+    // Eg if the simulation is stuck we may try with more sites.
+    if(status.algorithm_has_got_stuck) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
     if(c1.optMode == OptMode::OVERLAP) c1.max_sites = settings::strategy::multisite_max_sites;
     if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
@@ -347,10 +348,15 @@ void class_xdmrg::single_xDMRG_step() {
 
         variance_old_per_site = measure::energy_variance_per_site(tensors); // Should just take value from cache
         switch(conf.optInit) {
-            case OptInit::CURRENT_STATE: results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType)); break;
+            case OptInit::CURRENT_STATE: {
+                results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
+                results.back().validate_result();
+                break;
+            }
             case OptInit::LAST_RESULT: {
                 if(results.empty()) throw std::logic_error("There are no previous results to select an initial state");
                 results.emplace_back(opt::find_excited_state(tensors, results.back(), status, conf.optMode, conf.optSpace, conf.optType));
+                results.back().validate_result();
                 break;
             }
         }

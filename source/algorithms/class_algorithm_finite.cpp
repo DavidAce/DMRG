@@ -105,6 +105,7 @@ void class_algorithm_finite::run_postprocessing() {
     print_status_full();
     tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::log->info("Finished default postprocessing for {}", algo_name);
+    tools::common::profile::print_profiling_all();
 }
 
 void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {

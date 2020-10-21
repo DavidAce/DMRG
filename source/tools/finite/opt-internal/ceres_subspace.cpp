@@ -66,12 +66,22 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     auto            energy_reduced       = model.get_energy_reduced();
     Eigen::VectorXd overlaps             = (multisite_mps_vector.adjoint() * eigvecs).cwiseAbs().real();
 
+    double candidate_time = 0;
+    for(auto &&item : reports::eigs_log){
+        candidate_time += item.ham_time + item.lu_time + item.eig_time;
+    }
+
     std::vector<opt_state> candidate_list;
+    candidate_list.reserve(eigvals.size());
     for(long idx = 0; idx < eigvals.size(); idx++) {
         auto tensor_map = Textra::MatrixTensorMap(eigvecs.col(idx), state.active_dimensions());
         candidate_list.emplace_back(fmt::format("eigenvector {}", idx), tensor_map, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
                                     overlaps(idx), tensors.get_length());
+        candidate_list.back().set_time(candidate_time);
+        candidate_list.back().set_counter(reports::eigs_log.size());
+        candidate_list.back().set_iter(reports::eigs_log.size());
         candidate_list.back().is_basis_vector = true;
+        candidate_list.back().validate_candidate();
     }
     return candidate_list;
 }
@@ -91,6 +101,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                               tools::finite::measure::energy_variance(tensors),
                               1.0, // Overlap
                               tensors.get_length());
+    initial_tensor.validate_candidate();
     return ceres_subspace_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
@@ -347,6 +358,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
         optimized_tensor.set_name(candidate.get_name());
         optimized_tensor.set_sites(candidate.get_sites());
         optimized_tensor.set_length(candidate.get_length());
+        optimized_tensor.set_energy_reduced(candidate.get_energy_reduced());
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic();
         switch(optType) {
             case OptType::CPLX: {
