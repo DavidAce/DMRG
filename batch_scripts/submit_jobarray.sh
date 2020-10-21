@@ -150,10 +150,12 @@ fi
 
 if [ -f "$jobfile" ]; then
   numseeds=$(cat $jobfile | wc -l)
-  jobbase=$(basename $jobfile)
+  jobbase=$(basename $jobfile .job)
   jobdir=$(dirname $jobfile)
-  split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $jobfile $jobdir/$jobbase-
-  mv "$jobfile" "$(basename $jobfile).bak"
+  if [ "$numseeds" -gt $simspersbatch ] ; then
+    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $jobfile $jobdir/$jobbase-
+    mv "$jobfile" "$(basename $jobfile).bak"
+  fi
 
   jobfiles=$(find -L $jobdir -type f -name '*.job' |  sort -g )
   if [ -z "$jobfiles" ] ; then
@@ -166,7 +168,6 @@ if [ -f "$jobfile" ]; then
   fi
 
   for file in $jobfiles; do
-
     numseeds=$(cat file | wc -l)
 
     if [ -n "$dryrun" ]; then
