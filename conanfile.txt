@@ -7,6 +7,7 @@ h5pp/1.8.4@davidace/dev
 ceres-solver/2.0.0@davidace/stable
 eigen/3.3.8@davidace/patched
 arpack++/2.3.0@davidace/stable
+backward-cpp/1.5@
 
 [generators]
 cmake
