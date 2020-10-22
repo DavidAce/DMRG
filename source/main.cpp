@@ -28,6 +28,7 @@
 
 #include <config/class_dmrg_config.h>
 #include <csignal>
+#include <general/stack_trace.h>
 #include <tools/common/io.h>
 
 void print_usage() {
@@ -86,8 +87,15 @@ void signal_callback_handler(int signum) {
             std::cout << "Caught SIGABRT\n";
             break;
         }
+        case SIGSEGV: {
+            std::cout << "Caught SIGSEGV\n";
+            break;
+        }
         default: break;
     }
+
+    debug::print_stack_trace();
+
     std::cout << "Exiting" << std::endl;
     std::quick_exit(signum);
 }
@@ -116,6 +124,7 @@ int main(int argc, char *argv[]) {
     signal(SIGHUP, signal_callback_handler);
     signal(SIGQUIT, signal_callback_handler);
     signal(SIGABRT, signal_callback_handler);
+    signal(SIGSEGV, signal_callback_handler);
 
     // Make sure to move the file back from temp location
     std::atexit(clean_up);

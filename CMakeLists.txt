@@ -226,7 +226,6 @@ if(NOT TARGET Threads::Threads)
 endif()
 
 
-
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
@@ -255,7 +254,7 @@ if(DMRG_ENABLE_PCH)
     endif()
 endif()
 
-target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
+target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl)
 target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
 target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
 

@@ -125,6 +125,8 @@ void class_algorithm_launcher::setup_temp_path(){
 
 
 void class_algorithm_launcher::run_algorithms(){
+    std::vector<int> test;
+    test[100] = 2;
     if(h5pp_file) h5pp_file->writeDataset(false, "common/finished_all");
     run_idmrg();
     run_fdmrg();
