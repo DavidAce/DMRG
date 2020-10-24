@@ -310,7 +310,6 @@ fi
 
 # Take seeds from seedfiles, distribute them to config files, randomize and then split into .seed files
 if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
-    rm -rf seeds
     mkdir -p seeds
     # Generate a master list with 2 columns: configs and seeds
     echo "Generating list config paths and given seeds..."
