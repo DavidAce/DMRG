@@ -11,8 +11,8 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.array([16,24])
-lambdas      = [0.005,0.010, 0.015,0.020]
+sites        = np.array([16,20,24])
+lambdas      = [0.000,0.005,0.010, 0.015,0.020]
 deltas       = [-0.1, -0.05, 0.0, 0.05, 0.1]
 
 num_total = 0
