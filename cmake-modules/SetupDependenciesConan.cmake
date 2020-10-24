@@ -114,6 +114,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                 BASIC_SETUP CMAKE_TARGETS
                 SETTINGS compiler.cppstd=17
                 SETTINGS compiler.libcxx=libstdc++11
+                ENV libunwind:LDFLAGS=-fcommon
+                ENV libunwind:CXXFLAGS=-fcommon
+                ENV libunwind:CFLAGS=-fcommon
                 PROFILE_AUTO ALL
                 ${DMRG_CONAN_OPTIONS}
                 BUILD missing
