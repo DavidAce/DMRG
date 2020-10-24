@@ -134,7 +134,7 @@ if [ -f "$exec" ]; then
     echo "Found executable: $exec"
 else
     echo "Executable does not exist: $exec"
-    exit 1
+    #exit 1
 fi
 
 # Load the required parallel module
@@ -197,7 +197,8 @@ fi
 
 
 # The point from now on will be to generate one massive list with 2 columns: configs and seeds
-# After generating that list, we shuffle it, and then split it into chunks
+# After generating that list, and then split it into chunks and write the chunks to .job files
+# Optionally the big list is shuffled before the split
 
 # Parse config path
 if [ -d "$configpath" ];then
@@ -252,15 +253,18 @@ fi
 
 
 
-# Generate seeds, distribute them to config files, randomize and then split into .seed files
+# Generate seeds, distribute them to config files, optionally shuffle, and then split into .seed files
 if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
   rm -rf seeds
   mkdir -p seeds
+  echo "Generating list of config paths and seeds..."
   if [ -n "$shuffle" ]; then
-      # Generate a master list with 2 columns: configs and seeds
-      echo "Generating master file with config paths and seeds..."
-      superfile=seeds/superfile.txt
-      touch $superfile
+      # Generate a list with 2 columns: configs and seeds
+      # The superlist has length simspercfg * num config files
+      # The superlist is shuffled then split back into lists of length simspercfg
+
+      superfile=seeds/superfile.seed
+      truncate -s 0 $superfile
       seedcounter=$((startseed + 0))
       for configfile in $configfiles; do
           for sim in $(seq $simspercfg); do
@@ -268,23 +272,39 @@ if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
               seedcounter=$((seedcounter+1))
           done
       done
-      echo "Generating master file with config paths and seeds... OK"
-
-  else
-      # Generate one list per cfg, each with 2 columns: config and seeds
-      echo "Generating lists of config paths and seeds..."
+      echo "Shuffling seeds ..."
+      shuffledfile=seeds/shuffledfile.txt
+      truncate -s 0 $shuffledfile
+      cat $superfile | shuf --output $shuffledfile
+      echo "Shuffling seeds ... OK"
+      echo "Splitting list ..."
       seedcounter=$((startseed + 0))
       for configfile in $configfiles; do
-        configbase=$(basename $configfile .cfg)
-        seedfile=seeds/$configbase.seed
-        touch $seedfile
-        for sim in $(seq $simspercfg); do
+          endseed=$((seedcounter+simspercfg-1))
+          seedfile="seeds/part.[$seedcounter.$endseed].seed"
+          touch $seedfile
+          # Move simspercfg lines from shuffledfile --> seedfile
+          head -$simspercfg $shuffledfile > $seedfile && sed -i '1,$simspercfgd' $shuffledfile
+          seedcounter=$((seedcounter+simspercfg))
+      done
+      rm $superfile $shuffledfile
+      echo "Splitting list ... OK"
+  else
+      # Generate a list with 2 columns: configs and seeds.
+      # Each list has length simspercfg
+      seedcounter=$((startseed + 0))
+      for configfile in $configfiles; do
+          configbase=$(basename $configfile .cfg)
+          endseed=$((seedcounter+simspercfg-1))
+          seedfile="seeds/$configbase.[$seedcounter-$endseed].seed"
+          touch $seedfile
+          for sim in $(seq $simspercfg); do
               echo "$configfile $seedcounter" >> $seedfile
               seedcounter=$((seedcounter+1))
           done
       done
-      echo "Generating lists of config paths and seeds... OK"
   fi
+  echo "Generating list of config paths and seeds... OK"
 fi
 
 
@@ -293,7 +313,7 @@ if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
     rm -rf seeds
     mkdir -p seeds
     # Generate a master list with 2 columns: configs and seeds
-    echo "Generating master file with config paths and given seeds..."
+    echo "Generating list config paths and given seeds..."
     superfile=seeds/superfile.txt
     touch $superfile
     for seedfile in $seedfiles; do
@@ -304,36 +324,45 @@ if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
             echo "$configfile $seed" >> $superfile
         done
     done
-    echo "Generating master file with config paths and given seeds... OK"
-fi
-
-
-
-if [ -e "$superfile" ] ; then
-    echo "Shuffling and splitting master file into simulation files..."
-    shuffledfile=seeds/randomsims.txt
+    echo "Shuffling seeds ..."
+    shuffledfile=seeds/shuffledfile.txt
+    truncate -s 0 $shuffledfile
     cat $superfile | shuf --output $shuffledfile
-    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $shuffledfile seeds/part-
-    rm $superfile $shuffledfile
-    echo "Shuffling and splitting master file into simulation files... OK"
-else
-    echo "Splitting seed files into simulation files..."
-    seedfiles=$(find -L seeds -type f -name '*.seed' |  sort -g )
-    for seedfile in $seedfiles; do
-      seedbase=$(basename $seedfile .seed)
-      split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase-
+    echo "Shuffling seeds ... OK"
+    echo "Splitting list ..."
+    seedcounter=$((startseed + 0))
+    for configfile in $configfiles; do
+        endseed=$seedcounter+$simspercfg
+        seedfile="seeds/part.[$seedcounter-$endseed].seed"
+        touch $seedfile
+        # Move simspercfg lines from shuffledfile --> seedfile
+        head -$simspercfg $shuffledfile > $seedfile && sed -i '1,$simspercfgd' $shuffledfile
+        seedcounter=$((seedcounter+simspercfg))
     done
-
-
-    echo "Splitting seed files into simulation files... OK"
+    rm $superfile $shuffledfile
+    echo "Splitting list ... OK"
+    echo "Generating list with config paths and given seeds... OK"
 fi
 
 
 
+# Now we have many .seed files that may need to be chunked into .job files of length simsperbatch
+echo "Splitting seed files into job files..."
+seedfiles=$(find -L seeds -type f -name '*.seed' |  sort -g )
+for seedfile in $seedfiles; do
+  seedbase=$(basename $seedfile .seed)
+  if [ "$simspercfg" -gt "$simspersbatch" ]; then
+    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase.chunk-
+    rm $seedfile
+  else
+    mv $seedfile seeds/$seedbase.job
+  fi
+done
+echo "Splitting seed files into job files... OK"
 
-# From this point on we are guaranteed to have a set of files in seeds/part_###.job or seeds/<configbase>-###.job
+# From this point on we are guaranteed to have a set of files in seeds/<file>.###.job
 # Each .job file contains 2 columns with the corresponding config files and seeds
-
+# The length of each .job file can vary!
 
 jobfiles=$(find -L seeds -type f -name '*.job' |  sort -g )
 if [ -z "$jobfiles" ] ; then
