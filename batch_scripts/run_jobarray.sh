@@ -46,6 +46,7 @@ mkdir -p logs/$config_base
 
 
 echo "HOSTNAME          : $HOSTNAME"
+echo "CLUSTER           : $SLURM_CLUSTER_NAME"
 echo "CPUS ON  NODE     : $SLURM_CPUS_ON_NODE"
 echo "CPUS PER NODE     : $SLURM_JOB_CPUS_PER_NODE"
 echo "CPUS PER TASK     : $SLURM_CPUS_PER_TASK"

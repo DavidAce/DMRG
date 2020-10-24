@@ -223,46 +223,59 @@ echo "Finding config path... OK"
 
 
 # Parse seed path
-if [ -n "$seedpath" ] ; then
-    if [ -d "$seedpath" ];then
-        echo "Finding seed files in given path..."
-        seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
-        echo "Finding seed files in given path... OK"
-    elif [ -f "$seedpath" ]; then
-        echo "Found seed file in given path: $seedpath"
-        seedfiles=$seedpath
-        seedpath=$(dirname $seedpath)
-    elif [ ! -e "$seedpath" ]; then
-        echo "Seed path does not exist: $seedpath "
-        exit 1
-    else
-        echo "Input file path cannot be parsed: $seedpath "
-        exit 1
-    fi
-    echo "Pairing seed files with config files..."
-    for seedfile in $seedfiles; do
-        echo "Matching seed file: $seedfile"
-        seedbase=$(basename $seedfile .seed)
-        match=$(find -L $configpath -type f -name $seedbase.cfg |  sort -g )
-        num=$(echo $match | wc -w)
-        if [ -z "$match" ]  ; then echo "Could not find a config file matching the given seed file [ $seedfile ]. Searched with: find -L $configpath -type f -name '$seedbase.cfg' | Found: $match" ; exit 1; fi
-        if [ "$num" -gt 1 ] ; then echo "Too many config files correspond to seed file [ $seedfile ]. Found $num files: $match"; exit 1; fi
-    done
-    echo "Pairing seed files with config files... OK"
-fi
+#if [ -n "$seedpath" ] ; then
+#    if [ -d "$seedpath" ];then
+#        echo "Finding seed files in given path..."
+#        seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
+#        echo "Finding seed files in given path... OK"
+#    elif [ -f "$seedpath" ]; then
+#        echo "Found seed file in given path: $seedpath"
+#        seedfiles=$seedpath
+#        seedpath=$(dirname $seedpath)
+#    elif [ ! -e "$seedpath" ]; then
+#        echo "Seed path does not exist: $seedpath "
+#        exit 1
+#    else
+#        echo "Input file path cannot be parsed: $seedpath "
+#        exit 1
+#    fi
+#    echo "Pairing seed files with config files..."
+#    for seedfile in $seedfiles; do
+#        echo "Matching seed file: $seedfile"
+#        seedbase=$(basename $seedfile .seed)
+#        match=$(find -L $configpath -type f -name $seedbase.cfg |  sort -g )
+#        num=$(echo $match | wc -w)
+#        if [ -z "$match" ]  ; then echo "Could not find a config file matching the given seed file [ $seedfile ]. Searched with: find -L $configpath -type f -name '$seedbase.cfg' | Found: $match" ; exit 1; fi
+#        if [ "$num" -gt 1 ] ; then echo "Too many config files correspond to seed file [ $seedfile ]. Found $num files: $match"; exit 1; fi
+#    done
+#    echo "Pairing seed files with config files... OK"
+#fi
 
+
+# Generate a new unique seed path
+date=$(date '+%Y-%m-%dT%H:%M:%S')
+seedpath="seeds-$date"
+if [ -d $seedpath ]; then
+  n=1
+  seedpath="seeds-$date-$n"
+  # Increment $n as long as a directory with that name exists
+  while [[ -d "$seedpath" ]] ; do
+      n=$(($n+1))
+      seedpath="seeds-$date-$n"
+  done
+fi
+mkdir -p $seedpath
 
 
 # Generate seeds, distribute them to config files, optionally shuffle, and then split into .seed files
 if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
-  mkdir -p seeds
   echo "Generating list of config paths and seeds..."
   if [ -n "$shuffle" ]; then
       # Generate a list with 2 columns: configs and seeds
       # The superlist has length simspercfg * num config files
       # The superlist is shuffled then split back into lists of length simspercfg
 
-      superfile=seeds/superfile.seed
+      superfile=$seedpath/superfile.seed
       truncate -s 0 $superfile
       seedcounter=$((startseed + 0))
       for configfile in $configfiles; do
@@ -272,7 +285,7 @@ if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
           done
       done
       echo "Shuffling seeds ..."
-      shuffledfile=seeds/shuffledfile.txt
+      shuffledfile=$seedpath/shuffledfile.txt
       truncate -s 0 $shuffledfile
       cat $superfile | shuf --output $shuffledfile
       echo "Shuffling seeds ... OK"
@@ -280,7 +293,7 @@ if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
       seedcounter=$((startseed + 0))
       for configfile in $configfiles; do
           endseed=$((seedcounter+simspercfg-1))
-          seedfile="seeds/part.[$seedcounter.$endseed].seed"
+          seedfile="$seedpath/part.[$seedcounter.$endseed].seed"
           touch $seedfile
           # Move simspercfg lines from shuffledfile --> seedfile
           head -$simspercfg $shuffledfile > $seedfile && sed -i '1,$simspercfgd' $shuffledfile
@@ -295,7 +308,7 @@ if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
       for configfile in $configfiles; do
           configbase=$(basename $configfile .cfg)
           endseed=$((seedcounter+simspercfg-1))
-          seedfile="seeds/$configbase.[$seedcounter-$endseed].seed"
+          seedfile="$seedpath/$configbase.[$seedcounter-$endseed].seed"
           touch $seedfile
           for sim in $(seq $simspercfg); do
               echo "$configfile $seedcounter" >> $seedfile
@@ -309,10 +322,9 @@ fi
 
 # Take seeds from seedfiles, distribute them to config files, randomize and then split into .seed files
 if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
-    mkdir -p seeds
     # Generate a master list with 2 columns: configs and seeds
     echo "Generating list config paths and given seeds..."
-    superfile=seeds/superfile.txt
+    superfile=$seedpath/superfile.txt
     touch $superfile
     for seedfile in $seedfiles; do
         seedbase=$(basename $seedfile .seed)
@@ -323,7 +335,7 @@ if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
         done
     done
     echo "Shuffling seeds ..."
-    shuffledfile=seeds/shuffledfile.txt
+    shuffledfile=$seedpath/shuffledfile.txt
     truncate -s 0 $shuffledfile
     cat $superfile | shuf --output $shuffledfile
     echo "Shuffling seeds ... OK"
@@ -331,7 +343,7 @@ if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] && [ -n "$shuffle" ]; then
     seedcounter=$((startseed + 0))
     for configfile in $configfiles; do
         endseed=$seedcounter+$simspercfg
-        seedfile="seeds/part.[$seedcounter-$endseed].seed"
+        seedfile="$seedpath/part.[$seedcounter-$endseed].seed"
         touch $seedfile
         # Move simspercfg lines from shuffledfile --> seedfile
         head -$simspercfg $shuffledfile > $seedfile && sed -i '1,$simspercfgd' $shuffledfile
@@ -346,23 +358,23 @@ fi
 
 # Now we have many .seed files that may need to be chunked into .job files of length simsperbatch
 echo "Splitting seed files into job files..."
-seedfiles=$(find -L seeds -type f -name '*.seed' |  sort -g )
+seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
 for seedfile in $seedfiles; do
   seedbase=$(basename $seedfile .seed)
   if [ "$simspercfg" -gt "$simspersbatch" ]; then
-    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase.chunk-
+    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile $seedpath/$seedbase.chunk-
     rm $seedfile
   else
-    mv $seedfile seeds/$seedbase.job
+    mv $seedfile $seedpath/$seedbase.job
   fi
 done
 echo "Splitting seed files into job files... OK"
 
-# From this point on we are guaranteed to have a set of files in seeds/<file>.###.job
+# From this point on we are guaranteed to have a set of files in $seedpath/<file>.###.job
 # Each .job file contains 2 columns with the corresponding config files and seeds
 # The length of each .job file can vary!
 
-jobfiles=$(find -L seeds -type f -name '*.job' |  sort -g )
+jobfiles=$(find -L $seedpath -type f -name '*.job' |  sort -g )
 if [ -z "$jobfiles" ] ; then
     echo "No simulation files found!"
     exit 1
