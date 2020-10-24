@@ -212,16 +212,34 @@ void opt_state::validate_result() const {
 }
 
 bool opt_state::operator<(const opt_state &rhs) const {
-    if(this->get_overlap() < rhs.get_overlap()) return true;
-    else if(this->get_overlap() > rhs.get_overlap())
-        return false;
+    if(overlap and rhs.overlap){
+        if(this->get_overlap() < rhs.get_overlap()) return true;
+        else if(this->get_overlap() > rhs.get_overlap())
+            return false;
+    }
+    // If we reached this point then the overlaps are equal (probably 0)
+    // To disambiguate we can use the variance
+    if (this->variance and rhs.variance)
+        return std::abs(this->get_variance()) < std::abs(rhs.get_variance());
 
-    // Now we know that the overlaps are equal (probably 0)
+
+    // If we reached this point then the overlaps are equal (probably 0) and there are no variances defined
     // To disambiguate we can use the eigenvalue, which should
     // be spread around 0 as well (because we use reduced energies)
     // Eigenvalues nearest 0 are near the target energy, and while
     // not strictly relevant, it's probably the best we can do here.
-    return std::abs(this->get_eigval()) < std::abs(rhs.get_overlap());
+    // Of course this is only valid if the eigenvalues are defined
+    if (eigval and rhs.eigval)
+        return std::abs(this->get_eigval()) < std::abs(rhs.get_eigval());
+
+
+    // If we have reched this point the overlaps, variances and eigenvalues are not defined.
+    // There is probably a logical bug somewhere
+    fmt::print("Checking that this opt_state is valid\n");
+    this->validate_candidate();
+    fmt::print("Checking that rhs opt_state is valid\n");
+    rhs.validate_candidate();
+    return true;
 }
 
 bool opt_state::operator>(const opt_state &rhs) const { return not(*this < rhs); }
