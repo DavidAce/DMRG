@@ -14,6 +14,7 @@ source/math/svd/svd.cpp
 source/math/svd/svd_lapacke.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
+source/general/stack_trace.cpp
 source/io/class_config_reader.cpp
 source/main.cpp
 source/tensors/class_tensors_finite.cpp
@@ -99,6 +100,7 @@ source/general/nmspc_tensor_extra.h
 source/general/nmspc_tensor_omp.h
 source/general/nmspc_sfinae.h
 source/general/nmspc_sfinae_eigen.h
+source/general/stack_trace.h
 source/io/class_config_reader.h
 source/io/nmspc_filesystem.h
 source/io/table_types.h
