@@ -255,7 +255,6 @@ fi
 
 # Generate seeds, distribute them to config files, optionally shuffle, and then split into .seed files
 if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
-  rm -rf seeds
   mkdir -p seeds
   echo "Generating list of config paths and seeds..."
   if [ -n "$shuffle" ]; then
