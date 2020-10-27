@@ -29,10 +29,6 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1))
         throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
 
-    auto dsizes = mps.dimensions();
-    auto chiL   = dsizes[1];
-    auto chiR   = dsizes[2];
-
     res.device(*Textra::omp::dev) =
              mps
             .contract(envL, Textra::idx({1}, {0}))
