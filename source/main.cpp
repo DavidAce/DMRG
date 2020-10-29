@@ -3,9 +3,7 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
-#include <io/class_config_reader.h>
 #include <io/nmspc_filesystem.h>
-#include <iostream>
 #include <math/rnd.h>
 #include <tools/common/log.h>
 #include <general/nmspc_tensor_omp.h>
@@ -27,12 +25,11 @@
 #include <thread>
 
 #include <config/class_dmrg_config.h>
-#include <csignal>
 #include <general/stack_trace.h>
 #include <tools/common/io.h>
 
 void print_usage() {
-    std::cout <<
+    std::printf(
         R"(
 ==========  DMRG++  ============
 Usage                       : DMRG++ [-option <value>].
@@ -46,7 +43,7 @@ Usage                       : DMRG++ [-option <value>].
 -v                          : Enables trace-level verbosity
 -x                          : Do not append seed to the output filename.
 
-)";
+)");
 }
 
 void clean_up() {
@@ -59,45 +56,6 @@ void clean_up() {
     }
     H5garbage_collect();
     H5Eprint(H5E_DEFAULT, stderr);
-}
-
-void signal_callback_handler(int signum) {
-    switch(signum) {
-        case SIGTERM: {
-            std::cout << "Caught SIGTERM\n";
-            break;
-        }
-        case SIGKILL: {
-            std::cout << "Caught SIGKILL\n";
-            break;
-        }
-        case SIGINT: {
-            std::cout << "Caught SIGINT\n";
-            break;
-        }
-        case SIGHUP: {
-            std::cout << "Caught SIGHUP\n";
-            break;
-        }
-        case SIGQUIT: {
-            std::cout << "Caught SIGQUIT\n";
-            break;
-        }
-        case SIGABRT: {
-            std::cout << "Caught SIGABRT\n";
-            break;
-        }
-        case SIGSEGV: {
-            std::cout << "Caught SIGSEGV\n";
-            break;
-        }
-        default: break;
-    }
-
-    debug::print_stack_trace();
-
-    std::cout << "Exiting" << std::endl;
-    std::quick_exit(signum);
 }
 
 std::string filename_append_number(const std::string &filename, const long number) {
@@ -118,13 +76,7 @@ std::string filename_append_number(const std::string &filename, const long numbe
 
 int main(int argc, char *argv[]) {
     // Register termination codes and what to do in those cases
-    signal(SIGTERM, signal_callback_handler);
-    signal(SIGKILL, signal_callback_handler);
-    signal(SIGINT, signal_callback_handler);
-    signal(SIGHUP, signal_callback_handler);
-    signal(SIGQUIT, signal_callback_handler);
-    signal(SIGABRT, signal_callback_handler);
-    signal(SIGSEGV, signal_callback_handler);
+    debug::register_callbacks();
 
     // Make sure to move the file back from temp location
     std::atexit(clean_up);
