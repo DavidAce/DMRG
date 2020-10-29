@@ -6,7 +6,7 @@
 
 #include <complex>
 #include <optional>
-#include <general/nmspc_tensor_extra.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 class class_mps_site {
     public:

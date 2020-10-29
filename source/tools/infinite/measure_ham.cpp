@@ -3,9 +3,9 @@
 //
 
 #include <config/nmspc_settings.h>
-#include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/svd.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>

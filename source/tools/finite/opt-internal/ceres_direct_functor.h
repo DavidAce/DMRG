@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/ceres_base.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt::internal{
         template<typename Scalar>

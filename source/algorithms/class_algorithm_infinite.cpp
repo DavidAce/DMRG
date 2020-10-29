@@ -3,7 +3,6 @@
 //
 #include "class_algorithm_infinite.h"
 #include <config/nmspc_settings.h>
-#include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/io.h>
@@ -13,6 +12,9 @@
 #include <tools/infinite/io.h>
 #include <tools/infinite/measure.h>
 #include <tools/infinite/mps.h>
+
+
+
 class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType sim_type)
     : class_algorithm_base(std::move(h5ppFile_), sim_type) {
     tools::log->trace("Constructing algorithm infinite");

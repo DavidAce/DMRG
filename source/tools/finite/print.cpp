@@ -12,11 +12,9 @@
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/print.h>
-
 using Scalar = std::complex<double>;
 
 void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
-    using namespace Textra;
     for(size_t pos = 0; pos < tensors.get_length(); pos++) {
         std::string tag;
         if(pos == tensors.get_position()) tag = "<---- Position A";

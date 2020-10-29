@@ -13,6 +13,8 @@
 #include <tools/finite/measure.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
+#include <unsupported/Eigen/CXX11/Tensor>
+
 
 class_fdmrg::class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
     tools::log->trace("Constructing class_fdmrg");

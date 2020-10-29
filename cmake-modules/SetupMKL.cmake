@@ -22,6 +22,9 @@
 
 #    set(MKL_USE_STATIC_LIBS ON)
 if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
+    find_package(OpenMP)
+    find_package(Fortran REQUIRED)
+    find_package(Threads REQUIRED)
     if(TARGET openmp::openmp)
         set(MKL_MULTI_THREADED ON)
         mark_as_advanced(MKL_MULTI_THREADED)
@@ -45,25 +48,18 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
 
         # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
         add_library(mkl::mkl INTERFACE IMPORTED)
-        add_definitions(-DMKL_AVAILABLE)
+        target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE)
         if(MKL_MULTI_THREADED)
             target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_gthread)
             get_target_property(MKL_INCLUDE_DIR mkl::mkl_gf_lp_gthread INTERFACE_INCLUDE_DIRECTORIES)
             target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-            if(TARGET openmp::openmp)
-                target_link_libraries(mkl::mkl INTERFACE openmp::openmp)
-            endif()
+            target_link_libraries(mkl::mkl INTERFACE  gfortran::gfortran openmp::openmp Threads::Threads)
         else()
             target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_seq)
             get_target_property(MKL_INCLUDE_DIR mkl::mkl_gf_lp_seq INTERFACE_INCLUDE_DIRECTORIES)
             target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+            target_link_libraries(mkl::mkl INTERFACE  gfortran::gfortran Threads::Threads)
         endif()
-        target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE )
-
-        find_package(Fortran REQUIRED)
-        find_package(Threads REQUIRED)
-        target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran Threads::Threads)
-
 
         # Make the rest of the build structure aware of blas and lapack included in MKL.
         add_library(blas::blas          INTERFACE IMPORTED)

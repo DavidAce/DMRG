@@ -12,7 +12,8 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+
 
 Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, StateRitz ritz){
     return ground_state_optimization(tensors,enum2str(ritz));

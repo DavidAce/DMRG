@@ -9,8 +9,9 @@
     #include <thread>
 #endif
 
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <memory>
+#include <unsupported/Eigen/CXX11/Tensor>
+
 namespace Textra::omp {
 
 #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
@@ -21,8 +22,8 @@ namespace Textra::omp {
         if(not dev and tp) dev = std::make_unique<Eigen::ThreadPoolDevice>(tp.get(), num_threads);
     }
 #else
-    inline std::unique_ptr<Eigen::DefaultDevice> dev = std::make_unique<Eigen::DefaultDevice>() ;
-    inline void setNumThreads([[maybe_unused]] int num_threads) {
+    inline std::unique_ptr<Eigen::DefaultDevice> dev = std::make_unique<Eigen::DefaultDevice>();
+    inline void                                  setNumThreads([[maybe_unused]] int num_threads) {
         if(not dev) dev = std::make_unique<Eigen::DefaultDevice>();
     }
 #endif

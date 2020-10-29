@@ -3,14 +3,16 @@
 //
 
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
+
 // -- (textra first)
-#include <config/nmspc_settings.h>
+
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/common/contraction.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt_state.h>
 using Scalar = std::complex<double>;
 using real   = double;

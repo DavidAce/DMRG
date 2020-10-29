@@ -7,7 +7,6 @@ foreach (test ${TESTS})
     get_filename_component(test_nwe ${test} NAME_WE)
     include(source_lists/${test_nwe}.txt)
     add_executable(${test_nwe} ${test_src} ${test_inc})
-    target_link_libraries(${test_nwe} PRIVATE project-settings)
     target_include_directories(${test_nwe} PRIVATE ${CMAKE_SOURCE_DIR}/source)
     target_compile_definitions(${test_nwe} PRIVATE TEST_MATRIX_DIR="${PROJECT_SOURCE_DIR}/testmatrices")
     add_test(NAME ${test_nwe} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${test_nwe})
@@ -16,13 +15,24 @@ foreach (test ${TESTS})
     endif()
     add_dependencies(all-tests ${test_nwe})
     list(APPEND test_tgt_list ${test_nwe})
+
+    # Pretty print stack-trace
+    target_compile_options(${test_nwe} PUBLIC -rdynamic)
+    target_link_libraries(${test_nwe} PUBLIC -rdynamic)
+    target_link_libraries(${test_nwe}  PUBLIC -Wl,--export-dynamic)
+    if(TARGET CONAN_PKG::libunwind)
+        target_compile_definitions(${test_nwe} PRIVATE DMRG_HAS_UNWIND=1)
+        target_link_libraries(${test_nwe} PRIVATE CONAN_PKG::libunwind)
+    endif()
+    target_link_libraries(${test_nwe} PRIVATE dmrg-flags)
+
 endforeach ()
 add_custom_command(
         TARGET all-tests
         POST_BUILD
         COMMENT "Running Tests"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        DEPENDS DMRG++ project-settings
+        DEPENDS DMRG++
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
 
 
@@ -48,11 +58,41 @@ if(DMRG_ENABLE_CCACHE)
         foreach (tgt ${test_tgt_list})
             set_target_properties(${tgt} PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
         endforeach()
-        message(STATUS "Using ccache ${CCACHE_PROGRAM}")
+        message(STATUS "Tests using ccache ${CCACHE_PROGRAM}")
         if(DMRG_ENABLE_PCH AND COMMAND target_precompile_headers)
             message(STATUS "Detected ccache + pch: Remember to set --> sloppiness = include_file_mtime,pch_defines,time_macros <-- in your ccache.conf")
         endif()
     else()
         message(STATUS "ccache program could not be found")
     endif()
+endif()
+
+
+if (DMRG_PRINT_INFO)
+    include(${CMAKE_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
+    foreach(tgt ${test_tgt_list})
+        expand_target_one_level(${tgt} tgt_exp)
+        list(APPEND TEST_TARGETS_EXPANDED ${tgt_exp})
+    endforeach()
+    list(REMOVE_DUPLICATES TEST_TARGETS_EXPANDED)
+    message(STATUS "| TEST TARGET SUMMARY")
+    message(STATUS "|--------------------")
+    print_compiler_info("| ")
+    foreach(tgt ${TEST_TARGETS_EXPANDED})
+        print_target_info(${tgt} "| ")
+    endforeach()
+endif()
+
+# Print summary of CMake configuration
+if (DMRG_PRINT_INFO)
+    include(${CMAKE_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
+    message(STATUS "| TEST TARGET SUMMARY")
+    message(STATUS "|--------------------")
+    print_compiler_info("| ")
+    expand_target_all_targets(all-tests TEST_TARGET_EXPANDED)
+    foreach(tgt ${TEST_TARGET_EXPANDED})
+        print_target_info(${tgt} "| ")
+    endforeach()
 endif()

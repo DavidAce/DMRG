@@ -19,6 +19,7 @@ option(DMRG_ENABLE_PCH               "Enable precompiled headers to speed up com
 option(DMRG_ENABLE_CCACHE            "Enable ccache to speed up compilation"                        ON)
 option(DMRG_BUILD_EXAMPLES           "Build examples"                                               OFF)
 option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
+option(DMRG_PRINT_CHECKS             "Print more information during cmake configure"                OFF)
 option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
 option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
 
@@ -84,7 +85,14 @@ include(cmake-modules/CompilerFlags.cmake)
 ###  Add all source files    ###
 ################################
 include(source_list.txt)
-add_executable(${PROJECT_NAME} ${DMRG_SOURCES} ${DMRG_HEADERS})
+add_executable(${PROJECT_NAME})
+add_library(dmrg-main OBJECT ${DMRG_SOURCES})
+
+add_library(dmrg-arp OBJECT
+        # This one is special, since it absolutely can't have BLAS/LAPACK headers during compile for some reason
+        source/math/eig/arpack_solver/arpack_solver.cpp
+        )
+
 add_library(dmrg-eig OBJECT
         source/math/eig/settings.cpp
         source/math/eig/solver.cpp
@@ -93,27 +101,42 @@ add_library(dmrg-eig OBJECT
         source/math/eig/solver_zgeev.cpp
         source/math/eig/solver_zheevd.cpp
         source/math/eig/solution.cpp
-        source/math/eig/arpack_solver/arpack_solver.cpp
         source/math/eig/arpack_solver/matrix_product_dense.cpp
         source/math/eig/arpack_solver/matrix_product_sparse.cpp
         source/math/eig/arpack_solver/matrix_product_hamiltonian.cpp
-
-        source/math/eig.h
-        source/math/eig/settings.h
-        source/math/eig/solver.h
-        source/math/eig/solution.h
-        source/math/eig/view.h
-        source/math/eig/arpack_solver/arpack_solver.h
-        source/math/eig/arpack_solver/matrix_product_dense.h
-        source/math/eig/arpack_solver/matrix_product_sparse.h
-        source/math/eig/arpack_solver/matrix_product_hamiltonian.h
         )
 
-target_include_directories(${PROJECT_NAME} PRIVATE source)
+add_library(dmrg-opt OBJECT
+        source/tools/finite/opt_state.cpp
+        source/tools/finite/opt-internal/ceres_base.cpp
+        source/tools/finite/opt-internal/ceres_direct.cpp
+        source/tools/finite/opt-internal/ceres_direct_functor.cpp
+        source/tools/finite/opt-internal/ceres_subspace.cpp
+        source/tools/finite/opt-internal/ceres_subspace_diag_full.cpp
+        source/tools/finite/opt-internal/ceres_subspace_diag_part.cpp
+        source/tools/finite/opt-internal/ceres_subspace_filter.cpp
+        source/tools/finite/opt-internal/ceres_subspace_functor.cpp
+        source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp
+        source/tools/finite/opt-internal/ground_state.cpp
+        source/tools/finite/opt-internal/report.cpp
+        source/tools/finite/opt.cpp
+        )
+
+add_library(dmrg-dbg OBJECT
+        source/general/stack_trace.cpp
+        )
+
+
+
+#target_include_directories(${PROJECT_NAME} PRIVATE source)
+target_include_directories(dmrg-main PRIVATE source)
 target_include_directories(dmrg-eig PRIVATE source)
+target_include_directories(dmrg-arp PRIVATE source)
+target_include_directories(dmrg-opt PRIVATE source)
+target_include_directories(dmrg-dbg PRIVATE source)
 
 
-add_library(project-settings INTERFACE)
+add_library(dmrg-flags INTERFACE)
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
@@ -123,17 +146,13 @@ else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     if(NOT DMRG_ENABLE_ASAN)
-        target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+        target_link_libraries  (dmrg-flags INTERFACE -static)   ### Static linkage
     endif()
 endif()
 
 
 
 
-##############################
-###  Enable c++17 support  ###
-##############################
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
 #######################################################
@@ -149,27 +168,30 @@ CheckCXXOptional()
 ###  Add optional RELEASE/DEBUG compile flags  ###
 ##################################################
 # -fsanitize=leak -fsanitize=undefined -fsanitize=alignment  -fsanitize=leak -fsanitize=undefined -fsanitize=alignment
-target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
-target_compile_features(project-settings INTERFACE cxx_std_17)
+target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
+##############################
+###  Enable c++17 support  ###
+##############################
+target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 
 
 #######################################
 # Settings for sanitizers           ###
 #######################################
 if(DMRG_ENABLE_ASAN)
-    target_compile_options(project-settings INTERFACE -fsanitize=address -fno-omit-frame-pointer)
-    target_link_libraries(project-settings INTERFACE -fsanitize=address)
+    target_compile_options(dmrg-flags INTERFACE -fsanitize=address -fno-omit-frame-pointer)
+    target_link_libraries(dmrg-flags INTERFACE -fsanitize=address)
     if(NOT BUILD_SHARED_LIBS)
-        target_link_libraries(project-settings INTERFACE -static-libasan)
+        target_link_libraries(dmrg-flags INTERFACE -static-libasan)
     endif()
 endif()
 if(DMRG_ENABLE_USAN)
-    target_compile_options(project-settings INTERFACE -fsanitize=undefined -fno-omit-frame-pointer)
-    target_link_libraries(project-settings INTERFACE -fsanitize=undefined)
+    target_compile_options(dmrg-flags INTERFACE -fsanitize=undefined -fno-omit-frame-pointer)
+    target_link_libraries(dmrg-flags INTERFACE -fsanitize=undefined)
 endif()
 
 
@@ -177,7 +199,7 @@ endif()
 ### Compiler-dependent linker flags ###
 #######################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
-    target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
+    target_link_libraries(dmrg-flags INTERFACE  -stdlib=libstdc++ )
 endif()
 
 
@@ -236,43 +258,69 @@ include(cmake-modules/SetupDependenciesConan.cmake)
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-find_package(Filesystem COMPONENTS Final Experimental REQUIRED)
-target_link_libraries(project-settings INTERFACE  std::filesystem)
-target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${FOUND_TARGETS}) # Order is important here
-
-if(NOT TARGET openmp::openmp)
-    target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
-endif()
-
-
+#find_package(Filesystem COMPONENTS Final Experimental REQUIRED)
+#target_link_libraries(dmrg-main INTERFACE  std::filesystem)
 
 # Speed up with precompiled headers
 if(DMRG_ENABLE_PCH)
     if(COMMAND target_precompile_headers)
-        target_precompile_headers(${PROJECT_NAME} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
-        target_precompile_headers(${PROJECT_NAME} PRIVATE <h5pp/h5pp.h>)
+        target_precompile_headers(dmrg-flags INTERFACE <string> <vector> <array> <optional> <complex> <memory>)
+        target_precompile_headers(dmrg-eig PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-eig PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
+        target_precompile_headers(dmrg-opt PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-opt PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
+        target_precompile_headers(dmrg-main PRIVATE <list> <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-main PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor> <chrono> <string_view>)
     endif()
 endif()
 
-target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl)
-target_link_libraries(dmrg-eig PRIVATE project-settings )  # Link everything to main project
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-eig project-settings )  # Link everything to main project
+#target_link_libraries(dmrg-flags INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive rt dl)
+target_link_libraries(dmrg-main PRIVATE dmrg-flags)
+target_link_libraries(dmrg-arp PRIVATE dmrg-flags )
+target_link_libraries(dmrg-eig PRIVATE dmrg-flags )
+target_link_libraries(dmrg-opt PRIVATE dmrg-flags)
+target_link_libraries(dmrg-dbg PRIVATE dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-flags dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg )  # Link everything to main project
 
+#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
+#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
+#endif()
 
 #######################################
 # Settings for ccache               ###
 #######################################
 if(DMRG_ENABLE_CCACHE)
-    find_program(CCACHE_PROGRAM ccache)
-    if(CCACHE_PROGRAM)
-        set_target_properties(${PROJECT_NAME} PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
-        set_target_properties(dmrg-eig PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
-        message(STATUS "Using ccache ${CCACHE_PROGRAM}")
-        if(DMRG_ENABLE_PCH AND COMMAND target_precompile_headers)
-            message(STATUS "Detected ccache + pch: Remember to set --> sloppiness = include_file_mtime,pch_defines,time_macros <-- in your ccache.conf")
+    set(COMPILER_OK ON)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#        target_compile_options(dmrg-main PRIVATE -Xclang -fno-pch-timestamp)
+#        target_compile_options(dmrg-eig PRIVATE -Xclang -fno-pch-timestamp)
+#        target_compile_options(dmrg-opt PRIVATE -Xclang -fno-pch-timestamp)
+    endif()
+
+    mark_as_advanced(COMPILER_OK)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+        set(COMPILER_OK OFF)
+    endif()
+    if(COMPILER_OK)
+        find_program(CCACHE_PROGRAM ccache)
+        if(CCACHE_PROGRAM)
+            set_target_properties(${PROJECT_NAME} PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(dmrg-main PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(dmrg-opt PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(dmrg-dbg PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(dmrg-arp PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(dmrg-eig PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            message(STATUS "Using ccache ${CCACHE_PROGRAM}")
+            if(DMRG_ENABLE_PCH AND COMMAND target_precompile_headers)
+                message(STATUS "Detected ccache + pch: Remember to set --> sloppiness = include_file_mtime,pch_defines,time_macros <-- in your ccache.conf")
+            endif()
+        else()
+            message(STATUS "ccache program could not be found")
         endif()
-    else()
-        message(STATUS "ccache program could not be found")
     endif()
 endif()
 
@@ -290,15 +338,16 @@ if(NOT TARGET uninstall)
 endif()
 
 
+
 # Print summary of CMake configuration
 if (DMRG_PRINT_INFO)
     include(cmake-modules/PrintTargetInfo.cmake)
     include(cmake-modules/getExpandedTarget.cmake)
-    expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
     message(STATUS "| DMRG TARGET SUMMARY")
     message(STATUS "|--------------------")
     print_compiler_info("| ")
-    foreach(tgt ${DMRG_TARGETS_EXPANDED})
+    expand_target_all_targets(${PROJECT_NAME} DMRG_TARGET_EXPANDED)
+    foreach(tgt ${DMRG_TARGET_EXPANDED})
         print_target_info(${tgt} "| ")
     endforeach()
 endif()

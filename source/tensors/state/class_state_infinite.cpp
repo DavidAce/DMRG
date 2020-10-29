@@ -9,7 +9,7 @@
 #include <tools/common/split.h>
 #include <tools/common/views.h>
 #include <tools/infinite/measure.h>
-
+#include <general/nmspc_tensor_extra.h>
 using Scalar = class_state_infinite::Scalar;
 
 class_state_infinite::class_state_infinite() : MPS_A(std::make_unique<class_mps_site>()), MPS_B(std::make_unique<class_mps_site>()) {

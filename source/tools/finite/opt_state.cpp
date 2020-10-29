@@ -3,6 +3,8 @@
 //
 
 #include "opt_state.h"
+#include <tools/common/fmt.h>
+
 using namespace tools::finite::opt;
 
 opt_state::opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,

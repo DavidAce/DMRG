@@ -7,9 +7,11 @@
 #include "class_mpo_parameters.h"
 #include <any>
 #include <config/enums.h>
-#include <general/nmspc_tensor_extra.h>
 #include <map>
 #include <memory>
+#include <Eigen/Core>
+#include <unsupported/Eigen/CXX11/Tensor>
+
 
 namespace h5pp {
     class File;
@@ -40,12 +42,12 @@ class class_mpo_site {
     explicit class_mpo_site(ModelType model_type_, size_t position_);
     virtual ~class_mpo_site() = default;
 
-    void set_position(size_t new_pos);
-    void assert_validity() const;
-    void set_reduced_energy(double site_energy);
-    void build_mpo_squared();
-    void set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq);
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> get_uncompressed_mpo() const;
+    void                                          set_position(size_t new_pos);
+    void                                          assert_validity() const;
+    void                                          set_reduced_energy(double site_energy);
+    void                                          build_mpo_squared();
+    void                                          set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq);
+    [[nodiscard]] Eigen::Tensor<Scalar, 4>        get_uncompressed_mpo() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO2() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 4> &      MPO2();

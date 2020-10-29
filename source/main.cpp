@@ -16,7 +16,7 @@
 #if defined(MKL_AVAILABLE)
     #define MKL_Complex8 std::complex<float>
     #define MKL_Complex16 std::complex<double>
-    #include <mkl.h>
+//    #include <mkl.h>
     #include <mkl_service.h>
 #endif
 
@@ -26,7 +26,6 @@
 
 #include <config/class_dmrg_config.h>
 #include <general/stack_trace.h>
-#include <tools/common/io.h>
 
 void print_usage() {
     std::printf(

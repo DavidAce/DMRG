@@ -4,12 +4,12 @@
 
 #include "class_ising_sdual.h"
 #include <config/nmspc_settings.h>
-#include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
 #include <math/num.h>
 #include <math/rnd.h>
+#include <physics/nmspc_quantum_mechanics.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
@@ -35,8 +35,8 @@ double class_ising_sdual::get_coupling() const { return std::pow(h5tb.param.J_ra
 double class_ising_sdual::get_field() const { return std::pow(h5tb.param.h_rand + h5tb.param.h_pert, 1 - beta); }
 double class_ising_sdual::get_coupling(double J_rnd_, double J_ptb_, double alpha_) const { return std::pow(J_rnd_ + J_ptb_, 1 - alpha_); }
 double class_ising_sdual::get_field(double h_rnd_, double h_ptb_, double beta_) const { return std::pow(h_rnd_ + h_ptb_, 1 - beta_); }
-void class_ising_sdual::print_parameter_names() const { h5tb.print_parameter_names(); }
-void class_ising_sdual::print_parameter_values() const { h5tb.print_parameter_values(); }
+void   class_ising_sdual::print_parameter_names() const { h5tb.print_parameter_names(); }
+void   class_ising_sdual::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void class_ising_sdual::set_parameters(TableMap &parameters) {
     h5tb.param.J_mean   = std::any_cast<double>(parameters["J_mean"]);
@@ -120,7 +120,7 @@ void class_ising_sdual::build_mpo()
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
-        throw std::runtime_error(fmt::format("MPO at position {} has NAN's",get_position()));
+        throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
     }
     build_mpo_squared();
 }
@@ -140,21 +140,21 @@ void class_ising_sdual::randomize_hamiltonian() {
     }
 
     all_mpo_parameters_have_been_set = false;
-    mpo_squared = std::nullopt;
+    mpo_squared                      = std::nullopt;
 }
 
 void class_ising_sdual::set_coupling_damping(double alpha_) {
     alpha = alpha_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
-        mpo_squared = std::nullopt;
+        mpo_squared                                                                     = std::nullopt;
     }
 }
 void class_ising_sdual::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
-        mpo_squared = std::nullopt;
+        mpo_squared                                                                     = std::nullopt;
     }
 }
 
@@ -185,28 +185,24 @@ void class_ising_sdual::set_perturbation(double coupling_ptb, double field_ptb, 
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
-        mpo_squared = std::nullopt;
+        mpo_squared                                                                     = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!",get_position()));
+        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
 }
 
 bool class_ising_sdual::is_perturbed() const { return h5tb.param.J_pert != 0.0 or h5tb.param.h_pert != 0.0; }
 
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view() const {
-    if(e_reduced == 0) {
-        return MPO();
-    }
+    if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);
 }
 
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy) const {
-    if(site_energy == 0) {
-        return MPO();
-    }
+    if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<Scalar, 4> temp                                           = MPO();
     temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - site_energy * Id);
-//    temp.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
+    //    temp.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     return temp;
 }
 
@@ -240,18 +236,16 @@ Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_right() const {
     }
 }
 
-Eigen::Tensor<Scalar,1> class_ising_sdual::get_MPO2_edge_left() const {
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_left() const {
     auto edge = get_MPO_edge_left();
-    auto dim = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
 }
-Eigen::Tensor<Scalar,1> class_ising_sdual::get_MPO2_edge_right() const  {
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_right() const {
     auto edge = get_MPO_edge_right();
-    auto dim = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim*dim});
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
 }
-
-
 
 Eigen::MatrixXcd class_ising_sdual::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
                                                             std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {

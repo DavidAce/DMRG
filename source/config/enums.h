@@ -1,5 +1,5 @@
 #pragma once
-#include <h5pp/details/h5ppEnums.h>
+//#include <h5pp/details/h5ppEnums.h>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
@@ -151,14 +151,14 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == FileCollisionPolicy::REPLACE)    return "REPLACE";
     }
 
-    if constexpr(std::is_same_v<T, h5pp::FilePermission>) {
-        if(item == h5pp::FilePermission::READONLY)          return "READONLY";
-        if(item == h5pp::FilePermission::COLLISION_FAIL)    return "COLLISION_FAIL";
-        if(item == h5pp::FilePermission::RENAME)            return "RENAME";
-        if(item == h5pp::FilePermission::READWRITE)         return "READWRITE";
-        if(item == h5pp::FilePermission::BACKUP)            return "BACKUP";
-        if(item == h5pp::FilePermission::REPLACE)           return "REPLACE";
-    }
+//    if constexpr(std::is_same_v<T, h5pp::FilePermission>) {
+//        if(item == h5pp::FilePermission::READONLY)          return "READONLY";
+//        if(item == h5pp::FilePermission::COLLISION_FAIL)    return "COLLISION_FAIL";
+//        if(item == h5pp::FilePermission::RENAME)            return "RENAME";
+//        if(item == h5pp::FilePermission::READWRITE)         return "READWRITE";
+//        if(item == h5pp::FilePermission::BACKUP)            return "BACKUP";
+//        if(item == h5pp::FilePermission::REPLACE)           return "REPLACE";
+//    }
 
     if constexpr(std::is_same_v<T,fdmrg_task>){
         if(item == fdmrg_task::INIT_RANDOMIZE_MODEL)                    return "INIT_RANDOMIZE_MODEL";
@@ -312,14 +312,14 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "BACKUP")    return FileCollisionPolicy::BACKUP;
         if(item == "REPLACE")   return FileCollisionPolicy::REPLACE;
     }
-    if constexpr(std::is_same_v<T, h5pp::FilePermission>) {
-        if(item == "READONLY")          return h5pp::FilePermission::READONLY;
-        if(item == "COLLISION_FAIL")    return h5pp::FilePermission::COLLISION_FAIL;
-        if(item == "RENAME")            return h5pp::FilePermission::RENAME;
-        if(item == "READWRITE")         return h5pp::FilePermission::READWRITE;
-        if(item == "BACKUP")            return h5pp::FilePermission::BACKUP;
-        if(item == "REPLACE")           return h5pp::FilePermission::REPLACE;
-    }
+//    if constexpr(std::is_same_v<T, h5pp::FilePermission>) {
+//        if(item == "READONLY")          return h5pp::FilePermission::READONLY;
+//        if(item == "COLLISION_FAIL")    return h5pp::FilePermission::COLLISION_FAIL;
+//        if(item == "RENAME")            return h5pp::FilePermission::RENAME;
+//        if(item == "READWRITE")         return h5pp::FilePermission::READWRITE;
+//        if(item == "BACKUP")            return h5pp::FilePermission::BACKUP;
+//        if(item == "REPLACE")           return h5pp::FilePermission::REPLACE;
+//    }
 
     if constexpr(std::is_same_v<T,fdmrg_task>){
         if(item == "INIT_RANDOMIZE_MODEL")                    return fdmrg_task::INIT_RANDOMIZE_MODEL;

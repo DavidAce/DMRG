@@ -5,20 +5,24 @@
 // -- (textra first)
 #include "ceres_subspace_functor.h"
 #include <algorithms/class_algorithm_status.h>
+#include <ceres/gradient_problem.h>
 #include <config/nmspc_settings.h>
-#include <math/rnd.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+#include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_state.h>
+
 using namespace tools::finite::opt;
+using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
-                                                            OptSpace optSpace) {
+                                                           OptSpace optSpace) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
@@ -67,9 +71,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     Eigen::VectorXd overlaps             = (multisite_mps_vector.adjoint() * eigvecs).cwiseAbs().real();
 
     double candidate_time = 0;
-    for(auto &&item : reports::eigs_log){
-        candidate_time += item.ham_time + item.lu_time + item.eig_time;
-    }
+    for(auto &&item : reports::eigs_log) { candidate_time += item.ham_time + item.lu_time + item.eig_time; }
 
     std::vector<opt_state> candidate_list;
     candidate_list.reserve(eigvals.size());
@@ -86,28 +88,27 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     return candidate_list;
 }
 
-template std::vector<opt_state> internal::subspace::find_candidates<cplx>(const class_tensors_finite &tensors, double subspace_error_threshold,
-                                                                           OptMode optMode, OptSpace optSpace);
+template std::vector<opt_state> internal::subspace::find_candidates<cplx>(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
+                                                                          OptSpace optSpace);
 
-template std::vector<opt_state> internal::subspace::find_candidates<real>(const class_tensors_finite &tensors, double subspace_error_threshold,
-                                                                           OptMode optMode, OptSpace optSpace);
+template std::vector<opt_state> internal::subspace::find_candidates<real>(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
+                                                                          OptSpace optSpace);
 
 opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
-                                                                     OptMode optMode, OptSpace optSpace) {
+                                                                    OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
-                              tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                              tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
-                              tools::finite::measure::energy_variance(tensors),
-                              1.0, // Overlap
-                              tensors.get_length());
+                             tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                             tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                             tools::finite::measure::energy_variance(tensors),
+                             1.0, // Overlap
+                             tensors.get_length());
     initial_tensor.validate_candidate();
     return ceres_subspace_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
 opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const opt_state &initial_tensor,
-                                                                     const class_algorithm_status &status, OptType optType, OptMode optMode,
-                                                                     OptSpace optSpace) {
+                                                                    const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
     tools::log->trace("Optimizing in SUBSPACE mode");
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic();
 
@@ -298,7 +299,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
 
     tools::log->debug("Optimizing with {} initial guesses", candidate_list_top_idx.size());
     std::vector<opt_state> optimized_results;
-    size_t                  candidate_count = 0;
+    size_t                 candidate_count = 0;
     for(auto &idx : candidate_list_top_idx) {
         const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
         tools::log->trace("Starting LBFGS with candidate {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>20.16f} | eigvec {}", idx,
@@ -427,8 +428,8 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
         int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
         int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
         double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
-        tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
-                          ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+        tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec,
+                          summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
         if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_tensor, subspace_size); }
 

@@ -5,7 +5,8 @@
 #include <list>
 #include <memory>
 #include <optional>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/eigen_tensor_fwd_decl.h>
+
 class class_env_ene;
 class class_env_var;
 

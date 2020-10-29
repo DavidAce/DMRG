@@ -6,7 +6,7 @@
 // -- (textra first)
 #include <config/enums.h>
 #include <config/nmspc_settings.h>
-#include <general/nmspc_quantum_mechanics.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/fmt.h>

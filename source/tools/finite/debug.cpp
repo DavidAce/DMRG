@@ -2,8 +2,8 @@
 // Created by david on 2019-02-17.
 //
 #include <config/nmspc_settings.h>
-#include <general/nmspc_quantum_mechanics.h>
 #include <math/num.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/edges/class_env_ene.h>

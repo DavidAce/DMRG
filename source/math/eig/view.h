@@ -1,7 +1,7 @@
 #pragma once
 
 #include "solution.h"
-#include <general/nmspc_tensor_extra.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 namespace eig::view {
 
@@ -62,8 +62,4 @@ namespace eig::view {
         auto eigvecmap = get_eigvec<Scalar>(result, num, side);
         return Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(eigvecmap.data(), dims);
     }
-
-
-
-
 }

@@ -4,6 +4,7 @@
 #include <list>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
+
 class class_mpo_site;
 class class_tensors_finite;
 
@@ -18,15 +19,15 @@ class class_model_finite {
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo         = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo_squared = std::nullopt;
     };
-    mutable Cache cache;
-    std::vector<Eigen::Tensor<Scalar,4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
-    void randomize();
-    void reset_mpo_squared();
-    void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
-    void set_reduced_energy(double total_energy);
-    void set_reduced_energy_per_site(double site_energy);
-    void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-    void                                 damp_model_disorder(double coupling_damp, double field_damp);
+    mutable Cache                         cache;
+    std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void                                  randomize();
+    void                                  reset_mpo_squared();
+    void                                  rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void                                  set_reduced_energy(double total_energy);
+    void                                  set_reduced_energy_per_site(double site_energy);
+    void                                  perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
+    void                                  damp_model_disorder(double coupling_damp, double field_damp);
 
     public:
     std::list<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
@@ -55,8 +56,6 @@ class class_model_finite {
     [[nodiscard]] bool   is_damped() const;
     [[nodiscard]] double get_energy_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
-
-
 
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
