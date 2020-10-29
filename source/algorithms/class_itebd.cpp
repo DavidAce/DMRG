@@ -3,8 +3,7 @@
 //
 #include "class_itebd.h"
 #include <config/nmspc_settings.h>
-#include <general/nmspc_quantum_mechanics.h>
-#include <h5pp/h5pp.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>

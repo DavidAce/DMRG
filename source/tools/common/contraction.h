@@ -1,6 +1,9 @@
 #pragma once
 
-namespace tools::common::contraction{
+#include <complex>
+#include <general/eigen_tensor_fwd_decl.h>
+
+namespace tools::common::contraction {
     using cplx = std::complex<double>;
     using real = double;
 
@@ -72,31 +75,29 @@ namespace tools::common::contraction{
 
     /* clang-format on */
 
-
     // Extern templates
 
-//    template<typename Scalar>
-//    using T3 = Eigen::Tensor<Scalar, 3>;
-//    template<typename Scalar>
-//    using T4 = Eigen::Tensor<Scalar, 4>;
-//    template<typename T>
-//    using TM = Eigen::TensorMap<T>;
-//    extern template double expectation_value(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//    extern template double expectation_value(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+    //    template<typename Scalar>
+    //    using T3 = Eigen::Tensor<Scalar, 3>;
+    //    template<typename Scalar>
+    //    using T4 = Eigen::Tensor<Scalar, 4>;
+    //    template<typename T>
+    //    using TM = Eigen::TensorMap<T>;
+    //    extern template double expectation_value(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
+    //    extern template double expectation_value(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
 
-//    extern template double expectation_value(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//    extern template double expectation_value(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-//    extern template double second_moment(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
-//    extern template double second_moment(const T3<cplx> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
-//    extern template double second_moment(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
-//    extern template double second_moment(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
+    //    extern template double expectation_value(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
+    //    extern template double expectation_value(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+    //    extern template double second_moment(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
+    //    extern template double second_moment(const T3<cplx> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
+    //    extern template double second_moment(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
+    //    extern template double second_moment(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
 
-//    extern template T3<real> matrix_vector_product(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//    extern template T3<cplx> matrix_vector_product(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-//    extern template void matrix_vector_product(T3<real> & ,const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//    extern template void matrix_vector_product(T3<cplx> & ,const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-//    extern template void matrix_vector_product(T3<real> & ,const TM<T3<const real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//    extern template void matrix_vector_product(T3<cplx> & ,const TM<T3<const cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-
+    //    extern template T3<real> matrix_vector_product(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
+    //    extern template T3<cplx> matrix_vector_product(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+    //    extern template void matrix_vector_product(T3<real> & ,const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
+    //    extern template void matrix_vector_product(T3<cplx> & ,const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+    //    extern template void matrix_vector_product(T3<real> & ,const TM<T3<const real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
+    //    extern template void matrix_vector_product(T3<cplx> & ,const TM<T3<const cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
 
 }

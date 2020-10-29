@@ -4,6 +4,7 @@
 #include <algorithms/class_algorithm_status.h>
 #include <complex>
 #include <config/nmspc_settings.h>
+#include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <tensors/class_tensors_finite.h>
@@ -33,7 +34,7 @@ void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, co
         tools::common::io::h5table::load_profiling(h5ppFile, state_prefix);
         tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
-        tensors.activate_sites(settings::precision::max_size_full_diag,2);
+        tensors.activate_sites(settings::precision::max_size_full_diag, 2);
         tensors.reduce_mpo_energy();
         tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors);
     } catch(std::exception &ex) { throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
@@ -61,7 +62,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         for(size_t pos = 0; pos < model_size; pos++) {
             model.get_mpo(pos).load_hamiltonian(h5ppFile, hamiltonian);
             // We can use the mpo's on file here to check everything is correct
-            std::string mpo_dset = fmt::format("{}/H_{}",mpo_prefix, pos);
+            std::string mpo_dset = fmt::format("{}/H_{}", mpo_prefix, pos);
             if(h5ppFile.linkExists(mpo_dset)) {
                 if(Textra::Tensor_to_Vector(model.get_mpo(pos).MPO()) != Textra::Tensor_to_Vector(h5ppFile.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
                     throw std::runtime_error("Built MPO does not match the MPO on file");
@@ -132,9 +133,11 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
 }
 
 void compare(double val1, double val2, double tol, const std::string &tag) {
-    if(std::abs(val1 - val2) > tol) throw std::runtime_error(fmt::format("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2, std::abs(val1-val2),tol));
+    if(std::abs(val1 - val2) > tol)
+        throw std::runtime_error(fmt::format("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2,
+                                             std::abs(val1 - val2), tol));
     else
-        tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}",tag,val1,val2, std::abs(val1-val2),tol);
+        tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2, std::abs(val1 - val2), tol);
 }
 
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
@@ -143,6 +146,5 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tensors.do_all_measurements();
     compare(tensors.measurements.energy_variance_per_site.value(), expected_measurements.energy_variance_per_site, 1e-8, "Energy variance per site");
-    compare(tensors.measurements.energy_per_site.value(), expected_measurements.energy_per_site, 1e-8,
-            "Energy per site");
+    compare(tensors.measurements.energy_per_site.value(), expected_measurements.energy_per_site, 1e-8, "Energy per site");
 }

@@ -8,7 +8,7 @@
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/ceres_base.h>
 
 using namespace tools::finite::opt::internal;
 

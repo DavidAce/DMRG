@@ -3,7 +3,7 @@
 #include <config/enums.h>
 #include <measure/tensors_measure_infinite.h>
 #include <memory>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/eigen_tensor_fwd_decl.h>
 
 class class_state_infinite;
 class class_model_infinite;

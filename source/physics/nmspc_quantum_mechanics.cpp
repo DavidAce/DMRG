@@ -1,14 +1,14 @@
 //
 // Created by david on 2019-03-20.
 //
-#include <complex.h>
-#undef I
+//#include <complex.h>
+//#undef I
 
 #include <Eigen/Core>
 #include <vector>
 
+#include "general/nmspc_tensor_extra.h"
 #include "nmspc_quantum_mechanics.h"
-#include "nmspc_tensor_extra.h"
 #include <math/num.h>
 #include <math/rnd.h>
 #include <unsupported/Eigen/KroneckerProduct>

@@ -1,5 +1,5 @@
-#include <general/nmspc_quantum_mechanics.h>
 #include <math/eig.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/model/class_model_infinite.h>
 #include <tensors/model/class_mpo_site.h>
@@ -8,6 +8,7 @@
 #include <tools/common/prof.h>
 #include <tools/common/views.h>
 #include <tools/infinite/measure.h>
+#include <general/nmspc_tensor_extra.h>
 
 class_state_infinite::Scalar moment_generating_function(const class_state_infinite &                                 state_original,
                                                         std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {

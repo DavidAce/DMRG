@@ -2,7 +2,6 @@
 // Created by david on 2019-03-18.
 //
 #include <algorithms/class_algorithm_status.h>
-#include <general/nmspc_tensor_extra.h>
 #include <glog/logging.h>
 #include <string>
 #include <tensors/class_tensors_finite.h>
@@ -11,7 +10,9 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+#include <tools/finite/opt-internal/ceres_base.h>
+#include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_state.h>
 #include <tools/finite/opt-internal/ceres_subspace_functor.h>
 #include <tools/finite/opt-internal/ceres_direct_functor.h>

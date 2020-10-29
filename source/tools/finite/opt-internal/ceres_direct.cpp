@@ -2,9 +2,9 @@
 // Created by david on 2019-07-09.
 //
 
-#include <general/nmspc_tensor_extra.h>
-// -- (textra first)
+
 #include "ceres_direct_functor.h"
+#include <ceres/gradient_problem.h>
 #include <algorithms/class_algorithm_status.h>
 #include <config/nmspc_settings.h>
 #include <tensors/class_tensors_finite.h>
@@ -15,7 +15,8 @@
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/opt_state.h>
-
+#include <tools/finite/opt-internal/opt-internal.h>
+#include <tools/finite/opt-internal/report.h>
 tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &  tensors,
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {

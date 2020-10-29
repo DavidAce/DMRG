@@ -1,10 +1,12 @@
 #pragma once
-#include <list>
 #include <complex>
+#include <general/eigen_tensor_fwd_decl.h>
+#include <list>
 #include <tuple>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <vector>
+#include <optional>
 class class_mps_site;
-namespace tools::common::split{
+namespace tools::common::split {
     using Scalar = std::complex<double>;
     /* clang-format off */
     extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,

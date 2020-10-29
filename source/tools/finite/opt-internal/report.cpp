@@ -1,7 +1,7 @@
 
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_state.h>
 
 /* clang-format off */

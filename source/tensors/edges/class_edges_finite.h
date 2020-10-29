@@ -2,9 +2,10 @@
 #include <complex>
 #include <config/enums.h>
 #include <list>
-#include <optional>
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <memory>
+#include <optional>
+#include <vector>
+#include <general/eigen_tensor_fwd_decl.h>
 class class_env_ene;
 class class_env_var;
 
@@ -25,11 +26,11 @@ class class_edges_finite {
 
     public:
     class_edges_finite();
-    ~class_edges_finite();                                              // Read comment on implementation
-    class_edges_finite(class_edges_finite &&other);                     // default move ctor
-    class_edges_finite &operator=(class_edges_finite &&other);          // default move assign
-    class_edges_finite(const class_edges_finite &other);                // copy ctor
-    class_edges_finite &operator=(const class_edges_finite &other);     // copy assign
+    ~class_edges_finite();                                          // Read comment on implementation
+    class_edges_finite(class_edges_finite &&other);                 // default move ctor
+    class_edges_finite &operator=(class_edges_finite &&other);      // default move assign
+    class_edges_finite(const class_edges_finite &other);            // copy ctor
+    class_edges_finite &operator=(const class_edges_finite &other); // copy assign
 
     void initialize(size_t model_size);
 
@@ -54,7 +55,6 @@ class class_edges_finite {
     void eject_edges_all_ene();
     void eject_edges_all_var();
     void eject_edges_all();
-
 
     // This is a reference wrapper for an edge pair
     template<typename env_type>

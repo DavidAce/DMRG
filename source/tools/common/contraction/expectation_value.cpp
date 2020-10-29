@@ -1,4 +1,5 @@
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 #include <tools/common/contraction.h>
 #include <tools/common/fmt.h>
 using namespace tools::common::contraction;

@@ -12,7 +12,7 @@
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/prof.h>
 #include <tools/infinite/opt.h>
-
+#include <general/nmspc_tensor_extra.h>
 using Scalar = tools::infinite::opt::Scalar;
 
 Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_tensors_infinite &state, StateRitz ritz) {

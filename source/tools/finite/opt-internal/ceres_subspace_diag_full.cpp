@@ -1,9 +1,8 @@
-#include <general/nmspc_tensor_extra.h>
-// -- (textra first)
 #include <math/eig.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+#include <tools/finite/opt-internal/report.h>
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subspace::find_subspace_full(const MatrixType<Scalar> & H_local,

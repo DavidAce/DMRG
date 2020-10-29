@@ -3,10 +3,10 @@
 //
 
 #include "class_mpo_site.h"
-#include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <math/rnd.h>
+#include <physics/nmspc_quantum_mechanics.h>
 
 using namespace qm;
 using Scalar = std::complex<double>;

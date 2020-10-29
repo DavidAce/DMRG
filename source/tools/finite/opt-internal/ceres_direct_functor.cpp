@@ -2,17 +2,15 @@
 // Created by david on 2019-07-15.
 //
 
-#include <general/nmspc_tensor_extra.h>
-// -- (textra first)
 #include "ceres_direct_functor.h"
-#include <math/num.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/common/contraction.h>
+#include <tools/finite/opt-internal/opt-internal.h>
 
 using namespace tools::finite::opt::internal;
 
@@ -27,7 +25,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     if constexpr(std::is_same<Scalar, double>::value) {
         tools::log->trace("- Generating real-valued multisite components");
         mpo                 = model.get_multisite_mpo().real();
-        mpo2                 = model.get_multisite_mpo_squared().real();
+        mpo2                = model.get_multisite_mpo_squared().real();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
         envL                = env_ene.L.real();
@@ -39,7 +37,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         tools::log->trace("- Generating complex-valued multisite components");
         mpo                 = model.get_multisite_mpo();
-        mpo2                 = model.get_multisite_mpo_squared();
+        mpo2                = model.get_multisite_mpo_squared();
         const auto &env_ene = edges.get_multisite_ene_blk();
         const auto &env_var = edges.get_multisite_var_blk();
         envL                = env_ene.L;
@@ -138,14 +136,10 @@ template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     t_vH2->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes);
-    tools::common::contraction::matrix_vector_product(H2v_tensor,v_tensor,mpo2,env2L,env2R);
+    tools::common::contraction::matrix_vector_product(H2v_tensor, v_tensor, mpo2, env2L, env2R);
     t_vH2->toc();
 
-    ops = tools::finite::opt::internal::get_ops(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
-
-//    auto log2chiL = std::log2(dsizes[1]);
-//    auto log2chiR = std::log2(dsizes[2]);
-//    auto log2spin = std::log2(dsizes[0]);
+    ops = tools::finite::opt::internal::get_ops(dsizes[0], dsizes[1], dsizes[2], mpo.dimension(0));
 
     /*
      * NOTE 2020-10-05
@@ -196,93 +190,17 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
      *
      */
 
-
-//    if(log2spin >= std::max(log2chiL, log2chiR)) {
-//        if(log2chiL > log2chiR) {
-//            if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL > log2chiR ");
-//            ops = get_ops_v1(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
-//            Eigen::Tensor<Scalar, 3> theta =
-//                Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-//            H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
-//                                                       .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-//                                                       .contract(env2R, Textra::idx({0, 3}, {0, 2}))
-//                                                       .contract(mpo, Textra::idx({2, 1, 4}, {2, 0, 1}))
-//                                                       .shuffle(Textra::array3{2, 0, 1});
-//        }
-//
-//        else {
-//            if(print_path) tools::log->trace("get_H2v path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL <= log2chiR ");
-//            ops = get_ops_v2(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
-//            Eigen::Tensor<Scalar, 3> theta =
-//                Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
-//            H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2R, Textra::idx({0}, {0}))
-//                                                       .contract(mpo, Textra::idx({0, 3}, {2, 1}))
-//                                                       .contract(env2L, Textra::idx({0, 3}, {0, 2}))
-//                                                       .contract(mpo, Textra::idx({2, 4, 1}, {2, 0, 1}))
-//                                                       .shuffle(Textra::array3{2, 1, 0});
-//        }
-//
-//    } else {
-//        if(print_path) tools::log->trace("get_H2v path: log2spin < std::max(log2chiL, log2chiR)");
-//        ops = get_ops_v3(dsizes[0],dsizes[1],dsizes[2],mpo.dimension(0));
-//        Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-//        H2v_tensor.device(*Textra::omp::dev) = theta.contract(env2L, Textra::idx({0}, {0}))
-//                                                   .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-//                                                   .contract(mpo, Textra::idx({4, 2}, {2, 0}))
-//                                                   .contract(env2R, Textra::idx({0, 2, 3}, {0, 2, 3}))
-//                                                   .shuffle(Textra::array3{1, 0, 2});
-//    }
-//
-//    t_vH2->toc();
 }
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
     t_vH->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes);
-    tools::common::contraction::matrix_vector_product(Hv_tensor,v_tensor,mpo,envL,envR);
+    tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
     t_vH->toc();
-//    auto log2chiL = std::log2(dsizes[1]);
-//    auto log2chiR = std::log2(dsizes[2]);
-//    if(log2chiL > log2chiR) {
-//        if(print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
-//
-//        Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1, 0, 2});
-//        Hv_tensor.device(*Textra::omp::dev) = theta.contract(envL, Textra::idx({0}, {0}))
-//                                                  .contract(mpo, Textra::idx({0, 3}, {2, 0}))
-//                                                  .contract(envR, Textra::idx({0, 2}, {0, 2}))
-//                                                  .shuffle(Textra::array3{1, 0, 2});
-//    } else {
-//        if(print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
-//
-//        Eigen::Tensor<Scalar, 3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2, 0, 1});
-//        Hv_tensor.device(*Textra::omp::dev) = theta.contract(envR, Textra::idx({0}, {0}))
-//                                                  .contract(mpo, Textra::idx({0, 3}, {2, 1}))
-//                                                  .contract(envL, Textra::idx({0, 2}, {0, 2}))
-//                                                  .shuffle(Textra::array3{1, 2, 0});
-//    }
-//
-//    t_vH->toc();
 }
 
-// template<typename Scalar>
-// std::pair<typename ceres_direct_functor<Scalar>::VectorType, Scalar>
-// ceres_direct_functor<Scalar>::get_Hv_vHv(const VectorType &v)const{
-//    auto Hv = get_Hv(v);
-//    t_vHv->tic();
-//    auto vHv = v.dot(Hv);
-//    t_vHv->toc();
-//    return std::make_pair(Hv,vHv);
-//}
-//
-//
-// template<typename Scalar>
-// std::pair<typename ceres_direct_functor<Scalar>::VectorType, Scalar>
-// ceres_direct_functor<Scalar>::get_H2v_vH2v(const VectorType &v)const{
-//    auto H2v = get_H2v(v);
-//
-//    return std::make_pair(H2v,vH2v);
-//}
+
 
 template class tools::finite::opt::internal::ceres_direct_functor<double>;
 template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>;

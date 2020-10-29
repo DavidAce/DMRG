@@ -5,11 +5,11 @@
 #include "class_algorithm_base.h"
 #include <complex>
 #include <config/nmspc_settings.h>
-#include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
+#include <h5pp/h5pp.h>
 
 using Scalar = class_algorithm_base::Scalar;
 

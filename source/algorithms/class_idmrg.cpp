@@ -3,7 +3,6 @@
 //
 
 #include "class_idmrg.h"
-#include <h5pp/h5pp.h>
 #include <config/nmspc_settings.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/state/class_state_infinite.h>

@@ -3,12 +3,15 @@
 //
 
 #pragma once
-#include <general/nmspc_tensor_omp.h>
+
+#include <Eigen/Core>
 #include <complex>
-#include <vector>
+#include <general/eigen_tensor_fwd_decl.h>
 #include <list>
+#include <vector>
 
 namespace qm{
+    /* clang-format off */
     using Scalar = std::complex<double>;
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);
     constexpr std::complex<double> imp(0.0,1.0);
@@ -80,6 +83,7 @@ namespace qm{
         random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites);
     }
 
+    /* clang-format on */
 
 
 }

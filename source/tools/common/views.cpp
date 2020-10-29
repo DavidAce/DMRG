@@ -16,9 +16,9 @@
 #include <tensors/state/class_state_finite.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/views.h>
-//#include "class_mps_util.h"
+#include <general/nmspc_tensor_extra.h>
 
-using namespace Textra;
+//using namespace Textra;
 using Scalar = tools::common::views::Scalar;
 namespace tools::common::views{
     Eigen::Tensor<Scalar,4> theta                  = Eigen::Tensor<Scalar,4> ();
@@ -56,8 +56,8 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     int chiC2 = static_cast<int>(state.chiC() * state.chiC());
 
     theta = get_theta(state);
-    Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(state).reshape(array2{chiB2,chiB2});
-    Eigen::Tensor<Scalar,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(state).reshape(array2{chiC2,chiC2});
+    Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(state).reshape(Textra::array2{chiB2,chiB2});
+    Eigen::Tensor<Scalar,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(state).reshape(Textra::array2{chiC2,chiC2});
 
 //    int ncvA = std::min(16, chiA2);
     int ncvC = std::min(16, chiC2);
@@ -70,10 +70,10 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     Scalar normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
     Scalar normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
 
-    r_evn = MatrixTensorMap(eigvec_R_evn).reshape(array2{state.chiB(),state.chiB()})/normalization_evn;
-    l_evn = MatrixTensorMap(eigvec_L_evn).reshape(array2{state.chiB(),state.chiB()})/normalization_evn;
-    r_odd = MatrixTensorMap(eigvec_R_odd).reshape(array2{state.chiC(),state.chiC()})/normalization_odd;
-    l_odd = MatrixTensorMap(eigvec_L_odd).reshape(array2{state.chiC(),state.chiC()})/normalization_odd;
+    r_evn = Textra::MatrixTensorMap(eigvec_R_evn).reshape(Textra::array2{state.chiB(),state.chiB()})/normalization_evn;
+    l_evn = Textra::MatrixTensorMap(eigvec_L_evn).reshape(Textra::array2{state.chiB(),state.chiB()})/normalization_evn;
+    r_odd = Textra::MatrixTensorMap(eigvec_R_odd).reshape(Textra::array2{state.chiC(),state.chiC()})/normalization_odd;
+    l_odd = Textra::MatrixTensorMap(eigvec_L_odd).reshape(Textra::array2{state.chiC(),state.chiC()})/normalization_odd;
 
     theta                = get_theta(state);
     theta_sw             = get_theta_swapped(state);
@@ -81,15 +81,15 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     theta_odd_normalized = get_theta_odd(state, sqrt(eigval_R_odd));
 
     LAGA                 = state.A_bare(); // Modified! May contain some error? Check git history for comparison
-    LCGB                 = state.LC_diag().contract(state.GB(), Textra::idx({1},{1})).shuffle(array3{1,0,2}); // Modified! May contain some error? Check git history for comparison
+    LCGB                 = state.LC_diag().contract(state.GB(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2}); // Modified! May contain some error? Check git history for comparison
 
-    transfer_matrix_evn    = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
-    transfer_matrix_odd    = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
-    Eigen::Tensor<Scalar,4> transfer_matrix_LCGB_unnormalized = LCGB.contract(LCGB.conjugate(), idx({0}, {0})).shuffle(array4{0, 2, 1, 3});
-    Eigen::Tensor<Scalar,4> transfer_matrix_LAGA_unnormalized = LAGA.contract(LAGA.conjugate(), idx({0}, {0})).shuffle(array4{0, 2, 1, 3});
+    transfer_matrix_evn    = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3});
+    transfer_matrix_odd    = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3});
+    Eigen::Tensor<Scalar,4> transfer_matrix_LCGB_unnormalized = LCGB.contract(LCGB.conjugate(), Textra::idx({0}, {0})).shuffle(Textra::array4{0, 2, 1, 3});
+    Eigen::Tensor<Scalar,4> transfer_matrix_LAGA_unnormalized = LAGA.contract(LAGA.conjugate(), Textra::idx({0}, {0})).shuffle(Textra::array4{0, 2, 1, 3});
 
-    Eigen::Tensor<Scalar,0> l_evn_LBGA_r_odd = l_evn.contract(transfer_matrix_LAGA_unnormalized, idx({0, 1}, {0, 1})).contract(r_odd, idx({0, 1}, {0, 1}));
-    Eigen::Tensor<Scalar,0> l_odd_LCGB_r_evn = l_odd.contract(transfer_matrix_LCGB_unnormalized, idx({0, 1}, {0, 1})).contract(r_evn, idx({0, 1}, {0, 1}));
+    Eigen::Tensor<Scalar,0> l_evn_LBGA_r_odd = l_evn.contract(transfer_matrix_LAGA_unnormalized, Textra::idx({0, 1}, {0, 1})).contract(r_odd, Textra::idx({0, 1}, {0, 1}));
+    Eigen::Tensor<Scalar,0> l_odd_LCGB_r_evn = l_odd.contract(transfer_matrix_LCGB_unnormalized, Textra::idx({0, 1}, {0, 1})).contract(r_evn, Textra::idx({0, 1}, {0, 1}));
 
     transfer_matrix_LCGB = transfer_matrix_LCGB_unnormalized / l_odd_LCGB_r_evn(0);
     transfer_matrix_LAGA = transfer_matrix_LAGA_unnormalized / l_evn_LBGA_r_odd(0);
@@ -99,15 +99,15 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     std::cout << "Check:" << std::setprecision(10) <<  std::endl;
     std::cout << " l_odd_LCGB_r_evn          = " << l_odd_LCGB_r_evn(0) << std::endl;
     std::cout << " l_evn_LBGA_r_odd          = " << l_evn_LBGA_r_odd(0) << std::endl;
-    std::cout << " < l_evn | r_evn >         = " << l_evn.contract(r_evn, idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_odd | r_odd >         = " << l_odd.contract(r_odd, idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_evn | LAGA  | r_odd > = " << l_evn.contract(transfer_matrix_LAGA, idx({0,1},{0,1})).contract(r_odd, idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_odd | LCGB  | r_evn > = " << l_odd.contract(transfer_matrix_LCGB, idx({0,1},{0,1})).contract(r_evn, idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta     | theta >     = " << theta.contract(theta.conjugate(), idx({1,3,0,2},{1,3,0,2})) << std::endl;
-    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << theta_evn_normalized.contract(theta_evn_normalized.conjugate(), idx({0,2},{0,2})).contract(l_evn, idx({0,2},{0,1})).contract(r_evn,idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << transfer_matrix_evn.contract(l_evn, idx({0,1},{0,1})).contract(r_evn,idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << theta_odd_normalized.contract(theta_odd_normalized.conjugate(), idx({0,2},{0,2})).contract(l_odd, idx({0,2},{0,1})).contract(r_odd,idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << transfer_matrix_odd.contract(l_odd, idx({0,1},{0,1})).contract(r_odd,idx({0,1},{0,1})) << std::endl;
+    std::cout << " < l_evn | r_evn >         = " << l_evn.contract(r_evn, Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < l_odd | r_odd >         = " << l_odd.contract(r_odd, Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < l_evn | LAGA  | r_odd > = " << l_evn.contract(transfer_matrix_LAGA, Textra::idx({0,1},{0,1})).contract(r_odd, Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < l_odd | LCGB  | r_evn > = " << l_odd.contract(transfer_matrix_LCGB, Textra::idx({0,1},{0,1})).contract(r_evn, Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < theta     | theta >     = " << theta.contract(theta.conjugate(), Textra::idx({1,3,0,2},{1,3,0,2})) << std::endl;
+    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << theta_evn_normalized.contract(theta_evn_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_evn, Textra::idx({0,2},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << transfer_matrix_evn.contract(l_evn, Textra::idx({0,1},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << theta_odd_normalized.contract(theta_odd_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_odd, Textra::idx({0,2},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})) << std::endl;
+    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << transfer_matrix_odd.contract(l_odd, Textra::idx({0,1},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})) << std::endl;
 }
 
 
@@ -165,10 +165,10 @@ tools::common::views::get_theta_swapped(const class_state_infinite & state, Scal
 
     return state
                .LC_diag() //whatever L_A was in the previous moves
-                    .contract(state.B() , idx({1},{1}))
-                    .contract(state.GA(), idx({2},{1}))
-                    .contract(state.LC_diag(), idx({3}, {0}))
-                    .shuffle(array4{1,0,2,3})
+                    .contract(state.B() , Textra::idx({1},{1}))
+                    .contract(state.GA(), Textra::idx({2},{1}))
+                    .contract(state.LC_diag(), Textra::idx({3}, {0}))
+                    .shuffle(Textra::array4{1,0,2,3})
             /norm;
 }
 
@@ -189,7 +189,7 @@ tools::common::views::get_theta_evn(const class_state_infinite & state, Scalar n
 
 {
     return  state.A()
-             .contract(state.GB(),  idx({2},{1}))
+             .contract(state.GB(),  Textra::idx({2},{1}))
             /norm;
 }
 
@@ -205,9 +205,9 @@ tools::common::views::get_theta_odd(const class_state_infinite & state, Scalar n
  */
 {
     return state.LC_diag()
-                    .contract(state.B(),    idx({1},{1}))
-                    .contract(state.GA(),   idx({2},{1}))
-                    .shuffle(array4{1,0,2,3})
+                    .contract(state.B(),    Textra::idx({1},{1}))
+                    .contract(state.GA(),   Textra::idx({2},{1}))
+                    .shuffle(Textra::array4{1,0,2,3})
             /norm;
 }
 
@@ -215,18 +215,18 @@ tools::common::views::get_theta_odd(const class_state_infinite & state, Scalar n
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_zero(const class_state_infinite & state) {
     long dim = state.chiC();
-    Eigen::Tensor<Scalar,2> I = asDiagonal(Eigen::Tensor<Scalar,1>(dim));
+    Eigen::Tensor<Scalar,2> I = Textra::asDiagonal(Eigen::Tensor<Scalar,1>(dim));
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
-    return I.contract(I, pair ).shuffle(array4{0,2,1,3});
+    return I.contract(I, pair ).shuffle(Textra::array4{0,2,1,3});
 }
 
 
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_LBGA(const class_state_infinite & state, Scalar norm)  {
-    return state.A().contract( state.A().conjugate() , idx({0},{0}))
-                   .shuffle(array4{0,3,1,2})
+    return state.A().contract( state.A().conjugate() , Textra::idx({0},{0}))
+                   .shuffle(Textra::array4{0,3,1,2})
            /norm;
 }
 
@@ -234,17 +234,17 @@ tools::common::views::get_transfer_matrix_LBGA(const class_state_infinite & stat
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_GALC(const class_state_infinite & state, Scalar norm)  {
     return state.LC_diag()
-                   .contract(state.GA(),             idx({2},{0}))
-                   .contract(state.GA().conjugate(), idx({0},{0}))
-                   .contract(state.LC_diag(),             idx({3}, {0}) )
-                   .shuffle(array4{0,2,1,3})
+                   .contract(state.GA(),             Textra::idx({2},{0}))
+                   .contract(state.GA().conjugate(), Textra::idx({0},{0}))
+                   .contract(state.LC_diag(),             Textra::idx({3}, {0}) )
+                   .shuffle(Textra::array4{0,2,1,3})
            /norm;
 }
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_GBLB(const class_state_infinite & state, Scalar norm)  {
-    return state.B().contract(state.B().conjugate() ,   idx({0},{0}))
-                   .shuffle(array4{0,2,1,3})
+    return state.B().contract(state.B().conjugate() ,   Textra::idx({0},{0}))
+                   .shuffle(Textra::array4{0,2,1,3})
            /norm;
 }
 
@@ -252,10 +252,10 @@ tools::common::views::get_transfer_matrix_GBLB(const class_state_infinite & stat
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_LCGB(const class_state_infinite & state, Scalar norm)  {
     return state.LC_diag()
-                    .contract(state.GB(),               idx({1},{1}))
-                    .contract(state.GB().conjugate(),   idx({1},{0}))
-                    .contract(state.LC_diag(), idx({2}, {1}) )
-                    .shuffle(array4{0,3,1,2})
+                    .contract(state.GB(),               Textra::idx({1},{1}))
+                    .contract(state.GB().conjugate(),   Textra::idx({1},{0}))
+                    .contract(state.LC_diag(), Textra::idx({2}, {1}) )
+                    .shuffle(Textra::array4{0,3,1,2})
             /norm;
 }
 
@@ -263,12 +263,12 @@ tools::common::views::get_transfer_matrix_LCGB(const class_state_infinite & stat
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_theta_evn(const class_state_infinite & state, Scalar norm)  {
     using namespace tools::common::views;
-    return get_theta_evn(state).contract(get_theta_evn(state).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+    return get_theta_evn(state).contract(get_theta_evn(state).conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3}) / norm;
 }
 
 Eigen::Tensor<Scalar,4>
 tools::common::views::get_transfer_matrix_theta_odd(const class_state_infinite & state, Scalar norm)  {
-    return get_theta_odd(state).contract(get_theta_odd(state).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+    return get_theta_odd(state).contract(get_theta_odd(state).conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3}) / norm;
 }
 
 
@@ -278,10 +278,10 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
     Eigen::Tensor<Scalar,4> temp2;
     for (int i = 0; i < p-2; i++){
         if(num::mod(i,2) == 0){
-            temp2 = temp.contract(get_transfer_matrix_LBGA(state), idx({2,3},{0,1}));
+            temp2 = temp.contract(get_transfer_matrix_LBGA(state), Textra::idx({2,3},{0,1}));
 
         }else{
-            temp2 = temp.contract(get_transfer_matrix_LCGB(state), idx({2,3},{0,1}));
+            temp2 = temp.contract(get_transfer_matrix_LCGB(state), Textra::idx({2,3},{0,1}));
         }
         temp = temp2;
 
@@ -320,7 +320,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 // */
 //{
 //    return
-//            MPS.A().contract(MPS.B(), idx({2},{1})) / norm;
+//            MPS.A().contract(MPS.B(), Textra::idx({2},{1})) / norm;
 //}
 //
 //
@@ -337,10 +337,10 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 // */
 //{
 //    return MPS.LC_diag() //whatever L_A was in the previous moves
-//                    .contract(MPS.B(),        idx({1},{1}))
-//                    .contract(MPS.GA(),       idx({2},{1}))
-//                    .contract(MPS.LA_diag(),       idx({3},{0}))
-//                    .shuffle(array4{1,0,2,3})
+//                    .contract(MPS.B(),        Textra::idx({1},{1}))
+//                    .contract(MPS.GA(),       Textra::idx({2},{1}))
+//                    .contract(MPS.LA_diag(),       Textra::idx({3},{0}))
+//                    .shuffle(Textra::array4{1,0,2,3})
 //            /norm;
 //}
 //
@@ -361,7 +361,7 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //
 //{
 //    return  MPS.A()
-//             .contract(MPS.GB(),  idx({2},{1}))
+//             .contract(MPS.GB(),  Textra::idx({2},{1}))
 //            /norm;
 //}
 //
@@ -377,9 +377,9 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 // */
 //{
 //    return MPS.LC_diag()
-//                    .contract(MPS.B(),           idx({1},{1}))
-//                    .contract(MPS.GA(),          idx({2},{1}))
-//                    .shuffle(array4{1,0,2,3})
+//                    .contract(MPS.B(),           Textra::idx({1},{1}))
+//                    .contract(MPS.GA(),          Textra::idx({2},{1}))
+//                    .shuffle(Textra::array4{1,0,2,3})
 //            /norm;
 //}
 //
@@ -388,17 +388,17 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //tools::common::views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
 //    Eigen::Tensor<Scalar,1> I = MPS.MPS_A->get_LC();
 //    I.setConstant(1.0);
-//    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
+//    Eigen::Textra::array<Eigen::IndexPair<long>,0> pair = {};
 //
-//    return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(array4{0,2,1,3});
+//    return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(Textra::array4{0,2,1,3});
 //}
 //
 //
 //
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, Scalar norm)  {
-//    return MPS.A().contract(MPS.A().conjugate() , idx({0},{0}))
-//                   .shuffle(array4{0,3,1,2})
+//    return MPS.A().contract(MPS.A().conjugate() , Textra::idx({0},{0}))
+//                   .shuffle(Textra::array4{0,3,1,2})
 //           /norm;
 //}
 //
@@ -406,17 +406,17 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, Scalar norm)  {
 //    return MPS.LC_diag()
-//                   .contract(MPS.GA(),               idx({2},{0}))
-//                   .contract(MPS.GA().conjugate(),   idx({0},{0}))
-//                   .contract(MPS.LC_diag(), idx({3}, {0}) )
-//                   .shuffle(array4{0,2,1,3})
+//                   .contract(MPS.GA(),               Textra::idx({2},{0}))
+//                   .contract(MPS.GA().conjugate(),   Textra::idx({0},{0}))
+//                   .contract(MPS.LC_diag(), Textra::idx({3}, {0}) )
+//                   .shuffle(Textra::array4{0,2,1,3})
 //           /norm;
 //}
 //
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, Scalar norm)  {
-//    return MPS.B().contract(MPS.B().conjugate() ,   idx({0},{0}))
-//                   .shuffle(array4{0,2,1,3})
+//    return MPS.B().contract(MPS.B().conjugate() ,   Textra::idx({0},{0}))
+//                   .shuffle(Textra::array4{0,2,1,3})
 //           /norm;
 //}
 //
@@ -424,10 +424,10 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, Scalar norm)  {
 //    return MPS.LC_diag()
-//                    .contract(MPS.GB(),               idx({1},{1}))
-//                    .contract(MPS.GB().conjugate(),   idx({1},{0}))
-//                    .contract(MPS.LC_diag(), idx({2}, {1}) )
-//                    .shuffle(array4{0,3,1,2})
+//                    .contract(MPS.GB(),               Textra::idx({1},{1}))
+//                    .contract(MPS.GB().conjugate(),   Textra::idx({1},{0}))
+//                    .contract(MPS.LC_diag(), Textra::idx({2}, {1}) )
+//                    .shuffle(Textra::array4{0,3,1,2})
 //            /norm;
 //}
 //
@@ -435,12 +435,12 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_theta_evn(const class_mps_2site  &MPS, Scalar norm)  {
 //    using namespace tools::common::views;
-//    return get_theta_evn(MPS).contract(get_theta_evn(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+//    return get_theta_evn(MPS).contract(get_theta_evn(MPS).conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3}) / norm;
 //}
 //
 //Eigen::Tensor<Scalar,4>
 //tools::common::views::get_transfer_matrix_theta_odd(const class_mps_2site  &MPS, Scalar norm)  {
-//    return get_theta_odd(MPS).contract(get_theta_odd(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
+//    return get_theta_odd(MPS).contract(get_theta_odd(MPS).conjugate(), Textra::idx({0,2},{0,2})).shuffle(Textra::array4{0,2,1,3}) / norm;
 //}
 //
 //
@@ -450,10 +450,10 @@ tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state,
 //    Eigen::Tensor<Scalar,4> temp2;
 //    for (int i = 0; i < p-2; i++){
 //        if(num::mod(i,2) == 0){
-//            temp2 = temp.contract(get_transfer_matrix_LBGA(MPS), idx({2,3},{0,1}));
+//            temp2 = temp.contract(get_transfer_matrix_LBGA(MPS), Textra::idx({2,3},{0,1}));
 //
 //        }else{
-//            temp2 = temp.contract(get_transfer_matrix_LCGB(MPS), idx({2,3},{0,1}));
+//            temp2 = temp.contract(get_transfer_matrix_LCGB(MPS), Textra::idx({2,3},{0,1}));
 //        }
 //        temp = temp2;
 //

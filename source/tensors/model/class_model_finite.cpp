@@ -2,6 +2,7 @@
 // Created by david on 2020-05-11.
 //
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 // -- (textra first)
 #include "class_model_finite.h"
 #include "class_mpo_factory.h"

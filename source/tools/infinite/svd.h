@@ -1,6 +1,6 @@
 #pragma once
 #include <complex>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/eigen_tensor_fwd_decl.h>
 
 class class_state_infinite;
 

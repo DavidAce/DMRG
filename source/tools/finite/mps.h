@@ -5,7 +5,8 @@
 #include <optional>
 #include <set>
 #include <string>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <Eigen/Core>
+#include <general/eigen_tensor_fwd_decl.h>
 
 /* clang-format off */
 class class_state_finite;

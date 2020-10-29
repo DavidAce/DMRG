@@ -21,11 +21,13 @@ class MatrixProductHamiltonian {
     constexpr static eig::Storage storage          = eig::Storage::TENSOR;
 
     private:
-    const Scalar_ *      Lblock;
-    const Scalar_ *      Rblock;
+    const Scalar_ *      envL;
+    const Scalar_ *      envR;
     const Scalar_ *      mpo;
     std::array<long, 3>  shape_mps;
     std::array<long, 4>  shape_mpo;
+    std::array<long, 3>  shape_envL;
+    std::array<long, 3>  shape_envR;
     std::vector<Scalar>  shift_mpo;
     long                 mps_size;
     eig::Form            form = eig::Form::SYMM;
@@ -36,8 +38,8 @@ class MatrixProductHamiltonian {
     bool                 readyShift = false; // Flag to make sure the shift has occurred
 
     public:
-    MatrixProductHamiltonian(const Scalar_ *     Lblock_,                    /*!< The left block tensor.  */
-                             const Scalar_ *     Rblock_,                    /*!< The right block tensor.  */
+    MatrixProductHamiltonian(const Scalar_ *     envL_,                    /*!< The left block tensor.  */
+                             const Scalar_ *     envR_,                    /*!< The right block tensor.  */
                              const Scalar_ *     mpo_,                       /*!< The Hamiltonian MPO's  */
                              std::array<long, 3> shape_mps_,                 /*!< An array containing the shapes of theta  */
                              std::array<long, 4> shape_mpo_                 /*!< An array containing the shapes of the MPO  */

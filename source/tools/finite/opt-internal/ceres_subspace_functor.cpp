@@ -7,7 +7,7 @@
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-
+#include <tools/finite/opt-internal/opt-internal.h>
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
@@ -87,7 +87,6 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}", std::real(ene), std::imag(ene));
         tools::log->warn("log₁₀(var/L)    = {:.16f}", std::log10(variance_per_site));
-        std::cout << "v: \n " << v << std::endl;
         throw std::runtime_error("Subspace functor failed at counter = " + std::to_string(counter));
     }
 

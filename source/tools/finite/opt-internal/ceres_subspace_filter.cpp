@@ -1,11 +1,9 @@
-#include <general/nmspc_tensor_extra.h>
-// -- (textra first)
 #include "ceres_subspace_functor.h"
-#include <config/nmspc_settings.h>
-#include <math/rnd.h>
 #include <tools/common/log.h>
-#include <tools/common/prof.h>
 #include <tools/finite/opt_state.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+
+
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 

@@ -3,6 +3,8 @@
 //
 
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
+
 // -- (textra first)
 #include "class_state_finite.h"
 #include <config/nmspc_settings.h>

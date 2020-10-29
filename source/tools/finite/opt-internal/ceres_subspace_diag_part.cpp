@@ -3,7 +3,8 @@
 #include <math/eig.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/opt.h>
+#include <tools/finite/opt-internal/opt-internal.h>
+#include <tools/finite/opt-internal/report.h>
 #include <vector>
 
 std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {

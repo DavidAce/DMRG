@@ -5,7 +5,7 @@
 #pragma once
 
 #include <config/nmspc_settings.h>
-#include <general/nmspc_tensor_extra.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <list>
 #include <measure/state_measure_infinite.h>
 #include <memory>

@@ -1,7 +1,8 @@
 #pragma once
 #include <complex>
 #include <optional>
-#include <general/nmspc_tensor_extra.h>
+#include <unsupported/Eigen/CXX11/Tensor>
+#include <Eigen/Core>
 
 namespace tools::finite::opt {
     class opt_state {

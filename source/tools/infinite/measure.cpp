@@ -2,6 +2,7 @@
 // Created by david on 2019-02-01.
 //
 
+#include <general/nmspc_tensor_extra.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
@@ -194,8 +195,3 @@ double tools::infinite::measure::energy_variance_mpo(const Eigen::Tensor<Scalar,
 double tools::infinite::measure::energy_variance_per_site_mpo(const Eigen::Tensor<Scalar, 3> &mps, const class_tensors_infinite &tensors) {
     return tools::infinite::measure::energy_variance_per_site_mpo(mps, *tensors.model, *tensors.edges);
 }
-
-
-
-
-
