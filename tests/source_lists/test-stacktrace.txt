@@ -1,0 +1,4 @@
+set(test_inc
+${CMAKE_SOURCE_DIR}/source/general/stack_trace.h
+${CMAKE_SOURCE_DIR}/source/general/stack_trace.cpp
+)
