@@ -15,17 +15,7 @@ foreach (test ${TESTS})
     endif()
     add_dependencies(all-tests ${test_nwe})
     list(APPEND test_tgt_list ${test_nwe})
-
-    if(TARGET CONAN_PKG::libunwind)
-        target_compile_definitions(${test_nwe} PRIVATE DMRG_HAS_UNWIND=1)
-        target_link_libraries(${test_nwe} PRIVATE CONAN_PKG::libunwind)
-    endif()
-    if(TARGET unwind::unwind)
-        target_compile_definitions(${test_nwe} PRIVATE DMRG_HAS_UNWIND=1)
-        target_link_libraries(${test_nwe} PRIVATE unwind::unwind)
-    endif()
-    target_link_libraries(${test_nwe} PRIVATE dmrg-flags)
-
+    target_link_libraries(${test_nwe} PRIVATE ${DMRG_TARGETS})
 endforeach ()
 add_custom_command(
         TARGET all-tests
