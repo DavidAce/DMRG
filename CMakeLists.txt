@@ -146,7 +146,7 @@ else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     if(NOT DMRG_ENABLE_ASAN)
-        target_link_libraries  (dmrg-flags INTERFACE -static)   ### Static linkage
+        target_link_libraries  (${PROJECT_NAME} INTERFACE -static)   ### Static linkage
     endif()
 endif()
 
@@ -238,13 +238,21 @@ endif()
 ### Preempt Threads::Threads                                   ###
 ### It's looked for in dependencies, so we make it right       ###
 ### before it's done wrong, i.e. with pthread instead of       ###
-### -lpthread.                                     ###
+### -lpthread.                                                 ###
+### Here we specify the linking twice                          ###
+### 1) As string to make sure -lpthread gets sandwiched by     ###
+###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
+### 2) As usual to make sure that if somebody links            ###
+###    Threads::Threads, then any repeated pthread appended    ###
+###    to the end (the wrong order causes linking errors)      ###
 ##################################################################
 if(NOT TARGET Threads::Threads)
     set(CMAKE_THREAD_PREFER_PTHREAD FALSE)
     set(THREADS_PREFER_PTHREAD_FLAG FALSE)
     find_package(Threads)
-    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES pthread)
+    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "")
+    target_link_libraries(Threads::Threads INTERFACE "-Wl,--whole-archive;-lpthread;-Wl,--no-whole-archive;rt;dl")
+    target_link_libraries(Threads::Threads INTERFACE pthread rt dl)
 endif()
 
 
@@ -256,12 +264,8 @@ include(cmake-modules/SetupDependenciesFetch.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
 ##################################################################
-### Link all the things!                                       ###
+### Speed up compilation with precompiled headers              ###
 ##################################################################
-#find_package(Filesystem COMPONENTS Final Experimental REQUIRED)
-#target_link_libraries(dmrg-main INTERFACE  std::filesystem)
-
-# Speed up with precompiled headers
 if(DMRG_ENABLE_PCH)
     if(COMMAND target_precompile_headers)
         target_precompile_headers(dmrg-flags INTERFACE <string> <vector> <array> <optional> <complex> <memory>)
@@ -273,22 +277,6 @@ if(DMRG_ENABLE_PCH)
         target_precompile_headers(dmrg-main PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor> <chrono> <string_view>)
     endif()
 endif()
-
-#target_link_libraries(dmrg-flags INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive rt dl)
-target_link_libraries(dmrg-main PRIVATE dmrg-flags)
-target_link_libraries(dmrg-arp PRIVATE dmrg-flags )
-target_link_libraries(dmrg-eig PRIVATE dmrg-flags )
-target_link_libraries(dmrg-opt PRIVATE dmrg-flags)
-target_link_libraries(dmrg-dbg PRIVATE dmrg-flags)
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-flags dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg )  # Link everything to main project
-
-#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
-#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
-#endif()
 
 #######################################
 # Settings for ccache               ###
@@ -324,6 +312,23 @@ if(DMRG_ENABLE_CCACHE)
     endif()
 endif()
 
+##################################################################
+### Link all the things!                                       ###
+##################################################################
+target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
+target_link_libraries(dmrg-arp  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-eig  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-opt  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-main PUBLIC dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PUBLIC  dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-flags)  # Link everything to main project
+#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
+#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
+#endif()
 
 
 # Uninstall target
