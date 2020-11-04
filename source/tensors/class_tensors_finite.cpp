@@ -143,6 +143,7 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
         if(variance_change > 1e6 * critical_cancellation_error) {
             tools::log->warn("Energy reduction destroyed variance precision: {:.16f}%", variance_change / var_bef_reset * 100);
             throw std::runtime_error("Energy reduction destroyed variance precision");
+        }
     }
 }
 
