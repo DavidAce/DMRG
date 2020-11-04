@@ -63,14 +63,6 @@ find_package_handle_standard_args (Unwind REQUIRED_VARS Unwind_INCLUDE_DIR
 
 if (Unwind_FOUND)
     add_library (unwind::unwind INTERFACE IMPORTED)
-
-    set_property (TARGET unwind::unwind PROPERTY
-            INTERFACE_INCLUDE_DIRECTORIES ${Unwind_INCLUDE_DIR}
-            )
-    set_property (TARGET unwind::unwind PROPERTY
-            INTERFACE_LINK_LIBRARIES ${Unwind_LIBRARY} ${Unwind_PLATFORM_LIBRARY}
-            )
-    set_property (TARGET unwind::unwind PROPERTY
-            IMPORTED_CONFIGURATIONS RELEASE
-            )
+    target_link_libraries(unwind::unwind INTERFACE ${Unwind_LIBRARY} ${Unwind_PLATFORM_LIBRARY})
+    target_include_directories(unwind::unwind SYSTEM INTERFACE ${Unwind_INCLUDE_DIR})
 endif ()
