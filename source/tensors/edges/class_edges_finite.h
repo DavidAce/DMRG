@@ -26,11 +26,11 @@ class class_edges_finite {
 
     public:
     class_edges_finite();
-    ~class_edges_finite();                                          // Read comment on implementation
-    class_edges_finite(class_edges_finite &&other);                 // default move ctor
-    class_edges_finite &operator=(class_edges_finite &&other);      // default move assign
-    class_edges_finite(const class_edges_finite &other);            // copy ctor
-    class_edges_finite &operator=(const class_edges_finite &other); // copy assign
+    ~class_edges_finite();                                              // Read comment on implementation
+    class_edges_finite(class_edges_finite &&other) noexcept;            // default move ctor
+    class_edges_finite &operator=(class_edges_finite &&other) noexcept; // default move assign
+    class_edges_finite(const class_edges_finite &other);                // copy ctor
+    class_edges_finite &operator=(const class_edges_finite &other);     // copy assign
 
     void initialize(size_t model_size);
 

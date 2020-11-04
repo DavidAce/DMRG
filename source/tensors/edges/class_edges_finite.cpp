@@ -19,9 +19,9 @@ class_edges_finite::class_edges_finite() = default; // Can't initialize lists si
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_edges_finite::~class_edges_finite()                          = default;            // default dtor
-class_edges_finite::class_edges_finite(class_edges_finite &&other) = default;            // default move ctor
-class_edges_finite &class_edges_finite::operator=(class_edges_finite &&other) = default; // default move assign
+class_edges_finite::~class_edges_finite()                                   = default;            // default dtor
+class_edges_finite::class_edges_finite(class_edges_finite &&other) noexcept = default;            // default move ctor
+class_edges_finite &class_edges_finite::operator=(class_edges_finite &&other) noexcept = default; // default move assign
 
 class_edges_finite::class_edges_finite(const class_edges_finite &other) : active_sites(other.active_sites) {
     eneL.clear();

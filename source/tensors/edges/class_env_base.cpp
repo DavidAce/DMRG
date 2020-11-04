@@ -18,16 +18,16 @@
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_env_base::class_env_base() : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()) { assert_block(); }; // default ctor
-class_env_base::~class_env_base()                      = default;                                           // default dtor
-class_env_base::class_env_base(class_env_base &&other) = default;                                           // default move ctor
-class_env_base &class_env_base::operator=(class_env_base &&other) = default;                                // default move assign
+class_env_base::class_env_base() : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()) { assert_block(); } // default ctor
+class_env_base::~class_env_base()                               = default;                                 // default dtor
+class_env_base::class_env_base(class_env_base &&other) noexcept = default;                                 // default move ctor
+class_env_base &class_env_base::operator=(class_env_base &&other) noexcept = default;                      // default move assign
 
 class_env_base::class_env_base(const class_env_base &other)
     : edge_has_been_set(other.edge_has_been_set), block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position),
       side(other.side), tag(other.tag) {
     assert_block();
-};
+}
 
 class_env_base::class_env_base(std::string side_, size_t position_)
     : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)) {
