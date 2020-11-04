@@ -1,6 +1,5 @@
 #pragma once
-
-#include <general/nmspc_tensor_omp.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <complex>
 class class_state_infinite;
 class class_state_finite;
