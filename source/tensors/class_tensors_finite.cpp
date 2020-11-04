@@ -137,9 +137,11 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
         double critical_cancellation_max_decimals = 15.0 - std::log10(std::pow(static_cast<double>(get_length()) * site_energy.value(), 2));
         double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
         double variance_change                    = std::abs(var_bef_reset - var_aft_compr);
-        if(variance_change > 100 * critical_cancellation_error) {
-            tools::log->warn("Energy reduction changed the variance significantly: {:.4f}%", variance_change / var_bef_reset * 100);
-            throw std::runtime_error("Energy reduction changed the variance significantly");
+        if(variance_change > 100 * critical_cancellation_error){
+            tools::log->warn("Energy reduction changed the variance significantly: {:.16f}%", variance_change / var_bef_reset * 100);
+        }
+        if(variance_change > 1e6 * critical_cancellation_error) {
+            throw std::runtime_error("Energy reduction destroyed variance precision");
         }
     }
 }
