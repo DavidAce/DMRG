@@ -111,11 +111,10 @@ namespace settings {
 
         //Parameters for the selfdual transverse-field random-field next-nearest neighbor Ising model
         namespace ising_sdual {
-            inline double       J_mean        = 1;              /*!< Mean for the distribution defining random ferromagnetic coupling strength.*/
-            inline double       h_mean        = 1;              /*!< Mean for the distribution defining random transverse magnetic field strength */
+            inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
+            inline double       delta         = 0;              /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing max(J_mean,h_mean) = 1 */
             inline double       J_stdv        = 1;              /*!< Standard deviation for the log-normal distribution defining ferromagnetic coupling */
             inline double       h_stdv        = 1;              /*!< Standard deviation for the log-normal distribution defining transverse magnetic field */
-            inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
             inline bool         parity_sep    = false;          /*!< Separation of +-X parity sectors */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */

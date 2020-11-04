@@ -14,13 +14,24 @@
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
+double delta_to_J_mean(double delta) { return delta > 0 ? 1.0 : std::exp(delta); }
+
+double delta_to_h_mean(double delta) { return delta > 0 ? std::exp(-delta) : 1.0; }
+
 class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {
-    h5tb.param.J_mean   = settings::model::ising_sdual::J_mean;
-    h5tb.param.h_mean   = settings::model::ising_sdual::h_mean;
-    h5tb.param.J_stdv   = settings::model::ising_sdual::J_stdv;
-    h5tb.param.h_stdv   = settings::model::ising_sdual::h_stdv;
-    h5tb.param.lambda   = settings::model::ising_sdual::lambda;
-    h5tb.param.delta    = h5tb.param.J_mean - h5tb.param.h_mean;
+    h5tb.param.lambda = settings::model::ising_sdual::lambda;
+    h5tb.param.delta  = settings::model::ising_sdual::delta;
+    h5tb.param.J_mean = delta_to_J_mean(h5tb.param.delta);
+    h5tb.param.h_mean = delta_to_h_mean(h5tb.param.delta);
+    h5tb.param.J_stdv = settings::model::ising_sdual::J_stdv;
+    h5tb.param.h_stdv = settings::model::ising_sdual::h_stdv;
+
+    // Sanity check on delta, J_mean, h_mean
+    double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
+    if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
+        throw std::logic_error(
+            fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
+
     h5tb.param.spin_dim = settings::model::ising_sdual::spin_dim;
     std::strcpy(h5tb.param.distribution, settings::model::ising_sdual::distribution.c_str());
     parity_sep = settings::model::ising_sdual::parity_sep;
@@ -202,7 +213,6 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy)
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<Scalar, 4> temp                                           = MPO();
     temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - site_energy * Id);
-    //    temp.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     return temp;
 }
 
@@ -320,11 +330,10 @@ void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::stri
         throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", hamiltonian_table_path));
 
     // Check that we are on the same point of the phase diagram
-    if(std::abs(h5tb.param.J_mean - settings::model::ising_sdual::J_mean) > 1e-6) throw std::runtime_error("J_mean != settings::model::ising_sdual::J_mean");
-    if(std::abs(h5tb.param.h_mean - settings::model::ising_sdual::h_mean) > 1e-6) throw std::runtime_error("h_mean != settings::model::ising_sdual::h_mean");
+    if(std::abs(h5tb.param.delta - settings::model::ising_sdual::delta) > 1e-6) throw std::runtime_error("delta != settings::model::ising_sdual::delta");
+    if(std::abs(h5tb.param.lambda - settings::model::ising_sdual::lambda) > 1e-6) throw std::runtime_error("lambda != settings::model::ising_sdual::lambda");
     if(std::abs(h5tb.param.J_stdv - settings::model::ising_sdual::J_stdv) > 1e-6) throw std::runtime_error("J_stdv != settings::model::ising_sdual::J_stdv");
     if(std::abs(h5tb.param.h_stdv - settings::model::ising_sdual::h_stdv) > 1e-6) throw std::runtime_error("h_stdv != settings::model::ising_sdual::h_stdv");
-    if(std::abs(h5tb.param.lambda - settings::model::ising_sdual::lambda) > 1e-6) throw std::runtime_error("lambda != settings::model::ising_sdual::lambda");
     if(h5tb.param.distribution != settings::model::ising_sdual::distribution)
         throw std::runtime_error("distribution != settings::model::ising_sdual::distribution");
 }
