@@ -28,11 +28,11 @@ class class_env_base {
 
     public:
     class_env_base();
-    ~class_env_base();                                      // Read comment on implementation
-    class_env_base(class_env_base &&other);                 // default move ctor
-    class_env_base &operator=(class_env_base &&other);      // default move assign
-    class_env_base(const class_env_base &other);            // copy ctor
-    class_env_base &operator=(const class_env_base &other); // copy assign
+    ~class_env_base();                                          // Read comment on implementation
+    class_env_base(class_env_base &&other) noexcept;            // default move ctor
+    class_env_base &operator=(class_env_base &&other) noexcept; // default move assign
+    class_env_base(const class_env_base &other);                // copy ctor
+    class_env_base &operator=(const class_env_base &other);     // copy assign
 
     explicit class_env_base(std::string side_, size_t position_);
     explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
