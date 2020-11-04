@@ -11,7 +11,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/infinite/opt.h>
-
+#include <general/nmspc_tensor_extra.h>
 using namespace std;
 using namespace Textra;
 

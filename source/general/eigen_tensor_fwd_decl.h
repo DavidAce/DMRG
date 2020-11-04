@@ -1,6 +1,8 @@
 #pragma once
-#include <string>
 
+//#include <unsupported/Eigen/CXX11/Tensor>
+
+#include <string>
 // Handle NVCC/CUDA/SYCL
 #if defined(__CUDACC__) || defined(__SYCL_DEVICE_ONLY__)
 // Do not try asserts on CUDA and SYCL!

@@ -1,5 +1,5 @@
 #pragma once
-#include <general/nmspc_tensor_omp.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <list>
 class class_state_finite;
 class class_mpo_site;

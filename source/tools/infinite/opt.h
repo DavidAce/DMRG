@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <general/nmspc_tensor_omp.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <config/enums.h>
 
 class class_tensors_infinite;

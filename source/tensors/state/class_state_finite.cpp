@@ -373,7 +373,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
         long        dim2 = M.dimension(2);
         new_dims         = {dim0, dim1, dim2};
         temp.resize(new_dims);
-        temp.device(*Textra::omp::dev) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        temp.device(Textra::omp::getDevice()) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_tensor     = temp;
     }
     tools::common::profile::get_default_prof()["t_mps"]->toc();

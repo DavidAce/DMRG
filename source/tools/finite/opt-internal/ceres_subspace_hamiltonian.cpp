@@ -32,7 +32,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     long dim2 = env.R.dimension(0);
 
     Eigen::Tensor<std::complex<double>, 6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham.device(*Textra::omp::dev) = env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
+    ham.device(Textra::omp::getDevice()) = env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
 
     auto cols = ham.dimension(0) * ham.dimension(1) * ham.dimension(2);
     auto rows = ham.dimension(3) * ham.dimension(4) * ham.dimension(5);
@@ -87,7 +87,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
         tools::common::contraction::matrix_vector_product(Hv,theta_j,mpo,env.L,env.R);
         for(auto row = col; row < eignum; row++) {
             const auto &theta_i   = std::next(candidate_list.begin(), row)->get_tensor();
-            H2_ij.device(*Textra::omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
+            H2_ij.device(Textra::omp::getDevice()) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
             H2(row, col)          = H2_ij(0);
         }
     }

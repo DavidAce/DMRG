@@ -4,7 +4,7 @@
 
 #pragma once
 #include <complex>
-#include <general/nmspc_tensor_omp.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
 /* clang-format off */

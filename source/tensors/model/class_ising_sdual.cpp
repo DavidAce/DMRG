@@ -330,10 +330,27 @@ void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::stri
         throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", hamiltonian_table_path));
 
     // Check that we are on the same point of the phase diagram
-    if(std::abs(h5tb.param.delta - settings::model::ising_sdual::delta) > 1e-6) throw std::runtime_error("delta != settings::model::ising_sdual::delta");
-    if(std::abs(h5tb.param.lambda - settings::model::ising_sdual::lambda) > 1e-6) throw std::runtime_error("lambda != settings::model::ising_sdual::lambda");
-    if(std::abs(h5tb.param.J_stdv - settings::model::ising_sdual::J_stdv) > 1e-6) throw std::runtime_error("J_stdv != settings::model::ising_sdual::J_stdv");
-    if(std::abs(h5tb.param.h_stdv - settings::model::ising_sdual::h_stdv) > 1e-6) throw std::runtime_error("h_stdv != settings::model::ising_sdual::h_stdv");
+    if(std::abs(h5tb.param.delta - settings::model::ising_sdual::delta) > 1e-6)
+        throw std::runtime_error(
+            fmt::format("delta {:.16f} != {:.16f} settings::model::ising_sdual::delta", h5tb.param.delta, settings::model::ising_sdual::delta));
+    if(std::abs(h5tb.param.lambda - settings::model::ising_sdual::lambda) > 1e-6)
+        throw std::runtime_error(
+            fmt::format("lambda {:.16f} != {:.16f} settings::model::ising_sdual::lambda", h5tb.param.lambda, settings::model::ising_sdual::lambda));
+    if(std::abs(h5tb.param.J_stdv - settings::model::ising_sdual::J_stdv) > 1e-6)
+        throw std::runtime_error(
+            fmt::format("J_stdv {:.16f} != {:.16f} settings::model::ising_sdual::J_stdv", h5tb.param.J_stdv, settings::model::ising_sdual::J_stdv));
+    if(std::abs(h5tb.param.h_stdv - settings::model::ising_sdual::h_stdv) > 1e-6)
+        throw std::runtime_error(
+            fmt::format("h_stdv {:.16f} != {:.16f} settings::model::ising_sdual::h_stdv", h5tb.param.h_stdv, settings::model::ising_sdual::h_stdv));
     if(h5tb.param.distribution != settings::model::ising_sdual::distribution)
-        throw std::runtime_error("distribution != settings::model::ising_sdual::distribution");
+        throw std::runtime_error(fmt::format("distribution {} != {} settings::model::ising_sdual::distribution", h5tb.param.distribution,
+                                             settings::model::ising_sdual::distribution));
+
+    // Sanity check on delta, J_mean, h_mean
+    double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
+    if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
+        throw std::logic_error(
+                fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
+
+
 }

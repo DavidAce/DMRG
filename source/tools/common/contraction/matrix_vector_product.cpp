@@ -30,7 +30,7 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1))
         throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
 
-    res.device(*Textra::omp::dev) =
+    res.device(Textra::omp::getDevice()) =
              mps
             .contract(envL, Textra::idx({1}, {0}))
             .contract(mpo, Textra::idx({0, 3}, {2, 0}))

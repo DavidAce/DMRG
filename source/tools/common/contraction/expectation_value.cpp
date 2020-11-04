@@ -30,7 +30,7 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
         throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
 
     Eigen::Tensor<Scalar, 0> expval;
-    expval.device(*Textra::omp::dev) =
+    expval.device(Textra::omp::getDevice()) =
         envL
             .contract(mps,                  Textra::idx({0}, {1}))
             .contract(mpo,                  Textra::idx({2, 1}, {2, 0}))
@@ -81,7 +81,7 @@ template double tools::common::contraction::expectation_value(const cplx * const
 //
 //    Eigen::Tensor<Scalar, 0> M1;
 //    /* clang-format off */
-//    M1.device(*Textra::omp::dev) =
+//    M1.device(Textra::omp::getDevice()) =
 //        envL
 //            .contract(mps,                  Textra::idx({0}, {1}))
 //            .contract(mpo,                  Textra::idx({2, 1}, {2, 0}))

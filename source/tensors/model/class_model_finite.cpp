@@ -271,7 +271,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
         long        dim3 = multisite_mpo.dimension(3) * M.dimension(3);
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(*Textra::omp::dev) = multisite_mpo.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo                  = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
@@ -310,7 +310,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
         long        dim3 = multisite_mpo_squared.dimension(3) * M.dimension(3);
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(*Textra::omp::dev) = multisite_mpo_squared.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        temp.device(Textra::omp::getDevice()) = multisite_mpo_squared.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo_squared          = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
