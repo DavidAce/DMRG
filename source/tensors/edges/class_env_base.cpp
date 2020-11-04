@@ -18,37 +18,52 @@
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_env_base::class_env_base()                       = default;            // default ctor
-class_env_base::~class_env_base()                      = default;            // default dtor
-class_env_base::class_env_base(class_env_base &&other) = default;            // default move ctor
-class_env_base &class_env_base::operator=(class_env_base &&other) = default; // default move assign
+class_env_base::class_env_base() : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()) { assert_block(); }; // default ctor
+class_env_base::~class_env_base()                      = default;                                           // default dtor
+class_env_base::class_env_base(class_env_base &&other) = default;                                           // default move ctor
+class_env_base &class_env_base::operator=(class_env_base &&other) = default;                                // default move assign
 
 class_env_base::class_env_base(const class_env_base &other)
     : edge_has_been_set(other.edge_has_been_set), block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position),
-      side(other.side), tag(other.tag){};
+      side(other.side), tag(other.tag) {
+    assert_block();
+};
+
+class_env_base::class_env_base(std::string side_, size_t position_)
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)) {
+    assert_block();
+}
+class_env_base::class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO)
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)) {
+    if(MPS.get_position() != MPO.get_position())
+        throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
+    position = MPS.get_position();
+    assert_block();
+}
+
 class_env_base &class_env_base::operator=(const class_env_base &other) {
-    edge_has_been_set = other.edge_has_been_set;
-    block             = std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block);
-    sites             = other.sites;
-    position          = other.position;
-    side              = other.side;
-    tag               = other.tag;
+    if(this != &other) {
+        edge_has_been_set = other.edge_has_been_set;
+        block             = std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block);
+        sites             = other.sites;
+        position          = other.position;
+        side              = other.side;
+        tag               = other.tag;
+    }
+    assert_block();
     return *this;
 }
 
 using Scalar = class_env_base::Scalar;
 
-class_env_base::class_env_base(std::string side_, size_t position_) : position(position_), side(std::move(side_)) {}
-class_env_base::class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO) : side(std::move(side_)) {
-    if(MPS.get_position() != MPO.get_position())
-        throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
-    position = MPS.get_position();
+void class_env_base::assert_block() const {
+    if(block == nullptr) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
 }
 
 void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
     /*!< Contracts a site into the block-> */
     //    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
-    if(not has_block()) throw std::runtime_error(fmt::format("env {} {} pos {} has no block to enlarge", tag, side, get_position()));
+    assert_block();
     if(side == "L") {
         /*! # Left environment contraction
          * [      ]--0 0--[LB]--1 1--[  GA    ]--2
@@ -119,23 +134,37 @@ void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::T
 
 void class_env_base::clear() {
     // Do not clear the empty edge
+    assert_block();
     if(sites > 0) block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
 }
 
-const Eigen::Tensor<Scalar, 3> &class_env_base::get_block() const { return *block; }
-Eigen::Tensor<Scalar, 3> &      class_env_base::get_block() { return *block; }
+const Eigen::Tensor<Scalar, 3> &class_env_base::get_block() const {
+    assert_block();
+    return *block;
+}
+Eigen::Tensor<Scalar, 3> &class_env_base::get_block() {
+    assert_block();
+    return *block;
+}
 
-bool class_env_base::has_block() const { return block->size() != 0; }
+bool class_env_base::has_block() const { return block != nullptr and block->size() != 0; }
 
 void class_env_base::assert_validity() const {
+    assert_block();
     if(Textra::hasNaN(*block, fmt::format("env {} {}", tag, side))) {
         throw std::runtime_error(fmt::format("Environment {} side {} at position {} has NAN's", tag, side, get_position()));
     }
 }
 
-bool class_env_base::is_real() const { return Textra::isReal(*block, fmt::format("env {} {}", tag, side)); }
+bool class_env_base::is_real() const {
+    assert_block();
+    return Textra::isReal(*block, fmt::format("env {} {}", tag, side));
+}
 
-bool class_env_base::has_nan() const { return Textra::hasNaN(*block, fmt::format("env {} {}", tag, side)); }
+bool class_env_base::has_nan() const {
+    assert_block();
+    return Textra::hasNaN(*block, fmt::format("env {} {}", tag, side));
+}
 
 size_t class_env_base::get_position() const {
     if(position) return position.value();
@@ -147,6 +176,7 @@ size_t class_env_base::get_sites() const { return sites; }
 
 void class_env_base::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO, const Eigen::Tensor<Scalar, 1> &edge) {
     if(edge_has_been_set) return;
+    assert_block();
     if(side == "L") {
         long mpsDim = MPS.dimension(1);
         long mpoDim = MPO.dimension(0);
