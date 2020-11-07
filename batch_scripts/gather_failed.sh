@@ -48,8 +48,9 @@ touch $outdir/$resfile
 truncate -s 0 $outdir/$resfile
 jobids=$(cat $outdir/$outfile | cut -d ' ' -f1)
 for id in $jobids; do
-  logfile=$(find logs -name *$id.out)
+  logfile=$(find logs/ -name *$id.out)
   if [ -z "$logfile" ]; then
+    echo "No match for $id.out"
     continue
   fi
   seed=$(cat $logfile | grep SEED | tail -1 |  cut -d ':' -f2 | xargs)
