@@ -212,7 +212,7 @@ namespace settings {
         inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
         inline long     chi_lim_max             = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
+        inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when chi_grow == true, or starting from an entangled state. */
         inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
 //        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
