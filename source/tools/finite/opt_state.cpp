@@ -116,6 +116,19 @@ size_t opt_state::get_length() const {
         throw std::runtime_error("opt_state: length not set");
 }
 
+OptSpace opt_state::get_optspace() const {
+    if(optSpace) return optSpace.value();
+    else
+        throw std::runtime_error("opt_state: optSpace not set");
+}
+OptMode opt_state::get_optmode() const {
+    if(optMode) return optMode.value();
+    else
+        throw std::runtime_error("opt_state: optMode not set");
+}
+
+
+
 void opt_state::clear() { tensor = std::nullopt; }
 void opt_state::normalize() {
     if(not tensor) throw std::runtime_error("opt_state: tensor not set");
@@ -173,6 +186,15 @@ void opt_state::set_tensor_real(const double *data, const Eigen::DSizes<long, 3>
     tensor = Eigen::TensorMap<const Eigen::Tensor<const real, 3>>(data, dims).cast<cplx>();
     norm   = get_vector().norm();
 }
+
+void opt_state::set_optspace(OptSpace optSpace_){
+    optSpace = optSpace_;
+}
+void opt_state::set_optmode(OptMode optMode_){
+    optMode = optMode_;
+
+}
+
 
 void opt_state::validate_candidate() const {
     std::string error_msg;
