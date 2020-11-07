@@ -384,9 +384,10 @@ void class_xdmrg::single_xDMRG_step() {
 
     // Take the best result
     const auto &winner = results.front();
+    last_optspace = winner.get_optspace();
+    last_optmode = winner.get_optmode();
     tensors.activate_sites(winner.get_sites());
     if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
-
     // Truncate even more if doing chi quench
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 

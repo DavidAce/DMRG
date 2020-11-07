@@ -45,6 +45,9 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              num_dampings         = 0;     /*!< Number of damping trials done */
     size_t              max_dampings         = 2;     /*!< Maximum number of damping trials allowed */
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
+    std::optional<OptMode> last_optmode = std::nullopt;
+    std::optional<OptSpace> last_optspace = std::nullopt;
+
 
     public:
     virtual void run_algorithm() = 0;

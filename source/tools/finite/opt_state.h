@@ -24,7 +24,8 @@ namespace tools::finite::opt {
         std::optional<size_t>                 iter     = std::nullopt;
         std::optional<size_t>                 counter  = std::nullopt;
         std::optional<double>                 time     = std::nullopt;
-
+        std::optional<OptMode>                optMode  = std::nullopt;
+        std::optional<OptSpace>               optSpace = std::nullopt;
         public:
         bool is_basis_vector = false;
 
@@ -54,7 +55,8 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                             get_iter() const;
         [[nodiscard]] size_t                             get_counter() const;
         [[nodiscard]] double                             get_time() const;
-
+        [[nodiscard]] OptSpace                           get_optspace() const;
+        [[nodiscard]] OptMode                            get_optmode() const;
         void clear();
         void normalize();
         void set_name(const std::string &name_);
@@ -74,6 +76,8 @@ namespace tools::finite::opt {
         void set_time(double time_);
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
+        void set_optspace(OptSpace optspace_);
+        void set_optmode(OptMode optmode_);
         void validate_candidate() const;
         void validate_result() const;
         bool operator<(const opt_state &rhs) const;

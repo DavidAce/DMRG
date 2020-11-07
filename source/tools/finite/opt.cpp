@@ -121,6 +121,8 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     // Finish up and print reports
     reports::print_bfgs_report();
     reports::print_time_report();
+    result.set_optspace(optSpace);
+    result.set_optmode(optMode);
     result.validate_result();
     return result;
 }
