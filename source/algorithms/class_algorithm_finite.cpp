@@ -264,9 +264,12 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
         throw std::runtime_error(
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
+    tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
     tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_type), enum2str(reason));
-    tools::log->info("Spin components {}", tools::finite::measure::spin_components(*tensors.state));
-    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
+    tools::log->info("-- Energy variance per site : {}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
     tools::common::profile::prof[algo_type]["t_rnd"]->toc();
 }
 
@@ -593,27 +596,28 @@ void class_algorithm_finite::print_status_update() {
     std::string report;
     //    report += fmt::format("{:<} ", algo_name);
     report += fmt::format("{:<} ", state_name);
-    report += fmt::format("iter: {:<4} ", status.iter);
-    report += fmt::format("step: {:<5} ", status.step);
-    report += fmt::format("L: {} ", tensors.state->get_length());
-    if(tensors.state->active_sites.empty()) report += fmt::format("l: {:<2} ", tensors.state->get_position());
+    report += fmt::format("iter:{:<4} ", status.iter);
+    report += fmt::format("step:{:<5} ", status.step);
+    report += fmt::format("L:{} ", tensors.get_length());
+    if(tensors.active_sites.empty()) report += fmt::format("l:{:<2} ", tensors.get_position());
     else if(tensors.state->get_direction() > 0)
-        report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.front(), tensors.state->active_sites.back());
+        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
-        report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.back(), tensors.state->active_sites.front());
-    report += fmt::format("E/L: {:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
-    if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε: {:<6.4f} ", status.energy_dens); }
-    report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
-    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
+        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
+    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+    if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
+    report += fmt::format("Sₑ(l):{:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    report += fmt::format("log₁₀σ²(E)/L:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
                           std::log10(status.lowest_recorded_variance_per_site));
     report +=
-        fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
-    report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
-    report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
-    report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
-    report += fmt::format("con: {:<5} ", status.algorithm_has_converged);
-    report += fmt::format("time:{:>8.2f}s ", tools::common::profile::t_tot->get_measured_time());
-    report += fmt::format("mem: [rss {:<.1f} peak {:<.1f} vm {:<.1f}] MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+        fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
+    if(last_optmode and last_optspace) report+= fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0,3),enum2str(last_optspace.value()).substr(0,3));
+    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
+    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
+    report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
+    report += fmt::format("con:{:<5} ", status.algorithm_has_converged);
+    report += fmt::format("time:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
+    report += fmt::format("mem:[rss {:<.1f} peak {:<.1f} vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
 }
