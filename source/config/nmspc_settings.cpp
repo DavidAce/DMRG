@@ -60,7 +60,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
     dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
     dmrg_config.load_parameter("strategy::project_trial_when_stuck"           , strategy::project_when_stuck);
-    dmrg_config.load_parameter("strategy::project_on_every_sweep"             , strategy::project_on_every_sweep);
+    dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);
     dmrg_config.load_parameter("strategy::randomize_on_chi_update"            , strategy::randomize_on_chi_update);
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
@@ -89,19 +89,10 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
     dmrg_config.load_parameter("threading::num_threads"                       , threading::num_threads);
 
-
-    //Parameters controlling infinite-DMRG
-    dmrg_config.load_parameter("idmrg::on"           , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_steps"    , idmrg::max_iters);
-    dmrg_config.load_parameter("idmrg::chi_lim_max"  , idmrg::chi_lim_max);
-    dmrg_config.load_parameter("idmrg::chi_lim_grow" , idmrg::chi_lim_grow);
-    dmrg_config.load_parameter("idmrg::chi_lim_init" , idmrg::chi_lim_init);
-    dmrg_config.load_parameter("idmrg::print_freq"   , idmrg::print_freq);
-
     //Parameters controlling finite-DMRG
     dmrg_config.load_parameter("fdmrg::on"           , fdmrg::on);
-    dmrg_config.load_parameter("fdmrg::max_sweeps "  , fdmrg::max_iters);
-    dmrg_config.load_parameter("fdmrg::min_sweeps "  , fdmrg::min_iters);
+    dmrg_config.load_parameter("fdmrg::max_iters"    , fdmrg::max_iters);
+    dmrg_config.load_parameter("fdmrg::min_iters"    , fdmrg::min_iters);
     dmrg_config.load_parameter("fdmrg::chi_lim_max"  , fdmrg::chi_lim_max);
     dmrg_config.load_parameter("fdmrg::chi_lim_grow" , fdmrg::chi_lim_grow);
     dmrg_config.load_parameter("fdmrg::chi_lim_init" , fdmrg::chi_lim_init);
@@ -111,8 +102,9 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                     , xdmrg::on);
-    dmrg_config.load_parameter("xdmrg::max_sweeps "            , xdmrg::max_iters);
-    dmrg_config.load_parameter("xdmrg::min_sweeps "            , xdmrg::min_iters);
+    dmrg_config.load_parameter("xdmrg::max_iters"              , xdmrg::max_iters);
+    dmrg_config.load_parameter("xdmrg::min_iters"              , xdmrg::min_iters);
+    dmrg_config.load_parameter("xdmrg::overlap_iters"         , xdmrg::overlap_iters);
     dmrg_config.load_parameter("xdmrg::chi_lim_max"            , xdmrg::chi_lim_max);
     dmrg_config.load_parameter("xdmrg::chi_lim_grow"           , xdmrg::chi_lim_grow);
     dmrg_config.load_parameter("xdmrg::chi_lim_init"           , xdmrg::chi_lim_init);
@@ -121,6 +113,15 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
     dmrg_config.load_parameter("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
     dmrg_config.load_parameter("xdmrg::max_states"             , xdmrg::max_states);
+
+    //Parameters controlling infinite-DMRG
+    dmrg_config.load_parameter("idmrg::on"           , idmrg::on);
+    dmrg_config.load_parameter("idmrg::max_steps"    , idmrg::max_iters);
+    dmrg_config.load_parameter("idmrg::chi_lim_max"  , idmrg::chi_lim_max);
+    dmrg_config.load_parameter("idmrg::chi_lim_grow" , idmrg::chi_lim_grow);
+    dmrg_config.load_parameter("idmrg::chi_lim_init" , idmrg::chi_lim_init);
+    dmrg_config.load_parameter("idmrg::print_freq"   , idmrg::print_freq);
+
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     dmrg_config.load_parameter("itebd::on"            , itebd::on       );

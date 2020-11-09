@@ -276,7 +276,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_any_edge()) return;
     if(has_projected) return;
-    if(settings::strategy::project_on_every_sweep or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
+    if(settings::strategy::project_on_every_iter or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
         tensors.project_to_nearest_sector(settings::strategy::target_sector);
         has_projected = true;

@@ -128,7 +128,7 @@ namespace settings {
         inline bool          perturb_when_stuck        = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck        = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
         inline bool          project_when_stuck        = true;                                   /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool          project_on_every_sweep    = true;                                   /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool          project_on_every_iter     = true;                                   /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
         inline bool          project_on_chi_update     = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
         inline bool          randomize_on_chi_update   = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool          randomize_early           = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
@@ -210,6 +210,7 @@ namespace settings {
         inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters               = 10;               /*!< Max number sweeps along the chain. */
         inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
+        inline size_t   overlap_iters           = 2;                /*!< Number of initial sweeps selecting the candidate state with best overlap to the current state */
         inline long     chi_lim_max             = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when chi_grow == true, or starting from an entangled state. */
