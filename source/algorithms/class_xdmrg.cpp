@@ -252,14 +252,14 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Note that we make stricter requirements as we go down the if-list
 
     // If early in the simulation, or stuck, and the bond dimension is small enough we should give subspace optimization a shot
-    if((status.iter < 6 or status.algorithm_has_got_stuck) and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+    if((status.iter < settings::xdmrg::overlap_iters + 2 or status.algorithm_has_got_stuck) and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
         c1.optMode  = OptMode::VARIANCE;
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
     }
 
     // Very early in the simulation it is worth just following the overlap to get the
     // overal structure of the final state
-    if(status.iter < 4) {
+    if(status.iter < settings::xdmrg::overlap_iters) { // TODO: Testing 4 overlap runs to measure bias
         c1.optMode  = OptMode::OVERLAP;
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
     }

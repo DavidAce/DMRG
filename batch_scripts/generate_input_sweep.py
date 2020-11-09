@@ -49,13 +49,15 @@ for num_L,val_L in enumerate(sites):
             settings = {
                 "output::output_filepath"            : 'output/L_'+ str_L + '/l_'+ str_l + '/d_' + str_d + '/' + basename + '.h5',
                 "threading::num_threads"             : "1",
+                "console::verbosity"                 : "2",
                 "model::model_size"                  : str_L,
                 "model::ising_sdual::delta"          : str_d,
                 "model::ising_sdual::lambda"         : str_l,
                 "model::ising_sdual::J_stdv"         : "1.0",
                 "model::ising_sdual::h_stdv"         : "1.0",
                 "xdmrg::chi_lim_max"                 : "512",
-                "xdmrg::max_states "                 : "4",
+                "xdmrg::max_states"                  : "4",
+                "xdmrg::overlap_iters"               : "4",
             }
             num_total = num_total + 1
             print(input_filename, "L:", str_L,"l:",str_l, "d:", str_d,"j:", str_j, "h:",str_h)
