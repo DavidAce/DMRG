@@ -36,8 +36,8 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
 tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_state & initial_tensor, const class_algorithm_status &status,
                                                                       OptMode optMode, OptSpace optSpace, OptType optType) {
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
-    tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | shape {} = {}", enum2str(optMode), enum2str(optSpace), enum2str(optType),
-                      tensors.get_position(), tensors.state->active_dimensions(), tensors.state->active_problem_size());
+    tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2str(optMode), enum2str(optSpace), enum2str(optType),
+                      tensors.get_position(),tensors.active_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size());
 
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;

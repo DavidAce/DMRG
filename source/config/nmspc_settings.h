@@ -207,7 +207,7 @@ namespace settings {
 
     //Parameters controlling xDMRG
     namespace xdmrg {
-        inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
+        inline bool     on                      = false;             /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters               = 10;               /*!< Max number sweeps along the chain. */
         inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
         inline size_t   overlap_iters           = 2;                /*!< Number of initial sweeps selecting the candidate state with best overlap to the current state */

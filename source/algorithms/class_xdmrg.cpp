@@ -273,26 +273,29 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.optSpace = OptSpace::DIRECT;
     }
 
+    // Make sure not to use SUBSPACE if the 2-site problem size is huge
+    // When this happens, we can't use SUBSPACE even with two sites,
+    // so we might as well give it to DIRECT, which handles larger problems.
+    if(tensors.state->size_2site() > settings::precision::max_size_part_diag) {
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::DIRECT;
+    }
+
+
     // Setup the maximum problem size here
     switch(c1.optSpace) {
         case OptSpace::DIRECT: c1.max_problem_size = settings::precision::max_size_direct; break;
         case OptSpace::SUBSPACE_ONLY:
         case OptSpace::SUBSPACE_AND_DIRECT: c1.max_problem_size = settings::precision::max_size_part_diag; break;
     }
-    // Make sure not to use SUBSPACE if the 2-site problem size is huge
-    // When this happens, we can't use SUBSPACE even with two sites,
-    // so we might as well give it to DIRECT, which handles larger problems.
-    if(tensors.state->size_2site() > c1.max_problem_size) {
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::DIRECT;
-    }
+
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_got_stuck) c1.max_sites = settings::strategy::multisite_max_sites;
+//    if(status.algorithm_has_got_stuck) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(c1.optMode == OptMode::OVERLAP) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+//    if(c1.optMode == OptMode::OVERLAP) c1.max_sites = settings::strategy::multisite_max_sites;
+//    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -307,22 +310,24 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
      *
      */
     OptConf c2 = c1; // Start with c1 as a baseline
-                     //    c2.optWhen = OptWhen::PREV_FAIL; // Only run if the previous was unsuccessful
-
-    //    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::OVERLAP) {
-    //        // I.e. if we did an SUBSPACE OVERLAP run that failed, do the following
-    //        c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
-    //        c2.optSpace = OptSpace::DIRECT;
-    //        c2.optMode  = OptMode::VARIANCE;
-    //        configs.emplace_back(c2);
-    //    } else
-    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE) {
-        // I.e. if we did a SUBSPACE VARIANCE run that failed, do the following
+    // NOTES
+    // 1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
+    // 2)
+    //
+    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE and c1.max_sites != settings::strategy::multisite_max_sites) {
+        // I.e. if we did a SUBSPACE run that did not result in better variance, try a few more sites
+        c2.max_sites    = settings::strategy::multisite_max_sites;
+        c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
+        c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
+        c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
+        if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
+    }else if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE ) {
+        // I.e. if we did a SUBSPACE VARIANCE run that failed, and we are already trying max sites, switch to DIRECT
         c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c1.max_sites != settings::strategy::multisite_max_sites) {
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites != settings::strategy::multisite_max_sites) {
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
