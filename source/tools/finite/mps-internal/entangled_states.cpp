@@ -42,22 +42,33 @@ void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2
     tools::log->info("Setting random entangled state with spinors randomly in C2 ...");
     const auto spin_dim        = state.get_mps_site(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
+    bool pastCenter = false;
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
         auto  chiL = bond_dimensions[mps.get_position()];
         auto  chiR = bond_dimensions[mps.get_position() + 1];
         auto  size = spin_dim * chiL * chiR;
-
-        Eigen::Tensor<Scalar, 1> L = Textra::MatrixTensorMap(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
+        auto  smdt = pastCenter ? chiR : chiL;
+        Eigen::VectorXd Ltmp = Eigen::VectorXd(smdt).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_01();});
+        std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater());
+        Eigen::Tensor<Scalar, 1> L = Textra::MatrixTensorMap(Ltmp.normalized()).cast<Scalar>();
         Eigen::Tensor<Scalar, 3> G(spin_dim, chiL, chiR);
-        if(real) G = Textra::MatrixTensorMap(Eigen::VectorXd::Random(size).normalized(), spin_dim, chiL, chiR).cast<Scalar>();
-        else
-            G = Textra::MatrixTensorMap(Eigen::VectorXcd::Random(size).normalized(), spin_dim, chiL, chiR);
+        if(real){
+            Eigen::VectorXd Gtmp = Eigen::VectorXd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_box(-1.0,1.0);});
+            G =  Textra::MatrixTensorMap(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+        }
+        else{
+            Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_complex_1();});
+            G = Textra::MatrixTensorMap(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+        }
 
         mps.set_mps(G, L);
         if(mps.isCenter()) {
-            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixTensorMap(Eigen::VectorXd::Ones(chiR).normalized()).cast<Scalar>();
+            Ltmp = Eigen::VectorXd(chiR).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_01();});
+            std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater());
+            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixTensorMap(Ltmp.normalized()).cast<Scalar>();
             mps.set_LC(LC);
+            pastCenter = true;
         }
     }
     tools::log->info("Setting random entangled state with spinors randomly in C2 ... OK");
