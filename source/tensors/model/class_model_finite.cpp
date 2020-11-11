@@ -110,7 +110,7 @@ double class_model_finite::get_energy_per_site_reduced() const {
 }
 
 void class_model_finite::randomize() {
-    tools::log->info("Randomizing model");
+    tools::log->info("Randomizing hamiltonian");
     std::vector<class_mpo_site::TableMap> all_params;
     for(auto &mpo : MPO) {
         mpo->randomize_hamiltonian();

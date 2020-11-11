@@ -50,7 +50,7 @@ void class_model_infinite::initialize(ModelType model_type_){
 }
 
 void class_model_infinite::randomize() {
-    tools::log->trace("Randomizing model mpos");
+    tools::log->trace("Randomizing hamiltonian");
     HA->randomize_hamiltonian();
     HB->randomize_hamiltonian();
     std::vector<class_mpo_site::TableMap> all_params;
