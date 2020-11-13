@@ -107,9 +107,8 @@ void class_fdmrg::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
-    randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    auto spin_components = tools::finite::measure::spin_components(*tensors.state);
-    tools::log->info("Initial spin components: {}", spin_components);
+    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
+                    settings::strategy::use_eigenspinors);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
