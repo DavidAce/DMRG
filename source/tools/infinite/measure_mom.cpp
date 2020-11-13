@@ -10,16 +10,17 @@
 #include <tools/infinite/measure.h>
 #include <general/nmspc_tensor_extra.h>
 
-class_state_infinite::Scalar moment_generating_function(const class_state_infinite &                                 state_original,
-                                                        std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec) {
+class_state_infinite::Scalar moment_generating_function(const class_state_infinite & state_original,
+                                                        std::vector<Eigen::Tensor<class_state_infinite::Scalar, 2>> &Op_vec
+                                                        ) {
     using Scalar                       = class_state_infinite::Scalar;
     class_state_infinite state_evolved = state_original;
 
-    //    long cfg_chi_lim_max = 5 * state_evolved.chiC();
+    long chi_lim = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
         Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_mps(), Textra::idx({0}, {0}));
-        state_evolved.set_mps(mps_evo);
+        state_evolved.set_mps(mps_evo, chi_lim);
         if(&Op != &Op_vec.back()) { state_evolved.swap_AB(); }
     }
 

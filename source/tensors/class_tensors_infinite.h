@@ -1,9 +1,9 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
+#include <general/eigen_tensor_fwd_decl.h>
 #include <measure/tensors_measure_infinite.h>
 #include <memory>
-#include <general/eigen_tensor_fwd_decl.h>
 
 class class_state_infinite;
 class class_model_infinite;
@@ -25,14 +25,16 @@ class class_tensors_infinite {
     //  - Manage measurements cache
 
     class_tensors_infinite();
-    ~class_tensors_infinite();                                                  // Read comment on implementation
-    class_tensors_infinite(class_tensors_infinite &&other);                     // default move ctor
-    class_tensors_infinite &operator=(class_tensors_infinite &&other);          // default move assign
-    class_tensors_infinite(const class_tensors_infinite &other);                // copy ctor
-    class_tensors_infinite &operator=(const class_tensors_infinite &other);     // copy assign
+    ~class_tensors_infinite();                                              // Read comment on implementation
+    class_tensors_infinite(class_tensors_infinite &&other);                 // default move ctor
+    class_tensors_infinite &operator=(class_tensors_infinite &&other);      // default move assign
+    class_tensors_infinite(const class_tensors_infinite &other);            // copy ctor
+    class_tensors_infinite &operator=(const class_tensors_infinite &other); // copy assign
 
-    void                 initialize(ModelType model_type);
-    void                 assert_validity() const;
+    void initialize(ModelType model_type);
+    void randomize_model();
+    void assert_validity() const;
+
     [[nodiscard]] size_t get_length() const;
     [[nodiscard]] size_t get_position() const;
     [[nodiscard]] bool   is_real() const;
@@ -45,8 +47,7 @@ class class_tensors_infinite {
     void reset_edges();
     void eject_edges();
 
-
-    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor);
+    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void enlarge();
     void do_all_measurements() const;
     void clear_measurements() const;

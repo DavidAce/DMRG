@@ -5,9 +5,21 @@
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
+#include <tools/common/split.h>
 #include <tools/infinite/mps.h>
 
 using Scalar = std::complex<double>;
+
+void tools::infinite::mps::merge_twosite_tensor (class_state_infinite & state, const Eigen::Tensor<Scalar,3> & twosite_tensor, long chi_lim, std::optional<double> svd_threshold){
+    long   dA       = state.get_spin_dimA();
+    long   dB       = state.get_spin_dimB();
+    size_t posA     = state.get_positionA();
+    size_t posB     = state.get_positionB();
+    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi_lim, svd_threshold);
+    if(mps_list.size() != 2) throw std::logic_error(fmt::format("Got {} MPS sites from two-site tensor.",mps_list.size()));
+    state.get_mps_siteA().merge_mps(mps_list.front());
+    state.get_mps_siteB().merge_mps(mps_list.back());
+}
 
 
 void tools::infinite::mps::random_product_state([[maybe_unused]] const class_state_infinite &state, [[maybe_unused]] const std::string &sector, [[maybe_unused]] long bitfield,  [[maybe_unused]] bool use_eigenspinors) {

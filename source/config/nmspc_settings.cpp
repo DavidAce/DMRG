@@ -116,7 +116,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
 
     //Parameters controlling infinite-DMRG
     dmrg_config.load_parameter("idmrg::on"           , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_steps"    , idmrg::max_iters);
+    dmrg_config.load_parameter("idmrg::max_iters"    , idmrg::max_iters);
     dmrg_config.load_parameter("idmrg::chi_lim_max"  , idmrg::chi_lim_max);
     dmrg_config.load_parameter("idmrg::chi_lim_grow" , idmrg::chi_lim_grow);
     dmrg_config.load_parameter("idmrg::chi_lim_init" , idmrg::chi_lim_init);
@@ -125,7 +125,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     dmrg_config.load_parameter("itebd::on"            , itebd::on       );
-    dmrg_config.load_parameter("itebd::max_steps"     , itebd::max_iters);
+    dmrg_config.load_parameter("itebd::max_iters"     , itebd::max_iters);
     dmrg_config.load_parameter("itebd::delta_t0"      , itebd::delta_t0  );
     dmrg_config.load_parameter("itebd::delta_tmin"    , itebd::delta_tmin);
     dmrg_config.load_parameter("itebd::suzuki_order"  , itebd::suzuki_order);

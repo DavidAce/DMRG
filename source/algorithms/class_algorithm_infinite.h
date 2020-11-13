@@ -14,7 +14,7 @@ class class_algorithm_infinite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType sim_type);
+    explicit class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
     class_tensors_infinite tensors;
     //    std::shared_ptr<class_state_infinite> state;
     // Tables
@@ -27,6 +27,7 @@ class class_algorithm_infinite : public class_algorithm_base {
     /* clang-format off */
     void run()                                                                                               final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                        final;
+    void randomize_model();
     void randomize_state(ResetReason reason, std::optional<std::string> sector = std::nullopt,
                                        std::optional<long> bitfield = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt);
 

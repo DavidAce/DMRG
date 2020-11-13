@@ -27,10 +27,14 @@ class_itebd::class_itebd(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorith
 }
 
 void class_itebd::run_preprocessing() {
+    tools::log->info("Running {} preprocessing", algo_name);
     tools::common::profile::prof[algo_type]["t_pre"]->tic();
+    init_bond_dimension_limits();
+    randomize_model(); // First use of random!
     status.delta_t                  = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
+    tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_itebd::run_simulation() {
@@ -62,7 +66,7 @@ void class_itebd::single_TEBD_step() {
      */
     for(auto &U : unitary_time_evolving_operators) {
         Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
-        tensors.merge_multisite_tensor(twosite_tensor);
+        tensors.merge_twosite_tensor(twosite_tensor,status.chi_lim);
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
     tensors.clear_measurements();

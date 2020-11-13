@@ -53,12 +53,12 @@ double tools::infinite::measure::truncation_error(const class_state_infinite &st
 }
 
 double tools::infinite::measure::entanglement_entropy(const class_state_infinite &state) {
-    tools::common::profile::get_default_prof()["t_ent"]->tic();
     if(state.measurements.entanglement_entropy) return state.measurements.entanglement_entropy.value();
+    tools::common::profile::get_default_prof()["t_ent"]->tic();
     const auto &             LC = state.LC();
     Eigen::Tensor<Scalar, 0> SA = -LC.square().contract(LC.square().log().eval(), Textra::idx({0}, {0}));
-    tools::common::profile::get_default_prof()["t_ent"]->toc();
     state.measurements.entanglement_entropy = std::real(SA(0));
+    tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy.value();
 }
 

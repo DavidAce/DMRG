@@ -43,8 +43,8 @@ class class_state_infinite {
 
     //    std::unique_ptr<class_mps_2site> mps_sites; /*!< A matrix product state for two sites , A and B, and a center bond. In Vidal Canonical Form
     //                                                   \f$\Lambda^A\Gamma^A \Lambda^C \Gamma^B\Lambda^B\f$. */
-    std::optional<long> chi_lim;
-    std::optional<long> chi_max;
+//    std::optional<long> chi_lim;
+//    std::optional<long> chi_max;
     mutable Cache       cache;
 
     public:
@@ -71,8 +71,8 @@ class class_state_infinite {
     [[nodiscard]] long                            chiC() const;
     [[nodiscard]] long                            chiA() const;
     [[nodiscard]] long                            chiB() const;
-    [[nodiscard]] long                            get_chi_lim() const;
-    [[nodiscard]] long                            get_chi_max() const;
+//    [[nodiscard]] long                            get_chi_lim() const;
+//    [[nodiscard]] long                            get_chi_max() const;
     [[nodiscard]] long                            get_spin_dimA() const;
     [[nodiscard]] long                            get_spin_dimB() const;
     [[nodiscard]] Eigen::DSizes<long, 3>          dimensions() const;
@@ -80,6 +80,11 @@ class class_state_infinite {
     [[nodiscard]] const class_mps_site &          get_mps_siteB() const;
     [[nodiscard]] class_mps_site &                get_mps_siteA();
     [[nodiscard]] class_mps_site &                get_mps_siteB();
+    [[nodiscard]] const class_mps_site &          get_mps_site(size_t pos) const;
+    [[nodiscard]] class_mps_site &                get_mps_site(size_t pos);
+    [[nodiscard]] const class_mps_site &          get_mps_site(std::string_view pos) const;
+    [[nodiscard]] class_mps_site &                get_mps_site(std::string_view pos);
+
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A_bare() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &B() const;
@@ -96,12 +101,12 @@ class class_state_infinite {
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> & LB() const;
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_2site_mps(Scalar norm = 1.0) const;
-    void                                          set_chi_lim(long chi_lim_);
-    void                                          set_chi_max(long chi_max_);
+//    void                                          set_chi_lim(long chi_lim_);
+//    void                                          set_chi_max(long chi_max_);
     void                                          set_positions(size_t position);
 
     void swap_AB(); /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
-    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor,long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void set_mps(const std::list<class_mps_site> &mps_list);
     void set_mps(const class_mps_site &mpsA, const class_mps_site &mpsB);
     void set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB);

@@ -83,18 +83,18 @@ void class_algorithm_finite::run()
     tools::common::profile::t_tot->toc();
 }
 
-void class_algorithm_finite::run_preprocessing() {
-    tools::log->info("Running default preprocessing for {}", algo_name);
-    tools::common::profile::prof[algo_type]["t_pre"]->tic();
-    status.clear();
-    randomize_model();
-    init_bond_dimension_limits();
-    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
-                    settings::strategy::use_eigenspinors);
-    write_to_file(StorageReason::MODEL);
-    tools::common::profile::prof[algo_type]["t_pre"]->toc();
-    tools::log->info("Finished default preprocessing for {}", algo_name);
-}
+//void class_algorithm_finite::run_preprocessing() {
+//    tools::log->info("Running default preprocessing for {}", algo_name);
+//    tools::common::profile::prof[algo_type]["t_pre"]->tic();
+//    status.clear();
+//    randomize_model();
+//    init_bond_dimension_limits();
+//    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
+//                    settings::strategy::use_eigenspinors);
+//    write_to_file(StorageReason::MODEL);
+//    tools::common::profile::prof[algo_type]["t_pre"]->toc();
+//    tools::log->info("Finished default preprocessing for {}", algo_name);
+//}
 
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
@@ -131,11 +131,11 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
             if(tensors.position_is_any_edge()) {
-                tensors.state->increment_iter();
+                status.iter++;
                 has_projected = false;
             }
             tensors.move_center_point(status.chi_lim);
-            tensors.state->increment_step();
+            status.step++;
             if(chi_quench_steps > 0) chi_quench_steps--;
         }
         tools::finite::debug::check_integrity(*tensors.state, *tensors.model, *tensors.edges);
@@ -147,8 +147,8 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
         tools::finite::print::dimensions(tensors);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-    status.iter      = tensors.state->get_iteration();
-    status.step      = tensors.state->get_step();
+//    status.iter      = tensors.state->get_iteration();
+//    status.step      = tensors.state->get_step();
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
     has_projected    = false;
@@ -253,8 +253,8 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     while(tensors.state->get_position() != 0 and tensors.state->get_direction() != 1) move_center_point();
     clear_convergence_status();
     status.reset();
-    status.iter      = tensors.state->reset_iter();
-    status.step      = tensors.state->reset_step();
+    status.iter      = 0;
+    status.step      = 0;
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
     if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();

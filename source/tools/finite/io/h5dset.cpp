@@ -54,20 +54,20 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
     bootstrap_save_log(save_log,h5ppFile,{state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
 
-    auto save_point = std::make_pair(state.get_iteration(), state.get_step());
+    auto save_point = std::make_pair(status.iter, status.step);
 
     auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
-    /*! Writes down the center "Lambda" bond matrix (singular values). */
     std::string dsetName = state_prefix + "/schmidt_midchain";
     if(save_log[dsetName] != save_point) {
+        /*! Writes down the center "Lambda" bond matrix (singular values). */
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
         tools::common::profile::get_default_prof()["t_hdf"]->tic();
         h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
         h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetName);
         h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
-        h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
+        h5ppFile.writeAttribute(status.iter, "iteration", dsetName);
+        h5ppFile.writeAttribute(status.step, "step", dsetName);
         h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetName);
         h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
         tools::common::profile::get_default_prof()["t_hdf"]->toc();
@@ -99,9 +99,9 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         }
         h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
         h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
-        h5ppFile.writeAttribute(state.get_iteration(), "iteration", mps_prefix);
-        h5ppFile.writeAttribute(state.get_step(), "step", mps_prefix);
         h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
+        h5ppFile.writeAttribute(status.iter, "iteration", mps_prefix);
+        h5ppFile.writeAttribute(status.step, "step", mps_prefix);
         tools::common::profile::get_default_prof()["t_hdf"]->toc();
     }
 
