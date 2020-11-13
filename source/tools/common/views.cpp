@@ -96,18 +96,31 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     LCGB = LCGB / sqrt(l_odd_LCGB_r_evn(0));
     LAGA = LAGA / sqrt(l_evn_LBGA_r_odd(0));
     components_computed = true;
-    std::cout << "Check:" << std::setprecision(10) <<  std::endl;
-    std::cout << " l_odd_LCGB_r_evn          = " << l_odd_LCGB_r_evn(0) << std::endl;
-    std::cout << " l_evn_LBGA_r_odd          = " << l_evn_LBGA_r_odd(0) << std::endl;
-    std::cout << " < l_evn | r_evn >         = " << l_evn.contract(r_evn, Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_odd | r_odd >         = " << l_odd.contract(r_odd, Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_evn | LAGA  | r_odd > = " << l_evn.contract(transfer_matrix_LAGA, Textra::idx({0,1},{0,1})).contract(r_odd, Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < l_odd | LCGB  | r_evn > = " << l_odd.contract(transfer_matrix_LCGB, Textra::idx({0,1},{0,1})).contract(r_evn, Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta     | theta >     = " << theta.contract(theta.conjugate(), Textra::idx({1,3,0,2},{1,3,0,2})) << std::endl;
-    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << theta_evn_normalized.contract(theta_evn_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_evn, Textra::idx({0,2},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_evn_normalized | theta_evn_normalized > = " << transfer_matrix_evn.contract(l_evn, Textra::idx({0,1},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << theta_odd_normalized.contract(theta_odd_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_odd, Textra::idx({0,2},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})) << std::endl;
-    std::cout << " < theta_odd_normalized | theta_odd_normalized > = " << transfer_matrix_odd.contract(l_odd, Textra::idx({0,1},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})) << std::endl;
+    if(tools::log->level() == spdlog::level::trace){
+        Eigen::Tensor<Scalar,0>  le_re = l_evn.contract(r_evn, Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  lo_ro = l_odd.contract(r_odd, Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  le_laga = l_evn.contract(transfer_matrix_LAGA, Textra::idx({0,1},{0,1})).contract(r_odd, Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  lo_lcgb = l_odd.contract(transfer_matrix_LCGB, Textra::idx({0,1},{0,1})).contract(r_evn, Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  thth      = theta.contract(theta.conjugate(), Textra::idx({1,3,0,2},{1,3,0,2}));
+        Eigen::Tensor<Scalar,0>  then_then = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_evn, Textra::idx({0,2},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  thon_thon = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_odd, Textra::idx({0,2},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  tren_le = transfer_matrix_evn.contract(l_evn, Textra::idx({0,1},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1}));
+        Eigen::Tensor<Scalar,0>  trod_lo = transfer_matrix_odd.contract(l_odd, Textra::idx({0,1},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1}));
+        std::string str = "Check\n";
+        str += fmt::format(" l_odd_LCGB_r_evn                                = {:.15f}{:+.15f}\n",   std::real(l_odd_LCGB_r_evn(0)),std::imag(l_odd_LCGB_r_evn(0)));
+        str += fmt::format(" l_evn_LBGA_r_odd                                = {:.15f}{:+.15f}\n",   std::real(l_evn_LBGA_r_odd(0)),std::imag(l_evn_LBGA_r_odd(0)));
+        str += fmt::format(" < l_evn | r_evn >                               = {:.15f}{:+.15f}\n",   std::real(le_re(0)),std::imag(le_re(0)));//  l_evn.contract(r_evn, Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < l_odd | r_odd >                               = {:.15f}{:+.15f}\n",   std::real(lo_ro(0)),std::imag(lo_ro(0)));//  l_odd.contract(r_odd, Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < l_evn | LAGA  | r_odd >                       = {:.15f}{:+.15f}\n",   std::real(le_laga(0)),std::imag(le_laga(0)));//  l_evn.contract(transfer_matrix_LAGA, Textra::idx({0,1},{0,1})).contract(r_odd, Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < l_odd | LCGB  | r_evn >                       = {:.15f}{:+.15f}\n",   std::real(lo_lcgb(0)),std::imag(lo_lcgb(0)));//  l_odd.contract(transfer_matrix_LCGB, Textra::idx({0,1},{0,1})).contract(r_evn, Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < theta     | theta >                           = {:.15f}{:+.15f}\n",   std::real(thth(0)),std::imag(thth(0)));//  theta.contract(theta.conjugate(), Textra::idx({1,3,0,2},{1,3,0,2})));
+        str += fmt::format(" < theta_evn_normalized | theta_evn_normalized > = {:.15f}{:+.15f}\n",  std::real(then_then(0)),std::imag(then_then(0)));//  theta_evn_normalized.contract(theta_evn_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_evn, Textra::idx({0,2},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < theta_odd_normalized | theta_odd_normalized > = {:.15f}{:+.15f}\n",  std::real(thon_thon(0)),std::imag(thon_thon(0)));//  theta_odd_normalized.contract(theta_odd_normalized.conjugate(), Textra::idx({0,2},{0,2})).contract(l_odd, Textra::idx({0,2},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < theta_evn_normalized | theta_evn_normalized > = {:.15f}{:+.15f}\n",  std::real(tren_le(0)),std::imag(tren_le(0)));//  transfer_matrix_evn.contract(l_evn, Textra::idx({0,1},{0,1})).contract(r_evn,Textra::idx({0,1},{0,1})));
+        str += fmt::format(" < theta_odd_normalized | theta_odd_normalized > = {:.15f}{:+.15f}\n",  std::real(trod_lo(0)),std::imag(trod_lo(0)));//  transfer_matrix_odd.contract(l_odd, Textra::idx({0,1},{0,1})).contract(r_odd,Textra::idx({0,1},{0,1})));
+        tools::log->trace(str);
+    }
+
 }
 
 
