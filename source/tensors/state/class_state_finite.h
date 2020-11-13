@@ -42,8 +42,6 @@ class class_state_finite {
         std::optional<Eigen::Tensor<Scalar, 3>> multisite_mps = std::nullopt;
     };
 
-    size_t              iter      = 0;
-    size_t              step      = 0;
     int                 direction = 1;
     mutable Cache             cache;
     mutable std::vector<bool> site_update_tags;
@@ -65,16 +63,6 @@ class class_state_finite {
 
     const Eigen::Tensor<Scalar, 1> &midchain_bond() const;
     const Eigen::Tensor<Scalar, 1> &current_bond() const;
-
-    size_t get_iteration() const;
-    size_t reset_iter();
-    void   set_iter(size_t iter_);
-    void   increment_iter();
-
-    size_t get_step() const;
-    size_t reset_step();
-    void   set_step(size_t step_);
-    void   increment_step();
 
     long find_largest_chi() const;
 

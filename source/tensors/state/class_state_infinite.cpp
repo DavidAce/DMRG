@@ -9,6 +9,7 @@
 #include <tools/common/split.h>
 #include <tools/common/views.h>
 #include <tools/infinite/measure.h>
+#include <tools/infinite/mps.h>
 #include <general/nmspc_tensor_extra.h>
 using Scalar = class_state_infinite::Scalar;
 
@@ -34,8 +35,8 @@ class_state_infinite::class_state_infinite(const class_state_infinite &other):
 MPS_A(std::make_unique<class_mps_site>(*other.MPS_A)),
 MPS_B(std::make_unique<class_mps_site>(*other.MPS_B)),
 swapped(other.swapped),
-chi_lim(other.chi_lim),
-chi_max(other.chi_max),
+//chi_lim(other.chi_lim),
+//chi_max(other.chi_max),
 cache(other.cache),
 measurements(other.measurements),
 lowest_recorded_variance(other.lowest_recorded_variance)
@@ -48,8 +49,8 @@ class_state_infinite &class_state_infinite::operator=(const class_state_infinite
         MPS_A                    = std::make_unique<class_mps_site>(*other.MPS_A);
         MPS_B                    = std::make_unique<class_mps_site>(*other.MPS_B);
         swapped                  = other.swapped;
-        chi_lim                  = other.chi_lim;
-        chi_max                  = other.chi_max;
+//        chi_lim                  = other.chi_lim;
+//        chi_max                  = other.chi_max;
         cache                    = other.cache;
         measurements             = other.measurements;
         lowest_recorded_variance = other.lowest_recorded_variance;
@@ -84,33 +85,33 @@ long class_state_infinite::chiC() const { return MPS_A->get_LC().dimension(0); }
 long class_state_infinite::chiA() const { return MPS_A->get_L().dimension(0); }
 long class_state_infinite::chiB() const { return MPS_B->get_L().dimension(0); }
 
-long class_state_infinite::get_chi_lim() const {
-    // Should get the the current limit on allowed bond dimension
-    return chi_lim.value();
-}
-long class_state_infinite::get_chi_max() const {
-    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-    return chi_max.value();
-}
+//long class_state_infinite::get_chi_lim() const {
+//    // Should get the the current limit on allowed bond dimension
+//    return chi_lim.value();
+//}
+//long class_state_infinite::get_chi_max() const {
+//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
+//    return chi_max.value();
+//}
 
 long class_state_infinite::get_spin_dimA() const { return MPS_A->spin_dim(); }
 long class_state_infinite::get_spin_dimB() const { return MPS_B->spin_dim(); }
-
-void class_state_infinite::set_chi_lim(long chi_lim_) {
-    // Should set the the current limit on allowed bond dimension
-    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
-    chi_lim = chi_lim_;
-}
-
-void class_state_infinite::set_chi_max(long chi_max_) {
-    // Should set the the current limit on allowed bond dimension for the duration of the simulation
-    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-    chi_max = chi_max_;
-}
+//
+//void class_state_infinite::set_chi_lim(long chi_lim_) {
+//    // Should set the the current limit on allowed bond dimension
+//    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
+//    chi_lim = chi_lim_;
+//}
+//
+//void class_state_infinite::set_chi_max(long chi_max_) {
+//    // Should set the the current limit on allowed bond dimension for the duration of the simulation
+//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
+//    chi_max = chi_max_;
+//}
 
 double class_state_infinite::get_truncation_error() const {
     // Should get the the current limit on allowed bond dimension for the duration of the simulation
-    return tools::infinite::measure::truncation_error(*this);
+    return get_mps_siteA().get_truncation_error();
 }
 
 Eigen::DSizes<long, 3> class_state_infinite::dimensions() const { return Eigen::DSizes<long, 3>{get_spin_dimA() * get_spin_dimB(), chiA(), chiB()}; }
@@ -119,6 +120,28 @@ const class_mps_site &class_state_infinite::get_mps_siteA() const { return *MPS_
 const class_mps_site &class_state_infinite::get_mps_siteB() const { return *MPS_B; }
 class_mps_site &      class_state_infinite::get_mps_siteA() { return *MPS_A; }
 class_mps_site &      class_state_infinite::get_mps_siteB() { return *MPS_B; }
+const class_mps_site &class_state_infinite::get_mps_site(size_t pos) const {
+    if(pos == 0) return *MPS_A;
+    if(pos == 1) return *MPS_B;
+    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1",pos));
+}
+class_mps_site &class_state_infinite::get_mps_site(size_t pos) {
+    if(pos == 0) return *MPS_A;
+    if(pos == 1) return *MPS_B;
+    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1",pos));
+}
+const class_mps_site &      class_state_infinite::get_mps_site(std::string_view pos) const {
+    if(pos == "A") return *MPS_A;
+    if(pos == "B") return *MPS_B;
+    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1",pos));
+}
+class_mps_site &      class_state_infinite::get_mps_site(std::string_view pos) {
+    if(pos == "A") return *MPS_A;
+    if(pos == "B") return *MPS_B;
+    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1",pos));
+}
+
+
 
 /* clang-format off */
 const Eigen::Tensor<Scalar, 3> &class_state_infinite::A_bare() const { return MPS_A->get_M_bare(); }
@@ -274,14 +297,8 @@ void class_state_infinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor) {
-    long   chi      = get_chi_lim();
-    long   dA       = get_spin_dimA();
-    long   dB       = get_spin_dimB();
-    size_t posA     = get_positionA();
-    size_t posB     = get_positionB();
-    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi);
-    set_mps(mps_list);
+void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor,long chi_lim, std::optional<double> svd_threshold) {
+    tools::infinite::mps::merge_twosite_tensor(*this,twosite_tensor,chi_lim,svd_threshold);
 }
 
 void class_state_infinite::set_mps(const std::list<class_mps_site> &mps_list) {
@@ -339,4 +356,6 @@ void class_state_infinite::swap_AB() {
     MPS_B->set_L(LC);
     MPS_A->set_position(position_left);
     MPS_B->set_position(position_right);
+    clear_cache();
+    clear_measurements();
 }

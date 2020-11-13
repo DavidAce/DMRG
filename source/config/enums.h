@@ -77,7 +77,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == AlgorithmType::iDMRG) return "iDMRG";
         if(item == AlgorithmType::fDMRG) return "fDMRG";
         if(item == AlgorithmType::xDMRG) return "xDMRG";
-        if(item == AlgorithmType::iTEBD) return "iDMRG";
+        if(item == AlgorithmType::iTEBD) return "iTEBD";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == MultisiteMove::ONE) return "ONE";

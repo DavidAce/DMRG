@@ -16,7 +16,7 @@ namespace tools::infinite::io{
     /* clang-format off */
     namespace h5dset{
         extern int decide_layout(std::string_view prefix_path);
-        extern void save_state            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_infinite & state);
+        extern void save_state            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_infinite & state, const class_algorithm_status &status);
         extern void save_edges            (h5pp::File & h5ppFile, const std::string & edges_prefix, const StorageLevel & storage_level, const class_edges_infinite & edges);
         extern void save_model            (h5pp::File & h5ppFile, const std::string & mpo_path, const StorageLevel & storage_level, const class_model_infinite & model);
     }

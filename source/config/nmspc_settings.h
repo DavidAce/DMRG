@@ -42,8 +42,8 @@ namespace settings {
         inline std::string         output_filepath                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
         inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, checkpoints on each iteration will overwrite previous snapshots on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline bool                checkpoint_keep_chi_updates     = true;                         /*!< If true, a snapshot is written to file before updating the bond dimension is updated */
-        inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints after iterations (chi-update checkpoints can still happen) */
+        inline bool                checkpoint_keep_chi_updates     = true;                         /*!< If true, a snapshot is written to file before the bond dimension is updated */
+        inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables regular checkpoints but chi-update checkpoints can still happen */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
@@ -124,11 +124,11 @@ namespace settings {
     // Options for strategy that affect convergence and targeted state
     namespace strategy {
         inline bool          compress_mpo_squared      = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */
-        inline bool          chi_quench_when_stuck     = false;                                  /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
+        inline bool          chi_quench_when_stuck     = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck        = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck        = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool          project_when_stuck        = true;                                   /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool          project_on_every_iter     = true;                                   /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool          project_when_stuck        = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
+        inline bool          project_on_every_iter     = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update     = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
         inline bool          randomize_on_chi_update   = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool          randomize_early           = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
@@ -171,9 +171,7 @@ namespace settings {
         inline long chi_lim_max  = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_lim_grow = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long chi_lim_init = 16;                             /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */
-//        inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
-
+        inline size_t print_freq = 1000;                           /*!< Print frequency for console output. In units of iterations.  (0 = off). */
     }
 
 
@@ -187,35 +185,31 @@ namespace settings {
         inline long     chi_lim_max  = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. (0 = off).*/
-//        inline size_t   write_freq   = 100;                      /*!< Write frequency,for output file buffer. (0 = off). */
-
+        inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
     //Parameters controlling fdmrg
     namespace fdmrg {
         inline bool     on           = true;                         /*!< Turns fdmrg simulation on/off. */
-        inline size_t   max_iters    = 10;                           /*!< Max number sweeps along the chain. */
-        inline size_t   min_iters    = 4;                            /*!< Min number sweeps along the chain. */
+        inline size_t   max_iters    = 10;                           /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters    = 4;                            /*!< Min number of iterations. One iterations moves L steps. */
         inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-//        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
     //Parameters controlling xDMRG
     namespace xdmrg {
         inline bool     on                      = false;             /*!< Turns xDMRG simulation on/off. */
-        inline size_t   max_iters               = 10;               /*!< Max number sweeps along the chain. */
-        inline size_t   min_iters               = 4;                /*!< Min number sweeps along the chain. */
-        inline size_t   overlap_iters           = 2;                /*!< Number of initial sweeps selecting the candidate state with best overlap to the current state */
+        inline size_t   max_iters               = 10;               /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters               = 4;                /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t   overlap_iters           = 2;                /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
         inline long     chi_lim_max             = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init            = 16;               /*!< Initial chi limit. Only used when chi_grow == true, or starting from an entangled state. */
-        inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-//        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
         inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_tgt_per_site +- energy_dens_window. */

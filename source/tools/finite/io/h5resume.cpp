@@ -127,9 +127,6 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         if(pos != position and state.get_mps_site(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
         //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
     }
-
-    state.set_iter(status.iter);
-    state.set_step(status.step);
 }
 
 void compare(double val1, double val2, double tol, const std::string &tag) {

@@ -19,7 +19,7 @@ void tools::infinite::debug::check_integrity(const class_tensors_infinite & tens
        check_integrity(*tensors.model);
        check_integrity(*tensors.edges);
     }catch(std::exception & ex){
-        tools::infinite::print::print_state(*tensors.state) ;
+        tools::infinite::print::dimensions(tensors) ;
         throw std::runtime_error("Integrity check of state failed: " + std::string(ex.what()));
     }
 }

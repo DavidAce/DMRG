@@ -75,7 +75,7 @@ void class_idmrg::single_iDMRG_step(){
  */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
     Eigen::Tensor<Scalar,3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors,ritz);
-    tensors.merge_multisite_tensor(twosite_tensor);
+    tensors.merge_twosite_tensor(twosite_tensor,status.chi_lim);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }

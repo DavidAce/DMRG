@@ -32,11 +32,7 @@ class_state_finite &class_state_finite::operator=(class_state_finite &&other)   
 
 /* clang-format off */
 class_state_finite::class_state_finite(const class_state_finite &other):
-    iter(other.iter),
-    step(other.step),
     direction(other.direction),
-//    chi_lim(other.chi_lim),
-//    chi_lim_max(other.cfg_chi_lim_max),
     cache(other.cache),
     site_update_tags(other.site_update_tags),
     active_sites(other.active_sites),
@@ -50,11 +46,7 @@ class_state_finite::class_state_finite(const class_state_finite &other):
 class_state_finite &class_state_finite::operator=(const class_state_finite &other) {
     // check for self-assignment
     if(this != &other) {
-        iter                     = other.iter;
-        step                     = other.step;
         direction                = other.direction;
-//        chi_lim                  = other.chi_lim;
-//        chi_lim_max              = other.cfg_chi_lim_max;
         cache                    = other.cache;
         site_update_tags         = other.site_update_tags;
         active_sites             = other.active_sites;
@@ -115,15 +107,15 @@ size_t class_state_finite::get_position() const {
     return pos;
 }
 
-size_t class_state_finite::get_iteration() const { return iter; }
-size_t class_state_finite::reset_iter() { return iter = 0; }
-void   class_state_finite::set_iter(size_t iter_) { iter = iter_; }
-void   class_state_finite::increment_iter() { iter++; }
-
-size_t class_state_finite::get_step() const { return step; }
-size_t class_state_finite::reset_step() { return step = 0; }
-void   class_state_finite::set_step(size_t step_) { step = step_; }
-void   class_state_finite::increment_step() { step++; }
+//size_t class_state_finite::get_iteration() const { return iter; }
+//size_t class_state_finite::reset_iter() { return iter = 0; }
+//void   class_state_finite::set_iter(size_t iter_) { iter = iter_; }
+//void   class_state_finite::increment_iter() { iter++; }
+//
+//size_t class_state_finite::get_step() const { return step; }
+//size_t class_state_finite::reset_step() { return step = 0; }
+//void   class_state_finite::set_step(size_t step_) { step = step_; }
+//void   class_state_finite::increment_step() { step++; }
 
 long class_state_finite::find_largest_chi() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
@@ -211,141 +203,6 @@ const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_
 
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
-//
-// const class_mpo_site &class_state_finite::get_2site_mps(size_t pos) const {
-//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_2site_mps(pos) pos out of range: {}", pos));
-//    if(pos <= MPO_L.back()->get_position()) {
-//        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
-//        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_2site_mps(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
-//        return *mpo_it;
-//    } else {
-//        if(pos < MPO_R.front()->get_position())
-//            throw std::range_error(fmt::format("get_mps_site(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
-//        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
-//        if(mpo_it->get_position() != pos)
-//            throw std::range_error(fmt::format("get_2site_mps(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
-//        return *mpo_it;
-//    }
-//}
-//
-// class_mpo_site &class_state_finite::get_2site_mps(size_t pos) {
-//    return const_cast<class_mpo_site &>(static_cast<const class_state_finite &>(*this).get_2site_mps(pos));
-//}
-//
-// const class_environment &class_state_finite::get_ENVL(size_t pos) const {
-//    if(pos > ENV_L.back().get_position()) throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}", pos));
-//    if(pos >= ENV_L.size()) throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}", pos));
-//    auto env_it = std::next(ENV_L.begin(), static_cast<long>(pos));
-//    if(env_it->get_position() != pos)
-//        throw std::range_error(fmt::format("get_ENVL(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
-//    return *env_it;
-//}
-//
-// const class_environment &class_state_finite::get_ENVR(size_t pos) const {
-//    if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}", pos));
-//    if(pos >= ENV_L.size() + ENV_R.size()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
-//    auto env_it = std::next(ENV_R.begin(), static_cast<long>(pos - ENV_R.front().get_position()));
-//    if(env_it->get_position() != pos)
-//        throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
-//    return *env_it;
-//}
-//
-// const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
-//    if(pos > ENV2_L.back().get_position()) throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}", pos));
-//    if(pos >= ENV2_L.size()) throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}", pos));
-//    auto env2_it = std::next(ENV2_L.begin(), static_cast<long>(pos));
-//    if(env2_it->get_position() != pos)
-//        throw std::range_error(fmt::format("get_ENV2L(pos): Mismatch in env position and pos: {} != {}", env2_it->get_position(), pos));
-//    return *env2_it;
-//}
-//
-// const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
-//    if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
-//    if(pos >= ENV2_L.size() + ENV2_R.size()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
-//    auto env2_it = std::next(ENV2_R.begin(), static_cast<long>(pos - ENV2_R.front().get_position()));
-//    if(env2_it->get_position() != pos)
-//        throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in env2 position and pos: {} != {}", env2_it->get_position(), pos));
-//    return *env2_it;
-//}
-//
-//// For reduced energy MPO's
-//
-// bool class_state_finite::is_reduced() const {
-//    bool reduced = MPO_L.front()->is_reduced();
-//    for(auto &mpo : MPO_L)
-//        if(reduced != mpo->is_reduced()) {
-//            throw std::runtime_error(
-//                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
-//        }
-//    for(auto &mpo : MPO_R)
-//        if(reduced != mpo->is_reduced()) {
-//            throw std::runtime_error(
-//                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
-//        }
-//    return reduced;
-//}
-//
-// double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
-//
-// double class_state_finite::get_energy_per_site_reduced() const {
-//    // Check that all energies are the same
-//    double e_reduced = MPO_L.front()->get_reduced_energy();
-//    for(auto &mpo : MPO_L) {
-//        if(mpo->get_reduced_energy() != e_reduced) {
-//            throw std::runtime_error("Reduced energy mismatch!");
-//        }
-//    }
-//    for(auto &mpo : MPO_R) {
-//        if(mpo->get_reduced_energy() != e_reduced) {
-//            throw std::runtime_error("Reduced energy mismatch!");
-//        }
-//    }
-//    return e_reduced;
-//}
-//
-// void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
-//
-// void class_state_finite::set_reduced_energy_per_site(double site_energy) {
-//    if(get_energy_per_site_reduced() == site_energy) return;
-//    clear_measurements();
-//    cache.multimpo = {};
-//    for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
-//    for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
-//    tools::finite::mps::rebuild_all_edges(*this);
-//}
-//
-// void class_state_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-//    tools::finite::mpo::perturb_model_params(*this, coupling_ptb, field_ptb, perturbMode);
-//}
-//
-// void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_model_disorder(*this, coupling_damp, field_damp);
-// }
-//
-// bool class_state_finite::is_perturbed() const {
-//    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_2site_mps(pos).is_perturbed()) return true;
-//    }
-//    return false;
-//}
-//
-// bool class_state_finite::is_damped() const {
-//    for(size_t pos = 0; pos < get_length(); pos++) {
-//        if(get_2site_mps(pos).is_damped()) return true;
-//    }
-//    return false;
-//}
-
-// std::list<size_t> class_state_finite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
-//    clear_cache();
-//    return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
-//}
-//
-// std::list<size_t> class_state_finite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
-//    clear_cache();
-//    return active_sites = tools::finite::multisite::generate_truncated_site_list(*this, threshold, chi_lim, max_sites, min_sites);
-//}
-//
 Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
@@ -466,7 +323,7 @@ bool class_state_finite::all_sites_updated() const {
 
 bool class_state_finite::any_sites_updated() const {
     if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
-    return get_iteration() > 0 and std::any_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+    return std::any_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
 }
 
 bool class_state_finite::active_sites_updated() const {

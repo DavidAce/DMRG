@@ -15,9 +15,10 @@
 
 
 
-class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType sim_type)
-    : class_algorithm_base(std::move(h5ppFile_), sim_type) {
+class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
+    : class_algorithm_base(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing algorithm infinite");
+    tensors.initialize(settings::model::model_type);
     tools::infinite::debug::check_integrity(tensors);
 }
 
@@ -32,9 +33,9 @@ void class_algorithm_infinite::run() {
 
 void class_algorithm_infinite::run_preprocessing() {
     tools::common::profile::prof[algo_type]["t_pre"]->tic();
-    tensors.state->set_chi_max(cfg_chi_lim_max());
-    status.chi_lim_max = cfg_chi_lim_max();
-    update_bond_dimension_limit(cfg_chi_lim_init());
+    status.clear();
+    randomize_model(); // First use of random!
+    init_bond_dimension_limits();
     write_to_file(StorageReason::MODEL);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
 }
@@ -48,15 +49,20 @@ void class_algorithm_infinite::run_postprocessing() {
     tools::common::profile::print_profiling();
 }
 
+void class_algorithm_infinite::randomize_model() {
+    tools::log->info("Randomizing model");
+    tensors.randomize_model();
+    clear_convergence_status();
+}
+
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {
-        tensors.state->set_chi_lim(tmp_bond_limit.value());
         status.chi_lim = tmp_bond_limit.value();
         return;
     }
 
     try {
-        long chi_lim_now = tensors.state->get_chi_lim();
+        long chi_lim_now = status.chi_lim;
         if(chi_lim_now < cfg_chi_lim_init()) throw std::logic_error("Chi limit should be larger than chi init");
     } catch(std::exception &error) {
         // If we reached this stage, either
@@ -64,12 +70,12 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
         // 2) chi_lim is initialized, but it is smaller than the init value found in settings
         // Either way, we should set chi_lim to be chi_lim_init, unless cfg_chi_lim_init is larger than tmp_bond_limit
         tools::log->info("Setting initial bond dimension limit: {}", cfg_chi_lim_init());
-        tensors.state->set_chi_lim(cfg_chi_lim_init());
-        status.chi_lim = cfg_chi_lim_init();
+        status.chi_lim =  cfg_chi_lim_init();
+        status.chi_lim_init =  cfg_chi_lim_init();
         return;
     }
 
-    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() >= cfg_chi_lim_max();
+    status.chi_lim_has_reached_chi_max = status.chi_lim >= cfg_chi_lim_max();
     if(not status.chi_lim_has_reached_chi_max) {
         if(cfg_chi_lim_grow()) {
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
@@ -77,37 +83,37 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
             if(status.algorithm_has_got_stuck) {
                 tools::log->debug("Truncation error : {}", tensors.state->get_truncation_error());
                 tools::log->debug("Bond dimensions  : {}", tensors.state->chiC());
-                if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and tensors.state->chiC() >= tensors.state->get_chi_lim()) {
+                if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and tensors.state->chiC() >= status.chi_lim) {
                     // Write results before updating bond dimension chi
                     //                    backup_best_state(*state);
                     write_to_file(StorageReason::CHI_UPDATE);
-                    long chi_new_limit = std::min(tensors.state->get_chi_max(), tensors.state->get_chi_lim() * 2);
-                    tools::log->info("Updating bond dimension limit {} -> {}", tensors.state->get_chi_lim(), chi_new_limit);
-                    tensors.state->set_chi_lim(chi_new_limit);
+                    long chi_new_limit = std::min(status.chi_lim_max, status.chi_lim * 2);
+                    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new_limit);
+                    status.chi_lim = chi_new_limit;
                     clear_convergence_status();
-                    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == cfg_chi_lim_max();
+                    status.chi_lim_has_reached_chi_max = status.chi_lim == cfg_chi_lim_max();
 
                     copy_from_tmp();
 
                 } else {
                     tools::log->debug("cfg_chi_lim_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond "
                                       "dimension limit {}",
-                                      tensors.state->get_chi_lim());
+                                      status.chi_lim);
                 }
             } else {
-                tools::log->debug("Not stuck -> Kept current bond dimension limit {}", tensors.state->get_chi_lim());
+                tools::log->debug("Not stuck -> Kept current bond dimension limit {}", status.chi_lim);
             }
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
             tools::log->info("Setting bond dimension limit to maximum = {}", cfg_chi_lim_max());
-            tensors.state->set_chi_lim(cfg_chi_lim_max());
+            status.chi_lim = cfg_chi_lim_max();
         }
     } else {
-        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", cfg_chi_lim_max(), tensors.state->get_chi_lim());
+        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", cfg_chi_lim_max(), status.chi_lim);
     }
-    status.chi_lim = tensors.state->get_chi_lim();
-    if(tensors.state->get_chi_lim() > tensors.state->get_chi_max())
-        throw std::runtime_error(fmt::format("chi_lim is larger than cfg_chi_lim_max! {} > {}", tensors.state->get_chi_lim(), tensors.state->get_chi_max()));
+    status.chi_lim = status.chi_lim;
+    if(status.chi_lim > status.chi_lim_max)
+        throw std::runtime_error(fmt::format("chi_lim is larger than cfg_chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
 }
 
 // void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
@@ -116,7 +122,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //        max_bond_dim = cfg_chi_lim_max();
 //    }
 //    try{
-//        long chi_lim_now = tensors.state->get_chi_lim();
+//        long chi_lim_now = status.chi_lim;
 //        if(chi_lim_now < cfg_chi_lim_init())
 //            throw std::logic_error("Chi limit should be larger than chi init");
 //    }catch(std::exception &error){
@@ -127,22 +133,22 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //        tools::log->info("Setting initial bond dimension limit: {}", cfg_chi_lim_init());
 //        tensors.state->set_chi_lim(std::min(max_bond_dim.value(),cfg_chi_lim_init()));
 //        status.cfg_chi_lim_max = max_bond_dim.value();
-//        status.chi_lim = tensors.state->get_chi_lim();
+//        status.chi_lim = status.chi_lim;
 //        return;
 //    }
 //
-//    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == max_bond_dim;
+//    status.chi_lim_has_reached_chi_max = status.chi_lim == max_bond_dim;
 //    if(not status.chi_lim_has_reached_chi_max){
 //        if(cfg_chi_lim_grow()){
 //            // Here the settings specify to grow the bond dimension limit progressively during the simulation
 //            // Only do this if the simulation is stuck.
 //            if(status.algorithm_has_got_stuck){
-//                long chi_new_limit = std::min(max_bond_dim.value(), tensors.state->get_chi_lim() * 2);
-//                tools::log->debug("Updating bond dimension limit {} -> {}", tensors.state->get_chi_lim(), chi_new_limit);
+//                long chi_new_limit = std::min(max_bond_dim.value(), status.chi_lim * 2);
+//                tools::log->debug("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new_limit);
 //                tensors.state->set_chi_lim(chi_new_limit);
 //                clear_convergence_status();
 //            }else{
-//                tools::log->debug("cfg_chi_lim_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", tensors.state->get_chi_lim());
+//                tools::log->debug("cfg_chi_lim_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", status.chi_lim);
 //            }
 //        }else{
 //            // Here the settings specify to just set the limit to maximum chi directly
@@ -153,7 +159,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 //        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", cfg_chi_lim_max(),state->get_chi_lim());
 //    }
 //    status.cfg_chi_lim_max = max_bond_dim.value();
-//    status.chi_lim = tensors.state->get_chi_lim();
+//    status.chi_lim = status.chi_lim;
 //}
 
 void class_algorithm_infinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
@@ -367,7 +373,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
     // Start saving tensors and metadata
-    tools::infinite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, *tensors.state);
+    tools::infinite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::io::h5dset::save_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
                                          state_name, state_prefix, model_prefix, status);

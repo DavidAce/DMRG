@@ -61,6 +61,11 @@ void class_tensors_infinite::initialize(ModelType model_type_) {
     edges->initialize();
 }
 
+void class_tensors_infinite::randomize_model() {
+    model->randomize();
+    model->rebuild_mpo_squared();
+    reset_edges();
+}
 
 
 void class_tensors_infinite::reset_to_random_product_state(const std::string & sector, long bitfield, bool use_eigenspinors){
@@ -95,10 +100,12 @@ void class_tensors_infinite::eject_edges(){
 }
 
 
-void class_tensors_infinite::merge_multisite_tensor(const Eigen::Tensor<Scalar,3> & twosite_tensor) {
-    state->set_mps(twosite_tensor);
+void class_tensors_infinite::merge_twosite_tensor(const Eigen::Tensor<Scalar,3> & twosite_tensor, long chi_lim, std::optional<double> svd_threshold) {
     state->clear_cache();
     clear_measurements();
+    tools::infinite::mps::merge_twosite_tensor(*state, twosite_tensor, chi_lim, svd_threshold);
+//    normalize_state(chi_lim, svd_threshold, NormPolicy::IFNEEDED);
+
 }
 
 void class_tensors_infinite::enlarge() {
