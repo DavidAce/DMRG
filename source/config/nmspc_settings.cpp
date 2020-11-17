@@ -99,6 +99,15 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::print_freq "  , fdmrg::print_freq);
     dmrg_config.load_parameter("fdmrg::store_wavefn" , fdmrg::store_wavefn);
 
+    //Parameters controlling finite-LBIT
+    dmrg_config.load_parameter("flbit::on"           , flbit::on);
+    dmrg_config.load_parameter("flbit::max_iters"    , flbit::max_iters);
+    dmrg_config.load_parameter("flbit::min_iters"    , flbit::min_iters);
+    dmrg_config.load_parameter("flbit::chi_lim_max"  , flbit::chi_lim_max);
+    dmrg_config.load_parameter("flbit::chi_lim_grow" , flbit::chi_lim_grow);
+    dmrg_config.load_parameter("flbit::chi_lim_init" , flbit::chi_lim_init);
+    dmrg_config.load_parameter("flbit::print_freq "  , flbit::print_freq);
+    dmrg_config.load_parameter("flbit::store_wavefn" , flbit::store_wavefn);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                     , xdmrg::on);

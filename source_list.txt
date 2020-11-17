@@ -3,6 +3,7 @@ source/algorithms/class_algorithm_base.cpp
 source/algorithms/class_algorithm_finite.cpp
 source/algorithms/class_algorithm_infinite.cpp
 source/algorithms/class_algorithm_launcher.cpp
+source/algorithms/class_flbit.cpp
 source/algorithms/class_fdmrg.cpp
 source/algorithms/class_idmrg.cpp
 source/algorithms/class_itebd.cpp

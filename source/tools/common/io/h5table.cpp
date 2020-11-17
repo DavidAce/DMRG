@@ -140,6 +140,37 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
+        case(AlgorithmType::fLBIT): {
+            h5pp_table_flbit_profiling::register_table_type();
+            if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_flbit_profiling::h5_type, table_path, "fLBIT Profiling");
+            h5pp_table_flbit_profiling::table profiling_entry;
+            /* clang-format off */
+            profiling_entry.iter            = status.iter;
+            profiling_entry.step            = status.step;
+            profiling_entry.position        = status.position;
+            profiling_entry.t_tot           = tools::common::profile::t_tot->get_age();
+            profiling_entry.t_pre           = tools::common::profile::prof[algo_type.value()]["t_pre"]->get_measured_time();
+            profiling_entry.t_rnd           = tools::common::profile::prof[algo_type.value()]["t_rnd"]->get_measured_time();
+            profiling_entry.t_pos           = tools::common::profile::prof[algo_type.value()]["t_pos"]->get_measured_time();
+            profiling_entry.t_sim           = tools::common::profile::prof[algo_type.value()]["t_sim"]->get_measured_time();
+            profiling_entry.t_con           = tools::common::profile::prof[algo_type.value()]["t_con"]->get_measured_time();
+            profiling_entry.t_eig           = tools::common::profile::prof[algo_type.value()]["t_eig"]->get_measured_time();
+            profiling_entry.t_svd           = tools::common::profile::prof[algo_type.value()]["t_svd"]->get_measured_time();
+            profiling_entry.t_env           = tools::common::profile::prof[algo_type.value()]["t_env"]->get_measured_time();
+            profiling_entry.t_ent           = tools::common::profile::prof[algo_type.value()]["t_ent"]->get_measured_time();
+            profiling_entry.t_ene           = tools::common::profile::prof[algo_type.value()]["t_ene"]->get_measured_time();
+            profiling_entry.t_var           = tools::common::profile::prof[algo_type.value()]["t_var"]->get_measured_time();
+            profiling_entry.t_prj           = tools::common::profile::prof[algo_type.value()]["t_prj"]->get_measured_time();
+            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
+            profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
+            profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
+            /* clang-format on */
+            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            h5ppFile.appendTableRecords(profiling_entry, table_path);
+            tools::common::profile::get_default_prof()["t_hdf"]->toc();
+            break;
+        }
         case(AlgorithmType::iDMRG): {
             h5pp_table_idmrg_profiling::register_table_type();
             if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_idmrg_profiling::h5_type, table_path, "Profiling iDMRG");

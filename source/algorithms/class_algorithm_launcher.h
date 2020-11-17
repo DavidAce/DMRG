@@ -18,6 +18,7 @@ public:
     void run_algorithms();
     void run_idmrg() const;
     void run_fdmrg() const;
+    void run_flbit() const;
     void run_xdmrg() const;
     void run_itebd() const;
 

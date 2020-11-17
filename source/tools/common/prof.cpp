@@ -126,7 +126,6 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::xDMRG]["t_opt_sub_vH"]      = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- vH                 ");
     prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"]     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |  |- vHv                ");
 
-
     prof[AlgorithmType::fDMRG]["t_pre"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Preprocess             ");
     prof[AlgorithmType::fDMRG]["t_rnd"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Randomize state        ");
     prof[AlgorithmType::fDMRG]["t_pos"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Postprocess            ");
@@ -143,6 +142,23 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::fDMRG]["t_hdf"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          ");
     prof[AlgorithmType::fDMRG]["t_mps"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         ");
     prof[AlgorithmType::fDMRG]["t_mpo"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         ");
+
+    prof[AlgorithmType::fLBIT]["t_pre"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Preprocess             ");
+    prof[AlgorithmType::fLBIT]["t_rnd"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Randomize state        ");
+    prof[AlgorithmType::fLBIT]["t_pos"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Postprocess            ");
+    prof[AlgorithmType::fLBIT]["t_sim"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|+ Simulation             ");
+    prof[AlgorithmType::fLBIT]["t_con"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Convergence checks    ");
+    prof[AlgorithmType::fLBIT]["t_eig"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Eig. decomp.          ");
+    prof[AlgorithmType::fLBIT]["t_svd"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          ");
+    prof[AlgorithmType::fLBIT]["t_env"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Environment upd.      ");
+    prof[AlgorithmType::fLBIT]["t_ent"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  ");
+    prof[AlgorithmType::fLBIT]["t_ene"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                ");
+    prof[AlgorithmType::fLBIT]["t_var"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              ");
+    prof[AlgorithmType::fLBIT]["t_prj"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Projections           ");
+    prof[AlgorithmType::fLBIT]["t_chk"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                ");
+    prof[AlgorithmType::fLBIT]["t_hdf"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          ");
+    prof[AlgorithmType::fLBIT]["t_mps"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         ");
+    prof[AlgorithmType::fLBIT]["t_mpo"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         ");
 
     prof[AlgorithmType::iDMRG]["t_pre"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Preprocess             ");
     prof[AlgorithmType::iDMRG]["t_rnd"]             = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, "|- Randomize state        ");

@@ -200,6 +200,18 @@ namespace settings {
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
+    //Parameters controlling flbit
+    namespace flbit {
+        inline bool     on           = true;                         /*!< Turns flbit simulation on/off. */
+        inline size_t   max_iters    = 10;                           /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters    = 4;                            /*!< Min number of iterations. One iterations moves L steps. */
+        inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_lim_grow = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
+        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of iterations. (0 = off). */
+        inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+    }
+
     //Parameters controlling xDMRG
     namespace xdmrg {
         inline bool     on                      = false;             /*!< Turns xDMRG simulation on/off. */
