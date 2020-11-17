@@ -62,7 +62,7 @@ void debug::register_callbacks() {
     #include <memory>
     #include <unistd.h>
     #include <vector>
-
+    #include <execinfo.h>
 std::string getexepath() {
     static char result[PATH_MAX];
     ssize_t     count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -85,10 +85,10 @@ std::string getErrorLocation(unw_word_t addr) {
     auto exec_path = getexepath();
     // Generate a hex address for addr2line
     char hex_addr[16];
-    snprintf(hex_addr, 16, "%lx", addr);
+    snprintf(hex_addr, 16, "0x%lx", addr);
 
     // Generate the command and call it
-    std::string cmd       = "addr2line -e " + exec_path + " -f -C " + hex_addr;
+    std::string cmd       = "addr2line --exe " + exec_path + " --functions --demangle " + hex_addr;
     auto        locString = sh(cmd);
     if (locString.empty()) return locString;
 
@@ -100,8 +100,8 @@ std::string getErrorLocation(unw_word_t addr) {
             locString.replace(start_pos, 1, " in file ");
         start_pos += 1;
     }
-
-    return locString;
+    if(locString.find("??") != std::string::npos) return std::string();
+    else return locString;
 }
 
 void debug::print_stack_trace() {
@@ -116,9 +116,9 @@ void debug::print_stack_trace() {
         unw_word_t offset, ip;
         unw_get_reg(&cursor, UNW_REG_IP, &ip);
         if(ip == 0) { break; }
-        std::fprintf(stderr, "#%-3d 0x%-10lx", count++, ip);
-        char sym[256];
+        char sym[1024];
         if(unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
+            std::fprintf(stderr, "#%-3d 0x%-10lx", count++, ip);
             auto estr = getErrorLocation(ip);
             if(not estr.empty()) std::fprintf(stderr, " %s\n", estr.c_str());
             else {
