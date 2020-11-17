@@ -13,6 +13,8 @@
 namespace qm{
     /* clang-format off */
     using Scalar = std::complex<double>;
+    using cplx = std::complex<double>;
+    using real = double;
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);
     constexpr std::complex<double> imp(0.0,1.0);
     constexpr std::complex<double> imn(0.0,-1.0);
@@ -20,7 +22,7 @@ namespace qm{
         extern Eigen::Matrix2cd sx;
         extern Eigen::Matrix2cd sy;
         extern Eigen::Matrix2cd sz;
-        extern Eigen::Matrix2cd Id;
+        extern Eigen::Matrix2cd id;
         extern std::array<Eigen::Vector2cd,2> sx_spinors;
         extern std::array<Eigen::Vector2cd,2> sy_spinors;
         extern std::array<Eigen::Vector2cd,2> sz_spinors;
@@ -28,18 +30,19 @@ namespace qm{
         extern std::vector<Eigen::MatrixXcd> SY;
         extern std::vector<Eigen::MatrixXcd> SZ;
         extern std::vector<Eigen::MatrixXcd> II;
-
+        extern std::vector<Eigen::Matrix4cd> gen_twobody_spin(const Eigen::Matrix2cd &s);
     }
 
     namespace spinOne{
         extern Eigen::Matrix3cd sx;
         extern Eigen::Matrix3cd sy;
         extern Eigen::Matrix3cd sz;
-        extern Eigen::Matrix3cd Id;
+        extern Eigen::Matrix3cd id;
         extern std::vector<Eigen::MatrixXcd> SX;
         extern std::vector<Eigen::MatrixXcd> SY;
         extern std::vector<Eigen::MatrixXcd> SZ;
         extern std::vector<Eigen::MatrixXcd> II;
+        extern std::vector<Eigen::MatrixXcd> gen_twobody_spin(const Eigen::Matrix3cd &s);
     }
 
     namespace timeEvolution{
@@ -48,6 +51,10 @@ namespace qm{
         extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
         extern std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(std::complex<double> t, size_t susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
         extern std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(std::complex<double> a, size_t susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+    }
+
+    namespace lbit{
+        extern std::vector<Eigen::Tensor<cplx,2>> get_unitary_twosite_operators(size_t sites, double fmix);
     }
 
     namespace mpo{

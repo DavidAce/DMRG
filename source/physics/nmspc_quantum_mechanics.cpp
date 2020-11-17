@@ -17,14 +17,16 @@
 using Scalar = std::complex<double>;
 using namespace Eigen;
 
+
+
 std::vector<Eigen::MatrixXcd> qm::gen_manybody_spin(const Eigen::MatrixXcd &s, int sites) {
     std::vector<MatrixXcd> S;
-    MatrixXcd              Id = MatrixXcd::Identity(s.rows(), s.cols());
+    MatrixXcd              id = MatrixXcd::Identity(s.rows(), s.cols());
     MatrixXcd              tmp;
     for(int idx = 0; idx < sites; idx++) {
-        tmp = idx == 0 ? s : Id;
+        tmp = idx == 0 ? s : id;
         for(int j = 1; j < sites; j++) {
-            tmp = kroneckerProduct(tmp, idx == j ? s : Id).eval();
+            tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
         }
         S.emplace_back(tmp);
     }
@@ -32,6 +34,7 @@ std::vector<Eigen::MatrixXcd> qm::gen_manybody_spin(const Eigen::MatrixXcd &s, i
 }
 
 namespace qm::spinOneHalf {
+
     /* clang-format off */
     Matrix2cd sx = (Matrix2cd() <<
             0.0, 1.0,
@@ -42,7 +45,13 @@ namespace qm::spinOneHalf {
     Matrix2cd sz = (Matrix2cd() <<
             1.0, 0.0,
             0.0, -1.0).finished();
-    Matrix2cd Id  = (Matrix2cd() << 1.0, 0.0,
+    Matrix2cd sp = (Matrix2cd() <<
+            0.0, 2.0,
+            0.0, 0.0).finished();
+    Matrix2cd sm = (Matrix2cd() <<
+            0.0, 0.0,
+            2.0, 0.0).finished();
+    Matrix2cd id  = (Matrix2cd() << 1.0, 0.0,
             0.0, 1.0).finished();
 
     std::array<Vector2cd,2> sx_spinors{(Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),
@@ -60,6 +69,20 @@ namespace qm::spinOneHalf {
     std::vector<Eigen::MatrixXcd> II;
     /* clang-format on */
 
+    std::vector<Eigen::Matrix4cd> gen_twobody_spin(const Eigen::Matrix2cd &s) {
+        std::vector<Matrix4cd> S;
+        MatrixXcd tmp;
+        for(int idx = 0; idx < 2; idx++) {
+            tmp = idx == 0 ? s : id;
+            for(int j = 1; j < 2; j++) {
+                tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
+            }
+            S.emplace_back(tmp);
+        }
+        return S;
+    }
+
+
 }
 
 namespace qm::SpinOne {
@@ -74,7 +97,7 @@ namespace qm::SpinOne {
     Matrix3cd sz = (Matrix3cd() <<  1.0, 0.0, 0.0,
                                     0.0, 0.0, 0.0,
                                     0.0, 0.0,-1.0).finished();
-    Matrix3cd Id = (Matrix3cd()  << 1.0, 0.0, 0.0,
+    Matrix3cd id = (Matrix3cd()  << 1.0, 0.0, 0.0,
                                     0.0, 1.0, 0.0,
                                     0.0, 0.0, 1.0).finished();
 
@@ -83,6 +106,20 @@ namespace qm::SpinOne {
     std::vector<Eigen::MatrixXcd> SZ;
     std::vector<Eigen::MatrixXcd> II;
     /* clang-format on */
+
+    std::vector<Eigen::MatrixXcd> gen_twobody_spin(const Eigen::Matrix3cd &s) {
+        std::vector<MatrixXcd> S;
+        MatrixXcd tmp;
+        for(int idx = 0; idx < 2; idx++) {
+            tmp = idx == 0 ? s : id;
+            for(int j = 1; j < 2; j++) {
+                tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
+            }
+            S.emplace_back(tmp);
+        }
+        return S;
+    }
+
 }
 
 namespace qm::timeEvolution {
@@ -145,12 +182,7 @@ namespace qm::timeEvolution {
         return tensor_vec;
     }
 
-    //        inline void update_evolution_step_size(const std::complex<double> dt, const int susuki_trotter_order, Eigen::MatrixXcd &h_evn, Eigen::MatrixXcd
-    //        &h_odd){
-    //            /*! Returns a set of 2-site unitary gates for the time evolution operator. */
-    //            step_size = std::abs(dt);
-    //            U = get_2site_evolution_gates(dt, susuki_trotter_order, h_evn,h_odd);
-    //        }
+
 
     std::vector<Eigen::Tensor<std::complex<double>, 2>> compute_G(const std::complex<double> a, size_t susuki_trotter_order, const Eigen::MatrixXcd &h_evn,
                                                                   const Eigen::MatrixXcd &h_odd)
@@ -173,20 +205,62 @@ namespace qm::timeEvolution {
 
 }
 
+std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(size_t sites, double fmix){
+    /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
+     *
+     *
+     @verbatim
+                   0      1                0
+                   |      |                |
+                 [ exp(-ifH) ]  ---> [ exp(-ifH) ]
+                   |      |               |
+                   2      3               1
+     @endverbatim
+    */
+
+    tools::log->trace("Generating twosite unitaries");
+    std::vector<Eigen::Tensor<qm::cplx,2>> unitaries(sites-1);
+    auto SZ  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sz);
+    auto SP  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sp);
+    auto SM  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sm);
+    auto ID  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::id);
+    auto N   = std::vector<Eigen::Matrix4cd> {0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
+
+    for (size_t idx = 0; idx < sites-1; idx++){
+        double th0 = rnd::uniform_double_box(-1,1);
+        double th1 = rnd::uniform_double_box(-1,1);
+        double th2 = rnd::uniform_double_box(-1,1);
+        double th3 = rnd::uniform_double_box(-1,1);
+        std::complex<double> t(rnd::uniform_double_box(-1,1), rnd::uniform_double_box(-1,1));
+
+        Eigen::Matrix4cd H =
+            th3*N[0]*N[1] +
+            th2*N[1]*(ID[0]-N[0]) +
+            th1*N[0]*(ID[1]-N[1]) +
+            th0*(ID[0]-N[0])*(ID[1]-N[1]) +
+            SP[0]* SM[1]*t +
+            SP[1]* SM[0]*std::conj(t);
+
+        unitaries[idx] = Textra::MatrixToTensor((imn * fmix * H).exp(),4,4);
+    }
+    return unitaries;
+}
+
+
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
 /*! Builds the MPO for measuring parity on spin systems.
- *      P = Π  s_{i}
- * where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
- *
- * MPO = | s |
- *
- *        2
- *        |
- *    0---s---1
- *        |
- *        3
- *
- */
+*      P = Π  s_{i}
+* where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
+*
+* MPO = | s |
+*
+*        2
+*        |
+*    0---s---1
+*        |
+*        3
+*
+*/
 {
     long                     spin_dim = paulimatrix.rows();
     Eigen::array<long, 4>    extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
@@ -268,7 +342,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     MPO_I.setZero();
     MPO_S.setZero();
     MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
-    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Eigen::MatrixXcd::Identity(spin_dim, spin_dim));
+    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(Eigen::MatrixXcd::Identity(spin_dim, spin_dim));
 
     // We have to push in an even number of pauli matrices to retain the parity sector.
     // Choosing randomli

@@ -1,12 +1,12 @@
 #pragma once
+#include <Eigen/Core>
 #include <complex>
 #include <config/enums.h>
+#include <general/eigen_tensor_fwd_decl.h>
 #include <list>
 #include <optional>
 #include <set>
 #include <string>
-#include <Eigen/Core>
-#include <general/eigen_tensor_fwd_decl.h>
 
 /* clang-format off */
 class class_state_finite;
@@ -20,10 +20,11 @@ namespace tools::finite::mps {
     extern void truncate_all_sites              (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_active_sites           (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_next_sites             (class_state_finite & state, long chi_lim, size_t num_sites = 4, std::optional<double> svd_threshold = std::nullopt);
-    extern bool bitfield_is_valid               (std::optional<long> bitfield);
+    extern void apply_twosite_operators         (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,2>> & twosite_operators, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
 
     namespace internal{
         inline std::set<long> used_bitfields;
+        extern bool bitfield_is_valid (std::optional<long> bitfield);
         extern int get_sign(const std::string &sector);
         extern std::string get_axis(const std::string &sector);
         extern Eigen::Vector2cd get_spinor(const std::string &axis, int sign);

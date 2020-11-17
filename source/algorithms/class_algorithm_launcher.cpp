@@ -3,6 +3,7 @@
 //
 #include <algorithms/class_algorithm_launcher.h>
 #include <algorithms/class_fdmrg.h>
+#include <algorithms/class_flbit.h>
 #include <algorithms/class_idmrg.h>
 #include <algorithms/class_itebd.h>
 #include <algorithms/class_xdmrg.h>
@@ -128,6 +129,7 @@ void class_algorithm_launcher::run_algorithms(){
     if(h5pp_file) h5pp_file->writeDataset(false, "common/finished_all");
     run_idmrg();
     run_fdmrg();
+    run_flbit();
     run_xdmrg();
     run_itebd();
 
@@ -154,6 +156,14 @@ void class_algorithm_launcher::run_fdmrg() const{
         fdmrg.run();
     }
 }
+
+void class_algorithm_launcher::run_flbit() const{
+    if(settings::flbit::on){
+        class_flbit flbit(h5pp_file);
+        flbit.run();
+    }
+}
+
 
 void class_algorithm_launcher::run_xdmrg() const{
     if(settings::xdmrg::on){

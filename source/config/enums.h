@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
-enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD };
+enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode {EIGEN,LAPACKE};
@@ -21,8 +21,13 @@ enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
 enum class OptWhen { ALWAYS,NEVER, PREV_FAIL,  };
 enum class OptMark { PASS,FAIL, };
 enum class OptInit { CURRENT_STATE, LAST_RESULT };
-
-enum class StateType { RANDOM_PRODUCT_STATE, RANDOM_ENTANGLED_STATE, RANDOMIZE_PREVIOUS_STATE, PRODUCT_STATE };
+enum class StateType {
+    RANDOM_PRODUCT_STATE,
+    RANDOM_ENTANGLED_STATE,
+    RANDOMIZE_PREVIOUS_STATE,
+    PRODUCT_STATE,
+    ALL_DOWN_ONE_UP,
+};
 
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -32,6 +37,22 @@ enum class PerturbMode {
 };
 
 enum class fdmrg_task {
+    INIT_RANDOMIZE_MODEL,
+    INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
+    INIT_BOND_DIM_LIMITS,
+    INIT_WRITE_MODEL,
+    INIT_CLEAR_STATUS,
+    INIT_DEFAULT,
+    FIND_GROUND_STATE,
+    FIND_HIGHEST_STATE,
+    POST_WRITE_RESULT,
+    POST_PRINT_RESULT,
+    POST_DEFAULT,
+    PROF_RESET,
+};
+
+enum class flbit_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
@@ -76,6 +97,7 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == AlgorithmType::iDMRG) return "iDMRG";
         if(item == AlgorithmType::fDMRG) return "fDMRG";
+        if(item == AlgorithmType::fLBIT) return "fLBIT";
         if(item == AlgorithmType::xDMRG) return "xDMRG";
         if(item == AlgorithmType::iTEBD) return "iTEBD";
     }
@@ -137,6 +159,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StateType::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
         if(item == StateType::RANDOMIZE_PREVIOUS_STATE) return "RANDOMIZE_PREVIOUS_STATE";
         if(item == StateType::PRODUCT_STATE)            return "PRODUCT_STATE";
+        if(item == StateType::ALL_DOWN_ONE_UP)          return "ALL_DOWN_ONE_UP";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == PerturbMode::PERCENTAGE)                 return "PERCENTAGE";
@@ -238,8 +261,9 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == "iDMRG") return AlgorithmType::iDMRG;
         if(item == "fDMRG") return AlgorithmType::fDMRG;
+        if(item == "fLBIT") return AlgorithmType::fLBIT;
         if(item == "xDMRG") return AlgorithmType::xDMRG;
-        if(item == "iDMRG") return AlgorithmType::iTEBD;
+        if(item == "iTEBD") return AlgorithmType::iTEBD;
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == "ONE") return MultisiteMove::ONE;
@@ -299,6 +323,7 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "RANDOM_ENTANGLED_STATE")   return StateType::RANDOM_ENTANGLED_STATE;
         if(item == "RANDOMIZE_PREVIOUS_STATE") return StateType::RANDOMIZE_PREVIOUS_STATE;
         if(item == "PRODUCT_STATE")            return StateType::PRODUCT_STATE;
+        if(item == "ALL_DOWN_ONE_UP")          return StateType::ALL_DOWN_ONE_UP;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == "PERCENTAGE")                return PerturbMode::PERCENTAGE;
