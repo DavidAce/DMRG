@@ -11,9 +11,10 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.array([16,24])
-lambdas      = [0.000]
-deltas       = [0.000]
+sites         = np.array([16,24])
+lambdas       = [0.000]
+deltas        = [0.000]
+output_prefix = "output"
 
 
 # sites        = np.array([16,20,24])
@@ -47,7 +48,7 @@ for num_L,val_L in enumerate(sites):
 
             input_filename = location + '/' + basename + '_L'+ str_L + '_l' + str_l + '_d'+ str_d + '.cfg'
             settings = {
-                "output::output_filepath"            : 'output/L_'+ str_L + '/l_'+ str_l + '/d_' + str_d + '/' + basename + '.h5',
+                "output::output_filepath"            : output_prefix + '/L_'+ str_L + '/l_'+ str_l + '/d_' + str_d + '/' + basename + '.h5',
                 "threading::num_threads"             : "1",
                 "console::verbosity"                 : "2",
                 "model::model_size"                  : str_L,
