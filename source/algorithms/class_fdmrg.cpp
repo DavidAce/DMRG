@@ -107,8 +107,7 @@ void class_fdmrg::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
-    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
-                    settings::strategy::use_eigenspinors);
+    randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
