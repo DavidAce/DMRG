@@ -148,4 +148,8 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
 }
 
-void tools::finite::mps::internal::randomize_given_state(class_state_finite &state) { tools::finite::mps::apply_random_paulis(state, {"x", "z"}); }
+void tools::finite::mps::internal::randomize_given_state(class_state_finite &state) {
+#pragma message "Applying random paulis 10 times"
+    for(int i = 0; i < 10; i++)
+        tools::finite::mps::apply_random_paulis(state, {"x", "z"});
+}
