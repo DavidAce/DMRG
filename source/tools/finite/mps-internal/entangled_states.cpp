@@ -51,22 +51,22 @@ void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2
         auto  smdt = pastCenter ? chiR : chiL;
         Eigen::VectorXd Ltmp = Eigen::VectorXd(smdt).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_01();});
         std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater<double>());
-        Eigen::Tensor<Scalar, 1> L = Textra::MatrixTensorMap(Ltmp.normalized()).cast<Scalar>();
+        Eigen::Tensor<Scalar, 1> L = Textra::MatrixToTensor(Ltmp.normalized()).cast<Scalar>();
         Eigen::Tensor<Scalar, 3> G(spin_dim, chiL, chiR);
         if(real){
             Eigen::VectorXd Gtmp = Eigen::VectorXd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_box(-1.0,1.0);});
-            G =  Textra::MatrixTensorMap(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+            G =  Textra::MatrixToTensor(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
         }
         else{
             Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_complex_1();});
-            G = Textra::MatrixTensorMap(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+            G = Textra::MatrixToTensor(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
         }
 
         mps.set_mps(G, L);
         if(mps.isCenter()) {
             Ltmp = Eigen::VectorXd(chiR).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_01();});
             std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater<double>());
-            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixTensorMap(Ltmp.normalized()).cast<Scalar>();
+            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixToTensor(Ltmp.normalized()).cast<Scalar>();
             mps.set_LC(LC);
             pastCenter = true;
         }
@@ -88,7 +88,7 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
         auto                                                              rows = past_center ? chiL : chiL * spin_dim;
         auto                                                              cols = past_center ? chiR * spin_dim : chiR;
-        Eigen::Tensor<Scalar, 1>                                          L = Textra::MatrixTensorMap(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
+        Eigen::Tensor<Scalar, 1>                                          L = Textra::MatrixToTensor(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
         Eigen::Tensor<Scalar, 3>                                          G(spin_dim, chiL, chiR);
         Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         // Here we construct the set of spinors for each site using randomly selected eigenspinors
@@ -109,7 +109,7 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         //        G = Textra::MatrixTensorMap(Textra::Tensor_to_Vector(G).normalized(), spin_dim, chiL, chiR);
         mps.set_mps(G, L);
         if(mps.isCenter()) {
-            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixTensorMap(Eigen::VectorXd::Ones(chiR).normalized()).cast<Scalar>();
+            Eigen::Tensor<Scalar, 1> LC = Textra::MatrixToTensor(Eigen::VectorXd::Ones(chiR).normalized()).cast<Scalar>();
             mps.set_LC(LC);
             past_center = true;
         }

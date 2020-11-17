@@ -52,7 +52,8 @@ Eigen::Matrix2cd tools::finite::mps::internal::get_pauli(const std::string &axis
     if(axis.find('x') != std::string::npos) return qm::spinOneHalf::sx;
     if(axis.find('y') != std::string::npos) return qm::spinOneHalf::sy;
     if(axis.find('z') != std::string::npos) return qm::spinOneHalf::sz;
-    if(axis.find('I') != std::string::npos) return qm::spinOneHalf::Id;
+    if(axis.find('I') != std::string::npos) return qm::spinOneHalf::id;
+    if(axis.find('i') != std::string::npos) return qm::spinOneHalf::id;
     throw std::runtime_error(fmt::format("get_pauli given invalid axis: {}", axis));
 }
 
@@ -92,7 +93,7 @@ void tools::finite::mps::internal::random_product_state(class_state_finite &stat
     state.clear_cache();
     if(sector == "random") {
         internal::set_random_product_state_with_spinors_in_c2(state); // b)
-    } else if(bitfield_is_valid(bitfield)) {
+    } else if(internal::bitfield_is_valid(bitfield)) {
         internal::set_random_product_state_on_axis_using_bitfield(state, sector, bitfield.value()); // c)
         internal::used_bitfields.insert(bitfield.value());
     } else if(use_eigenspinors) {
@@ -105,16 +106,17 @@ void tools::finite::mps::internal::random_product_state(class_state_finite &stat
     state.tag_all_sites_have_been_updated(true); // This operation changes all sites
 }
 
+
 void tools::finite::mps::internal::set_product_state(class_state_finite &state, const std::string &sector) {
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis      = get_axis(sector);
     int         sign      = get_sign(sector);
     int         last_sign = 1;
-    auto        spinor    = Textra::MatrixTensorMap(get_spinor(axis, last_sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
-    for(auto &mps_ptr : state.mps_sites) {
-        auto &mps = *mps_ptr;
+    for(auto &&mps_ptr : state.mps_sites) {
+        auto &&mps = *mps_ptr;
         mps.set_mps(spinor, L);
         if(mps.isCenter()) mps.set_LC(L);
     }
@@ -127,7 +129,7 @@ void tools::finite::mps::internal::set_random_product_state_with_spinors_in_c2(c
     L.setConstant(1.0);
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
-        mps.set_mps(Textra::MatrixTensorMap(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
         if(mps.isCenter()) mps.set_LC(L);
     }
 }
@@ -152,7 +154,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
         auto &mps  = *mps_ptr;
         int   sign = 2 * bs[mps.get_position()] - 1;
         carry_sign *= sign;
-        mps.set_mps(Textra::MatrixTensorMap(get_spinor(sector).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(sector).normalized(), 2, 1, 1), L);
         std::string arrow = sign < 0 ? "↓" : "↑";
         ud_vec.emplace_back(arrow);
         if(mps.isCenter()) mps.set_LC(L);
@@ -170,13 +172,13 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         last_sign = 2 * rnd::uniform_integer_01() - 1;
-        mps.set_mps(Textra::MatrixTensorMap(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L);
         if(mps.isCenter()) mps.set_LC(L);
     }
     auto spin_component = tools::finite::measure::spin_component(state, axis);
     if(spin_component * sign < 0) {
         auto &mps = *state.mps_sites.back();
-        mps.set_mps(Textra::MatrixTensorMap(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L);
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
@@ -196,7 +198,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
         auto &           mps    = *mps_ptr;
         Eigen::VectorXd  ab     = Eigen::VectorXd::Random(2).normalized();
         Eigen::VectorXcd spinor = ab(0) * spinor_up + ab(1) * spinor_dn;
-        mps.set_mps(Textra::MatrixTensorMap(spinor.normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(spinor.normalized(), 2, 1, 1), L);
         if(mps.isCenter()) mps.set_LC(L);
     }
 }

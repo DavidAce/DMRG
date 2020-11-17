@@ -28,7 +28,7 @@ class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : 
     qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
     qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
-    qm::spinOneHalf::II = qm::gen_manybody_spin(Id, 2);
+    qm::spinOneHalf::II = qm::gen_manybody_spin(id, 2);
 
     class_ising_tf_rf::randomize_hamiltonian();
     h5tb_ising_tf_rf::register_table_type();
@@ -92,11 +92,11 @@ void class_ising_tf_rf::build_mpo()
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
     mpo_internal.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(id);
     mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_coupling() * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(id);
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
@@ -123,7 +123,7 @@ void class_ising_tf_rf::set_coupling_damping(double alpha_) { alpha = alpha_; }
 void class_ising_tf_rf::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
     }
 }
@@ -148,7 +148,7 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
@@ -165,7 +165,7 @@ Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view() const {
 Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view(double site_energy) const {
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<Scalar, 4> temp                                           = MPO();
-    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - site_energy * Id);
+    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - site_energy * id);
     return temp;
 }
 
