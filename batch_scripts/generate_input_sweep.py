@@ -14,7 +14,7 @@ os.makedirs(location, exist_ok=True)
 sites         = np.array([16,24])
 lambdas       = [0.000]
 deltas        = [0.000]
-output_prefix = "output"
+output_prefix = "output_10_rnd"
 
 
 # sites        = np.array([16,20,24])
@@ -57,7 +57,7 @@ for num_L,val_L in enumerate(sites):
                 "model::ising_sdual::J_stdv"         : "1.0",
                 "model::ising_sdual::h_stdv"         : "1.0",
                 "xdmrg::chi_lim_max"                 : "512",
-                "xdmrg::max_states"                  : "4",
+                "xdmrg::max_states"                  : "8",
                 "xdmrg::overlap_iters"               : "4",
             }
             num_total = num_total + 1
