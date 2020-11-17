@@ -245,6 +245,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
         else
             chi_lim = cfg_chi_lim_init();
     }
+    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_type == StateType::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
