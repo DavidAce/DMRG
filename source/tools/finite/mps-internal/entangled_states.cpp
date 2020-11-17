@@ -149,6 +149,5 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
 }
 
 void tools::finite::mps::internal::randomize_given_state(class_state_finite &state) {
-#pragma message "Applying random paulis 10 times"
     tools::finite::mps::apply_random_paulis(state, {"x", "z"});
 }

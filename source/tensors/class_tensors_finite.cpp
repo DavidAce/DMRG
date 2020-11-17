@@ -62,14 +62,15 @@ void class_tensors_finite::randomize_state(StateType state_type, const std::stri
                                            std::optional<double> svd_threshold) {
     state->clear_measurements();
     if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE) {
+        #pragma message "Applying random paulis 10 times"
         for(int i = 0; i < 10; i++){
             tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
-            project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection anyway
+            project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection
         }
     }else{
         tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
         if(state_type == StateType::RANDOM_ENTANGLED_STATE)
-            project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection anyway
+            project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection
         else
             normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);
     }
