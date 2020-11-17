@@ -58,7 +58,7 @@ for num_L,val_L in enumerate(sites):
                 "model::ising_sdual::h_stdv"         : "1.0",
                 "xdmrg::chi_lim_max"                 : "512",
                 "xdmrg::max_states"                  : "8",
-                "xdmrg::overlap_iters"               : "4",
+                "xdmrg::overlap_iters"               : "2",
             }
             num_total = num_total + 1
             print(input_filename, "L:", str_L,"l:",str_l, "d:", str_d,"j:", str_j, "h:",str_h)
