@@ -78,7 +78,7 @@ namespace Textra {
     //
 
     template<typename Scalar>
-    constexpr Eigen::Tensor<Scalar, 1> extractDiagonal(const Eigen::Tensor<Scalar, 2> &tensor) {
+    Eigen::Tensor<Scalar, 1> extractDiagonal(const Eigen::Tensor<Scalar, 2> &tensor) {
         assert(tensor.dimension(0) == tensor.dimension(1) and "extractDiagonal expects a square tensor");
 
         Eigen::Tensor<Scalar, 1> diagonals(tensor.dimension(0));
@@ -88,29 +88,28 @@ namespace Textra {
     }
 
     template<typename Scalar>
-    constexpr auto asDiagonal(const Eigen::Tensor<Scalar, 1> &tensor) {
+    Eigen::Tensor<Scalar, 2> asDiagonal(const Eigen::Tensor<Scalar, 1> &tensor) {
         return tensor.inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
     }
 
     template<typename Scalar>
-    constexpr auto asDiagonalSquared(const Eigen::Tensor<Scalar, 1> &tensor) {
+    Eigen::Tensor<Scalar, 2> asDiagonalSquared(const Eigen::Tensor<Scalar, 1> &tensor) {
         return tensor.square().inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
     }
 
     template<typename Scalar>
-    constexpr auto asDiagonalInversed(const Eigen::Tensor<Scalar, 1> &tensor) {
+    Eigen::Tensor<Scalar, 2> asDiagonalInversed(const Eigen::Tensor<Scalar, 1> &tensor) {
         return tensor.inverse().inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
     }
 
     template<typename Scalar>
-    constexpr auto asDiagonalInversed(const Eigen::Tensor<Scalar, 2> &tensor) {
-        assert(tensor.dimension(0) == tensor.dimension(1) and "Textra::asDiagonalInversed expects a square tensor");
-        Eigen::Tensor<Scalar, 2> inversed = asDiagonalInversed(extractDiagonal(tensor));
-        return inversed;
+    Eigen::Tensor<Scalar, 2> asDiagonalInversed(const Eigen::Tensor<Scalar, 2> &tensor) {
+        if(not tensor.dimension(0) == tensor.dimension(1)) throw std::runtime_error("Textra::asDiagonalInversed expects a square tensor");
+        return asDiagonalInversed(extractDiagonal(tensor));
     }
 
     template<typename Scalar, auto rank>
-    constexpr auto asNormalized(const Eigen::Tensor<Scalar, rank> &tensor) {
+    Eigen::Tensor<Scalar, rank> asNormalized(const Eigen::Tensor<Scalar, rank> &tensor) {
         Eigen::Map<const VectorType<Scalar>> map(tensor.data(), tensor.size());
         return Eigen::TensorMap<Eigen::Tensor<const Scalar, rank>>(map.normalized().eval().data(), tensor.dimensions());
     }
@@ -131,7 +130,7 @@ namespace Textra {
     using is_plainObject = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived>>, std::decay_t<Derived>>;
 
     template<typename Derived, auto rank>
-    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims) {
+    constexpr Eigen::Tensor<typename Derived::Scalar, rank> MatrixToTensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims) {
         if constexpr(is_plainObject<Derived>::value) {
             // Return map from raw input.
             return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
@@ -144,26 +143,36 @@ namespace Textra {
 
     // Helpful overload
     template<typename Derived, typename... Dims>
-    constexpr Eigen::Tensor<typename Derived::Scalar, static_cast<int>(sizeof...(Dims))> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix,
+    constexpr Eigen::Tensor<typename Derived::Scalar, static_cast<int>(sizeof...(Dims))> MatrixToTensor(const Eigen::EigenBase<Derived> &matrix,
                                                                                                           const Dims... dims) {
-        return Matrix_to_Tensor(matrix, array<sizeof...(Dims)>{dims...});
+        static_assert(sizeof...(Dims) > 0, "MatrixToTensor: sizeof... (Dims) must be larger than 0");
+        return MatrixToTensor(matrix, array<sizeof...(Dims)>{dims...});
     }
     // Helpful overload
     template<typename Derived, auto rank>
-    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long, rank> &dims) {
+    constexpr Eigen::Tensor<typename Derived::Scalar, rank> MatrixToTensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long, rank> &dims) {
         array<rank> dim_array = dims;
         std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
-        return Matrix_to_Tensor(matrix, dim_array);
+        return MatrixToTensor(matrix, dim_array);
     }
 
     template<typename Derived>
-    constexpr auto Matrix_to_Tensor1(const Eigen::EigenBase<Derived> &matrix) {
-        return Matrix_to_Tensor(matrix, matrix.size());
+    constexpr auto MatrixToTensor(const Eigen::EigenBase<Derived> &matrix) {
+        if constexpr(Derived::ColsAtCompileTime == 1 or Derived::RowsAtCompileTime == 1) {
+            return MatrixToTensor(matrix, matrix.size());
+        } else {
+            return MatrixToTensor(matrix, matrix.rows(), matrix.cols());
+        }
     }
 
     template<typename Derived>
-    constexpr auto Matrix_to_Tensor2(const Eigen::EigenBase<Derived> &matrix) {
-        return Matrix_to_Tensor(matrix, matrix.rows(), matrix.cols());
+    constexpr auto MatrixToTensor1(const Eigen::EigenBase<Derived> &matrix) {
+        return MatrixToTensor(matrix, matrix.size());
+    }
+
+    template<typename Derived>
+    constexpr auto MatrixToTensor2(const Eigen::EigenBase<Derived> &matrix) {
+        return MatrixToTensor(matrix, matrix.rows(), matrix.cols());
     }
 
     template<typename Derived, auto rank>
@@ -171,24 +180,30 @@ namespace Textra {
         if constexpr(is_plainObject<Derived>::value) {
             return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
         } else {
-            return Matrix_to_Tensor(matrix, dims);
+            return MatrixToTensor(matrix, dims);
         }
     }
+    template<typename Derived, auto rank>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const Eigen::DSizes<long, rank> &dims) = delete; // Prevent map from temporary
+
 
     template<typename Derived, typename... Dims>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
         return MatrixTensorMap(matrix, Eigen::DSizes<long, static_cast<int>(sizeof...(Dims))>{dims...});
     }
+    template<typename Derived, typename... Dims>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const Dims... dims) = delete; // Prevent map from temporary
 
     template<typename Derived>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix) {
-        if constexpr(Derived::ColsAtCompileTime == 1) {
+        if constexpr(Derived::ColsAtCompileTime == 1 or Derived::RowsAtCompileTime == 1) {
             return MatrixTensorMap(matrix, matrix.size());
         } else {
             return MatrixTensorMap(matrix, matrix.rows(), matrix.cols());
         }
     }
-
+    template<typename Derived>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix) = delete; // Prevent map from temporary
     //
     //    //****************************//
     //    //Tensor to matrix conversions//
@@ -219,16 +234,23 @@ namespace Textra {
     constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar, rank> &tensor, const sizeType rows, const sizeType cols) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), rows, cols);
     }
+    template<typename Scalar, auto rank, typename sizeType>
+    constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar, rank> &&tensor, const sizeType rows, const sizeType cols) = delete; // Prevent map from temporary
 
     template<typename Scalar>
     constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar, 2> &tensor) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
     }
+    template<typename Scalar>
+    constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar, 2> &&tensor) = delete; // Prevent map from temporary
 
     template<typename Scalar, auto rank>
     constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar, rank> &tensor) {
         return Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size());
     }
+    template<typename Scalar, auto rank>
+    constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar, rank> &&tensor) = delete; // Prevent map from temporary
+
 
     //************************//
     // change storage layout //
