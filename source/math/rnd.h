@@ -26,7 +26,11 @@ namespace rnd {
     extern int                  uniform_integer_01();
     extern double               uniform_double_01();
     extern double               uniform_double_box(double min, double max);
-    extern std::complex<double> uniform_complex_1();
+    extern double               uniform_double_box(double width);
+    extern std::complex<double> uniform_complex_in_unit_circle();
+    extern std::complex<double> uniform_complex_on_unit_circle();
+    extern std::complex<double> uniform_complex_box(double real_min,double real_max, double imag_min, double imag_max);
+    extern std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max);
     extern double               normal(double mean, double std);
     extern double               log_normal(double mean, double std);
     extern Eigen::ArrayXd       random_with_replacement(const Eigen::ArrayXd &indata);

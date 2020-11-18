@@ -251,13 +251,11 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                                   max_overlap_idx.value(), candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(),
                                   std::log10(candidate_max_overlap.get_variance_per_site()));
             }
-            state.tag_active_sites_have_been_updated(true);
             tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             return candidate_max_overlap;
         } else {
             // (OB)
             tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
-            state.tag_active_sites_have_been_updated(false);
             tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             return initial_tensor;
         }

@@ -31,15 +31,14 @@ std::vector<long> tools::finite::mps::internal::get_valid_bond_dimensions(size_t
     return bond_dimensions;
 }
 
-void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, const std::string &sector, long chi_lim, bool use_eigenspinors,
-                                                          bool real) {
-    if(use_eigenspinors) set_random_entangled_state_with_spinors_in_c2(state, chi_lim, real);
+void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, StateInitType type, const std::string &sector, long chi_lim, bool use_eigenspinors) {
+    if(use_eigenspinors) set_random_entangled_state_with_random_spinors(state, type, chi_lim);
     else
-        set_random_entangled_state_with_spinors_in_c2(state, chi_lim, real);
+        set_random_entangled_state_with_random_spinors(state, type, chi_lim);
 }
 
-void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2(class_state_finite &state, long chi_lim, bool real) {
-    tools::log->info("Setting random entangled state with spinors randomly in C2 ...");
+void tools::finite::mps::internal::set_random_entangled_state_with_random_spinors(class_state_finite &state,StateInitType type, long chi_lim) {
+    tools::log->info("Setting random entangled state with random unit spinors...");
     const auto spin_dim        = state.get_mps_site(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     bool pastCenter = false;
@@ -53,12 +52,12 @@ void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2
         std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater<double>());
         Eigen::Tensor<Scalar, 1> L = Textra::MatrixToTensor(Ltmp.normalized()).cast<Scalar>();
         Eigen::Tensor<Scalar, 3> G(spin_dim, chiL, chiR);
-        if(real){
+        if(type  == StateInitType::REAL){
             Eigen::VectorXd Gtmp = Eigen::VectorXd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_box(-1.0,1.0);});
             G =  Textra::MatrixToTensor(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
         }
-        else{
-            Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_complex_1();});
+        else if(type  == StateInitType::CPLX){
+            Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_complex_in_unit_circle();});
             G = Textra::MatrixToTensor(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
         }
 
@@ -71,16 +70,20 @@ void tools::finite::mps::internal::set_random_entangled_state_with_spinors_in_c2
             pastCenter = true;
         }
     }
-    tools::log->info("Setting random entangled state with spinors randomly in C2 ... OK");
+    tools::log->info("Setting random entangled state with random unit spinors... OK");
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_eigenspinors(class_state_finite &state, const std::string &sector, long chi_lim) {
+void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_eigenspinors(class_state_finite &state,StateInitType type, const std::string &sector, long chi_lim) {
     const auto spin_dim        = state.get_mps_site(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     auto       axis            = internal::get_axis(sector);
     auto       sign            = internal::get_sign(sector);
     tools::log->info("Setting random entangled state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
     tools::log->info("Target bond dimensions: {}", bond_dimensions);
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     bool past_center = false;
     for(auto &mps_ptr : state.mps_sites) {
         auto &                                                            mps  = *mps_ptr;
@@ -146,8 +149,14 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         if(mps.isCenter()) { past_center = true; }
     }
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::internal::randomize_given_state(class_state_finite &state) {
-    tools::finite::mps::apply_random_paulis(state, {"x", "z"});
+void tools::finite::mps::internal::randomize_given_state(class_state_finite &state, StateInitType type, double factor) {
+    switch(type){
+        case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<std::string>{"x","z"}, std::vector<double>{0.02,0.02});break;
+        case StateInitType::CPLX: tools::finite::mps::apply_random_paulis(state, std::vector<std::string>{"x","y","z"}, std::vector<double>{factor,factor,factor});break;
+    }
 }

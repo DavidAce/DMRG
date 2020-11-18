@@ -248,11 +248,11 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
 
 
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
-/*! Builds the MPO for measuring parity on spin systems.
+/*! Builds the MPO string for measuring  spin on many-body systems.
 *      P = Π  s_{i}
 * where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
 *
-* MPO = | s |
+* MPO = | s | (a 1 by 1 matrix with a single pauli matrix element)
 *
 *        2
 *        |
@@ -483,7 +483,6 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
 
     // Push in an even number of operators
     // This is so that we get a 50% chance of applying a gate.
-
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
@@ -494,11 +493,71 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list
     std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<std::string> mpos_str;
     for(auto &val : binary) {
-        if(val < 0)
+        if(val < 0){
             mpos.push_back(MPO_S);
-        else
+            mpos_str.emplace_back("S");
+        }else {
             mpos.push_back(MPO_I);
+            mpos_str.emplace_back("I");
+        }
+    }
+    tools::log->warn("Generated random pauli MPO string: {}",mpos_str);
+    // Create compatible edges
+    Eigen::Tensor<Scalar, 3> Ledge(1, 1, num_paulis); // The left  edge
+    Eigen::Tensor<Scalar, 3> Redge(1, 1, num_paulis); // The right edge
+    Ledge(0, 0, 0) = 1.0 / static_cast<double>(num_paulis);
+    Ledge(0, 0, 1) = 1.0 / static_cast<double>(num_paulis);
+    Redge(0, 0, 0) = 1;
+    Redge(0, 0, 1) = 1;
+    return std::make_tuple(mpos, Ledge, Redge);
+}
+
+
+
+
+std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> & uniform_dist_widths, size_t sites)
+/*! Builds a set of MPO's used for randomizing a state  pauli matrix MPO's with random weights picked from a uniform distribution
+ *      P = Π  O_i
+ * where Π is the product over all sites, and O_i is the MPO sum of pauli matrices with random weights.
+ *
+ *            | c0*s0   0       0     .   |
+ * O_i =      | 0       c1*s1   0     .   |
+ *            | 0       0       c2*s2 .   |
+ *            | .       .       .     ... |
+ *  Here s_i are 2x2 pauli matrices (including identity) and
+ *  the weight coefficients c_i are random real numbers drawn from a uniform distribution U(-w,w).
+ *
+ *        2
+ *        |
+ *    0---O---1
+ *        |
+ *        3
+ *
+ */
+{
+    if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
+    if (paulimatrices.size() != uniform_dist_widths.size()) throw std::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
+    long                     num_paulis = static_cast<long>(paulimatrices.size());
+    long                     spin_dim   = 2;
+    auto                     I          = Eigen::MatrixXcd::Identity(spin_dim, spin_dim);
+    Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
+
+    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    for(size_t site = 0; site < sites; site++){
+        Eigen::Tensor<Scalar, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
+        MPO_S.setZero();
+        for(long idx = 0; idx < num_paulis; idx++) {
+            auto uidx = static_cast<size_t>(idx);
+            auto coeff   = 1 + rnd::uniform_double_box(uniform_dist_widths[uidx]);
+            auto offset4 = Eigen::array<long, 4>{idx, idx, 0, 0};
+            const auto & pauli =  paulimatrices[uidx];
+            MPO_S.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(coeff * pauli);
+        }
+        mpos.emplace_back(MPO_S);
     }
 
     // Create compatible edges

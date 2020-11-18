@@ -64,8 +64,8 @@ void class_flbit::run_task_list(std::list<flbit_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_PRODUCT_STATE); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_ENTANGLED_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;

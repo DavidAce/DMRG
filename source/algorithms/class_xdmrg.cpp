@@ -75,10 +75,10 @@ void class_xdmrg::resume() {
     for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
         task_list.emplace_back(xdmrg_task::PROF_RESET);
         switch(settings::strategy::secondary_states) {
-            case StateType::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
-            case StateType::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateType::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
-            case StateType::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+            case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
+            case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
+            case StateInit::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -101,10 +101,10 @@ void class_xdmrg::run_default_task_list() {
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
         default_task_list.emplace_back(xdmrg_task::PROF_RESET);
         switch(settings::strategy::secondary_states) {
-            case StateType::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
-            case StateType::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateType::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
-            case StateType::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+            case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
+            case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
+            case StateInit::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -117,9 +117,9 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case xdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_PRODUCT_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOMIZE_PREVIOUS_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN:
                 randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
                 break;
@@ -131,9 +131,9 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
                 run_preprocessing();
                 break;
                 //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
-            case xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_PRODUCT_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE: randomize_state(ResetReason::NEW_STATE, StateType::RANDOMIZE_PREVIOUS_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOM_PRODUCT_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
             case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:
@@ -191,6 +191,7 @@ void class_xdmrg::run_preprocessing() {
     if(settings::xdmrg::energy_density_window != 0.5) randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+    randomize_state(ResetReason::NEW_STATE, StateInit::RANDOMIZE_PREVIOUS_STATE);
     write_to_file(StorageReason::MODEL);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
@@ -252,7 +253,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Note that we make stricter requirements as we go down the if-list
 
     // If early in the simulation, or stuck, and the bond dimension is small enough we should give subspace optimization a shot
-    if((status.iter < settings::xdmrg::overlap_iters + 2 or status.algorithm_has_got_stuck) and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+    if((status.iter < settings::xdmrg::overlap_iters + 2 or status.algorithm_has_stuck_for > 1) and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
         c1.optMode  = OptMode::VARIANCE;
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
     }
@@ -392,7 +393,7 @@ void class_xdmrg::single_xDMRG_step() {
     last_optspace = winner.get_optspace();
     last_optmode = winner.get_optmode();
     tensors.activate_sites(winner.get_sites());
-    if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_have_been_updated(true);
+    if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_normalized(true);
     // Truncate even more if doing chi quench
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
@@ -469,7 +470,7 @@ void class_xdmrg::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
-void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateType state_type, std::optional<std::string> sector) {
+void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector) {
     tools::log->info("Resetting to state in energy window -- reason: {}", enum2str(reason));
     tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 
@@ -483,7 +484,7 @@ void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, Stat
     bool outside_of_window = true;
     tensors.activate_sites(settings::precision::max_size_full_diag, 2);
     while(true) {
-        randomize_state(ResetReason::FIND_WINDOW, state_type, sector, -1); // Do not use the bitfield: set to -1
+        randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, -1); // Do not use the bitfield: set to -1
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);

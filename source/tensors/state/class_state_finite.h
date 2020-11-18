@@ -44,7 +44,7 @@ class class_state_finite {
 
     int                 direction = 1;
     mutable Cache             cache;
-    mutable std::vector<bool> site_update_tags;
+    mutable std::vector<bool> tag_normalized_sites;
 
     public:
     std::list<std::unique_ptr<class_mps_site>> mps_sites;
@@ -110,13 +110,15 @@ class class_state_finite {
     size_t num_bonds_reached_chi(long chi_level) const;
     bool   is_bond_limited(long chi_limit, double truncation_threshold) const;
 
-    void clear_measurements() const;
+    void clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
     void do_all_measurements() const;
-    void clear_cache() const;
 
-    void tag_active_sites_have_been_updated(bool tag) const;
-    void tag_all_sites_have_been_updated(bool tag) const;
-    bool all_sites_updated() const;
-    bool any_sites_updated() const;
-    bool active_sites_updated() const;
+    void tag_active_sites_normalized(bool tag) const;
+    void tag_all_sites_normalized(bool tag) const;
+    void tag_site_normalized(size_t pos, bool tag) const;
+    bool is_normalized_on_all_sites() const;
+    bool is_normalized_on_any_sites() const;
+    bool is_normalized_on_active_sites() const;
+    bool is_normalized_on_non_active_sites() const;
 };
