@@ -77,13 +77,13 @@ void class_tensors_finite::randomize_state(StateInit state_init,const std::strin
         for(int i = 0; i < 10; i++){
             tools::log->warn("Randomizing state {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
             tools::finite::mps::randomize_state(*state, state_init, state_type.value(),sector, chi_lim, use_eigenspinors, bitfield);
-            print_state(*state);
+//            print_state(*state);
             tools::log->warn("Normalizing state after randomization {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
             normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);
-            print_state(*state);
+//            print_state(*state);
             tools::log->warn("Projecting state after randomization {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
             project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection
-            print_state(*state);
+//            print_state(*state);
         }
     }else{
         tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, chi_lim, use_eigenspinors, bitfield);
