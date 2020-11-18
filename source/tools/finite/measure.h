@@ -28,7 +28,7 @@ namespace tools::finite::measure{
     extern long   bond_dimension_midchain                     (const class_state_finite & state);
     extern std::vector<long> bond_dimensions                  (const class_state_finite & state);
     extern double norm                                        (const class_state_finite & state);
-    extern double norm_fast                                   (const class_state_finite & state);
+//    extern double norm_fast                                   (const class_state_finite & state);
 
 
     extern double spin_component                              (const class_state_finite & state, const Eigen::Matrix2cd &paulimatrix);

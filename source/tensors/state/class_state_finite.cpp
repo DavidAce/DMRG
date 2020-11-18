@@ -34,7 +34,7 @@ class_state_finite &class_state_finite::operator=(class_state_finite &&other)   
 class_state_finite::class_state_finite(const class_state_finite &other):
     direction(other.direction),
     cache(other.cache),
-    site_update_tags(other.site_update_tags),
+    tag_normalized_sites(other.tag_normalized_sites),
     active_sites(other.active_sites),
     measurements(other.measurements)
 {
@@ -48,7 +48,7 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
     if(this != &other) {
         direction                = other.direction;
         cache                    = other.cache;
-        site_update_tags         = other.site_update_tags;
+        tag_normalized_sites     = other.tag_normalized_sites;
         active_sites             = other.active_sites;
         measurements             = other.measurements;
         mps_sites.clear();
@@ -85,7 +85,7 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     if(mps_sites.size() != model_size) throw std::logic_error("Initialized state with wrong size");
     if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
     if(get_position() != position) throw std::logic_error("Initialized state at the wrong position");
-    site_update_tags = std::vector<bool>(model_size, false);
+    tag_normalized_sites = std::vector<bool>(model_size, false);
 }
 
 void class_state_finite::set_positions() {
@@ -293,46 +293,62 @@ size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
 
 bool class_state_finite::is_bond_limited(long chi_lim, double truncation_threshold) const { return num_sites_truncated(truncation_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0; }
 
-void class_state_finite::clear_measurements() const {
-    if constexpr (settings::debug) tools::log->trace("Clearing state measurements");
-    measurements = state_measure_finite(); }
+void class_state_finite::clear_measurements(LogPolicy logPolicy) const {
+    if (logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state measurements");
+    measurements = state_measure_finite();
+}
 
-void class_state_finite::clear_cache() const {
-    if constexpr (settings::debug) tools::log->trace("Clearing state cache");
+void class_state_finite::clear_cache(LogPolicy logPolicy) const {
+    if (logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state cache");
     cache = Cache();
 }
 
 void class_state_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 
-void class_state_finite::tag_active_sites_have_been_updated(bool tag) const {
-    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
-    for(auto &site : active_sites) {
-        site_update_tags[site] = tag;
-    }
+void class_state_finite::tag_active_sites_normalized(bool tag) const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
+    for(auto &site : active_sites)  tag_normalized_sites[site] = tag;
+    tools::log->trace("Updated site update tags on active sites: {}", tag_normalized_sites);
 }
 
-void class_state_finite::tag_all_sites_have_been_updated(bool tag) const {
-    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
-    site_update_tags = std::vector<bool>(get_length(), tag);
+void class_state_finite::tag_all_sites_normalized(bool tag) const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+    tag_normalized_sites = std::vector<bool>(get_length(), tag);
+    tools::log->trace("Updated site update tags on all sites: {}", tag_normalized_sites);
 }
 
-bool class_state_finite::all_sites_updated() const {
-    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
-    return std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+void class_state_finite::tag_site_normalized(size_t pos, bool tag) const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+    tag_normalized_sites[pos] = tag;
 }
 
-bool class_state_finite::any_sites_updated() const {
-    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
-    return std::any_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+bool class_state_finite::is_normalized_on_all_sites() const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
+    tools::log->trace("Checking update status on all sites", active_sites);
+    return std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
 }
 
-bool class_state_finite::active_sites_updated() const {
-    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+bool class_state_finite::is_normalized_on_any_sites() const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on any sites, size mismatch in site list");
+    return std::any_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
+}
+
+bool class_state_finite::is_normalized_on_active_sites() const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on active sites, size mismatch in site list");
     if(active_sites.empty()) return false;
-    auto first_site_ptr = std::next(site_update_tags.begin(), static_cast<long>(active_sites.front()));
-    auto last_site_ptr  = std::next(site_update_tags.begin(), static_cast<long>(active_sites.back()));
+    auto first_site_ptr = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.front()));
+    auto last_site_ptr  = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.back()));
     tools::log->trace("Checking update status on active sites: {}", active_sites);
-    bool updated = std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
-    tools::log->trace("Active sites updated: {}", updated);
-    return updated;
+    bool normalized = std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
+    tools::log->trace("Active sites normalized: {}", normalized);
+    return normalized;
+}
+
+bool class_state_finite::is_normalized_on_non_active_sites() const {
+    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+    if(active_sites.empty()) return is_normalized_on_all_sites();
+    tools::log->trace("Checking normalization status on non-active sites", active_sites);
+    for(size_t idx = 0; idx < get_length(); idx++)
+        if(std::find(active_sites.begin(),active_sites.end(),idx) == active_sites.end() and not tag_normalized_sites[idx]) return false;
+    return true;
 }

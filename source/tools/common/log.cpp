@@ -67,7 +67,7 @@ void tools::Logger::setLogger(std::shared_ptr<spdlog::logger> &other_log, const 
 std::shared_ptr<spdlog::logger> tools::Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToFive, std::optional<bool> timestamp) {
     std::shared_ptr<spdlog::logger> other_log;
     if(spdlog::get(name) == nullptr) {
-        other_log = spdlog::stdout_color_mt(name);
+        other_log = spdlog::stdout_color_st(name,spdlog::color_mode::always);
     } else {
         other_log = spdlog::get(name);
     }

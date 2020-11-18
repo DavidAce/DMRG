@@ -136,8 +136,8 @@ namespace settings {
         inline size_t        max_resets                = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
         inline size_t        multisite_max_sites       = 8;                                      /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
         inline MultisiteMove multisite_move            = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline StateType     initial_state             = StateType::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
-        inline StateType     secondary_states          = StateType::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
+        inline StateInit     initial_state             = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
+        inline StateInit     secondary_states          = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
         inline std::string   target_sector             = "x";                                    /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
 }
 
