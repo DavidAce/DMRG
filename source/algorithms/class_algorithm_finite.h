@@ -66,8 +66,8 @@ class class_algorithm_finite : public class_algorithm_base {
     void         randomize_model();
     void         run() final;
     void         clear_convergence_status() override;
-    void         randomize_state(ResetReason reason,
-                                 StateType state_type,
+    void         randomize_state(ResetReason reason, StateInit state_init,
+                                 std::optional<StateInitType> state_type = std::nullopt,
                                  std::optional<std::string> sector = std::nullopt,
                                  std::optional<long> chi_lim = std::nullopt,
                                  std::optional<bool> use_eigenspinors = std::nullopt,

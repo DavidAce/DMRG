@@ -37,12 +37,12 @@ std::string tools::finite::mps::internal::get_axis(const std::string &sector) {
 }
 
 Eigen::Vector2cd tools::finite::mps::internal::get_spinor(const std::string &axis, int sign) {
-    if(axis == "x" and sign > 0) return qm::spinOneHalf::sx_spinors[0];
-    if(axis == "x" and sign <= 0) return qm::spinOneHalf::sx_spinors[1];
-    if(axis == "y" and sign > 0) return qm::spinOneHalf::sy_spinors[0];
-    if(axis == "y" and sign <= 0) return qm::spinOneHalf::sy_spinors[1];
-    if(axis == "z" and sign > 0) return qm::spinOneHalf::sz_spinors[0];
-    if(axis == "z" and sign <= 0) return qm::spinOneHalf::sz_spinors[1];
+    if(axis == "x" and sign >= 0) return qm::spinOneHalf::sx_spinors[0];
+    if(axis == "x" and sign < 0) return qm::spinOneHalf::sx_spinors[1];
+    if(axis == "y" and sign >= 0) return qm::spinOneHalf::sy_spinors[0];
+    if(axis == "y" and sign < 0) return qm::spinOneHalf::sy_spinors[1];
+    if(axis == "z" and sign >= 0) return qm::spinOneHalf::sz_spinors[0];
+    if(axis == "z" and sign < 0) return qm::spinOneHalf::sz_spinors[1];
     throw std::runtime_error(fmt::format("get_spinor given invalid axis: {}", axis));
 }
 
@@ -57,7 +57,7 @@ Eigen::Matrix2cd tools::finite::mps::internal::get_pauli(const std::string &axis
     throw std::runtime_error(fmt::format("get_pauli given invalid axis: {}", axis));
 }
 
-void tools::finite::mps::internal::random_product_state(class_state_finite &state, const std::string &sector, bool use_eigenspinors,
+void tools::finite::mps::internal::random_product_state(class_state_finite &state, StateInitType type, const std::string &sector, bool use_eigenspinors,
                                                         std::optional<long> bitfield)
 /*!
  * There are many ways to generate an initial product state based on the
@@ -88,32 +88,29 @@ void tools::finite::mps::internal::random_product_state(class_state_finite &stat
 */
 {
     if(sector == "none") return; // a)
-    tools::log->info("Setting random product state in sector {}", sector);
+    tools::log->info("Setting random product state of type {} in sector {}",enum2str(type), sector);
     state.clear_measurements();
     state.clear_cache();
     if(sector == "random") {
-        internal::set_random_product_state_with_spinors_in_c2(state); // b)
+        internal::set_random_product_state_with_random_spinors(state, type); // b)
     } else if(internal::bitfield_is_valid(bitfield)) {
-        internal::set_random_product_state_on_axis_using_bitfield(state, sector, bitfield.value()); // c)
+        internal::set_random_product_state_on_axis_using_bitfield(state,type, sector, bitfield.value()); // c)
         internal::used_bitfields.insert(bitfield.value());
     } else if(use_eigenspinors) {
-        internal::set_random_product_state_in_sector_using_eigenspinors(state, sector); // d)
+        internal::set_random_product_state_in_sector_using_eigenspinors(state,type, sector); // d)
     } else {
-        internal::set_random_product_state_on_axis(state, sector); // e)
+        internal::set_random_product_state_on_axis(state,type, sector); // e)
     }
-    state.clear_measurements();
-    state.clear_cache();
-    state.tag_all_sites_have_been_updated(true); // This operation changes all sites
 }
 
 
-void tools::finite::mps::internal::set_product_state(class_state_finite &state, const std::string &sector) {
+void tools::finite::mps::internal::set_product_state(class_state_finite &state, StateInitType type, const std::string &sector) {
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis      = get_axis(sector);
     int         sign      = get_sign(sector);
-    int         last_sign = 1;
-    Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1);
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
+    Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
     for(auto &&mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
@@ -121,23 +118,34 @@ void tools::finite::mps::internal::set_product_state(class_state_finite &state, 
         if(mps.isCenter()) mps.set_LC(L);
     }
     state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
     tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
 }
 
-void tools::finite::mps::internal::set_random_product_state_with_spinors_in_c2(class_state_finite &state) {
+void tools::finite::mps::internal::set_random_product_state_with_random_spinors(class_state_finite &state, StateInitType type) {
+    tools::log->debug("Setting random product state with random unit spinors...");
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
-        mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
+        if(type == StateInitType::CPLX)
+            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
+        else if (type == StateInitType::REAL)
+            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L);
         if(mps.isCenter()) mps.set_LC(L);
     }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->debug("Setting random product state with spinors in C2... OK");
 }
 
-void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfield(class_state_finite &state, const std::string &sector, long bitfield) {
+void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfield(class_state_finite &state, StateInitType type, const std::string &sector, long bitfield) {
     auto axis = get_axis(sector);
     tools::log->trace("Setting product state from bitset of number {} in along axis {}", bitfield, axis);
     if(bitfield < 0) throw std::runtime_error(fmt::format("Can't set product state from bitfield of negative number: {}", bitfield));
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
 
     constexpr long maxbits = 64;
     if(maxbits < state.get_length()) throw std::range_error("Max supported state length for bitset is 64");
@@ -160,14 +168,18 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
         if(mps.isCenter()) mps.set_LC(L);
     }
     tools::log->debug("Initialized state from bitfield of number {} with eigenspinors of σ{} in sector {}: {}", bitfield, sector, carry_sign, ud_vec);
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::internal::set_random_product_state_in_sector_using_eigenspinors(class_state_finite &state, const std::string &sector) {
+void tools::finite::mps::internal::set_random_product_state_in_sector_using_eigenspinors(class_state_finite &state, StateInitType type, const std::string &sector) {
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis      = get_axis(sector);
     int         sign      = get_sign(sector);
     int         last_sign = 1;
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     tools::log->debug("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
@@ -185,13 +197,17 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     tools::log->debug("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}... global spin component {}: OK", sector, axis,
                      spin_component);
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_finite &state, const std::string &sector) {
+void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_finite &state, StateInitType type, const std::string &sector) {
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis = get_axis(sector);
     tools::log->debug("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}...", sector, axis);
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     auto spinor_up = internal::get_spinor(axis, 1);
     auto spinor_dn = internal::get_spinor(axis, -1);
     for(auto &mps_ptr : state.mps_sites) {
@@ -201,4 +217,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
         mps.set_mps(Textra::MatrixToTensor(spinor.normalized(), 2, 1, 1), L);
         if(mps.isCenter()) mps.set_LC(L);
     }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }

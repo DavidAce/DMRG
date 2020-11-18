@@ -9,6 +9,7 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_iter.h>
 #include <iostream>
+#include <utility>
 #include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_mps_site.h>
@@ -63,10 +64,9 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
             twosite_tensor =
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
-
-        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
-        state.clear_cache();
-        state.clear_measurements();
+        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
+        state.clear_cache(LogPolicy::QUIET);
+        state.clear_measurements(LogPolicy::QUIET);
 
         // Put LC where it belongs.
         // Recall that mpsL, mpsR are on the new position, not the old one!
@@ -77,8 +77,8 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 }
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
-                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold) {
-    tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
+                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
+    if (not logPolicy or logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -113,10 +113,11 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     for(const auto &mps_src : mps_list) {
         auto &mps_tgt = **mps_ptr;
         mps_tgt.merge_mps(mps_src);
+        state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
         mps_ptr++;
     }
-    state.clear_cache();
-    state.clear_measurements();
+    state.clear_cache(LogPolicy::QUIET);
+    state.clear_measurements(LogPolicy::QUIET);
 }
 
 bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
@@ -124,19 +125,15 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     // Each move performs an SVD decomposition which leaves unitaries after it, effectively normalizing the state.
     // NOTE! It may be important to start with the current position.
 
-    // We may want to make a quick check on release builds, but more thorough on debug, for performance.
     if(norm_policy == NormPolicy::IFNEEDED) {
-        const double norm = [state] {
-            if(state.all_sites_updated()) return tools::finite::measure::norm(state);
-            else
-                return tools::finite::measure::norm_fast(state);
-        }();
-
         // We may only go ahead with a normalization if its really needed.
-        if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
+        if(std::abs(tools::finite::measure::norm(state) - 1.0) < settings::precision::max_norm_error) return false;
     }
+
     // Otherwise we just do the normalization
-    tools::log->trace("Normalizing state");
+    if(tools::Logger::getLogLevel(tools::log) <= 0 )
+        tools::log->trace("Normalizing state | Old norm = {:.16f}",tools::finite::measure::norm(state));
+
     // Start with normalizing at the current position
     size_t                   num_moves = 2 * (state.get_length() - 1);
     size_t                   posL      = state.get_position();
@@ -149,33 +146,38 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     long                     chiR      = mpsR.get_chiR();
     Eigen::Tensor<Scalar, 3> twosite_tensor =
         mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
-    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold);
+    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold,LogPolicy::QUIET);
 
     // Now we can move around the chain
     for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
+    if(tools::Logger::getLogLevel(tools::log) <= 0 )
+        tools::log->trace("Normalizing state | New norm = {:.16f}",tools::finite::measure::norm(state));
     state.assert_validity();
     return true;
 }
 
-void tools::finite::mps::randomize_state(class_state_finite &state, const std::string &sector, StateType state_type, long chi_lim, bool use_eigenspinors,
+void tools::finite::mps::randomize_state(class_state_finite &state, StateInit init, StateInitType type, const std::string &sector, long chi_lim, bool use_eigenspinors,
                                          std::optional<long> bitfield) {
-    bool real = true;
-    switch(state_type) {
-        case StateType::RANDOM_PRODUCT_STATE: return internal::random_product_state(state, sector, use_eigenspinors, bitfield);
-        case StateType::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state, sector, chi_lim, use_eigenspinors, real);
-        case StateType::RANDOMIZE_PREVIOUS_STATE: return internal::randomize_given_state(state);
-        case StateType::PRODUCT_STATE: return internal::set_product_state(state, sector);
-        case StateType::ALL_DOWN_ONE_UP: return internal::set_product_state(state, sector);
+    switch(init) {
+        case StateInit::RANDOM_PRODUCT_STATE: return internal::random_product_state(state, type, sector, use_eigenspinors, bitfield);
+        case StateInit::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state,type, sector, chi_lim, use_eigenspinors);
+        case StateInit::RANDOMIZE_PREVIOUS_STATE: return internal::randomize_given_state(state,type);
+        case StateInit::PRODUCT_STATE: return internal::set_product_state(state, type, sector);
     }
 }
 
-void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
+void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<Eigen::Matrix2cd> & paulimatrices, std::optional<std::vector<double>> amplitudes) {
+    if(not amplitudes) amplitudes = std::vector<double>(paulimatrices.size(),1.0);
+    auto [mpos, L, R] = qm::mpo::random_pauli_mpos(paulimatrices,amplitudes.value(), state.get_length());
+    tools::finite::ops::apply_mpos(state, mpos, L, R);
+}
+
+void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings, std::optional<std::vector<double>> amplitudes) {
     std::vector<Eigen::Matrix2cd> paulimatrices;
     for(const auto &str : paulistrings) paulimatrices.emplace_back(internal::get_pauli(str));
-    auto [mpos, L, R] = qm::mpo::random_pauli_mpos(paulimatrices, state.get_length());
-    tools::finite::ops::apply_mpos(state, mpos, L, R);
+    apply_random_paulis(state,paulimatrices,std::move(amplitudes));
 }
 
 void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
@@ -192,7 +194,8 @@ void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_
             if(std::all_of(bond_dimensions.begin(), bond_dimensions.end(), [chi_lim](const long &chi) { return chi <= chi_lim; })) break;
         }
     }
-
+    state.clear_cache();
+    state.clear_measurements();
     tools::log->trace("Truncated all sites");
     tools::log->warn("MUST REBUILD EDGES AFTER TRUNCATING ALL SITES");
 }

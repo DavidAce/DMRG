@@ -53,41 +53,78 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
 size_t tools::finite::measure::length(const class_tensors_finite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const class_state_finite &state) { return state.get_length(); }
 
+//double tools::finite::measure::norm(const class_state_finite &state) {
+////    if(state.measurements.norm) return state.measurements.norm.value();
+//    tools::log->trace("Measuring norm");
+//    Eigen::Tensor<Scalar, 2> chain;
+//    Eigen::Tensor<Scalar, 2> temp;
+//    bool                     first = true;
+//    for(size_t pos = 0; pos < state.get_length(); pos++) {
+//        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
+//        if(first) {
+//            chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
+//            first = false;
+//            continue;
+//        }
+//        temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+//        chain = temp;
+//    }
+//    double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
+//    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_chain);
+//    state.measurements.norm = norm_chain;
+//    return state.measurements.norm.value();
+//}
+
 double tools::finite::measure::norm(const class_state_finite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    Eigen::Tensor<Scalar, 2> chain;
-    Eigen::Tensor<Scalar, 2> temp;
-    bool                     first = true;
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
-        if(first) {
-            chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
-            first = false;
-            continue;
+    double norm;
+    if(state.is_normalized_on_all_sites()){
+        const auto  pos  = state.get_position();
+        const auto &mpsL = state.get_mps_site(pos);
+        const auto &mpsR = state.get_mps_site(pos + 1);
+        tools::log->trace("Measuring norm using center sites [{},{}]",pos,pos+1);
+        Eigen::Tensor<Scalar, 0> norm_contraction = mpsL.get_M()
+            .contract(mpsR.get_M(), Textra::idx({2}, {1}))
+            .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
+            .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
+        norm = std::abs(norm_contraction(0));
+
+    }else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()){
+        tools::log->trace("Measuring norm using active sites {}",state.active_sites);
+        Eigen::Tensor<Scalar, 2> chain;
+        Eigen::Tensor<Scalar, 2> temp;
+        bool                     first = true;
+        for(auto && pos : state.active_sites) {
+            const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
+            if(first) {
+                chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
+                first = false;
+                continue;
+            }
+            temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+            chain = temp;
         }
-        temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
-        chain = temp;
+        norm = std::abs(Textra::TensorMatrixMap(chain).trace());
+    }else{
+        tools::log->trace("Measuring norm on full chain");
+        Eigen::Tensor<Scalar, 2> chain;
+        Eigen::Tensor<Scalar, 2> temp;
+        bool                     first = true;
+        for(size_t pos = 0; pos < state.get_length(); pos++) {
+            const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
+            if(first) {
+                chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
+                first = false;
+                continue;
+            }
+            temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+            chain = temp;
+        }
+        norm = std::abs(Textra::TensorMatrixMap(chain).trace());
     }
-    double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
-    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_chain);
-    state.measurements.norm = norm_chain;
-    return state.measurements.norm.value();
-}
 
-double tools::finite::measure::norm_fast(const class_state_finite &state) {
-    if(state.measurements.norm) return state.measurements.norm.value();
-    const auto  pos  = state.get_position();
-    const auto &mpsL = state.get_mps_site(pos);
-    const auto &mpsR = state.get_mps_site(pos + 1);
-
-    Eigen::Tensor<Scalar, 0> norm = mpsL.get_M()
-                                        .contract(mpsR.get_M(), Textra::idx({2}, {1}))
-                                        .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
-                                        .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
-
-    double norm_fast = std::abs(norm(0));
-    if(std::abs(norm_fast - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_fast);
-    state.measurements.norm = norm_fast;
+    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm);
+    state.measurements.norm = norm;
     return state.measurements.norm.value();
 }
 
@@ -193,7 +230,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
 }
 
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
-    if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
+//    if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
     double spin_x                      = measure::spin_component(state, qm::spinOneHalf::sx);
     double spin_y                      = measure::spin_component(state, qm::spinOneHalf::sy);
     double spin_z                      = measure::spin_component(state, qm::spinOneHalf::sz);

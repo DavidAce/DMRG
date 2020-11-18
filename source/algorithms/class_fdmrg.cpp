@@ -62,8 +62,8 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
         auto task = task_list.front();
         switch(task) {
             case fdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_PRODUCT_STATE); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateType::RANDOM_ENTANGLED_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;

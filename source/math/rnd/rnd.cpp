@@ -31,14 +31,30 @@ namespace rnd {
         return internal::rand_double_01(internal::rng);
     }
 
-    double uniform_double_box(const double min, const double max){
+    double uniform_double_box(double min,double max){
         std::uniform_real_distribution<>  rand_real(std::min(min,max),std::max(min,max));
+        return rand_real(internal::rng);
+    }
+    double uniform_double_box(double width){
+        std::uniform_real_distribution<>  rand_real(-width,width);
         return rand_real(internal::rng);
     }
 
 
-     std::complex<double> uniform_complex_1(){
+    std::complex<double> uniform_complex_in_unit_circle(){
+        return std::polar(uniform_double_01(),internal::rand_double_0_2pi(internal::rng));
+    }
+
+    std::complex<double> uniform_complex_on_unit_circle(){
         return std::polar(1.0,internal::rand_double_0_2pi(internal::rng));
+    }
+
+    std::complex<double> uniform_complex_box(double real_min,double real_max, double imag_min, double imag_max){
+        return {uniform_double_box(real_min,real_max),uniform_double_box(imag_min,imag_max) };
+    }
+
+    std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max){
+        return std::polar(uniform_double_box(0,radius_max),uniform_double_box(angle_min,angle_max));
     }
 
 

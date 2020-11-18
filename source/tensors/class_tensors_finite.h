@@ -36,8 +36,8 @@ class class_tensors_finite {
 
     void initialize(ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
-    void randomize_state(StateType state_type, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
-                         std::optional<double> svd_threshold = std::nullopt);
+    void randomize_state(StateInit state_init, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
+                         std::optional<StateInitType> state_type = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     //    void randomize_from_current_state(const std::vector<std::string> &pauli_strings, const std::string &sector, long chi_lim, std::optional<double>
     //    svd_threshold = std::nullopt);
     void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
