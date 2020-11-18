@@ -1,7 +1,9 @@
 
 #include "class_tensors_finite.h"
 #include <config/nmspc_settings.h>
+#include <iostream>
 #include <math/num.h>
+#include <tensors/state/class_mps_site.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -58,18 +60,34 @@ void class_tensors_finite::randomize_model() {
     rebuild_edges();
 }
 
-void class_tensors_finite::randomize_state(StateType state_type, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
+void print_state(const class_state_finite & state){
+    Eigen::IOFormat  CleanFmt(4, 0, ", ", "\n", "  [", "]");
+    for(auto && mps : state.mps_sites)
+        std::cout << "M(" << mps->get_position() << ") dims ["<< mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n" << Textra::TensorMatrixMap(mps->get_M_bare(),mps->spin_dim(),mps->get_chiL()*mps->get_chiR()).format(CleanFmt) << std::endl;
+
+}
+
+void class_tensors_finite::randomize_state(StateInit state_init,const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,  std::optional<StateInitType> state_type,
                                            std::optional<double> svd_threshold) {
     state->clear_measurements();
-    if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE) {
+    if(not state_type) state_type = state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
+    if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) {
         #pragma message "Applying random paulis 10 times"
+        print_state(*state);
         for(int i = 0; i < 10; i++){
-            tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
+            tools::log->warn("Randomizing state {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
+            tools::finite::mps::randomize_state(*state, state_init, state_type.value(),sector, chi_lim, use_eigenspinors, bitfield);
+            print_state(*state);
+            tools::log->warn("Normalizing state after randomization {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
+            normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);
+            print_state(*state);
+            tools::log->warn("Projecting state after randomization {}:th time | norm {:.16f} | spins: {:.16f}", i, tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
             project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection
+            print_state(*state);
         }
     }else{
-        tools::finite::mps::randomize_state(*state, sector, state_type, chi_lim, use_eigenspinors, bitfield);
-        if(state_type == StateType::RANDOM_ENTANGLED_STATE)
+        tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, chi_lim, use_eigenspinors, bitfield);
+        if(state_init == StateInit::RANDOM_ENTANGLED_STATE)
             project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens during projection
         else
             normalize_state(chi_lim, svd_threshold, NormPolicy::ALWAYS);

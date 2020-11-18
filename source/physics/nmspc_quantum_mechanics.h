@@ -88,6 +88,12 @@ namespace qm{
             Eigen::Tensor<Scalar,3>,
             Eigen::Tensor<Scalar,3>>
         random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites);
+
+        extern std::tuple<
+            std::list<Eigen::Tensor<Scalar,4>>,
+            Eigen::Tensor<Scalar,3>,
+            Eigen::Tensor<Scalar,3>>
+        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> & uniform_dist_widths, size_t sites);
     }
 
     /* clang-format on */

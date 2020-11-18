@@ -15,19 +15,23 @@ enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, N
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
+enum class LogPolicy {NORMAL,QUIET};
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
 enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
 enum class OptWhen { ALWAYS,NEVER, PREV_FAIL,  };
 enum class OptMark { PASS,FAIL, };
 enum class OptInit { CURRENT_STATE, LAST_RESULT };
-enum class StateType {
+enum class StateInitType {REAL,CPLX};
+enum class StateInit {
     RANDOM_PRODUCT_STATE,
     RANDOM_ENTANGLED_STATE,
     RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE,
-    ALL_DOWN_ONE_UP,
+//    ALL_DOWN_ONE_UP,
 };
+
+
 
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -137,7 +141,10 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == NormPolicy::ALWAYS)      return "ALWAYS";
         if(item == NormPolicy::IFNEEDED)    return "IFNEEDED";
     }
-
+    if constexpr(std::is_same_v<T, LogPolicy>) {
+        if(item == LogPolicy::NORMAL)   return "NORMAL";
+        if(item == LogPolicy::QUIET)    return "QUIET";
+    }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
         if(item == StorageLevel::LIGHT)     return "LIGHT";
@@ -154,12 +161,16 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StorageReason::EMAX_STATE)   return "EMAX_STATE";
         if(item == StorageReason::MODEL)        return "MODEL";
     }
-    if constexpr(std::is_same_v<T, StateType>) {
-        if(item == StateType::RANDOM_PRODUCT_STATE)     return "RANDOM_PRODUCT_STATE";
-        if(item == StateType::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
-        if(item == StateType::RANDOMIZE_PREVIOUS_STATE) return "RANDOMIZE_PREVIOUS_STATE";
-        if(item == StateType::PRODUCT_STATE)            return "PRODUCT_STATE";
-        if(item == StateType::ALL_DOWN_ONE_UP)          return "ALL_DOWN_ONE_UP";
+    if constexpr(std::is_same_v<T, StateInit>) {
+        if(item == StateInit::RANDOM_PRODUCT_STATE)     return "RANDOM_PRODUCT_STATE";
+        if(item == StateInit::RANDOM_ENTANGLED_STATE)   return "RANDOM_ENTANGLED_STATE";
+        if(item == StateInit::RANDOMIZE_PREVIOUS_STATE) return "RANDOMIZE_PREVIOUS_STATE";
+        if(item == StateInit::PRODUCT_STATE)            return "PRODUCT_STATE";
+//        if(item == StateInit::ALL_DOWN_ONE_UP)          return "ALL_DOWN_ONE_UP";
+    }
+    if constexpr(std::is_same_v<T, StateInitType>) {
+        if(item == StateInitType::REAL)   return "REAL";
+        if(item == StateInitType::CPLX)   return "CPLX";
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == PerturbMode::PERCENTAGE)                 return "PERCENTAGE";
@@ -301,7 +312,10 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "ALWAYS") return NormPolicy::ALWAYS;
         if(item == "IFNEEDED") return NormPolicy::IFNEEDED;
     }
-
+    if constexpr(std::is_same_v<T, LogPolicy>) {
+        if(item == "NORMAL")   return LogPolicy::NORMAL;
+        if(item == "QUIET")    return LogPolicy::QUIET;
+    }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == "NONE")      return StorageLevel::NONE;
         if(item == "LIGHT")     return StorageLevel::LIGHT;
@@ -318,12 +332,16 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "EMAX_STATE")return StorageReason::EMAX_STATE;
         if(item == "MODEL")     return StorageReason::MODEL;
     }
-    if constexpr(std::is_same_v<T, StateType>) {
-        if(item == "RANDOM_PRODUCT_STATE")     return StateType::RANDOM_PRODUCT_STATE;
-        if(item == "RANDOM_ENTANGLED_STATE")   return StateType::RANDOM_ENTANGLED_STATE;
-        if(item == "RANDOMIZE_PREVIOUS_STATE") return StateType::RANDOMIZE_PREVIOUS_STATE;
-        if(item == "PRODUCT_STATE")            return StateType::PRODUCT_STATE;
-        if(item == "ALL_DOWN_ONE_UP")          return StateType::ALL_DOWN_ONE_UP;
+    if constexpr(std::is_same_v<T, StateInit>) {
+        if(item == "RANDOM_PRODUCT_STATE")     return StateInit::RANDOM_PRODUCT_STATE;
+        if(item == "RANDOM_ENTANGLED_STATE")   return StateInit::RANDOM_ENTANGLED_STATE;
+        if(item == "RANDOMIZE_PREVIOUS_STATE") return StateInit::RANDOMIZE_PREVIOUS_STATE;
+        if(item == "PRODUCT_STATE")            return StateInit::PRODUCT_STATE;
+//        if(item == "ALL_DOWN_ONE_UP")          return StateInit::ALL_DOWN_ONE_UP;
+    }
+    if constexpr(std::is_same_v<T, StateInitType>) {
+        if(item ==  "REAL")   return StateInitType::REAL;
+        if(item ==  "CPLX")   return StateInitType::CPLX;
     }
     if constexpr(std::is_same_v<T, PerturbMode>) {
         if(item == "PERCENTAGE")                return PerturbMode::PERCENTAGE;

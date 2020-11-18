@@ -210,7 +210,7 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
     if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
-        randomize_state(ResetReason::CHI_UPDATE, StateType::RANDOMIZE_PREVIOUS_STATE, std::nullopt, status.chi_lim);
+        randomize_state(ResetReason::CHI_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.chi_lim);
 
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
     status.chi_lim *= 2;
@@ -228,9 +228,9 @@ void class_algorithm_finite::randomize_model() {
     clear_convergence_status();
 }
 
-void class_algorithm_finite::randomize_state(ResetReason reason, StateType state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
+void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
                                              std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ...", state_name, enum2str(state_type), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ...", state_name, enum2str(state_init), enum2str(reason));
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -238,9 +238,10 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
     tools::common::profile::prof[algo_type]["t_rnd"]->tic();
+    if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     if(not sector) sector = settings::strategy::target_sector;
     if(not chi_lim) {
-        if(state_type == StateType::RANDOMIZE_PREVIOUS_STATE)
+        if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
         else
             chi_lim = cfg_chi_lim_init();
@@ -248,9 +249,9 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
     if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
-    if(not svd_threshold and state_type == StateType::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
+    if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
 
-    tensors.randomize_state(state_type, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, svd_threshold);
+    tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
     while(tensors.state->get_position() != 0 and tensors.state->get_direction() != 1) move_center_point();
     clear_convergence_status();
     status.reset();
@@ -266,7 +267,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateType state
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
-    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_type), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_init), enum2str(reason));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));

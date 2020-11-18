@@ -106,6 +106,8 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
 
     if constexpr(settings::debug){
         state.clear_measurements();
+        state.clear_cache();
+        state.tag_all_sites_normalized(false); // This operation denormalizes all sites
         tools::log->debug("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
         tools::log->debug("Bond dimensions      after  applying mpos: {}", tools::finite::measure::bond_dimensions(state));
@@ -114,7 +116,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
 
     state.clear_measurements();
     state.clear_cache();
-    state.tag_all_sites_have_been_updated(true); // All sites change in this operation
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
     state.assert_validity();
 }
 
@@ -144,23 +146,52 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
 }
 
 void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {
+    /*
+     * When projecting, there is one big danger: that the norm of the state vanishes.
+     *
+     * This can happen in a couple of different scenarios:
+     *      - The global state has spin component X = -1.0 and we project to +X
+     *      - The global state has spin component X ~ 0.0 and we project to +X or -X
+     *
+     * Therefore the projection is only done if the state has a chance of surviving
+     * Otherwise emit a warning and return
+     *
+     */
+
     tools::log->debug("Projecting state to axis nearest sector {}", sector);
     std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
+    auto spin_component_threshold = 1e-6;
     if(sector_is_valid) {
         auto sector_sign = mps::internal::get_sign(sector);
         auto paulimatrix = mps::internal::get_pauli(sector);
-        if(sector_sign == 0) {
-            double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-            if(requested_spin_component > 0) sector_sign = 1;
-            else
-                sector_sign = -1;
+        auto spin_component_along_requested_axis = tools::finite::measure::spin_component(state, paulimatrix);
+        // Now we have to check that the projection intended projection is safe
+        if(std::abs(spin_component_along_requested_axis) < spin_component_threshold)
+            return tools::log->warn("Skipping projection to [{}]: State spin component along this axis is too small: {:.16f}", sector,spin_component_along_requested_axis);
+        auto alignment = sector_sign * spin_component_along_requested_axis;
+        if(alignment > 0)
+            // In this case the state has an aligned component along the requested axis --> safe
+            project_to_sector(state, paulimatrix, sector_sign);
+        else if (alignment < 0)
+            // In this case the state has an anti-aligned component along the requested axis --> unsafe
+            return tools::log->warn("Skipping projection to [{}]: State spin component is opposite to the requested projection axis: {:.16f}", sector,spin_component_along_requested_axis);
+        else if(alignment == 0){
+            // No sector sign was specified, so we select the one along which there is a component
+            if(spin_component_along_requested_axis >= spin_component_threshold) sector_sign = 1;
+            if(spin_component_along_requested_axis <= spin_component_threshold) sector_sign = -1;
+            project_to_sector(state, paulimatrix, sector_sign);
         }
-        project_to_sector(state, paulimatrix, sector_sign);
-
     } else if(sector == "randomAxis") {
-        std::vector<std::string> possibilities = {"x", "y", "z"};
-        std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, 2)];
+        std::vector<std::string> possibilities;// = {"x", "y", "z"};
+        auto spin_components = tools::finite::measure::spin_components(state);
+        if(std::abs(spin_components[0]) > spin_component_threshold) possibilities.emplace_back("x");
+        if(std::abs(spin_components[1]) > spin_component_threshold) possibilities.emplace_back("y");
+        if(std::abs(spin_components[2]) > spin_component_threshold) possibilities.emplace_back("z");
+        if(possibilities.empty())
+            return tools::log->warn("Skipping projection to [{}]: State has no spin safe spin component: {:.16f}", sector, fmt::join(spin_components, ", "));
+
+        std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size()-1)];
         project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
