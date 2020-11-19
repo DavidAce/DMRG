@@ -201,6 +201,7 @@ void class_xdmrg::run_algorithm() {
     if(state_name.empty()) fmt::format("state_{}", excited_state_number);
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
+    stop_reason = StopReason::NONE;
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
