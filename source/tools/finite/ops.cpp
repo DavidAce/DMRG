@@ -147,10 +147,10 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
 
 void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {
     /*
-     * When projecting, there is one big danger: that the norm of the state vanishes.
+     * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
      *
      * This can happen in a couple of different scenarios:
-     *      - The global state has spin component X = -1.0 and we project to +X
+     *      - The global state has spin component X = -1.0 and we project to +X (or vice versa)
      *      - The global state has spin component X ~ 0.0 and we project to +X or -X
      *
      * Therefore the projection is only done if the state has a chance of surviving
