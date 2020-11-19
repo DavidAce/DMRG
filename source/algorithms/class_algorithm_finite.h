@@ -27,9 +27,9 @@ class class_algorithm_finite : public class_algorithm_base {
                                       * Therefore, this number is only incremented when randomizing the current state*/
 
     // Control behavior when stuck
-    size_t              max_stuck_iters      = 2;     /*!< If stuck for this many sweeps -> stop. */
+    size_t              max_stuck_iters      = 4;     /*!< If stuck for this many sweeps -> stop. */
     size_t              min_saturation_iters = 1;     /*!< If both var and ent saturated  this long -> got_stuck: true */
-    size_t              max_saturation_iters = 5;     /*!< If either var or ent saturated this long -> got_stuck: true */
+    size_t              max_saturation_iters = 10;    /*!< If either var or ent saturated this long -> got_stuck: true */
 
     bool                has_projected        = false; /*!< True if projection has already been tried */
     bool                has_damped           = false; /*!< True if damping of hamiltonian parameters is ongoing */
