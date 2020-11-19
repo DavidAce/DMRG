@@ -24,7 +24,7 @@ class class_algorithm_status {
     double energy_dens                       = 0;
     double energy_dens_target                = 0;
     double energy_dens_window                = 0;
-    double lowest_recorded_variance_per_site = 1;
+    double energy_variance_lowest            = 1;
     double phys_time                         = 0;
     double wall_time                         = 0;
     double algo_time                         = 0;

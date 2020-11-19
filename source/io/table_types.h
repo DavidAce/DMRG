@@ -464,7 +464,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "energy_dens", HOFFSET(table, energy_dens), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_target", HOFFSET(table, energy_dens_target), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_window", HOFFSET(table, energy_dens_window), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "lowest_recorded_variance_per_site", HOFFSET(table, lowest_recorded_variance_per_site), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_variance_lowest", HOFFSET(table, energy_variance_lowest), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time", HOFFSET(table, algo_time), H5T_NATIVE_DOUBLE);

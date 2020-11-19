@@ -73,8 +73,8 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     measurement_entry.energy_per_site                 = tools::finite::measure::energy_per_site(tensors);
     measurement_entry.energy_variance                 = tools::finite::measure::energy_variance(tensors);
     measurement_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(tensors);
-    measurement_entry.energy_variance_lowest          = status.lowest_recorded_variance_per_site;
-    measurement_entry.energy_variance_per_site_lowest = status.lowest_recorded_variance_per_site / static_cast<double>(tensors.get_length());
+    measurement_entry.energy_variance_lowest          = status.energy_variance_lowest;
+    measurement_entry.energy_variance_per_site_lowest = status.energy_variance_lowest / static_cast<double>(tensors.get_length());
     measurement_entry.spin_components                 = tools::finite::measure::spin_components(*tensors.state);
     measurement_entry.truncation_error                = tensors.state->get_truncation_error_midchain();
     measurement_entry.total_time                      = status.wall_time;
