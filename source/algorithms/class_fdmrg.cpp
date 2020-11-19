@@ -117,7 +117,7 @@ void class_fdmrg::run_algorithm() {
     if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
-
+    stop_reason = StopReason::NONE;
     while(true) {
         single_fdmrg_step();
         // Update record holder
