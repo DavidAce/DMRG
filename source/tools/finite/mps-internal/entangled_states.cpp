@@ -7,6 +7,7 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/rnd.h>
+#include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/fmt.h>
@@ -155,8 +156,9 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
 }
 
 void tools::finite::mps::internal::randomize_given_state(class_state_finite &state, StateInitType type, double factor) {
+    using namespace qm::spinOneHalf;
     switch(type){
-        case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<std::string>{"x","z"}, std::vector<double>{0.02,0.02});break;
-        case StateInitType::CPLX: tools::finite::mps::apply_random_paulis(state, std::vector<std::string>{"x","y","z"}, std::vector<double>{factor,factor,factor});break;
+        case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::Matrix2cd>{id, 1.0/std::sqrt(2.0) * (sx + sz)}); break;
+        case StateInitType::CPLX: tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::Matrix2cd>{id, 1.0/std::sqrt(3.0) * (sx + sy + sz)}); break;
     }
 }

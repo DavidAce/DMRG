@@ -168,16 +168,15 @@ void tools::finite::mps::randomize_state(class_state_finite &state, StateInit in
     }
 }
 
-void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<Eigen::Matrix2cd> & paulimatrices, std::optional<std::vector<double>> amplitudes) {
-    if(not amplitudes) amplitudes = std::vector<double>(paulimatrices.size(),1.0);
-    auto [mpos, L, R] = qm::mpo::random_pauli_mpos(paulimatrices,amplitudes.value(), state.get_length());
+void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<Eigen::Matrix2cd> & paulimatrices) {
+    auto [mpos, L, R] = qm::mpo::sum_of_pauli_mpo(paulimatrices, state.get_length(),true);
     tools::finite::ops::apply_mpos(state, mpos, L, R);
 }
 
-void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings, std::optional<std::vector<double>> amplitudes) {
+void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<std::string> &paulistrings) {
     std::vector<Eigen::Matrix2cd> paulimatrices;
     for(const auto &str : paulistrings) paulimatrices.emplace_back(internal::get_pauli(str));
-    apply_random_paulis(state,paulimatrices,std::move(amplitudes));
+    apply_random_paulis(state,paulimatrices);
 }
 
 void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
