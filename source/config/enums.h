@@ -52,6 +52,7 @@ enum class fdmrg_task {
     FIND_HIGHEST_STATE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
+    POST_PRINT_PROFILING,
     POST_DEFAULT,
     PROF_RESET,
 };
@@ -68,6 +69,7 @@ enum class flbit_task {
     FIND_HIGHEST_STATE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
+    POST_PRINT_PROFILING,
     POST_DEFAULT,
     PROF_RESET,
 };
@@ -91,6 +93,7 @@ enum class xdmrg_task {
     FIND_EXCITED_STATE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
+    POST_PRINT_PROFILING,
     POST_DEFAULT,
     PROF_RESET,
 };

@@ -16,8 +16,8 @@ namespace tools::finite::mps {
     extern void merge_multisite_tensor          (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::vector<size_t> & sites, size_t center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt, std::optional<LogPolicy> log_policy = std::nullopt);
     extern bool normalize_state                 (class_state_finite & state,long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void randomize_state                 (class_state_finite & state, StateInit state_type, StateInitType type,const std::string & sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt);
-    extern void apply_random_paulis             (class_state_finite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices, std::optional<std::vector<double>> amplitudes);
-    extern void apply_random_paulis             (class_state_finite & state, const std::vector<std::string> & paulistrings, std::optional<std::vector<double>> amplitudes);
+    extern void apply_random_paulis             (class_state_finite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);
+    extern void apply_random_paulis             (class_state_finite & state, const std::vector<std::string> & paulistrings);
     extern void truncate_all_sites              (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_active_sites           (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_next_sites             (class_state_finite & state, long chi_lim, size_t num_sites = 4, std::optional<double> svd_threshold = std::nullopt);
