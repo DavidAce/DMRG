@@ -118,9 +118,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
     if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) {
-        auto var = tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
-        if(var < state.lowest_recorded_variance) state.lowest_recorded_variance = var;
-        return var;
+        return  tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
     } else {
         tools::log->trace("Measuring energy variance mpo");
         double energy = 0;
