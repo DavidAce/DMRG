@@ -80,6 +80,7 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
+            case fdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(algo_type); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case fdmrg_task::PROF_RESET: tools::common::profile::reset_profiling(algo_type); break;
         }
