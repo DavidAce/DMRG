@@ -126,8 +126,8 @@ void class_flbit::run_algorithm() {
         // Update record holder
         if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
             tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance_per_site(tensors);
-            if(var < status.lowest_recorded_variance_per_site) status.lowest_recorded_variance_per_site = var;
+            auto var = tools::finite::measure::energy_variance(tensors);
+            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
 
         check_convergence();
