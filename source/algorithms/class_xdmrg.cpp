@@ -192,7 +192,6 @@ void class_xdmrg::run_preprocessing() {
     if(settings::xdmrg::energy_density_window != 0.5) randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    randomize_state(ResetReason::NEW_STATE, StateInit::RANDOMIZE_PREVIOUS_STATE);
     write_to_file(StorageReason::MODEL);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
@@ -296,7 +295,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Eg if the simulation is stuck we may try with more sites.
 //    if(status.algorithm_has_got_stuck) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-//    if(c1.optMode == OptMode::OVERLAP) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(c1.optMode == OptMode::OVERLAP and status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
 //    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
