@@ -538,8 +538,12 @@ void class_xdmrg::find_energy_range() {
     // Reset our logger
     tools::log                 = tools::Logger::getLogger(std::string(enum2str(algo_type)));
 
+    // Reset the profiling data
+    tools::common::profile::reset_profiling(AlgorithmType::fDMRG);
+
     // Set the default profile back to xDMRG because the constructor of class_fdmrg changed it
     tools::common::profile::set_default_prof(AlgorithmType::xDMRG);
+
 }
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }
