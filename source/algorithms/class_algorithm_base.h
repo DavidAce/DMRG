@@ -50,7 +50,7 @@ class class_algorithm_base {
     // common functions
     void copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
     void init_bond_dimension_limits();
-    void print_profiling();
+    void print_profiling_lap();
 
     protected:
     //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from

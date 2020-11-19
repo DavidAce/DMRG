@@ -120,7 +120,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     return report;
 }
 
-void class_algorithm_base::print_profiling(){
+void class_algorithm_base::print_profiling_lap(){
     if(not settings::profiling::extra) return;
     tools::common::profile::print_profiling_laps();
 }

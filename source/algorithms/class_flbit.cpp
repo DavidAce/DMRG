@@ -132,7 +132,7 @@ void class_flbit::run_algorithm() {
 
         check_convergence();
         print_status_update();
-        print_profiling();
+        print_profiling_lap();
         write_to_file();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
