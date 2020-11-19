@@ -230,7 +230,7 @@ void class_algorithm_finite::randomize_model() {
 
 void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
                                              std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ...", state_name, enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", state_name, enum2str(state_init), enum2str(reason));
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -252,7 +252,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
 
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
-    while(tensors.state->get_position() != 0 and tensors.state->get_direction() != 1) move_center_point();
+    while(tensors.state->get_position() != 0 or tensors.state->get_direction() != 1) move_center_point(); // Rewind state back to initial point
     clear_convergence_status();
     status.reset();
     status.iter      = 0;
@@ -267,11 +267,13 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
-    tools::log->info("Randomizing state [{}] to type [{}] | Reason {} ... OK!", state_name, enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", state_name, enum2str(state_init), enum2str(reason));
+    tools::log->info("-- Normalization            : {:.16f}",tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-    tools::log->info("-- Energy variance per site : {}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
+    tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors,status.energy_min_per_site,status.energy_max_per_site));
+    tools::log->info("-- Energy variance          : {}", std::log10(tools::finite::measure::energy_variance(tensors)));
     tools::common::profile::prof[algo_type]["t_rnd"]->toc();
 }
 
@@ -609,8 +611,8 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l):{:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
-    report += fmt::format("log₁₀σ²(E)/L:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
-                          std::log10(status.lowest_recorded_variance_per_site));
+    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
+                          std::log10(status.energy_variance_lowest));
     report +=
         fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
     if(last_optmode and last_optspace) report+= fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0,3),enum2str(last_optspace.value()).substr(0,3));
