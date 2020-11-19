@@ -14,7 +14,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -d                                  : Dry run
 -e <executable>                     : Path to executable (default = "")
 -f <jobfile>                        : Path to simulation file, two columns formatted as [configfile seed] (default = "")
--o <output logfile>                 : Path to GNU parallel logfile (default = "")
+-o <output logfile>                 : Path to output logfile (default = "")
 EOF
   exit 1
 }
@@ -41,8 +41,10 @@ num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 arg_line=$(tail -n+$SLURM_ARRAY_TASK_ID $jobfile | head -1)
 config_file=$(echo $arg_line | cut -d " " -f1)
 config_base=$(basename $config_file .cfg)
+config_dir="$(basename "$(dirname "$config_file")")"
 model_seed=$(echo $arg_line | cut -d " " -f2)
-mkdir -p logs/$config_base
+logdir=logs/$config_dir/$config_base
+mkdir -p $logdir
 
 
 echo "HOSTNAME          : $HOSTNAME"
@@ -62,13 +64,13 @@ echo "SEED              : $model_seed"
 if [ "$num_cols" -eq 2 ]; then
     echo "EXEC LINE         : $exec -c $config_file -s $model_seed &> logs/$config_base/$model_seed.out"
     if [ -z  "$dryrun" ];then
-      $exec -c $config_file -s $model_seed &> logs/$config_base/$model_seed.out
+      $exec -c $config_file -s $model_seed &> $logdir/$model_seed.out
     fi
 elif [ "$num_cols" -eq 3 ]; then
     bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "EXEC LINE         : $exec -c $config_file -s $model_seed -b $bit_field &> logs/$config_base/$model_seed_$bit_field.out"
+    echo "EXEC LINE         : $exec -c $config_file -s $model_seed -b $bit_field &> $logdir/$model_seed_$bit_field.out"
     if [ -z  "$dryrun" ];then
-      $exec -c $config_file -s $model_seed -b $bit_field &> logs/$config_base/$model_seed_$bit_field.out
+      $exec -c $config_file -s $model_seed -b $bit_field &> $logdir/$model_seed_$bit_field.out
     fi
 else
     echo "Case not implemented"
