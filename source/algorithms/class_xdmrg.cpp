@@ -142,6 +142,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
                 break;
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
+            case xdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(algo_type); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case xdmrg_task::PROF_RESET: tools::common::profile::reset_profiling(algo_type); break;
         }
@@ -513,11 +514,9 @@ void class_xdmrg::find_energy_range() {
 
     std::list<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS,
                                       fdmrg_task::INIT_WRITE_MODEL,  fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                      fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
+                                      fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT, fdmrg_task::POST_PRINT_PROFILING};
     std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                      fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
-    class_fdmrg           fdmrg(h5pp_file);
-    *fdmrg.tensors.model = *tensors.model; // Copy the model
+                                      fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT, fdmrg_task::POST_PRINT_PROFILING};
     // Find lowest energy state
     tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
     fdmrg.run_task_list(gs_tasks);
