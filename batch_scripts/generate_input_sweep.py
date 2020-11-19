@@ -9,7 +9,6 @@ from itertools import product
 template_filename = 'input_template.cfg'
 basename    = 'mbl'
 location    = "input"
-os.makedirs(location, exist_ok=True)
 
 
 sites               = np.array([16,24])
@@ -37,7 +36,7 @@ def undelta(delta):
     else:
         return np.exp(delta),1.0
 
-print("Generating", len(sites) * len(lambdas) * len(deltas), "input files")
+print("Generating", len(sites) * len(lambdas) * len(deltas) * len(multisite_max_sites) * len(initial_state), "input files")
 
 for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_state,multisite_max_sites):
     val_j,val_h = undelta(val_d)
