@@ -83,19 +83,6 @@ void class_algorithm_finite::run()
     tools::common::profile::t_tot->toc();
 }
 
-//void class_algorithm_finite::run_preprocessing() {
-//    tools::log->info("Running default preprocessing for {}", algo_name);
-//    tools::common::profile::prof[algo_type]["t_pre"]->tic();
-//    status.clear();
-//    randomize_model();
-//    init_bond_dimension_limits();
-//    randomize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::target_sector, settings::input::bitfield,
-//                    settings::strategy::use_eigenspinors);
-//    write_to_file(StorageReason::MODEL);
-//    tools::common::profile::prof[algo_type]["t_pre"]->toc();
-//    tools::log->info("Finished default preprocessing for {}", algo_name);
-//}
-
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
     tools::common::profile::prof[algo_type]["t_pos"]->tic();
@@ -259,6 +246,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     status.step      = 0;
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
+    stop_reason = StopReason::NONE;
     if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
 
