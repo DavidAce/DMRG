@@ -517,14 +517,24 @@ void class_xdmrg::find_energy_range() {
     std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT, fdmrg_task::POST_PRINT_PROFILING};
     // Find lowest energy state
-    tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
-    fdmrg.run_task_list(gs_tasks);
-    status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
+    {
+        class_fdmrg           fdmrg_gs(h5pp_file);
+        *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
+        tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
+        fdmrg_gs.run_task_list(gs_tasks);
+        status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg_gs.tensors);
+    }
 
     // Find highest energy state
-    tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
-    fdmrg.run_task_list(hs_tasks);
-    status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg.tensors);
+    {
+        class_fdmrg           fdmrg_hs(h5pp_file);
+        *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
+        tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
+        fdmrg_hs.run_task_list(hs_tasks);
+        status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg_hs.tensors);
+    }
+
+    // Reset our logger
     tools::log                 = tools::Logger::getLogger(std::string(enum2str(algo_type)));
 
     // Set the default profile back to xDMRG because the constructor of class_fdmrg changed it
