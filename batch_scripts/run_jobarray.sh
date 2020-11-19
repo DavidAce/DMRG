@@ -64,7 +64,7 @@ echo "SEED              : $model_seed"
 if [ "$num_cols" -eq 2 ]; then
     echo "EXEC LINE         : $exec -c $config_file -s $model_seed &> logs/$config_base/$model_seed.out"
     if [ -z  "$dryrun" ];then
-      $exec -c $config_file -s $model_seed &> logs/$config_base/$model_seed.out
+      $exec -c $config_file -s $model_seed &> $logdir/$model_seed.out
     fi
 elif [ "$num_cols" -eq 3 ]; then
     bit_field=$(echo $arg_line | cut -d " " -f3)
