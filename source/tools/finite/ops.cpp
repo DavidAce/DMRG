@@ -164,7 +164,6 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
     if(sector_is_valid) {
         auto sector_sign = mps::internal::get_sign(sector);
         auto paulimatrix = mps::internal::get_pauli(sector);
-        auto spin_components = tools::finite::measure::spin_components(state);
         auto spin_component_along_requested_axis = tools::finite::measure::spin_component(state, paulimatrix);
         // Now we have to check that the projection intended projection is safe
         auto alignment = sector_sign * spin_component_along_requested_axis;
