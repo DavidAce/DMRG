@@ -40,13 +40,18 @@ done
 
 mkdir -p $outdir
 export SACCT_FORMAT="jobid%16,jobname%16,user,state%14,maxrss%10,exitcode%10,account%20,cluster%20"
-sacct -u $USER  -X $jobname $startdate $enddate  | egrep 'OUT|FAI' > $outdir/$outfile
+sacct -u $USER  -X $jobname $startdate $enddate | column -t | tr -s " " | egrep 'OUT|FAI' > $outdir/$outfile
 cat $outdir/$outfile
 
 
 touch $outdir/$resfile
 truncate -s 0 $outdir/$resfile
-jobids=$(cat $outdir/$outfile | cut -d ' ' -f1)
+jobids=$(cat $outdir/$outfile | column -t | cut -d ' ' -f1)
+if [ -z "$jobids" ] ; then
+    echo "Failed to gather job-ids"
+    exit 1
+fi
+
 for id in $jobids; do
   logfile=$(find logs/ -name *$id.out)
   if [ -z "$logfile" ]; then
@@ -56,6 +61,7 @@ for id in $jobids; do
   seed=$(cat $logfile | grep SEED | tail -1 |  cut -d ':' -f2 | xargs)
   cfgfile=$(cat $logfile | grep CONFIG | tail -1 | cut -d ':' -f2 | xargs)
   echo "$cfgfile $seed" >> $outdir/$resfile
+  echo "$cfgfile $seed"
 done
 echo "" >> $outdir/$resfile
 
