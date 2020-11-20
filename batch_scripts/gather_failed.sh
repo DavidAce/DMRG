@@ -39,7 +39,7 @@ done
 
 
 mkdir -p $outdir
-
+export SACCT_FORMAT="jobid%16,jobname%16,user,state%14,maxrss%10,exitcode%10,account%20,cluster%20"
 sacct -u $USER  -X $jobname $startdate $enddate  | egrep 'OUT|FAI' > $outdir/$outfile
 cat $outdir/$outfile
 
