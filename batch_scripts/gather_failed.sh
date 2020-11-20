@@ -63,5 +63,4 @@ for id in $jobids; do
   echo "$cfgfile $seed" >> $outdir/$resfile
   echo "$cfgfile $seed"
 done
-echo "" >> $outdir/$resfile
 
