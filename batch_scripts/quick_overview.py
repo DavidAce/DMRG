@@ -103,31 +103,37 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         # Collect the number of states present.
-        if not "common/state_root" in h5file:
-            continue
-        state_keys = [x for x in h5file["common/state_root"].attrs.keys() if any(algo in x for algo in args.algorithms)]
-#         state_keys = [x.key for x in h5file["common/finished"].attrs if args.algorithms and any(algo in x for algo in args.algorithms)]
-        state_keys = []
-        for candidate in h5file["common/finished"].attrs.keys():
-            if args.finished and h5file["common/finished"].attrs[candidate] == 0:
+        try:
+            if not "common/state_root" in h5file:
                 continue
-            if not args.finished and "checkpoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
+        except Exception as er:
+            print("Could not read [common/state_root]. Reason: ", er)
                 continue
-            if not args.projection and "projection" in candidate:
+        try:
+            state_keys = [x for x in h5file["common/state_root"].attrs.keys() if any(algo in x for algo in args.algorithms)]
+            state_keys = []
+            for candidate in h5file["common/finished"].attrs.keys():
+                if args.finished and h5file["common/finished"].attrs[candidate] == 0:
+                    continue
+                if not args.finished and "checkpoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
+                    continue
+                if not args.projection and "projection" in candidate:
+                    continue
+                if not any(algo in candidate for algo in args.algorithms):
+                    continue
+                if args.state and not str(args.state) in h5file["common/state_root"].attrs[candidate]:
+                    continue
+                state_keys.append(candidate)
+            state_keys.sort()
+        except Exception as er:
+            print("Could not gather paths in file [",h5path,"]. Reason: ", er)
                 continue
-            if not any(algo in candidate for algo in args.algorithms):
-                continue
-            if args.state and not str(args.state) in h5file["common/state_root"].attrs[candidate]:
-                continue
-            state_keys.append(candidate)
-        state_keys.sort()
         for state_num,state_prefix in enumerate(state_keys):
             entry = []
             ententrp_zero = []
-            algo_name = h5file["common/algo_type"].attrs[state_prefix]
-            state_name = h5file["common/state_name"].attrs[state_prefix]
-
             try:
+                algo_name = h5file["common/algo_type"].attrs[state_prefix]
+                state_name = h5file["common/state_name"].attrs[state_prefix]
                 finished.append(h5file["common/finished"].attrs[state_prefix])
                 if (args.finished and finished[-1] == 0):
                     continue
@@ -142,7 +148,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 step.append(status_last_entry['step'])
                 energy.append(msrmnt_last_entry['energy_per_site'])
                 variance.append(msrmnt_last_entry['energy_variance_per_site'])
-                variancel.append(status_last_entry['lowest_recorded_variance_per_site'])
+                variancel.append(status_last_entry['energy_variance_lowest'])
                 ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
                 walltime.append(status_last_entry['wall_time'])
                 resets.append(status_last_entry['num_resets'])
