@@ -108,7 +108,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 continue
         except Exception as er:
             print("Could not read [common/state_root]. Reason: ", er)
-                continue
+            continue
         try:
             state_keys = [x for x in h5file["common/state_root"].attrs.keys() if any(algo in x for algo in args.algorithms)]
             state_keys = []
@@ -127,7 +127,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             state_keys.sort()
         except Exception as er:
             print("Could not gather paths in file [",h5path,"]. Reason: ", er)
-                continue
+            continue
         for state_num,state_prefix in enumerate(state_keys):
             entry = []
             ententrp_zero = []
