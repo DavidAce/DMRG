@@ -62,15 +62,15 @@ echo "SEED              : $model_seed"
 
 
 if [ "$num_cols" -eq 2 ]; then
-    echo "EXEC LINE         : $exec -c $config_file -s $model_seed &> $logdir/$model_seed.out"
+    echo "EXEC LINE         : $exec -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
     if [ -z  "$dryrun" ];then
-      $exec -c $config_file -s $model_seed &> $logdir/$model_seed.out
+      $exec -c $config_file -s $model_seed &>> $logdir/$model_seed.out
     fi
 elif [ "$num_cols" -eq 3 ]; then
     bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "EXEC LINE         : $exec -c $config_file -s $model_seed -b $bit_field &> $logdir/$model_seed_$bit_field.out"
+    echo "EXEC LINE         : $exec -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
     if [ -z  "$dryrun" ];then
-      $exec -c $config_file -s $model_seed -b $bit_field &> $logdir/$model_seed_$bit_field.out
+      $exec -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
     fi
 else
     echo "Case not implemented"
