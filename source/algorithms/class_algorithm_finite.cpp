@@ -134,8 +134,6 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
         tools::finite::print::dimensions(tensors);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-//    status.iter      = tensors.state->get_iteration();
-//    status.step      = tensors.state->get_step();
     status.position  = tensors.state->get_position();
     status.direction = tensors.state->get_direction();
     has_projected    = false;
@@ -239,7 +237,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
 
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
-    while(tensors.state->get_position() != 0 or tensors.state->get_direction() != 1) move_center_point(); // Rewind state back to initial point
+    tensors.move_center_point_to_edge(chi_lim.value());
     clear_convergence_status();
     status.reset();
     status.iter      = 0;
