@@ -308,13 +308,11 @@ void class_state_finite::do_all_measurements() const { tools::finite::measure::d
 void class_state_finite::tag_active_sites_normalized(bool tag) const {
     if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
     for(auto &site : active_sites)  tag_normalized_sites[site] = tag;
-    tools::log->trace("Updated site update tags on active sites: {}", tag_normalized_sites);
 }
 
 void class_state_finite::tag_all_sites_normalized(bool tag) const {
     if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
     tag_normalized_sites = std::vector<bool>(get_length(), tag);
-    tools::log->trace("Updated site update tags on all sites: {}", tag_normalized_sites);
 }
 
 void class_state_finite::tag_site_normalized(size_t pos, bool tag) const {
