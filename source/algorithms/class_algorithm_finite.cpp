@@ -98,17 +98,20 @@ void class_algorithm_finite::run_postprocessing() {
 void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {
     if(not num_moves.has_value()) {
         if(tensors.active_sites.empty()) num_moves = 1ul;
-        else if(settings::strategy::multisite_move == MultisiteMove::ONE)
+        else if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length()-1) or
+                (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)){
+                // In this case we have just updated from here to the edge. No point in keep updating
+                // closer and closer to the edge. Just move until reaching the edge without flipping
+                // position_is_any_edge is defined as the outwards pointing edge, and it is important to reach that stage.
+                num_moves = std::max<size_t>(1ul,tensors.active_sites.size()-2); // to the edge without flipping
+        }else if(settings::strategy::multisite_move == MultisiteMove::ONE)
             num_moves = 1ul;
-        else if(settings::strategy::multisite_move == MultisiteMove::MID)
-            num_moves = std::max<size_t>(1, (tensors.active_sites.size()) / 2);
-        else if(settings::strategy::multisite_move == MultisiteMove::MAX) {
-            size_t offset = 1ul;
-            if(tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length() - 1) offset = 2ul;
-            if(tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0) offset = 2ul;
-            num_moves = std::max<size_t>(1, tensors.active_sites.size() - offset);
-
-        } else
+        else if(settings::strategy::multisite_move == MultisiteMove::MID) {
+            num_moves = std::max<size_t>(1, tensors.active_sites.size() / 2);
+        }else if (settings::strategy::multisite_move == MultisiteMove::MAX){
+            num_moves = std::max<size_t>(1, tensors.active_sites.size()-1); // Move so that the center point moves out of the active region
+        }
+        else
             throw std::logic_error("Could not determine how many sites to move");
     }
 
@@ -225,16 +228,15 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     tools::common::profile::prof[algo_type]["t_rnd"]->tic();
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     if(not sector) sector = settings::strategy::target_sector;
-    if(not chi_lim) {
-        if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
-            chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
-        else
-            chi_lim = cfg_chi_lim_init();
-    }
-    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
-    if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-4;
+    if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
+    if(not chi_lim) {
+        chi_lim = cfg_chi_lim_init();
+        if(not cfg_chi_lim_grow() and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+            chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
+    }
+    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
 
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
     tensors.move_center_point_to_edge(chi_lim.value());
@@ -610,7 +612,6 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
-    report += fmt::format("con:{:<5} ", status.algorithm_has_converged);
     report += fmt::format("time:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());

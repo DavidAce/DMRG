@@ -114,10 +114,13 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::on"                     , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::max_iters"              , xdmrg::max_iters);
     dmrg_config.load_parameter("xdmrg::min_iters"              , xdmrg::min_iters);
-    dmrg_config.load_parameter("xdmrg::overlap_iters"         , xdmrg::overlap_iters);
+    dmrg_config.load_parameter("xdmrg::olap_iters"             , xdmrg::olap_iters);
+    dmrg_config.load_parameter("xdmrg::vsub_iters"             , xdmrg::vsub_iters);
     dmrg_config.load_parameter("xdmrg::chi_lim_max"            , xdmrg::chi_lim_max);
     dmrg_config.load_parameter("xdmrg::chi_lim_grow"           , xdmrg::chi_lim_grow);
     dmrg_config.load_parameter("xdmrg::chi_lim_init"           , xdmrg::chi_lim_init);
+    dmrg_config.load_parameter("xdmrg::chi_lim_olap"           , xdmrg::chi_lim_olap);
+    dmrg_config.load_parameter("xdmrg::chi_lim_vsub"           , xdmrg::chi_lim_vsub);
     dmrg_config.load_parameter("xdmrg::print_freq "            , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"           , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
