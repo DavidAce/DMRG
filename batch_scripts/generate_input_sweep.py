@@ -14,8 +14,8 @@ location    = "input"
 sites               = np.array([16,24])
 lambdas             = [0.000]
 deltas              = [0.000]
-initial_state       = ["RANDOM_PRODUCT_STATE","RANDOM_ENTANGLED_STATE"]
-multisite_max_sites = [2,6]
+initial_state       = ["RANDOM_ENTANGLED_STATE"]
+multisite_max_sites = [6]
 output_prefix       = "output"
 
 
