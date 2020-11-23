@@ -309,11 +309,13 @@ if [ -n "$configfiles" ] && [ -z  "$seedfiles" ] ; then
           configbase=$(basename $configfile .cfg)
           endseed=$((seedcounter+simspercfg-1))
           seedfile="$seedpath/$configbase.[$seedcounter-$endseed].seed"
-          touch $seedfile
+          tempfile="/dev/shm/$configbase.[$seedcounter-$endseed].seed"
+          touch $tempfile
           for sim in $(seq $simspercfg); do
-              echo "$configfile $seedcounter" >> $seedfile
+              echo "$configfile $seedcounter" >> $tempfile
               seedcounter=$((seedcounter+1))
           done
+          mv $tempfile $seedfile
       done
   fi
   echo "Generating list of config paths and seeds... OK"
