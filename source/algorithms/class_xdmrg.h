@@ -24,6 +24,7 @@ class class_xdmrg : public class_algorithm_finite {
         size_t              min_sites        = 2;
         long                max_problem_size = 0;
         long                problem_size     = 0;
+        bool                second_chance    = true;
         std::array<long, 3> problem_dims;
         std::vector<size_t> chosen_sites;
     };

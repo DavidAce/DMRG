@@ -82,6 +82,10 @@ void tools::finite::mps::move_center_point_to_edge(class_state_finite &state, lo
     state.flip_direction();
 }
 
+void tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold){
+    while(not state.position_is_the_middle())
+        move_center_point(state,chi_lim,svd_threshold);
+}
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                 size_t center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
