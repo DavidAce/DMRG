@@ -205,11 +205,10 @@ void class_xdmrg::run_algorithm() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
-        // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
+
+        if(tools::finite::measure::energy_variance(tensors) < status.energy_variance_lowest){
             tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance(tensors);
-            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+            status.energy_variance_lowest = tools::finite::measure::energy_variance(tensors);
         }
 
         check_convergence();
@@ -253,17 +252,34 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    // If early in the simulation, or stuck, and the bond dimension is small enough we should give subspace optimization a shot
-    if((status.iter < settings::xdmrg::overlap_iters + 2 or status.algorithm_has_stuck_for > 1) and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+
+    // On the zeroth iteration, the rest of the chain is probably just randomized, so don't
+    // focus on growing the bond dimension yet.
+    if(status.iter == 0){
+        status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init());
     }
 
-    // Very early in the simulation it is worth just following the overlap to get the
-    // overal structure of the final state
-    if(status.iter < settings::xdmrg::overlap_iters) { // TODO: Testing 4 overlap runs to measure bias
+    // If early in the simulation, and the bond dimension is small enough we use subspace optimization
+    if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.second_chance = false;
+        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
+    }
+
+    // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
+    if(status.iter < settings::xdmrg::olap_iters and excited_state_number == 0) {
         c1.optMode  = OptMode::OVERLAP;
         c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.second_chance = false;
+        if(settings::xdmrg::chi_lim_olap > 0) status.chi_lim = settings::xdmrg::chi_lim_olap;
+    }
+
+    // If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
+    if(status.algorithm_has_stuck_for > 1 and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.second_chance = true;
     }
 
     // Setup strong overrides to normal conditions, e.g.,
@@ -273,6 +289,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         // No need to do expensive operations -- just finish
         c1.optMode  = OptMode::VARIANCE;
         c1.optSpace = OptSpace::DIRECT;
+        c1.second_chance = false;
     }
 
     // Make sure not to use SUBSPACE if the 2-site problem size is huge
@@ -281,6 +298,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     if(tensors.state->size_2site() > settings::precision::max_size_part_diag) {
         c1.optMode  = OptMode::VARIANCE;
         c1.optSpace = OptSpace::DIRECT;
+        c1.second_chance = true;
     }
 
 
@@ -294,10 +312,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-//    if(status.algorithm_has_got_stuck) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(c1.optMode == OptMode::OVERLAP and status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
-//    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -305,7 +322,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     c1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c1.chosen_sites);
 
     configs.emplace_back(c1);
-
+    if(not c1.second_chance) return configs;
     /*
      *
      *  Second trial
@@ -316,7 +333,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // 1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
     // 2)
     //
-    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE and c1.max_sites != settings::strategy::multisite_max_sites) {
+    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode != OptMode::OVERLAP and c1.max_sites != settings::strategy::multisite_max_sites) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try a few more sites
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);

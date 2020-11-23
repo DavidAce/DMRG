@@ -249,9 +249,13 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
             if(tools::log->level() == spdlog::level::trace) {
                 tools::log->trace("ceres_subspace_optimization: Candidate {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>20.16f}",
                                   max_overlap_idx.value(), candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(),
-                                  std::log10(candidate_max_overlap.get_variance_per_site()));
+                                  std::log10(candidate_max_overlap.get_variance()));
             }
             tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
+            if(candidate_max_overlap.get_overlap() < 0.707){
+                tools::log->debug("ceres_subspace_optimization: Overlap too low < 0.707. Returning old tensor");
+                return initial_tensor;
+            }
             return candidate_max_overlap;
         } else {
             // (OB)
