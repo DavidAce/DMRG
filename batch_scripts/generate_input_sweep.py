@@ -68,8 +68,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::ising_sdual::J_stdv"         : "1.0",
         "model::ising_sdual::h_stdv"         : "1.0",
         "xdmrg::chi_lim_max"                 : "512",
-        "xdmrg::max_states"                  : "8",
-        "xdmrg::overlap_iters"               : "2",
+        "xdmrg::max_states"                  : "4",
         "strategy::multisite_max_sites"      : str(multi),
         "strategy::initial_state"            : str(init),
     }
