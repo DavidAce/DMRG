@@ -150,6 +150,19 @@ std::vector<long> tools::finite::measure::bond_dimensions(const class_state_fini
     return state.measurements.bond_dimensions.value();
 }
 
+std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_state_finite &state) {
+    std::vector<long> bond_dimensions;
+    for(auto && pos : state.active_sites){
+        bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
+        if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
+    }
+    if(bond_dimensions.size() > 2){
+        bond_dimensions.pop_back();
+        bond_dimensions.erase(bond_dimensions.begin());
+    }
+    return bond_dimensions;
+}
+
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite &state) {
     if(state.measurements.entanglement_entropy_current) { return state.measurements.entanglement_entropy_current.value(); }
     tools::common::profile::get_default_prof()["t_ent"]->tic();

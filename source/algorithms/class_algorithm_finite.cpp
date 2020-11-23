@@ -600,14 +600,19 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
                           std::log10(status.energy_variance_lowest));
     report +=
-        fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_current(*tensors.state));
+        fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
+    std::string bond_strings = fmt::format("{}",tools::finite::measure::bond_dimensions_merged(*tensors.state));
+    size_t bond_width = 5*(settings::strategy::multisite_max_sites - 1);
+    report += fmt::format("{0:<{1}}", bond_strings, bond_width);
+
+
     if(last_optmode and last_optspace) report+= fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0,3),enum2str(last_optspace.value()).substr(0,3));
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("con:{:<5} ", status.algorithm_has_converged);
     report += fmt::format("time:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
-    report += fmt::format("mem:[rss {:<.1f} peak {:<.1f} vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
 }
