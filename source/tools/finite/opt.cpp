@@ -69,15 +69,15 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.nonlinear_conjugate_gradient_type          = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    ceres_default_options.max_num_iterations                         = 4000;
+    ceres_default_options.max_num_iterations                         = 2000;
     ceres_default_options.max_lbfgs_rank                             = 8; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-64;//  std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3;
     ceres_default_options.min_line_search_step_contraction           = 0.6;
     ceres_default_options.max_line_search_step_expansion             = 10;
-    ceres_default_options.max_num_line_search_step_size_iterations   = 20;//20;
-    ceres_default_options.max_num_line_search_direction_restarts     = 5;//2;
+    ceres_default_options.max_num_line_search_step_size_iterations   = 80;//20;
+    ceres_default_options.max_num_line_search_direction_restarts     = 10;//2;
     ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9; // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*10;//60*2;
@@ -87,15 +87,23 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
     if(status.algorithm_has_got_stuck){
-        ceres_default_options.max_num_iterations                        = 8000;
-        ceres_default_options.max_lbfgs_rank                            = 40; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-        ceres_default_options.function_tolerance                        = 1e-6;
+        ceres_default_options.max_num_iterations                        = 4000;
+        ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        ceres_default_options.function_tolerance                        = 1e-8;
         ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 1e-14;
+        ceres_default_options.parameter_tolerance                       = 2e-16;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
     }
-
+    if(status.algorithm_has_stuck_for > 1){
+        ceres_default_options.max_num_iterations                        = 6000;
+        ceres_default_options.max_lbfgs_rank                            = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        ceres_default_options.function_tolerance                        = 1e-12;
+        ceres_default_options.gradient_tolerance                        = 1e-6;
+        ceres_default_options.parameter_tolerance                       = 2e-16;
+        ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
+        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
+    }
     //    Progress log definitions:
     //    f is the value of the objective function.
     //    d is the change in the value of the objective function if the step computed in this iteration is accepted.
@@ -164,8 +172,6 @@ std::pair<double, double> tools::finite::opt::internal::windowed_func_grad(doubl
             func = (x + window) * (x + window);
             grad = 2 * (x + window);
         }
-        //        func = x*x - window*window;
-        //        grad = 2*x;
     }
     return std::make_pair(func, grad);
 }
@@ -201,7 +207,7 @@ template<typename FunctorType>
 tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
     if(not log) log = tools::Logger::setLogger("xDMRG");
     log->set_level(tools::log->level());
-    if(log->level() == spdlog::level::debug){
+    if(log->level() == spdlog::level::info){ // TODO: revert to debug
         freq_log_iter = 10;
         freq_log_time = 10;
         init_log_time = 1;
@@ -212,13 +218,13 @@ tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(
 template<typename FunctorType>
 ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
     if(not log) return ceres::SOLVER_CONTINUE;
-    if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;
+    if(log->level() > spdlog::level::info) return ceres::SOLVER_CONTINUE; // TODO: revert to debug
     if(summary.iteration - last_log_iter  < freq_log_iter and summary.iteration > init_log_iter  ) return ceres::SOLVER_CONTINUE;
     if(summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time) return ceres::SOLVER_CONTINUE;
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} "
+    log->info("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} " // TODO: revert to debug
                "|∇f|∞ {:>3.2e} |ΔΨ| {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
                "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                summary.iteration,
