@@ -26,6 +26,7 @@ namespace tools::finite::measure{
     extern size_t length                                      (const class_edges_finite & edges);
     extern long   bond_dimension_current                      (const class_state_finite & state);
     extern long   bond_dimension_midchain                     (const class_state_finite & state);
+    extern std::vector<long> bond_dimensions_merged           (const class_state_finite & state);
     extern std::vector<long> bond_dimensions                  (const class_state_finite & state);
     extern double norm                                        (const class_state_finite & state);
 //    extern double norm_fast                                   (const class_state_finite & state);
