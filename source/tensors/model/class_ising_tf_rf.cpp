@@ -11,7 +11,7 @@
 #include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
 
-using namespace qm::spinOneHalf;
+using namespace qm::spinHalf;
 using Scalar = std::complex<double>;
 
 class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {
@@ -25,10 +25,10 @@ class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
 
-    qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
-    qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
-    qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
-    qm::spinOneHalf::II = qm::gen_manybody_spin(id, 2);
+    qm::spinHalf::SX = qm::gen_manybody_spins(sx, 2);
+    qm::spinHalf::SY = qm::gen_manybody_spins(sy, 2);
+    qm::spinHalf::SZ = qm::gen_manybody_spins(sz, 2);
+    qm::spinHalf::II = qm::gen_manybody_spins(id, 2);
 
     class_ising_tf_rf::randomize_hamiltonian();
     h5tb_ising_tf_rf::register_table_type();

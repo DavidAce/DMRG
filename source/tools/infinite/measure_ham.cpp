@@ -26,9 +26,9 @@ double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinit
     if(state.chiB() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();
     tools::log->trace("Measuring energy ham");
     tools::common::profile::get_default_prof()["t_ene_ham"]->tic();
-    auto SX    = qm::gen_manybody_spin(qm::spinOneHalf::sx, 2);
-    auto SY    = qm::gen_manybody_spin(qm::spinOneHalf::sy, 2);
-    auto SZ    = qm::gen_manybody_spin(qm::spinOneHalf::sz, 2);
+    auto SX    = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
+    auto SY    = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
+    auto SZ    = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
     auto h_evn = model.get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
     auto h_odd = model.get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
     tools::common::views::compute_mps_components(state);
@@ -64,9 +64,9 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
     tools::common::profile::get_default_prof()["t_var_ham"]->tic();
     using namespace tools::common::views;
 
-    auto SX    = qm::gen_manybody_spin(qm::spinOneHalf::sx, 2);
-    auto SY    = qm::gen_manybody_spin(qm::spinOneHalf::sy, 2);
-    auto SZ    = qm::gen_manybody_spin(qm::spinOneHalf::sz, 2);
+    auto SX    = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
+    auto SY    = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
+    auto SZ    = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
     auto h_evn = model.get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
     auto h_odd = model.get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
     tools::common::views::compute_mps_components(state);
