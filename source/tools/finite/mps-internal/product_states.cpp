@@ -37,23 +37,23 @@ std::string tools::finite::mps::internal::get_axis(const std::string &sector) {
 }
 
 Eigen::Vector2cd tools::finite::mps::internal::get_spinor(const std::string &axis, int sign) {
-    if(axis == "x" and sign >= 0) return qm::spinOneHalf::sx_spinors[0];
-    if(axis == "x" and sign < 0) return qm::spinOneHalf::sx_spinors[1];
-    if(axis == "y" and sign >= 0) return qm::spinOneHalf::sy_spinors[0];
-    if(axis == "y" and sign < 0) return qm::spinOneHalf::sy_spinors[1];
-    if(axis == "z" and sign >= 0) return qm::spinOneHalf::sz_spinors[0];
-    if(axis == "z" and sign < 0) return qm::spinOneHalf::sz_spinors[1];
+    if(axis == "x" and sign >= 0) return qm::spinHalf::sx_spinors[0];
+    if(axis == "x" and sign < 0) return qm::spinHalf::sx_spinors[1];
+    if(axis == "y" and sign >= 0) return qm::spinHalf::sy_spinors[0];
+    if(axis == "y" and sign < 0) return qm::spinHalf::sy_spinors[1];
+    if(axis == "z" and sign >= 0) return qm::spinHalf::sz_spinors[0];
+    if(axis == "z" and sign < 0) return qm::spinHalf::sz_spinors[1];
     throw std::runtime_error(fmt::format("get_spinor given invalid axis: {}", axis));
 }
 
 Eigen::Vector2cd tools::finite::mps::internal::get_spinor(const std::string &sector) { return get_spinor(get_axis(sector), get_sign(sector)); }
 
 Eigen::Matrix2cd tools::finite::mps::internal::get_pauli(const std::string &axis) {
-    if(axis.find('x') != std::string::npos) return qm::spinOneHalf::sx;
-    if(axis.find('y') != std::string::npos) return qm::spinOneHalf::sy;
-    if(axis.find('z') != std::string::npos) return qm::spinOneHalf::sz;
-    if(axis.find('I') != std::string::npos) return qm::spinOneHalf::id;
-    if(axis.find('i') != std::string::npos) return qm::spinOneHalf::id;
+    if(axis.find('x') != std::string::npos) return qm::spinHalf::sx;
+    if(axis.find('y') != std::string::npos) return qm::spinHalf::sy;
+    if(axis.find('z') != std::string::npos) return qm::spinHalf::sz;
+    if(axis.find('I') != std::string::npos) return qm::spinHalf::id;
+    if(axis.find('i') != std::string::npos) return qm::spinHalf::id;
     throw std::runtime_error(fmt::format("get_pauli given invalid axis: {}", axis));
 }
 

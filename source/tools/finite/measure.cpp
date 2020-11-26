@@ -244,9 +244,9 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
 
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
     if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
-    double spin_x                      = measure::spin_component(state, qm::spinOneHalf::sx);
-    double spin_y                      = measure::spin_component(state, qm::spinOneHalf::sy);
-    double spin_z                      = measure::spin_component(state, qm::spinOneHalf::sz);
+    double spin_x                      = measure::spin_component(state, qm::spinHalf::sx);
+    double spin_y                      = measure::spin_component(state, qm::spinHalf::sy);
+    double spin_z                      = measure::spin_component(state, qm::spinHalf::sz);
     state.measurements.spin_components = {spin_x, spin_y, spin_z};
     return state.measurements.spin_components.value();
 }
