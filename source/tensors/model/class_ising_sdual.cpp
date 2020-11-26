@@ -11,7 +11,7 @@
 #include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
 
-using namespace qm::spinOneHalf;
+using namespace qm::spinHalf;
 using Scalar = std::complex<double>;
 
 double delta_to_J_mean(double delta) { return delta > 0 ? 1.0 : std::exp(delta); }

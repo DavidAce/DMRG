@@ -188,7 +188,7 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
         project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
-        Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spinOneHalf::sx + coeffs(1) * qm::spinOneHalf::sy + coeffs(2) * qm::spinOneHalf::sz;
+        Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spinHalf::sx + coeffs(1) * qm::spinHalf::sy + coeffs(2) * qm::spinHalf::sz;
         return project_to_sector(state, random_c2, 1);
     } else if(sector == "none") {
         return;

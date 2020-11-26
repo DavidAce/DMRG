@@ -11,7 +11,7 @@
 #include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
 
-using namespace qm::spinOneHalf;
+using namespace qm::spinHalf;
 using Scalar = std::complex<double>;
 
 class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {

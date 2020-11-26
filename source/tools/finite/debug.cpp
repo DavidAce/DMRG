@@ -719,9 +719,9 @@ void tools::finite::debug::print_parity_properties(const class_state_finite &sta
     tools::log->debug("Printing parity properties");
 
     tools::log->debug("\tComputing spin components");
-    const auto sx = tools::finite::measure::spin_component(state,qm::spinOneHalf::sx);
-    const auto sy = tools::finite::measure::spin_component(state,qm::spinOneHalf::sy);
-    const auto sz = tools::finite::measure::spin_component(state,qm::spinOneHalf::sz);
+    const auto sx = tools::finite::measure::spin_component(state,qm::spinHalf::sx);
+    const auto sy = tools::finite::measure::spin_component(state,qm::spinHalf::sy);
+    const auto sz = tools::finite::measure::spin_component(state,qm::spinHalf::sz);
     tools::log->debug("\t<psi | sx | psi>                = {:0.16f}", sx);
     tools::log->debug("\t<psi | sy | psi>                = {:0.16f}", sy);
     tools::log->debug("\t<psi | sz | psi>                = {:0.16f}", sz);
