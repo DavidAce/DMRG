@@ -15,10 +15,13 @@ namespace qm{
     using Scalar = std::complex<double>;
     using cplx = std::complex<double>;
     using real = double;
-    extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);
+
+    extern Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t site, bool swap = false);
+    extern std::vector<Eigen::MatrixXcd> gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool swap = false);
+
     constexpr std::complex<double> imp(0.0,1.0);
     constexpr std::complex<double> imn(0.0,-1.0);
-    namespace spinOneHalf {
+    namespace spinHalf {
         extern Eigen::Matrix2cd sx;
         extern Eigen::Matrix2cd sy;
         extern Eigen::Matrix2cd sz;
@@ -30,7 +33,9 @@ namespace qm{
         extern std::vector<Eigen::MatrixXcd> SY;
         extern std::vector<Eigen::MatrixXcd> SZ;
         extern std::vector<Eigen::MatrixXcd> II;
-        extern std::vector<Eigen::Matrix4cd> gen_twobody_spin(const Eigen::Matrix2cd &s);
+
+        extern Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::Matrix2cd &s, size_t at, size_t sites, bool swap = false);
+        extern std::vector<Eigen::Matrix4cd> gen_twobody_spins(const Eigen::Matrix2cd &s, bool swap = false);
     }
 
     namespace spinOne{
@@ -42,7 +47,7 @@ namespace qm{
         extern std::vector<Eigen::MatrixXcd> SY;
         extern std::vector<Eigen::MatrixXcd> SZ;
         extern std::vector<Eigen::MatrixXcd> II;
-        extern std::vector<Eigen::MatrixXcd> gen_twobody_spin(const Eigen::Matrix3cd &s);
+        extern std::vector<Eigen::MatrixXcd> gen_twobody_spins(const Eigen::Matrix3cd &s, bool swap = false);
     }
 
     namespace timeEvolution{
