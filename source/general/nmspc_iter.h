@@ -75,6 +75,10 @@ namespace iter {
         return internal::enumerate_range<typename Container::iterator,false>(std::begin(content), std::end(content), 0, content.size()-1);
     }
 
+    template<class Container>
+    decltype(auto) enumerate(const Container &content) {
+        return internal::enumerate_range<typename Container::const_iterator,false>(std::begin(content), std::end(content), 0, content.size()-1);
+    }
 
     template<class Iterator>
     decltype(auto) enumerate_reverse(Iterator first, Iterator last, std::size_t initial,std::size_t final) {
