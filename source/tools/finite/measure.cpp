@@ -268,9 +268,9 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
 }
 
 double tools::finite::measure::spin_component(const class_state_finite &state, const std::string &axis) {
-    if(axis.find('x') != std::string::npos) return measure::spin_component(state, qm::spinOneHalf::sx);
-    if(axis.find('y') != std::string::npos) return measure::spin_component(state, qm::spinOneHalf::sy);
-    if(axis.find('z') != std::string::npos) return measure::spin_component(state, qm::spinOneHalf::sz);
+    if(axis.find('x') != std::string::npos) return measure::spin_component(state, qm::spinHalf::sx);
+    if(axis.find('y') != std::string::npos) return measure::spin_component(state, qm::spinHalf::sy);
+    if(axis.find('z') != std::string::npos) return measure::spin_component(state, qm::spinHalf::sz);
     throw std::runtime_error("Unexpected axis: " + axis);
 }
 
