@@ -18,22 +18,56 @@ using Scalar = std::complex<double>;
 using namespace Eigen;
 
 
+Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool swap)
+/*
+ * Returns a spin operator embedded in a larger Hilbert space. For instance, if at == 1 and sites == 4:
+ *
+ *   σ¹ = i ⊗ σ ⊗ i ⊗ i
+ *
+ * where each element is a dxd matrix, resulting in a d^4 * d^4 matrix.
 
-std::vector<Eigen::MatrixXcd> qm::gen_manybody_spin(const Eigen::MatrixXcd &s, int sites) {
+ * Note that if this matrix is converted to a rank-8 tensor, the indexing goes like:
+ *
+ @verbatim
+        6 4 2 0
+        | | | |
+       [  σ¹  ]
+       | | | |
+       7 5 3 1
+ @endverbatim
+
+ * whereas you would normally want left-to-right indexing:
+ *
+ @verbatim
+        0 2 4 6
+        | | | |
+       [  σ¹  ]
+       | | | |
+       1 3 5 7
+ @endverbatim
+
+ * So don't forget to set "swap = true" if you intend to use the result as a tensor.
+ */
+
+{
+    if(at >= sites) throw std::logic_error("Expected at < sites. Got [at = " + std::to_string(at) + "] [sites = " + std::to_string(sites) + "]");
+    MatrixXcd id = MatrixXcd::Identity(s.rows(),s.cols());
+    MatrixXcd result = at == 0 ? s : id;
+    if(swap)
+        for(size_t site = 1; site < sites; site++) result = kroneckerProduct(site == at ? s : id, result).eval(); // .eval() is required to avoid aliasing!!
+    else
+        for(size_t site = 1; site < sites; site++) result = kroneckerProduct(result, site == at ? s : id).eval(); // .eval() is required to avoid aliasing!!
+    return result;
+}
+
+
+std::vector<Eigen::MatrixXcd> qm::gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool swap) {
     std::vector<MatrixXcd> S;
-    MatrixXcd              id = MatrixXcd::Identity(s.rows(), s.cols());
-    MatrixXcd              tmp;
-    for(int idx = 0; idx < sites; idx++) {
-        tmp = idx == 0 ? s : id;
-        for(int j = 1; j < sites; j++) {
-            tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
-        }
-        S.emplace_back(tmp);
-    }
+    for(int site = 0; site < sites; site++) S.emplace_back(qm::gen_embedded_spin_operator(s,site,sites,swap));
     return S;
 }
 
-namespace qm::spinOneHalf {
+namespace qm::spinHalf {
 
     /* clang-format off */
     Matrix2cd sx = (Matrix2cd() <<
@@ -69,19 +103,24 @@ namespace qm::spinOneHalf {
     std::vector<Eigen::MatrixXcd> II;
     /* clang-format on */
 
-    std::vector<Eigen::Matrix4cd> gen_twobody_spin(const Eigen::Matrix2cd &s) {
-        std::vector<Matrix4cd> S;
-        MatrixXcd tmp;
-        for(int idx = 0; idx < 2; idx++) {
-            tmp = idx == 0 ? s : id;
-            for(int j = 1; j < 2; j++) {
-                tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
-            }
-            S.emplace_back(tmp);
-        }
-        return S;
+
+    Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::Matrix2cd &s, size_t at, size_t sites,bool swap){
+        // Don't forget to set "swap = true" if you intend to use the result as a tensor.
+        return qm::gen_embedded_spin_operator(s,at,sites,swap);
     }
 
+
+    std::vector<Eigen::Matrix4cd> gen_twobody_spins(const Eigen::Matrix2cd &s, bool swap)
+    // Returns a pair of two-body 4x4 spin operators for embedded in a two-site Hilbert space:
+    //        (σ ⊗ i, i ⊗ σ)
+    // where σ is a 2x2 (pauli) matrix and i is the 2x2 identity matrix.
+    // Don't forget to set "swap = true" if you intend to use the result as a tensor.
+    {
+        std::vector<Matrix4cd> S;
+        for (size_t site = 0; site < 2; site++)
+            S.emplace_back(qm::gen_embedded_spin_operator(s,site,2,swap));
+        return S;
+    }
 
 }
 
@@ -107,19 +146,14 @@ namespace qm::SpinOne {
     std::vector<Eigen::MatrixXcd> II;
     /* clang-format on */
 
-    std::vector<Eigen::MatrixXcd> gen_twobody_spin(const Eigen::Matrix3cd &s) {
-        std::vector<MatrixXcd> S;
-        MatrixXcd tmp;
-        for(int idx = 0; idx < 2; idx++) {
-            tmp = idx == 0 ? s : id;
-            for(int j = 1; j < 2; j++) {
-                tmp = kroneckerProduct(tmp, idx == j ? s : id).eval();
-            }
-            S.emplace_back(tmp);
-        }
-        return S;
+    std::vector<Eigen::MatrixXcd> gen_twobody_spins(const Eigen::Matrix3cd &s, bool swap)
+    // Returns a pair of two-body 4x4 spin operators for embedded in a two-site Hilbert space:
+    //        (σ ⊗ i, i ⊗ σ)
+    // where σ is a 3x3 (pauli) matrix and i is the 3x3 identity matrix.
+    // So don't forget to set "swap = true" if you intend to use the result as a tensor.
+{
+        return qm::gen_manybody_spins(s,2,swap);
     }
-
 }
 
 namespace qm::timeEvolution {
@@ -210,20 +244,20 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
      *
      *
      @verbatim
-                   0      1                0
+                   0      2                0
                    |      |                |
                  [ exp(-ifH) ]  ---> [ exp(-ifH) ]
                    |      |               |
-                   2      3               1
+                   1      3               1
      @endverbatim
     */
 
     tools::log->trace("Generating twosite unitaries");
     std::vector<Eigen::Tensor<qm::cplx,2>> unitaries(sites-1);
-    auto SZ  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sz);
-    auto SP  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sp);
-    auto SM  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::sm);
-    auto ID  = qm::spinOneHalf::gen_twobody_spin(qm::spinOneHalf::id);
+    auto SZ  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz,false); // We use these as matrices
+    auto SP  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp,false); // We use these as matrices
+    auto SM  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm,false); // We use these as matrices
+    auto ID  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id,false); // We use these as matrices
     auto N   = std::vector<Eigen::Matrix4cd> {0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
 
     for (size_t idx = 0; idx < sites-1; idx++){
@@ -232,7 +266,6 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
         double th2 = rnd::uniform_double_box(-1,1);
         double th3 = rnd::uniform_double_box(-1,1);
         std::complex<double> t(rnd::uniform_double_box(-1,1), rnd::uniform_double_box(-1,1));
-
         Eigen::Matrix4cd H =
             th3*N[0]*N[1] +
             th2*N[1]*(ID[0]-N[0]) +
@@ -241,8 +274,17 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
             SP[0]* SM[1]*t +
             SP[1]* SM[0]*std::conj(t);
 
-        unitaries[idx] = Textra::MatrixToTensor((imn * fmix * H).exp(),4,4);
+        // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+        // the kronecker product that generated two-site gates above has indexed right-to-left
+        //         0                   2      0              0      2               0
+        //         |                   |      |              |      |               |
+        //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
+        //        |                   |      |              |      |                |
+        //        1                   3      1              1      3                1
+        unitaries[idx] = Textra::MatrixToTensor((imn * fmix * H).exp(),2,2,2,2).shuffle(Textra::array4{2,3,0,1}).reshape(Textra::array2{4,4});
     }
+    // Sanity check
+//    for(auto && u : unitaries) std::cout << "u^dagger u: \n" << u.contract(u.conjugate().shuffle(Textra::array2{1,0}), Textra::idx({1},{0})) << std::endl;
     return unitaries;
 }
 
