@@ -12,6 +12,14 @@
 class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
+    struct UnitaryGate {
+        size_t posL = 0;
+        size_t posR = 1;
+        Eigen::Tensor<Scalar,2> op;
+        Eigen::Tensor<Scalar,2> adjoint() const;
+    };
+
+
     extern void move_center_point               (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void move_center_point_to_edge       (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void move_center_point_to_middle     (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
@@ -23,7 +31,8 @@ namespace tools::finite::mps {
     extern void truncate_all_sites              (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_active_sites           (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_next_sites             (class_state_finite & state, long chi_lim, size_t num_sites = 4, std::optional<double> svd_threshold = std::nullopt);
-    extern void apply_twosite_operators         (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,2>> & twosite_operators, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern void apply_twosite_gates             (class_state_finite & state, const std::vector<UnitaryGate> & twosite_gates, bool inverse, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern void apply_twosite_gates             (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,2>> & twosite_gates, bool inverse, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
 
     namespace internal{
         inline std::set<long> used_bitfields;
