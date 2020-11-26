@@ -4,6 +4,7 @@
 
 #include "class_flbit.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_tensor_extra.h>
 #include <iostream>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_state_finite.h>
@@ -13,9 +14,10 @@
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
+#include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
-#include <tools/finite/mps.h>
+#include <tensors/state/class_mps_site.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 class_flbit::class_flbit(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
@@ -111,8 +113,27 @@ void class_flbit::run_preprocessing() {
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    unitary_twosite_operators = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
-    tools::finite::mps::apply_twosite_operators(*tensors.state,unitary_twosite_operators, status.chi_lim);
+    Eigen::Tensor<Scalar,3>   zminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("z", -1).normalized(), 2, 1, 1);
+    tensors.state->get_mps_site(2).set_M(zminus_spinor);
+
+    auto unitary_twosite_operators0 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+    auto unitary_twosite_operators1 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+    auto unitary_twosite_operators2 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+    auto unitary_twosite_operators3 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators0,false, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators1,false, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators2,false, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators3,false, status.chi_lim);
+
+    // Time evolve here
+
+
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators3,true, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators2,true, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators1,true, status.chi_lim);
+    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators0,true, status.chi_lim);
+
+    exit(0);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
