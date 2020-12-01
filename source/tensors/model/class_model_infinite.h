@@ -13,7 +13,10 @@ class class_model_infinite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 4>> twosite_tensor = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 4>> twosite_mpo_AB = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 4>> twosite_mpo_BA = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> twosite_ham_AB = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> twosite_ham_BA = std::nullopt;
     };
     mutable Cache                   cache;
     std::unique_ptr<class_mpo_site> HA; /*!< Left hamiltonian MPO */
@@ -43,7 +46,11 @@ class class_model_infinite {
     [[nodiscard]] const class_mpo_site &get_mpo_siteB() const;
     [[nodiscard]] class_mpo_site &      get_mpo_siteA();
     [[nodiscard]] class_mpo_site &      get_mpo_siteB();
-    const Eigen::Tensor<Scalar, 4> &    get_2site_mpo() const;
+    const Eigen::Tensor<Scalar, 4> &    get_2site_mpo_AB() const;
+    const Eigen::Tensor<Scalar, 4> &    get_2site_mpo_BA() const;
+    const Eigen::Tensor<Scalar, 2> &    get_2site_ham_AB() const;
+    const Eigen::Tensor<Scalar, 2> &    get_2site_ham_BA() const;
+
     Eigen::DSizes<long, 4>              dimensions() const;
 
     [[nodiscard]] bool   is_reduced() const;

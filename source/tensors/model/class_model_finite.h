@@ -17,6 +17,7 @@ class class_model_finite {
     struct Cache {
         std::optional<std::vector<size_t>>      cached_sites          = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo         = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham         = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo_squared = std::nullopt;
     };
     mutable Cache                         cache;
@@ -60,7 +61,9 @@ class class_model_finite {
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
+    const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 
     Eigen::DSizes<long, 4>          active_dimensions_squared() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites) const;
