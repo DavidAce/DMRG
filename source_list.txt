@@ -29,6 +29,7 @@ source/tensors/model/class_mpo_factory.cpp
 source/tensors/model/class_mpo_site.cpp
 source/tensors/model/class_ising_sdual.cpp
 source/tensors/model/class_ising_tf_rf.cpp
+source/tensors/model/class_lbit.cpp
 source/tensors/model/class_model_finite.cpp
 source/tensors/model/class_model_infinite.cpp
 source/tensors/state/class_mps_site.cpp
@@ -57,7 +58,6 @@ source/tools/finite/mps.cpp
 source/tools/finite/multisite.cpp
 source/tools/finite/ops.cpp
 source/tools/finite/print.cpp
-source/tools/finite/views.cpp
 source/tools/infinite/debug.cpp
 source/tools/infinite/env.cpp
 source/tools/infinite/io/h5dset.cpp
