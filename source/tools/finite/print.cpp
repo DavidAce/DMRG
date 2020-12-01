@@ -32,7 +32,7 @@ void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
     }
 }
 
-void tools::finite::print::dimensions(const class_model_finite &model) {
+void tools::finite::print::model(const class_model_finite &model) {
     model.get_mpo(0).print_parameter_names();
     for(size_t pos = 0; pos < model.get_length(); pos++) model.get_mpo(pos).print_parameter_values();
 }
