@@ -26,7 +26,7 @@ namespace rnd {
     extern int                  uniform_integer_01();
     extern double               uniform_double_01();
     extern double               uniform_double_box(double min, double max);
-    extern double               uniform_double_box(double width);
+    extern double               uniform_double_box(double halfwidth);
     extern std::complex<double> uniform_complex_in_unit_circle();
     extern std::complex<double> uniform_complex_on_unit_circle();
     extern std::complex<double> uniform_complex_box(double real_min,double real_max, double imag_min, double imag_max);

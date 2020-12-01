@@ -35,8 +35,8 @@ namespace rnd {
         std::uniform_real_distribution<>  rand_real(std::min(min,max),std::max(min,max));
         return rand_real(internal::rng);
     }
-    double uniform_double_box(double width){
-        std::uniform_real_distribution<>  rand_real(-width,width);
+    double uniform_double_box(double halfwidth){
+        std::uniform_real_distribution<>  rand_real(-halfwidth, halfwidth);
         return rand_real(internal::rng);
     }
 
