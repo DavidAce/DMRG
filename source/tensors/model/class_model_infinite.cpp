@@ -54,8 +54,8 @@ void class_model_infinite::randomize() {
     std::vector<class_mpo_site::TableMap> all_params;
     all_params.push_back(HA->get_parameters());
     all_params.push_back(HB->get_parameters());
-    HA->set_averages(all_params);
-    HB->set_averages(all_params);
+    HA->set_averages(all_params,true);
+    HB->set_averages(all_params,true);
 }
 
 void class_model_infinite::reset_mpo_squared() {
@@ -79,8 +79,8 @@ void class_model_infinite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
 std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
-    mpos_sq.emplace_back(HA->get_uncompressed_mpo());
-    mpos_sq.emplace_back(HB->get_uncompressed_mpo());
+    mpos_sq.emplace_back(HA->get_uncompressed_mpo_squared());
+    mpos_sq.emplace_back(HB->get_uncompressed_mpo_squared());
 
     // Setup SVD
     // Here we need a lot of precision:
@@ -178,15 +178,49 @@ void class_model_infinite::set_reduced_energy_per_site(double site_energy) {
     HB->set_reduced_energy(site_energy);
 }
 
-const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_mpo() const {
-    if(cache.twosite_tensor) return cache.twosite_tensor.value();
+const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_mpo_AB() const {
+    if(cache.twosite_mpo_AB) return cache.twosite_mpo_AB.value();
     long dim0 = HA->MPO().dimension(0);
     long dim1 = HB->MPO().dimension(1);
     long dim2 = HA->MPO().dimension(2) * HB->MPO().dimension(2);
     long dim3 = HA->MPO().dimension(3) * HB->MPO().dimension(3);
-    cache.twosite_tensor =
+    cache.twosite_mpo_AB =
         HA->MPO().contract(HB->MPO(), Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
-    return cache.twosite_tensor.value();
+    return cache.twosite_mpo_AB.value();
 }
+
+const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_2site_mpo_BA() const {
+    if(cache.twosite_mpo_BA) return cache.twosite_mpo_BA.value();
+    long dim0 = HB->MPO().dimension(0);
+    long dim1 = HA->MPO().dimension(1);
+    long dim2 = HB->MPO().dimension(2) * HA->MPO().dimension(2);
+    long dim3 = HB->MPO().dimension(3) * HA->MPO().dimension(3);
+    cache.twosite_mpo_BA =
+        HB->MPO().contract(HA->MPO(), Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
+    return cache.twosite_mpo_BA.value();
+}
+
+const Eigen::Tensor<class_model_infinite::Scalar, 2> &    class_model_infinite::get_2site_ham_AB() const{
+    if(cache.twosite_ham_AB) return cache.twosite_ham_AB.value();
+    auto twosite_mpo_AB = get_2site_mpo_AB();
+    auto edgeL = get_mpo_siteA().get_MPO_edge_left();
+    auto edgeR = get_mpo_siteB().get_MPO_edge_right();
+    cache.twosite_ham_AB = twosite_mpo_AB
+        .contract(edgeL, Textra::idx({0},{0}))
+        .contract(edgeR, Textra::idx({0},{0}));
+    return cache.twosite_ham_AB.value();
+
+}
+const Eigen::Tensor<class_model_infinite::Scalar, 2> &    class_model_infinite::get_2site_ham_BA() const{
+    if(cache.twosite_ham_BA) return cache.twosite_ham_BA.value();
+    auto twosite_mpo_BA = get_2site_mpo_BA();
+    auto edgeL = get_mpo_siteB().get_MPO_edge_left();
+    auto edgeR = get_mpo_siteA().get_MPO_edge_right();
+    cache.twosite_ham_BA = twosite_mpo_BA
+        .contract(edgeL, Textra::idx({0},{0}))
+        .contract(edgeR, Textra::idx({0},{0}));
+    return cache.twosite_ham_BA.value();
+}
+
 
 void class_model_infinite::clear_cache() { cache = Cache(); }
