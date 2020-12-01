@@ -11,7 +11,6 @@
 #include <math/svd.h>
 #include <tools/common/prof.h>
 #include <tools/finite/multisite.h>
-#include <tools/finite/views.h>
 
 class_model_finite::class_model_finite() = default; // Can't initialize lists since we don't know the model size yet
 
@@ -52,7 +51,7 @@ class_model_finite &class_model_finite::operator=(const class_model_finite &othe
 }
 
 void class_model_finite::initialize(ModelType model_type_, size_t model_size) {
-    tools::log->info("Initializing model with {} sites", model_size);
+    tools::log->info("Initializing model {} with {} sites", enum2str(model_type_), model_size);
     if(model_size < 2) throw std::logic_error("Tried to initialize model with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize model with more than 2048 sites");
     if(not MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
@@ -136,7 +135,7 @@ void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
 std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
-    for(auto &&mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo());
+    for(auto &&mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
 
     // Setup SVD
     // Here we need a lot of precision:
@@ -276,6 +275,19 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo;
+}
+
+Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_ham(const std::vector<size_t> &sites) const{
+    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
+    if(sites == active_sites and cache.multisite_ham) return cache.multisite_ham.value();
+    // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
+    auto multisite_mpo = get_multisite_mpo(sites);
+    auto edgeL = get_mpo(sites.front()).get_MPO_edge_left();
+    auto edgeR = get_mpo(sites.back()).get_MPO_edge_right();
+    return multisite_mpo
+                .contract(edgeL, Textra::idx({0},{0}))
+                .contract(edgeR, Textra::idx({0},{0}))
+                .reshape(Textra::array2{multisite_mpo.dimension(2),multisite_mpo.dimension(3)});
 }
 
 const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_mpo() const {
