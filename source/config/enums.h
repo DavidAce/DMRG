@@ -6,8 +6,8 @@
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
-enum class SVDMode {EIGEN,LAPACKE};
-enum class ModelType { ising_tf_rf, ising_sdual };
+enum class SVDMode { EIGEN, LAPACKE };
+enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
@@ -15,23 +15,28 @@ enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, N
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
-enum class LogPolicy {NORMAL,QUIET};
+enum class LogPolicy { NORMAL, QUIET };
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
 enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
-enum class OptWhen { ALWAYS,NEVER, PREV_FAIL,  };
-enum class OptMark { PASS,FAIL, };
+enum class OptWhen {
+    ALWAYS,
+    NEVER,
+    PREV_FAIL,
+};
+enum class OptMark {
+    PASS,
+    FAIL,
+};
 enum class OptInit { CURRENT_STATE, LAST_RESULT };
-enum class StateInitType {REAL,CPLX};
+enum class StateInitType { REAL, CPLX };
 enum class StateInit {
     RANDOM_PRODUCT_STATE,
     RANDOM_ENTANGLED_STATE,
     RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE,
-//    ALL_DOWN_ONE_UP,
+    //    ALL_DOWN_ONE_UP,
 };
-
-
 
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -124,6 +129,7 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf) return "ising_tf_rf";
         if(item == ModelType::ising_sdual) return "ising_sdual";
+        if(item == ModelType::lbit)        return "lbit";
     }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == StopReason::SUCCEEDED) return "SUCCEEDED";
@@ -187,15 +193,6 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == FileCollisionPolicy::BACKUP)     return "BACKUP";
         if(item == FileCollisionPolicy::REPLACE)    return "REPLACE";
     }
-
-//    if constexpr(std::is_same_v<T, h5pp::FilePermission>) {
-//        if(item == h5pp::FilePermission::READONLY)          return "READONLY";
-//        if(item == h5pp::FilePermission::COLLISION_FAIL)    return "COLLISION_FAIL";
-//        if(item == h5pp::FilePermission::RENAME)            return "RENAME";
-//        if(item == h5pp::FilePermission::READWRITE)         return "READWRITE";
-//        if(item == h5pp::FilePermission::BACKUP)            return "BACKUP";
-//        if(item == h5pp::FilePermission::REPLACE)           return "REPLACE";
-//    }
 
     if constexpr(std::is_same_v<T,fdmrg_task>){
         if(item == fdmrg_task::INIT_RANDOMIZE_MODEL)                    return "INIT_RANDOMIZE_MODEL";
@@ -295,6 +292,7 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf") return ModelType::ising_tf_rf;
         if(item == "ising_sdual") return ModelType::ising_sdual;
+        if(item == "lbit")        return ModelType::lbit;
     }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == "SUCCEEDED") return StopReason::SUCCEEDED;
