@@ -26,20 +26,17 @@ double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinit
     if(state.chiB() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();
     tools::log->trace("Measuring energy ham");
     tools::common::profile::get_default_prof()["t_ene_ham"]->tic();
-    auto SX    = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
-    auto SY    = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
-    auto SZ    = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
-    auto h_evn = model.get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
-    auto h_odd = model.get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
+    auto & h_evn = model.get_2site_ham_AB();
+    auto & h_odd = model.get_2site_ham_BA();
     tools::common::views::compute_mps_components(state);
     using namespace tools::common::views;
 
-    Eigen::Tensor<Scalar, 0> E_evn = theta_evn_normalized.contract(Textra::MatrixTensorMap(h_evn, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
+    Eigen::Tensor<Scalar, 0> E_evn = theta_evn_normalized.contract(h_evn.reshape(Textra::array4{2, 2, 2, 2}), Textra::idx({0, 2}, {0, 1}))
                                          .contract(theta_evn_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
                                          .contract(l_evn, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_evn, Textra::idx({0, 1}, {0, 1}));
 
-    Eigen::Tensor<Scalar, 0> E_odd = theta_odd_normalized.contract(Textra::MatrixTensorMap(h_odd, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
+    Eigen::Tensor<Scalar, 0> E_odd = theta_odd_normalized.contract(h_odd.reshape(Textra::array4{2, 2, 2, 2}), Textra::idx({0, 2}, {0, 1}))
                                          .contract(theta_odd_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
                                          .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
@@ -64,25 +61,22 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
     tools::common::profile::get_default_prof()["t_var_ham"]->tic();
     using namespace tools::common::views;
 
-    auto SX    = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
-    auto SY    = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
-    auto SZ    = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
-    auto h_evn = model.get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
-    auto h_odd = model.get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
+    auto & h_evn  = model.get_2site_ham_AB();
+    auto & h_odd  = model.get_2site_ham_BA();
     tools::common::views::compute_mps_components(state);
 
-    Eigen::Tensor<Scalar, 0> E_evn = theta_evn_normalized.contract(Textra::MatrixTensorMap(h_evn, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
+    Eigen::Tensor<Scalar, 0> E_evn = theta_evn_normalized.contract(h_evn.reshape(Textra::array4{2,2,2,2}), Textra::idx({0, 2}, {0, 1}))
                                          .contract(theta_evn_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
                                          .contract(l_evn, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_evn, Textra::idx({0, 1}, {0, 1}));
 
-    Eigen::Tensor<Scalar, 0> E_odd = theta_odd_normalized.contract(Textra::MatrixTensorMap(h_odd, 2, 2, 2, 2), Textra::idx({0, 2}, {0, 1}))
+    Eigen::Tensor<Scalar, 0> E_odd = theta_odd_normalized.contract(h_odd.reshape(Textra::array4{2,2,2,2}), Textra::idx({0, 2}, {0, 1}))
                                          .contract(theta_odd_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
                                          .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
 
-    Eigen::Tensor<Scalar, 4> h0 = Textra::MatrixToTensor((h_evn - E_evn(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
-    Eigen::Tensor<Scalar, 4> h1 = Textra::MatrixToTensor((h_odd - E_odd(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
+    Eigen::Tensor<Scalar, 4> h0 = Textra::MatrixToTensor((Textra::TensorMatrixMap(h_evn) - E_evn(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
+    Eigen::Tensor<Scalar, 4> h1 = Textra::MatrixToTensor((Textra::TensorMatrixMap(h_odd) - E_odd(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
 
     Eigen::Tensor<Scalar, 0> E2AB = theta_evn_normalized.contract(h0, Textra::idx({0, 2}, {0, 1}))
                                         .contract(h0, Textra::idx({2, 3}, {0, 1}))

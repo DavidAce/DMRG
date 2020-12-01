@@ -69,7 +69,7 @@ double tools::infinite::measure::energy_minus_energy_reduced(const state_or_mps_
         return tools::infinite::measure::energy_minus_energy_reduced(state.get_2site_mps(), model, edges);
     } else {
         tools::log->trace("Measuring energy mpo");
-        const auto &mpo = model.get_2site_mpo();
+        const auto &mpo = model.get_2site_mpo_AB();
         const auto &env = edges.get_ene_blk();
         tools::common::profile::get_default_prof()["t_ene"]->tic();
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
@@ -126,7 +126,7 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         else
             energy = tools::infinite::measure::energy_mpo(state, model, edges);
         double      E2  = energy * energy;
-        const auto &mpo = model.get_2site_mpo();
+        const auto &mpo = model.get_2site_mpo_AB();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
         tools::common::profile::get_default_prof()["t_ene"]->tic();
