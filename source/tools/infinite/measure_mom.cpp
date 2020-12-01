@@ -66,11 +66,8 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
     tools::common::profile::get_default_prof()["t_ene_mom"]->tic();
 
     Scalar a      = Scalar(0.0, 1.0) * 5e-3;
-    auto   SX     = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
-    auto   SY     = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
-    auto   SZ     = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
-    auto   h_evn  = model.get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
-    auto   h_odd  = model.get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
+    auto & h_evn  = model.get_2site_ham_AB();
+    auto & h_odd  = model.get_2site_ham_BA();
     auto   Op_vec = qm::timeEvolution::compute_G(a, 4, h_evn, h_odd);
 
     // The following only works if state.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
