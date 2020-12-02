@@ -38,7 +38,7 @@ class class_ising_tf_rf : public class_mpo_site {
     void set_field_damping(double beta) override;
     void build_mpo() override;
     void randomize_hamiltonian() override;
-    void set_averages(std::vector<TableMap> all_parameters, bool reverse = false) override;
+    void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) override;
 
     void save_hamiltonian(h5pp::File &file, const std::string &table_path) const override;
     void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) override;
