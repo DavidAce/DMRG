@@ -200,8 +200,8 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
      *                  1) There are a few candidate states with significant overlap (superposition)
      *              It's clear that we need to optimize, but we have to think carefully about the initial guess.
      *              Right now it makes sense to always choose best overlap theta, since that forces the algorithm to
-     *              choose a particular state and not get stuck in superposition. Choosing the old theta may not always
-     *              may just entrench the algorithm into a local minima.
+     *              choose a particular state and not get stuck in superposition. Choosing the old theta may just entrench
+     *              the algorithm into a local minima.
      *          D)  If 0 <= best_overlap and best_overlap < overlap_cat
      *              This can happen for three reasons, most often early in the simulation.
      *                  1) There are several candidate states with significant overlap (superposition)
@@ -246,6 +246,15 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
             internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
         if(max_overlap_idx) {
             // (OA)
+//            if constexpr(settings::debug) {
+//                for(auto &&[idx, candidate] : iter::enumerate(candidate_list)) {
+//                    candidate.set_variance(tools::finite::measure::energy_variance(candidate.get_tensor(), tensors));
+//                    std::string msg = fmt::format("Candidate {:10} | overlap {:<14.12f} | energy {:<+20.16f} | variance {:<+20.16f}", candidate.get_name(),
+//                                                  candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()));
+//                    if(idx == max_overlap_idx) msg.append("   <--- max overlap");
+//                    tools::log->trace(msg);
+//                }
+//            }
             auto &candidate_max_overlap = *std::next(candidate_list.begin(), static_cast<long>(max_overlap_idx.value()));
             candidate_max_overlap.set_variance(tools::finite::measure::energy_variance(candidate_max_overlap.get_tensor(), tensors));
             if(tools::log->level() == spdlog::level::trace) {
@@ -254,10 +263,8 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                                   std::log10(candidate_max_overlap.get_variance()));
             }
             tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
-            if(candidate_max_overlap.get_overlap() < 0.707){
-                tools::log->debug("ceres_subspace_optimization: Overlap too low < 0.707. Returning old tensor");
-                return initial_tensor;
-            }
+            if(candidate_max_overlap.get_overlap() < 0.1)
+                tools::log->debug("ceres_subspace_optimization: Overlap fell below < 0.1: {:20.16f}", candidate_max_overlap.get_overlap());
             return candidate_max_overlap;
         } else {
             // (OB)
@@ -422,9 +429,9 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
             double energy_check   = tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors);
             double variance_check = tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors);
             if(std::abs(1.0 - std::abs(optimized_tensor.get_energy() / energy_check)) > 1e-3)
-                tools::log->error("Energy mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_energy(), energy_check);
+                tools::log->warn("Energy mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_energy(), energy_check);
             if(std::abs(1.0 - std::abs(optimized_tensor.get_variance() / variance_check)) > 1e-3)
-                tools::log->error("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_tensor.get_variance(), variance_check);
+                tools::log->warn("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", std::log10(optimized_tensor.get_variance()), std::log10(variance_check));
         }
 
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->toc();
