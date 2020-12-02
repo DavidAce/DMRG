@@ -130,8 +130,66 @@ class h5tb_ising_tf_rf {
     static std::vector<std::string> get_parameter_names() { return {"J1", "J2", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"}; }
     static void                     print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12}", name[0], name[1], name[2], name[3], name[4], name[5],
-                         name[6], name[7], name[8]);
+        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2], name[3], name[4], name[5], name[6],
+                         name[7], name[8]);
+    }
+    void print_parameter_values() const {
+        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12} {:<12}", param.J1, param.J2, param.h_tran,
+                         param.h_mean, param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
+    }
+};
+
+class h5tb_lbit {
+    public:
+    struct table {
+        double J1               = 0;         /*!< On-site interaction */
+        double J2               = 0;         /*!< Two-body interaction */
+        double J3               = 0;         /*!< Three-body interaction */
+        double w1               = 0;         /*!< Width of the uniform box distribution U(-w1,w1) */
+        double w2               = 0;         /*!< Width of the uniform box distribution U(-w2,w2) */
+        double w3               = 0;         /*!< Width of the uniform box distribution U(-w3,w3) */
+        double J1_pert          = 0;         /*!< On-site perturbation */
+        double J2_pert          = 0;         /*!< Two-body perturbation */
+        double J3_pert          = 0;         /*!< Three-body perturbation */
+        long   spin_dim         = 2;         /*!< Spin dimension */
+        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+    };
+
+    static inline h5pp::hid::h5t h5_type;
+    table                        param;
+
+    h5tb_lbit() { register_table_type(); }
+
+    static void register_table_type() {
+        if(h5_type.valid()) return;
+        // Create a type for the char array from the template H5T_C_S1
+        // The template describes a string with a single char.
+        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
+        h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
+        H5Tset_size(h5t_custom_string, 16);
+        // Optionally set the null terminator '\0'
+        H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
+        h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+        H5Tinsert(h5_type, "J1", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J3", HOFFSET(table, J3), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "w1", HOFFSET(table, w1), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "w2", HOFFSET(table, w2), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "w3", HOFFSET(table, w3), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
+    }
+
+    static std::vector<std::string> get_parameter_names() {
+        return {"J1", "J2", "J3", "w1", "w2", "w3", "J1_pert", "J2_pert", "J3_pert", "spin_dim", "distribution"};
+    }
+    static void print_parameter_names() {
+        auto name = get_parameter_names();
+        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2], name[3], name[4], name[5],
+                         name[6], name[7], name[8], name[9], name[10]);
     }
     void print_parameter_values() const {
         tools::log->info("{: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12}", param.J1, param.J2, param.h_tran, param.h_mean,
