@@ -51,11 +51,11 @@ namespace qm{
     }
 
     namespace timeEvolution{
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_1st_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_2nd_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(std::complex<double> t, size_t susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(std::complex<double> a, size_t susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(cplx t, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> compute_G(cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
     }
 
     namespace lbit{
