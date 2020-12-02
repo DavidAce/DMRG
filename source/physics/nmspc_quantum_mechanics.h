@@ -60,6 +60,10 @@ namespace qm{
 
     namespace lbit{
         extern std::vector<Eigen::Tensor<cplx,2>> get_unitary_twosite_operators(size_t sites, double fmix);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_3site_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site);
+        extern std::vector<Eigen::Tensor<Scalar,4>> get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<Scalar,4>> &mpos);
+
     }
 
     namespace mpo{
