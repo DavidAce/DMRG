@@ -132,7 +132,7 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
 
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::common::profile::get_default_prof()["t_prj"]->tic();
-    tools::log->debug("Projecting state into sector with sign {}", sign);
+    tools::log->info("Projecting state into sector with sign {}", sign);
     auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     state.clear_measurements();
@@ -157,7 +157,7 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
      *
      */
 
-    tools::log->debug("Projecting state to axis nearest sector {}", sector);
+    tools::log->info("Projecting state to axis nearest sector {}", sector);
     std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
     auto spin_component_threshold = 1e-3;
@@ -178,8 +178,8 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
         }
         else if(alignment == 0){
             // No sector sign was specified, so we select the one along which there is a component
-            if(spin_component_along_requested_axis >= spin_component_threshold) sector_sign = 1;
-            if(spin_component_along_requested_axis <= spin_component_threshold) sector_sign = -1;
+            if(spin_component_along_requested_axis >= 0) sector_sign = 1;
+            else sector_sign = -1;
             project_to_sector(state, paulimatrix, sector_sign);
         }
     } else if(sector == "randomAxis") {
