@@ -102,7 +102,7 @@ namespace qm{
             std::list<Eigen::Tensor<Scalar,4>>,
             Eigen::Tensor<Scalar,3>,
             Eigen::Tensor<Scalar,3>>
-        sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, bool shuffle = false);
+        sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode);
 
         extern std::tuple<
             std::list<Eigen::Tensor<Scalar,4>>,
