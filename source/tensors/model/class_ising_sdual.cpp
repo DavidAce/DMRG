@@ -264,31 +264,44 @@ std::unique_ptr<class_mpo_site> class_ising_sdual::clone() const { return std::m
 
 long class_ising_sdual::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
-void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool reverse) {
+void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool infinite, bool reverse) {
     if(reverse) {
         // We need to reverse the parameters, and move them one step
         std::reverse(all_parameters.begin(), all_parameters.end());
         for(size_t pos = 0; pos < all_parameters.size(); pos++) {
             all_parameters[pos]["position"] = pos;
             if(pos < all_parameters.size() - 1) {
-                all_parameters[pos]["J_rnd"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_rnd"] : 0.0;
-                all_parameters[pos]["J_ptb"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_ptb"] : 0.0;
+                if(infinite){
+                    all_parameters[pos]["J_rand"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_rand"] : all_parameters[0]["J_rand"];
+                    all_parameters[pos]["J_pert"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_pert"] : all_parameters[0]["J_pert"];
+                }else {
+                    all_parameters[pos]["J_rand"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_rand"] : 0.0;
+                    all_parameters[pos]["J_pert"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_pert"] : 0.0;
+                }
+
             }
         }
     } else {
-        all_parameters.back()["J_rnd"] = 0.0;
-        all_parameters.back()["J_ptb"] = 0.0;
+        if(not infinite){
+            all_parameters.back()["J_rand"] = 0.0;
+            all_parameters.back()["J_pert"] = 0.0;
+        }
     }
 
     // Recompute J_avrg and pm.param.h_avrg from given pm.param.J_rand and pm.param.h_rand on all sites
     double J_avrg_ = 0;
     double h_avrg_ = 0;
-    for(auto &site_param : all_parameters) {
-        J_avrg_ += std::any_cast<double>(site_param["J_rand"]);
-        h_avrg_ += std::any_cast<double>(site_param["h_rand"]);
+    if(infinite){
+        J_avrg_ = h5tb.param.J_mean;
+        h_avrg_ = h5tb.param.h_mean;
+    }else{
+        for(auto &site_param : all_parameters) {
+            J_avrg_ += std::any_cast<double>(site_param["J_rand"]);
+            h_avrg_ += std::any_cast<double>(site_param["h_rand"]);
+        }
+        J_avrg_ /= static_cast<double>(all_parameters.size() - 1);
+        h_avrg_ /= static_cast<double>(all_parameters.size());
     }
-    J_avrg_ /= static_cast<double>(all_parameters.size() - 1);
-    h_avrg_ /= static_cast<double>(all_parameters.size());
 
     for(auto &site_params : all_parameters) {
         site_params["J_avrg"] = J_avrg_;
