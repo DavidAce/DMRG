@@ -13,7 +13,7 @@ using Scalar = std::complex<double>;
 
 class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
-Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo() const {
+Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo_squared() const {
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
@@ -23,7 +23,7 @@ Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo() const {
 }
 
 void class_mpo_site::build_mpo_squared() {
-    mpo_squared     = get_uncompressed_mpo();
+    mpo_squared     = get_uncompressed_mpo_squared();
     if(Textra::hasNaN(mpo_squared.value())) {
         print_parameter_names();
         print_parameter_values();
