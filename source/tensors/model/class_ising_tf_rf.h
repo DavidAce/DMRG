@@ -29,8 +29,6 @@ class class_ising_tf_rf : public class_mpo_site {
     [[nodiscard]] long                            get_spin_dimension() const override;
     [[nodiscard]] TableMap                        get_parameters() const override;
     [[nodiscard]] bool                            is_perturbed() const override;
-    [[nodiscard]] Eigen::MatrixXcd single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY,
-                                                           std::vector<Eigen::MatrixXcd> &SZ) const override;
 
     void print_parameter_names() const override;
     void print_parameter_values() const override;
