@@ -33,7 +33,7 @@ class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : 
             fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
 
     h5tb.param.spin_dim = settings::model::ising_sdual::spin_dim;
-    std::strcpy(h5tb.param.distribution, settings::model::ising_sdual::distribution.c_str());
+    copy_c_str(settings::model::ising_sdual::distribution,h5tb.param.distribution);
     parity_sep = settings::model::ising_sdual::parity_sep;
 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -63,7 +63,7 @@ void class_ising_sdual::set_parameters(TableMap &parameters) {
     h5tb.param.lambda   = std::any_cast<double>(parameters["lambda"]);
     h5tb.param.delta    = std::any_cast<double>(parameters["delta"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
+    copy_c_str(std::any_cast<std::string>(parameters["distribution"]),h5tb.param.distribution);
     all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
