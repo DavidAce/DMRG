@@ -158,15 +158,28 @@ namespace qm::SpinOne {
 
 namespace qm::timeEvolution {
 
-    std::vector<Eigen::MatrixXcd> Suzuki_Trotter_1st_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd) {
-        return {(t * h_evn).exp(), (t * h_odd).exp()};
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
+        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
+        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        return
+            {
+                Textra::MatrixToTensor((t * h_evn_matrix).exp()),
+                Textra::MatrixToTensor((t * h_odd_matrix).exp())
+            };
     }
 
-    std::vector<Eigen::MatrixXcd> Suzuki_Trotter_2nd_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd) {
-        return {(t * h_evn / 2.0).exp(), (t * h_odd).exp(), (t * h_evn / 2.0).exp()};
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
+        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
+        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        return
+        {
+            Textra::MatrixToTensor((t * h_evn_matrix / 2.0).exp()),
+            Textra::MatrixToTensor((t * h_odd_matrix).exp()),
+            Textra::MatrixToTensor((t * h_evn_matrix / 2.0).exp())
+        };
     }
 
-    std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
     /*!
      * Implementation based on
      * Janke, W., & Sauer, T. (1992).
@@ -176,50 +189,42 @@ namespace qm::timeEvolution {
      *
      */
     {
+        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
+        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
         double cbrt2 = pow(2.0, 1.0 / 3.0);
         double beta1 = 1.0 / (2.0 - cbrt2);
         double beta2 = -cbrt2 * beta1;
         double alph1 = 0.5 * beta1;
         double alph2 = (1.0 - cbrt2) / 2.0 * beta1;
 
-        std::vector<Eigen::MatrixXcd> temp;
-
-        temp.emplace_back((alph1 * t * h_evn).exp());
-        temp.emplace_back((beta1 * t * h_odd).exp());
-        temp.emplace_back((alph2 * t * h_evn).exp());
-        temp.emplace_back((beta2 * t * h_odd).exp());
-        temp.emplace_back((alph2 * t * h_evn).exp());
-        temp.emplace_back((beta1 * t * h_odd).exp());
-        temp.emplace_back((alph1 * t * h_evn).exp());
+        std::vector<Eigen::Tensor<Scalar,2>> temp;
+        temp.emplace_back(Textra::MatrixToTensor((alph1 * t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta1 * t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph2 * t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta2 * t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph2 * t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta1 * t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph1 * t * h_evn_matrix).exp()));
         return temp;
     }
 
-    std::vector<Eigen::Tensor<std::complex<double>, 2>> get_2site_evolution_gates(std::complex<double> t, size_t susuki_trotter_order,
-                                                                                  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<Scalar, 2>> get_twosite_time_evolution_operators(std::complex<double> t, size_t susuki_trotter_order,
+                                                                                  const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
      */
     {
-        long                          spin_dim_evn = h_evn.rows();
-        long                          spin_dim_odd = h_odd.rows();
-        std::vector<Eigen::MatrixXcd> matrix_vec;
         switch(susuki_trotter_order) {
-            case 1: matrix_vec = Suzuki_Trotter_1st_order(t, h_evn, h_odd); break;
-            case 2: matrix_vec = Suzuki_Trotter_2nd_order(t, h_evn, h_odd); break;
-            case 4: matrix_vec = Suzuki_Trotter_4th_order(t, h_evn, h_odd); break;
-            default: matrix_vec = Suzuki_Trotter_2nd_order(t, h_evn, h_odd); break;
+            case 1:  return Suzuki_Trotter_1st_order(t, h_evn, h_odd);
+            case 2:  return Suzuki_Trotter_2nd_order(t, h_evn, h_odd);
+            case 4:  return Suzuki_Trotter_4th_order(t, h_evn, h_odd);
+            default: return Suzuki_Trotter_2nd_order(t, h_evn, h_odd);
         }
-        std::vector<Eigen::Tensor<std::complex<double>, 2>> tensor_vec;
-        for(auto &m : matrix_vec) {
-            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, spin_dim_evn, spin_dim_odd)); // spin_dim^2  *
-        }
-        return tensor_vec;
     }
 
 
 
-    std::vector<Eigen::Tensor<std::complex<double>, 2>> compute_G(const std::complex<double> a, size_t susuki_trotter_order, const Eigen::MatrixXcd &h_evn,
-                                                                  const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<Scalar, 2>> compute_G(const cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
     /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 2 tensor.
      *  The legs contain two physical spin indices each
     *   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
@@ -234,7 +239,7 @@ namespace qm::timeEvolution {
     @endverbatim
     */
     {
-        return get_2site_evolution_gates(a, susuki_trotter_order, h_evn, h_odd);
+        return get_twosite_time_evolution_operators(a, susuki_trotter_order, h_evn, h_odd);
     }
 
 }
