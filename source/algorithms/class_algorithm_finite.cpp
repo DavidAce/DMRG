@@ -272,7 +272,7 @@ void class_algorithm_finite::try_projection() {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
         tensors.project_to_nearest_sector(settings::strategy::target_sector);
         has_projected = true;
-        write_to_file(StorageReason::PROJ_STATE);
+        write_to_file(StorageReason::PROJ_STATE, *tensors.state,CopyPolicy::OFF, true);
     }
 }
 
