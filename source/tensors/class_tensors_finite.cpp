@@ -132,19 +132,22 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
     }
 
     if constexpr(settings::debug) {
-        tools::log->debug("Energy   before mpo reset       {:>20.16f}", ene_bef_reset);
-        tools::log->debug("Energy   after  mpo compression {:>20.16f}", ene_aft_compr_lap);
-        tools::log->debug("Variance before mpo reset       {:>20.16f}", std::log10(var_bef_reset));
-        tools::log->debug("Variance after  mpo compression {:>20.16f}", std::log10(var_aft_compr));
-        double critical_cancellation_max_decimals = 15.0 - std::log10(std::pow(static_cast<double>(get_length()) * site_energy.value(), 2));
+        double critical_cancellation_max_decimals = 15 - std::max(0.0,std::log10(std::pow(site_energy.value()* static_cast<double>(get_length()), 2)));
         double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
         double variance_change                    = std::abs(var_bef_reset - var_aft_compr);
-        if(variance_change > 100 * critical_cancellation_error) {
-            tools::log->warn("Energy reduction changed the variance significantly: {:.16f}%", variance_change / var_bef_reset * 100);
-        }
-        if(variance_change > 1e6 * critical_cancellation_error) {
-            tools::log->warn("Energy reduction destroyed variance precision: {:.16f}%", variance_change / var_bef_reset * 100);
-            throw std::runtime_error("Energy reduction destroyed variance precision");
+        double variance_change_percent            = variance_change / std::abs(var_bef_reset) * 100;
+        if(variance_change > 1e3 * critical_cancellation_error) {
+            tools::log->warn("Energy   before mpo reset        {:>20.16f}", ene_bef_reset);
+            tools::log->warn("Energy   after  mpo compression  {:>20.16f}", ene_aft_compr_lap);
+            tools::log->warn("Variance before mpo reset        {:>20.16f}", std::log10(var_bef_reset));
+            tools::log->warn("Variance after  mpo compression  {:>20.16f}", std::log10(var_aft_compr));
+            tools::log->warn("Variance change                  {:>20.16f}", variance_change);
+            tools::log->warn("Variance change percent          {:>20.16f}", variance_change_percent);
+            tools::log->warn("Critical cancellation decimals   {:>20.16f}", critical_cancellation_max_decimals);
+            tools::log->warn("Critical cancellation error      {:>20.16f}", critical_cancellation_error);
+            tools::log->warn("Variance changed significantly after energy reduction+compression");
+            if(variance_change > 1e6 * critical_cancellation_error)
+                throw std::runtime_error("Energy reduction destroyed variance precision");
         }
     }
 }
