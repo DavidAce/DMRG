@@ -70,20 +70,18 @@ class class_mpo_site {
     [[nodiscard]] virtual long                            get_spin_dimension() const                        = 0;
     [[nodiscard]] virtual TableMap                        get_parameters() const                            = 0;
     [[nodiscard]] virtual bool                            is_perturbed() const                              = 0;
-    [[nodiscard]] virtual Eigen::MatrixXcd                single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
-                                                                                  std::vector<Eigen::MatrixXcd> &SY, std::vector<Eigen::MatrixXcd> &SZ) const = 0;
 
-    virtual void print_parameter_names() const                                                = 0;
-    virtual void print_parameter_values() const                                               = 0;
-    virtual void set_parameters(TableMap &parameters)                                         = 0;
-    virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) = 0;
-    virtual void set_coupling_damping(double alpha)                                           = 0;
-    virtual void set_field_damping(double beta)                                               = 0;
-    virtual void build_mpo()                                                                  = 0;
-    virtual void randomize_hamiltonian()                                                      = 0;
-    virtual void set_averages(std::vector<TableMap> all_parameters, bool reverse = false)     = 0;
-    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const    = 0;
-    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)    = 0;
+    virtual void print_parameter_names() const                                                                       = 0;
+    virtual void print_parameter_values() const                                                                      = 0;
+    virtual void set_parameters(TableMap &parameters)                                                                = 0;
+    virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                        = 0;
+    virtual void set_coupling_damping(double alpha)                                                                  = 0;
+    virtual void set_field_damping(double beta)                                                                      = 0;
+    virtual void build_mpo()                                                                                         = 0;
+    virtual void randomize_hamiltonian()                                                                             = 0;
+    virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false)     = 0;
+    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const                           = 0;
+    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)                           = 0;
     void         save_mpo(h5pp::File &file, const std::string &model_prefix) const;
     void         load_mpo(const h5pp::File &file, const std::string &model_prefix);
 };

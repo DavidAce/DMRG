@@ -105,6 +105,31 @@ void class_ising_tf_rf::build_mpo()
     build_mpo_squared();
 }
 
+Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO_edge_left() const {
+    Eigen::Tensor<Scalar, 1> ledge(3);
+    ledge.setZero();
+    ledge(2) = 1;
+    return ledge;
+}
+Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO_edge_right() const {
+    Eigen::Tensor<Scalar, 1> redge(3);
+    redge.setZero();
+    redge(0) = 1;
+    return redge;
+}
+
+Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO2_edge_left() const {
+    auto edge = get_MPO_edge_left();
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
+}
+Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO2_edge_right() const {
+    auto edge = get_MPO_edge_right();
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
+}
+
+
 void class_ising_tf_rf::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_stdv);
@@ -167,13 +192,6 @@ Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view(double site_energy)
     Eigen::Tensor<Scalar, 4> temp                                           = MPO();
     temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - site_energy * id);
     return temp;
-}
-
-Eigen::MatrixXcd class_ising_tf_rf::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
-                                                            std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {
-    auto i = num::mod(position, sites);
-    auto j = num::mod(position + 1, sites);
-    return -(h5tb.param.J1 * SZ[i] * SZ[j] + h5tb.param.h_tran * 0.5 * (SX[i] + SX[j]));
 }
 
 std::unique_ptr<class_mpo_site> class_ising_tf_rf::clone() const { return std::make_unique<class_ising_tf_rf>(*this); }
