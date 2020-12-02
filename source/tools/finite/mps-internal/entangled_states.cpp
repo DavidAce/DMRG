@@ -122,7 +122,6 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
     // Here we can make sure the state ends up in the correct spin parity sector by flipping the last
     // spin if necessary
     auto spin_component = tools::finite::measure::spin_component(state, axis);
-    past_center         = false;
     if(spin_component * sign < 0) {
         auto &                                                            mps  = *state.mps_sites.back();
         auto                                                              chiL = bond_dimensions[mps.get_position()];
@@ -147,7 +146,6 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         }
         G_mat.colwise().normalize();
         mps.set_M(G);
-        if(mps.isCenter()) { past_center = true; }
     }
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
     state.clear_measurements();
