@@ -29,21 +29,21 @@ Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_
  * Note that if this matrix is converted to a rank-8 tensor, the indexing goes like:
  *
  @verbatim
-        6 4 2 0
+        3 2 1 0
         | | | |
        [  σ¹  ]
        | | | |
-       7 5 3 1
+       7 6 5 4
  @endverbatim
 
  * whereas you would normally want left-to-right indexing:
  *
  @verbatim
-        0 2 4 6
+        0 1 2 3
         | | | |
        [  σ¹  ]
        | | | |
-       1 3 5 7
+       4 5 6 7
  @endverbatim
 
  * So don't forget to set "swap = true" if you intend to use the result as a tensor.
@@ -249,20 +249,21 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
      *
      *
      @verbatim
-                   0      2                0
+                   0      1                0
                    |      |                |
                  [ exp(-ifH) ]  ---> [ exp(-ifH) ]
                    |      |               |
-                   1      3               1
+                   2      3               1
      @endverbatim
     */
 
     tools::log->trace("Generating twosite unitaries");
     std::vector<Eigen::Tensor<qm::cplx,2>> unitaries(sites-1);
-    auto SZ  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz,false); // We use these as matrices
-    auto SP  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp,false); // We use these as matrices
-    auto SM  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm,false); // We use these as matrices
-    auto ID  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id,false); // We use these as matrices
+    constexpr bool kroneckerSwap = false;
+    auto SZ  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz,kroneckerSwap); // We use these as matrices
+    auto SP  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp,kroneckerSwap); // We use these as matrices
+    auto SM  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm,kroneckerSwap); // We use these as matrices
+    auto ID  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id,kroneckerSwap); // We use these as matrices
     auto N   = std::vector<Eigen::Matrix4cd> {0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
 
     for (size_t idx = 0; idx < sites-1; idx++){
@@ -279,17 +280,32 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
             SP[0]* SM[1]*t +
             SP[1]* SM[0]*std::conj(t);
 
-        // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
-        // the kronecker product that generated two-site gates above has indexed right-to-left
-        //         0                   2      0              0      2               0
-        //         |                   |      |              |      |               |
-        //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
-        //        |                   |      |              |      |                |
-        //        1                   3      1              1      3                1
-        unitaries[idx] = Textra::MatrixToTensor((imn * fmix * H).exp(),2,2,2,2).shuffle(Textra::array4{2,3,0,1}).reshape(Textra::array2{4,4});
+
+        if constexpr (kroneckerSwap){
+            // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
+
+            //         0               0      1
+            //         |               |      |
+            //   [ exp(-ifH) ]  ==  [ exp(-ifH) ]
+            //        |               |      |
+            //        1               2      3
+
+            unitaries[idx] = Textra::MatrixToTensor2((imn * fmix * H).exp());
+        }else{
+            // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+            // the kronecker product that generated two-site gates above has indexed right-to-left
+            //         0                   1      0              0      1               0
+            //         |                   |      |              |      |               |
+            //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
+            //        |                   |      |              |      |                |
+            //        1                   3      2              2      3                1
+            Eigen::Tensor<Scalar,2> H_shuffled = Textra::MatrixTensorMap(H,2,2,2,2).shuffle(Textra::array4{1,0,3,2}).reshape(Textra::array2{4,4});
+            Eigen::MatrixXcd expifH = (imn * fmix * Textra::TensorMatrixMap(H_shuffled)).exp();
+            unitaries[idx] = Textra::MatrixTensorMap(expifH);
+        }
     }
     // Sanity check
-//    for(auto && u : unitaries) std::cout << "u^dagger u: \n" << u.contract(u.conjugate().shuffle(Textra::array2{1,0}), Textra::idx({1},{0})) << std::endl;
+    for(auto && u : unitaries) if(not Textra::TensorMatrixMap(u).isUnitary()) throw std::logic_error("u is not unitary!");
     return unitaries;
 }
 
