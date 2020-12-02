@@ -61,7 +61,9 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
 
     if constexpr(std::is_same<Scalar, double>::value) {
         Textra::subtract_phase(eigvecs);
-        tools::log->trace("truncating imag of eigvecs, sum: {}", eigvecs.imag().cwiseAbs().sum());
+        double trunc = eigvecs.imag().cwiseAbs().sum();
+        if(trunc > 1e-12)
+            tools::log->warn("truncating imag of eigvecs, sum: {}", trunc);
         eigvecs = eigvecs.real();
     }
 
