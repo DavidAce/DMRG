@@ -198,37 +198,16 @@ std::unique_ptr<class_mpo_site> class_ising_tf_rf::clone() const { return std::m
 
 long class_ising_tf_rf::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
-Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO_edge_left() const {
-    Eigen::Tensor<Scalar, 1> ledge(3);
-    ledge.setZero();
-    ledge(2) = 1;
-    return ledge;
-}
-Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO_edge_right() const {
-    Eigen::Tensor<Scalar, 1> redge(3);
-    redge.setZero();
-    redge(0) = 1;
-    return redge;
-}
-
-Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO2_edge_left() const {
-    auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
-}
-Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO2_edge_right() const {
-    auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
-}
-
-void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool reverse) {
+void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite, bool reverse) {
     if(reverse) {
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
     }
-    lattice_parameters.back()["J1"] = 0.0;
-    lattice_parameters.back()["J2"] = 0.0;
+    if(not infinite){
+        lattice_parameters.back()["J1"] = 0.0;
+        lattice_parameters.back()["J2"] = 0.0;
+        lattice_parameters.end()[-2]["J2"] = 0.0;
+    }
     // Recompute J_avrg and h_avrg from given J_rnrd and h_rnd on all sites
     double J_sum = 0;
     double h_sum = 0;
