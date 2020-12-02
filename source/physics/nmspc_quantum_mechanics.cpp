@@ -309,6 +309,40 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
     return unitaries;
 }
 
+std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_twosite_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams){
+    // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
+    //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
+    // without passing through the Suzuki-Trotter decomposition.
+
+    // Here we expect "twosite_hams" to contain operators  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
+
+    if(twosite_hams.size() != sites-1)
+        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", twosite_hams.size(),sites-1));
+
+    std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
+    time_evolution_operators.reserve(sites-1);
+    for(auto && h : twosite_hams)
+       time_evolution_operators.emplace_back(Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(h)).exp()));
+    return time_evolution_operators;
+}
+
+std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_3site_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site){
+    // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore we can immediately use the relation
+    // exp(A + B) = exp(A)exp(B)
+    // without passing through the Suzuki-Trotter decomposition.
+
+    if(hams_3site.size() != sites-2)
+        throw std::logic_error(fmt::format("Wrong number of three-site hamiltonians: {}. Expected {}", hams_3site.size(),sites-2));
+
+    std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
+    time_evolution_operators.reserve(sites-1);
+    for(auto && h : hams_3site)
+        time_evolution_operators.emplace_back(Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(h)).exp()));
+    return time_evolution_operators;
+}
+
+
+
 
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
 /*! Builds the MPO string for measuring  spin on many-body systems.
