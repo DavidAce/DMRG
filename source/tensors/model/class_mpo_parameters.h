@@ -77,13 +77,14 @@ class h5tb_ising_sdual {
     }
     static void print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12}", name[0], name[1],
-                         name[2], name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
+        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2],
+                         name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
     }
     void print_parameter_values() const {
-        tools::log->info("{: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12}", param.J_mean,
-                         param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg, param.h_pert,
-                         param.lambda, param.delta, param.spin_dim, param.distribution);
+        tools::log->info(
+            "{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12} {:<12}",
+            param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg, param.h_pert,
+            param.lambda, param.delta, param.spin_dim, param.distribution);
     }
 };
 
@@ -192,7 +193,7 @@ class h5tb_lbit {
                          name[6], name[7], name[8], name[9], name[10]);
     }
     void print_parameter_values() const {
-        tools::log->info("{: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12} {: <12}", param.J1, param.J2, param.h_tran, param.h_mean,
-                         param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
+        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12} {:<12}", param.J1,
+                         param.J2, param.J3, param.w1, param.w2, param.w3, param.J1_pert, param.J2_pert, param.J3_pert, param.spin_dim, param.distribution);
     }
 };
