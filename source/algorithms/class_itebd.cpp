@@ -18,12 +18,6 @@ using namespace Textra;
 
 class_itebd::class_itebd(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_infinite(std::move(h5ppFile_), AlgorithmType::iTEBD) {
     tools::log->trace("Constructing class_itebd");
-    status.delta_t = settings::itebd::delta_t0;
-    auto SX        = qm::gen_manybody_spins(qm::spinHalf::sx, 2);
-    auto SY        = qm::gen_manybody_spins(qm::spinHalf::sy, 2);
-    auto SZ        = qm::gen_manybody_spins(qm::spinHalf::sz, 2);
-    h_evn          = tensors.model->get_mpo_siteA().single_site_hamiltonian(0, 2, SX, SY, SZ);
-    h_odd          = tensors.model->get_mpo_siteB().single_site_hamiltonian(1, 2, SX, SY, SZ);
 }
 
 void class_itebd::run_preprocessing() {
@@ -31,8 +25,11 @@ void class_itebd::run_preprocessing() {
     tools::common::profile::prof[algo_type]["t_pre"]->tic();
     init_bond_dimension_limits();
     randomize_model(); // First use of random!
-    status.delta_t                  = settings::itebd::delta_t0;
-    unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+    status.delta_t = settings::itebd::delta_t0;
+    h_evn       = tensors.model->get_2site_ham_AB();
+    h_odd       = tensors.model->get_2site_ham_BA();
+
+    unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
@@ -93,7 +90,7 @@ void class_itebd::check_convergence_time_step() {
         status.time_step_has_converged = true;
     } else if(status.chi_lim_has_reached_chi_max and status.entanglement_has_converged) {
         status.delta_t                  = std::max(settings::itebd::delta_tmin, status.delta_t * 0.5);
-        unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+        unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(-status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);
         clear_convergence_status();
     }
