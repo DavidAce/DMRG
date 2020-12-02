@@ -98,7 +98,7 @@ void class_ising_sdual::build_mpo()
  *  |     sz                0           0              0            0   |
  *  |     sx                0           0              0            0   |
  *  |     0                 I           0              0            0   |
- *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_av g*sx    -l*J_avrg*sz    I   |
+ *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_avrg*sx    -l*J_avrg*sz    I   |
  *
  *        2
  *        |
@@ -136,16 +136,59 @@ void class_ising_sdual::build_mpo()
     build_mpo_squared();
 }
 
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_left() const {
+    if(parity_sep) {
+        Eigen::Tensor<Scalar, 1> ledge(6);
+        ledge.setZero();
+        ledge(4) = 1;
+        ledge(5) = psfactor;
+        return ledge;
+    } else {
+        Eigen::Tensor<Scalar, 1> ledge(5);
+        ledge.setZero();
+        ledge(4) = 1;
+        return ledge;
+    }
+}
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_right() const {
+    if(parity_sep) {
+        Eigen::Tensor<Scalar, 1> redge(6);
+        redge.setZero();
+        redge(0) = 1;
+        redge(5) = 1;
+        return redge;
+    } else {
+        Eigen::Tensor<Scalar, 1> redge(5);
+        redge.setZero();
+        redge(0) = 1;
+        return redge;
+    }
+}
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_left() const {
+    auto edge = get_MPO_edge_left();
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
+}
+Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_right() const {
+    auto edge = get_MPO_edge_right();
+    auto dim  = edge.dimension(0);
+    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
+}
+
+
 void class_ising_sdual::randomize_hamiltonian() {
-    if(std::string(h5tb.param.distribution) == "normal") {
+    if(std::string_view(h5tb.param.distribution) == "normal") {
         h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_stdv);
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_stdv);
-    } else if(std::string(h5tb.param.distribution) == "lognormal") {
+    } else if(std::string_view(h5tb.param.distribution) == "lognormal") {
         h5tb.param.J_rand = rnd::log_normal(h5tb.param.J_mean, h5tb.param.J_stdv);
         h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_stdv);
-    } else if(std::string(h5tb.param.distribution) == "uniform") {
+    } else if(std::string_view(h5tb.param.distribution) == "uniform") {
         h5tb.param.J_rand = rnd::uniform_double_box(h5tb.param.J_mean - h5tb.param.J_stdv / 2.0, h5tb.param.J_mean + h5tb.param.J_stdv / 2.0);
         h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_stdv / 2.0, h5tb.param.h_mean + h5tb.param.h_stdv / 2.0);
+    } else if(std::string_view(h5tb.param.distribution) == "constant"){
+        h5tb.param.J_rand = h5tb.param.J_mean;
+        h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform>");
     }
@@ -216,55 +259,6 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy)
     return temp;
 }
 
-Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_left() const {
-    if(parity_sep) {
-        Eigen::Tensor<Scalar, 1> ledge(6);
-        ledge.setZero();
-        ledge(4) = 1;
-        ledge(5) = psfactor;
-        return ledge;
-    } else {
-        Eigen::Tensor<Scalar, 1> ledge(5);
-        ledge.setZero();
-        ledge(4) = 1;
-        return ledge;
-    }
-}
-
-Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO_edge_right() const {
-    if(parity_sep) {
-        Eigen::Tensor<Scalar, 1> redge(6);
-        redge.setZero();
-        redge(0) = 1;
-        redge(5) = 1;
-        return redge;
-    } else {
-        Eigen::Tensor<Scalar, 1> redge(5);
-        redge.setZero();
-        redge(0) = 1;
-        return redge;
-    }
-}
-
-Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_left() const {
-    auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
-}
-Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_right() const {
-    auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
-}
-
-Eigen::MatrixXcd class_ising_sdual::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
-                                                            std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {
-    auto i = num::mod(position, sites);
-    auto j = num::mod(position + 1, sites);
-    auto k = num::mod(position + 2, sites);
-    return -(h5tb.param.J_rand * SZ[i] * SZ[j] + h5tb.param.h_rand * 0.5 * (SX[i] + SX[j]) +
-             h5tb.param.lambda * (h5tb.param.h_avrg * SX[i] * SX[j] + h5tb.param.J_avrg * SZ[i] * SZ[k]));
-}
 
 std::unique_ptr<class_mpo_site> class_ising_sdual::clone() const { return std::make_unique<class_ising_sdual>(*this); }
 
