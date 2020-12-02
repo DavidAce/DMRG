@@ -76,7 +76,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     for(auto &&item : reports::eigs_log) { candidate_time += item.ham_time + item.lu_time + item.eig_time; }
 
     std::vector<opt_state> candidate_list;
-    candidate_list.reserve(eigvals.size());
+    candidate_list.reserve(static_cast<size_t>(eigvals.size()));
     for(long idx = 0; idx < eigvals.size(); idx++) {
         auto eigvec_i = Textra::MatrixToTensor(eigvecs.col(idx), state.active_dimensions());
         candidate_list.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
