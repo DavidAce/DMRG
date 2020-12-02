@@ -179,7 +179,7 @@ void tools::finite::mps::randomize_state(class_state_finite &state, StateInit in
 }
 
 void tools::finite::mps::apply_random_paulis(class_state_finite &state, const std::vector<Eigen::Matrix2cd> &paulimatrices) {
-    auto [mpos, L, R] = qm::mpo::sum_of_pauli_mpo(paulimatrices, state.get_length(), true);
+    auto [mpos, L, R] = qm::mpo::sum_of_pauli_mpo(paulimatrices, state.get_length(), RandomizerMode::SELECT1);
     tools::finite::ops::apply_mpos(state, mpos, L, R);
 }
 
