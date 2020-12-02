@@ -21,7 +21,7 @@ class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : 
     h5tb.param.h_mean   = settings::model::ising_tf_rf::h_mean;
     h5tb.param.h_stdv   = settings::model::ising_tf_rf::h_stdv;
     h5tb.param.spin_dim = settings::model::ising_tf_rf::spin_dim;
-    std::strcpy(h5tb.param.distribution, settings::model::ising_tf_rf::distribution.c_str());
+    copy_c_str(settings::model::ising_tf_rf::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
 
@@ -50,7 +50,7 @@ void class_ising_tf_rf::set_parameters(TableMap &parameters) {
     h5tb.param.h_rand   = std::any_cast<double>(parameters["h_rand"]);
     h5tb.param.h_pert   = std::any_cast<double>(parameters["h_pert"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
+    copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
     if(h5tb.param.J2 != 0.0) throw std::runtime_error("Use of [J2] - Next-nearest neighbor coupling - is not implemented yet");
     all_mpo_parameters_have_been_set = true;
     build_mpo();

@@ -13,6 +13,13 @@
 #include <hdf5_hl.h>
 #include <tools/common/log.h>
 
+template<typename SrcType, typename TgtType, size_t size>
+void copy_c_str(const SrcType &src, TgtType (&tgt)[size])
+// Use to copy the distribution char array from string
+{
+    tgt[src.copy(tgt, size - 1)] = 0; // Null terminates
+}
+
 class h5tb_ising_sdual {
     public:
     struct table {
