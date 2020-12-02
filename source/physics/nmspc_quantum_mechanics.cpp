@@ -614,17 +614,10 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
 
 
 std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
-qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, bool shuffle)
+qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode)
 /*! Builds a string of MPO's
  *      P = Π  O_i
  * where Π is the product over all sites, and O_i are MPOs with 2x2 (pauli) matrices on the diagonal
- *
- *            | s0  0   0  .  |
- * O_i =      | 0   s1  0  .  |
- *            | 0   0  s2  .  |
- *            | .   .   . ... |
- *
- * The matrices s0, s1, s2 are shuffled if the argument shuffle == true
  *
  *        2
  *        |
@@ -632,36 +625,94 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
  *        |
  *        3
  *
+ * If mode == RandomizerMode::SHUFFLE:
+ *
+ *                 | s0  0   0  .  |
+ *      O_i =      | 0   s1  0  .  |
+ *                 | 0   0  s2  .  |
+ *                 | .   .   . ... |
+ *
+ * where for each O_i the matrices s0, s1, s2 are shuffled randomly
+ *
+ * If mode == RandomizerMode::SELECT1:
+ *
+ *      O_i =  | s  |
+ *
+ *  where for each O_i one of the matrices s0, s1, s2... is selected randomly
+ *
+ * If mode == RandomizerMode::ASIS:
+ *
+ *                 | s0  0   0  .  |
+ *      O_i =      | 0   s1  0  .  |
+ *                 | 0   0  s2  .  |
+ *                 | .   .   . ... |
+ *
+ * where for each O_i the matrices s0, s1, s2... are placed in order as given
+ *
  */
+
 {
     if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
-    long                     num_paulis = static_cast<long>(paulimatrices.size());
     long                     spin_dim   = 2;
     Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
+    Eigen::array<long, 4>    offset4    = {0, 0, 0, 0};
+
     std::list<Eigen::Tensor<Scalar, 4>> mpos;
-    std::vector<size_t> pauli_idx = num::range<size_t,size_t>(0,num_paulis-1,1);
-    for(size_t site = 0; site < sites; site++){
-        Eigen::Tensor<Scalar, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
-        MPO_S.setZero();
-        if(shuffle)
-            std::shuffle(pauli_idx.begin(),pauli_idx.end(),rnd::internal::rng);
-        for(long idx = 0; idx < num_paulis; idx++) {
-            auto uidx = static_cast<size_t>(idx);
-            const auto & pauli =  paulimatrices[pauli_idx[uidx]];
-            auto offset4 = Eigen::array<long, 4>{idx, idx, 0, 0};
-            MPO_S.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
+    auto pauli_idx = num::range<size_t,size_t>(0, paulimatrices.size() - 1, 1);
+
+    for(size_t site = 0; site < sites; site++) {
+        Eigen::Tensor<Scalar, 4> mpo;
+        switch(mode) {
+            case RandomizerMode::SELECT1: {
+                mpo.resize(1, 1, spin_dim, spin_dim);
+                mpo.setZero();
+                auto        rnd_idx                          = rnd::uniform_integer_box<size_t>(0, paulimatrices.size()-1);
+                const auto &pauli                            = paulimatrices[rnd_idx];
+                mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
+                break;
+            }
+            case RandomizerMode::SHUFFLE:{
+                std::shuffle(pauli_idx.begin(),pauli_idx.end(),rnd::internal::rng);
+                [[fallthrough]];
+            }
+            case RandomizerMode::ASIS:{
+                auto num_paulis = static_cast<long>(paulimatrices.size());
+                mpo.resize(num_paulis, num_paulis, spin_dim, spin_dim);
+                for(long idx = 0; idx < num_paulis; idx++) {
+                    auto uidx = static_cast<size_t>(idx);
+                    const auto & pauli =  paulimatrices[pauli_idx[uidx]];
+                    offset4 = {idx, idx, 0, 0};
+                    mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
+                }
+                break;
+            }
         }
-        mpos.emplace_back(MPO_S);
+        mpos.emplace_back(mpo);
     }
 
+
     // Create compatible edges
-    Eigen::Tensor<Scalar, 3> Ledge(1, 1, num_paulis); // The left  edge
-    Eigen::Tensor<Scalar, 3> Redge(1, 1, num_paulis); // The right edge
-    Ledge(0, 0, 0) = 1.0 / std::sqrt(num_paulis);
-    Ledge(0, 0, 1) = 1.0 / std::sqrt(num_paulis);
-    Redge(0, 0, 0) = 1;
-    Redge(0, 0, 1) = 1;
+    Eigen::Tensor<Scalar, 3> Ledge(1,1,1); // The left  edge
+    Eigen::Tensor<Scalar, 3> Redge(1,1,1); // The right edge
+    switch(mode){
+        case RandomizerMode::SHUFFLE:
+        case RandomizerMode::ASIS:{
+            Ledge.resize(1, 1, paulimatrices.size());
+            Redge.resize(1, 1, paulimatrices.size());
+            for(size_t idx = 0; idx < paulimatrices.size(); idx++){
+                Ledge(0, 0, idx) = 1.0 / std::sqrt(paulimatrices.size());
+                Redge(0, 0, idx) = 1;
+            }
+            break;
+        }
+        case RandomizerMode::SELECT1:{
+            Ledge(0, 0, 0) = 1;
+            Redge(0, 0, 0) = 1;
+            break;
+        }
+
+    }
     return std::make_tuple(mpos, Ledge, Redge);
 }
 

@@ -16,6 +16,7 @@ enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
 enum class LogPolicy { NORMAL, QUIET };
+enum class RandomizerMode {SHUFFLE, SELECT1, ASIS};
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
 enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
@@ -238,6 +239,11 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == CopyPolicy::TRY)                                    return "TRY";
         if(item == CopyPolicy::OFF)                                    return "OFF";
     }
+    if constexpr(std::is_same_v<T,RandomizerMode>){
+        if(item == RandomizerMode::SHUFFLE)                            return "SHUFFLE";
+        if(item == RandomizerMode::SELECT1)                            return "SELECT1";
+        if(item == RandomizerMode::ASIS)                               return "ASIS";
+    }
     if constexpr(std::is_same_v<T,OptType>){
         if(item == OptType::REAL)                                      return "REAL";
         if(item == OptType::CPLX)                                      return "CPLX";
@@ -407,6 +413,11 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "FORCE")                                   return CopyPolicy::FORCE;
         if(item == "TRY")                                     return CopyPolicy::TRY;
         if(item == "OFF")                                     return CopyPolicy::OFF;
+    }
+    if constexpr(std::is_same_v<T,RandomizerMode>){
+        if(item == "SHUFFLE")                                 return RandomizerMode::SHUFFLE;
+        if(item == "SELECT1")                                 return RandomizerMode::SELECT1;
+        if(item == "ASIS")                                    return RandomizerMode::ASIS;
     }
     if constexpr(std::is_same_v<T,OptType>){
         if(item == "REAL")                                    return OptType::REAL;
