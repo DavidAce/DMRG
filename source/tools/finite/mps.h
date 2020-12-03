@@ -55,7 +55,7 @@ namespace tools::finite::mps {
         extern void set_product_state(class_state_finite & state, StateInitType type, const std::string &sector);
 
         // Entangled states
-        extern void randomize_given_state (class_state_finite & state, StateInitType type, double factor = 1.0);
+        extern void randomize_given_state (class_state_finite & state, StateInitType type);
         extern void set_random_entangled_state_in_sector_using_eigenspinors(class_state_finite & state, StateInitType type, const std::string &sector, long chi_lim);
         extern void set_random_entangled_state_with_random_spinors(class_state_finite & state, StateInitType type, long chi_lim);
     }

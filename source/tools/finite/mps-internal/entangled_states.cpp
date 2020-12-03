@@ -153,7 +153,7 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::internal::randomize_given_state(class_state_finite &state, StateInitType type, double factor) {
+void tools::finite::mps::internal::randomize_given_state(class_state_finite &state, StateInitType type) {
     using namespace qm::spinHalf;
     switch(type){
         case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::Matrix2cd>{id, 1.0/std::sqrt(2.0) * (sx + sz)}); break;
