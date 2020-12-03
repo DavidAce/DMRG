@@ -180,17 +180,17 @@ if [ -f "$jobfile" ]; then
     if [ -n "$dryrun" ]; then
 cat << EOF >&2
 sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
---array=1-$numseeds \
+--array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $file
 EOF
     bash run_jobarray.sh -e $exec -f $file -d
     else
       echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
-        --array=1-$numseeds \
+        --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file" >> job_report.txt
 
       sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
-        --array=1-$numseeds \
+        --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file
     fi
   done
