@@ -54,7 +54,7 @@ echo "JOB FILE          : $jobfile"
 
 num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 start_id=$SLURM_ARRAY_TASK_ID
-end_id=$((SLURM_ARRAY_TASK_ID+$SLURM_ARRAY_TASK_STEP))
+end_id=$((SLURM_ARRAY_TASK_ID+SLURM_ARRAY_TASK_STEP))
 
 for id in $(seq $start_id $end_id); do
   arg_line=$(tail -n+$id $jobfile | head -1)
