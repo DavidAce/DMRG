@@ -260,8 +260,6 @@ void tools::finite::mps::apply_twosite_gates(class_state_finite &state, const st
         if(gate.posR >= state.get_length())
             throw std::logic_error(fmt::format("Expected site posR < length. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
         while(state.get_position() != gate.posL) move_center_point(state, chi_lim, svd_threshold); // Move into position
-        auto &mpsL = state.get_mps_site(gate.posL);
-        auto &mpsR = state.get_mps_site(gate.posR);
         tools::log->debug("Applying two-site gate at sites [{} {}]", gate.posL, gate.posR);
         Eigen::Tensor<Scalar, 3> twosite_tensor_op;
         if(reverse) twosite_tensor_op = gate.adjoint().contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
