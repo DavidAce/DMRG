@@ -37,16 +37,6 @@ if [ ! -f $jobfile ]; then
     exit 1
 fi
 
-num_cols=$(awk '{print NF}' $jobfile | head -n 1)
-arg_line=$(tail -n+$SLURM_ARRAY_TASK_ID $jobfile | head -1)
-config_file=$(echo $arg_line | cut -d " " -f1)
-config_base=$(basename $config_file .cfg)
-config_dir="$(basename "$(dirname "$config_file")")"
-model_seed=$(echo $arg_line | cut -d " " -f2)
-logdir=logs/$config_dir/$config_base
-mkdir -p $logdir
-
-
 echo "HOSTNAME          : $HOSTNAME"
 echo "CLUSTER           : $SLURM_CLUSTER_NAME"
 echo "CPUS ON  NODE     : $SLURM_CPUS_ON_NODE"
@@ -56,23 +46,44 @@ echo "MEM PER CPU       : $SLURM_MEM_PER_CPU"
 echo "MEM PER NODE      : $SLURM_MEM_PER_NODE"
 echo "ARRAY JOB ID      : $SLURM_ARRAY_JOB_ID"
 echo "ARRAY TASK ID     : $SLURM_ARRAY_TASK_ID"
+echo "ARRAY TASK STEP   : $SLURM_ARRAY_TASK_STEP"
+echo "ARRAY TASK MIN ID : $SLURM_ARRAY_TASK_MIN"
+echo "ARRAY TASK MAX ID : $SLURM_ARRAY_TASK_MAX"
 echo "JOB FILE          : $jobfile"
-echo "CONFIG FILE       : $config_file"
-echo "SEED              : $model_seed"
 
 
-if [ "$num_cols" -eq 2 ]; then
-    echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
-    if [ -z  "$dryrun" ];then
-      $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
-    fi
-elif [ "$num_cols" -eq 3 ]; then
-    bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
-    if [ -z  "$dryrun" ];then
-      $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
-    fi
-else
-    echo "Case not implemented"
-    exit 1
-fi
+num_cols=$(awk '{print NF}' $jobfile | head -n 1)
+
+for id in $(seq $SLURM_ARRAY_TASK_MIN $SLURM_ARRAY_TASK_MAX); do
+  arg_line=$(tail -n+$id $jobfile | head -1)
+  config_file=$(echo "$arg_line" | cut -d " " -f1)
+  config_base=$(echo "$config_file" | xargs -l basename)
+  config_dir=$(echo "$config_file" | xargs -l dirname)
+  model_seed=$(echo $arg_line | cut -d " " -f2)
+  logdir=logs/$config_dir/$config_base
+  mkdir -p $logdir
+
+  echo "JOB FILE LINE(S)  : $arg_line"
+  echo "CONFIG FILE       : $config_file"
+  echo "SEED              : $model_seed"
+
+  if [ "$num_cols" -eq 2 ]; then
+      echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
+      if [ -z  "$dryrun" ];then
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
+      fi
+  elif [ "$num_cols" -eq 3 ]; then
+      bit_field=$(echo $arg_line | cut -d " " -f3)
+      echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+      if [ -z  "$dryrun" ];then
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
+      fi
+  else
+      echo "Case not implemented"
+      exit 1
+  fi
+done
+
+
+
+

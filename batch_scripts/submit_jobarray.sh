@@ -19,7 +19,8 @@ Usage            : $PROGNAME [-option | --option ] [=]<argument>
 -J | --job-name <str>              : Slurm job name. (default = DMRG)
 -m | --mem-per-cpu <int[suffix]>   : Memory per cpu core, e.g. 2000, 2000M, 2G (default: 2000)
 -N | --sims-per-cfg <int>          : Number of simulations per config file. Can be split up into chunks with -n (default: 10)
--n | --sims-per-sbatch <int>       : Number of simulations per invocation of sbatch, or job-array size. (Splits -N into chunks of <num>)  (default = 10)
+-n | --sims-per-array <int>        : Number of simulations in each job-array (splits -N into -N/-n chunks)  (default: 1000)
+   | --sims-per-task <int>         : Number of simulations per job-array task. This is equivalent to the step, or stride in the array (default: 1)
    | --ntasks <int>                : Number of tasks per simulation (e.g. mpi threads) (default: 1)
 -o | --other <...>                 : Other options passed to sbatch
 -O | --open-mode <append|truncate> : Open mode for logs (default: append)
@@ -51,7 +52,8 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:O:p:q:r:s:t:v \
                 job-name:\
                 mem-per-cpu:\
                 sims-per-cfg:\
-                sims-per-sbatch:\
+                sims-per-array:\
+                sims-per-task:\
                 ntasks:\
                 other:\
                 open-mode:\
@@ -79,7 +81,8 @@ configpath=input/
 startseed=0
 time="--time=0-1:00:00"
 simspercfg=10
-simspersbatch=10
+simsperarray=1000
+simspertask=1
 openmode="--open-mode=append"
 cpuspertask="--cpus-per-task=1"
 ntasks="--ntasks=1"
@@ -102,7 +105,8 @@ do
     -J|--job-name)                  jobname="--job-name=$2"           ; echo " * Job name                 : $2"      ; shift 2 ;;
     -m|--mem-per-cpu)               mempercpu="--mem-per-cpu=$2"      ; echo " * Mem per cpu              : $2"      ; shift 2 ;;
     -N|--sims-per-cfg)              simspercfg=$2                     ; echo " * Sims per cfg             : $2"      ; shift 2 ;;
-    -n|--sims-per-sbatch)           simspersbatch=$2                  ; echo " * Sims per sbatch          : $2"      ; shift 2 ;;
+    -n|--sims-per-array)            simsperarray=$2                   ; echo " * Sims per array           : $2"      ; shift 2 ;;
+       --sims-per-task)             simspertask=$2                    ; echo " * Sims per task            : $2"      ; shift 2 ;;
        --ntasks)                    ntasks="--ntasks=$2"              ; echo " * ntasks                   : $2"      ; shift 2 ;;
        --other)                     other=$2                          ; echo " * Other                    : $2"      ; shift 2 ;;
     -O|--open-mode)                 openmode="--open-mode=$2"         ; echo " * Open mode                : $2"      ; shift 2 ;;
@@ -123,10 +127,13 @@ if [ $OPTIND -eq 0 ] ; then
 fi
 shift "$((OPTIND - 1))"
 
-if [ "$simspersbatch" -gt "$simspercfg" ]; then
-    echo "Cannot have sims-per-sbatch ($simspersbatch) greater than sims-per-cfg ($simspercfg)"
+
+if [ "$simsperarray" -gt "$simspercfg" ]; then
+    echo "Cannot have array-size ($simsperarray) > sims-per-cfg ($simspercfg)"
     exit 1
 fi
+
+
 
 
 exec=../build/$build_type/$execname
@@ -146,14 +153,14 @@ fi
 
 
 # If we are using a job-file we can use it directly and then skip generating one
-#      split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase-
+#      split --lines=$simsperarray --additional-suffix=.job -d --suffix-length=3 $seedfile seeds/$seedbase-
 
 if [ -f "$jobfile" ]; then
   numseeds=$(cat $jobfile | wc -l)
   jobbase=$(basename $jobfile .job)
   jobdir=$(dirname $jobfile)
-  if [ "$numseeds" -gt $simspersbatch ] ; then
-    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $jobfile $jobdir/$jobbase-
+  if [ "$numseeds" -gt $simsperarray ] ; then
+    split --lines=$simsperarray --additional-suffix=.job -d --suffix-length=3 $jobfile $jobdir/$jobbase-
     mv "$jobfile" "$(basename $jobfile).bak"
   fi
 
@@ -191,13 +198,8 @@ EOF
 fi
 
 
-
-
-
-
-
 # The point from now on will be to generate one massive list with 2 columns: configs and seeds
-# After generating that list, and then split it into chunks and write the chunks to .job files
+# After generating that list we split it into chunks and write the chunks to .job files
 # Optionally the big list is shuffled before the split
 
 # Parse config path
@@ -220,36 +222,6 @@ else
     exit 1
 fi
 echo "Finding config path... OK"
-
-
-# Parse seed path
-#if [ -n "$seedpath" ] ; then
-#    if [ -d "$seedpath" ];then
-#        echo "Finding seed files in given path..."
-#        seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
-#        echo "Finding seed files in given path... OK"
-#    elif [ -f "$seedpath" ]; then
-#        echo "Found seed file in given path: $seedpath"
-#        seedfiles=$seedpath
-#        seedpath=$(dirname $seedpath)
-#    elif [ ! -e "$seedpath" ]; then
-#        echo "Seed path does not exist: $seedpath "
-#        exit 1
-#    else
-#        echo "Input file path cannot be parsed: $seedpath "
-#        exit 1
-#    fi
-#    echo "Pairing seed files with config files..."
-#    for seedfile in $seedfiles; do
-#        echo "Matching seed file: $seedfile"
-#        seedbase=$(basename $seedfile .seed)
-#        match=$(find -L $configpath -type f -name $seedbase.cfg |  sort -g )
-#        num=$(echo $match | wc -w)
-#        if [ -z "$match" ]  ; then echo "Could not find a config file matching the given seed file [ $seedfile ]. Searched with: find -L $configpath -type f -name '$seedbase.cfg' | Found: $match" ; exit 1; fi
-#        if [ "$num" -gt 1 ] ; then echo "Too many config files correspond to seed file [ $seedfile ]. Found $num files: $match"; exit 1; fi
-#    done
-#    echo "Pairing seed files with config files... OK"
-#fi
 
 
 # Generate a new unique seed path
@@ -363,8 +335,8 @@ echo "Splitting seed files into job files..."
 seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
 for seedfile in $seedfiles; do
   seedbase=$(basename $seedfile .seed)
-  if [ "$simspercfg" -gt "$simspersbatch" ]; then
-    split --lines=$simspersbatch --additional-suffix=.job -d --suffix-length=3 $seedfile $seedpath/$seedbase.chunk-
+  if [ "$simspercfg" -gt "$simsperarray" ]; then
+    split --lines=$simsperarray --additional-suffix=.job -d --suffix-length=3 $seedfile $seedpath/$seedbase.chunk-
     rm $seedfile
   else
     mv $seedfile $seedpath/$seedbase.job
@@ -394,17 +366,17 @@ for jobfile in $jobfiles; do
   if [ -n "$dryrun" ]; then
 cat << EOF >&2
 sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
---array=1-$numseeds \
+--array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $jobfile
 EOF
   bash run_jobarray.sh -e $exec -f $jobfile -d
   else
     echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
-      --array=1-$numseeds \
+      --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile" >> job_report.txt
 
     sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
-      --array=1-$numseeds \
+      --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile
   fi
 done
