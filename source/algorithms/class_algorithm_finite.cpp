@@ -19,6 +19,7 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/print.h>
+#include <general/nmspc_exceptions.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
     : class_algorithm_base(std::move(h5ppFile_), algo_type) {
@@ -72,10 +73,14 @@ void class_algorithm_finite::run()
     if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
         try {
             resume();
-        } catch(std::exception &ex) {
+        }
+        catch (const ex::state_error & ex){
+            tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
+            run_default_task_list();
+        }
+        catch(const std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
             exit(1);
-            //            run_default_task_list();
         }
     } else {
         run_default_task_list();

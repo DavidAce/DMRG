@@ -20,7 +20,7 @@
 #include <tools/finite/multisite.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_state.h>
-
+#include <general/nmspc_exceptions.h>
 class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
 }
@@ -36,7 +36,7 @@ void class_xdmrg::resume() {
     // To guide the behavior, we check the setting ResumePolicy.
 
     auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
-    if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
+    if(state_prefix.empty()) throw ex::state_error("no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
     clear_convergence_status();
