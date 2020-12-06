@@ -61,7 +61,7 @@ for id in $(seq $start_id $end_id); do
   config_file=$(echo "$arg_line" | cut -d " " -f1)
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
-  model_seed=$(echo $arg_line | cut -d " " -f2)
+  model_seed=$(echo "$arg_line" | cut -d " " -f2)
   logdir=logs/$config_dir/$config_base
   mkdir -p $logdir
 
@@ -72,13 +72,13 @@ for id in $(seq $start_id $end_id); do
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out || continue
       fi
   elif [ "$num_cols" -eq 3 ]; then
       bit_field=$(echo $arg_line | cut -d " " -f3)
       echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out || continue
       fi
   else
       echo "Case not implemented"
