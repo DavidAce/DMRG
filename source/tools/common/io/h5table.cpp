@@ -36,6 +36,7 @@ void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
     if(save_log[table_path] == save_point) {
+        // The table has been saved at this iteration, so we overwrite the last entry.
         auto tableInfo = h5ppFile.getTableInfo(table_path);
         h5ppFile.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
     } else

@@ -507,8 +507,12 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::CHECKPOINT: {
-            if(not state.position_is_any_edge()) return;
-            if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+            if(stop_reason == StopReason::NONE){
+                // During a simulation we may want to limit the number of checkpoint saves.
+                // After the simulation has finished, we always want to go through with this save
+                if(not state.position_is_any_edge()) return;
+                if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+            }
             state_prefix += "/checkpoint";
             storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
