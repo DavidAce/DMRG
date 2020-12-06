@@ -67,7 +67,15 @@ void class_algorithm_launcher::start_h5pp_file(){
     if(h5pp::fs::exists(settings::output::output_filepath)){
         switch(settings::output::file_collision_policy){
             case FileCollisionPolicy::RESUME: {
-                h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READWRITE);
+                try{
+                    h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READWRITE);
+                    if (not h5pp_file->fileIsValid()) throw std::runtime_error(fmt::format("HDF5 file is not valid: {}",settings::output::output_filepath));
+                    if (not h5pp_file->linkExists("git/DMRG++")) throw std::runtime_error(fmt::format("Could not find link git/DMRG++ in file: {}",settings::output::output_filepath));
+                }catch (const std::exception & ex){
+                    tools::log->error("Failed to resume simulation: {}", ex.what());
+                    tools::log->info("Truncating file [{}]", settings::output::output_filepath);
+                    h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::REPLACE);
+                }
                 break;
             }
             case FileCollisionPolicy::RENAME: {
