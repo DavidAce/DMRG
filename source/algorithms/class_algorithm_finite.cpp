@@ -256,8 +256,9 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
 
     if(tensors.state->find_largest_chi() > chi_lim.value())
-        throw std::runtime_error(
-            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
+        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value());
+//        throw std::runtime_error(
+//            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", state_name, enum2str(state_init), enum2str(reason));
