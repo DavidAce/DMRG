@@ -14,7 +14,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
                       "Optimization report",
                       "size",
                       "space",
-                      "energy",
+                      "energy/L",
                       "log₁₀ var", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
@@ -102,7 +102,7 @@ void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & m
     if (tools::log->level() > spdlog::level::debug) return;
     if(not space) space = tensor.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}",mode,tensor.get_name(),tag);
-    bfgs_log.push_back({description, tensor.get_tensor().size(),space.value(),tensor.get_energy_per_site(), tensor.get_variance_per_site(), tensor.get_overlap(), tensor.get_norm(),
+    bfgs_log.push_back({description, tensor.get_tensor().size(),space.value(),tensor.get_energy_per_site(), tensor.get_variance(), tensor.get_overlap(), tensor.get_norm(),
                         tensor.get_iter(), tensor.get_counter(), tensor.get_time()});
 }
 

@@ -127,6 +127,7 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     // Set up the SVD
     if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
+    svd.use_lapacke = true;
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
     tools::common::profile::get_default_prof()["t_svd"]->tic();
@@ -260,6 +261,7 @@ std::list<class_mps_site>
     // Set up the SVD
     if(not svd_threshold) svd_threshold = settings::precision::svd_threshold;
     svd::solver svd;
+    svd.use_lapacke = true;
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
@@ -307,7 +309,9 @@ std::list<class_mps_site>
     // We just tuck them back into the last  A matrix.
     // This operation should not change dimensions!
     if(V.dimension(0) != 1) throw std::runtime_error("Could not split mps from the left: Last V dimension(0) is not 1");
-    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(mps_sites.back().dimensions());
+    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1}))
+                                       .shuffle(Textra::array4{0, 2, 1, 3})
+                                       .reshape(Textra::array3{U.dimension(0),U.dimension(1),V.dimension(2)});
     mps_sites.back().set_M(USV);
     return mps_sites;
 }
@@ -370,6 +374,7 @@ std::list<class_mps_site>
 
     // Set up the SVD
     svd::solver svd;
+    svd.use_lapacke = true;
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
@@ -419,7 +424,9 @@ std::list<class_mps_site>
     // We just tuck them back into the front B matrix, and perform one more SVD on A S B later.
     // This operation should not change dimensions!
     if(U.dimension(0) != 1) throw std::runtime_error("Could not split mps from the right: Last U dimension(0) is not 1");
-    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(V.dimensions());
+    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1}))
+                                       .shuffle(Textra::array4{0, 2, 1, 3})
+                                       .reshape(Textra::array3{V.dimension(0), U.dimension(1), V.dimension(2)});
 
     mps_sites.front().set_M(USV);
     return mps_sites;

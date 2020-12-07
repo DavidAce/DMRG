@@ -59,6 +59,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
     dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
+    dmrg_config.load_parameter("strategy::discard_schmidt_when_stuck"         , strategy::discard_schmidt_when_stuck);
     dmrg_config.load_parameter("strategy::project_trial_when_stuck"           , strategy::project_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);

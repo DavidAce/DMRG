@@ -16,7 +16,6 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
     auto eigvecs = eig::view::get_eigvecs<Scalar>(solver.result);
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
-
     Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_tensor.data(), multisite_tensor.size());
     Eigen::VectorXd                    overlaps = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
     int                                idx;

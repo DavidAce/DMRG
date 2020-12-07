@@ -27,7 +27,9 @@ namespace eig {
         std::vector<cplx> eigvecsL_cplx;
 
         void build_eigvecs_cplx();
+        void build_eigvecs_real();
         void build_eigvals_cplx();
+        void build_eigvals_real();
 
         struct Meta {
             eig::size_type rows           = 0;
@@ -53,6 +55,7 @@ namespace eig {
         template<typename Scalar, Side side = Side::R>
         auto &get_eigvecs() {
             if constexpr(std::is_same_v<Scalar, real>) {
+                build_eigvecs_real();
                 if constexpr(side == Side::R) return eigvecsR_real;
                 if constexpr(side == Side::L) return eigvecsL_real;
                 if constexpr(side == Side::LR) return std::pair(eigvecsL_real,eigvecsR_real);
@@ -97,7 +100,10 @@ namespace eig {
 
         template<typename Scalar>
         auto &get_eigvals() {
-            if constexpr(std::is_same_v<Scalar, real>) return eigvals_real;
+            if constexpr(std::is_same_v<Scalar, real>){
+                build_eigvals_real();
+                return eigvals_real;
+            }
             if constexpr(std::is_same_v<Scalar, cplx>) {
                 build_eigvals_cplx();
                 return eigvals_cplx;

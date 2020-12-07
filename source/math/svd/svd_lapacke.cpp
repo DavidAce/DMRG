@@ -23,9 +23,29 @@
 
 #include <Eigen/Core>
 #include <math/svd.h>
+
+
+namespace svd{
+    template<typename Scalar>
+    void print_matrix_lapacke(const Scalar *mat_ptr, long rows, long cols,long dec = 8){
+        auto A = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(mat_ptr, rows, cols);
+        svd::log->warn("Error printing matrix of dimensions {}x{}\n",rows,cols);
+        for(long r = 0; r < A.rows(); r++) {
+            if constexpr(std::is_same_v<Scalar,std::complex<double>>)
+                for(long c = 0; c <A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ",dec,std::real(A(r,c)), std::imag(A(r,c)));
+            else
+                for(long c = 0; c <A.cols(); c++) fmt::print("{1:.{0}f} ",dec,A(r,c));
+            fmt::print("\n");
+        }
+    }
+}
+
+
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+
+    // Setup useful sizes
     int rowsA = static_cast<int>(rows);
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
@@ -38,29 +58,49 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     bool use_jacobi = static_cast<size_t>(sizeS) <= lapacke_svd_switchsize;
     if(use_jacobi and rows < cols) {
         // The jacobi routine needs a tall matrix
-        svd::log->trace("Transposing into tall matrix");
-        MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols).adjoint();
-        auto [U, S, V, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
+        svd::log->trace("Transposing {}x{} into tall matrix {}x{}", rows,cols,cols,rows);
+        MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
+        A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
+        svd::log->trace("Sanity checks... ");
+        // Sanity checks
+        if(A.rows() <= 0) throw std::runtime_error("SVD error: rows() == 0");
+        if(A.cols() <= 0) throw std::runtime_error("SVD error: cols() == 0");
+        if(not A.allFinite()){
+            print_matrix_lapacke(A.data(),A.rows(),A.cols());
+            throw std::runtime_error("SVD error: matrix has inf's or nan's");
+        }
+        if(A.isZero(1e-12)){
+            print_matrix_lapacke(A.data(),A.rows(),A.cols(),16);
+            throw std::runtime_error("SVD error: matrix is all zeros");
+        }
+        svd::log->trace("Sanity checks... OK. A: {}x{}", A.rows(),A.cols());
+        auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(),std::max(A.rows(),A.cols()));
         long max_size        = std::min(S.size(), std::min(rows, cols));
         rank                 = (S.head(max_size).real().array() >= lapacke_svd_threshold).count();
-        return std::make_tuple(V.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
+        if(U.rows() != A.rows()) throw std::logic_error(fmt::format("U.rows():{} != A.rows():{}",U.rows(),A.rows()));
+        if(VT.cols() != A.cols()) throw std::logic_error(fmt::format("VT.cols():{} != A.cols():{}",VT.cols(),A.cols()));
+        return std::make_tuple(VT.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
+    }
+
+
+    // Sanity checks
+    if(rows <= 0) throw std::runtime_error("SVD error: rows() == 0");
+    if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
+
+    MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
+    if(not A.allFinite()){
+        print_matrix_lapacke(mat_ptr,rows,cols);
+        throw std::runtime_error("SVD error: matrix has inf's or nan's");
+    }
+    if(A.isZero(1e-12)){
+        print_matrix_lapacke(mat_ptr,rows,cols,16);
+        throw std::runtime_error("SVD error: matrix is all zeros");
     }
 
     svd::log->trace("Starting SVD with lapacke");
 
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
-    if(rows <= 0) throw std::runtime_error("SVD error: rows() == 0");
-    if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
 
-    MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
-    if(not A.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    if(A.isZero(1e-12)) throw std::runtime_error("SVD error: matrix is all zeros");
-#ifndef NDEBUG
-    // These are more expensive debugging operations
-    if(not A.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    if(A.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
-    if(A.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
-#endif
 
     int info   = 0;
     int rowsU  = rowsA;

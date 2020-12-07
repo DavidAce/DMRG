@@ -41,7 +41,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
         solver.config.clear();
         solver.eigs(hamiltonian,nev, -1,eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, energy_target,  eig::Shinv::ON, eig::Vecs::ON, eig::Dephase::OFF);
         eigvals = eig::view::get_eigvals<eig::real>(solver.result);
-        eigvecs = eig::view::get_eigvecs<eig::real>(solver.result, eig::Side::R);
+        eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R);
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
 
         Eigen::VectorXd overlaps       = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
