@@ -44,6 +44,8 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              damping_steps        = 0;     /*!< Number of steps left doing disorder damping of MPOs */
     size_t              num_dampings         = 0;     /*!< Number of damping trials done */
     size_t              max_dampings         = 2;     /*!< Maximum number of damping trials allowed */
+    size_t              num_discards         = 0;
+    size_t              max_discards         = 1;
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
     std::optional<OptMode> last_optmode = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
@@ -57,6 +59,7 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual void resume() = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection();
+    void         try_discard_small_schmidt();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();

@@ -146,6 +146,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
         Textra::MatrixToTensor(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
         (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
     svd::solver svd;
+    svd.use_lapacke = true;
     svd.setThreshold(settings::precision::svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 

@@ -136,23 +136,24 @@ namespace settings {
 
     // Options for strategy that affect convergence and targeted state
     namespace strategy {
-        inline bool          compress_mpo_squared      = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */
-        inline bool          chi_quench_when_stuck     = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
-        inline bool          perturb_when_stuck        = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
-        inline bool          damping_when_stuck        = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool          project_when_stuck        = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
-        inline bool          project_on_every_iter     = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
-        inline bool          project_on_chi_update     = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
-        inline bool          randomize_on_chi_update   = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
-        inline bool          randomize_early           = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
-        inline bool          use_eigenspinors          = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
-        inline size_t        max_resets                = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
-        inline size_t        multisite_max_sites       = 8;                                      /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
-        inline MultisiteMove multisite_move            = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline StateInitType initial_type              = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
-        inline StateInit     initial_state             = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
-        inline StateInit     secondary_states          = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
-        inline std::string   target_sector             = "x";                                    /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
+        inline bool          compress_mpo_squared       = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */
+        inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
+        inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
+        inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
+        inline bool          discard_schmidt_when_stuck = true;                                   /*!< Try discarding smallest schmidt values when stuck */
+        inline bool          project_when_stuck         = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
+        inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
+        inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
+        inline bool          randomize_on_chi_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
+        inline bool          randomize_early            = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
+        inline bool          use_eigenspinors           = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
+        inline size_t        max_resets                 = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
+        inline size_t        multisite_max_sites        = 8;                                      /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
+        inline MultisiteMove multisite_move             = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline StateInitType initial_type               = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
+        inline StateInit     initial_state              = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
+        inline StateInit     secondary_states           = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
+        inline std::string   target_sector              = "x";                                    /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
 }
 
 
@@ -162,7 +163,7 @@ namespace settings {
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline size_t   svd_switchsize                  = 2048  ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
+        inline size_t   svd_switchsize                  = 128   ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/

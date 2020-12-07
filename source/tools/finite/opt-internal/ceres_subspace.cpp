@@ -314,7 +314,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
     for(auto &idx : candidate_list_top_idx) {
         const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
         tools::log->trace("Starting LBFGS with candidate {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>20.16f} | eigvec {}", idx,
-                          candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance_per_site()), candidate.is_basis_vector);
+                          candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()), candidate.is_basis_vector);
         Eigen::VectorXcd        subspace_vector = internal::subspace::get_vector_in_subspace(candidate_list, idx);
         long                    subspace_size   = subspace_vector.size();
         [[maybe_unused]] double norm;
@@ -347,7 +347,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                     Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
                     auto             theta_0_tensor = Textra::MatrixTensorMap(theta_0, state.active_dimensions());
                     double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
-                    double           variance_0     = tools::finite::measure::energy_variance_per_site(theta_0_tensor, tensors);
+                    double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                     double           overlap_0      = std::abs(initial_tensor.get_vector().dot(theta_0));
                     tools::common::profile::prof[AlgorithmType::xDMRG]["t_chk"]->toc();
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");

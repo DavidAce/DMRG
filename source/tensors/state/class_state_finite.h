@@ -105,6 +105,7 @@ class class_state_finite {
     double              get_truncation_error_LC() const;
     double              get_truncation_error_midchain() const;
     std::vector<double> get_truncation_errors() const;
+    std::vector<double> get_truncation_errors_active() const;
 
     size_t num_sites_truncated(double truncation_threshold) const;
     size_t num_bonds_reached_chi(long chi_level) const;

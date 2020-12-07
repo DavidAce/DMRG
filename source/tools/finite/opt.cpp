@@ -91,7 +91,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         ceres_default_options.function_tolerance                        = 1e-8;
         ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 2e-16;
+        ceres_default_options.parameter_tolerance                       = 5e-16;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
     }
@@ -100,7 +100,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         ceres_default_options.max_lbfgs_rank                            = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         ceres_default_options.function_tolerance                        = 1e-12;
         ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 2e-16;
+        ceres_default_options.parameter_tolerance                       = 5e-16;
         ceres_default_options.max_solver_time_in_seconds                = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
     }
@@ -241,7 +241,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                fmt::format("{:>5.3f} s",summary.cumulative_time_in_seconds),
                static_cast<double>(functor.get_ops()) / functor.t_vH2->get_last_interval()/1e9,
                functor.get_energy_per_site(),
-               std::log10(functor.get_variance_per_site())
+               std::log10(functor.get_variance())
     );
     last_count = functor.get_count();
     /* clang-format on */

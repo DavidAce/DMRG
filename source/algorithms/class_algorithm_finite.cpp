@@ -281,6 +281,17 @@ void class_algorithm_finite::try_projection() {
     }
 }
 
+void class_algorithm_finite::try_discard_small_schmidt() {
+    if(not settings::strategy::discard_schmidt_when_stuck) return;
+    if(not tensors.position_is_any_edge()) return;
+    if(num_discards >= max_discards) return;
+    if(status.algorithm_has_stuck_for <= 2) return;
+    tools::log->info("Trying discard of smallest schmidt values");
+    tensors.normalize_state(status.chi_lim,1e-4,NormPolicy::ALWAYS);
+    clear_convergence_status();
+    num_discards++;
+}
+
 void class_algorithm_finite::try_bond_dimension_quench() {
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_convergence_status();

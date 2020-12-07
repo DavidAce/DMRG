@@ -23,7 +23,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     t_step->tic();
     Scalar     vH2v, vHv;
     Scalar     ene, ene2, var;
-    double     vv, log10var_per_site;
+    double     vv, log10var;
     double     norm_func, norm_grad;
     VectorType Hv, H2v;
     int        vecSize = NumParameters();
@@ -66,9 +66,9 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     variance_per_site              = variance / static_cast<double>(length);
     norm_offset                    = std::abs(vv) - 1.0;
     std::tie(norm_func, norm_grad) = windowed_func_grad(norm_offset, 0.05);
-    log10var_per_site              = std::log10(variance_per_site);
+    log10var                       = std::log10(variance);
 
-    if(fx != nullptr) { fx[0] = log10var_per_site + norm_func; }
+    if(fx != nullptr) { fx[0] = log10var + norm_func; }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
@@ -79,14 +79,14 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         grad += norm_grad * v;
     }
 
-    if(std::isnan(log10var_per_site) or std::isinf(log10var_per_site)) {
+    if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("log₁₀ variance is invalid");
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("vH2v            = {:.16f} + i{:.16f}", std::real(vH2v), std::imag(vH2v));
         tools::log->warn("vHv             = {:.16f} + i{:.16f}", std::real(vHv), std::imag(vHv));
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}", std::real(ene), std::imag(ene));
-        tools::log->warn("log₁₀(var/L)    = {:.16f}", std::log10(variance_per_site));
+        tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
         throw std::runtime_error("Subspace functor failed at counter = " + std::to_string(counter));
     }
 

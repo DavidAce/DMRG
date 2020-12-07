@@ -277,6 +277,12 @@ double class_state_finite::get_truncation_error_midchain() const {
 }
 
 std::vector<double> class_state_finite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
+std::vector<double> class_state_finite::get_truncation_errors_active() const {
+    std::vector<double> truncation_errors;
+    truncation_errors.reserve(active_sites.size());
+    for(auto && pos : active_sites) truncation_errors.emplace_back(get_truncation_error(pos));
+    return truncation_errors;
+}
 
 size_t class_state_finite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();

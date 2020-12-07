@@ -48,7 +48,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
     auto mpo_prefix  = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_prefix");
     auto hamiltonian = h5ppFile.readAttribute<std::string>(state_prefix, "common/hamiltonian");
     if(h5ppFile.linkExists(hamiltonian)) {
-        tools::log->debug("Loading model data from hamiltonian table: [{}]", hamiltonian);
+        tools::log->info("Loading model data from hamiltonian table: [{}]", hamiltonian);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", hamiltonian);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", hamiltonian);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
@@ -142,6 +142,6 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     tools::log->debug("Validating resumed state: Measurements should match those on file");
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tensors.do_all_measurements();
-    compare(tensors.measurements.energy_variance_per_site.value(), expected_measurements.energy_variance_per_site, 1e-8, "Energy variance per site");
-    compare(tensors.measurements.energy_per_site.value(), expected_measurements.energy_per_site, 1e-8, "Energy per site");
+    compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+    compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
 }

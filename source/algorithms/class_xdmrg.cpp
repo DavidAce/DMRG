@@ -21,6 +21,7 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_state.h>
 #include <general/nmspc_exceptions.h>
+
 class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
 }
@@ -224,6 +225,7 @@ void class_xdmrg::run_algorithm() {
         // Prepare for next step
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
+        try_discard_small_schmidt();
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
@@ -346,7 +348,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites != settings::strategy::multisite_max_sites) {
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 1 and c2.max_sites != settings::strategy::multisite_max_sites) {
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
@@ -364,13 +366,13 @@ void class_xdmrg::single_xDMRG_step() {
 
     auto                   optConf = get_opt_conf_list();
     std::vector<opt_state> results;
-    double                 variance_old_per_site = 1;
+    double                 variance_old = 1;
     for(auto &conf : optConf) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         tensors.activate_sites(conf.chosen_sites);
 
-        variance_old_per_site = measure::energy_variance_per_site(tensors); // Should just take value from cache
+        variance_old = measure::energy_variance(tensors); // Should just take value from cache
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
@@ -386,14 +388,14 @@ void class_xdmrg::single_xDMRG_step() {
         }
 
         // We can now decide if we are happy with the result or not.
-        double percent = 100 * results.back().get_variance_per_site() / variance_old_per_site;
+        double percent = 100 * results.back().get_variance() / variance_old;
         if(percent < 99) {
-            tools::log->debug("State improved during {} optimization. Variance Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
-                              std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
+            tools::log->debug("State improved during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
+                              std::log10(results.back().get_variance()), std::log10(variance_old), percent);
             break;
         } else {
-            tools::log->debug("State did not improve during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
-                              std::log10(results.back().get_variance_per_site()), std::log10(variance_old_per_site), percent);
+            tools::log->debug("State did not improve enough during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
+                              std::log10(results.back().get_variance()), std::log10(variance_old), percent);
             continue;
         }
     }
@@ -403,7 +405,7 @@ void class_xdmrg::single_xDMRG_step() {
     if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
         for(auto &candidate : results)
             tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-                              candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance_per_site()),
+                              candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance()),
                               candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
 
     // Take the best result
@@ -411,18 +413,24 @@ void class_xdmrg::single_xDMRG_step() {
     last_optspace = winner.get_optspace();
     last_optmode = winner.get_optmode();
     tensors.activate_sites(winner.get_sites());
-    if(std::log10(variance_old_per_site) / std::log10(winner.get_variance_per_site()) < 0.999) tensors.state->tag_active_sites_normalized(true);
+    tensors.state->tag_active_sites_normalized(false);
     // Truncate even more if doing chi quench
     //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     // Do the truncation with SVD
     tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
+    if(tools::log->level() <= spdlog::level::debug){
+        auto truncation_errors = tensors.state->get_truncation_errors_active();
+        for(auto & t : truncation_errors) t = std::log10(t);
+        tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors,", "));
+    }
+
     if constexpr(settings::debug) {
-        auto variance_per_site_before_svd = winner.get_variance_per_site();
-        auto variance_per_site_after_svd  = tools::finite::measure::energy_variance_per_site(tensors);
-        tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_per_site_before_svd));
-        tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_per_site_after_svd));
-        tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_per_site_after_svd - variance_per_site_before_svd) / variance_per_site_after_svd);
+        auto variance_before_svd = winner.get_variance();
+        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+        tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
+        tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+        tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_after_svd - variance_before_svd) / variance_after_svd);
     }
 
     debug::check_integrity(*tensors.state);
