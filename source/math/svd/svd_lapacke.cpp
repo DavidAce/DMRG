@@ -49,13 +49,14 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int rowsA = static_cast<int>(rows);
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
+    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     // Setup the SVD solver
-    double lapacke_svd_threshold  = static_cast<double>(sizeS) * std::numeric_limits<double>::epsilon(); // Same as Eigen
+    double lapacke_svd_threshold  = static_cast<double>(sizeS) * std::numeric_limits<double>::epsilon();
     size_t lapacke_svd_switchsize = 16ul;                                                                // Same as Eigen
     if(threshold) lapacke_svd_threshold = threshold.value();
     if(switchsize) lapacke_svd_switchsize = switchsize.value();
-    bool use_jacobi = static_cast<size_t>(sizeS) <= lapacke_svd_switchsize;
+    bool use_jacobi = static_cast<size_t>(sizeS) < lapacke_svd_switchsize;
     if(use_jacobi and rows < cols) {
         // The jacobi routine needs a tall matrix
         svd::log->trace("Transposing {}x{} into tall matrix {}x{}", rows,cols,cols,rows);
@@ -75,7 +76,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         svd::log->trace("Sanity checks... OK. A: {}x{}", A.rows(),A.cols());
         auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(),std::max(A.rows(),A.cols()));
-        long max_size        = std::min(S.size(), std::min(rows, cols));
+        long max_size        = std::min(S.size(), rank_max.value());
         rank                 = (S.head(max_size).real().array() >= lapacke_svd_threshold).count();
         if(U.rows() != A.rows()) throw std::logic_error(fmt::format("U.rows():{} != A.rows():{}",U.rows(),A.rows()));
         if(VT.cols() != A.cols()) throw std::logic_error(fmt::format("VT.cols():{} != A.cols():{}",VT.cols(),A.cols()));
@@ -99,7 +100,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     svd::log->trace("Starting SVD with lapacke");
 
-    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
 
     int info   = 0;
