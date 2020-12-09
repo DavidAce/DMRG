@@ -30,7 +30,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("output::copy_from_temp_freq"                  , output::copy_from_temp_freq);
     dmrg_config.load_parameter("output::temp_dir"                             , output::temp_dir);
     dmrg_config.load_parameter("output::compression_level"                    , output::compression_level);
-    dmrg_config.load_parameter("output::existing_file_policy"                 , output::file_collision_policy);
+    dmrg_config.load_parameter("output::file_collision_policy"                , output::file_collision_policy);
+    dmrg_config.load_parameter("output::file_resume_policy"                   , output::file_resume_policy);
     dmrg_config.load_parameter("output::storage_level_model"                  , output::storage_level_model);
     dmrg_config.load_parameter("output::storage_level_checkpoint"             , output::storage_level_checkpoint);
     dmrg_config.load_parameter("output::storage_level_good_state"             , output::storage_level_good_state);
