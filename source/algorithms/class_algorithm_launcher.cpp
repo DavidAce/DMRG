@@ -23,23 +23,24 @@
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_): h5pp_file(std::move(h5ppFile_)){
     tools::log = tools::Logger::setLogger("DMRG++ launch",  settings::console::verbosity, settings::console::timestamp);
-    setup_temp_path();
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
     std::atexit(tools::common::profile::print_profiling_all);
+
+    setup_temp_path();
 }
 
 
 class_algorithm_launcher::class_algorithm_launcher(){
     tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
-    start_h5pp_file();
-    setup_temp_path();
-
     //Called in reverse order
     std::atexit(tools::common::profile::print_mem_usage);
     std::atexit(tools::common::profile::print_profiling_all);
     std::at_quick_exit(tools::common::profile::print_mem_usage);
     std::at_quick_exit(tools::common::profile::print_profiling_all);
+
+    start_h5pp_file();
+    setup_temp_path();
 }
 
 
@@ -67,10 +68,26 @@ void class_algorithm_launcher::start_h5pp_file(){
     if(h5pp::fs::exists(settings::output::output_filepath)){
         switch(settings::output::file_collision_policy){
             case FileCollisionPolicy::RESUME: {
+                    // Inspecting the file in READWRITE mode can update the file modification timestamp.
+                    // Therefore we must first inspect the file in READONLY mode, then reopen in READWRITE.
+                    // If the file is somehow damaged or invalid, we simply truncate it and start from scratch.
+                    // If the file has a fully processed set of simulations, then [common/finished_all] = true,
+                    // in which case we consult settings::output::file_resume_policy, to either exit or keep going
+                    // and consult .cfg if there is anything more to be done.
                 try{
-                    h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READWRITE);
+                    h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READONLY);
                     if (not h5pp_file->fileIsValid()) throw std::runtime_error(fmt::format("HDF5 file is not valid: {}",settings::output::output_filepath));
-                    if (not h5pp_file->linkExists("git/DMRG++")) throw std::runtime_error(fmt::format("Could not find link git/DMRG++ in file: {}",settings::output::output_filepath));
+                    if (not h5pp_file->linkExists("common/finished_all"))
+                        throw std::runtime_error(fmt::format("Could not find link common/finished_all in file: {}",settings::output::output_filepath));
+                    if (not h5pp_file->linkExists("git/DMRG++"))
+                        throw std::runtime_error(fmt::format("Could not find link git/DMRG++ in file: {}",settings::output::output_filepath));
+                    if (settings::output::file_resume_policy == FileResumePolicy::FAST and h5pp_file->readDataset<bool>("common/finished_all")){
+                        tools::log->info("Detected file_resume_policy == FileResumePolicy::FAST");
+                        tools::log->info("Detected [common/finished_all] = true");
+                        tools::log->info("All simulations have finished. Nothing more to do.");
+                        exit(0);
+                    }
+                    h5pp_file = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READWRITE);
                 }catch (const std::exception & ex){
                     tools::log->error("Failed to resume simulation: {}", ex.what());
                     tools::log->info("Truncating file [{}]", settings::output::output_filepath);
