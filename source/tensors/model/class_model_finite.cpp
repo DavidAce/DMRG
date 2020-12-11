@@ -124,8 +124,8 @@ void class_model_finite::reset_mpo_squared() {
 }
 
 void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
+    tools::log->debug("Rebuilding squared MPO");
     if(settings::strategy::compress_mpo_squared) {
-        tools::log->debug("Compressing squared MPO");
         auto mpo_compressed = get_compressed_mpo_squared(svdMode);
         for(auto &&[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
     } else
@@ -136,6 +136,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
     for(auto &&mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
+    tools::log->debug("Compressing squared MPO");
 
     // Setup SVD
     // Here we need a lot of precision:

@@ -88,7 +88,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
             chain = temp;
         }
         norm = std::abs(Textra::TensorMatrixMap(chain).trace());
-    }else{
+    } else {
         tools::log->trace("Measuring norm on full chain");
         Eigen::Tensor<Scalar, 2> chain;
         Eigen::Tensor<Scalar, 2> temp;
@@ -137,11 +137,11 @@ std::vector<long> tools::finite::measure::bond_dimensions(const class_state_fini
 
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_state_finite &state) {
     std::vector<long> bond_dimensions;
-    for(auto && pos : state.active_sites){
+    for(auto &&pos : state.active_sites) {
         bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
         if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
     }
-    if(bond_dimensions.size() > 2){
+    if(bond_dimensions.size() > 2) {
         bond_dimensions.pop_back();
         bond_dimensions.erase(bond_dimensions.begin());
     }

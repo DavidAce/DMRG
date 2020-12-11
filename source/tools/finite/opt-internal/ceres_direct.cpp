@@ -2,10 +2,9 @@
 // Created by david on 2019-07-09.
 //
 
-
 #include "ceres_direct_functor.h"
-#include <ceres/gradient_problem.h>
 #include <algorithms/class_algorithm_status.h>
+#include <ceres/gradient_problem.h>
 #include <config/nmspc_settings.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
@@ -14,26 +13,25 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
-#include <tools/finite/opt_state.h>
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt-internal/report.h>
-tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &  tensors,
-                                                                                       const class_algorithm_status &status, OptType optType, OptMode optMode,
-                                                                                       OptSpace optSpace) {
+#include <tools/finite/opt_state.h>
+tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status,
+                                                                                      OptType optType, OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
-                              tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                              tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
-                              tools::finite::measure::energy_variance(tensors),
-                              1.0, // Overlap
-                              tensors.get_length());
+                             tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                             tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                             tools::finite::measure::energy_variance(tensors),
+                             1.0, // Overlap
+                             tensors.get_length());
 
     return ceres_direct_optimization(tensors, initial_tensor, status, optType, optMode, optSpace);
 }
 
 tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const opt_state &initial_tensor,
-                                                                                       const class_algorithm_status &status, OptType optType, OptMode optMode,
-                                                                                       OptSpace optSpace) {
+                                                                                      const class_algorithm_status &status, OptType optType, OptMode optMode,
+                                                                                      OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic();
 
@@ -96,8 +94,6 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
     optimized_tensor.normalize();
     optimized_tensor.set_iter(summary.iterations.size());
     optimized_tensor.set_time(summary.total_time_in_seconds);
-    //    optimized_tensor.set_energy(tools::finite::measure::energy(optimized_tensor.get_tensor(), tensors));
-    //    optimized_tensor.set_variance(tools::finite::measure::energy_variance(optimized_tensor.get_tensor(), tensors));
     optimized_tensor.set_overlap(std::abs(current_vector.dot(optimized_tensor.get_vector())));
 
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->toc();
