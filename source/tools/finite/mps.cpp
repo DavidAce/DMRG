@@ -3,6 +3,7 @@
 //
 
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 // -- (textra first)
 #include <config/enums.h>
 #include <config/nmspc_settings.h>
@@ -47,24 +48,24 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
         // Do the same with its truncation error
         Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
         double                   truncation_error_LC = mps.get_truncation_error_LC();
-        Eigen::Tensor<Scalar, 3> twosite_tensor;
+        Eigen::Tensor<Scalar, 3> twosite_tensor(Textra::array3{dL * dR, chiL, chiR});
         if(state.get_direction() == 1) {
             // Here both M_bare are B's
             // i.e. mpsL.get_M() = GB * LB
             // and  mpsR.get_M() = GB * GB
             // So we have to attach LC from the left
-            twosite_tensor = Textra::asDiagonal(LC)
-                                 .contract(mpsL.get_M(), Textra::idx({1}, {1}))
-                                 .contract(mpsR.get_M(), Textra::idx({2}, {1}))
-                                 .shuffle(Textra::array4{1, 2, 0, 3})
-                                 .reshape(Textra::array3{dL * dR, chiL, chiR});
+            twosite_tensor.device(Textra::omp::getDevice()) = Textra::asDiagonal(LC)
+                                                                  .contract(mpsL.get_M(), Textra::idx({1}, {1}))
+                                                                  .contract(mpsR.get_M(), Textra::idx({2}, {1}))
+                                                                  .shuffle(Textra::array4{1, 2, 0, 3})
+                                                                  .reshape(Textra::array3{dL * dR, chiL, chiR});
         } else {
             // Here both M_bare are A's
             // The right A should be the previous position, so it has an attached
             // LC if we ask for get_M(), i.e. mpsR.get_M() = LA * GA * LC
             // The left A should be a simple A, i.e. mpsL.get_M() = LA * GA
 
-            twosite_tensor =
+            twosite_tensor.device(Textra::omp::getDevice()) =
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
         tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
@@ -146,16 +147,18 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f}", tools::finite::measure::norm(state));
 
     // Start with normalizing at the current position
-    size_t                   num_moves = 2 * (state.get_length() - 1);
-    size_t                   posL      = state.get_position();
-    size_t                   posR      = posL + 1;
-    auto &                   mpsL      = state.get_mps_site(posL);
-    auto &                   mpsR      = state.get_mps_site(posR);
-    long                     dL        = mpsL.spin_dim();
-    long                     dR        = mpsR.spin_dim();
-    long                     chiL      = mpsL.get_chiL();
-    long                     chiR      = mpsR.get_chiR();
-    Eigen::Tensor<Scalar, 3> twosite_tensor =
+    size_t num_moves = 2 * (state.get_length() - 1);
+    size_t posL      = state.get_position();
+    size_t posR      = posL + 1;
+    auto & mpsL      = state.get_mps_site(posL);
+    auto & mpsR      = state.get_mps_site(posR);
+    long   dL        = mpsL.spin_dim();
+    long   dR        = mpsR.spin_dim();
+    long   chiL      = mpsL.get_chiL();
+    long   chiR      = mpsR.get_chiR();
+
+    Eigen::Tensor<Scalar, 3> twosite_tensor(Textra::array3{dL * dR, chiL, chiR});
+    twosite_tensor.device(Textra::omp::getDevice()) =
         mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
     tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
 
@@ -163,7 +166,7 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
-    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | New norm = {:.16f}", tools::finite::measure::norm(state));
+    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->debug("Normalized state | New norm = {:.16f}", tools::finite::measure::norm(state));
     state.assert_validity();
     return true;
 }

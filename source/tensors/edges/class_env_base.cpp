@@ -4,6 +4,7 @@
 
 #include "class_env_base.h"
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
@@ -92,10 +93,11 @@ void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::T
                                                  MPO.dimension(0), 2, block->dimension(2)));
 
         sites++;
-        Eigen::Tensor<Scalar, 3> block_enlarged = block->contract(MPS, Textra::idx({0}, {1}))
-                                                      .contract(MPO, Textra::idx({1, 2}, {0, 2}))
-                                                      .contract(MPS.conjugate(), Textra::idx({0, 3}, {1, 0}))
-                                                      .shuffle(Textra::array3{0, 2, 1});
+        Eigen::Tensor<Scalar, 3> block_enlarged(MPS.dimension(2), MPS.dimension(2), MPO.dimension(1));
+        block_enlarged.device(Textra::omp::getDevice()) = block->contract(MPS, Textra::idx({0}, {1}))
+                                                              .contract(MPO, Textra::idx({1, 2}, {0, 2}))
+                                                              .contract(MPS.conjugate(), Textra::idx({0, 3}, {1, 0}))
+                                                              .shuffle(Textra::array3{0, 2, 1});
         *block = block_enlarged;
     } else if(side == "R") {
         /*! # Right environment contraction
@@ -124,10 +126,11 @@ void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::T
             throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{}]:{}", tag, side, position.value(), 1,
                                                  MPO.dimension(1), 2, block->dimension(2)));
         sites++;
-        Eigen::Tensor<Scalar, 3> block_enlarged = block->contract(MPS, Textra::idx({0}, {2}))
-                                                      .contract(MPO, Textra::idx({1, 2}, {1, 2}))
-                                                      .contract(MPS.conjugate(), Textra::idx({0, 3}, {2, 0}))
-                                                      .shuffle(Textra::array3{0, 2, 1});
+        Eigen::Tensor<Scalar, 3> block_enlarged(MPS.dimension(1), MPS.dimension(1), MPO.dimension(0));
+        block_enlarged.device(Textra::omp::getDevice()) = block->contract(MPS, Textra::idx({0}, {2}))
+                                                              .contract(MPO, Textra::idx({1, 2}, {1, 2}))
+                                                              .contract(MPS.conjugate(), Textra::idx({0, 3}, {2, 0}))
+                                                              .shuffle(Textra::array3{0, 2, 1});
         *block = block_enlarged;
     }
 }

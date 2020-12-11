@@ -3,6 +3,7 @@
 //
 
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 // textra must appear first
 #include "class_mps_site.h"
 #include <tools/common/fmt.h>
@@ -191,8 +192,8 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
         Eigen::Tensor<Scalar, 1> LC_temp = get_LC().broadcast(Textra::array1{mpoDimR});
         set_LC(LC_temp);
     }
-
-    Eigen::Tensor<Scalar, 3> M_bare_temp = get_M_bare()
+    Eigen::Tensor<Scalar, 3> M_bare_temp(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    M_bare_temp.device(Textra::omp::getDevice()) = get_M_bare()
                                                .contract(mpo, Textra::idx({0}, {2}))
                                                .shuffle(Textra::array5{4, 0, 2, 1, 3})
                                                .reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
@@ -203,6 +204,7 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
 }
 
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo) {
-    Eigen::Tensor<Scalar, 3> M_bare_temp = mpo.contract(get_M_bare(), Textra::idx({0}, {0}));
+    Eigen::Tensor<Scalar, 3> M_bare_temp(mpo.dimension(1), get_chiL(), get_chiR());
+    M_bare_temp.device(Textra::omp::getDevice()) = mpo.contract(get_M_bare(), Textra::idx({0}, {0}));
     set_M(M_bare_temp);
 }
