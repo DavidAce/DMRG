@@ -223,6 +223,8 @@ void class_xdmrg::run_algorithm() {
         if(stop_reason != StopReason::NONE) break;
 
         // Prepare for next step
+
+        // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
         try_discard_small_schmidt();

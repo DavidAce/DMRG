@@ -19,7 +19,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
-    tools::log->trace("Rebuilding edges ene...");
+    tools::log->debug("Rebuilding edges ene");
     tools::common::profile::get_default_prof()["t_env"]->tic();
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
@@ -73,7 +73,7 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
-    tools::log->trace("Rebuilding edges var...");
+    tools::log->debug("Rebuilding edges var");
     tools::common::profile::get_default_prof()["t_env"]->tic();
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
