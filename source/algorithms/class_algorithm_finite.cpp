@@ -158,6 +158,7 @@ void class_algorithm_finite::reduce_mpo_energy() {
 
 void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
     if(not tensors.position_is_any_edge()) return;
+    status.chi_lim_max = cfg_chi_lim_max();
     status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
     if(not cfg_chi_lim_grow()) {
         status.chi_lim = status.chi_lim_max;
