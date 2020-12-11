@@ -9,6 +9,7 @@
 #include "measure.h"
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
 #include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/class_tensors_finite.h>
@@ -53,55 +54,37 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
 size_t tools::finite::measure::length(const class_tensors_finite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const class_state_finite &state) { return state.get_length(); }
 
-//double tools::finite::measure::norm(const class_state_finite &state) {
-////    if(state.measurements.norm) return state.measurements.norm.value();
-//    tools::log->trace("Measuring norm");
-//    Eigen::Tensor<Scalar, 2> chain;
-//    Eigen::Tensor<Scalar, 2> temp;
-//    bool                     first = true;
-//    for(size_t pos = 0; pos < state.get_length(); pos++) {
-//        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
-//        if(first) {
-//            chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
-//            first = false;
-//            continue;
-//        }
-//        temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
-//        chain = temp;
-//    }
-//    double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
-//    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm_chain);
-//    state.measurements.norm = norm_chain;
-//    return state.measurements.norm.value();
-//}
-
 double tools::finite::measure::norm(const class_state_finite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
-    if(state.is_normalized_on_all_sites()){
+    if(state.is_normalized_on_all_sites()) {
         const auto  pos  = state.get_position();
         const auto &mpsL = state.get_mps_site(pos);
         const auto &mpsR = state.get_mps_site(pos + 1);
-        tools::log->trace("Measuring norm using center sites [{},{}]",pos,pos+1);
-        Eigen::Tensor<Scalar, 0> norm_contraction = mpsL.get_M()
-            .contract(mpsR.get_M(), Textra::idx({2}, {1}))
-            .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
-            .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
+        tools::log->trace("Measuring norm using center sites [{},{}]", pos, pos + 1);
+        Eigen::Tensor<Scalar, 0> norm_contraction;
+
+        norm_contraction.device(Textra::omp::getDevice()) = mpsL.get_M()
+                                                                .contract(mpsR.get_M(), Textra::idx({2}, {1}))
+                                                                .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
+                                                                .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
         norm = std::abs(norm_contraction(0));
 
-    }else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()){
-        tools::log->trace("Measuring norm using active sites {}",state.active_sites);
+    } else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
+        tools::log->trace("Measuring norm using active sites {}", state.active_sites);
         Eigen::Tensor<Scalar, 2> chain;
         Eigen::Tensor<Scalar, 2> temp;
         bool                     first = true;
-        for(auto && pos : state.active_sites) {
+        for(auto &&pos : state.active_sites) {
             const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
             if(first) {
                 chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
                 first = false;
                 continue;
             }
-            temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+            temp.resize(Textra::array2{M.dimension(2), M.dimension(2)});
+            temp.device(Textra::omp::getDevice()) = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+
             chain = temp;
         }
         norm = std::abs(Textra::TensorMatrixMap(chain).trace());
@@ -117,7 +100,9 @@ double tools::finite::measure::norm(const class_state_finite &state) {
                 first = false;
                 continue;
             }
-            temp  = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+            temp.resize(Textra::array2{M.dimension(2), M.dimension(2)});
+            temp.device(Textra::omp::getDevice()) = chain.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0, 1}, {1, 0}));
+
             chain = temp;
         }
         norm = std::abs(Textra::TensorMatrixMap(chain).trace());
@@ -253,12 +238,12 @@ std::array<double, 3> tools::finite::measure::spin_components(const class_state_
 
 double tools::finite::measure::spin_component(const class_state_finite &state, const Eigen::Matrix2cd &paulimatrix) {
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
-    Eigen::TensorRef<Eigen::Tensor<Scalar, 3>> temp;
+    Eigen::Tensor<Scalar, 3> temp;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        temp = L.contract(state.get_mps_site(pos).get_M(), idx({0}, {1}))
-                   .contract(state.get_mps_site(pos).get_M().conjugate(), idx({0}, {1}))
-                   .contract(mpo, idx({0, 1, 3}, {0, 2, 3}));
-        L = temp;
+        const auto &M = state.get_mps_site(pos).get_M();
+        temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
+        temp.device(Textra::omp::getDevice()) = L.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0}, {1})).contract(mpo, idx({0, 1, 3}, {0, 2, 3}));
+        L                                     = temp;
     }
 
     assert(L.dimensions() == R.dimensions());
