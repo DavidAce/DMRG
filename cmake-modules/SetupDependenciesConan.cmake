@@ -30,9 +30,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                     OPTIONS arpack-ng:blas=All
                     OPTIONS arpack-ng:blas_libraries=${MKL_LIBRARIES}
                     OPTIONS arpack-ng:lapack_libraries=${MKL_LIBRARIES}
-                    OPTIONS ceres-solver:blas=All
-                    OPTIONS ceres-solver:blas_libraries=${MKL_LIBRARIES}
-                    OPTIONS ceres-solver:lapack_libraries=${MKL_LIBRARIES}
+                    #OPTIONS ceres-solver:blas=All
+                    #OPTIONS ceres-solver:blas_libraries=${MKL_LIBRARIES}
+                    #OPTIONS ceres-solver:lapack_libraries=${MKL_LIBRARIES}
                     )
         else()
             message(FATAL_ERROR "Undefined target: mkl::mkl")

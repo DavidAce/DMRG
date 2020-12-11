@@ -3,9 +3,8 @@
 
 
 [requires]
-#h5pp/1.8.4@
+ceres-solver/2.0.0
 h5pp/1.8.5@davidace/dev
-ceres-solver/2.0.0@davidace/stable
 eigen/3.3.8@davidace/patched
 arpack++/2.3.0@davidace/stable
 libunwind/1.3.1@
@@ -19,8 +18,11 @@ cmake
 *:shared=False
 openblas:build_lapack=True
 openblas:dynamic_arch=False
-ceres-solver:march=native
-ceres-solver:verbose=True
+ceres-solver:use_glog=True
+ceres-solver:use_gflags=True
+
+#ceres-solver:march=native
+#ceres-solver:verbose=True
 # backward-cpp:stack_walking=unwind
 # backward-cpp:stack_details=dwarf
 
