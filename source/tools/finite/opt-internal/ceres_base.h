@@ -50,6 +50,7 @@ namespace tools::finite::opt::internal{
         double get_variance_per_site   () const;
         size_t get_count               () const;
         double get_norm                () const;
+        double get_norm_offset         () const;
         long   get_ops                 () const;
         int    NumParameters           () const final;
 
