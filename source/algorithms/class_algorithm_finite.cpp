@@ -195,7 +195,7 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
         tools::log->info("Bonds at limit  count : {} ", bond_at_lim_count);
         tools::log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
     }
-    bool state_is_bond_limited = tensors.state->is_bond_limited(status.chi_lim, 5 * settings::precision::svd_threshold);
+    bool state_is_bond_limited = tensors.state->is_bond_limited(status.chi_lim, 2 * settings::precision::svd_threshold);
     if(not state_is_bond_limited) {
         tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.chi_lim);
         return;
