@@ -59,14 +59,12 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     Scalar ene, ene2, var;
     Scalar vHv, vH2v;
     double vv, log10var;
-    double norm_func, norm_grad;
     int    vecSize = NumParameters();
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { vecSize = NumParameters() / 2; }
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
     vv   = v.squaredNorm();
     norm = std::sqrt(vv);
 
-    if(!grad_double_double or grad_double_double == nullptr) { tools::log->warn("Gradient ptr is null at step {}", counter); }
     get_H2v(v);
     get_Hv(v);
 
@@ -99,11 +97,10 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     variance                       = std::abs(var);
     variance_per_site              = variance / static_cast<double>(length);
     norm_offset                    = std::abs(vv) - 1.0;
-    std::tie(norm_func, norm_grad) = windowed_func_grad(norm_offset, 0.2);
-    double epsilon                 = 1e-14;
+    double epsilon                 = 1e-15;
     log10var                       = std::log10(epsilon + variance);
 
-    if(fx != nullptr) { fx[0] = log10var + norm_func; }
+    if(fx != nullptr) { fx[0] = log10var; }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
@@ -111,7 +108,6 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         auto var_1 = (1.0 / (epsilon + var) / std::log(10));
         grad       = var_1 * vv_1 * (H2v - 2.0 * ene * Hv - (ene2 - 2.0 * ene * ene) * v);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
-        grad += norm_grad * v;
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {

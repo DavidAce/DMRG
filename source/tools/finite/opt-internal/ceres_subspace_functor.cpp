@@ -24,7 +24,6 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     Scalar     vH2v, vHv;
     Scalar     ene, ene2, var;
     double     vv, log10var;
-    double     norm_func, norm_grad;
     VectorType Hv, H2v;
     int        vecSize = NumParameters();
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { vecSize = NumParameters() / 2; }
@@ -65,10 +64,9 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     variance                       = std::abs(var);
     variance_per_site              = variance / static_cast<double>(length);
     norm_offset                    = std::abs(vv) - 1.0;
-    std::tie(norm_func, norm_grad) = windowed_func_grad(norm_offset, 0.05);
     log10var                       = std::log10(variance);
 
-    if(fx != nullptr) { fx[0] = log10var + norm_func; }
+    if(fx != nullptr) { fx[0] = log10var; }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
@@ -76,7 +74,6 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         auto var_1 = 1.0 / var / std::log(10);
         grad       = var_1 * vv_1 * (H2v - 2.0 * ene * Hv - (ene2 - 2.0 * ene * ene) * v);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
-        grad += norm_grad * v;
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
