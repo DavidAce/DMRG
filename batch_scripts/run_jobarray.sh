@@ -58,6 +58,9 @@ end_id=$((SLURM_ARRAY_TASK_ID+SLURM_ARRAY_TASK_STEP))
 exit_code_save=0
 for id in $(seq $start_id $end_id); do
   arg_line=$(tail -n+$id $jobfile | head -1)
+  if [ -z "$arg_line" ]; then
+    continue
+  fi
   config_file=$(echo "$arg_line" | cut -d " " -f1)
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
