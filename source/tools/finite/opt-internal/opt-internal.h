@@ -77,7 +77,8 @@ namespace tools::finite::opt::internal{
         extern Eigen::VectorXd get_energies(const std::vector<opt_state> & candidate_list);
         extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_state> & candidate_list);
         extern Eigen::VectorXd get_overlaps(const std::vector<opt_state> & candidate_list);
-        extern double get_subspace_error(const std::vector<opt_state> & candidate_list);
+        extern std::vector<double> get_subspace_errors(const std::vector<opt_state> & candidate_list);
+        extern double get_subspace_error(const std::vector<opt_state> & candidate_list, std::optional<size_t> max_candidates = std::nullopt);
         extern double get_subspace_error(const std::vector<double> &overlaps);
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_state> & candidate_list, size_t idx);
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_state> & candidate_list, const Eigen::VectorXcd & subspace_vector);
