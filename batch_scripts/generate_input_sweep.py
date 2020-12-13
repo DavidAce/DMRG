@@ -13,7 +13,7 @@ location    = "input"
 
 sites               = np.array([32,40])
 lambdas             = [0.000]
-deltas              = [-0.10, -0.05,0.00, 0.05, 0.10]
+deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_max_sites = [6]
 output_prefix       = "output"
@@ -67,8 +67,8 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::ising_sdual::lambda"         : str_l,
         "model::ising_sdual::J_stdv"         : "1.0",
         "model::ising_sdual::h_stdv"         : "1.0",
-        "xdmrg::chi_lim_max"                 : "1024",
-        "xdmrg::max_states"                  : "2",
+        "xdmrg::chi_lim_max"                 : "256",
+        "xdmrg::max_states"                  : "10",
         "strategy::multisite_max_sites"      : str(multi),
         "strategy::initial_state"            : str(init),
     }
