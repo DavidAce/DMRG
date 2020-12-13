@@ -34,8 +34,8 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
 void tools::finite::opt::internal::reports::print_eigs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (eigs_log.empty()) return;
-    std::string format_hdr = "- {:<5} {:<20} {:<20} {:<20} {:<12} {:<12} {:<12}";
-    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<20.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
+    std::string format_hdr = "- {:<5} {:<20} {:<20} {:<20} {:<12} {:<12} {:<12} {:<6}";
+    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<20.8f} {:<12.3f} {:<12.3f} {:<12.3f} {:<6}";
     tools::log->debug(format_hdr.c_str(),
                        "nev",
                        "max <θ_i|θ>",
@@ -43,7 +43,8 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                        "log₁₀(1-Σ|<θ_i|θ>|²)",  // Special characters are counted properly in fmt 1.7.0
                        "Eig Time[ms]",
                        "Ham Time[ms]",
-                       "LU Time[ms]");
+                       "LU Time[ms]",
+                       "Steps" );
 
     for(auto &entry : eigs_log){
         tools::log->debug(format_num.c_str(),
@@ -53,7 +54,9 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                           entry.eps ,
                           entry.eig_time * 1000,
                           entry.ham_time * 1000,
-                          entry.lu_time  * 1000);
+                          entry.lu_time  * 1000,
+                          entry.steps
+                            );
     }
     eigs_log.clear();
 }
@@ -124,7 +127,7 @@ void tools::finite::opt::internal::reports::time_add_sub_entry(){
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->get_last_interval(),
                           tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"]->get_last_interval()});
 }
-void tools::finite::opt::internal::reports::eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time){
+void tools::finite::opt::internal::reports::eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time, size_t steps){
     if (tools::log->level() > spdlog::level::debug) return;
-    eigs_log.push_back({nev, max_olap, min_olap, eps, eig_time,ham_time,lu_time});
+    eigs_log.push_back({nev, max_olap, min_olap, eps, eig_time,ham_time,lu_time,steps});
 }

@@ -18,6 +18,7 @@ namespace tools::finite::opt::internal::reports{
     struct eigs_entry{
         long nev;
         double max_olap,min_olap,eps,eig_time,ham_time,lu_time;
+        size_t steps;
     };
 
     inline std::vector<bfgs_entry> bfgs_log;
@@ -31,6 +32,6 @@ namespace tools::finite::opt::internal::reports{
     extern void bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_state & tensor, std::optional<long> space = std::nullopt);
     extern void time_add_dir_entry();
     extern void time_add_sub_entry();
-    extern void eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time);
+    extern void eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time,double ham_time, double lu_time, size_t steps);
 
 }
