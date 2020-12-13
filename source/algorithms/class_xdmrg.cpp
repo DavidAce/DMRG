@@ -484,8 +484,9 @@ void class_xdmrg::check_convergence() {
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
 
-    if(tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
-        stop_reason = StopReason::NONE;
+    stop_reason = StopReason::NONE;
+    if(status.iter >= settings::xdmrg::min_iters and tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and
+       not tensors.model->is_damped()) {
         if(status.iter >= settings::xdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
