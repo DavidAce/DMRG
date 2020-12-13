@@ -121,7 +121,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
-        /* clang-format on */
+       /* clang-format on */
     }
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
@@ -205,6 +205,8 @@ tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(
 
 template<typename FunctorType>
 ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
+//    if(summary.iteration > 100 and summary.cost_change < 1e-5 and summary.gradient_max_norm < 10.0 and summary.step_norm < 1e-6) return ceres::SOLVER_ABORT;
+
     if(not log) return ceres::SOLVER_CONTINUE;
     if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;
     if(summary.iteration - last_log_iter < freq_log_iter and summary.iteration > init_log_iter) return ceres::SOLVER_CONTINUE;
