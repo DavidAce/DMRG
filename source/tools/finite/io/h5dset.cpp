@@ -37,6 +37,7 @@ namespace tools::finite::io::h5dset{
 
 
 int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
+    return H5D_CHUNKED; // Let everything be chunked a while. When resuming, rewriting into checkpoint/iter_? can lead datasets of different sizes
     std::string str(prefix_path);
     std::regex  rx(R"(checkpoint/iter_[0-9])"); // Declare the regex with a raw string literal
     std::smatch m;
