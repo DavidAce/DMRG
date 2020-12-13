@@ -280,7 +280,15 @@ std::vector<double> class_state_finite::get_truncation_errors() const { return t
 std::vector<double> class_state_finite::get_truncation_errors_active() const {
     std::vector<double> truncation_errors;
     truncation_errors.reserve(active_sites.size());
-    for(auto && pos : active_sites) truncation_errors.emplace_back(get_truncation_error(pos));
+    for(auto && pos : active_sites){
+        // We are only interested in the truncation on bonds that are updated
+        // when operating on active_sites. This excludes the outer bonds.
+        if(get_mps_site(pos).isCenter())
+            truncation_errors.emplace_back(get_truncation_error_LC());
+        if(pos == active_sites.front()) continue;
+        if(pos == active_sites.back()) continue;
+        truncation_errors.emplace_back(get_truncation_error(pos));
+    }
     return truncation_errors;
 }
 
