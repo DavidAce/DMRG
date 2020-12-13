@@ -5,6 +5,7 @@
 #include "class_xdmrg.h"
 #include "class_fdmrg.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_exceptions.h>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <tensors/edges/class_edges_finite.h>
@@ -20,7 +21,6 @@
 #include <tools/finite/multisite.h>
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_state.h>
-#include <general/nmspc_exceptions.h>
 
 class_xdmrg::class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -207,7 +207,7 @@ void class_xdmrg::run_algorithm() {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
 
-        if(tools::finite::measure::energy_variance(tensors) < status.energy_variance_lowest){
+        if(tools::finite::measure::energy_variance(tensors) < status.energy_variance_lowest) {
             tools::log->trace("Updating variance record holder");
             status.energy_variance_lowest = tools::finite::measure::energy_variance(tensors);
         }
@@ -256,33 +256,30 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-
     // On the zeroth iteration, the rest of the chain is probably just randomized, so don't
     // focus on growing the bond dimension yet.
-    if(status.iter == 0){
-        status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init());
-    }
+    if(status.iter == 0) { status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init()); }
 
     // If early in the simulation, and the bond dimension is small enough we use subspace optimization
     if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_ONLY;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
 
     // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
     if(status.iter < settings::xdmrg::olap_iters and excited_state_number == 0) {
-        c1.optMode  = OptMode::OVERLAP;
-        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.optMode       = OptMode::OVERLAP;
+        c1.optSpace      = OptSpace::SUBSPACE_ONLY;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_olap > 0) status.chi_lim = settings::xdmrg::chi_lim_olap;
     }
 
     // If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
     if(status.algorithm_has_stuck_for > 1 and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::SUBSPACE_ONLY;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_ONLY;
         c1.second_chance = true;
     }
 
@@ -291,8 +288,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     //      - when the algorithm has already converged
     if(status.variance_mpo_has_converged) {
         // No need to do expensive operations -- just finish
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::DIRECT;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::DIRECT;
         c1.second_chance = false;
     }
 
@@ -300,11 +297,10 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // When this happens, we can't use SUBSPACE even with two sites,
     // so we might as well give it to DIRECT, which handles larger problems.
     if(tensors.state->size_2site() > settings::precision::max_size_part_diag) {
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::DIRECT;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::DIRECT;
         c1.second_chance = true;
     }
-
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
@@ -312,7 +308,6 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         case OptSpace::SUBSPACE_ONLY:
         case OptSpace::SUBSPACE_AND_DIRECT: c1.max_problem_size = settings::precision::max_size_part_diag; break;
     }
-
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
@@ -344,7 +339,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
         if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
-    }else if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE ) {
+    } else if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE) {
         // I.e. if we did a SUBSPACE VARIANCE run that failed, and we are already trying max sites, switch to DIRECT
         c2.optInit  = OptInit::LAST_RESULT; // Use the result from c1
         c2.optSpace = OptSpace::DIRECT;
@@ -392,12 +387,12 @@ void class_xdmrg::single_xDMRG_step() {
         // We can now decide if we are happy with the result or not.
         double percent = 100 * results.back().get_variance() / variance_old;
         if(percent < 99) {
-            tools::log->debug("State improved during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
-                              std::log10(results.back().get_variance()), std::log10(variance_old), percent);
+            tools::log->debug("State improved during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
+                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_old), percent);
             break;
         } else {
-            tools::log->debug("State did not improve enough during {} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optSpace),
-                              std::log10(results.back().get_variance()), std::log10(variance_old), percent);
+            tools::log->debug("State did not improve enough during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
+                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_old), percent);
             continue;
         }
     }
@@ -412,8 +407,8 @@ void class_xdmrg::single_xDMRG_step() {
 
     // Take the best result
     const auto &winner = results.front();
-    last_optspace = winner.get_optspace();
-    last_optmode = winner.get_optmode();
+    last_optspace      = winner.get_optspace();
+    last_optmode       = winner.get_optmode();
     tensors.activate_sites(winner.get_sites());
     tensors.state->tag_active_sites_normalized(false);
     // Truncate even more if doing chi quench
@@ -421,10 +416,10 @@ void class_xdmrg::single_xDMRG_step() {
 
     // Do the truncation with SVD
     tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
-    if(tools::log->level() <= spdlog::level::debug){
+    if(tools::log->level() <= spdlog::level::debug) {
         auto truncation_errors = tensors.state->get_truncation_errors_active();
-        for(auto & t : truncation_errors) t = std::log10(t);
-        tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors,", "));
+        for(auto &t : truncation_errors) t = std::log10(t);
+        tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors, ", "));
     }
 
     if constexpr(settings::debug) {
@@ -467,10 +462,9 @@ void class_xdmrg::check_convergence() {
         }
     }
 
-    status.algorithm_has_saturated =
-        (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
-//        or
-//        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
+    status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
+    //        or
+    //        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
@@ -540,14 +534,14 @@ void class_xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::list<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS,
-                                      fdmrg_task::INIT_WRITE_MODEL,  fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                      fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT, fdmrg_task::POST_PRINT_PROFILING};
-    std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                      fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT, fdmrg_task::POST_PRINT_PROFILING};
+    std::list<fdmrg_task> gs_tasks = {
+        fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_WRITE_MODEL,    fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+        fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
+    std::list<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS,  fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+                                      fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
     // Find lowest energy state
     {
-        class_fdmrg           fdmrg_gs(h5pp_file);
+        class_fdmrg fdmrg_gs(h5pp_file);
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-gs", settings::console::verbosity, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
@@ -556,7 +550,7 @@ void class_xdmrg::find_energy_range() {
 
     // Find highest energy state
     {
-        class_fdmrg           fdmrg_hs(h5pp_file);
+        class_fdmrg fdmrg_hs(h5pp_file);
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)) + "-hs", settings::console::verbosity, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
@@ -564,14 +558,13 @@ void class_xdmrg::find_energy_range() {
     }
 
     // Reset our logger
-    tools::log                 = tools::Logger::getLogger(std::string(enum2str(algo_type)));
+    tools::log = tools::Logger::getLogger(std::string(enum2str(algo_type)));
 
     // Reset the profiling data
     tools::common::profile::reset_profiling(AlgorithmType::fDMRG);
 
     // Set the default profile back to xDMRG because the constructor of class_fdmrg changed it
     tools::common::profile::set_default_prof(AlgorithmType::xDMRG);
-
 }
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }
