@@ -45,7 +45,7 @@ jobs:
         with:
           path: |
             ~/.conan/data
-            build/Debug/install
+            build/Release/install
           key: ${{ env.cache-name }}
 
       - name: Setup gcc # compilers are already installed on the CI
@@ -75,12 +75,12 @@ jobs:
 
       - name: Build
         run: |
-          ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=Debug -j 2 --verbose --verbose-cmake --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} --shared=${{ matrix.shared }}
+          ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=Release -j 2 --verbose --verbose-cmake --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} --shared=${{ matrix.shared }}
 
       - name: Test
         run: |
-          cd build/Debug
-          ctest -C Debug --output-on-failure
+          cd build/Release
+          ctest -C Release --output-on-failure
 
 
 
