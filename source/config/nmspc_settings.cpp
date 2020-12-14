@@ -128,6 +128,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
     dmrg_config.load_parameter("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
     dmrg_config.load_parameter("xdmrg::max_states"             , xdmrg::max_states);
+    dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
+    dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
 
     //Parameters controlling infinite-DMRG
     dmrg_config.load_parameter("idmrg::on"           , idmrg::on);
