@@ -221,7 +221,8 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
     const auto &edges = *tensors.edges;
 
     /*
-     *  Step 0) Find the subspace
+     *  Step 0) Find the subspace.
+     *  The subspace set of candidate eigenstates obtained from full or partial diagonalization
      */
 
     std::vector<opt_state> candidate_list;
