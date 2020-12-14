@@ -127,7 +127,7 @@ namespace num {
         if(first == last) return std::vector<T2>{static_cast<T2>(first)};
         T1              current = first;
         std::vector<T2> vec;
-        size_t          num_steps = std::abs(int((last - first + step) / step));
+        auto          num_steps = std::abs<size_t>(size_t((last - first + step) / step));
         if(num_steps > 1000000) throw std::runtime_error("Too many steps");
         while(current <= last) {
             vec.push_back(static_cast<T2>(current));
