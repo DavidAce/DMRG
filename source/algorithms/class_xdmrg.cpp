@@ -485,6 +485,8 @@ void class_xdmrg::check_convergence() {
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
+        if(status.entanglement_has_saturated and settings::xdmrg::finish_if_entanglm_saturated) stop_reason = StopReason::SATURATED;
+        if(status.variance_mpo_has_saturated and settings::xdmrg::finish_if_variance_saturated) stop_reason = StopReason::SATURATED;
         if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_chi() >= 32 and
            tools::finite::measure::energy_variance(tensors) < 1e-4)
             stop_reason = StopReason::RANDOMIZE;
