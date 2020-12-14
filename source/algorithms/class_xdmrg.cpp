@@ -269,7 +269,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
 
     // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
-    if(status.iter < settings::xdmrg::olap_iters and excited_state_number == 0) {
+    if(status.iter < settings::xdmrg::olap_iters) {
         c1.optMode       = OptMode::OVERLAP;
         c1.optSpace      = OptSpace::SUBSPACE_ONLY;
         c1.second_chance = false;
