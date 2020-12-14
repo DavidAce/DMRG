@@ -5,8 +5,8 @@ on:
   pull_request:
   push:
     branches:
-      - master
-      #- development
+      #- master
+      - development
 
 jobs:
   ci:
