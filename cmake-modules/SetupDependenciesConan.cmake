@@ -49,7 +49,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                     "   OPENBLAS_CORETYPE=<microarch>"
                     "before launching the executable")
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=True)
-        else(_host_name MATCHES "raken")
+        else()
             message(STATUS "Setting OpenBLAS dynamic_arch=False")
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
         endif()
