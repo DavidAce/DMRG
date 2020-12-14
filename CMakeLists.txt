@@ -146,7 +146,7 @@ else()
     set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     if(NOT DMRG_ENABLE_ASAN)
-        target_link_libraries  (${PROJECT_NAME} INTERFACE -static)   ### Static linkage
+        target_link_libraries  (${PROJECT_NAME} PUBLIC -static)   ### Static linkage
     endif()
 endif()
 
