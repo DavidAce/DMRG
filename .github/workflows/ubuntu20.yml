@@ -75,7 +75,6 @@ jobs:
 
         # ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
-        if: matrix.source != 'conan'
         run: |
           ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=${{ matrix.build_type }} -j 2 --verbose --verbose-cmake --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} --shared=${{ matrix.shared }}
 
