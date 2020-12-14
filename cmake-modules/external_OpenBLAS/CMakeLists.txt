@@ -6,8 +6,8 @@ get_num_threads(NUM_THREADS)
 include(ExternalProject)
 
 ExternalProject_Add(external_OpenBLAS
-        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.10.tar.gz
-        URL_MD5  4727a1333a380b67c8d7c7787a3d9c9a
+        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.13.tar.gz
+        URL_MD5  2ca05b9cee97f0d1a8ab15bd6ea2b747
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         BUILD_ALWAYS TRUE

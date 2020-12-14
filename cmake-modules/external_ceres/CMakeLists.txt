@@ -29,10 +29,8 @@ message(STATUS "-Dgflags_DIR:PATH=${gflags_DIR}")
 
 include(ExternalProject)
 ExternalProject_Add(external_ceres
-        GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
-        GIT_TAG 2.0.0rc1
-        GIT_PROGRESS TRUE
-        GIT_SHALLOW TRUE
+        URL  https://github.com/ceres-solver/ceres-solver/archive/2.0.0.tar.gz
+        URL_MD5 "94246057ac520313e3b582c45a30db6e"
         BUILD_ALWAYS TRUE # <- True will detect changes in dependencies of ceres
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
