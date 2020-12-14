@@ -20,6 +20,7 @@ matrix:
         - CC=gcc-7
         - FC=gfortran-7
         - FLAGS="--download-method=find-or-fetch"
+        - BUILD_TYPE="Debug"
       addons:
         apt:
           update: true
@@ -44,6 +45,7 @@ matrix:
         - CC=gcc-8
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch"
+        - BUILD_TYPE="Debug"
       addons:
         apt:
           update: true
@@ -68,6 +70,7 @@ matrix:
         - CC=clang-7
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch"
+        - BUILD_TYPE="Debug"
       addons:
         apt:
           update: true
@@ -95,6 +98,7 @@ matrix:
         - CC=gcc-7
         - FC=gfortran-7
         - FLAGS="--download-method=find-or-fetch"
+        - BUILD_TYPE="Debug"
       addons:
         apt:
           update: true
@@ -132,6 +136,7 @@ matrix:
         - CC=gcc-8
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch"
+        - BUILD_TYPE="Debug"
       addons:
         apt:
           update: true
@@ -167,6 +172,7 @@ matrix:
         - CACHE_NAME=bionic-clang-static-conan
         - FC=gfortran-8
         - FLAGS="--download-method=conan"
+        - BUILD_TYPE="Release"
       addons:
         apt:
           update: true
@@ -191,6 +197,7 @@ matrix:
         - CC=gcc-8
         - FC=gfortran-8
         - FLAGS="--download-method=conan"
+        - BUILD_TYPE="Release"
       addons:
         apt:
           update: true
@@ -274,4 +281,4 @@ before_script:
   - cmake --version
 
 script:
-  - ./build.sh --enable-tests --verbose-cmake -a haswell  -j 2 --build-type=Debug ${FLAGS}
+  - ./build.sh --enable-tests --verbose-cmake -a haswell  -j 2 --build-type=${BUILD_TYPE} ${FLAGS}
