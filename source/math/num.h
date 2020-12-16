@@ -65,10 +65,8 @@ namespace num {
     }
 
     template<typename ContainerType>
-    double sterr(const ContainerType & X,
-                 std::optional<size_t> start_point = std::nullopt,
-                 std::optional<size_t> end_point   = std::nullopt){
-        return stdev(X,start_point,end_point)/std::sqrt(X.size());
+    double sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        return stdev(X, start_point, end_point) / std::sqrt(X.size());
     }
 
     template<typename ContainerType1, typename ContainerType2>
@@ -127,7 +125,8 @@ namespace num {
         if(first == last) return std::vector<T2>{static_cast<T2>(first)};
         T1              current = first;
         std::vector<T2> vec;
-        auto          num_steps = std::abs<size_t>(size_t((last - first + step) / step));
+        auto            num_steps = static_cast<long>(
+            std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
         if(num_steps > 1000000) throw std::runtime_error("Too many steps");
         while(current <= last) {
             vec.push_back(static_cast<T2>(current));
