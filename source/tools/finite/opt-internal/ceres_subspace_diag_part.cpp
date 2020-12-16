@@ -12,8 +12,8 @@ std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {
     if(shape <= 512) nev_list = {32,128};
     if(512 < shape and shape <= 1024) nev_list = {64,128,256};
     if(1024 < shape and shape <= 2048) nev_list = {8,64,256};
-    if(2048 < shape and shape <= 3072)  nev_list = {8,128,256};
-    if(3072 < shape and shape <= 4096)  nev_list = {8,128};
+    if(2048 < shape and shape <= 3072)  nev_list = {8,64,128};
+    if(3072 < shape and shape <= 4096)  nev_list = {8,64};
     return nev_list;
 }
 

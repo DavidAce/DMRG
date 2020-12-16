@@ -64,8 +64,9 @@ const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
             if(MC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): MC has size 0 at position {}", get_position()));
             return MC.value();
         } else {
-            MC = get_M_bare().contract(Textra::asDiagonal(get_LC()), Textra::idx({2}, {0}));
-            if(MC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): built MC with size 0 at position {}", get_position()));
+            MC = Eigen::Tensor<Scalar,3>(spin_dim(), get_chiL(),get_chiR());
+            MC->device(Textra::omp::getDevice()) = get_M_bare().contract(Textra::asDiagonal(get_LC()), Textra::idx({2}, {0}));
+            if(MC->size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): built MC with size 0 at position {}", get_position()));
             return MC.value();
         }
     } else
@@ -83,7 +84,7 @@ const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(
-                fmt::format("class_mps_site::get_LC(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
+                fmt::format("class_mps_site::get_LC(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0), get_position()));
         if(LC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_LC(): LC has size 0 at position {}", get_position()));
         return LC.value();
     } else
@@ -141,6 +142,12 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
+
+void   class_mps_site::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error){
+    set_LC(LC_and_error.first,LC_and_error.second);
+}
+
+
 
 void   class_mps_site::set_truncation_error(double error) { truncation_error = error; }
 void   class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
@@ -207,4 +214,21 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo) {
     Eigen::Tensor<Scalar, 3> M_bare_temp(mpo.dimension(1), get_chiL(), get_chiR());
     M_bare_temp.device(Textra::omp::getDevice()) = mpo.contract(get_M_bare(), Textra::idx({0}, {0}));
     set_M(M_bare_temp);
+}
+
+
+void   class_mps_site::stash_LC(const Eigen::Tensor<Scalar, 1> &LC_stash_, double error){
+    LC_stash = LC_stash_;
+    truncation_error_LC_stash = error;
+}
+void   class_mps_site::stash_LC(const std::pair<Eigen::Tensor<Scalar, 1>,double> & LC_and_error){
+    std::tie(LC_stash,truncation_error_LC_stash) = LC_and_error;
+}
+std::pair<Eigen::Tensor<Scalar, 1>,double>  class_mps_site::unstash_LC(){
+    if(not LC_stash) throw std::runtime_error(fmt::format("No LC was found stashed at position {}", get_position()));
+    if(not truncation_error_LC_stash) throw std::runtime_error(fmt::format("No LC truncation error was found stashed at position {}", get_position()));
+    auto tmp = std::make_pair(LC_stash.value(),truncation_error_LC_stash.value());
+    LC_stash = std::nullopt;
+    truncation_error_LC_stash = std::nullopt;
+    return tmp;
 }

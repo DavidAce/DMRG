@@ -21,15 +21,18 @@ class class_mps_site {
     double                                          truncation_error    = 0;
     double                                          truncation_error_LC = 0;
 
+    std::optional<Eigen::Tensor<Scalar, 1>> LC_stash                  = std::nullopt; /*!< \f$\Lambda_C\f$ A center lambda stored temporarily  */
+    std::optional<double>                   truncation_error_LC_stash = std::nullopt;
+
     public:
     ~class_mps_site(); // Read comment on implementation
     class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error = 0);
     class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error = 0);
-    class_mps_site();                                           // ctor
-    class_mps_site(const class_mps_site &other);                // default copy ctor
-    class_mps_site(class_mps_site &&other);                     // default move ctor
-    class_mps_site &operator=(class_mps_site &&other);          // default move assign
-    class_mps_site &operator=(const class_mps_site &other);     // default copy assign
+    class_mps_site();                                       // ctor
+    class_mps_site(const class_mps_site &other);            // default copy ctor
+    class_mps_site(class_mps_site &&other);                 // default move ctor
+    class_mps_site &operator=(class_mps_site &&other);      // default move assign
+    class_mps_site &operator=(const class_mps_site &other); // default copy assign
 
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
@@ -58,6 +61,7 @@ class class_mps_site {
     void   set_M(const Eigen::Tensor<Scalar, 3> &M_);
     void   set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
     void   set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error = 0);
+    void   set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
     void   set_truncation_error(double error);
     void   set_truncation_error_LC(double error);
     double get_truncation_error() const;
@@ -66,7 +70,11 @@ class class_mps_site {
         LC.reset();
         MC.reset();
     }
-    void merge_mps(const class_mps_site & other);
+    void merge_mps(const class_mps_site &other);
     void apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo);
     void apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo);
+
+    void                                        stash_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error);
+    void                                        stash_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
+    std::pair<Eigen::Tensor<Scalar, 1>, double> unstash_LC();
 };

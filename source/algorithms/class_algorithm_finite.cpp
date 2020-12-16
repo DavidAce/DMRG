@@ -129,7 +129,8 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
                 status.iter++;
                 has_projected = false;
             }
-            tensors.move_center_point(status.chi_lim);
+#pragma message "testing svd_threshold while moving"
+            tensors.move_center_point(status.chi_lim,1e-14);
             status.step++;
             if(chi_quench_steps > 0) chi_quench_steps--;
         }
@@ -292,9 +293,15 @@ void class_algorithm_finite::try_discard_small_schmidt() {
     if(not tensors.position_is_any_edge()) return;
     if(num_discards >= max_discards) return;
     if(status.algorithm_has_stuck_for <= 2) return;
-    tools::log->info("Trying discard of smallest schmidt values");
-    tensors.normalize_state(status.chi_lim,1e-4,NormPolicy::ALWAYS);
+    tools::log->info("Trying discard of smallest schmidt values: trials {}",num_discards);
+    tensors.normalize_state(status.chi_lim,1e-3,NormPolicy::ALWAYS);
     clear_convergence_status();
+#pragma message "testing lower svd_threshold"
+//    settings::precision::svd_threshold = 1e-10;
+    settings::strategy::multisite_move = MultisiteMove::ONE;
+    settings::strategy::multisite_max_sites = 2;
+    iter_discard = status.iter;
+//    tensors.reduce_mpo_energy(0.0);
     num_discards++;
 }
 
@@ -647,7 +654,7 @@ void class_algorithm_finite::print_status_update() {
 void class_algorithm_finite::print_status_full() {
     tensors.do_all_measurements();
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "][" + state_name + "]");
+    tools::log->info("= {: ^56} =", " Full status: [" + algo_name + "][" + state_name + "]");
     tools::log->info("{:=^60}", "");
     tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
     tools::log->info("Sites                              = {}", tensors.state->get_length());
