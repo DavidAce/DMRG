@@ -206,6 +206,7 @@ void class_xdmrg::run_algorithm() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
+        tools::log->info("Bond dimensions after  step        = {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
         if(tools::finite::measure::energy_variance(tensors) < status.energy_variance_lowest) {
             tools::log->trace("Updating variance record holder");
@@ -215,6 +216,7 @@ void class_xdmrg::run_algorithm() {
         check_convergence();
         print_status_update();
         print_profiling_lap();
+        if(tensors.position_is_any_edge()) print_status_full();
         write_to_file();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
@@ -233,6 +235,7 @@ void class_xdmrg::run_algorithm() {
         try_hamiltonian_perturbation();
         reduce_mpo_energy();
         move_center_point();
+        tools::log->info("Bond dimensions after  move        = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -263,7 +266,13 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // If early in the simulation, and the bond dimension is small enough we use subspace optimization
     if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
         c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::SUBSPACE_ONLY;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.second_chance = false;
+        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
+    }
+    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2){
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
@@ -279,7 +288,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
     if(status.algorithm_has_stuck_for > 1 and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
         c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::SUBSPACE_ONLY;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
         c1.second_chance = true;
     }
 
@@ -315,6 +324,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
     if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
+
+#pragma message "Testing max sites = multisite_max_sites always"
+    c1.max_sites = settings::strategy::multisite_max_sites;
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
     c1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c1.chosen_sites);
