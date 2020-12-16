@@ -95,16 +95,27 @@ void class_state_finite::set_positions() {
 
 size_t class_state_finite::get_length() const { return mps_sites.size(); }
 size_t class_state_finite::get_position() const {
-    size_t pos          = 0;
-    bool   found_center = false;
+    std::optional<size_t> pos;
     for(const auto &mps : mps_sites)
-        if(mps->isCenter() and not found_center) {
+        if(mps->isCenter()) {
+            if(pos) throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos.value(), mps->get_position()));
             pos          = mps->get_position();
-            found_center = true;
-        } else if(mps->isCenter() and found_center)
-            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps->get_position()));
-    if(not found_center) throw std::logic_error("Could not find center");
-    return pos;
+        }
+    if(not pos) throw std::logic_error("Could not find center");
+    return pos.value();
+
+//
+//
+//    size_t pos          = 0;
+//    bool   found_center = false;
+//    for(const auto &mps : mps_sites)
+//        if(mps->isCenter() and not found_center) {
+//            pos          = mps->get_position();
+//            found_center = true;
+//        } else if(mps->isCenter() and found_center)
+//            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps->get_position()));
+//    if(not found_center) throw std::logic_error("Could not find center");
+//    return pos;
 }
 
 //size_t class_state_finite::get_iteration() const { return iter; }
@@ -151,6 +162,8 @@ bool class_state_finite::position_is_the_middle_any_direction() const {
 bool class_state_finite::position_is_left_edge() const { return get_position() == 0 and direction == -1; }
 
 bool class_state_finite::position_is_right_edge() const { return get_position() == get_length() - 2 and direction == 1; }
+//#pragma message "Testing moving up to the rightmost site"
+//bool class_state_finite::position_is_right_edge() const { return get_position() == get_length() - 1 and direction == 1; }
 
 bool class_state_finite::position_is_any_edge() const { return position_is_left_edge() or position_is_right_edge(); }
 

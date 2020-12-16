@@ -29,6 +29,44 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
 
+void tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    if(state.position_is_any_edge()) {
+        // Instead of moving out of the chain, just flip the direction and return
+        state.flip_direction();
+    } else {
+        size_t pos            = state.get_position();
+        auto & mps            = state.get_mps_site(pos);//This is the "A" tensor with an LC at the current position
+        size_t posC           = state.get_direction() == 1 ? pos + 1 : pos - 1;
+        auto & mpsC           = state.get_mps_site(posC);//This is the tensor which becomes the new center position
+        long   dC   = mpsC.spin_dim();
+        long   chiL = mpsC.get_chiL();
+        long   chiR = mpsC.get_chiR();
+        // Store the special LC bond in a temporary. It needs to be put back afterwards
+        // Do the same with its truncation error
+        Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
+        double                   truncation_error_LC = mps.get_truncation_error_LC();
+        if(state.get_direction() == 1){
+            if(mps.get_chiR() != chiL) throw std::logic_error(fmt::format("chiR({}) != chiL({})",pos,posC));
+            Eigen::Tensor<Scalar, 3> onesite_tensor(dC,chiL,chiR);
+            // Contract LC * B
+            onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+        }else{
+            if(mps.get_chiL() != chiR) throw std::logic_error(fmt::format("chiL({}) != chiR({})",pos,posC));
+            auto & onesite_tensor = mps.get_M();
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {pos}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+        }
+
+        state.clear_cache(LogPolicy::QUIET);
+        state.clear_measurements(LogPolicy::QUIET);
+
+        //Put LC where it belongs.
+        //Recall that mps, mpsC are on the new positions, not the old ones!
+        mpsC.set_L(LC, truncation_error_LC);
+    }
+}
+
+
 void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     if(state.position_is_any_edge()) {
         // Instead of moving out of the chain, just flip the direction and return
@@ -121,13 +159,35 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     // the center in our current state so we don't get duplicate centers
     state.get_mps_site().unset_LC();
 
-    // Copy the split up mps components into the current state
-    auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
-    for(const auto &mps_src : mps_list) {
-        auto &mps_tgt = **mps_ptr;
-        mps_tgt.merge_mps(mps_src);
-        state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
-        mps_ptr++;
+    if(mps_list.size() == 1){
+        // We handle one-site mergers a little bit differently.
+        // When going left-to-right, LC is belongs to the same site.
+        // When going right-to-left, LC belongs to the site on the left, but it has been sent here inside the single element of "mps_list"
+        auto & mps_src = mps_list.front();
+        auto   pos = mps_src.get_position();
+        auto & mps_tgt = state.get_mps_site(pos);
+        auto & mps_cnt = state.get_mps_site(center_position);
+        if(center_position == pos){
+            // Going left-to-right. This site is an "A".Convention is that A contains LC.
+            mps_tgt.merge_mps(mps_src);
+        }else if (center_position == pos - 1) {
+            // Going right-to-left. This site is a "B". Convention is that A contains LC.
+            // We extract LC and put it on the site on A to the left
+            mps_cnt.set_LC(mps_src.unstash_LC());
+            mps_tgt.merge_mps(mps_src);
+        }else{
+            throw std::runtime_error(fmt::format("Unexpected center position: {} | sites: {}",center_position,sites));
+        }
+    }else{
+        // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
+        // Copy the split up mps components into the current state
+        auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
+        for(const auto &mps_src : mps_list) {
+            auto &mps_tgt = **mps_ptr;
+            mps_tgt.merge_mps(mps_src);
+            state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
+            mps_ptr++;
+        }
     }
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);

@@ -44,8 +44,9 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              damping_steps        = 0;     /*!< Number of steps left doing disorder damping of MPOs */
     size_t              num_dampings         = 0;     /*!< Number of damping trials done */
     size_t              max_dampings         = 2;     /*!< Maximum number of damping trials allowed */
-    size_t              num_discards         = 0;
-    size_t              max_discards         = 1;
+    size_t              iter_discard         = 0;     /*!< Iteration when last discard occurred */
+    size_t              num_discards         = 0;     /*!< Counter for number of times discarding the smallest schmidt values */
+    size_t              max_discards         = 3;     /*!< Maximum number of times to discard the smallest schmidt values */
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
     std::optional<OptMode> last_optmode = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
