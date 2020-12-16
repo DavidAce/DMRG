@@ -29,6 +29,44 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
 
+void tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    if(state.position_is_any_edge()) {
+        // Instead of moving out of the chain, just flip the direction and return
+        state.flip_direction();
+    } else {
+        size_t pos            = state.get_position();
+        auto & mps            = state.get_mps_site(pos);//This is the "A" tensor with an LC at the current position
+        size_t posC           = state.get_direction() == 1 ? pos + 1 : pos - 1;
+        auto & mpsC           = state.get_mps_site(posC);//This is the tensor which becomes the new center position
+        long   dC   = mpsC.spin_dim();
+        long   chiL = mpsC.get_chiL();
+        long   chiR = mpsC.get_chiR();
+        // Store the special LC bond in a temporary. It needs to be put back afterwards
+        // Do the same with its truncation error
+        Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
+        double                   truncation_error_LC = mps.get_truncation_error_LC();
+        if(state.get_direction() == 1){
+            if(mps.get_chiR() != chiL) throw std::logic_error(fmt::format("chiR({}) != chiL({})",pos,posC));
+            Eigen::Tensor<Scalar, 3> onesite_tensor(dC,chiL,chiR);
+            // Contract LC * B
+            onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+        }else{
+            if(mps.get_chiL() != chiR) throw std::logic_error(fmt::format("chiL({}) != chiR({})",pos,posC));
+            auto & onesite_tensor = mps.get_M();
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {pos}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+        }
+
+        state.clear_cache(LogPolicy::QUIET);
+        state.clear_measurements(LogPolicy::QUIET);
+
+        //Put LC where it belongs.
+        //Recall that mps, mpsC are on the new positions, not the old ones!
+        mpsC.set_L(LC, truncation_error_LC);
+    }
+}
+
+
 void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     if(state.position_is_any_edge()) {
         // Instead of moving out of the chain, just flip the direction and return

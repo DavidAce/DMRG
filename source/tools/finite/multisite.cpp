@@ -128,7 +128,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     tools::log->debug(
         "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}", state.get_position(),
                       state.get_direction(),min_sites, max_sites, threshold, sites, shape.back(), sizes.back(),reason);
-    if(sites.size() < 2) throw std::runtime_error("Less than 2 active sites");
+    if(sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})",sites.size(), min_sites));
     return sites;
 }
 
