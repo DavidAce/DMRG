@@ -101,7 +101,8 @@ tools::finite::opt::opt_state tools::finite::opt::internal::ceres_direct_optimiz
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
     int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
     double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
-    tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
+#pragma message "Printing lbfgs exit status"
+    tools::log->info("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
     reports::bfgs_add_entry("Direct", "opt", optimized_tensor);
 
