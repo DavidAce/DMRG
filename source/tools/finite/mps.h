@@ -20,6 +20,7 @@ namespace tools::finite::mps {
     };
 
 
+    extern void move_center_point_single_site   (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void move_center_point               (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void move_center_point_to_edge       (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern void move_center_point_to_middle     (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
