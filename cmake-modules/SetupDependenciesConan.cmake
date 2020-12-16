@@ -55,7 +55,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         endif()
         find_package(Fortran REQUIRED)
     endif()
-
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
+    endif()
 
 
     unset(CONAN_BUILD_INFO)
