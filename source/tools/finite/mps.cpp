@@ -159,13 +159,35 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     // the center in our current state so we don't get duplicate centers
     state.get_mps_site().unset_LC();
 
-    // Copy the split up mps components into the current state
-    auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
-    for(const auto &mps_src : mps_list) {
-        auto &mps_tgt = **mps_ptr;
-        mps_tgt.merge_mps(mps_src);
-        state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
-        mps_ptr++;
+    if(mps_list.size() == 1){
+        // We handle one-site mergers a little bit differently.
+        // When going left-to-right, LC is belongs to the same site.
+        // When going right-to-left, LC belongs to the site on the left, but it has been sent here inside the single element of "mps_list"
+        auto & mps_src = mps_list.front();
+        auto   pos = mps_src.get_position();
+        auto & mps_tgt = state.get_mps_site(pos);
+        auto & mps_cnt = state.get_mps_site(center_position);
+        if(center_position == pos){
+            // Going left-to-right. This site is an "A".Convention is that A contains LC.
+            mps_tgt.merge_mps(mps_src);
+        }else if (center_position == pos - 1) {
+            // Going right-to-left. This site is a "B". Convention is that A contains LC.
+            // We extract LC and put it on the site on A to the left
+            mps_cnt.set_LC(mps_src.unstash_LC());
+            mps_tgt.merge_mps(mps_src);
+        }else{
+            throw std::runtime_error(fmt::format("Unexpected center position: {} | sites: {}",center_position,sites));
+        }
+    }else{
+        // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
+        // Copy the split up mps components into the current state
+        auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
+        for(const auto &mps_src : mps_list) {
+            auto &mps_tgt = **mps_ptr;
+            mps_tgt.merge_mps(mps_src);
+            state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
+            mps_ptr++;
+        }
     }
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
