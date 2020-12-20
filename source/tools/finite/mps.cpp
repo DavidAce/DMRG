@@ -23,7 +23,6 @@
 #include <tools/finite/ops.h>
 #include <utility>
 
-Eigen::Tensor<tools::finite::mps::Scalar, 2> tools::finite::mps::UnitaryGate::adjoint() const { return op.conjugate().shuffle(Textra::array2{1, 0}); }
 
 bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;

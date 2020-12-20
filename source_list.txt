@@ -18,6 +18,7 @@ source/general/nmspc_tensor_omp.cpp
 source/io/class_config_reader.cpp
 source/main.cpp
 source/physics/nmspc_quantum_mechanics.cpp
+source/physics/class_quantum_gates.cpp
 source/tensors/class_tensors_finite.cpp
 source/tensors/class_tensors_infinite.cpp
 source/tensors/edges/class_env_base.cpp
