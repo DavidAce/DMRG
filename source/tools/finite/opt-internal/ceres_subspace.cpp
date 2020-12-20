@@ -280,7 +280,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
      *
      */
 
-    internal::subspace::filter_candidates(candidate_list, settings::precision::min_subspace_error, 128);
+    internal::subspace::filter_candidates(candidate_list, settings::precision::min_subspace_error, settings::precision::max_subspace_size);
 
     /*
      *
