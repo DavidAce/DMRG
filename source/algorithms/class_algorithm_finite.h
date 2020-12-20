@@ -80,7 +80,7 @@ class class_algorithm_finite : public class_algorithm_base {
                                  );
 
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
-    void print_status_update() final;
+    void print_status_update() override;
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
