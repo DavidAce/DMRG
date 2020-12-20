@@ -114,24 +114,24 @@ namespace num {
         return (x % y + y) % y;
     }
 
-    /*! \brief Python-style range generator, including edges
-     *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6,8] </code>
+    /*! \brief Python-style range generator, i.e. not-including "last"
+     *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6] </code>
      */
-    template<typename T1, typename T2>
-    std::vector<T2> range(T1 first, T1 last, T2 step) {
+    template<typename T>
+    std::vector<T> range(T first, T last, T step = static_cast<T>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
         if(first > last and step > 0) return range(first, last, -step);
         if(first < last and step < 0) return range(first, last, -step);
-        if(first == last) return std::vector<T2>{static_cast<T2>(first)};
-        T1              current = first;
-        std::vector<T2> vec;
-        auto            num_steps = static_cast<long>(
+        if(first == last) return {};
+        if(first + step == last) return {first};
+
+        auto num_steps = static_cast<size_t>(
             std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
-        if(num_steps > 1000000) throw std::runtime_error("Too many steps");
-        while(current <= last) {
-            vec.push_back(static_cast<T2>(current));
-            current += step;
-        }
+        if(num_steps > 10000000) throw std::runtime_error("Too many steps for range");
+
+        std::vector<T> vec;
+        vec.reserve(num_steps);
+        for(T current = first; current < last; current+=step ) vec.emplace_back(static_cast<T>(current));
         return vec;
     }
 
