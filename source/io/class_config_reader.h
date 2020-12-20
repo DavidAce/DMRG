@@ -52,10 +52,10 @@ class class_config_reader {
     [[nodiscard]] T parse_param(const std::string &param_val, const std::string &param_name) {
         try {
             if(param_val.empty()) throw std::range_error("Parameter [" + param_name + "] has no value");
-            if constexpr(std::is_same_v<T, int>) return (T) std::stoi(param_val);
-            if constexpr(std::is_same_v<T, long>) return (T) std::stol(param_val);
-            if constexpr(std::is_same_v<T, size_t>) return (T) std::stol(param_val);
-            if constexpr(std::is_same_v<T, double>) return (T) std::stod(param_val);
+            if constexpr(std::is_same_v<T, int>) return    static_cast<T>(std::stoi(param_val));
+            if constexpr(std::is_same_v<T, long>) return   static_cast<T>(std::stol(param_val));
+            if constexpr(std::is_same_v<T, size_t>) return static_cast<T>(std::stol(param_val));
+            if constexpr(std::is_same_v<T, double>) return static_cast<T>(std::stod(param_val));
             if constexpr(std::is_enum_v<T>) return str2enum<T>(param_val);
             if constexpr(std::is_same<T, std::string>::value) return param_val;
             if constexpr(std::is_same<T, bool>::value) {
