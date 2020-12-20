@@ -60,8 +60,8 @@ class class_model_finite {
 
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> & nbody_terms = {}) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 
