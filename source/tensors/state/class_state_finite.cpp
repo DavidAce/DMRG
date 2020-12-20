@@ -78,9 +78,13 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     M(0, 0, 0) = 0;
     M(1, 0, 0) = 1;
     L(0)       = 1;
+    std::string label = "A";
     for(size_t site = 0; site < model_size; site++) {
-        mps_sites.emplace_back(std::make_unique<class_mps_site>(M, L, site));
-        if(site == position) mps_sites.back()->set_LC(L);
+        mps_sites.emplace_back(std::make_unique<class_mps_site>(M, L, site, 0.0, label));
+        if(site == position){
+            mps_sites.back()->set_LC(L);
+            label = "B";
+        }
     }
     if(mps_sites.size() != model_size) throw std::logic_error("Initialized state with wrong size");
     if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
@@ -161,19 +165,17 @@ long class_state_finite::size_2site() const {
 }
 
 bool class_state_finite::position_is_the_middle() const {
-    return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0) and direction == 1;
+    return get_position() + 1 == static_cast<size_t>(get_length() / 2) and direction == 1;
 }
 bool class_state_finite::position_is_the_middle_any_direction() const {
-    return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0);
+    return get_position() + 1 == static_cast<size_t>(get_length() / 2);
 }
 
-bool class_state_finite::position_is_left_edge() const { return get_position() == 0 and direction == -1; }
+bool class_state_finite::position_is_left_edge([[maybe_unused]] size_t nsite) const { return get_position() == 0 and direction == -1; }
 
-bool class_state_finite::position_is_right_edge() const { return get_position() == get_length() - 2 and direction == 1; }
-//#pragma message "Testing moving up to the rightmost site"
-//bool class_state_finite::position_is_right_edge() const { return get_position() == get_length() - 1 and direction == 1; }
+bool class_state_finite::position_is_right_edge(size_t nsite) const { return get_position() >= get_length() - nsite and direction == 1; }
 
-bool class_state_finite::position_is_any_edge() const { return position_is_left_edge() or position_is_right_edge(); }
+bool class_state_finite::position_is_any_edge(size_t nsite) const { return position_is_left_edge(nsite) or position_is_right_edge(nsite); }
 
 bool class_state_finite::position_is_at(size_t pos) const { return get_position() == pos; }
 

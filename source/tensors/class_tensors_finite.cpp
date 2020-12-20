@@ -237,13 +237,13 @@ size_t class_tensors_finite::get_position() const { return state->get_position()
 
 bool class_tensors_finite::position_is_the_middle() const { return state->position_is_the_middle(); }
 bool class_tensors_finite::position_is_the_middle_any_direction() const { return state->position_is_the_middle_any_direction(); }
-bool class_tensors_finite::position_is_left_edge() const { return state->position_is_left_edge(); }
-bool class_tensors_finite::position_is_right_edge() const { return state->position_is_right_edge(); }
-bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
+bool class_tensors_finite::position_is_left_edge(size_t nsite) const { return state->position_is_left_edge(nsite); }
+bool class_tensors_finite::position_is_right_edge(size_t nsite) const { return state->position_is_right_edge(nsite); }
+bool class_tensors_finite::position_is_any_edge(size_t nsite) const { return state->position_is_any_edge(nsite); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
 void class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
 #pragma message "trying single site move"
-    tools::finite::mps::move_center_point(*state, chi_lim, svd_threshold);
+    tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_threshold);
 }
 void class_tensors_finite::move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold) {
     tools::finite::mps::move_center_point_to_edge(*state, chi_lim, svd_threshold);

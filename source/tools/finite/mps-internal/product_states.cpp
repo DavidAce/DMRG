@@ -112,10 +112,14 @@ void tools::finite::mps::internal::set_product_state(class_state_finite &state, 
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
+    std::string label = "A";
     for(auto &&mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
-        mps.set_mps(spinor, L);
-        if(mps.isCenter()) mps.set_LC(L);
+        mps.set_mps(spinor, L,0,label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
     }
     state.clear_measurements();
     state.clear_cache();
@@ -127,13 +131,17 @@ void tools::finite::mps::internal::set_random_product_state_with_random_spinors(
     tools::log->info("Setting random product state with spinors in C²...");
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         if(type == StateInitType::CPLX)
-            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
+            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L, 0, label);
         else if (type == StateInitType::REAL)
-            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L);
-        if(mps.isCenter()) mps.set_LC(L);
+            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L,0, label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
     }
     state.clear_measurements();
     state.clear_cache();
@@ -158,14 +166,18 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     int carry_sign = 1;
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
         int   sign = 2 * bs[mps.get_position()] - 1;
         carry_sign *= sign;
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(sector).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(sector).normalized(), 2, 1, 1), L,0,label);
         std::string arrow = sign < 0 ? "↓" : "↑";
         ud_vec.emplace_back(arrow);
-        if(mps.isCenter()) mps.set_LC(L);
+        if(mps.isCenter()){
+            mps.set_LC(L);
+            label = "B";
+        }
     }
     tools::log->debug("Setting random product state using the bitset of number {} to select eigenspinors of σ{} in sector {}... OK: {}", bitfield,axis,carry_sign, axis,ud_vec);
     state.clear_measurements();
@@ -181,16 +193,20 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     int         last_sign = 1;
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     tools::log->info("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         last_sign = 2 * rnd::uniform_integer_01() - 1;
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L);
-        if(mps.isCenter()) mps.set_LC(L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L, 0, label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
     }
     auto spin_component = tools::finite::measure::spin_component(state, axis);
     if(spin_component * sign < 0) {
         auto &mps = *state.mps_sites.back();
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L);
+        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L, 0, label);
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
@@ -210,6 +226,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     auto spinor_up = internal::get_spinor(axis, 1);
     auto spinor_dn = internal::get_spinor(axis, -1);
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &           mps    = *mps_ptr;
         Eigen::Vector2cd ab;
@@ -219,8 +236,11 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
             ab = Eigen::Vector2cd::Random().normalized();
 
         Eigen::VectorXcd spinor = ab(0) * spinor_up + ab(1) * spinor_dn;
-        mps.set_mps(Textra::MatrixToTensor(spinor.normalized(), 2, 1, 1), L);
-        if(mps.isCenter()) mps.set_LC(L);
+        mps.set_mps(Textra::MatrixToTensor(spinor.normalized(), 2, 1, 1), L,0, label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
     }
     state.clear_measurements();
     state.clear_cache();

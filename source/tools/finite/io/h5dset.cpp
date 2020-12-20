@@ -90,17 +90,20 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
             h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
             h5ppFile.writeAttribute(pos, "position", dsetName);
             h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
+            h5ppFile.writeAttribute(state.get_mps_site(pos).get_truncation_error(), "truncation_error", dsetName);
             if(state.get_mps_site(pos).isCenter()) {
                 dsetName = mps_prefix + "/L_C";
                 h5ppFile.writeDataset(state.get_mps_site(pos).get_LC(), dsetName, layout);
                 h5ppFile.writeAttribute(pos, "position", dsetName);
                 h5ppFile.writeAttribute(state.get_mps_site(pos).get_LC().dimensions(), "dimensions", dsetName);
+                h5ppFile.writeAttribute(state.get_mps_site(pos).get_truncation_error_LC(), "truncation_error", dsetName);
             }
             save_log[dsetName] = save_point;
         }
         h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
         h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
         h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
+        h5ppFile.writeAttribute(state.get_labels(), "labels", mps_prefix);
         h5ppFile.writeAttribute(status.iter, "iteration", mps_prefix);
         h5ppFile.writeAttribute(status.step, "step", mps_prefix);
         tools::common::profile::get_default_prof()["t_hdf"]->toc();
@@ -121,6 +124,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
             h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
             h5ppFile.writeAttribute(pos, "position", dsetName);
             h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);
+            h5ppFile.writeAttribute(state.get_mps_site(pos).get_label(), "label", dsetName);
             save_log[dsetName] = save_point;
         }
         tools::common::profile::get_default_prof()["t_hdf"]->toc();

@@ -120,7 +120,9 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         if(not h5ppFile.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
         auto L = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_L_name);
         auto M = h5ppFile.readDataset<Eigen::Tensor<Scalar, 3>>(dset_M_name);
-        state.get_mps_site(pos).set_mps(M, L);
+        auto error = h5ppFile.readAttribute<double>("truncation_error", dset_L_name);
+        auto label = h5ppFile.readAttribute<std::string>("label", dset_M_name);
+        state.get_mps_site(pos).set_mps(M, L, error, label);
         // Sanity checks
         if(pos == position and not state.get_mps_site(pos).isCenter())
             throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");

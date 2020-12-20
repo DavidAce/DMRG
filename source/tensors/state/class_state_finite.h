@@ -77,9 +77,9 @@ class class_state_finite {
 
     bool position_is_the_middle() const;
     bool position_is_the_middle_any_direction() const;
-    bool position_is_left_edge() const;
-    bool position_is_right_edge() const;
-    bool position_is_any_edge() const;
+    bool position_is_left_edge(size_t nsite = 2) const;
+    bool position_is_right_edge(size_t nsite = 2) const;
+    bool position_is_any_edge(size_t nsite = 2) const;
     bool position_is_at(size_t pos) const;
     bool is_real() const;
     bool has_nan() const;

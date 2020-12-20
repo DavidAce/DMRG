@@ -43,6 +43,7 @@ void tools::finite::mps::internal::set_random_entangled_state_with_random_spinor
     const auto spin_dim        = state.get_mps_site(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     bool pastCenter = false;
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
         auto  chiL = bond_dimensions[mps.get_position()];
@@ -62,13 +63,14 @@ void tools::finite::mps::internal::set_random_entangled_state_with_random_spinor
             G = Textra::MatrixToTensor(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
         }
 
-        mps.set_mps(G, L);
+        mps.set_mps(G, L,0,label);
         if(mps.isCenter()) {
             Ltmp = Eigen::VectorXd(chiR).unaryExpr([]([[maybe_unused]] auto dummy){return rnd::uniform_double_01();});
             std::sort(Ltmp.data(), Ltmp.data()+Ltmp.size(),std::greater<double>());
             Eigen::Tensor<Scalar, 1> LC = Textra::MatrixToTensor(Ltmp.normalized()).cast<Scalar>();
             mps.set_LC(LC);
             pastCenter = true;
+            label = "B";
         }
     }
     tools::log->info("Setting random entangled state with random unit spinors... OK");
@@ -86,6 +88,7 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
     tools::log->info("Target bond dimensions: {}", bond_dimensions);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     bool past_center = false;
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &                                                            mps  = *mps_ptr;
         auto                                                              chiL = bond_dimensions[mps.get_position()];
@@ -111,11 +114,12 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
 
         //        Textra::normalize(G);
         //        G = Textra::MatrixTensorMap(Textra::Tensor_to_Vector(G).normalized(), spin_dim, chiL, chiR);
-        mps.set_mps(G, L);
+        mps.set_mps(G, L, 0, label);
         if(mps.isCenter()) {
             Eigen::Tensor<Scalar, 1> LC = Textra::MatrixToTensor(Eigen::VectorXd::Ones(chiR).normalized()).cast<Scalar>();
             mps.set_LC(LC);
             past_center = true;
+            label = "B";
         }
     }
 

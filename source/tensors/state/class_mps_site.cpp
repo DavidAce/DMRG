@@ -8,14 +8,16 @@
 #include "class_mps_site.h"
 #include <tools/common/fmt.h>
 
+#include <utility>
+
 using Scalar = class_mps_site::Scalar;
 
 class_mps_site::class_mps_site() = default;
-class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error)
-    : M(M_), L(L_), position(pos), truncation_error(error) {}
+class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string  label_)
+    : M(M_), L(L_), position(pos), truncation_error(error),label(std::move(label_)) {}
 
-class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error)
-    : M(M_), L(std::move(L_)), position(pos), truncation_error(error) {}
+class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string  label_)
+    : M(M_), L(std::move(L_)), position(pos), truncation_error(error),label(std::move(label_)) {}
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -26,15 +28,13 @@ class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_mps_site::~class_mps_site()                                      = default; // default dtor
-class_mps_site::class_mps_site(class_mps_site &&other)                 = default; // default move ctor
-class_mps_site &class_mps_site::operator=(class_mps_site &&other)      = default; // default move assign
-class_mps_site::class_mps_site(const class_mps_site &other)            = default;
+class_mps_site::~class_mps_site()                      = default;            // default dtor
+class_mps_site::class_mps_site(class_mps_site &&other) noexcept = default;            // default move ctor
+class_mps_site &class_mps_site::operator=(class_mps_site &&other) noexcept = default; // default move assign
+class_mps_site::class_mps_site(const class_mps_site &other)       = default;
 class_mps_site &class_mps_site::operator=(const class_mps_site &other) = default;
 
-bool class_mps_site::isCenter() const {
-    return LC.has_value();
-}
+bool class_mps_site::isCenter() const { return LC.has_value(); }
 
 bool class_mps_site::has_L() const { return L.has_value(); }
 bool class_mps_site::has_M() const { return M.has_value(); }
@@ -60,11 +60,11 @@ const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(
                 fmt::format("class_mps_site::get_M(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
-        if(MC){
+        if(MC) {
             if(MC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): MC has size 0 at position {}", get_position()));
             return MC.value();
         } else {
-            MC = Eigen::Tensor<Scalar,3>(spin_dim(), get_chiL(),get_chiR());
+            MC                                   = Eigen::Tensor<Scalar, 3>(spin_dim(), get_chiL(), get_chiR());
             MC->device(Textra::omp::getDevice()) = get_M_bare().contract(Textra::asDiagonal(get_LC()), Textra::idx({2}, {0}));
             if(MC->size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): built MC with size 0 at position {}", get_position()));
             return MC.value();
@@ -83,8 +83,8 @@ const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const {
 const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
-            throw std::runtime_error(
-                fmt::format("class_mps_site::get_LC(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0), get_position()));
+            throw std::runtime_error(fmt::format("class_mps_site::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}",
+                                                 get_M_bare().dimensions(), LC.value().dimensions(), get_position()));
         if(LC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_LC(): LC has size 0 at position {}", get_position()));
         return LC.value();
     } else
@@ -97,7 +97,7 @@ Eigen::Tensor<Scalar, 1> &   class_mps_site::get_L() { return const_cast<Eigen::
 Eigen::Tensor<Scalar, 1> &   class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
 double                       class_mps_site::get_truncation_error() const { return truncation_error; }
 double                       class_mps_site::get_truncation_error_LC() const { return truncation_error_LC; }
-std::string                  class_mps_site::get_label() const { return label; }
+std::string                  class_mps_site::get_label() const { if(label.empty()) throw std::runtime_error(fmt::format("No label found at position {}",get_position()));return label; }
 std::tuple<long, long, long> class_mps_site::get_dims() const { return {spin_dim(), get_chiL(), get_chiR()}; }
 long                         class_mps_site::spin_dim() const { return get_M_bare().dimension(0); }
 long                         class_mps_site::get_chiL() const { return get_M_bare().dimension(1); }
@@ -115,11 +115,12 @@ size_t class_mps_site::get_position() const {
     }
 }
 
-void class_mps_site::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error) {
+void class_mps_site::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string & label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
     set_M(M_);
     set_L(L_);
     set_truncation_error(error);
+    set_label(label_);
 }
 
 void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
@@ -127,6 +128,7 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
     if(position) {
         M = M_;
         MC.reset();
+
     } else
         throw std::runtime_error("class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &): Can't set M: Position hasn't been set yet");
 }
@@ -142,14 +144,12 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
         LC = LC_;
         MC.reset();
         truncation_error_LC = error;
+        set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
 
-void   class_mps_site::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error){
-    set_LC(LC_and_error.first,LC_and_error.second);
-}
-
+void class_mps_site::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 
 
 void   class_mps_site::set_truncation_error(double error) { truncation_error = error; }
@@ -158,6 +158,7 @@ void   class_mps_site::set_label(const std::string & label_){label = label_;}
 void   class_mps_site::unset_LC() {
     LC.reset();
     MC.reset();
+    if(label == "AC") label = "A";
 }
 void class_mps_site::merge_mps(const class_mps_site &other) {
     // This operation is done when merging mps after an svd split, for instance
@@ -177,12 +178,13 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
     // This is intended, but should be checked for.
     // Note that if there is no L on the other mps, there has to exist a previous one
     // on this mps -- we can't leave here without having defined L.
-    if(other.has_L())
-        set_L(other.get_L(), other.get_truncation_error());
+    if(other.has_L()) set_L(other.get_L(), other.get_truncation_error());
     else if(not has_L())
         throw std::runtime_error(fmt::format(
             "class_mps_site::merge_mps(const class_mps_site &): Got mps site with undefined L, and no L is defined on this mps either, at position {}",
             get_position()));
+
+    set_label(other.get_label()); // Copy the A/B label
 
     // If the other is a center it should be fine to copy its contents
     // without checking its size. However for debugging purposes, since
@@ -206,9 +208,9 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
     }
     Eigen::Tensor<Scalar, 3> M_bare_temp(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     M_bare_temp.device(Textra::omp::getDevice()) = get_M_bare()
-                                               .contract(mpo, Textra::idx({0}, {2}))
-                                               .shuffle(Textra::array5{4, 0, 2, 1, 3})
-                                               .reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+                                                       .contract(mpo, Textra::idx({0}, {2}))
+                                                       .shuffle(Textra::array5{4, 0, 2, 1, 3})
+                                                       .reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     Eigen::Tensor<Scalar, 1> L_temp = get_L().broadcast(Textra::array1{mpoDimL});
 
     set_L(L_temp);
@@ -221,19 +223,97 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo) {
     set_M(M_bare_temp);
 }
 
+void class_mps_site::stash_U(const Eigen::Tensor<Scalar, 3> &U) const { U_stash = U; }
+void class_mps_site::stash_V(const Eigen::Tensor<Scalar, 3> &V) const { V_stash = V; }
+void class_mps_site::stash_S(const Eigen::Tensor<Scalar, 1> &S, double error) const {
+    S_stash                  = S;
+    truncation_error_S_stash = error;
+}
+void class_mps_site::stash_S(const std::pair<Eigen::Tensor<Scalar, 1>, double> &S_and_error) const { std::tie(S_stash, truncation_error_S_stash) = S_and_error; }
 
-void   class_mps_site::stash_LC(const Eigen::Tensor<Scalar, 1> &LC_stash_, double error){
-    LC_stash = LC_stash_;
-    truncation_error_LC_stash = error;
+Eigen::Tensor<Scalar, 3> class_mps_site::unstash_U() const {
+    if(not U_stash) throw std::runtime_error(fmt::format("No U was found stashed at position {}", get_position()));
+    Eigen::Tensor<Scalar, 3> U_tmp = U_stash.value();
+    U_stash                        = std::nullopt;
+    return U_tmp;
 }
-void   class_mps_site::stash_LC(const std::pair<Eigen::Tensor<Scalar, 1>,double> & LC_and_error){
-    std::tie(LC_stash,truncation_error_LC_stash) = LC_and_error;
+Eigen::Tensor<Scalar, 3> class_mps_site::unstash_V() const {
+    if(not V_stash) throw std::runtime_error(fmt::format("No V was found stashed at position {}", get_position()));
+    Eigen::Tensor<Scalar, 3> V_tmp = V_stash.value();
+    V_stash                        = std::nullopt;
+    return V_tmp;
 }
-std::pair<Eigen::Tensor<Scalar, 1>,double>  class_mps_site::unstash_LC(){
-    if(not LC_stash) throw std::runtime_error(fmt::format("No LC was found stashed at position {}", get_position()));
-    if(not truncation_error_LC_stash) throw std::runtime_error(fmt::format("No LC truncation error was found stashed at position {}", get_position()));
-    auto tmp = std::make_pair(LC_stash.value(),truncation_error_LC_stash.value());
-    LC_stash = std::nullopt;
-    truncation_error_LC_stash = std::nullopt;
+
+std::pair<Eigen::Tensor<Scalar, 1>, double> class_mps_site::unstash_S() const {
+    if(not S_stash) throw std::runtime_error(fmt::format("No LC was found stashed at position {}", get_position()));
+    if(not truncation_error_S_stash) throw std::runtime_error(fmt::format("No LC truncation error was found stashed at position {}", get_position()));
+    auto tmp                 = std::make_pair(S_stash.value(), truncation_error_S_stash.value());
+    S_stash                  = std::nullopt;
+    truncation_error_S_stash = std::nullopt;
     return tmp;
+}
+
+void class_mps_site::unstash() const{
+    U_stash                  = std::nullopt;
+    S_stash                  = std::nullopt;
+    V_stash                  = std::nullopt;
+    truncation_error_S_stash = std::nullopt;
+}
+
+void class_mps_site::merge_stash(const class_mps_site &other){
+    if(get_position() == other.get_position() + 1){
+        /* Left-to-right move.
+         * In this case there should be a "V" in "other" that should be absorbed into this site from the left.
+         *
+         *   1 --[New "B"]-- 2       1 --[V]-- 2   1 --[this "M"]-- 2
+         *          |            =        |                |
+         *          0                 0(dim=1)             0
+         */
+
+        auto V = other.unstash_V();
+        if(V.dimension(0) != 1) throw std::logic_error(fmt::format("Failed to merge stash from left site {} into {}: "
+                                                                   "V has invalid dimensions {}. Dim at idx 0 should be == 1",
+                                                                   other.get_position(),get_position(), V.dimensions()));
+        if(V.dimension(2) != get_chiL()) throw std::logic_error(fmt::format("Failed to merge stash from left site {} into {}: "
+                                                                  "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)",
+                                                                  other.get_position(),get_position(), dimensions()));
+        Textra::array3 dims = {spin_dim(),V.dimension(1),get_chiR()};
+        Eigen::Tensor<Scalar,3> VM(dims);
+        VM.device(Textra::omp::getDevice()) = V.contract(get_M_bare(), Textra::idx({2}, {1}))
+                                                 .shuffle(Textra::array4{0,2,1,3}).reshape(dims);
+        set_M(VM);
+    }else if (get_position() == other.get_position() - 1){
+        /* Right-to-left move.
+         * In this case there should be a U and an S in "other".
+         * U should be absorbed into this site from the right.
+         * S becomes the new LC.
+         *
+         *    1 --[New "A"]-- 2       1 --[this "M"]-- 2   1 --[U]-- 2
+         *           |            =          |                  |
+         *           0                       0               0(dim=1)
+         *
+         *   0--[New "LC"]--1     =  0--[S]--1
+         *
+         *
+         */
+        auto U = other.unstash_U();
+        if(U.dimension(0) != 1) throw std::logic_error(fmt::format("Failed to merge stash from right site {} into {}: "
+                                                                   "U has invalid dimensions {}. Dim at idx 0 should be == 1",
+                                                                   other.get_position(),get_position(), U.dimensions()));
+
+        if(U.dimension(1) != get_chiR()) throw std::logic_error(fmt::format("Failed to merge stash from right site {} into {}: "
+                                                                            "M dimensions {} | U dimensions {} | Expected M(2) == U(1)",
+                                                                            other.get_position(),get_position(), dimensions()));
+        Textra::array3 dims = {spin_dim(),get_chiL(),U.dimension(2)};
+        Eigen::Tensor<Scalar,3> MU(dims);
+        MU.device(Textra::omp::getDevice()) = get_M_bare().contract(U, Textra::idx({2}, {1}))
+            .shuffle(Textra::array4{0,2,1,3}).reshape(dims);
+
+        set_M(MU);
+        set_LC(other.unstash_S());
+        set_label("AC");
+
+
+    }else
+        throw std::logic_error(fmt::format("Failed to merge stash: Wrong positions: this {} | other {}",get_position(),other.get_position()));
 }

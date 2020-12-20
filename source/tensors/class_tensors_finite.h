@@ -55,9 +55,9 @@ class class_tensors_finite {
     [[nodiscard]] size_t get_position() const;
     [[nodiscard]] bool   position_is_the_middle() const;
     [[nodiscard]] bool   position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool   position_is_left_edge() const;
-    [[nodiscard]] bool   position_is_right_edge() const;
-    [[nodiscard]] bool   position_is_any_edge() const;
+    [[nodiscard]] bool   position_is_left_edge(size_t nsite = 2) const;
+    [[nodiscard]] bool   position_is_right_edge(size_t nsite = 2) const;
+    [[nodiscard]] bool   position_is_any_edge(size_t nsite = 2) const;
     [[nodiscard]] bool   position_is_at(size_t pos) const;
 
     void sync_active_sites();
