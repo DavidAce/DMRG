@@ -5,8 +5,6 @@
 #pragma once
 
 #include "class_algorithm_infinite.h"
-class class_log_infinite_dmrg_measurements;
-
 
 /*!
  * \brief Class that runs the infinite DMRG algorithm.
