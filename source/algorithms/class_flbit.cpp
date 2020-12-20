@@ -209,6 +209,28 @@ void class_flbit::single_flbit_step() {
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
+void class_flbit::update_time_step(){
+    static double time_last_update = 0;
+    if(std::abs(status.delta_t) == 0.0) status.delta_t = std::complex<double>(settings::flbit::time_step_init_real, settings::flbit::time_step_init_imag);
+    double time_until_update = time_last_update + std::abs(status.delta_t) * settings::flbit::time_step_growth_factor - status.phys_time;
+    tools::log->trace("time_last_update : {}",time_last_update);
+    tools::log->trace("time_until_update: {}",time_until_update);
+    tools::log->trace("phys_time        : {}",status.phys_time);
+    tools::log->trace("delta_t          : {:.16f}{:+.16f}i",status.delta_t.real(),status.delta_t.imag());
+    Scalar();
+    if(time_until_update <= 1e-10){
+        time_last_update = status.phys_time;
+        status.delta_t *= settings::flbit::time_step_growth_factor;
+        time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
+        time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
+        time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+        if(settings::model::model_size <= 10 and settings::debug){
+            time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
+        }
+    }
+}
+
+
 void class_flbit::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
     if(tensors.position_is_any_edge()) {
