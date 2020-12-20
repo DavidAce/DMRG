@@ -92,7 +92,7 @@ void class_lbit::build_mpo()
     mpo_internal.slice(Textra::array4{0, 0, 0, 0}, extent4).reshape(extent2) = i;
     mpo_internal.slice(Textra::array4{1, 0, 0, 0}, extent4).reshape(extent2) = n;
     mpo_internal.slice(Textra::array4{2, 1, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1 * n;
+    mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1 * n - e_reduced * i;
     mpo_internal.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2 * n;
     mpo_internal.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3 * n;
     mpo_internal.slice(Textra::array4{3, 3, 0, 0}, extent4).reshape(extent2) = i;
@@ -134,17 +134,17 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 
 void class_lbit::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
-        h5tb.param.J1 = rnd::normal(0, h5tb.param.w1);
-        h5tb.param.J2 = rnd::normal(0, h5tb.param.w2);
-        h5tb.param.J3 = rnd::normal(0, h5tb.param.w3);
+        h5tb.param.J1 = settings::model::lbit::J1 + rnd::normal(0, h5tb.param.w1);
+        h5tb.param.J2 = settings::model::lbit::J2 + rnd::normal(0, h5tb.param.w2);
+        h5tb.param.J3 = settings::model::lbit::J3 + rnd::normal(0, h5tb.param.w3);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.J1 = rnd::log_normal(0, h5tb.param.w1);
-        h5tb.param.J2 = rnd::log_normal(0, h5tb.param.w2);
-        h5tb.param.J3 = rnd::log_normal(0, h5tb.param.w3);
+        h5tb.param.J1 =  settings::model::lbit::J1 + rnd::log_normal(0, h5tb.param.w1);
+        h5tb.param.J2 =  settings::model::lbit::J2 + rnd::log_normal(0, h5tb.param.w2);
+        h5tb.param.J3 =  settings::model::lbit::J3 + rnd::log_normal(0, h5tb.param.w3);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
-        h5tb.param.J1 = rnd::uniform_double_box(h5tb.param.w1);
-        h5tb.param.J2 = rnd::uniform_double_box(h5tb.param.w2);
-        h5tb.param.J3 = rnd::uniform_double_box(h5tb.param.w3);
+        h5tb.param.J1 = settings::model::lbit::J1 + rnd::uniform_double_box(h5tb.param.w1);
+        h5tb.param.J2 = settings::model::lbit::J2 + rnd::uniform_double_box(h5tb.param.w2);
+        h5tb.param.J3 = settings::model::lbit::J3 + rnd::uniform_double_box(h5tb.param.w3);
     }else if(std::string(h5tb.param.distribution) == "constant") {
             h5tb.param.J1 = settings::model::lbit::J1;
             h5tb.param.J2 = settings::model::lbit::J2;

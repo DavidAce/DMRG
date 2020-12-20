@@ -21,6 +21,8 @@
 #include <tools/finite/print.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
+#include <iostream>
+#include <math/num.h>
 class_flbit::class_flbit(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
 }
@@ -50,9 +52,8 @@ void class_flbit::resume() {
     if(not status.algorithm_has_finished) {
         // This could be a checkpoint state
         // Simply "continue" the algorithm until convergence
-        if(name.find("emax") != std::string::npos) task_list.emplace_back(flbit_task::FIND_HIGHEST_STATE);
-        else if(name.find("emin") != std::string::npos)
-            task_list.emplace_back(flbit_task::FIND_GROUND_STATE);
+        if(name.find("lbit") != std::string::npos)
+            task_list.emplace_back(flbit_task::TIME_EVOLVE);
         else
             throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
         task_list.emplace_back(flbit_task::POST_DEFAULT);
@@ -73,14 +74,8 @@ void class_flbit::run_task_list(std::list<flbit_task> &task_list) {
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
             case flbit_task::INIT_DEFAULT: run_preprocessing(); break;
-            case flbit_task::FIND_GROUND_STATE:
-                ritz       = StateRitz::SR;
-                state_name = "state_e_min";
-                run_algorithm();
-                break;
-            case flbit_task::FIND_HIGHEST_STATE:
-                ritz       = StateRitz::LR;
-                state_name = "state_e_max";
+            case flbit_task::TIME_EVOLVE:
+                state_name = "state_lbit";
                 run_algorithm();
                 break;
             case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
@@ -96,7 +91,7 @@ void class_flbit::run_task_list(std::list<flbit_task> &task_list) {
 void class_flbit::run_default_task_list() {
     std::list<flbit_task> default_task_list = {
         flbit_task::INIT_DEFAULT,
-        flbit_task::FIND_GROUND_STATE,
+        flbit_task::TIME_EVOLVE,
         flbit_task::POST_DEFAULT,
     };
 
@@ -113,64 +108,92 @@ void class_flbit::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
+
+    // Create a state in the l-bit basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+    while(not tensors.state->position_is_any_edge()) tensors.move_center_point(status.chi_lim);
+    if(not tensors.state->position_is_any_edge()){tools::finite::print::dimensions(tensors); throw std::logic_error("Put the state on an edge!");}
+
+    Eigen::Tensor<Scalar,3>   yplus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("y", 1).normalized(), 2, 1, 1);
     Eigen::Tensor<Scalar,3>   xplus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("x", 1).normalized(), 2, 1, 1);
+    Eigen::Tensor<Scalar,3>   zplus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("z", 1).normalized(), 2, 1, 1);
+    Eigen::Tensor<Scalar,3>   xminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("x", -1).normalized(), 2, 1, 1);
+    Eigen::Tensor<Scalar,3>   yminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("y", -1).normalized(), 2, 1, 1);
     Eigen::Tensor<Scalar,3>   zminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("z", -1).normalized(), 2, 1, 1);
-    tensors.state->get_mps_site(1).set_M(xplus_spinor);
-    tensors.state->get_mps_site(2).set_M(zminus_spinor);
+    tensors.state->get_mps_site(0).set_M(xplus_spinor);
+    tensors.state->get_mps_site(1).set_M(xminus_spinor);
+    tensors.state->get_mps_site(2).set_M(xplus_spinor);
+    tensors.state->get_mps_site(3).set_M(xminus_spinor);
+    tensors.state->get_mps_site(4).set_M(xplus_spinor);
+    tensors.state->get_mps_site(5).set_M(xminus_spinor);
     tools::finite::print::model(*tensors.model);
+    status.delta_t = std::complex<double>(settings::flbit::time_step_init_real,settings::flbit::time_step_init_imag);
+    if(settings::model::model_size <= 10){
+        // Create a copy of the state as a full state vector for ED comparison
+        auto list_Lsite = num::range<size_t>(0,settings::model::model_size,1);
+        Upsi_ed = tools::finite::measure::mps_wavefn(*tensors.state);
+        tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
+        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite,{1,2,3}), list_Lsite));
+        time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
+//        auto Udt = qm::lbit::get_time_evolution_operator(delta_t,ham);
+//        Eigen::Tensor<Scalar,1> Upsi = time_gates_Lsite[0].op.contract(psi, Textra::idx({1},{0}));
+//        psi = Upsi;
+//        std::cout << "|Ψ>: \n" << psi << std::endl;
+//        std::cout << "Ham (includes J3-terms!): \n" << ham << std::endl;
+//        std::cout << "Udt: \n" << Udt << std::endl;
+//        std::cout << "U|Ψ>: \n" << Upsi << std::endl;
+    }
 
 
-    // Time evolve here
-    auto delta_t =  std::complex<double>(0.0,-0.3);
-    std::vector<Eigen::Tensor<Scalar,2>> twosite_hamiltonian_operators;
-    for(size_t pos = 0; pos < settings::model::model_size-1; pos++)
-        twosite_hamiltonian_operators.emplace_back(tensors.model->get_multisite_ham({pos,pos+1}));
+    // Create the hamiltonian gates with n-site terms
+    auto                    list_1site = num::range<size_t>(0,settings::model::model_size-0,1);
+    auto                    list_2site = num::range<size_t>(0,settings::model::model_size-1,1);
+    auto                    list_3site = num::range<size_t>(0,settings::model::model_size-2,1);
+    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
+    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1}, {2}), {pos,pos+1}));
+    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1,pos+2},{3}), {pos,pos+1,pos+2}));
 
-    auto time_evolution_operators = qm::lbit::get_twosite_time_evolution_operators(settings::model::model_size, delta_t, twosite_hamiltonian_operators);
-
-    tools::finite::mps::apply_twosite_gates(*tensors.state,time_evolution_operators,false, status.chi_lim);
-//    tools::finite::mps::apply_twosite_gates(*tensors.state,time_evolution_operators,true, status.chi_lim);
-
-    exit(0);
-    auto unitary_twosite_operators0 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
-    auto unitary_twosite_operators1 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
-    auto unitary_twosite_operators2 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
-    auto unitary_twosite_operators3 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators0,false, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators1,false, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators2,false, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators3,false, status.chi_lim);
+    // Get the time evolution operators
+    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
+    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
+    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 
 
 
 
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators3,true, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators2,true, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators1,true, status.chi_lim);
-    tools::finite::mps::apply_twosite_gates(*tensors.state,unitary_twosite_operators0,true, status.chi_lim);
+//    exit(0);
+//    auto unitary_twosite_operators0 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+//    auto unitary_twosite_operators1 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+//    auto unitary_twosite_operators2 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+//    auto unitary_twosite_operators3 = qm::lbit::get_unitary_twosite_operators(settings::model::model_size,0.1);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators0, 2, false, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators1, 2, false, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators2, 2, false, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators3, 2, false, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators3, 2, true, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators2, 2, true, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators1, 2, true, status.chi_lim);
+//    tools::finite::mps::apply_gates(*tensors.state,unitary_twosite_operators0, 2, true, status.chi_lim);
+//
 
-    exit(0);
+    if(not tensors.state->position_is_any_edge()) throw std::logic_error("Put the state on an edge!");
+
+
+//    exit(0);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_flbit::run_algorithm() {
-    if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
+    if(state_name.empty()) state_name = "state_lbit";
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
-
+    if(not tensors.state->position_is_any_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
-        // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
-            tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance(tensors);
-            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-        }
-
         check_convergence();
         print_status_update();
+        print_status_full();
         print_profiling_lap();
         write_to_file();
 
@@ -178,11 +201,8 @@ void class_flbit::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(stop_reason != StopReason::NONE) break;
-
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
-        try_projection();
-        reduce_mpo_energy();
-        move_center_point();
+        update_time_step();
+//        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -193,18 +213,28 @@ void class_flbit::single_flbit_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->trace("Starting single flbit step with ritz [{}]", enum2str(ritz));
+    tools::log->trace("Starting single flbit time-step with");
 
-    tensors.activate_sites(settings::precision::max_size_part_diag, 2);
-    Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
-    if constexpr(settings::debug)
-        tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors)));
+    // Time evolve here
+    tools::finite::mps::apply_gates(*tensors.state,time_gates_1site, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state,time_gates_2site, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state,time_gates_3site, false, status.chi_lim);
 
-    tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
-    if constexpr(settings::debug)
-        tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
-                          tools::finite::measure::truncation_errors_active(*tensors.state));
+    if(settings::model::model_size <= 10 and settings::debug){
+        Eigen::Tensor<Scalar,1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
+        Eigen::Tensor<Scalar,1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, Textra::idx({1},{0}));
+        Upsi_ed = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0,-1));
+        Upsi_mps = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0,-1));
 
+        Eigen::Tensor<Scalar,0> overlap = Upsi_ed.conjugate().contract(Upsi_mps, Textra::idx({0},{0}));
+        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}",Textra::TensorVectorMap(Upsi_mps).norm());
+        tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i",std::real(overlap(0)),std::imag(overlap(0)));
+    }
+    status.iter     += 1;
+    status.step     += settings::model::model_size;
+    status.phys_time += std::abs(status.delta_t);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
@@ -234,17 +264,11 @@ void class_flbit::update_time_step(){
 void class_flbit::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
     if(tensors.position_is_any_edge()) {
-        check_convergence_variance();
         check_convergence_entg_entropy();
     }
 
-    status.algorithm_has_saturated =
-        (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
-//        or
-//        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
-
-
-    status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
+    status.algorithm_has_saturated = status.entanglement_saturated_for >= min_saturation_iters;
+    status.algorithm_has_converged = status.entanglement_has_converged;
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
 
@@ -260,6 +284,7 @@ void class_flbit::check_convergence() {
     if(tensors.position_is_any_edge()) {
         stop_reason = StopReason::NONE;
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
+        if(status.phys_time >= settings::flbit::time_limit) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;

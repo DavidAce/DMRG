@@ -9,7 +9,7 @@
 #include <general/eigen_tensor_fwd_decl.h>
 #include <list>
 #include <vector>
-
+#include <physics/class_quantum_gates.h>
 namespace qm{
     /* clang-format off */
     using Scalar = std::complex<double>;

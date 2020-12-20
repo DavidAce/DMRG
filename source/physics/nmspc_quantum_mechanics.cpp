@@ -335,20 +335,19 @@ std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_2sit
     // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
     //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
     // without passing through the Suzuki-Trotter decomposition.
+    // Here we expect "hams_2site" to contain terms like  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
 
-    // Here we expect "twosite_hams" to contain operators  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
-
-    if(twosite_hams.size() != sites-1)
-        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", twosite_hams.size(),sites-1));
+    if(hams_2site.size() != sites-1)
+        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", hams_2site.size(),sites-1));
 
     std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
     time_evolution_operators.reserve(sites-1);
-    for(auto && h : twosite_hams)
-       time_evolution_operators.emplace_back(Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(h)).exp()));
+    for(auto && h : hams_2site)
+       time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
     return time_evolution_operators;
 }
 
-std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_3site_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site){
+std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site){
     // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore we can immediately use the relation
     // exp(A + B) = exp(A)exp(B)
     // without passing through the Suzuki-Trotter decomposition.
@@ -359,7 +358,7 @@ std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_3site_time_evolution_operator
     std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
     time_evolution_operators.reserve(sites-1);
     for(auto && h : hams_3site)
-        time_evolution_operators.emplace_back(Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(h)).exp()));
+        time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
     return time_evolution_operators;
 }
 
@@ -681,7 +680,7 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
     Eigen::array<long, 4>    offset4    = {0, 0, 0, 0};
 
     std::list<Eigen::Tensor<Scalar, 4>> mpos;
-    auto pauli_idx = num::range<size_t,size_t>(0, paulimatrices.size() - 1, 1);
+    auto pauli_idx = num::range<size_t>(0, paulimatrices.size(), 1);
 
     for(size_t site = 0; site < sites; site++) {
         Eigen::Tensor<Scalar, 4> mpo;
