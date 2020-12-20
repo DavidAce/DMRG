@@ -33,4 +33,5 @@ class class_flbit : public class_algorithm_finite {
     bool   cfg_chi_lim_grow() final;
     long   cfg_chi_lim_init() final;
     bool   cfg_store_wave_function() final;
+    void   print_status_update() final;
 };

@@ -252,3 +252,37 @@ size_t class_flbit::cfg_print_freq() { return settings::flbit::print_freq; }
 bool   class_flbit::cfg_chi_lim_grow() { return settings::flbit::chi_lim_grow; }
 long   class_flbit::cfg_chi_lim_init() { return settings::flbit::chi_lim_init; }
 bool   class_flbit::cfg_store_wave_function() { return settings::flbit::store_wavefn; }
+
+
+
+void class_flbit::print_status_update() {
+    if(num::mod(status.iter, cfg_print_freq()) != 0) return;
+    if(cfg_print_freq() == 0) return;
+
+    std::string report;
+    report += fmt::format("{:<} ", state_name);
+    report += fmt::format("iter:{:<4} ", status.iter);
+    report += fmt::format("step:{:<5} ", status.step);
+    report += fmt::format("L:{} ", tensors.get_length());
+    if(tensors.active_sites.empty()) report += fmt::format("l:{:<2} ", tensors.get_position());
+    else if(tensors.state->get_direction() > 0)
+        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
+    else if(tensors.state->get_direction() < 0)
+        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
+    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+    if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
+    report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
+    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
+                          std::log10(status.energy_variance_lowest));
+    report +=
+        fmt::format("χ:{:<3}|{:<3}|{:<3}", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
+
+    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
+    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
+    report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
+    report += fmt::format("wtime:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
+    report += fmt::format("ptime:{:<} ",fmt::format("{:>6.2f}s",status.phys_time));
+    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+                          tools::common::profile::mem_vm_in_mb());
+    tools::log->info(report);
+}
