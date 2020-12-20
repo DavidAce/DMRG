@@ -28,8 +28,9 @@ void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
             envl[0], envl[1], envl[2], mps[0], mps[1], mps[2], mpo[0], mpo[1], mpo[2], mpo[3], envr[0],
             envr[1], envr[2], tag);
         if(tensors.state->get_mps_site(pos).isCenter())
-            tools::log->info("Pos {:2}: L [{:^4}] {:>70}", pos, tensors.state->get_mps_site(pos).get_L().dimension(0), "<---- Center");
+            tools::log->info("Pos {:2}: LC [{:^4}] {:>69}", pos, tensors.state->get_mps_site(pos).get_L().dimension(0), "<---- Center");
     }
+    tools::log->info("Direction: {}", tensors.state->get_direction());
 }
 
 void tools::finite::print::model(const class_model_finite &model) {
