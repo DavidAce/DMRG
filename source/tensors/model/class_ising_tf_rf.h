@@ -20,6 +20,7 @@ class class_ising_tf_rf : public class_mpo_site {
     public:
     class_ising_tf_rf(ModelType model_type_, size_t position_);
     [[nodiscard]] std::unique_ptr<class_mpo_site> clone() const override;
+    [[nodiscard]] Eigen::Tensor<Scalar, 4>        MPO_nbody_view(const std::vector<size_t> &nbody_terms) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4>        MPO_reduced_view() const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4>        MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 1>        get_MPO_edge_left() const override;

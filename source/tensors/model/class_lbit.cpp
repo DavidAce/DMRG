@@ -202,6 +202,28 @@ void class_lbit::set_perturbation(double coupling_ptb, double field_ptb, Perturb
 
 bool class_lbit::is_perturbed() const { return h5tb.param.J1_pert != 0.0 or h5tb.param.J2_pert != 0.0 or h5tb.param.J3_pert != 0.0; }
 
+
+Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
+    // This function returns a view of the MPO including only n-body terms.
+    // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
+    if(nbody_terms.empty()) return MPO();
+    double J1 = 0;
+    double J2 = 0;
+    double J3 = 0;
+    for(auto &&n : nbody_terms){
+        if(n == 1) J1 = 1;
+        if(n == 2) J2 = 1;
+        if(n == 3) J3 = 1;
+    }
+    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
+    Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
+    Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+    MPO_nbody.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1 * n - e_reduced * i;
+    MPO_nbody.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2 * n;
+    MPO_nbody.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3 * n;
+    return MPO_nbody;
+}
+
 Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);

@@ -182,6 +182,23 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
 
 bool class_ising_tf_rf::is_perturbed() const { return h5tb.param.h_pert != 0.0; }
 
+
+Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
+    // This function returns a view of the MPO including only n-body terms.
+    // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
+    if(nbody_terms.empty()) return MPO();
+    double J1 = 0, J2 = 0;
+    for(auto &&n : nbody_terms){
+        if(n == 1) J1 = 1.0;
+        if(n == 2) J2 = 1.0;
+    }
+    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
+    MPO_nbody.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J1*get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2*get_coupling() * sz);
+    return MPO_nbody;
+}
+
+
 Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);

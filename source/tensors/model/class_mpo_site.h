@@ -5,13 +5,12 @@
 #pragma once
 
 #include "class_mpo_parameters.h"
+#include <Eigen/Core>
 #include <any>
 #include <config/enums.h>
 #include <map>
 #include <memory>
-#include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
-
 
 namespace h5pp {
     class File;
@@ -32,9 +31,9 @@ class class_mpo_site {
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
 
-    Eigen::array<long, 4>                   extent4{};  /*!< Extent of pauli matrices in a rank-4 tensor */
-    Eigen::array<long, 2>                   extent2{};  /*!< Extent of pauli matrices in a rank-2 tensor */
-    std::optional<size_t>                   position; /*!< Position on a finite chain */
+    Eigen::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
+    std::optional<size_t>                   position;  /*!< Position on a finite chain */
     Eigen::Tensor<Scalar, 4>                mpo_internal;
     std::optional<Eigen::Tensor<Scalar, 4>> mpo_squared = std::nullopt;
 
@@ -60,28 +59,29 @@ class class_mpo_site {
     [[nodiscard]] bool                            is_reduced() const;
     [[nodiscard]] double                          get_reduced_energy() const;
 
-    [[nodiscard]] virtual std::unique_ptr<class_mpo_site> clone() const                                     = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view() const                          = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view(double single_site_energy) const = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_left() const                         = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_right() const                        = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_left() const                        = 0;
-    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_right() const                       = 0;
-    [[nodiscard]] virtual long                            get_spin_dimension() const                        = 0;
-    [[nodiscard]] virtual TableMap                        get_parameters() const                            = 0;
-    [[nodiscard]] virtual bool                            is_perturbed() const                              = 0;
+    [[nodiscard]] virtual std::unique_ptr<class_mpo_site> clone() const                                                = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_nbody_view(const std::vector<size_t> &nbody_terms) const = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view() const                                     = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 4>        MPO_reduced_view(double single_site_energy) const            = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_left() const                                    = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO_edge_right() const                                   = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_left() const                                   = 0;
+    [[nodiscard]] virtual Eigen::Tensor<Scalar, 1>        get_MPO2_edge_right() const                                  = 0;
+    [[nodiscard]] virtual long                            get_spin_dimension() const                                   = 0;
+    [[nodiscard]] virtual TableMap                        get_parameters() const                                       = 0;
+    [[nodiscard]] virtual bool                            is_perturbed() const                                         = 0;
 
-    virtual void print_parameter_names() const                                                                       = 0;
-    virtual void print_parameter_values() const                                                                      = 0;
-    virtual void set_parameters(TableMap &parameters)                                                                = 0;
-    virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                        = 0;
-    virtual void set_coupling_damping(double alpha)                                                                  = 0;
-    virtual void set_field_damping(double beta)                                                                      = 0;
-    virtual void build_mpo()                                                                                         = 0;
-    virtual void randomize_hamiltonian()                                                                             = 0;
-    virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false)     = 0;
-    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const                           = 0;
-    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)                           = 0;
+    virtual void print_parameter_names() const                                                                   = 0;
+    virtual void print_parameter_values() const                                                                  = 0;
+    virtual void set_parameters(TableMap &parameters)                                                            = 0;
+    virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                    = 0;
+    virtual void set_coupling_damping(double alpha)                                                              = 0;
+    virtual void set_field_damping(double beta)                                                                  = 0;
+    virtual void build_mpo()                                                                                     = 0;
+    virtual void randomize_hamiltonian()                                                                         = 0;
+    virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) = 0;
+    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const                       = 0;
+    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)                       = 0;
     void         save_mpo(h5pp::File &file, const std::string &model_prefix) const;
     void         load_mpo(const h5pp::File &file, const std::string &model_prefix);
 };

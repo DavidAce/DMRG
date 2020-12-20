@@ -247,10 +247,14 @@ bool class_model_finite::is_damped() const {
 
 Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_mpo(const std::vector<size_t> &sites) const {
+Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
-    if(sites == active_sites and cache.multisite_mpo) return cache.multisite_mpo.value();
-    tools::log->trace("Contracting multisite mpo tensor with {} sites", sites.size());
+    if(sites == active_sites and cache.multisite_mpo and nbody.empty()) return cache.multisite_mpo.value();
+    if(nbody.empty())
+        tools::log->trace("Contracting multisite mpo tensor with sites {}", sites);
+    else
+        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody);
+
     tools::common::profile::get_default_prof()["t_mpo"]->tic();
     Eigen::Tensor<Scalar, 4> multisite_mpo;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
@@ -260,29 +264,35 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     bool                     first = true;
     for(auto &site : sites) {
         if(first) {
-            multisite_mpo    = get_mpo(site).MPO();
+            if(nbody.empty())
+                multisite_mpo    = get_mpo(site).MPO();
+            else
+                multisite_mpo    = get_mpo(site).MPO_nbody_view(nbody);
             first            = false;
             continue;
         }
-        const auto &M    = get_mpo(site).MPO();
+        const auto & mpo = get_mpo(site);
         long        dim0 = multisite_mpo.dimension(0);
-        long        dim1 = M.dimension(1);
-        long        dim2 = multisite_mpo.dimension(2) * M.dimension(2);
-        long        dim3 = multisite_mpo.dimension(3) * M.dimension(3);
+        long        dim1 = mpo.MPO().dimension(1);
+        long        dim2 = multisite_mpo.dimension(2) * mpo.MPO().dimension(2);
+        long        dim3 = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        if(nbody.empty()) // Avoids creating a temporary
+            temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        else
+            temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo                  = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo;
 }
 
-Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_ham(const std::vector<size_t> &sites) const{
+Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> & nbody_terms) const{
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
-    if(sites == active_sites and cache.multisite_ham) return cache.multisite_ham.value();
+    if(sites == active_sites and cache.multisite_ham and nbody_terms.empty()) return cache.multisite_ham.value();
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto multisite_mpo = get_multisite_mpo(sites);
+    auto multisite_mpo = get_multisite_mpo(sites, nbody_terms);
     auto edgeL = get_mpo(sites.front()).get_MPO_edge_left();
     auto edgeR = get_mpo(sites.back()).get_MPO_edge_right();
     return multisite_mpo
@@ -292,9 +302,15 @@ Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_h
 }
 
 const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_mpo() const {
-    if(cache.multisite_mpo) return cache.multisite_mpo.value();
+    if(cache.multisite_mpo and not active_sites.empty()) return cache.multisite_mpo.value();
     cache.multisite_mpo = get_multisite_mpo(active_sites);
     return cache.multisite_mpo.value();
+}
+
+const Eigen::Tensor<class_model_finite::Scalar, 2> &class_model_finite::get_multisite_ham() const {
+    if(cache.multisite_ham and not active_sites.empty()) return cache.multisite_ham.value();
+    cache.multisite_ham = get_multisite_ham(active_sites);
+    return cache.multisite_ham.value();
 }
 
 Eigen::DSizes<long, 4> class_model_finite::active_dimensions_squared() const { return tools::finite::multisite::get_dimensions_squared(*this); }
