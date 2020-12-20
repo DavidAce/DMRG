@@ -121,14 +121,14 @@ namespace settings {
             inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */
         }
 
-        //Parameters for the selfdual transverse-field random-field next-nearest neighbor Ising model
+        //Parameters for the l-bit hamiltonian
         namespace lbit {
-            inline double       J1            = 1;              /*!< On-site */
-            inline double       J2            = 1;              /*!< Two-body interaction */
-            inline double       J3            = 1;              /*!< Three-body interaction */
-            inline double       w1            = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) */
-            inline double       w2            = 0.5;            /*!< Width of the uniform box distribution U(-w2,w2) */
-            inline double       w3            = 0.5;            /*!< Width of the uniform box distribution U(-w3,w3) */
+            inline double       J1            = 0;              /*!< Constant offset for on-site */
+            inline double       J2            = 0;              /*!< Constant offset for two-body interaction */
+            inline double       J3            = 0;              /*!< Constant offset for three-body interaction */
+            inline double       w1            = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) for on-site interactions */
+            inline double       w2            = 0.5;            /*!< Width of the uniform box distribution U(-w2,w2) for two-body interaction */
+            inline double       w3            = 0.5;            /*!< Width of the uniform box distribution U(-w3,w3) for three-body interaction */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for interaction strengths */
         }

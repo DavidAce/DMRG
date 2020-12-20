@@ -80,10 +80,8 @@ void tools::finite::mps::move_center_point_single_site(class_state_finite &state
 
 
 void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    if(state.position_is_any_edge()) {
-        // Instead of moving out of the chain, just flip the direction and return
-        state.flip_direction();
-    } else {
+    if(state.position_is_any_edge(2)) state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
+    else {
         size_t pos  = state.get_position();
         size_t posL = state.get_direction() == 1 ? pos + 1 : pos - 1;
         size_t posR = state.get_direction() == 1 ? pos + 2 : pos;
@@ -141,7 +139,7 @@ void tools::finite::mps::move_center_point_to_middle(class_state_finite &state, 
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                 size_t center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
-    if(not logPolicy or logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {}", sites, chi_lim);
+    if(not logPolicy or logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {} | dimensions {}", sites, chi_lim, multisite_mps.dimensions());
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -163,6 +161,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     // Split the multisite mps into single-site mps objects
     auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
 
+    // Sanity checks
     if(sites.size() != mps_list.size())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: number of sites mismatch: positions.size() {} != mps_list.size() {}",
                                              sites.size(), mps_list.size()));
@@ -178,15 +177,20 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
         auto & mps_src = mps_list.front();
         auto   pos = mps_src.get_position();
         auto & mps_tgt = state.get_mps_site(pos);
-        auto & mps_cnt = state.get_mps_site(center_position);
         if(center_position == pos){
             // Going left-to-right. This site is an "A".Convention is that A contains LC.
             mps_tgt.merge_mps(mps_src);
+            if(pos == state.get_length()-1) mps_src.unstash(); // Discard whatever is stashed at the edge (this normalizes the state)
+            else{
+                // Extract the stashed V-matrix and multiply onto the "B" on the right
+                state.get_mps_site(pos+1).merge_stash(mps_src);
+            }
         }else if (center_position == pos - 1) {
             // Going right-to-left. This site is a "B". Convention is that A contains LC.
             // We extract LC and put it on the site on A to the left
-            mps_cnt.set_LC(mps_src.unstash_LC());
             mps_tgt.merge_mps(mps_src);
+            if(pos == 0) mps_src.unstash();  // Discard whatever is stashed at the edge (this normalizes the state)
+            else state.get_mps_site(pos-1).merge_stash(mps_src);
         }else{
             throw std::runtime_error(fmt::format("Unexpected center position: {} | sites: {}",center_position,sites));
         }
@@ -205,9 +209,47 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     state.clear_measurements(LogPolicy::QUIET);
 }
 
+//bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
+//    // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
+//    // Each move performs an SVD decomposition which leaves unitaries behind, effectively normalizing the state.
+//    // NOTE! It may be important to start with the current position.
+//
+//    if(norm_policy == NormPolicy::IFNEEDED) {
+//        // We may only go ahead with a normalization if its really needed.
+//        if(std::abs(tools::finite::measure::norm(state) - 1.0) < settings::precision::max_norm_error) return false;
+//    }
+//
+//    // Otherwise we just do the normalization
+//    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f}", tools::finite::measure::norm(state));
+//
+//    // Start with normalizing at the current position
+//    size_t num_moves = 2 * (state.get_length() - 1);
+//    size_t posL      = state.get_position();
+//    size_t posR      = posL + 1;
+//    auto & mpsL      = state.get_mps_site(posL);
+//    auto & mpsR      = state.get_mps_site(posR);
+//    long   dL        = mpsL.spin_dim();
+//    long   dR        = mpsR.spin_dim();
+//    long   chiL      = mpsL.get_chiL();
+//    long   chiR      = mpsR.get_chiR();
+//
+//    Eigen::Tensor<Scalar, 3> twosite_tensor(Textra::array3{dL * dR, chiL, chiR});
+//    twosite_tensor.device(Textra::omp::getDevice()) =
+//        mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
+//    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
+//
+//    // Now we can move around the chain
+//    for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
+//    state.clear_measurements();
+//    state.clear_cache();
+//    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->debug("Normalized state | New norm = {:.16f}", tools::finite::measure::norm(state));
+//    state.assert_validity();
+//    return true;
+//}
+
 bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
     // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
-    // Each move performs an SVD decomposition which leaves unitaries after it, effectively normalizing the state.
+    // Each move performs an SVD decomposition which leaves unitaries behind, effectively normalizing the state.
     // NOTE! It may be important to start with the current position.
 
     if(norm_policy == NormPolicy::IFNEEDED) {
@@ -219,29 +261,22 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f}", tools::finite::measure::norm(state));
 
     // Start with normalizing at the current position
-    size_t num_moves = 2 * (state.get_length() - 1);
-    size_t posL      = state.get_position();
-    size_t posR      = posL + 1;
-    auto & mpsL      = state.get_mps_site(posL);
-    auto & mpsR      = state.get_mps_site(posR);
-    long   dL        = mpsL.spin_dim();
-    long   dR        = mpsR.spin_dim();
-    long   chiL      = mpsL.get_chiL();
-    long   chiR      = mpsR.get_chiR();
-
-    Eigen::Tensor<Scalar, 3> twosite_tensor(Textra::array3{dL * dR, chiL, chiR});
-    twosite_tensor.device(Textra::omp::getDevice()) =
-        mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
-    tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
-
+//    size_t num_moves = 2 * (state.get_length() - 1);
+    auto dir = state.get_direction();
+    auto pos = state.get_position();
+    auto & mps      = state.get_mps_site(pos);
+    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {pos}, pos, chi_lim, svd_threshold, LogPolicy::QUIET);
+    move_center_point_single_site(state, chi_lim, svd_threshold); // Move once to get started
     // Now we can move around the chain
-    for(size_t move = 0; move < num_moves; move++) move_center_point(state, chi_lim, svd_threshold);
+    while(state.get_direction() != dir or state.get_position() != pos) move_center_point_single_site(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
     if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->debug("Normalized state | New norm = {:.16f}", tools::finite::measure::norm(state));
     state.assert_validity();
     return true;
 }
+
+
 
 void tools::finite::mps::randomize_state(class_state_finite &state, StateInit init, StateInitType type, const std::string &sector, long chi_lim,
                                          bool use_eigenspinors, std::optional<long> bitfield) {
@@ -298,65 +333,153 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] class_state_finite
 
 void is_unitary(const Eigen::Tensor<std::complex<double>, 2> &U_tensor) {
     Eigen::Tensor<std::complex<double>, 2> UU = U_tensor.contract(U_tensor.conjugate(), Textra::idx({0}, {0}));
-    std::cout << UU << std::endl;
 }
 
-void tools::finite::mps::apply_twosite_gates(class_state_finite &state, const std::vector<UnitaryGate> &twosite_gates, bool reverse, long chi_lim,
+//void tools::finite::mps::apply_twosite_gates(class_state_finite &state, const std::vector<qm::Gate> &twosite_gates, bool reverse, long chi_lim,
+//                                             std::optional<double> svd_threshold) {
+//    if(twosite_gates.size() + 1 != state.get_length())
+//        throw std::runtime_error(fmt::format("Size mismatch: Given {} two-site operators for a system of {} sites. Expected {}", twosite_gates.size(),
+//                                             state.get_length(), state.get_length() - 1));
+//
+//    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
+//    tools::log->info("Before applying gates");
+//    for(auto &&mps : state.mps_sites)
+//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//
+//    // Generate staggered indices so that the unitaries are applied on even sites first, then on odd sites.
+//    // When applying the inverse operation, the indices are reversed.
+//
+//    std::vector<size_t> all_idx;
+//    std::vector<size_t> evn_idx = num::range<size_t>(0, twosite_gates.size(), 2);
+//    std::vector<size_t> odd_idx = num::range<size_t>(1, twosite_gates.size(), 2);
+//    if(evn_idx.size() + odd_idx.size() != twosite_gates.size()) throw std::logic_error(fmt::format("Size mismatch"));
+//    all_idx.reserve(twosite_gates.size());
+//    all_idx.insert(all_idx.end(), evn_idx.begin(), evn_idx.end());
+//    all_idx.insert(all_idx.end(), odd_idx.begin(), odd_idx.end());
+//    if(reverse) std::reverse(all_idx.begin(), all_idx.end());
+//
+//    fmt::print("all_idx {}\n", all_idx);
+//    state.clear_cache(LogPolicy::QUIET);
+//    for(auto &&idx : all_idx) {
+////        if(idx == 1) continue;
+//        auto &gate = twosite_gates[idx];
+//        if(gate.posL + 1 != gate.posR) throw std::logic_error(fmt::format("Expected site posL+1 == posR. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
+//        if(gate.posL >= state.get_length() - 1)
+//            throw std::logic_error(fmt::format("Expected site posL < length-1. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
+//        if(gate.posR >= state.get_length())
+//            throw std::logic_error(fmt::format("Expected site posR < length. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
+//        while(state.get_position() != gate.posL) move_center_point(state, chi_lim, svd_threshold); // Move into position
+//        tools::log->debug("Applying two-site gate at sites [{} {}]", gate.posL, gate.posR);
+//        Eigen::Tensor<Scalar, 3> twosite_tensor_op;
+//        if(reverse) twosite_tensor_op = gate.adjoint().contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
+//        else
+//            twosite_tensor_op = gate.op.contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
+//        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor_op, {gate.posL, gate.posR}, gate.posL, chi_lim, svd_threshold);
+//    }
+//
+//    tools::log->info("After applying gates");
+//    for(auto &&mps : state.mps_sites)
+//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//    tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::ALWAYS);
+//    tools::log->info("After normalization");
+//    for(auto &&mps : state.mps_sites)
+//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//}
+
+void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &nsite_tensors, size_t gate_size, bool reverse,
+                                             long chi_lim, std::optional<double> svd_threshold) {
+    // Pack the two-site operators into a vector of UnitaryGates
+    std::vector<qm::Gate> gates;
+    gates.reserve(nsite_tensors.size());
+    for(auto &&[idx, op] : iter::enumerate(nsite_tensors)) gates.emplace_back(qm::Gate(nsite_tensors[idx],num::range<size_t>(idx,idx+gate_size,1)));
+    apply_gates(state, gates, reverse, chi_lim, svd_threshold);
+}
+
+
+void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
                                              std::optional<double> svd_threshold) {
-    if(twosite_gates.size() + 1 != state.get_length())
-        throw std::runtime_error(fmt::format("Size mismatch: Given {} two-site operators for a system of {} sites. Expected {}", twosite_gates.size(),
-                                             state.get_length(), state.get_length() - 1));
 
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-    tools::log->info("Before applying gates");
-    for(auto &&mps : state.mps_sites)
-        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-
-    // Generate staggered indices so that the unitaries are applied on even sites first, then on odd sites.
-    // When applying the inverse operation, the indices are reversed.
-
-    std::vector<size_t> all_idx;
-    std::vector<size_t> evn_idx = num::range<size_t, size_t>(0, twosite_gates.size() - 1, 2);
-    std::vector<size_t> odd_idx = num::range<size_t, size_t>(1, twosite_gates.size() - 1, 2);
-    if(evn_idx.size() + odd_idx.size() != twosite_gates.size()) throw std::logic_error(fmt::format("Size mismatch"));
-    all_idx.reserve(twosite_gates.size());
-    all_idx.insert(all_idx.end(), evn_idx.begin(), evn_idx.end());
-    all_idx.insert(all_idx.end(), odd_idx.begin(), odd_idx.end());
-    if(reverse) std::reverse(all_idx.begin(), all_idx.end());
-
-    fmt::print("all_idx {}\n", all_idx);
-    state.clear_cache(LogPolicy::QUIET);
-    for(auto &&idx : all_idx) {
-        auto &gate = twosite_gates[idx];
-        if(gate.posL + 1 != gate.posR) throw std::logic_error(fmt::format("Expected site posL+1 == posR. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
-        if(gate.posL >= state.get_length() - 1)
-            throw std::logic_error(fmt::format("Expected site posL < length-1. [posL = {}, posR = {}]", gate.posL, gate.posR));
-        if(gate.posR >= state.get_length())
-            throw std::logic_error(fmt::format("Expected site posR < length. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
-        while(state.get_position() != gate.posL) move_center_point(state, chi_lim, svd_threshold); // Move into position
-        tools::log->debug("Applying two-site gate at sites [{} {}]", gate.posL, gate.posR);
-        Eigen::Tensor<Scalar, 3> twosite_tensor_op;
-        if(reverse) twosite_tensor_op = gate.adjoint().contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
-        else
-            twosite_tensor_op = gate.op.contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
-        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor_op, {gate.posL, gate.posR}, gate.posL, chi_lim, svd_threshold);
+    if(tools::log->level() == spdlog::level::trace and settings::debug){
+        tools::log->trace("Before applying gates");
+        for(auto &&mps : state.mps_sites)
+            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
     }
 
-    tools::log->info("After applying gates");
-    for(auto &&mps : state.mps_sites)
-        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-    tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::ALWAYS);
-    tools::log->info("After normalization");
-    for(auto &&mps : state.mps_sites)
-        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-}
 
-void tools::finite::mps::apply_twosite_gates(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &twosite_operators, bool inverse,
-                                             long chi_lim, std::optional<double> svd_threshold) {
-    std::vector<UnitaryGate> gates;
-    for(auto &&[idx, op] : iter::enumerate(twosite_operators)) gates.emplace_back(UnitaryGate{idx, idx + 1, twosite_operators[idx]});
-    apply_twosite_gates(state, gates, inverse, chi_lim, svd_threshold);
+    if(gates.empty()) return;
+    auto gate_size = gates.front().pos.size(); // The size of each gate, i.e. how many sites are updated by each gate.
+    for (auto && [idx,gate] : iter::enumerate(gates)) // Check that all gates are of the same size
+        if(gate.pos.size() != gate_size)
+            throw std::runtime_error(fmt::format("Gate size mismatch: "
+                                                 "Gate 0 has {} sites: {} | "
+                                                 "gate {} has {} sites: {}",
+                                                 gate_size,gates.front().pos, idx,gate.pos.size(),gate.pos ));
+
+
+    // Generate a list of staggered indices
+    // If 2-site gates,
+    //      * Apply gates on [0-1],[2-3]... and then [1-2],[3-4]..., i.e. even sites first, then odd sites,
+    //      * The corresponing list is [0,2,3,4,6....1,3,5,7,9...]
+    // If 3-site gates,
+    //      * Apply gates on [0-1-2], [3-4-5]... then on [1-2-3], [4-5-6]..., then on [2-3-4],[5-6-7], and so on.
+    //      * The corresponing list is [0,3,6,9...1,4,7,10...2,5,8,11...]
+    // So the list contains the index to the the "first" or left-most" leg of the unitary.
+    // When applying the inverse operation, the indices are reversed.
+    std::vector<size_t> all_idx;
+    for(size_t offset = 0; offset < gate_size; offset++){
+        if(offset+gate_size > state.get_length()) break;
+        auto off_idx = num::range<size_t>(offset, state.get_length()-gate_size+1, gate_size);
+        tools::log->trace("Appending idx {}", off_idx);
+        all_idx.insert(all_idx.end(), off_idx.begin(), off_idx.end());
+    }
+    if(reverse) std::reverse(all_idx.begin(), all_idx.end());
+
+    if(tools::log->level() == spdlog::level::trace and settings::debug)fmt::print("all_idx {}\n", all_idx);
+
+    // Save current position and direction so we can leave this function in the same condition
+    auto save_pos = state.get_position();
+    auto save_dir = state.get_direction();
+
+
+    state.clear_cache(LogPolicy::QUIET);
+    for(auto &&idx : all_idx) {
+//        if(idx == 1) continue;
+        auto &gate = gates[idx];
+        if(gate.pos != num::range<size_t>(gate.pos.front(), gate.pos.front()+gate_size, 1))// Just a sanity check that gate.pos is well defined
+            throw std::runtime_error(fmt::format("The positions on gate {} are not well defined for a {}-site gate: {}", idx,gate_size,gate.pos));
+        if(gate.pos.back() >= state.get_length())
+            throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", idx, gate.pos));
+
+        while(state.get_position() != gate.pos.front()) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
+        tools::log->trace("Applying gate gate at sites {}", gate.pos);
+        Eigen::Tensor<Scalar, 3> gate_mps;
+        if(reverse) gate_mps = gate.adjoint().op.contract(state.get_multisite_mps(gate.pos), Textra::idx({0}, {0}));
+        else
+            gate_mps = gate.op.contract(state.get_multisite_mps(gate.pos), Textra::idx({0}, {0}));
+        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, gate.pos.front(), chi_lim, svd_threshold);
+    }
+    if(tools::log->level() == spdlog::level::trace and settings::debug){
+        tools::log->info("After applying gates");
+        for(auto &&mps : state.mps_sites)
+            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+    }
+
+    while(state.get_position() != save_pos or state.get_direction() != save_dir) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
+
+
+    tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::ALWAYS);
+    if(tools::log->level() == spdlog::level::trace){
+        tools::log->trace("After normalization");
+        for(auto &&mps : state.mps_sites)
+            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+    }
+
+
 }

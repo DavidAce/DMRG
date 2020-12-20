@@ -287,10 +287,10 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const class
 }
 
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
+    Eigen::Tensor<Scalar, 2> temp;
     Eigen::Tensor<Scalar, 2> chain(1, 1);
     chain.setConstant(1.0);
-    Eigen::TensorRef<Eigen::Tensor<Scalar, 2>> temp;
-    // The "state" is a matrix whose 0 index keeps growing.
+    // The "chain" is a matrix whose 0 index keeps growing.
     // For each site that passes, it grows by GA.dimension(0) = phys dim
     // Say the state is a 16x7 matrix (having contracted 4 particles, and the latest
     // chi was 7). Then contracting the next site, with dimensions 2x7x9 will get you a
