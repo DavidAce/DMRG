@@ -71,6 +71,7 @@ class class_state_finite {
     size_t                 get_position() const;
     void                   flip_direction();
     int                    get_direction() const;
+    std::vector<std::string> get_labels() const;
     Eigen::DSizes<long, 3> dimensions_2site() const;
     long                   size_2site() const;
 

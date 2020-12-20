@@ -13,6 +13,7 @@ class class_mps_site {
     using Scalar = std::complex<double>;
 
     private:
+    std::string                                     label;
     std::optional<Eigen::Tensor<Scalar, 3>>         M                   = std::nullopt; /*!< \f$M\f$ A or B tensor (note: not a Gamma tensor!) */
     std::optional<Eigen::Tensor<Scalar, 1>>         L                   = std::nullopt; /*!< \f$\Lambda\f$*/
     std::optional<Eigen::Tensor<Scalar, 1>>         LC                  = std::nullopt; /*!< \f$\Lambda_C\f$ Center lambda, if this is a center matrix*/
@@ -50,26 +51,26 @@ class class_mps_site {
     [[nodiscard]] Eigen::Tensor<Scalar, 3> &      get_M();
     [[nodiscard]] Eigen::Tensor<Scalar, 1> &      get_L();
     [[nodiscard]] Eigen::Tensor<Scalar, 1> &      get_LC();
+    [[nodiscard]] double                          get_truncation_error() const;
+    [[nodiscard]] double                          get_truncation_error_LC() const;
+    [[nodiscard]] std::string                     get_label() const;
     [[nodiscard]] std::tuple<long, long, long>    get_dims() const;
     [[nodiscard]] long                            spin_dim() const;
     [[nodiscard]] long                            get_chiL() const;
     [[nodiscard]] long                            get_chiR() const;
     [[nodiscard]] size_t                          get_position() const;
-    void                                          set_position(size_t position_);
-    void                                          set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
 
-    void   set_M(const Eigen::Tensor<Scalar, 3> &M_);
-    void   set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
-    void   set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error = 0);
-    void   set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
-    void   set_truncation_error(double error);
-    void   set_truncation_error_LC(double error);
-    double get_truncation_error() const;
-    double get_truncation_error_LC() const;
-    void   unset_LC() {
-        LC.reset();
-        MC.reset();
-    }
+    void set_M(const Eigen::Tensor<Scalar, 3> &M_);
+    void set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
+    void set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error = 0);
+    void set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
+    void set_truncation_error(double error);
+    void set_truncation_error_LC(double error);
+    void set_label(const std::string &label_);
+    void set_position(size_t position_);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
+
+    void unset_LC();
     void merge_mps(const class_mps_site &other);
     void apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo);
     void apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo);

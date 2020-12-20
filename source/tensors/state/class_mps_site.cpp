@@ -95,6 +95,9 @@ Eigen::Tensor<Scalar, 3> &   class_mps_site::get_M_bare() { return const_cast<Ei
 Eigen::Tensor<Scalar, 3> &   class_mps_site::get_M() { return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M()); }
 Eigen::Tensor<Scalar, 1> &   class_mps_site::get_L() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_L()); }
 Eigen::Tensor<Scalar, 1> &   class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
+double                       class_mps_site::get_truncation_error() const { return truncation_error; }
+double                       class_mps_site::get_truncation_error_LC() const { return truncation_error_LC; }
+std::string                  class_mps_site::get_label() const { return label; }
 std::tuple<long, long, long> class_mps_site::get_dims() const { return {spin_dim(), get_chiL(), get_chiR()}; }
 long                         class_mps_site::spin_dim() const { return get_M_bare().dimension(0); }
 long                         class_mps_site::get_chiL() const { return get_M_bare().dimension(1); }
@@ -151,9 +154,11 @@ void   class_mps_site::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> 
 
 void   class_mps_site::set_truncation_error(double error) { truncation_error = error; }
 void   class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
-double class_mps_site::get_truncation_error() const { return truncation_error; }
-double class_mps_site::get_truncation_error_LC() const { return truncation_error_LC; }
-
+void   class_mps_site::set_label(const std::string & label_){label = label_;}
+void   class_mps_site::unset_LC() {
+    LC.reset();
+    MC.reset();
+}
 void class_mps_site::merge_mps(const class_mps_site &other) {
     // This operation is done when merging mps after an svd split, for instance
     if(get_position() != other.get_position())
