@@ -134,6 +134,14 @@ long class_state_finite::find_largest_chi() const {
 }
 
 int  class_state_finite::get_direction() const { return direction; }
+std::vector<std::string> class_state_finite::get_labels() const{
+    std::vector<std::string> labels;
+    labels.reserve(get_length());
+    for(auto && mps : mps_sites) labels.emplace_back(mps->get_label());
+    return labels;
+}
+
+
 void class_state_finite::flip_direction() { direction *= -1; }
 
 Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
