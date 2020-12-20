@@ -72,8 +72,8 @@ void class_state_infinite::initialize(ModelType model_type) {
     M.setZero();
     M(0, 0, 0) = 1;
     L.setConstant(1.0);
-    MPS_A = std::make_unique<class_mps_site>(M, L, 0);
-    MPS_B = std::make_unique<class_mps_site>(M, L, 1);
+    MPS_A = std::make_unique<class_mps_site>(M, L, 0, 0, "A");
+    MPS_B = std::make_unique<class_mps_site>(M, L, 1, 0, "B");
     MPS_A->set_LC(L);
 }
 
@@ -324,9 +324,9 @@ void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eig
 }
 void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC,
                                    const Eigen::Tensor<Scalar, 3> &MB, const Eigen::Tensor<Scalar, 1> &LB) {
-    MPS_A->set_mps(MA, LA);
+    MPS_A->set_mps(MA, LA, 0, "A");
     MPS_A->set_LC(LC);
-    MPS_B->set_mps(MB, LB);
+    MPS_B->set_mps(MB, LB, 0, "B");
     clear_cache();
 }
 

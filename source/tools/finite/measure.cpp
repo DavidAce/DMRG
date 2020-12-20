@@ -59,6 +59,11 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     double norm;
     if(state.is_normalized_on_all_sites()) {
         const auto  pos  = state.get_position();
+        if (pos == state.get_length()-1){
+            // We know the current position is an "A" matrix, so the norm must be what's left in LC.
+            Eigen::Tensor<Scalar,0>  LCsum = state.get_mps_site(pos).get_LC().square().sum(Textra::array1{0});
+            return std::abs(LCsum(0));
+        }
         const auto &mpsL = state.get_mps_site(pos);
         const auto &mpsR = state.get_mps_site(pos + 1);
         tools::log->trace("Measuring norm using center sites [{},{}]", pos, pos + 1);

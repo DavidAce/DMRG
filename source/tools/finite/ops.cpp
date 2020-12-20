@@ -77,7 +77,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
                 .contract(state.mps_sites.front()->get_M_bare(), Textra::idx({0}, {1})) // Contract with A which already has the mpo on it
                 .shuffle(Textra::array3{1, 0, 2});                                      // Shuffle back to convention
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
-        state.mps_sites.front()->set_mps(M_temp, one, 0);
+        state.mps_sites.front()->set_mps(M_temp, one, 0,"A");
     }
     {
         /*
@@ -100,7 +100,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
                                               .contract(state.mps_sites.back()->get_M_bare(), Textra::idx({0}, {2}))
                                               .shuffle(Textra::array3{1, 2, 0});
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
-        state.mps_sites.back()->set_mps(M_temp, one, 0);
+        state.mps_sites.back()->set_mps(M_temp, one, 0, "B");
     }
 
 
