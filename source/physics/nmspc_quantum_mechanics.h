@@ -51,17 +51,19 @@ namespace qm{
     }
 
     namespace timeEvolution{
-        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
-        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
-        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
-        extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(cplx t, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
         extern std::vector<Eigen::Tensor<Scalar,2>> compute_G(cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
     }
 
     namespace lbit{
-        extern std::vector<Eigen::Tensor<cplx,2>> get_unitary_twosite_operators(size_t sites, double fmix);
-        extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams);
-        extern std::vector<Eigen::Tensor<Scalar,2>> get_3site_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site);
+        extern std::vector<qm::Gate> get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite);
+        extern Eigen::Tensor<Scalar,2> get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar,2> &hamiltonian);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_unitary_twosite_operators(size_t sites, double fmix);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams);
+        extern std::vector<Eigen::Tensor<Scalar,2>> get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site);
         extern std::vector<Eigen::Tensor<Scalar,4>> get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<Scalar,4>> &mpos);
 
     }

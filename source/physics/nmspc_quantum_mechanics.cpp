@@ -158,28 +158,28 @@ namespace qm::SpinOne {
 
 namespace qm::timeEvolution {
 
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
         auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
         auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
         return
             {
-                Textra::MatrixToTensor((t * h_evn_matrix).exp()),
-                Textra::MatrixToTensor((t * h_odd_matrix).exp())
+                Textra::MatrixToTensor((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
+                Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
             };
     }
 
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
         auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
         auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
         return
         {
-            Textra::MatrixToTensor((t * h_evn_matrix / 2.0).exp()),
-            Textra::MatrixToTensor((t * h_odd_matrix).exp()),
-            Textra::MatrixToTensor((t * h_evn_matrix / 2.0).exp())
+            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp()),
+            Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp()),
+            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp())
         };
     }
 
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
+    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
     /*!
      * Implementation based on
      * Janke, W., & Sauer, T. (1992).
@@ -198,27 +198,27 @@ namespace qm::timeEvolution {
         double alph2 = (1.0 - cbrt2) / 2.0 * beta1;
 
         std::vector<Eigen::Tensor<Scalar,2>> temp;
-        temp.emplace_back(Textra::MatrixToTensor((alph1 * t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta1 * t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph2 * t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta2 * t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph2 * t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta1 * t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph1 * t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph1 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta1 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph2 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta2 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph2 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((beta1 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::MatrixToTensor((alph1 * imn * delta_t * h_evn_matrix).exp()));
         return temp;
     }
 
-    std::vector<Eigen::Tensor<Scalar, 2>> get_twosite_time_evolution_operators(std::complex<double> t, size_t susuki_trotter_order,
+    std::vector<Eigen::Tensor<Scalar, 2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order,
                                                                                   const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
      */
     {
         switch(susuki_trotter_order) {
-            case 1:  return Suzuki_Trotter_1st_order(t, h_evn, h_odd);
-            case 2:  return Suzuki_Trotter_2nd_order(t, h_evn, h_odd);
-            case 4:  return Suzuki_Trotter_4th_order(t, h_evn, h_odd);
-            default: return Suzuki_Trotter_2nd_order(t, h_evn, h_odd);
+            case 1:  return Suzuki_Trotter_1st_order(delta_t, h_evn, h_odd);
+            case 2:  return Suzuki_Trotter_2nd_order(delta_t, h_evn, h_odd);
+            case 4:  return Suzuki_Trotter_4th_order(delta_t, h_evn, h_odd);
+            default: return Suzuki_Trotter_2nd_order(delta_t, h_evn, h_odd);
         }
     }
 
@@ -239,6 +239,8 @@ namespace qm::timeEvolution {
     @endverbatim
     */
     {
+        tools::log->warn("compute_G(...): Convention has changed: delta_t, or a, are now multiplied by [-i] in exponentials."
+                         " This function may not have been adjusted to the new convention");
         return get_twosite_time_evolution_operators(a, susuki_trotter_order, h_evn, h_odd);
     }
 
@@ -309,7 +311,27 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
     return unitaries;
 }
 
-std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_twosite_time_evolution_operators(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams){
+
+
+Eigen::Tensor<Scalar,2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar,2> &H){
+    // Given a matrix H, this returns exp(delta_t * H)
+    // For time evolution, just make sure delta_t = -i*d,  where d is a (small) real positive number.
+    return Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(H)).exp());
+}
+
+
+std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite){
+    std::vector<Gate> time_evolution_gates;
+    time_evolution_gates.reserve(hams_nsite.size());
+    for(auto & h : hams_nsite ) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
+    for(auto & t : time_evolution_gates ) if(not t.isUnitary()) {
+            std::cout << t.op << std::endl;
+            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary", t.pos)); }
+    return time_evolution_gates;
+}
+
+
+std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_2site){
     // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
     //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
     // without passing through the Suzuki-Trotter decomposition.

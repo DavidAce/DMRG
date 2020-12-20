@@ -103,14 +103,18 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::store_wavefn" , fdmrg::store_wavefn);
 
     //Parameters controlling finite-LBIT
-    dmrg_config.load_parameter("flbit::on"           , flbit::on);
-    dmrg_config.load_parameter("flbit::max_iters"    , flbit::max_iters);
-    dmrg_config.load_parameter("flbit::min_iters"    , flbit::min_iters);
-    dmrg_config.load_parameter("flbit::chi_lim_max"  , flbit::chi_lim_max);
-    dmrg_config.load_parameter("flbit::chi_lim_grow" , flbit::chi_lim_grow);
-    dmrg_config.load_parameter("flbit::chi_lim_init" , flbit::chi_lim_init);
-    dmrg_config.load_parameter("flbit::print_freq "  , flbit::print_freq);
-    dmrg_config.load_parameter("flbit::store_wavefn" , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::on"                      , flbit::on);
+    dmrg_config.load_parameter("flbit::max_iters"               , flbit::max_iters);
+    dmrg_config.load_parameter("flbit::min_iters"               , flbit::min_iters);
+    dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
+    dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
+    dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
+    dmrg_config.load_parameter("flbit::time_step_init_real"     , flbit::time_step_init_real);
+    dmrg_config.load_parameter("flbit::time_step_init_imag"     , flbit::time_step_init_imag);
+    dmrg_config.load_parameter("flbit::time_step_growth_factor" , flbit::time_step_growth_factor);
+    dmrg_config.load_parameter("flbit::time_limit"              , flbit::time_limit);
+    dmrg_config.load_parameter("flbit::print_freq "             , flbit::print_freq);
+    dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                     , xdmrg::on);
@@ -141,15 +145,16 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
 
 
     //Parameters controlling imaginary TEBD (Zero temperature)
-    dmrg_config.load_parameter("itebd::on"            , itebd::on       );
-    dmrg_config.load_parameter("itebd::max_iters"     , itebd::max_iters);
-    dmrg_config.load_parameter("itebd::delta_t0"      , itebd::delta_t0  );
-    dmrg_config.load_parameter("itebd::delta_tmin"    , itebd::delta_tmin);
-    dmrg_config.load_parameter("itebd::suzuki_order"  , itebd::suzuki_order);
-    dmrg_config.load_parameter("itebd::chi_lim_max"   , itebd::chi_lim_max  );
-    dmrg_config.load_parameter("itebd::chi_lim_grow"  , itebd::chi_lim_grow);
-    dmrg_config.load_parameter("itebd::chi_lim_init"  , itebd::chi_lim_init);
-    dmrg_config.load_parameter("itebd::print_freq"    , itebd::print_freq);
+    dmrg_config.load_parameter("itebd::on"                  , itebd::on       );
+    dmrg_config.load_parameter("itebd::max_iters"           , itebd::max_iters);
+    dmrg_config.load_parameter("itebd::time_step_init_real" , itebd::time_step_init_real  );
+    dmrg_config.load_parameter("itebd::time_step_init_imag" , itebd::time_step_init_imag  );
+    dmrg_config.load_parameter("itebd::time_step_min"       , itebd::time_step_min);
+    dmrg_config.load_parameter("itebd::suzuki_order"        , itebd::suzuki_order);
+    dmrg_config.load_parameter("itebd::chi_lim_max"         , itebd::chi_lim_max  );
+    dmrg_config.load_parameter("itebd::chi_lim_grow"        , itebd::chi_lim_grow);
+    dmrg_config.load_parameter("itebd::chi_lim_init"        , itebd::chi_lim_init);
+    dmrg_config.load_parameter("itebd::print_freq"          , itebd::print_freq);
 
     //Profiling
     dmrg_config.load_parameter("profiling::on"        , profiling::on        );

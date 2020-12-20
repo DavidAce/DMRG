@@ -55,10 +55,10 @@ void tools::infinite::io::h5table::save_measurements(h5pp::File &h5ppFile, const
     measurement_entry.bond_dimension_maximum = status.chi_lim_max;
     measurement_entry.entanglement_entropy   = tools::infinite::measure::entanglement_entropy(state);
     measurement_entry.norm                   = tools::infinite::measure::norm(*tensors.state);
-    if(status.delta_t == 0) {
-        // MPO calculations do not make sense for iTEBD and delta_t != 0 on iTEBD.
+    if(std::abs(status.delta_t) == 0) {
+        // MPO calculations do not make sense for iTEBD, and we know delta_t != 0 on iTEBD.
         measurement_entry.energy_mpo          = tools::infinite::measure::energy_mpo(tensors);
-        measurement_entry.energy_per_site_mpo          = tools::infinite::measure::energy_per_site_mpo(tensors);
+        measurement_entry.energy_per_site_mpo = tools::infinite::measure::energy_per_site_mpo(tensors);
         measurement_entry.energy_variance_mpo = tools::infinite::measure::energy_variance_mpo(tensors);
         measurement_entry.energy_variance_per_site_mpo = tools::infinite::measure::energy_variance_per_site_mpo(tensors);
     }

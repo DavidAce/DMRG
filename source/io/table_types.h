@@ -95,7 +95,7 @@ class h5pp_table_measurements_infinite {
         double   truncation_error;
         double   wall_time;
         double   phys_time;
-        double   time_step; // Only used in itebd
+        std::complex<double> time_step;
     };
 
     h5pp_table_measurements_infinite() { register_table_type(); }
@@ -122,7 +122,7 @@ class h5pp_table_measurements_infinite {
         H5Tinsert(h5_type, "truncation_error", HOFFSET(table, truncation_error), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), h5pp::type::compound::H5T_COMPLEX_DOUBLE);
     }
 };
 
@@ -468,7 +468,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time", HOFFSET(table, algo_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "delta_t", HOFFSET(table, delta_t), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "delta_t", HOFFSET(table, delta_t), h5pp::type::compound::H5T_COMPLEX_DOUBLE);
         H5Tinsert(h5_type, "simulation_has_stuck_for", HOFFSET(table, algorithm_has_stuck_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "entanglement_saturated_for", HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_mpo_saturated_for", HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);

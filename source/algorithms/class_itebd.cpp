@@ -25,7 +25,7 @@ void class_itebd::run_preprocessing() {
     tools::common::profile::prof[algo_type]["t_pre"]->tic();
     init_bond_dimension_limits();
     randomize_model(); // First use of random!
-    status.delta_t = settings::itebd::delta_t0;
+    status.delta_t = std::complex<double>(settings::itebd::time_step_init_real,settings::itebd::time_step_init_imag);
     h_evn       = tensors.model->get_2site_ham_AB();
     h_odd       = tensors.model->get_2site_ham_BA();
 
@@ -39,7 +39,6 @@ void class_itebd::run_simulation() {
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(status.iter < settings::itebd::max_iters and not status.algorithm_has_converged) {
         single_TEBD_step();
-        status.phys_time += status.delta_t;
         write_to_file();
         copy_from_tmp();
         print_status_update();
@@ -66,6 +65,7 @@ void class_itebd::single_TEBD_step() {
         tensors.merge_twosite_tensor(twosite_tensor,status.chi_lim);
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
+    status.phys_time += std::abs(status.delta_t);
     tensors.clear_measurements();
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
@@ -86,11 +86,11 @@ void class_itebd::check_convergence() {
 }
 
 void class_itebd::check_convergence_time_step() {
-    if(status.delta_t <= settings::itebd::delta_tmin) {
+    if(std::abs(status.delta_t) <= settings::itebd::time_step_min) {
         status.time_step_has_converged = true;
     } else if(status.chi_lim_has_reached_chi_max and status.entanglement_has_converged) {
-        status.delta_t                  = std::max(settings::itebd::delta_tmin, status.delta_t * 0.5);
-        unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(-status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+        status.delta_t                  = std::max(settings::itebd::time_step_min, std::abs(status.delta_t) * 0.5);
+        unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);
         clear_convergence_status();
     }
