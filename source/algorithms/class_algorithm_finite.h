@@ -64,7 +64,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();
-    void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
+    void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         randomize_model();

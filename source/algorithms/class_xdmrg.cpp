@@ -259,8 +259,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    // On the zeroth iteration, the rest of the chain is probably just randomized, so don't
-    // focus on growing the bond dimension yet.
+    // On the zeroth iteration, the rest of the chain is probably just randomized, so don't focus on growing the bond dimension yet.
     if(status.iter == 0) { status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init()); }
 
     // If early in the simulation, and the bond dimension is small enough we use subspace optimization

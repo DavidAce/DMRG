@@ -17,11 +17,11 @@ class class_mps_site {
     std::optional<Eigen::Tensor<Scalar, 1>>         L                   = std::nullopt; /*!< \f$\Lambda\f$*/
     std::optional<Eigen::Tensor<Scalar, 1>>         LC                  = std::nullopt; /*!< \f$\Lambda_C\f$ Center lambda, if this is a center matrix*/
     mutable std::optional<Eigen::Tensor<Scalar, 3>> MC                  = std::nullopt;
-    std::optional<size_t>                           position            = std::nullopt;
+    std::optional<long>                             position            = std::nullopt;
     double                                          truncation_error    = 0;
     double                                          truncation_error_LC = 0;
     std::string                                     label;
-
+    mutable std::optional<std::size_t>              unique_id;
     mutable std::optional<Eigen::Tensor<Scalar, 3>> U_stash                  = std::nullopt; /*!< \f$U\f$ A "U" matrix from SVD stored temporarily  */
     mutable std::optional<Eigen::Tensor<Scalar, 1>> S_stash                  = std::nullopt; /*!< \f$S\f$ A "S" matrix from SVD stored temporarily  */
     mutable std::optional<Eigen::Tensor<Scalar, 3>> V_stash                  = std::nullopt; /*!< \f$V\f$ A "V" matrix from SVD stored temporarily  */
@@ -60,7 +60,8 @@ class class_mps_site {
     [[nodiscard]] long                            spin_dim() const;
     [[nodiscard]] long                            get_chiL() const;
     [[nodiscard]] long                            get_chiR() const;
-    [[nodiscard]] size_t                          get_position() const;
+
+    template<typename T = size_t>  [[nodiscard]] T get_position() const;
 
     void set_M(const Eigen::Tensor<Scalar, 3> &M_);
     void set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
@@ -69,7 +70,7 @@ class class_mps_site {
     void set_truncation_error(double error);
     void set_truncation_error_LC(double error);
     void set_label(const std::string &label_);
-    void set_position(size_t position_);
+    void set_position(long position_);
     void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string & label_);
 
     void unset_LC();
@@ -78,13 +79,20 @@ class class_mps_site {
     void apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo);
 
     void stash_U(const Eigen::Tensor<Scalar, 3> &U) const;
-    void stash_V(const Eigen::Tensor<Scalar, 3> &V) const;
     void stash_S(const Eigen::Tensor<Scalar, 1> &S, double error) const;
     void stash_S(const std::pair<Eigen::Tensor<Scalar, 1>, double> &S_and_error) const;
+    void stash_V(const Eigen::Tensor<Scalar, 3> &V) const;
+
+    bool has_stash_U() const;
+    bool has_stash_S() const;
+    bool has_stash_V() const;
+
 
     Eigen::Tensor<Scalar, 3>                    unstash_U() const;
-    Eigen::Tensor<Scalar, 3>                    unstash_V() const;
     std::pair<Eigen::Tensor<Scalar, 1>, double> unstash_S() const;
+    Eigen::Tensor<Scalar, 3>                    unstash_V() const;
     void                                        unstash() const;
     void                                        merge_stash(const class_mps_site &other);
+
+    std::size_t get_unique_id() const;
 };

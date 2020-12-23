@@ -100,40 +100,55 @@ void class_algorithm_finite::run_postprocessing() {
     tools::common::profile::print_profiling_all();
 }
 
-void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {
+void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
     if(not num_moves.has_value()) {
-        if(tensors.active_sites.empty()) num_moves = 1ul;
-        else if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length()-1) or
-                (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)){
-                // In this case we have just updated from here to the edge. No point in keep updating
+        if(tensors.active_sites.empty()) num_moves = 1;
+        else{
+            long num_sites = static_cast<long>(tensors.active_sites.size());
+            if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length()-1) or
+               (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)){
+                // In this case we have just updated from here to the edge. No point in updating
                 // closer and closer to the edge. Just move until reaching the edge without flipping
                 // position_is_any_edge is defined as the outwards pointing edge, and it is important to reach that stage.
-                num_moves = std::max<size_t>(1ul,tensors.active_sites.size()-2); // to the edge without flipping
-        }else if(settings::strategy::multisite_move == MultisiteMove::ONE)
-            num_moves = 1ul;
-        else if(settings::strategy::multisite_move == MultisiteMove::MID) {
-            num_moves = std::max<size_t>(1, tensors.active_sites.size() / 2);
-        }else if (settings::strategy::multisite_move == MultisiteMove::MAX){
-            num_moves = std::max<size_t>(1, tensors.active_sites.size()-1); // Move so that the center point moves out of the active region
+                num_moves = std::max<long>(1,num_sites - 1); // to the edge without flipping
+            }else if(settings::strategy::multisite_move == MultisiteMove::ONE)
+                num_moves = 1ul;
+            else if(settings::strategy::multisite_move == MultisiteMove::MID) {
+                num_moves = std::max<long>(1, num_sites / 2);
+            }else if (settings::strategy::multisite_move == MultisiteMove::MAX){
+                num_moves = std::max<long>(1, num_sites - 1); // Move so that the center point moves out of the active region
+            }
+            else
+                throw std::logic_error("Could not determine how many sites to move");
         }
-        else
-            throw std::logic_error("Could not determine how many sites to move");
+
     }
 
+    if(num_moves <= 0) throw std::runtime_error(fmt::format("Cannot move center point {} sites", num_moves.value()));
     tools::log->debug("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
     tensors.clear_cache();
     tensors.clear_measurements();
     try {
-        for(size_t i = 0; i < num_moves.value(); i++) {
-            if(tensors.position_is_any_edge()) {
-                status.iter++;
-                has_projected = false;
-            }
+        long moves = 0;
+        while(num_moves > moves++){
+            if(chi_quench_steps > 0) chi_quench_steps--;
+            if(tensors.position_is_any_edge()) status.iter++;
 #pragma message "testing svd_threshold while moving"
             tensors.move_center_point(status.chi_lim,1e-14);
             status.step++;
-            if(chi_quench_steps > 0) chi_quench_steps--;
+            if(status.step > (1+status.iter) * tensors.get_length()) throw std::logic_error(fmt::format("steps {} > (1+iter) * L {}", status.step, (1+status.iter) * tensors.get_length() ));
+            if(tensors.position_is_any_edge()) break; // Do not go past the edge if you aren't there already!
         }
+//        for(long i = 0; i < num_moves.value(); i++) {
+//            if(tensors.position_is_any_edge()) {
+//                status.iter++;
+//                has_projected = false;
+//            }
+//#pragma message "testing svd_threshold while moving"
+//            tensors.move_center_point(status.chi_lim,1e-14);
+//            status.step++;
+//            if(chi_quench_steps > 0) chi_quench_steps--;
+//        }
         tools::finite::debug::check_integrity(*tensors.state, *tensors.model, *tensors.edges);
         tensors.active_sites.clear();
         tensors.state->active_sites.clear();
@@ -143,7 +158,7 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
         tools::finite::print::dimensions(tensors);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-    status.position  = tensors.state->get_position();
+    status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     has_projected    = false;
 }
@@ -246,7 +261,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
 
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
-    tensors.move_center_point_to_edge(chi_lim.value());
+//    tensors.move_center_point_to_edge(chi_lim.value());
     clear_convergence_status();
     status.reset();
     status.iter      = 0;
@@ -260,7 +275,6 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     stop_reason = StopReason::NONE;
     if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
-
     if(tensors.state->find_largest_chi() > chi_lim.value())
 //        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value());
         throw std::runtime_error(
@@ -274,6 +288,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
     tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors,status.energy_min_per_site,status.energy_max_per_site));
     tools::log->info("-- Energy variance          : {}", std::log10(tools::finite::measure::energy_variance(tensors)));
+    tools::log->info("-- State labels             : {}", tensors.state->get_labels());
     tools::common::profile::prof[algo_type]["t_rnd"]->toc();
 }
 

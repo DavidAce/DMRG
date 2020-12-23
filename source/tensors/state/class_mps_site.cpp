@@ -7,7 +7,7 @@
 // textra must appear first
 #include "class_mps_site.h"
 #include <tools/common/fmt.h>
-
+#include <math/hash.h>
 #include <utility>
 
 using Scalar = class_mps_site::Scalar;
@@ -59,7 +59,7 @@ const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(
-                fmt::format("class_mps_site::get_M(): M and LC dim mismatch: {} != {}", get_M_bare().dimension(2), LC.value().dimension(0)));
+                fmt::format("class_mps_site::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0), get_position()));
         if(MC) {
             if(MC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_M(): MC has size 0 at position {}", get_position()));
             return MC.value();
@@ -103,17 +103,23 @@ long                         class_mps_site::spin_dim() const { return get_M_bar
 long                         class_mps_site::get_chiL() const { return get_M_bare().dimension(1); }
 long                         class_mps_site::get_chiR() const { return get_M_bare().dimension(2); }
 
-void class_mps_site::set_position(const size_t position_) {
+void class_mps_site::set_position(const long position_) {
     position = position_;
     MC.reset();
 }
-size_t class_mps_site::get_position() const {
+
+template<typename T>
+T class_mps_site::get_position() const {
     if(position) {
-        return position.value();
+        return static_cast<T>(position.value());
     } else {
         throw std::runtime_error("class_mps_site::get_position(): Position hasn't been set on mps site.");
     }
 }
+template size_t class_mps_site::get_position<size_t>() const;
+template long class_mps_site::get_position<long>() const;
+
+
 
 void class_mps_site::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string & label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
@@ -128,7 +134,7 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
     if(position) {
         M = M_;
         MC.reset();
-
+        unique_id = std::nullopt;
     } else
         throw std::runtime_error("class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &): Can't set M: Position hasn't been set yet");
 }
@@ -136,6 +142,7 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
     if(position) {
         L                = L_;
         truncation_error = error;
+        unique_id = std::nullopt;
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
@@ -144,6 +151,8 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
         LC = LC_;
         MC.reset();
         truncation_error_LC = error;
+        unique_id = std::nullopt;
+        tools::log->trace("Setting LC on site {} | size {}", get_position(), LC->dimensions());
         set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
@@ -158,6 +167,8 @@ void   class_mps_site::set_label(const std::string & label_){label = label_;}
 void   class_mps_site::unset_LC() {
     LC.reset();
     MC.reset();
+    unique_id = std::nullopt;
+    tools::log->trace("Unset LC on site {}",get_position());
     if(label == "AC") label = "A";
 }
 void class_mps_site::merge_mps(const class_mps_site &other) {
@@ -198,6 +209,7 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
 }
 
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
+    tools::log->trace("Applying mpo (dims {}) at position {} | isCenter: {}", mpo.dimensions(),get_position(), isCenter());
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
     if(mpoDimL != mpoDimR) throw std::logic_error("Can't apply mpo's with different L/R dims: not implemented yet");
@@ -224,12 +236,17 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo) {
 }
 
 void class_mps_site::stash_U(const Eigen::Tensor<Scalar, 3> &U) const { U_stash = U; }
-void class_mps_site::stash_V(const Eigen::Tensor<Scalar, 3> &V) const { V_stash = V; }
 void class_mps_site::stash_S(const Eigen::Tensor<Scalar, 1> &S, double error) const {
     S_stash                  = S;
     truncation_error_S_stash = error;
 }
 void class_mps_site::stash_S(const std::pair<Eigen::Tensor<Scalar, 1>, double> &S_and_error) const { std::tie(S_stash, truncation_error_S_stash) = S_and_error; }
+
+void class_mps_site::stash_V(const Eigen::Tensor<Scalar, 3> &V) const { V_stash = V; }
+
+bool class_mps_site::has_stash_U() const{return U_stash.has_value();}
+bool class_mps_site::has_stash_S() const{return S_stash.has_value() and truncation_error_S_stash.has_value();}
+bool class_mps_site::has_stash_V() const{return V_stash.has_value();}
 
 Eigen::Tensor<Scalar, 3> class_mps_site::unstash_U() const {
     if(not U_stash) throw std::runtime_error(fmt::format("No U was found stashed at position {}", get_position()));
@@ -311,9 +328,17 @@ void class_mps_site::merge_stash(const class_mps_site &other){
 
         set_M(MU);
         set_LC(other.unstash_S());
-        set_label("AC");
-
-
     }else
         throw std::logic_error(fmt::format("Failed to merge stash: Wrong positions: this {} | other {}",get_position(),other.get_position()));
 }
+
+
+
+std::size_t class_mps_site::get_unique_id() const {
+    if(unique_id) return unique_id.value();
+    unique_id = hash::hash_buffer(get_M().data(), static_cast<size_t>(get_M().size()));
+    unique_id = hash::hash_buffer(get_L().data(), static_cast<size_t>(get_L().size()), unique_id.value());
+//    if(isCenter()) unique_id = hash::hash_buffer(get_LC().data(), static_cast<size_t>(get_LC().size()), unique_id.value());
+    return unique_id.value();
+}
+

@@ -102,6 +102,7 @@ void class_ising_tf_rf::build_mpo()
         print_parameter_values();
         throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
     }
+    unique_id = std::nullopt;
     build_mpo_squared();
 }
 
@@ -142,6 +143,8 @@ void class_ising_tf_rf::randomize_hamiltonian() {
     }
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
+    unique_id                        = std::nullopt;
+    unique_id_sq                     = std::nullopt;
 }
 
 void class_ising_tf_rf::set_coupling_damping(double alpha_) { alpha = alpha_; }
@@ -150,6 +153,8 @@ void class_ising_tf_rf::set_field_damping(double beta_) {
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
+        unique_id                                                                       = std::nullopt;
+        unique_id_sq                                                                    = std::nullopt;
     }
 }
 
@@ -175,6 +180,8 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
+        unique_id                                                                       = std::nullopt;
+        unique_id_sq                                                                    = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));

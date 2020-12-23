@@ -58,7 +58,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
     if(state.is_normalized_on_all_sites()) {
-        const auto  pos  = state.get_position();
+        const auto  pos  = state.get_position<size_t>();
         if (pos == state.get_length()-1){
             // We know the current position is an "A" matrix, so the norm must be what's left in LC.
             Eigen::Tensor<Scalar,0>  LCsum = state.get_mps_site(pos).get_LC().square().sum(Textra::array1{0});
@@ -66,7 +66,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
         }
         const auto &mpsL = state.get_mps_site(pos);
         const auto &mpsR = state.get_mps_site(pos + 1);
-        tools::log->trace("Measuring norm using center sites [{},{}]", pos, pos + 1);
+        tools::log->trace("Measuring norm using center sites [{},{}] with dimensions [{}, {}]", pos, pos + 1, mpsL.dimensions(), mpsR.dimensions());
         Eigen::Tensor<Scalar, 0> norm_contraction;
 
         norm_contraction.device(Textra::omp::getDevice()) = mpsL.get_M()
@@ -283,7 +283,6 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const class
         if(mps.isCenter()) truncation_errors.emplace_back(mps.get_truncation_error_LC());
     }
     return truncation_errors;
-    ;
 }
 
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
@@ -326,7 +325,7 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
     } else {
         const auto &mpo = model.get_multisite_mpo();
         const auto &env = edges.get_multisite_ene_blk();
-        tools::log->trace("Measuring energy");
+        tools::log->trace("Measuring energy on sites: model {} | edges {}", model.active_sites, edges.active_sites);
         tools::common::profile::get_default_prof()["t_ene"]->tic();
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         tools::common::profile::get_default_prof()["t_ene"]->toc();

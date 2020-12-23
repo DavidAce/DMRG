@@ -8,6 +8,8 @@
 /*! \brief Base environment class for environment blocks och type Left or Right corresponding to a single site.
  */
 
+class class_env_ene;
+class class_env_var;
 class class_mps_site;
 class class_mpo_site;
 
@@ -25,6 +27,10 @@ class class_env_base {
     std::optional<size_t>                     position = std::nullopt;
     std::string                               side;
     std::string                               tag;
+    mutable std::optional<std::size_t>        unique_id;
+    mutable std::optional<std::size_t>        unique_id_mps; // Unique identifiers of the neighboring site which are used to build this block
+    mutable std::optional<std::size_t>        unique_id_mpo; // Unique identifiers of the neighboring site which are used to build this block
+    mutable std::optional<std::size_t>        unique_id_env; // Unique identifiers of the neighboring site which are used to build this block
 
     public:
     class_env_base();
@@ -38,6 +44,7 @@ class class_env_base {
     explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
 
     void clear();
+
     void set_position(const size_t position_) { position = position_; }
     void assert_block() const;
     void assert_validity() const;
@@ -51,4 +58,9 @@ class class_env_base {
     [[nodiscard]] size_t                          get_sites() const;
 
     virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) = 0;
+
+    std::size_t get_unique_id() const;
+    std::optional<std::size_t> get_unique_id_env() const;
+    std::optional<std::size_t> get_unique_id_mps() const;
+    std::optional<std::size_t> get_unique_id_mpo() const;
 };

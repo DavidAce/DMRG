@@ -8,6 +8,9 @@
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
+#include <math/hash.h>
+#include <math/num.h>
+#include <config/debug.h>
 #include <utility>
 
 // We need to define the destructor and other special functions
@@ -50,6 +53,10 @@ class_env_base &class_env_base::operator=(const class_env_base &other) {
         position          = other.position;
         side              = other.side;
         tag               = other.tag;
+        unique_id         = other.unique_id;
+        unique_id_env     = other.unique_id_env;
+        unique_id_mps     = other.unique_id_mps;
+        unique_id_mpo     = other.unique_id_mpo;
     }
     assert_block();
     return *this;
@@ -138,7 +145,15 @@ void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::T
 void class_env_base::clear() {
     // Do not clear the empty edge
     assert_block();
-    if(sites > 0) block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+    if(sites > 0) {
+        block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+        tools::log->trace("Ejected env{} pos {}", side, get_position());
+        unique_id = std::nullopt;
+    }
+    unique_id_env = std::nullopt;
+    unique_id_mps = std::nullopt;
+    unique_id_mpo = std::nullopt;
+
 }
 
 const Eigen::Tensor<Scalar, 3> &class_env_base::get_block() const {
@@ -206,4 +221,24 @@ void class_env_base::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Ei
     }
     sites             = 0;
     edge_has_been_set = true;
+    unique_id         = std::nullopt;
+    unique_id_env     = std::nullopt;
+    unique_id_mps     = std::nullopt;
+    unique_id_mpo     = std::nullopt;
+}
+
+std::size_t class_env_base::get_unique_id() const{
+    if(unique_id) return unique_id.value();
+    unique_id = hash::hash_buffer(get_block().data(), static_cast<size_t>(get_block().size()));
+    return unique_id.value();
+}
+
+std::optional<std::size_t> class_env_base::get_unique_id_env() const{
+    return unique_id_env;
+}
+std::optional<std::size_t> class_env_base::get_unique_id_mps() const{
+    return unique_id_mps;
+}
+std::optional<std::size_t> class_env_base::get_unique_id_mpo() const{
+    return unique_id_mpo;
 }

@@ -5,33 +5,91 @@
 #include "class_env_var.h"
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
-
+#include <math/num.h>
+#include <config/debug.h>
 #include <utility>
 
 class_env_var::class_env_var(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO) : class_env_base(std::move(side_), MPS, MPO) {
+    tag = "var";
     set_edge_dims(MPS, MPO);
 }
 
-class_env_var class_env_var::enlarge(const class_mps_site &MPS, const class_mpo_site &MPO) {
-    if(MPS.get_position() != MPO.get_position()) throw std::logic_error("MPS and MPO not at the same position!");
+class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_site &mpo) const {
+    if(mps.get_position() != mpo.get_position()) throw std::logic_error("mps and mpo not at the same position!");
     class_env_var env = *this;
     if(env.sites == 0 and not env.edge_has_been_set) {
-        env.set_edge_dims(MPS, MPO);
-        env.position = MPS.get_position();
+        env.set_edge_dims(mps, mpo);
+        env.position = mps.get_position();
         return env;
     }
-    env.enlarge(MPS.get_M_bare(), MPO.MPO2().real().cast<Scalar>());
+    env.enlarge(mps.get_M_bare(), mpo.MPO2());
     if(env.side == "L") {
-        env.position = MPS.get_position() + 1;
+        env.position = mps.get_position() + 1;
     } else if(env.side == "R") {
-        env.position = MPS.get_position() - 1;
+        env.position = mps.get_position() - 1;
     } else {
         throw std::logic_error("Expected environment side L or R, got: " + side);
     }
-
+    env.tag           = "var";
+    env.unique_id_env = get_unique_id();
+    env.unique_id_mps = mps.get_unique_id();
+    env.unique_id_mpo = mpo.get_unique_id_sq();
     return env;
 }
 
+void class_env_var::refresh(const class_env_var & env, const class_mps_site &mps, const class_mpo_site &mpo) {
+    // If side == L, env,mps and mpo are all corresponding to the neighbor on the left
+    // If side == R, env,mps and mpo are all corresponding to the neighbor on the right
+    if(not num::all_equal(env.get_position(), mps.get_position(), mpo.get_position()))
+        throw std::logic_error(fmt::format("class_env_var::refresh(pos == {}): All positions are not equal: env {} | mps {} | mpo {}",
+                                           get_position(),env.get_position(), mps.get_position(), mpo.get_position()));
+
+    if(side == "L" and get_position() != mps.get_position()+1)
+        throw std::logic_error(fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(),side, get_position()-1));
+    if(side == "R" and get_position()+1 != mps.get_position())
+        throw std::logic_error(fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(),side, get_position()+1));
+
+    // We refresh this block if any of these conditions hold:
+    //   not has_block()
+    //   unique_id_env != env.unique_id;
+    //   unique_id_mps != mps.unique_id;
+    //   unique_id_mpo != mpo.unique_id_sq;
+
+    if(not has_block()){
+        tools::log->trace("Refreshing {} env{}({}): missing block",tag,side,get_position());
+        *this = env.enlarge(mps,mpo);
+        return;
+    }
+    bool refresh = false;
+    std::string reason;
+    if(env.get_unique_id() != unique_id_env){
+        refresh = true;
+        if constexpr (settings::debug){
+            reason.append(fmt::format("| env({}) {} !=",env.get_position(),env.get_unique_id()));
+            if(unique_id_env) reason.append(fmt::format(" {} ",unique_id_env.value()));
+        }
+    }
+    if(mps.get_unique_id() != unique_id_mps){
+        refresh = true;
+        if constexpr (settings::debug){
+            reason.append(fmt::format("| mps({}) {} !=",mps.get_position(),mps.get_unique_id()));
+            if(unique_id_mps) reason.append(fmt::format(" {} ", unique_id_mps.value()));
+        }
+    }
+    auto mpo_unique_id = tag == "ene" ? mpo.get_unique_id() : mpo.get_unique_id_sq();
+    if(mpo_unique_id != unique_id_mpo){
+        refresh = true;
+        if constexpr(settings::debug){
+            reason.append(fmt::format("| mpo({}) {} !=",mpo.get_position(),mpo_unique_id));
+            if(unique_id_mpo) reason.append(fmt::format(" {} ", unique_id_mpo.value()));
+        }
+
+    }
+    if(refresh){
+        if constexpr(settings::debug) tools::log->trace("Refreshing {} env{}({}): modified {}",tag,side,get_position(),reason);
+        *this = env.enlarge(mps,mpo);
+    }
+}
 
 void class_env_var::set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;

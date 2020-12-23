@@ -49,32 +49,37 @@ class class_tensors_finite {
     void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
 
     void                 assert_validity() const;
+
+    template<typename T = size_t> [[nodiscard]] T get_position() const;
+    template<typename T = size_t> [[nodiscard]] T get_length() const;
+
     [[nodiscard]] bool   is_real() const;
     [[nodiscard]] bool   has_nan() const;
-    [[nodiscard]] size_t get_length() const;
-    [[nodiscard]] size_t get_position() const;
+    [[nodiscard]] bool   has_center_point() const;
     [[nodiscard]] bool   position_is_the_middle() const;
     [[nodiscard]] bool   position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool   position_is_left_edge(size_t nsite = 2) const;
-    [[nodiscard]] bool   position_is_right_edge(size_t nsite = 2) const;
-    [[nodiscard]] bool   position_is_any_edge(size_t nsite = 2) const;
-    [[nodiscard]] bool   position_is_at(size_t pos) const;
+    [[nodiscard]] bool   position_is_left_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool   position_is_right_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool   position_is_any_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool   position_is_at(long pos) const;
+    [[nodiscard]] bool   position_is_at(long pos, int dir) const;
+    [[nodiscard]] bool   position_is_at(long pos, int dir, bool isCenter) const;
 
     void sync_active_sites();
-    void activate_sites(long threshold, size_t max_sites, size_t min_sites = 2);
+    void activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
     void activate_sites(const std::vector<size_t> &sites);
-    void activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 2);
+    void activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 1);
     long active_problem_size() const;
     void do_all_measurements() const;
     void move_center_point(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt, LogPolicy log_policy = LogPolicy::QUIET);
 
     void rebuild_edges();
-    void eject_all_edges();
-    void eject_inactive_edges();
-
+//    void eject_all_edges();
+//    void eject_inactive_edges();
+//    void eject_stale_edges();
     void clear_measurements() const;
     void clear_cache() const;
 };

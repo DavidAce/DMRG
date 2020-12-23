@@ -449,7 +449,7 @@ class h5pp_table_algorithm_status {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_INT64);
         H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);

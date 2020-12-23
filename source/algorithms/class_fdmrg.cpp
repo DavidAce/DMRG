@@ -121,7 +121,7 @@ void class_fdmrg::run_algorithm() {
     while(true) {
         single_fdmrg_step();
         // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance_per_site) {
+        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance) {
             tools::log->trace("Updating variance record holder");
             auto var = tools::finite::measure::energy_variance(tensors);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
@@ -152,15 +152,14 @@ void class_fdmrg::single_fdmrg_step() {
      * \fn void single_DMRG_step(std::string ritz)
      */
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
-
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
     Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
     if constexpr(settings::debug)
-        tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance_per_site(multisite_tensor, tensors)));
+        tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)));
 
     tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
     if constexpr(settings::debug)
-        tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)),
+        tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance(tensors)),
                           tools::finite::measure::truncation_errors_active(*tensors.state));
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();

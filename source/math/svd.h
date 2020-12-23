@@ -173,7 +173,7 @@ namespace svd {
              *          |                                |
              *     d^(N-1)=dL                           d=dR
              *
-             * Here V is an "M" matrix of type B = Gamma * Lambda
+             * Here V is an "M" matrix of type B
              *
              */
             if(tensor.dimension(0) % dR != 0) throw std::runtime_error("Tensor dim 0 is not divisible by the given spin dimension " + std::to_string(dR));
@@ -212,9 +212,10 @@ namespace svd {
              *
              * chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR
              *          |                                |
-             *     d^(N-1)=dL                           d=dR
+             *        dL=d                            dR=d^(N-1)
              *
-             * Here V is an "M" matrix of type B = Gamma * Lambda
+             * Here U is an "M" matrix of type A
+             * Here V is an "M" matrix of type B
              *
              */
             if(tensor.dimension(0) % dL != 0) throw std::runtime_error("Tensor dim 0 is not divisible by the given spin dimension " + std::to_string(dL));

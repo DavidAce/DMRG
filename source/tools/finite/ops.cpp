@@ -3,6 +3,7 @@
 //
 
 #include <config/nmspc_settings.h>
+#include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
@@ -42,32 +43,34 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
     }
     state.clear_measurements();
 
+    for(auto &&[pos,mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
 
-    auto mpo = mpos.begin();
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        state.get_mps_site(pos).apply_mpo(*mpo);
-        mpo++;
-    }
 
     // Take care of the edges. Apply the left and right MPO-edges on A's and B's
     // so the left- and right-most lambdas become ones.
     // Looking at the pictures, the A/B mps tensors have already been contracted with mpo's
     // in the for loop above, where their horizontal legs have been merged as well.
     // Hence, asking for get_M_bare() will get us the A/B with mpo's connected.
+
+    // Note:
+    // If M is an A then M_bare = L0*M,, and the mpo was applied on A.
+    // If M is an AC then M_bare = L0*M, (L1 = LC) and the mpo was applied on M_bare, LC dim increased by mpodim
+    // If M is a B then M_bare = M * L1, and there is no L0.
     {
         /*
-         *    |------ 0     1---[A]---2
-         *    |                  |
-         *    |                  0
-         *    |                  2
-         *    |                  |
-         *  [Ledge]--- 2   0---[mpo]---1
-         *    |                  |
-         *    |                  2
+         *    |------ 0   0---[L0]---1   1---[M]---2   0---[L1]---1
+         *    |                               |
+         *    |                               0
+         *    |                               2
+         *    |                               |
+         *  [Ledge]--- 2                0---[mpo]---1
+         *    |                               |
+         *    |                               2
+         *    |
          *    |
          *    |------ 1
          */
-
+        auto                     label   = state.mps_sites.front()->get_label();
         long                     mpoDimL = mpos.front().dimension(0);
         auto                     Ldim    = Ledge.dimension(0);
         Eigen::Tensor<Scalar, 3> M_temp =
@@ -77,30 +80,42 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
                 .contract(state.mps_sites.front()->get_M_bare(), Textra::idx({0}, {1})) // Contract with A which already has the mpo on it
                 .shuffle(Textra::array3{1, 0, 2});                                      // Shuffle back to convention
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
-        state.mps_sites.front()->set_mps(M_temp, one, 0,"A");
+        state.mps_sites.front()->set_mps(M_temp, one, 0,label);
     }
     {
+        // Note:
+        // If M is an A then M_bare = (L-1)*M, and the mpo was applied on A (this should never happen)
+        // If M is an AC then M_bare = (L-1)*M, (L = LC) and the mpo was applied on M_bare, and LC dim incresed by mpoDim
+        // If M is a B then M_bare = M * L (L-1 belongs on the site to the right), and the mpo was applied on M_bare
+
+
         /*
-         *     1---[B]---2   0 ------|
-         *          |                |
-         *          0                |
-         *          2                |
-         *          |                |
-         *    0---[mpo]---1  2 ---[Redge]
-         *          |                |
-         *          2                |
-         *                           |
-         *                   1 ------|
+         *  0---[L-1]---1  1---[M]---2  0---[L]---1   0 ------|
+         *                      |                             |
+         *                      0                             |
+         *                      2                             |
+         *                      |                             |
+         *                0---[mpo]---1               2 ---[Redge]
+         *                      |                             |
+         *                      2                             |
+         *                                                    |
+         *                                            1 ------|
          */
 
-        long                     mpoDimR = mpos.back().dimension(1);
-        auto                     Rdim    = Redge.dimension(0);
-        Eigen::Tensor<Scalar, 3> M_temp  = Redge.shuffle(Textra::array3{0, 2, 1})
+        auto                     label    = state.mps_sites.back()->get_label();
+        bool                     isCenter = state.mps_sites.back()->isCenter();
+        long                     mpoDimR  = mpos.back().dimension(1);
+        auto                     Rdim     = Redge.dimension(0);
+        Eigen::Tensor<Scalar, 3> M_temp   = Redge.shuffle(Textra::array3{0, 2, 1})
                                               .reshape(Textra::array2{Rdim * mpoDimR, Rdim})
                                               .contract(state.mps_sites.back()->get_M_bare(), Textra::idx({0}, {2}))
                                               .shuffle(Textra::array3{1, 2, 0});
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
-        state.mps_sites.back()->set_mps(M_temp, one, 0, "B");
+        if(isCenter) {
+            state.mps_sites.back()->set_M(M_temp);
+            state.mps_sites.back()->set_LC(one,0);
+        } else
+            state.mps_sites.back()->set_mps(M_temp, one, 0, label);
     }
 
 

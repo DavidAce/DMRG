@@ -8,6 +8,7 @@ enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode { EIGEN, LAPACKE };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
+enum class EdgeStatus {STALE, FRESH};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
@@ -131,6 +132,10 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
         if(item == ModelType::ising_sdual)                              return "ising_sdual";
         if(item == ModelType::lbit)                                     return "lbit";
+    }
+    if constexpr(std::is_same_v<T, EdgeStatus>) {
+        if(item == EdgeStatus::STALE)                                   return "STALE";
+        if(item == EdgeStatus::FRESH)                                   return "FRESH";
     }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == StopReason::SUCCEEDED)                               return "SUCCEEDED";
@@ -301,6 +306,10 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;
         if(item == "ising_sdual")                           return ModelType::ising_sdual;
         if(item == "lbit")                                  return ModelType::lbit;
+    }
+    if constexpr(std::is_same_v<T, EdgeStatus>) {
+        if(item == "STALE")                                 return EdgeStatus::STALE ;
+        if(item == "FRESH")                                 return EdgeStatus::FRESH ;
     }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == "SUCCEEDED")                             return StopReason::SUCCEEDED;
