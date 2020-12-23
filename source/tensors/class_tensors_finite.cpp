@@ -48,15 +48,17 @@ class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite
 }
 
 void class_tensors_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
+    tools::log->trace("Initializing tensors with {} sites at position {}", model_size,position);
     state->initialize(model_type, model_size, position);
     model->initialize(model_type, model_size);
     edges->initialize(model_size);
+    tools::log->trace("Initializing tensors with {} sites at position {} ... OK", state->get_length(),state->get_position());
 }
 
 void class_tensors_finite::randomize_model() {
     model->randomize();
     model->rebuild_mpo_squared();
-    eject_all_edges();
+//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -76,7 +78,7 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     if(has_normalized) {
         state->clear_cache();
         clear_measurements();
-        eject_all_edges();
+//        eject_all_edges();
         rebuild_edges();
         assert_validity();
     }
@@ -96,7 +98,7 @@ void class_tensors_finite::perturb_model_params(double coupling_ptb, double fiel
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
     model->rebuild_mpo_squared();
     model->assert_validity();
-    eject_all_edges();
+//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -121,7 +123,7 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
     model->set_reduced_energy_per_site(site_energy.value());
     model->rebuild_mpo_squared();
     model->assert_validity();
-    eject_all_edges();
+//    eject_all_edges();
     rebuild_edges();
 
     if constexpr(settings::debug) {
@@ -157,7 +159,7 @@ void class_tensors_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
     model->clear_cache();
     model->rebuild_mpo_squared(svdMode);
     model->assert_validity();
-    eject_all_edges();
+//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -167,7 +169,7 @@ void class_tensors_finite::damp_model_disorder(double coupling_damp, double fiel
     model->damp_model_disorder(coupling_damp, field_damp);
     model->rebuild_mpo_squared();
     model->assert_validity();
-    eject_all_edges();
+//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -227,20 +229,29 @@ void class_tensors_finite::assert_validity() const {
     edges->assert_validity();
 }
 
-size_t class_tensors_finite::get_length() const {
-    if(not num::all_equal(state->get_length(), model->get_length(), edges->get_length()))
-        throw std::runtime_error("All lengths are not equal: state {} | model {} | edges {}");
-    return state->get_length();
+bool class_tensors_finite::has_center_point() const { return state->has_center_point();}
+
+template<typename T>
+T class_tensors_finite::get_length() const {
+    if(not num::all_equal(state->get_length<size_t>(), model->get_length(), edges->get_length()))
+        throw std::runtime_error(fmt::format("All lengths are not equal: state {} | model {} | edges {}",
+                                             state->get_length<size_t>(), model->get_length(), edges->get_length()));
+    return state->get_length<T>();
 }
 
-size_t class_tensors_finite::get_position() const { return state->get_position(); }
+template<typename T>
+T class_tensors_finite::get_position() const { return state->get_position<T>(); }
+template size_t class_tensors_finite::get_position<size_t>() const;
+template long class_tensors_finite::get_position<long>() const;
 
 bool class_tensors_finite::position_is_the_middle() const { return state->position_is_the_middle(); }
 bool class_tensors_finite::position_is_the_middle_any_direction() const { return state->position_is_the_middle_any_direction(); }
 bool class_tensors_finite::position_is_left_edge(size_t nsite) const { return state->position_is_left_edge(nsite); }
 bool class_tensors_finite::position_is_right_edge(size_t nsite) const { return state->position_is_right_edge(nsite); }
 bool class_tensors_finite::position_is_any_edge(size_t nsite) const { return state->position_is_any_edge(nsite); }
-bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
+bool class_tensors_finite::position_is_at(long pos) const { return state->position_is_at(pos); }
+bool class_tensors_finite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
+bool class_tensors_finite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
 void class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
 #pragma message "trying single site move"
     tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_threshold);
@@ -252,18 +263,21 @@ void class_tensors_finite::move_center_point_to_middle(long chi_lim, std::option
     tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_threshold);
 }
 
-void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold) {
+void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold, LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position(), chi_lim, svd_threshold);
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_threshold,LogPolicy::NORMAL);
     normalize_state(chi_lim, svd_threshold, NormPolicy::IFNEEDED);
+//    eject_all_edges();
+    rebuild_edges();
 }
 
 void class_tensors_finite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }
-void class_tensors_finite::eject_all_edges() { edges->eject_edges_all(); }
-void class_tensors_finite::eject_inactive_edges() { edges->eject_edges_inactive(); }
+//void class_tensors_finite::eject_all_edges() { edges->eject_edges_all(); }
+//void class_tensors_finite::eject_inactive_edges() { edges->eject_edges_inactive(); }
+//void class_tensors_finite::eject_stale_edges() { edges->eject_edges_stale(state->get_edge_ene_status(), state->get_edge_var_status()); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
     measurements = tensors_measure_finite();

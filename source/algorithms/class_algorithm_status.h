@@ -9,7 +9,7 @@ class class_algorithm_status {
     // common variables
     size_t iter                              = 0; // In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
     size_t step                              = 0; // How many dmrg steps have been taken (each step may cover multiple sites)
-    size_t position                          = 0;
+    long   position                          = 0;
     int    direction                         = 1;
     size_t num_resets                        = 0;
     size_t min_iters                         = 0;

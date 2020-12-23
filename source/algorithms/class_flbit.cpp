@@ -120,12 +120,12 @@ void class_flbit::run_preprocessing() {
     Eigen::Tensor<Scalar,3>   xminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("x", -1).normalized(), 2, 1, 1);
     Eigen::Tensor<Scalar,3>   yminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("y", -1).normalized(), 2, 1, 1);
     Eigen::Tensor<Scalar,3>   zminus_spinor  = Textra::MatrixToTensor(tools::finite::mps::internal::get_spinor("z", -1).normalized(), 2, 1, 1);
-    tensors.state->get_mps_site(0).set_M(xplus_spinor);
-    tensors.state->get_mps_site(1).set_M(xminus_spinor);
-    tensors.state->get_mps_site(2).set_M(xplus_spinor);
-    tensors.state->get_mps_site(3).set_M(xminus_spinor);
-    tensors.state->get_mps_site(4).set_M(xplus_spinor);
-    tensors.state->get_mps_site(5).set_M(xminus_spinor);
+    tensors.state->get_mps_site<size_t>(0).set_M(xplus_spinor);
+    tensors.state->get_mps_site<size_t>(1).set_M(xminus_spinor);
+    tensors.state->get_mps_site<size_t>(2).set_M(xplus_spinor);
+    tensors.state->get_mps_site<size_t>(3).set_M(xminus_spinor);
+    tensors.state->get_mps_site<size_t>(4).set_M(xplus_spinor);
+    tensors.state->get_mps_site<size_t>(5).set_M(xminus_spinor);
     tools::finite::print::model(*tensors.model);
     status.delta_t = std::complex<double>(settings::flbit::time_step_init_real,settings::flbit::time_step_init_imag);
     if(settings::model::model_size <= 10){

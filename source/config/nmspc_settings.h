@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <config/enums.h>
 #include <string>
 #include <vector>
-
+#include "enums.h"
+#include "debug.h"
 /*!
  *  \namespace settings
  *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
@@ -85,14 +85,6 @@ namespace settings {
         inline size_t verbosity  = 2;                              /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline bool   timestamp  = false;                          /*!< Whether to put a timestamp on console outputs */
     }
-
-    #ifdef NDEBUG
-        inline constexpr bool debug = false;
-    #else
-        inline constexpr bool debug = true;
-    #endif
-
-
 
     //Parameters for the model Hamiltonian
     namespace model {

@@ -35,6 +35,8 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     direction(other.direction),
     cache(other.cache),
     tag_normalized_sites(other.tag_normalized_sites),
+//    tag_edge_ene_status(other.tag_edge_ene_status),
+//    tag_edge_var_status(other.tag_edge_var_status),
     active_sites(other.active_sites),
     measurements(other.measurements)
 {
@@ -49,6 +51,8 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         direction                = other.direction;
         cache                    = other.cache;
         tag_normalized_sites     = other.tag_normalized_sites;
+//        tag_edge_ene_status      = other.tag_edge_ene_status;
+//        tag_edge_var_status      = other.tag_edge_var_status;
         active_sites             = other.active_sites;
         measurements             = other.measurements;
         mps_sites.clear();
@@ -90,47 +94,37 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
     if(get_position() != position) throw std::logic_error("Initialized state at the wrong position");
     tag_normalized_sites = std::vector<bool>(model_size, false);
+//    tag_edge_ene_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
+//    tag_edge_var_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
 }
 
 void class_state_finite::set_positions() {
-    size_t pos = 0;
+    long pos = 0;
     for(auto &mps : mps_sites) mps->set_position(pos++);
 }
 
-size_t class_state_finite::get_length() const { return mps_sites.size(); }
-size_t class_state_finite::get_position() const {
-    std::optional<size_t> pos;
+template<typename T> T class_state_finite::get_length() const { return static_cast<T>(mps_sites.size()); }
+template size_t class_state_finite::get_length<size_t>() const;
+template long class_state_finite::get_length<long>() const;
+
+template<typename T>
+T class_state_finite::get_position() const {
+    std::optional<T> pos;
     for(const auto &mps : mps_sites)
         if(mps->isCenter()) {
             if(pos) throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos.value(), mps->get_position()));
-            pos          = mps->get_position();
+            pos          = mps->get_position<T>();
         }
-    if(not pos) throw std::logic_error("Could not find center");
-    return pos.value();
-
-//
-//
-//    size_t pos          = 0;
-//    bool   found_center = false;
-//    for(const auto &mps : mps_sites)
-//        if(mps->isCenter() and not found_center) {
-//            pos          = mps->get_position();
-//            found_center = true;
-//        } else if(mps->isCenter() and found_center)
-//            throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos, mps->get_position()));
-//    if(not found_center) throw std::logic_error("Could not find center");
-//    return pos;
+    // If no center position was found then all sites are "B" sites. In that case, return -1 if T is signed, otherwise throw.
+    if(not pos){
+        if constexpr (std::is_signed_v<T>) return -1;
+        else throw std::runtime_error(fmt::format("Could not find center position in current state: {}", get_labels()));
+    }
+    else return pos.value();
 }
+template size_t class_state_finite::get_position<size_t>() const;
+template long class_state_finite::get_position<long>() const;
 
-//size_t class_state_finite::get_iteration() const { return iter; }
-//size_t class_state_finite::reset_iter() { return iter = 0; }
-//void   class_state_finite::set_iter(size_t iter_) { iter = iter_; }
-//void   class_state_finite::increment_iter() { iter++; }
-//
-//size_t class_state_finite::get_step() const { return step; }
-//size_t class_state_finite::reset_step() { return step = 0; }
-//void   class_state_finite::set_step(size_t step_) { step = step_; }
-//void   class_state_finite::increment_step() { step++; }
 
 long class_state_finite::find_largest_chi() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
@@ -150,9 +144,11 @@ void class_state_finite::flip_direction() { direction *= -1; }
 
 Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
     Eigen::DSizes<long, 3> dimensions;
-    auto                   pos  = get_position();
-    const auto &           mpsL = get_mps_site(pos);
-    const auto &           mpsR = get_mps_site(pos + 1);
+    auto                   pos  = get_position<long>();
+    auto                   posL = std::min(pos, get_length<long>()-2);
+    auto                   posR = std::min(pos + 1, get_length<long>()-1);
+    const auto &           mpsL = get_mps_site(posL);
+    const auto &           mpsR = get_mps_site(posR);
     dimensions[1]               = mpsL.get_chiL();
     dimensions[2]               = mpsR.get_chiR();
     dimensions[0]               = mpsL.spin_dim() * mpsR.spin_dim();
@@ -171,13 +167,28 @@ bool class_state_finite::position_is_the_middle_any_direction() const {
     return get_position() + 1 == static_cast<size_t>(get_length() / 2);
 }
 
-bool class_state_finite::position_is_left_edge([[maybe_unused]] size_t nsite) const { return get_position() == 0 and direction == -1; }
+bool class_state_finite::position_is_left_edge([[maybe_unused]] size_t nsite) const {
+    if(nsite == 1){
+        return get_position<long>() <= 0 and direction == -1; // i.e. all sites are B's
+//        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
+    }else
+        return get_position<long>() == 0 and direction == -1 and get_mps_site().isCenter(); // left-most site is a an AC
+}
 
-bool class_state_finite::position_is_right_edge(size_t nsite) const { return get_position() >= get_length() - nsite and direction == 1; }
+bool class_state_finite::position_is_right_edge(size_t nsite) const { return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == 1; }
 
 bool class_state_finite::position_is_any_edge(size_t nsite) const { return position_is_left_edge(nsite) or position_is_right_edge(nsite); }
 
-bool class_state_finite::position_is_at(size_t pos) const { return get_position() == pos; }
+bool class_state_finite::position_is_at(long pos) const { return get_position<long>() == pos; }
+
+bool class_state_finite::position_is_at(long pos, int dir) const { return get_position<long>() == pos and get_direction() == dir; }
+
+bool class_state_finite::position_is_at(long pos, int dir, bool isCenter) const { return get_position<long>() == pos and get_direction() == dir and get_mps_site(pos).isCenter() == isCenter; }
+
+bool class_state_finite::has_center_point() const{
+    return get_mps_site().isCenter();
+}
+
 
 bool class_state_finite::is_real() const {
     bool mps_real = true;
@@ -194,7 +205,7 @@ bool class_state_finite::has_nan() const {
 void class_state_finite::assert_validity() const {
     size_t pos = 0;
     for(const auto &mps : mps_sites){
-        if(pos != mps->get_position())
+        if(pos != mps->get_position<size_t>())
             throw std::runtime_error(fmt::format("State is corrupted: position mismatch: expected position {} != mps position {}", pos, mps->get_position()));
         pos++;
     }
@@ -202,7 +213,7 @@ void class_state_finite::assert_validity() const {
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain_bond() const {
-    size_t center_pos = (get_length() - 1) / 2;
+    size_t center_pos = (get_length<size_t>() - 1) / 2;
     if(get_position() < center_pos) return get_mps_site(center_pos).get_L();
     if(get_position() > center_pos) return get_mps_site(center_pos + 1).get_L();
     if(get_position() == center_pos)
@@ -213,14 +224,20 @@ const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::current_bond() const { return get_mps_site(get_position()).get_LC(); }
 
-const class_mps_site &class_state_finite::get_mps_site(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
+template<typename T> const class_mps_site &class_state_finite::get_mps_site(T pos) const {
+    if constexpr (std::is_signed_v<T>) if (pos < 0) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
+    if(pos >= get_length<T>()) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
     const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
-    if(mps_ptr->get_position() != pos) throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position()));
+    if(mps_ptr->get_position<T>() != pos) throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
     return *mps_ptr;
 }
+template const class_mps_site &class_state_finite::get_mps_site(size_t pos) const;
+template const class_mps_site &class_state_finite::get_mps_site(long pos) const;
 
-class_mps_site &class_state_finite::get_mps_site(size_t pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps_site(pos)); }
+template<typename T> class_mps_site &class_state_finite::get_mps_site(T pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps_site<T>(pos)); }
+template class_mps_site &class_state_finite::get_mps_site(size_t pos);
+template class_mps_site &class_state_finite::get_mps_site(long pos);
+
 
 const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_site(get_position()); }
 
@@ -387,3 +404,28 @@ bool class_state_finite::is_normalized_on_non_active_sites() const {
         if(std::find(active_sites.begin(),active_sites.end(),idx) == active_sites.end() and not tag_normalized_sites[idx]) return false;
     return true;
 }
+
+//
+//void class_state_finite::set_edge_status(size_t pos, EdgeStatus status) const{
+//    set_edge_ene_status(pos,status);
+//    set_edge_var_status(pos,status);
+//}
+//
+//void class_state_finite::set_edge_ene_status(size_t pos, EdgeStatus status) const{
+//    if(tag_edge_ene_status.size() != get_length()) throw std::runtime_error("Cannot check edge ene status on all sites, mismatch in tags and state size");
+//    tools::log->trace("Setting edge ene status at site {}: {}", pos, enum2str(status));
+//    tag_edge_ene_status.at(pos) = status;
+//}
+//
+//void class_state_finite::set_edge_var_status(size_t pos, EdgeStatus status) const{
+//    if(tag_edge_var_status.size() != get_length()) throw std::runtime_error("Cannot check edge var status on all sites, mismatch in tags and state size");
+//    tools::log->trace("Setting edge var status at site {}: {}", pos, enum2str(status));
+//    tag_edge_var_status.at(pos) = status;
+//}
+//
+//std::vector<EdgeStatus> class_state_finite::get_edge_ene_status() const{
+//    return tag_edge_ene_status;
+//}
+//std::vector<EdgeStatus> class_state_finite::get_edge_var_status() const{
+//    return tag_edge_var_status;
+//}

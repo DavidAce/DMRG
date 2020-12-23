@@ -24,6 +24,8 @@ class class_mpo_site {
     bool            all_mpo_parameters_have_been_set = false;
 
     protected:
+    mutable std::optional<std::size_t> unique_id;
+    mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
     double alpha      = 0;     /*!< Damping factor [0,1] on couplings, std::pow(J_rnd + J_ptb,1-alpha)  */
     double beta       = 0;     /*!< Damping factor [0,1] on fields, std::pow(h_rnd + h_ptb,1-alpha)  */
@@ -84,4 +86,6 @@ class class_mpo_site {
     virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)                       = 0;
     void         save_mpo(h5pp::File &file, const std::string &model_prefix) const;
     void         load_mpo(const h5pp::File &file, const std::string &model_prefix);
+    std::size_t  get_unique_id() const;
+    std::size_t  get_unique_id_sq() const;
 };

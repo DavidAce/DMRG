@@ -72,23 +72,26 @@ long tools::finite::multisite::get_problem_size(const class_state_finite &state,
 
 std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, long threshold, size_t max_sites, const size_t min_sites) {
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
-    tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {}", state.get_position(),
+    tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {}", state.get_position<long>(),
                       state.get_direction(),min_sites, max_sites, threshold);
+
     using namespace Textra;
-    int                                 direction = state.get_direction();
-    int                                 position  = static_cast<int>(state.get_position());
-    int                                 length    = static_cast<int>(state.get_length());
+    auto                                direction = state.get_direction();
+    auto                                position  = state.get_position<long>();
+    auto                                length    = state.get_length<long>();
     std::vector<long>                   sizes;
     std::vector<size_t>                 sites;
     std::vector<Eigen::DSizes<long, 3>> shape;
-    if(direction == -1) position = std::min(position + 1, length - 1); // If going to the left, take position to be the site on the right of the center bond.
+//    if(direction == -1) position = std::min(position + 1, length - 1); // If going to the left, take position to be the site on the right of the center bond.
     while(true) {
-        sites.emplace_back(position);
-        sizes.emplace_back(get_problem_size(state, sites));
-        shape.emplace_back(get_dimensions(state,sites));
+        if(position >= 0){
+            sites.emplace_back(position);
+            sizes.emplace_back(get_problem_size(state, sites));
+            shape.emplace_back(get_dimensions(state,sites));
+            if(sites.size() >= max_sites) break;
+        }
         position += direction;
-        if(sites.size() >= max_sites) break;
-        if(position == -1 or position == length) break;
+        if(position <= -1 or position >= length) break;
     }
     tools::log->trace("Candidate sites {}", sites);
     tools::log->trace("Candidate sizes {}", sizes);
@@ -129,6 +132,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
         "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}", state.get_position(),
                       state.get_direction(),min_sites, max_sites, threshold, sites, shape.back(), sizes.back(),reason);
     if(sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})",sites.size(), min_sites));
+    if(sites.size() > max_sites) throw std::runtime_error(fmt::format("Activated sites ({}) > max_sites ({})",sites.size(), max_sites));
     return sites;
 }
 

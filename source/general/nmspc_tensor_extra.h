@@ -79,12 +79,10 @@ namespace Textra {
 
     template<typename Scalar>
     Eigen::Tensor<Scalar, 1> extractDiagonal(const Eigen::Tensor<Scalar, 2> &tensor) {
-        assert(tensor.dimension(0) == tensor.dimension(1) and "extractDiagonal expects a square tensor");
-
+        if(tensor.dimension(0) != tensor.dimension(1)) throw std::runtime_error("extractDiagonal expects a square tensor");
         Eigen::Tensor<Scalar, 1> diagonals(tensor.dimension(0));
-        for(auto i = 0; i < tensor.dimension(0); i++) { diagonals(i) = tensor(i, i); }
+        for(Eigen::Index i = 0; i < tensor.dimension(0); i++) diagonals(i) = tensor(i, i);
         return diagonals;
-        //        return tensor.reshape(array1{rows*cols}).stride(array1{cols+1});
     }
 
     template<typename Scalar>

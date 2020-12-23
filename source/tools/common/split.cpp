@@ -1,13 +1,15 @@
 #include "split.h"
 #include "prof.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_tensor_omp.h>
+#include <iostream>
 #include <math/svd.h>
 #include <optional>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
 
 std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
-                                                          const std::vector<size_t> &sites, size_t center_position, long chi_limit,
+                                                          const std::vector<size_t> &sites, long center_position, long chi_limit,
                                                           std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites.
      *  Consider a case with 3 sites and
@@ -111,9 +113,6 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     if(sites.empty()) throw std::runtime_error("Could not split multisite tensor: sites list is empty");
     if(multisite_tensor.size() == 0) throw std::runtime_error("Could not split multisite tensor: tensor is empty");
     if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor: spin_dims list is empty");
-//    if(center_position < sites.front() or center_position > sites.back())
-//        throw std::runtime_error(
-//            fmt::format("Could not split multisite tensor: center position [{}] is not in the given list of sites {}", center_position, sites));
     if(spin_dims.size() != sites.size())
         throw std::runtime_error(
             fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims, sites));
@@ -134,7 +133,7 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     auto site_it = sites.begin();
     auto dims_it = spin_dims.begin();
     while(site_it != sites.end() and dims_it != spin_dims.end()) {
-        if(*site_it <= center_position) {
+        if(static_cast<long>(*site_it) <= center_position) {
             sites_left.emplace_back(*site_it);
             spin_dims_left.emplace_back(*dims_it);
             dL *= *dims_it;
@@ -165,65 +164,91 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
                                              multisite_tensor.dimension(1), U.dimension(1)));
     if(multisite_tensor.dimension(2) != V.dimension(2))
         throw std::runtime_error(fmt::format("Could not split multisite tensor: right bond dimension mismatch: before split {} != {} after split",
-                                             multisite_tensor.dimension(2),V.dimension(2)));
-
+                                             multisite_tensor.dimension(2), V.dimension(2)));
 
     // Perform more SVD's to split the left and right parts around the center
-    auto mps_sites_left = internal::split_mps_from_left(U, spin_dims_left, sites_left, chi_limit, svd_threshold);
-    auto mps_sites_right = internal::split_mps_from_right(V, spin_dims_right, sites_right, chi_limit, svd_threshold);
+    auto mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, sites_left, chi_limit, svd_threshold);
+    auto mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, sites_right, chi_limit, svd_threshold);
+    tools::log->trace("SVD split L {} sites | R {} sites", mps_sites_As.size(), mps_sites_Bs.size());
 
+    if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
 
-    if(mps_sites_left.empty() and mps_sites_right.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
+    if(not mps_sites_As.empty() and mps_sites_As.back().has_stash_V()) {
+        // Use small letters for stashed tensors
+        auto [s, e]                   = mps_sites_As.back().unstash_S();
+        auto                     v    = mps_sites_As.back().unstash_V();
+        Textra::array2           dims = {v.dimension(0) * s.dimension(0), S.dimension(0)}; // We know that v.dimension(0) == 1
+        Eigen::Tensor<Scalar, 2> svS =
+            Textra::asDiagonal(s).contract(v, Textra::idx({1}, {1})).contract(Textra::asDiagonal(S), Textra::idx({2}, {0})).reshape(dims);
+        std::cout << "A: " << fmt::format("{}\n", mps_sites_As.back().get_M_bare().dimensions()) << mps_sites_As.back().get_M_bare() << std::endl;
+        std::cout << "s: " << fmt::format("{}\n", s.dimensions()) << s << std::endl;
+        std::cout << "e:" << e << std::endl;
+        std::cout << "v:" << fmt::format("{}\n", v.dimensions()) << v.reshape(dims) << std::endl;
+        std::cout << "S:" << fmt::format("{}\n", S.dimensions()) << S << std::endl;
+        std::cout << "svS:\n" << svS << std::endl;
+        std::cout << "V:" << fmt::format("{}\n", V.dimensions()) << V << std::endl;
 
-    if(not mps_sites_left.empty() and mps_sites_right.empty()){
-        // We find this situation when doing SVD on a one-site tensor going left-to-right to convert "LC*B" -> "A*LC"
-        if(multisite_tensor.dimension(1) != mps_sites_left.front().get_chiL())
-            throw std::runtime_error(fmt::format("Could not split multisite tensor: left bond dimension mismatch: "
-                                                 "multisite_tensor {} | mps_sites_left.front() {} | U {} | S {} | V {}",
-                                                 multisite_tensor.dimensions(), mps_sites_left.front().dimensions(), U.dimensions(),S.dimensions(),V.dimensions()));
-        mps_sites_left.back().set_LC(S,svd.get_truncation_error()); // By convention, the center bond lives on the right-most "A" mps, before all the "B".
-        mps_sites_left.back().set_label("AC");
-        mps_sites_left.back().stash_V(V); // The left over V is multiplied from the left onto the next B to the right of this position
-    }else if(mps_sites_left.empty() and not mps_sites_right.empty()){
-        // We find this situation when doing SVD on a one-site tensor going right-to-left to convert "A*LC" -> "LC*B"
-        if(multisite_tensor.dimension(2) != mps_sites_right.back().get_chiR())
-            throw std::runtime_error(fmt::format("Could not split multisite tensor: right bond dimension mismatch: "
-                                                 "multisite_tensor {} | mps_sites_right.back() {} | U {} | S {} | V {}",
-                                                 multisite_tensor.dimensions(), mps_sites_right.back().dimensions(), U.dimensions(),S.dimensions(),V.dimensions()));
-
-        mps_sites_right.front().stash_S(S, svd.get_truncation_error()); // We stash the LC here temporarily: remember it belongs to the "A" site on the left.
-        mps_sites_right.front().stash_U(U); // We stash the U here, but remember it has to be multiplied onto the left-neighbor "A" from the right.
-    }else{
-        // We find this situation when doing SVD on a multisite tensor, i.e. >= 2 sites
-        mps_sites_left.back().set_LC(S, svd.get_truncation_error());
-        if(sites.size() > 2) {
-            Eigen::Tensor<Scalar, 4> theta = mps_sites_left.back()
-                .get_M_bare()
-                .contract(Textra::asDiagonal(S), Textra::idx({2}, {0}))
-                .contract(mps_sites_right.front().get_M_bare(), Textra::idx({2}, {1}));
-            auto [u, s, v] = svd.schmidt(theta, chi_limit);
-            mps_sites_left.back().set_M(u);
-            mps_sites_left.back().set_LC(s, svd.get_truncation_error());
-            mps_sites_left.back().set_label("AC");
-            mps_sites_right.front().set_M(v);
-        }
+        //        S = Textra::extractDiagonal(svS);
+    }
+    if(not mps_sites_Bs.empty() and mps_sites_Bs.front().has_stash_U()) {
+        // Use small letters for stashed tensors
+        auto u                        = mps_sites_Bs.front().unstash_U();
+        auto [s, e]                   = mps_sites_Bs.front().unstash_S();
+        Textra::array2           dims = {S.dimension(0), s.dimension(0)}; // We know that u.dimension(0) == 1
+        Eigen::Tensor<Scalar, 2> Sus =
+            Textra::asDiagonal(S).contract(u, Textra::idx({1}, {1})).contract(Textra::asDiagonal(s), Textra::idx({2}, {0})).reshape(dims);
+        std::cout << "s:\n" << s << std::endl;
+        std::cout << "e:" << e << std::endl;
+        std::cout << "v:\n" << u << std::endl;
+        std::cout << "Sus:\n" << Sus << std::endl;
+        //        S = Textra::extractDiagonal(Sus);
     }
 
+    if(not mps_sites_As.empty() and mps_sites_Bs.empty()) {
+        // We got only left-normalized "A" matrices from the split.
+        if(multisite_tensor.dimension(1) != mps_sites_As.front().get_chiL())
+            throw std::runtime_error(fmt::format("Could not split multisite tensor: left bond dimension mismatch: "
+                                                 "multisite_tensor {} | mps_sites_As.front() {} | U {} | S {} | V {}",
+                                                 multisite_tensor.dimensions(), mps_sites_As.front().dimensions(), U.dimensions(), S.dimensions(),
+                                                 V.dimensions()));
+        if(mps_sites_As.back().get_position<long>() != center_position)
+            throw std::logic_error(fmt::format("Could not split multisite tensor: right-most A is not at the center position"));
+        mps_sites_As.back().set_LC(S, svd.get_truncation_error());
+        mps_sites_As.back().stash_V(V);
 
-
+    } else if(mps_sites_As.empty() and not mps_sites_Bs.empty()) {
+        // We got only right-normalized "B" matrices from the split.
+        if(multisite_tensor.dimension(2) != mps_sites_Bs.back().get_chiR())
+            throw std::runtime_error(fmt::format("Could not split multisite tensor: right bond dimension mismatch: "
+                                                 "multisite_tensor {} | mps_sites_Bs.back() {} | U {} | S {} | V {}",
+                                                 multisite_tensor.dimensions(), mps_sites_Bs.back().dimensions(), U.dimensions(), S.dimensions(),
+                                                 V.dimensions()));
+        mps_sites_Bs.front().stash_S(S, svd.get_truncation_error());
+        mps_sites_Bs.front().stash_U(U);
+    } else {
+        // We find this situation when doing SVD on a multisite tensor, i.e. >= 2 sites straddling the center point
+        mps_sites_As.back().set_LC(S, svd.get_truncation_error());
+//        if(sites.size() > 2) {
+//            Eigen::Tensor<Scalar, 4> A_LC_B = mps_sites_As.back().get_M().contract(mps_sites_Bs.front().get_M(), Textra::idx({2}, {1}));
+//            auto [u, s, v]                  = svd.schmidt(A_LC_B, chi_limit);
+//            mps_sites_As.back().set_M(u);
+//            mps_sites_As.back().set_LC(s, svd.get_truncation_error());
+//            mps_sites_Bs.front().set_M(v);
+//        }
+    }
 
     if constexpr(settings::debug) {
         //    Eigen::Tensor<Scalar,2> C = SV.reshape(Textra::array2{SV.dimension(0)*SV.dimension(1),SV.dimension(2)})
         //                                 .contract(Textra::asDiagonal(S), Textra::idx({1},{0}))
         //                                 .contract(US.reshape(Textra::array2{US.dimension(0)*US.dimension(1),US.dimension(2)}), Textra::idx({1},{0}));
-        //        Eigen::Tensor<Scalar,4> theta = mps_sites_left.back().get_M_bare()
+        //        Eigen::Tensor<Scalar,4> theta = mps_sites_As.back().get_M_bare()
         //            .contract(Textra::asDiagonal(S), Textra::idx({2},{0}))
-        //            .contract(mps_sites_right.front().get_M_bare(), Textra::idx({2},{1}));
+        //            .contract(mps_sites_Bs.front().get_M_bare(), Textra::idx({2},{1}));
         //    std::cout << "S = \n" << S << std::endl;
         //        std::tie(U,S,V) = svd.schmidt(theta,chi_limit);
-        //        mps_sites_left.back().set_M(U);
-        //    mps_sites_left.back().set_LC(S,svd.get_truncation_error());
-        //        mps_sites_right.front().set_M(V);
+        //        mps_sites_As.back().set_M(U);
+        //    mps_sites_As.back().set_LC(S,svd.get_truncation_error());
+        //        mps_sites_Bs.front().set_M(V);
         //    std::cout << "C = \n" << C << std::endl;
         //    std::cout << "C = \n" << Textra::extractDiagonal(C) << std::endl;
         //    std::cout << "S = \n" << S << std::endl;
@@ -231,32 +256,31 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     }
 
     // Some sanity checks
-    if(mps_sites_left.size() != spin_dims_left.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_left of of unexpected size");
-    if(mps_sites_right.size() != spin_dims_right.size())
-        throw std::runtime_error("Could not split multisite tensor: Got mps_sites_right of of unexpected size");
+    if(mps_sites_As.size() != spin_dims_left.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_As of of unexpected size");
+    if(mps_sites_Bs.size() != spin_dims_right.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_Bs of of unexpected size");
 
     // Move the right side onto the left side.
-    mps_sites_left.splice(mps_sites_left.end(), mps_sites_right);
+    mps_sites_As.splice(mps_sites_As.end(), mps_sites_Bs);
 
     site_it = sites.begin();
-    for(const auto &mps : mps_sites_left) {
+    for(const auto &mps : mps_sites_As) {
         if(*site_it != mps.get_position())
             throw std::runtime_error(fmt::format("Could not split multisite tensor: Position mismatch: expected site {} != mps pos {} | sites to merge {}",
                                                  *site_it, mps.get_position(), sites));
-        if(mps.get_position() == center_position and not mps.isCenter())
+        if(mps.get_position<long>() == center_position and not mps.isCenter())
             throw std::runtime_error(
-                fmt::format("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position()));
+                fmt::format("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position<long>()));
         site_it++;
     }
 
     // Return the all the sites including the bond matrix
-    return mps_sites_left;
+    return mps_sites_As;
 }
 
 std::list<class_mps_site>
     // std::pair<std::list<class_mps_site>,Eigen::Tensor<class_mps_site::Scalar,3>>
-    tools::common::split::internal::split_mps_from_left(const Eigen::Tensor<Scalar, 3> &multisite_mps, std::vector<long> spin_dims, std::vector<size_t> sites,
-                                                        long chi_limit, std::optional<double> svd_threshold) {
+    tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<Scalar, 3> &multisite_mps, std::vector<long> spin_dims, std::vector<size_t> positions,
+                                                      long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the left.
      *  Consider a case with 3 sites and
      *  spin_dims = {2,2,2}
@@ -293,26 +317,19 @@ std::list<class_mps_site>
      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
      */
 
-//    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the left: spin_dims list is empty");
-    if(spin_dims.size() != sites.size())
+    //    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the left: spin_dims list is empty");
+    if(spin_dims.size() != positions.size())
         throw std::runtime_error(fmt::format(
-            "Could not split multisite tensor from the left: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims, sites));
+            "Could not split multisite tensor from the left: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims, positions));
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
-    if(sites.empty()) return std::list<class_mps_site>();
-//    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the left: sites list is empty");
+    if(positions.empty()) return std::list<class_mps_site>();
+    //    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the left: sites list is empty");
 
     // Another  special case is when we do two-site tensors. Then we expect
     // this function to receive a single site. We can simply return it
-    if(spin_dims.size() == 1) {
-        return {class_mps_site(multisite_mps, std::nullopt, sites.front(), 0, "A")};
-        //        mps_sites.emplace_back(multisite_mps,std::nullopt,sites.front());
-        //        return mps_sites;
-        //        auto diag = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>::Identity(multisite_mps.dimension(2),multisite_mps.dimension(2));
-        //        Eigen::Tensor<Scalar,3> diag_tensor = Textra::MatrixTensorMap(diag,1,multisite_mps.dimension(2),multisite_mps.dimension(2));
-        //        return {mps_sites,diag_tensor};
-    }
+    if(spin_dims.size() == 1) { return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "A")}; }
     // Initialize the resulting container of split sites
     std::list<class_mps_site> mps_sites;
 
@@ -325,60 +342,77 @@ std::list<class_mps_site>
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
     // Declare the tensors that will catch the schmidt (SVD) decompositions
-    Eigen::Tensor<Scalar, 3>                U;                      // This will become the first site extracted
-    Eigen::Tensor<Scalar, 1>                S;                      // The singular values
-    Eigen::Tensor<Scalar, 3>                V      = multisite_mps; // This side contains all the sites
-    std::optional<Eigen::Tensor<Scalar, 1>> S_prev = std::nullopt;  // Starts out empty, needs to be checked outside of this split
+    Eigen::Tensor<Scalar, 3>                U;                           // This will become the first site to be extracted
+    Eigen::Tensor<Scalar, 1>                S;                           // The singular values
+    Eigen::Tensor<Scalar, 3>                V = multisite_mps;           // This side contains all the remaining sites
+    Eigen::Tensor<Scalar, 3>                SV_temp;                     // Temporary for contracting S*V
+    std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt; // Starts out empty, carries the schmidt values from the previous iteration
+    double                                  S_prev_error = 0;            // Truncation error from the previous iteration
     for(const auto &spin_dim : spin_dims) {
-        /* The schmidt decomposition gives us 3 matrices:
-         *
-         * chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR
-         *          |                                |
-         *          d                             d^(sites-1)
-         *
+        /* The schmidt decomposition gives us the 3 matrices to the right of the line |:
+         *                       |
+         *                       |
+         *  chi---[S_prev]---chi | chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR
+         *                       |          |                                |
+         *                       |          d                             d^(sites-1)
+         *                       |
          * Here U is an "M" matrix of type A = Lambda * Gamma
          * See the notes on svd.schmidt at its definition
          */
-        if(sites.empty()) throw std::logic_error("Could not split multisite tensor from the right: Site list became empty");
+        if(positions.empty()) throw std::logic_error("Could not split multisite tensor from the right: Site list became empty");
 
         tools::common::profile::get_default_prof()["t_svd"]->tic();
+        if(S_prev) {
+            // Let V absorb S from the previous SVD (see note below)
+            SV_temp.resize(V.dimensions());
+            SV_temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(S_prev.value()).contract(V, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+            V                                        = SV_temp;
+        }
+
         std::tie(U, S, V) = svd.schmidt_from_left(V, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
-        // Now we have the three components
-        // U:   A left-unitary "A" matrix which already contains its left singular values
-        // S:   A set of singular values, "L" matrix, belonging to the right site
-        //      (i.e. the next A to pop out of V)
-        // V:   Contains one site less than the previous iteration.
-        //      Absorbs the S so that the next U to pop out is a left-unitary A-type matrix.
-        mps_sites.emplace_back(U, S_prev, sites.front(), svd.get_truncation_error(), "A"); // S_prev is empty the first iteration.
+        //        std::cout << "U:" << fmt::format("{}\n",U.dimensions()) << U <<std::endl;
+        //        std::cout << "S:" << fmt::format("{}\n",S.dimensions()) << S <<std::endl;
+        //        std::cout << "V:" << fmt::format("{}\n",V.dimensions()) << V <<std::endl;
+        //
 
-        // Let V absorb S
-        Eigen::Tensor<Scalar, 3> temp = Textra::asDiagonal(S).contract(V, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
-        V                             = temp;
+        // Note: Now we have the three components
+        // U:   A left-unitary "A" matrix which is a "Lambda * Gamma" in Vidal's notation
+        // S:   A set of singular values, "L" matrix, belonging to the site on the right of this one (i.e. the next A to pop out of V)
+        // V:   Contains one site less than the it did before. That site is now in U.
+        //      Before using V as the next multisite mps, it absorbs S so that the next U to pop out is a left-unitary A-type matrix.
+
+        mps_sites.emplace_back(U, S_prev, positions.front(), S_prev_error, "A"); // S_prev is empty in the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev = S;
-        sites.erase(sites.begin());
+        S_prev       = S;
+        S_prev_error = svd.get_truncation_error();
+        positions.erase(positions.begin());
     }
-    // Now we have a series of A-A-A-A matrices and their corresponding L's
-    // At the last step we have a residual S*V left over, where V has already absorbed S.
-    // The spin dimension of S*V should be 1, and together S*V may contain important signs that can't be ignored.
-    // We just tuck them back into the last  A matrix.
-    // This operation should not change dimensions!
+
+    // The spin dimension of V should be 1 since it does not contain sites anymore!
     if(V.dimension(0) != 1) throw std::runtime_error("Could not split mps from the left: Last V dimension(0) is not 1");
-    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1}))
-                                       .shuffle(Textra::array4{0, 2, 1, 3})
-                                       .reshape(Textra::array3{U.dimension(0),U.dimension(1),V.dimension(2)});
-    mps_sites.back().set_M(USV);
+
+    // Now we have a series of A-A-A-A matrices and their corresponding L's
+    // At the last step we have residual S and V left over.
+    // U is already left-normalized but has scrambled rows. Use V to sort them!
+    // S has all entries 1/dim(S) and can be discarded
+    // V is a site-less tensor with scrambled unit-vectors as columns.
+
+    // This operation should not change dimensions!
+    Eigen::Tensor<Scalar, 3> UV =
+        U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{U.dimension(0), U.dimension(1), V.dimension(2)});
+    // Note that after this M M^dagger = Identity
+    mps_sites.back().set_M(UV);
     return mps_sites;
 }
 
 std::list<class_mps_site>
     // std::pair<Eigen::Tensor<class_mps_site::Scalar,3>,std::list<class_mps_site>>
-    tools::common::split::internal::split_mps_from_right(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, std::vector<long> spin_dims,
-                                                         std::vector<size_t> sites, long chi_limit, std::optional<double> svd_threshold) {
+    tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, std::vector<long> spin_dims,
+                                                      std::vector<size_t> positions, long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the right
      *  Consider a case with 3 sites and
      *  spin_dims = {2,2,2}
@@ -414,19 +448,20 @@ std::list<class_mps_site>
      *
      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
      */
-//    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
-    if(spin_dims.size() != sites.size())
-        throw std::runtime_error(fmt::format(
-            "Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims, sites));
+    //    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
+    if(spin_dims.size() != positions.size())
+        throw std::runtime_error(
+            fmt::format("Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims,
+                        positions));
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
-    if(sites.empty()) return std::list<class_mps_site>();
-//    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the right: sites list is empty");
+    if(positions.empty()) return std::list<class_mps_site>();
+    //    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the right: sites list is empty");
 
     // Another special case is when we do two-site tensors. Then we expect
     // this function to receive a single site. We can simply return it
-    if(spin_dims.size() == 1) { return {class_mps_site(multisite_mps, std::nullopt, sites.front(),0, "B")}; }
+    if(spin_dims.size() == 1) return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "B")};
 
     // Initialize the resulting container of split sites
     std::list<class_mps_site> mps_sites;
@@ -441,55 +476,62 @@ std::list<class_mps_site>
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
     // Declare the the tensors that will catch the schmidt (SVD) decompositions
-    Eigen::Tensor<Scalar, 3>                U = multisite_mps;     // This side contains all the sites
-    Eigen::Tensor<Scalar, 1>                S;                     // The singular values
-    Eigen::Tensor<Scalar, 3>                V;                     // This will become the first site extracted
-    std::optional<Eigen::Tensor<Scalar, 1>> S_prev = std::nullopt; // Starts out empty, needs to be checked outside of this split
+    Eigen::Tensor<Scalar, 3>                U = multisite_mps;           // This side contains all the sites
+    Eigen::Tensor<Scalar, 1>                S;                           // The singular values
+    Eigen::Tensor<Scalar, 3>                V;                           // This will become the first site extracted
+    Eigen::Tensor<Scalar, 3>                US_temp;                     // Temporary for contracting U*S
+    std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt; // Starts out empty, needs to be checked outside of this split
+    double                                  S_prev_error = 0;            // Truncation error from the previous iteration
     for(const auto &spin_dim : spin_dims) {
-        /* The schmidt decomposition gives us 3 matrices:
-         *
-         * chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR
-         *          |                                |
-         *      d^(sites-1)                          d
+        /* The schmidt decomposition gives us the 3 matrices to the left of the line |:
+         *                                                      |
+         * chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR  |  chi---[S_prev]---chi
+         *          |                                |          |
+         *      d^(sites-1)                          d          |
          *
          * Here V is an "M" matrix of type B = Gamma * Lambda
          * See the notes on svd.schmidt at its definition
          */
 
-        if(sites.empty()) throw std::logic_error("Could not split multisite tensor from the right: No sites left");
+        if(positions.empty()) throw std::logic_error("Could not split multisite tensor from the right: No sites left");
 
         tools::common::profile::get_default_prof()["t_svd"]->tic();
+        if(S_prev) {
+            // Let V absorb S from the previous SVD (see note below)
+            US_temp.resize(U.dimensions());
+            US_temp.device(Textra::omp::getDevice()) = U.contract(Textra::asDiagonal(S), Textra::idx({2}, {0}));
+            U                                        = US_temp;
+        }
+
         std::tie(U, S, V) = svd.schmidt_from_right(U, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
-        // Now we have the three components
+        // Note: Now we have the three components
         // U:   Contains one site less than the previous iteration.
-        //      Absorbs the S so that the next V to pop out is a right-unitary B-type matrix.
-        // S:   A set of singular values, "L" matrix, belonging to the left site
-        //      (i.e. the next B to pop out of U)
-        // V:   A right-unitary "B" matrix which already contains its right singular values
+        //      Before using U as the next multisite mps, it absorbs the S so that the next V to pop out is a right-unitary B-type matrix.
+        // S:   A set of singular values, "L" matrix, belonging to the left site  (i.e. the next B to pop out of U)
+        // V:   A right-unitary "B" matrix which is a "Gamma*Lambda" in Vidal's notation
 
-        mps_sites.emplace_front(V, S_prev, sites.back(), svd.get_truncation_error(),"B"); // S_prev is empty the first iteration.
-
-        // Let U absorb S
-        Eigen::Tensor<Scalar, 3> temp = U.contract(Textra::asDiagonal(S), Textra::idx({2}, {0}));
-        U                             = temp;
+        mps_sites.emplace_front(V, S_prev, positions.back(), S_prev_error, "B"); // S_prev is empty the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev = S;
-        sites.pop_back();
+        S_prev       = S;
+        S_prev_error = svd.get_truncation_error();
+        positions.pop_back();
     }
-    // Now we have a series of B-B-B-B matrices and their corresponding L's
-    // At the last step we have a residual U*S, where U has already absorbed S.
-    // The spin dimension of U should be 1, and together U*S may contain important data that can't be ignored.
-    // We just tuck them back into the front B matrix, and perform one more SVD on A S B later.
-    // This operation should not change dimensions!
+    // The spin dimension of U should be 1, since it contains no sites anymore!
     if(U.dimension(0) != 1) throw std::runtime_error("Could not split mps from the right: Last U dimension(0) is not 1");
-    Eigen::Tensor<Scalar, 3> USV = U.contract(V, Textra::idx({2}, {1}))
-                                       .shuffle(Textra::array4{0, 2, 1, 3})
-                                       .reshape(Textra::array3{V.dimension(0), U.dimension(1), V.dimension(2)});
 
-    mps_sites.front().set_M(USV);
+    // Now we have a series of B-B-B-B matrices and their corresponding L's
+    // At the last step we have residual U and S left over.
+    // U is a site-less tensor with scrambled unit-vectors as rows.
+    // S has all entries 1/dim(S) and can be discarded
+    // V is already right-normalized but has scrambled columns. Use U to sort them!
+    // This operation should not change dimensions!
+    Eigen::Tensor<Scalar, 3> UV =
+        U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{V.dimension(0), U.dimension(1), V.dimension(2)});
+    // Note that after this M M^dagger = Identity
+    mps_sites.front().set_M(UV);
     return mps_sites;
 }

@@ -29,52 +29,46 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
 }
 
 void tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    if(state.position_is_any_edge(1)){
-        if(state.get_direction() == -1 and state.get_mps_site().get_chiL() != 1 )
-            throw std::logic_error(fmt::format("chiL at position {} must have dimension 1, but it has dimension {}. Mps dims {}",
-                                               state.get_position(), state.get_mps_site().get_chiL(), state.get_mps_site().dimensions()));
+
+    if(state.position_is_any_edge()){
+        if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1 )
+            throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
+                                                state.get_mps_site(0l).get_chiL(), state.get_mps_site(0l).dimensions()));
         if(state.get_direction() == 1 and state.get_mps_site().get_chiR() != 1 )
             throw std::logic_error(fmt::format("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}",
                                                state.get_position(), state.get_mps_site().get_chiR(), state.get_mps_site().dimensions()));
-        state.flip_direction();  // Instead of moving out of the chain, just flip the direction and return
+        return state.flip_direction();  // Instead of moving out of the chain, just flip the direction and return
+    }else
+    {
+        long   pos            = state.get_position<long>(); // If all sites are B's, then this is -1. Otherwise this is the current "A*LC" site
+        long   posC           = pos + state.get_direction(); // This is the site which becomes the new center position
+        if(pos  < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}",pos));
+        if(posC < -1 or posC >= state.get_length<long>()) throw std::runtime_error(fmt::format("posC out of bounds: {}",posC));
+        if(state.get_direction() != posC - pos) throw std::logic_error(fmt::format("Expected posC - pos == {}. Got {}",state.get_direction(), posC-pos));
+//        auto & mps            = state.get_mps_site(pos);
+//        if(not mps.isCenter()) posC = pos; // In this case we need to create a new center at position 0 since all sites are B's
 
-    }else{
-        tools::log->info("Labels before: {}", state.get_labels());
-        size_t pos            = state.get_position();
-        auto & mps            = state.get_mps_site(pos);//This is the "A" tensor with an LC at the current position
-        size_t posC           = state.get_direction() == 1 ? pos + 1 : pos - 1;
-        auto & mpsC           = state.get_mps_site(posC);//This is the tensor which becomes the new center position
-        if(state.get_direction() == 1){
-            tools::log->info("Moving center pos {} -> {}. Current LC moves {} -> {}", pos, posC, pos, posC);
-        }else{
-            tools::log->info("Moving center pos {} <- {}. Current LC moves {} <- {}", posC, pos, posC, pos);
+        Eigen::Tensor<Scalar, 1> LC(1); LC.setConstant(1); // Store the LC bond in a temporary. It will become a regular "L" bond later
+        double                   truncation_error_LC = 0; // Same story with the truncation error
+        if(pos >= 0){
+            auto & mps          = state.get_mps_site(pos);
+            LC                  = mps.get_LC();
+            truncation_error_LC = mps.get_truncation_error_LC();
         }
-        long   dC   = mpsC.spin_dim();
-        long   chiL = mpsC.get_chiL();
-        long   chiR = mpsC.get_chiR();
-        // Store the special LC bond in a temporary. It needs to be put back afterwards
-        // Do the same with its truncation error
-        Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
-        double                   truncation_error_LC = mps.get_truncation_error_LC();
         if(state.get_direction() == 1){
-            if(mps.get_chiR() != chiL) throw std::logic_error(fmt::format("chiR({}) != chiL({})",pos,posC));
-            Eigen::Tensor<Scalar, 3> onesite_tensor(dC,chiL,chiR);
-            // Contract LC * B
+            auto & mpsC = state.get_mps_site(posC); //This becomes the new center position AC
+            Eigen::Tensor<Scalar, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction of LC * B
             onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
-        }else{
-            if(mps.get_chiL() != chiR) throw std::logic_error(fmt::format("chiL({}) != chiR({})",pos,posC));
-            auto & onesite_tensor = mps.get_M();
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {pos}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+            mpsC.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "A" at position "posC"
+        }else if (state.get_direction() == -1) {
+            auto & mps = state.get_mps_site(pos); //This becomes the new B
+            auto &onesite_tensor = mps.get_M(); // No need to contract anything this time.
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+            mps.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "B" at position "pos"}
         }
-
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
-
-        //Put LC where it belongs.
-        //Recall that mps, mpsC are on the new positions, not the old ones!
-        mpsC.set_L(LC, truncation_error_LC);
-        tools::log->info("Labels after : {}", state.get_labels());
     }
 }
 
@@ -116,7 +110,7 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
             twosite_tensor.device(Textra::omp::getDevice()) =
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
-        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, posL, chi_lim, svd_threshold, LogPolicy::QUIET);
+        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, static_cast<long>(posL), chi_lim, svd_threshold, LogPolicy::QUIET);
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
 
@@ -129,17 +123,17 @@ void tools::finite::mps::move_center_point(class_state_finite &state, long chi_l
 }
 
 void tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    while(not state.position_is_any_edge()) move_center_point(state, chi_lim, svd_threshold);
-    state.flip_direction();
+    while(not state.position_is_any_edge()) move_center_point_single_site(state, chi_lim, svd_threshold);
 }
 
 void tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    while(not state.position_is_the_middle()) move_center_point(state, chi_lim, svd_threshold);
+    while(not state.position_is_the_middle()) move_center_point_single_site(state, chi_lim, svd_threshold);
 }
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
-                                                size_t center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
-    if(not logPolicy or logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {} | dimensions {}", sites, chi_lim, multisite_mps.dimensions());
+                                                long center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
+    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {} | dimensions {} | center {} -> {}",
+                          sites, chi_lim, multisite_mps.dimensions(),state.get_position<long>(), center_position);
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -168,43 +162,33 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
 
     // Note that one of the positions on the split will be a center, so we need to unset
     // the center in our current state so we don't get duplicate centers
-    state.get_mps_site().unset_LC();
+    if(state.get_position<long>() >= 0) state.get_mps_site().unset_LC();
 
-    if(mps_list.size() == 1){
-        // We handle one-site mergers a little bit differently.
-        // When going left-to-right, LC is belongs to the same site.
-        // When going right-to-left, LC belongs to the site on the left, but it has been sent here inside the single element of "mps_list"
-        auto & mps_src = mps_list.front();
-        auto   pos = mps_src.get_position();
-        auto & mps_tgt = state.get_mps_site(pos);
-        if(center_position == pos){
-            // Going left-to-right. This site is an "A".Convention is that A contains LC.
-            mps_tgt.merge_mps(mps_src);
+    // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
+    // Copy the split up mps components into the current state
+    for(const auto &mps_src : mps_list) {
+        auto pos = mps_src.get_position();
+        auto &mps_tgt = state.get_mps_site(pos);
+        mps_tgt.merge_mps(mps_src);
+        state.tag_site_normalized(pos, true); // Merged site is normalized
+        if(mps_src.has_stash_V()){
             if(pos == state.get_length()-1) mps_src.unstash(); // Discard whatever is stashed at the edge (this normalizes the state)
             else{
                 // Extract the stashed V-matrix and multiply onto the "B" on the right
-                state.get_mps_site(pos+1).merge_stash(mps_src);
+                if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging stash from site {} into {}",pos,pos+1);
+                state.get_mps_site(pos+1).merge_stash(mps_src); // Absorb remaining V
             }
-        }else if (center_position == pos - 1) {
-            // Going right-to-left. This site is a "B". Convention is that A contains LC.
-            // We extract LC and put it on the site on A to the left
-            mps_tgt.merge_mps(mps_src);
-            if(pos == 0) mps_src.unstash();  // Discard whatever is stashed at the edge (this normalizes the state)
-            else state.get_mps_site(pos-1).merge_stash(mps_src);
-        }else{
-            throw std::runtime_error(fmt::format("Unexpected center position: {} | sites: {}",center_position,sites));
         }
-    }else{
-        // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
-        // Copy the split up mps components into the current state
-        auto mps_ptr = std::next(state.mps_sites.begin(), static_cast<long>(sites.front()));
-        for(const auto &mps_src : mps_list) {
-            auto &mps_tgt = **mps_ptr;
-            mps_tgt.merge_mps(mps_src);
-            state.tag_site_normalized(mps_tgt.get_position(), true); // Merged site is normalized
-            mps_ptr++;
+        if(mps_src.has_stash_U()){
+            if(pos == 0) mps_src.unstash();  // Discard whatever is stashed at the edge (this normalizes the state)
+            else{
+                if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging stash from site {} into {}",pos,pos-1);
+                state.get_mps_site(pos-1).merge_stash(mps_src); // Absorb remaining U,S=LC
+            }
         }
     }
+
+    if(state.get_position<long>() != center_position) throw std::logic_error("Center position mismatch");
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
 }
@@ -256,19 +240,21 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
         // We may only go ahead with a normalization if its really needed.
         if(std::abs(tools::finite::measure::norm(state) - 1.0) < settings::precision::max_norm_error) return false;
     }
-
     // Otherwise we just do the normalization
-    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f}", tools::finite::measure::norm(state));
+
+    // Save the current position, direction and center status
+    auto dir = state.get_direction();
+    auto pos = state.get_position<long>();
+    auto cnt = state.get_mps_site().isCenter();
+    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {}", tools::finite::measure::norm(state),pos,dir);
 
     // Start with normalizing at the current position
-//    size_t num_moves = 2 * (state.get_length() - 1);
-    auto dir = state.get_direction();
-    auto pos = state.get_position();
     auto & mps      = state.get_mps_site(pos);
-    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {pos}, pos, chi_lim, svd_threshold, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, chi_lim, svd_threshold, LogPolicy::NORMAL);
     move_center_point_single_site(state, chi_lim, svd_threshold); // Move once to get started
-    // Now we can move around the chain
-    while(state.get_direction() != dir or state.get_position() != pos) move_center_point_single_site(state, chi_lim, svd_threshold);
+    // Now we can move around the chain until we return to the original status
+    while(not state.position_is_at(pos,dir,cnt))
+        move_center_point_single_site(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
     if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->debug("Normalized state | New norm = {:.16f}", tools::finite::measure::norm(state));

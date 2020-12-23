@@ -101,6 +101,7 @@ void class_lbit::build_mpo()
         print_parameter_values();
         throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
     }
+    unique_id = std::nullopt;
     build_mpo_squared();
 }
 
@@ -162,6 +163,8 @@ void class_lbit::set_field_damping(double beta_) {
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
+        unique_id                                                                       = std::nullopt;
+        unique_id_sq                                                                    = std::nullopt;
     }
 }
 
@@ -195,6 +198,8 @@ void class_lbit::set_perturbation(double coupling_ptb, double field_ptb, Perturb
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                     = std::nullopt;
+        unique_id                                                                       = std::nullopt;
+        unique_id_sq                                                                    = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));

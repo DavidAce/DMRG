@@ -40,7 +40,7 @@ void tools::finite::mps::internal::random_entangled_state(class_state_finite &st
 
 void tools::finite::mps::internal::set_random_entangled_state_with_random_spinors(class_state_finite &state,StateInitType type, long chi_lim) {
     tools::log->info("Setting random entangled state with random unit spinors...");
-    const auto spin_dim        = state.get_mps_site(0).spin_dim();
+    const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     bool pastCenter = false;
     std::string label = "A";
@@ -80,7 +80,7 @@ void tools::finite::mps::internal::set_random_entangled_state_with_random_spinor
 }
 
 void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_eigenspinors(class_state_finite &state,StateInitType type, const std::string &sector, long chi_lim) {
-    const auto spin_dim        = state.get_mps_site(0).spin_dim();
+    const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = internal::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     auto       axis            = internal::get_axis(sector);
     auto       sign            = internal::get_sign(sector);

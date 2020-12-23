@@ -21,7 +21,7 @@ class class_xdmrg : public class_algorithm_finite {
         OptType             optType          = OptType::CPLX;
         OptInit             optInit          = OptInit::CURRENT_STATE;
         size_t              max_sites        = 2;
-        size_t              min_sites        = 2;
+        size_t              min_sites        = 1;
         long                max_problem_size = 0;
         long                problem_size     = 0;
         bool                second_chance    = true;

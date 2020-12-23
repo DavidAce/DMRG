@@ -5,8 +5,9 @@
 #include "class_mpo_site.h"
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
-#include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
+#include <math/hash.h>
+#include <math/rnd.h>
 
 using namespace qm;
 using Scalar = std::complex<double>;
@@ -24,6 +25,7 @@ Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo_squared() const {
 
 void class_mpo_site::build_mpo_squared() {
     mpo_squared     = get_uncompressed_mpo_squared();
+    unique_id_sq    = std::nullopt;
     if(Textra::hasNaN(mpo_squared.value())) {
         print_parameter_names();
         print_parameter_values();
@@ -31,7 +33,10 @@ void class_mpo_site::build_mpo_squared() {
     }
 }
 
-void class_mpo_site::set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq) { mpo_squared = mpo_sq; }
+void class_mpo_site::set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq) {
+    mpo_squared = mpo_sq;
+    unique_id_sq = std::nullopt;
+}
 
 const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
     if(all_mpo_parameters_have_been_set) {
@@ -113,6 +118,8 @@ void class_mpo_site::set_reduced_energy(double site_energy) {
         e_reduced    = site_energy;
         mpo_internal = MPO_reduced_view();
         mpo_squared  = std::nullopt;
+        unique_id    = std::nullopt;
+        unique_id_sq = std::nullopt;
     }
 }
 
@@ -186,4 +193,17 @@ void class_mpo_site::load_mpo(const h5pp::File &file, const std::string &mpo_pre
     } else {
         throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));
     }
+}
+
+
+std::size_t class_mpo_site::get_unique_id() const {
+    if(unique_id) return unique_id.value();
+    unique_id = hash::hash_buffer(MPO().data(), static_cast<size_t>(MPO().size()));
+    return unique_id.value();
+}
+
+std::size_t class_mpo_site::get_unique_id_sq() const {
+    if(unique_id_sq) return unique_id_sq.value();
+    unique_id_sq = hash::hash_buffer(MPO2().data(), static_cast<size_t>(MPO2().size()));
+    return unique_id_sq.value();
 }
