@@ -6,6 +6,7 @@
 #include <bitset>
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
+#include <math/num.h>
 #include <math/rnd.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/state/class_mps_site.h>
@@ -104,14 +105,14 @@ void tools::finite::mps::internal::random_product_state(class_state_finite &stat
 }
 
 
-void tools::finite::mps::internal::set_product_state(class_state_finite &state, StateInitType type, const std::string &sector) {
+void tools::finite::mps::internal::set_product_state_aligned(class_state_finite &state, StateInitType type, const std::string &sector) {
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string axis      = get_axis(sector);
     int         sign      = get_sign(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, sign).normalized(), 2, 1, 1);
-    tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
+    tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
     std::string label = "A";
     for(auto &&mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
@@ -124,8 +125,33 @@ void tools::finite::mps::internal::set_product_state(class_state_finite &state, 
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->debug("Setting product state using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
+    tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
 }
+
+void tools::finite::mps::internal::set_product_state_neel(class_state_finite &state, StateInitType type, const std::string &sector) {
+    Eigen::Tensor<Scalar, 1> L(1);
+    L.setConstant(1.0);
+    std::string axis      = get_axis(sector);
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
+    std::array<Eigen::Tensor<Scalar,3>,2> spinors    = {Textra::MatrixToTensor(get_spinor(axis, +1).normalized(), 2, 1, 1),
+                                                        Textra::MatrixToTensor(get_spinor(axis, -1).normalized(), 2, 1, 1) };
+    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites...", axis, axis);
+    std::string label = "A";
+    for(auto &&mps_ptr : state.mps_sites) {
+        auto &&mps = *mps_ptr;
+        auto idx  = num::mod<size_t>(mps.get_position(),2);
+        mps.set_mps(spinors.at(idx), L,0,label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites... OK", axis,axis);
+}
+
 
 void tools::finite::mps::internal::set_random_product_state_with_random_spinors(class_state_finite &state, StateInitType type) {
     tools::log->info("Setting random product state with spinors in C²...");

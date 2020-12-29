@@ -79,12 +79,12 @@ class class_algorithm_finite : public class_algorithm_base {
                                  std::optional<double> svd_threshold = std::nullopt
                                  );
 
-    void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
+    void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) override;
     void print_status_update() override;
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
-    void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt, bool is_projection = false, const std::string &given_prefix = "");
+    void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt, const std::string &given_prefix = "");
 
     std::vector<double> V_mpo_vec;    // History of variances
     std::vector<size_t> X_mpo_vec;    // History of moves numbers

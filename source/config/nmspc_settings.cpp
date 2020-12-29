@@ -72,6 +72,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::project_trial_when_stuck"           , strategy::project_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);
+    dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
     dmrg_config.load_parameter("strategy::randomize_on_chi_update"            , strategy::randomize_on_chi_update);
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
@@ -119,6 +120,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
     dmrg_config.load_parameter("flbit::time_step_init_real"     , flbit::time_step_init_real);
     dmrg_config.load_parameter("flbit::time_step_init_imag"     , flbit::time_step_init_imag);
+    dmrg_config.load_parameter("flbit::time_step_max_size"      , flbit::time_step_max_size);
     dmrg_config.load_parameter("flbit::time_step_growth_factor" , flbit::time_step_growth_factor);
     dmrg_config.load_parameter("flbit::time_limit"              , flbit::time_limit);
     dmrg_config.load_parameter("flbit::print_freq "             , flbit::print_freq);

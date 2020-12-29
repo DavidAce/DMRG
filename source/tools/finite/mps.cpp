@@ -59,12 +59,12 @@ void tools::finite::mps::move_center_point_single_site(class_state_finite &state
             auto & mpsC = state.get_mps_site(posC); //This becomes the new center position AC
             Eigen::Tensor<Scalar, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction of LC * B
             onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
             mpsC.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "A" at position "posC"
         }else if (state.get_direction() == -1) {
             auto & mps = state.get_mps_site(pos); //This becomes the new B
             auto &onesite_tensor = mps.get_M(); // No need to contract anything this time.
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_lim, svd_threshold, LogPolicy::NORMAL);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
             mps.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "B" at position "pos"}
         }
         state.clear_cache(LogPolicy::QUIET);
@@ -132,8 +132,10 @@ void tools::finite::mps::move_center_point_to_middle(class_state_finite &state, 
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                 long center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
+    std::optional<long> current_position = state.get_position<long>();
+
     if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {} | dimensions {} | center {} -> {}",
-                          sites, chi_lim, multisite_mps.dimensions(),state.get_position<long>(), center_position);
+                          sites, chi_lim, multisite_mps.dimensions(),current_position.value(), center_position);
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
@@ -142,8 +144,14 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
     if(multisite_mps.dimension(2) != state.get_mps_site(sites.back()).get_chiR())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
+    if constexpr(settings::debug){
+        auto norm = Textra::Tensor_to_Vector(multisite_mps).norm();
+        if(std::abs(norm-1) > 1e-8) throw std::runtime_error(fmt::format("Multisite mps norm is too big: {:.16f}",norm));
+    }
+
     long              spin_prod = 1;
     std::vector<long> spin_dims;
+    spin_dims.reserve(sites.size());
     for(const auto &site : sites) {
         spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
         spin_prod *= spin_dims.back();
@@ -153,7 +161,9 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
             fmt::format("Could not merge multisite mps into state: multisite_mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod));
 
     // Split the multisite mps into single-site mps objects
+    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->tic();
     auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
+    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->toc();
 
     // Sanity checks
     if(sites.size() != mps_list.size())
@@ -162,10 +172,14 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
 
     // Note that one of the positions on the split will be a center, so we need to unset
     // the center in our current state so we don't get duplicate centers
-    if(state.get_position<long>() >= 0) state.get_mps_site().unset_LC();
+    if(current_position.value() != center_position) {
+        state.get_mps_site(current_position.value()).unset_LC();
+        current_position = std::nullopt;
+    }
 
     // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
     // Copy the split up mps components into the current state
+    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->tic();
     for(const auto &mps_src : mps_list) {
         auto pos = mps_src.get_position();
         auto &mps_tgt = state.get_mps_site(pos);
@@ -187,8 +201,9 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
             }
         }
     }
-
-    if(state.get_position<long>() != center_position) throw std::logic_error("Center position mismatch");
+    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->toc();
+    if(not current_position) current_position = state.get_position<long>();
+    if(current_position.value() != center_position) throw std::logic_error(fmt::format("Center position mismatch {} ! {}\nLabels: {}", current_position.value(),center_position,state.get_labels()));
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
 }
@@ -238,7 +253,9 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
 
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
-        if(std::abs(tools::finite::measure::norm(state) - 1.0) < settings::precision::max_norm_error) return false;
+        auto norm = tools::finite::measure::norm(state);
+        tools::log->trace("Norm: {:.16f}",norm);
+        if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
     }
     // Otherwise we just do the normalization
 
@@ -248,9 +265,9 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     auto cnt = state.get_mps_site().isCenter();
     if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {}", tools::finite::measure::norm(state),pos,dir);
 
-    // Start with normalizing at the current position
+    // Start with SVD at the current position
     auto & mps      = state.get_mps_site(pos);
-    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, chi_lim, svd_threshold, LogPolicy::NORMAL);
+    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, chi_lim, svd_threshold, LogPolicy::QUIET);
     move_center_point_single_site(state, chi_lim, svd_threshold); // Move once to get started
     // Now we can move around the chain until we return to the original status
     while(not state.position_is_at(pos,dir,cnt))
@@ -270,7 +287,8 @@ void tools::finite::mps::randomize_state(class_state_finite &state, StateInit in
         case StateInit::RANDOM_PRODUCT_STATE: return internal::random_product_state(state, type, sector, use_eigenspinors, bitfield);
         case StateInit::RANDOM_ENTANGLED_STATE: return internal::random_entangled_state(state, type, sector, chi_lim, use_eigenspinors);
         case StateInit::RANDOMIZE_PREVIOUS_STATE: return internal::randomize_given_state(state, type);
-        case StateInit::PRODUCT_STATE: return internal::set_product_state(state, type, sector);
+        case StateInit::PRODUCT_STATE_ALIGNED: return internal::set_product_state_aligned(state, type, sector);
+        case StateInit::PRODUCT_STATE_NEEL: return internal::set_product_state_neel(state, type, sector);
     }
 }
 
@@ -389,12 +407,15 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
                                              std::optional<double> svd_threshold) {
 
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-    if(tools::log->level() == spdlog::level::trace and settings::debug){
-        tools::log->trace("Before applying gates");
-        for(auto &&mps : state.mps_sites)
-            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+    if constexpr(settings::debug){
+        if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
+            tools::log->trace("Before applying gates");
+            for(auto &&mps : state.mps_sites)
+                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+        }
     }
+
 
 
     if(gates.empty()) return;
@@ -425,7 +446,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     }
     if(reverse) std::reverse(all_idx.begin(), all_idx.end());
 
-    if(tools::log->level() == spdlog::level::trace and settings::debug)fmt::print("all_idx {}\n", all_idx);
+    if constexpr (settings::debug) tools::log->trace("all_idx {}", all_idx);
 
     // Save current position and direction so we can leave this function in the same condition
     auto save_pos = state.get_position();
@@ -433,39 +454,67 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 
 
     state.clear_cache(LogPolicy::QUIET);
+    Eigen::Tensor<Scalar, 3> gate_mps;
     for(auto &&idx : all_idx) {
-//        if(idx == 1) continue;
         auto &gate = gates[idx];
         if(gate.pos != num::range<size_t>(gate.pos.front(), gate.pos.front()+gate_size, 1))// Just a sanity check that gate.pos is well defined
             throw std::runtime_error(fmt::format("The positions on gate {} are not well defined for a {}-site gate: {}", idx,gate_size,gate.pos));
         if(gate.pos.back() >= state.get_length())
             throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", idx, gate.pos));
 
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic();
         while(state.get_position() != gate.pos.front()) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
-        tools::log->trace("Applying gate gate at sites {}", gate.pos);
-        Eigen::Tensor<Scalar, 3> gate_mps;
-        if(reverse) gate_mps = gate.adjoint().op.contract(state.get_multisite_mps(gate.pos), Textra::idx({0}, {0}));
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->toc();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic();
+        tools::log->debug("Constructing multisite_mps at sites {}", gate.pos);
+        auto multisite_mps = state.get_multisite_mps(gate.pos);
+        tools::log->debug("Contracting gate and multisite_mps at sites {}", gate.pos);
+        gate_mps.resize({gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        if(reverse) gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().op.contract(multisite_mps, Textra::idx({0}, {0}));
         else
-            gate_mps = gate.op.contract(state.get_multisite_mps(gate.pos), Textra::idx({0}, {0}));
-        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, gate.pos.front(), chi_lim, svd_threshold);
+            gate_mps.device(Textra::omp::getDevice()) = gate.op.contract(multisite_mps, Textra::idx({0}, {0}));
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->toc();
+        tools::log->debug("Merging at sites {}", gate.pos);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->tic();
+//        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, static_cast<long>(gate.pos.front()), chi_lim, svd_threshold, LogPolicy::QUIET);
+        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, state.get_position<long>(), chi_lim, svd_threshold, LogPolicy::QUIET);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->toc();
+        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f} | lapacke {:.4f} ({:.4f}) | jacobi {:.4f} ({:.4f})",
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->get_last_interval(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->get_measured_time()
+                          );
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->reset();
     }
-    if(tools::log->level() == spdlog::level::trace and settings::debug){
-        tools::log->info("After applying gates");
-        for(auto &&mps : state.mps_sites)
-            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+
+
+    if constexpr(settings::debug){
+        if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6 ){
+            tools::log->trace("After applying gates");
+            for(auto &&mps : state.mps_sites)
+                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+        }
     }
+
 
     while(state.get_position() != save_pos or state.get_direction() != save_dir) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
 
 
-    tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::ALWAYS);
-    if(tools::log->level() == spdlog::level::trace){
-        tools::log->trace("After normalization");
-        for(auto &&mps : state.mps_sites)
-            std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                      << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-    }
+    auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::IFNEEDED);
+    if constexpr(settings::debug)
+        if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
+            tools::log->trace("After normalization");
+            for(auto &&mps : state.mps_sites)
+                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+        }
 
 
 }

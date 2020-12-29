@@ -52,16 +52,9 @@ class class_edges_finite {
     void eject_edges_inactive_var(std::optional<std::vector<size_t>> sites = std::nullopt);
     void eject_edges_inactive(std::optional<std::vector<size_t>> sites = std::nullopt);
 
-//    void eject_edges_stale_ene(const std::vector<EdgeStatus> &status);
-//    void eject_edges_stale_var(const std::vector<EdgeStatus> &status);
-//    void eject_edges_stale(const std::vector<EdgeStatus> &status_ene, const std::vector<EdgeStatus> & status_var);
-
     void eject_edges_all_ene();
     void eject_edges_all_var();
     void eject_edges_all();
-
-    std::pair<size_t, size_t> get_ejected_positions_ene() const;
-    std::pair<size_t, size_t> get_ejected_positions_var() const;
 
     // This is a reference wrapper for an edge pair
     template<typename env_type>

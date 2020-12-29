@@ -110,8 +110,10 @@ namespace num {
      * x%y.
      */
     template<typename T>
-    inline auto mod(const T x, const T y) {
-        return (x % y + y) % y;
+    inline T mod(const T x, const T y) {
+        if constexpr (std::is_integral_v<T>)
+            return (x % y + y) % y;
+        else return std::fmod((std::fmod(x,y)+y),y);
     }
 
     /*! \brief Python-style range generator, i.e. not-including "last"

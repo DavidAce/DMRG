@@ -149,13 +149,16 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     // Set up the SVD
     svd::solver svd;
     svd.use_lapacke = true;
+    svd.setLogLevel(2);
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
     // Perform the first SVD which splits at the center position
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->tic();
     tools::common::profile::get_default_prof()["t_svd"]->tic();
     auto [U, S, V] = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
     tools::common::profile::get_default_prof()["t_svd"]->toc();
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->toc();
 
     // Sanity checks
     if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from main svd");
@@ -167,42 +170,15 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
                                              multisite_tensor.dimension(2), V.dimension(2)));
 
     // Perform more SVD's to split the left and right parts around the center
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
     auto mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, sites_left, chi_limit, svd_threshold);
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
     auto mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, sites_right, chi_limit, svd_threshold);
-    tools::log->trace("SVD split L {} sites | R {} sites", mps_sites_As.size(), mps_sites_Bs.size());
+    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
+    //    tools::log->trace("SVD split L {} sites | R {} sites", mps_sites_As.size(), mps_sites_Bs.size());
 
     if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
-
-    if(not mps_sites_As.empty() and mps_sites_As.back().has_stash_V()) {
-        // Use small letters for stashed tensors
-        auto [s, e]                   = mps_sites_As.back().unstash_S();
-        auto                     v    = mps_sites_As.back().unstash_V();
-        Textra::array2           dims = {v.dimension(0) * s.dimension(0), S.dimension(0)}; // We know that v.dimension(0) == 1
-        Eigen::Tensor<Scalar, 2> svS =
-            Textra::asDiagonal(s).contract(v, Textra::idx({1}, {1})).contract(Textra::asDiagonal(S), Textra::idx({2}, {0})).reshape(dims);
-        std::cout << "A: " << fmt::format("{}\n", mps_sites_As.back().get_M_bare().dimensions()) << mps_sites_As.back().get_M_bare() << std::endl;
-        std::cout << "s: " << fmt::format("{}\n", s.dimensions()) << s << std::endl;
-        std::cout << "e:" << e << std::endl;
-        std::cout << "v:" << fmt::format("{}\n", v.dimensions()) << v.reshape(dims) << std::endl;
-        std::cout << "S:" << fmt::format("{}\n", S.dimensions()) << S << std::endl;
-        std::cout << "svS:\n" << svS << std::endl;
-        std::cout << "V:" << fmt::format("{}\n", V.dimensions()) << V << std::endl;
-
-        //        S = Textra::extractDiagonal(svS);
-    }
-    if(not mps_sites_Bs.empty() and mps_sites_Bs.front().has_stash_U()) {
-        // Use small letters for stashed tensors
-        auto u                        = mps_sites_Bs.front().unstash_U();
-        auto [s, e]                   = mps_sites_Bs.front().unstash_S();
-        Textra::array2           dims = {S.dimension(0), s.dimension(0)}; // We know that u.dimension(0) == 1
-        Eigen::Tensor<Scalar, 2> Sus =
-            Textra::asDiagonal(S).contract(u, Textra::idx({1}, {1})).contract(Textra::asDiagonal(s), Textra::idx({2}, {0})).reshape(dims);
-        std::cout << "s:\n" << s << std::endl;
-        std::cout << "e:" << e << std::endl;
-        std::cout << "v:\n" << u << std::endl;
-        std::cout << "Sus:\n" << Sus << std::endl;
-        //        S = Textra::extractDiagonal(Sus);
-    }
 
     if(not mps_sites_As.empty() and mps_sites_Bs.empty()) {
         // We got only left-normalized "A" matrices from the split.
@@ -211,10 +187,11 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
                                                  "multisite_tensor {} | mps_sites_As.front() {} | U {} | S {} | V {}",
                                                  multisite_tensor.dimensions(), mps_sites_As.front().dimensions(), U.dimensions(), S.dimensions(),
                                                  V.dimensions()));
-        if(mps_sites_As.back().get_position<long>() != center_position)
-            throw std::logic_error(fmt::format("Could not split multisite tensor: right-most A is not at the center position"));
-        mps_sites_As.back().set_LC(S, svd.get_truncation_error());
         mps_sites_As.back().stash_V(V);
+        if(mps_sites_As.back().get_position<long>() == center_position)
+            mps_sites_As.back().set_LC(S, svd.get_truncation_error());
+        else
+            mps_sites_As.back().stash_S(S, svd.get_truncation_error());
 
     } else if(mps_sites_As.empty() and not mps_sites_Bs.empty()) {
         // We got only right-normalized "B" matrices from the split.
@@ -228,32 +205,8 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     } else {
         // We find this situation when doing SVD on a multisite tensor, i.e. >= 2 sites straddling the center point
         mps_sites_As.back().set_LC(S, svd.get_truncation_error());
-//        if(sites.size() > 2) {
-//            Eigen::Tensor<Scalar, 4> A_LC_B = mps_sites_As.back().get_M().contract(mps_sites_Bs.front().get_M(), Textra::idx({2}, {1}));
-//            auto [u, s, v]                  = svd.schmidt(A_LC_B, chi_limit);
-//            mps_sites_As.back().set_M(u);
-//            mps_sites_As.back().set_LC(s, svd.get_truncation_error());
-//            mps_sites_Bs.front().set_M(v);
-//        }
     }
 
-    if constexpr(settings::debug) {
-        //    Eigen::Tensor<Scalar,2> C = SV.reshape(Textra::array2{SV.dimension(0)*SV.dimension(1),SV.dimension(2)})
-        //                                 .contract(Textra::asDiagonal(S), Textra::idx({1},{0}))
-        //                                 .contract(US.reshape(Textra::array2{US.dimension(0)*US.dimension(1),US.dimension(2)}), Textra::idx({1},{0}));
-        //        Eigen::Tensor<Scalar,4> theta = mps_sites_As.back().get_M_bare()
-        //            .contract(Textra::asDiagonal(S), Textra::idx({2},{0}))
-        //            .contract(mps_sites_Bs.front().get_M_bare(), Textra::idx({2},{1}));
-        //    std::cout << "S = \n" << S << std::endl;
-        //        std::tie(U,S,V) = svd.schmidt(theta,chi_limit);
-        //        mps_sites_As.back().set_M(U);
-        //    mps_sites_As.back().set_LC(S,svd.get_truncation_error());
-        //        mps_sites_Bs.front().set_M(V);
-        //    std::cout << "C = \n" << C << std::endl;
-        //    std::cout << "C = \n" << Textra::extractDiagonal(C) << std::endl;
-        //    std::cout << "S = \n" << S << std::endl;
-        //    S = Textra::extractDiagonal(C);
-    }
 
     // Some sanity checks
     if(mps_sites_As.size() != spin_dims_left.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_As of of unexpected size");
@@ -361,16 +314,18 @@ std::list<class_mps_site>
          */
         if(positions.empty()) throw std::logic_error("Could not split multisite tensor from the right: Site list became empty");
 
-        tools::common::profile::get_default_prof()["t_svd"]->tic();
         if(S_prev) {
             // Let V absorb S from the previous SVD (see note below)
             SV_temp.resize(V.dimensions());
             SV_temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(S_prev.value()).contract(V, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
             V                                        = SV_temp;
         }
-
+        tools::log->debug("V dims: {}", V.dimensions());
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->tic();
+        tools::common::profile::get_default_prof()["t_svd"]->tic();
         std::tie(U, S, V) = svd.schmidt_from_left(V, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
         //        std::cout << "U:" << fmt::format("{}\n",U.dimensions()) << U <<std::endl;
@@ -495,16 +450,18 @@ std::list<class_mps_site>
 
         if(positions.empty()) throw std::logic_error("Could not split multisite tensor from the right: No sites left");
 
-        tools::common::profile::get_default_prof()["t_svd"]->tic();
         if(S_prev) {
             // Let V absorb S from the previous SVD (see note below)
             US_temp.resize(U.dimensions());
             US_temp.device(Textra::omp::getDevice()) = U.contract(Textra::asDiagonal(S), Textra::idx({2}, {0}));
             U                                        = US_temp;
         }
-
+        tools::log->debug("U dims: {}", U.dimensions());
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->tic();
+        tools::common::profile::get_default_prof()["t_svd"]->tic();
         std::tie(U, S, V) = svd.schmidt_from_right(U, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
         // Note: Now we have the three components

@@ -1,9 +1,8 @@
 #pragma once
-//#include <h5pp/details/h5ppEnums.h>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
-enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT };
+enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode { EIGEN, LAPACKE };
@@ -37,7 +36,8 @@ enum class StateInit {
     RANDOM_PRODUCT_STATE,
     RANDOM_ENTANGLED_STATE,
     RANDOMIZE_PREVIOUS_STATE,
-    PRODUCT_STATE,
+    PRODUCT_STATE_ALIGNED,
+    PRODUCT_STATE_NEEL,
     //    ALL_DOWN_ONE_UP,
 };
 
@@ -114,6 +114,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == AlgorithmType::fLBIT)                                return "fLBIT";
         if(item == AlgorithmType::xDMRG)                                return "xDMRG";
         if(item == AlgorithmType::iTEBD)                                return "iTEBD";
+        if(item == AlgorithmType::ANY)                                  return "ANY";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == MultisiteMove::ONE)                                  return "ONE";
@@ -180,7 +181,8 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
         if(item == StateInit::RANDOM_ENTANGLED_STATE)                   return "RANDOM_ENTANGLED_STATE";
         if(item == StateInit::RANDOMIZE_PREVIOUS_STATE)                 return "RANDOMIZE_PREVIOUS_STATE";
-        if(item == StateInit::PRODUCT_STATE)                            return "PRODUCT_STATE";
+        if(item == StateInit::PRODUCT_STATE_ALIGNED)                    return "PRODUCT_STATE_ALIGNED";
+        if(item == StateInit::PRODUCT_STATE_NEEL)                       return "PRODUCT_STATE_NEEL";
     }
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item == StateInitType::REAL)   return "REAL";
@@ -288,6 +290,7 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "fLBIT")                                 return AlgorithmType::fLBIT;
         if(item == "xDMRG")                                 return AlgorithmType::xDMRG;
         if(item == "iTEBD")                                 return AlgorithmType::iTEBD;
+        if(item == "ANY")                                   return AlgorithmType::ANY;
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == "ONE")                                   return MultisiteMove::ONE;
@@ -354,7 +357,8 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;
         if(item == "RANDOM_ENTANGLED_STATE")                return StateInit::RANDOM_ENTANGLED_STATE;
         if(item == "RANDOMIZE_PREVIOUS_STATE")              return StateInit::RANDOMIZE_PREVIOUS_STATE;
-        if(item == "PRODUCT_STATE")                         return StateInit::PRODUCT_STATE;
+        if(item == "PRODUCT_STATE_ALIGNED")                 return StateInit::PRODUCT_STATE_ALIGNED;
+        if(item == "PRODUCT_STATE_NEEL")                    return StateInit::PRODUCT_STATE_NEEL;
     }
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item ==  "REAL")                                 return StateInitType::REAL;

@@ -79,6 +79,7 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     measurement_entry.truncation_error                = tensors.state->get_truncation_error_midchain();
     measurement_entry.total_time                      = status.wall_time;
     measurement_entry.algorithm_time                  = status.algo_time;
+    measurement_entry.physical_time                   = status.phys_time;
     tools::common::profile::get_default_prof()["t_hdf"]->tic();
     h5ppFile.appendTableRecords(measurement_entry, table_path);
     h5ppFile.writeAttribute(status.iter, "iteration", table_path);

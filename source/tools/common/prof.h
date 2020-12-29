@@ -1,55 +1,37 @@
 #pragma once
 
-#include <general/class_tic_toc.h>
 #include <memory>
 #include <optional>
 #include <vector>
-#include <tools/common/fmt.h>
+#include <general/class_tic_toc.h>
 
 class class_tic_toc;
 enum class AlgorithmType;
 namespace tools::common::profile {
     // Profiling
     inline std::unique_ptr<class_tic_toc> t_tot;          // + Total Time
+
     namespace internal {
+        // Implement a custom ordered map
+        // In the map, we want keep the order in which they were appended. This behavior does not exist in stl ordered maps.
         template<typename KeyT, typename ValT>
         class insert_ordered_map {
             private:
             std::vector<std::pair<KeyT, ValT>> data;
-
             public:
-            const ValT &operator[](const KeyT &key) const {
-                auto it = find(key);
-                if(it == data.end()){
-                    if constexpr(std::is_convertible_v<KeyT,std::string>)
-                        throw std::runtime_error(fmt::format("Invalid key: {}",key));
-                    else throw std::runtime_error("Invalid key");
-                }
-                return it->second;
-            }
-            ValT &operator[](const KeyT &key) {
-                auto it = find(key);
-                if(it == data.end()) {
-                    data.emplace_back(std::make_pair(key, ValT()));
-                    return data.back().second;
-                } else
-                    return it->second;
-            }
-
-            [[nodiscard]] auto begin() { return data.begin(); }
-            [[nodiscard]] auto end() { return data.end(); }
-            [[nodiscard]] auto begin() const { return data.begin(); }
-            [[nodiscard]] auto end() const { return data.end(); }
-            [[nodiscard]] auto find(const KeyT & key){
-                return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
-            }
-            [[nodiscard]] auto find(const KeyT & key) const {
-                return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
-            }
+            using iterator = typename std::vector<std::pair<KeyT, ValT>>::iterator;
+            using const_iterator = typename std::vector<std::pair<KeyT, ValT>>::const_iterator;
+            ValT &operator[](const KeyT &key);
+            void append(const KeyT & key, ValT val);
+            [[nodiscard]] iterator begin();
+            [[nodiscard]] iterator end();
+            [[nodiscard]] const_iterator begin() const;
+            [[nodiscard]] const_iterator end() const;
+            [[nodiscard]] iterator find(const KeyT & key);
+            [[nodiscard]] const_iterator find(const KeyT & key) const;
         };
         using MapTicTocUnique   = insert_ordered_map<std::string, std::unique_ptr<class_tic_toc>>;
-        using MapTicTocShared   = insert_ordered_map<std::string, std::shared_ptr<class_tic_toc>>;
-        using AlgoProf    = insert_ordered_map<AlgorithmType, MapTicTocUnique>;
+        using AlgoProf          = insert_ordered_map<AlgorithmType, MapTicTocUnique>;
         inline std::optional<AlgorithmType> default_algo_type = std::nullopt;
     }
 

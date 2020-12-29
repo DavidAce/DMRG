@@ -18,7 +18,7 @@ class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text) : n
 
 void class_tic_toc::tic() {
     if(enable) {
-        if(is_measuring) throw std::runtime_error("Called tic() twice: this timer is already measuring");
+        if(is_measuring) throw std::runtime_error("Called tic() twice: this timer is already measuring: " + name);
         tic_timepoint = std::chrono::high_resolution_clock::now();
         is_measuring  = true;
     }

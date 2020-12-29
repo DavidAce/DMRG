@@ -24,9 +24,9 @@ class_idmrg::class_idmrg(std::shared_ptr<h5pp::File> h5ppFile_)
 
 
 void class_idmrg::run_simulation() {
-    if(ritz == StateRitz::SR) state_name = "state_emin";
-    else state_name = "state_emax";
-    tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    if(ritz == StateRitz::SR) tensors.state->set_name("state_emin");
+    else tensors.state->set_name("state_emax");
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     while(true){
         single_iDMRG_step();

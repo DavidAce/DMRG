@@ -137,6 +137,7 @@ namespace settings {
         inline bool          project_when_stuck         = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
+        inline bool          project_initial_state      = false;                                  /*!< Project to target parity sector when initializing a state. */
         inline bool          randomize_on_chi_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool          randomize_early            = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors           = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
@@ -156,7 +157,7 @@ namespace settings {
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline size_t   svd_switchsize                  = 128   ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
+        inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
@@ -221,6 +222,7 @@ namespace settings {
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline double   time_step_init_real     = 0.1;                      /*!< Real part of initial time step delta_t */
         inline double   time_step_init_imag     = 0.0;                      /*!< Imag part of initial time step delta_t */
+        inline double   time_step_max_size      = 10;                       /*!< Maximum time step size */
         inline double   time_step_growth_factor = 10;                       /*!< (Absolute value) Growth factor for time step delta_t */
         inline double   time_limit              = 1;                        /*!< (Absolute value) Maximum physical time to evolve */
         inline size_t   print_freq              = 1;                        /*!< Print frequency for console output. In units of iterations. (0 = off). */

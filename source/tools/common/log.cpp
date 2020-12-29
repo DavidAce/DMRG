@@ -4,6 +4,7 @@
 
 void tools::Logger::enableTimestamp(const std::shared_ptr <spdlog::logger> &other_log) {
     if (other_log != nullptr) {
+//        other_log->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n]%^[%=8l]%$ %v");
         other_log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
         other_log->trace("Enabled timestamp");
     }

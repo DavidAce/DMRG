@@ -9,7 +9,13 @@
 #include <Eigen/SVD>
 #include <math/svd.h>
 svd::solver::solver(size_t logLevel) {
-    if(not svd::log) { tools::Logger::setLogger(svd::log, "svd", logLevel); }
+    setLogLevel(logLevel);
+}
+
+void svd::solver::setLogLevel(size_t logLevel){
+    if(not svd::log) tools::Logger::setLogger(svd::log, "svd", logLevel, true);
+    else tools::Logger::setLogLevel(svd::log,logLevel);
+    svd::log->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n]%^[%=8l]%$ %v");
 }
 
 double svd::solver::get_truncation_error() { return truncation_error; }

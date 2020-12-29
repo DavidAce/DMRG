@@ -240,7 +240,7 @@ void class_algorithm_finite::randomize_model() {
 
 void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
                                              std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", state_name, enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -266,7 +266,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     status.reset();
     status.iter      = 0;
     status.step      = 0;
-    status.position  = tensors.state->get_position();
+    status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     num_perturbations = 0;
     num_chi_quenches = 0;
@@ -281,7 +281,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", state_name, enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
     tools::log->info("-- Normalization            : {:.16f}",tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
@@ -299,7 +299,7 @@ void class_algorithm_finite::try_projection() {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
         tensors.project_to_nearest_sector(settings::strategy::target_sector);
         has_projected = true;
-        write_to_file(StorageReason::PROJ_STATE, *tensors.state,CopyPolicy::OFF, true);
+        write_to_file(StorageReason::PROJ_STATE, *tensors.state, CopyPolicy::OFF);
     }
 }
 
@@ -533,14 +533,13 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, std::op
     write_to_file(storage_reason, *tensors.state, copy_policy);
 }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy,
-                                           bool is_projection, const std::string &given_prefix) {
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy, const std::string &given_prefix) {
     // Setup this save
     StorageLevel             storage_level;
-    std::string              state_prefix = algo_name + '/' + state_name; // May get modified
-    std::string              model_prefix = algo_name + "/model";
-    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"}; // Common tables
+    std::string              state_prefix = fmt::format("{}/{}", algo_name,state.get_name()); // May get modified
     if(not given_prefix.empty()) state_prefix = given_prefix;
+    std::string              model_prefix = fmt::format("{}/{}", algo_name,"model");
+    std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
@@ -576,10 +575,14 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::output::storage_level_proj_state;
-            if(not is_projection and storage_level != StorageLevel::NONE) {
-                auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(*tensors.state, settings::strategy::target_sector);
-                return write_to_file(storage_reason, state_projected, copy_policy, true, state_prefix);
+            auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state,settings::strategy::target_sector));
+            if(std::abs(abs_spin_component - 1.0) > 1e-6){
+                auto state_projected = tensors.get_state_projected_to_nearest_sector(settings::strategy::target_sector,status.chi_lim);
+                abs_spin_component = std::abs(tools::finite::measure::spin_component(state_projected,settings::strategy::target_sector));
+                if(std::abs(abs_spin_component - 1.0) > 1e-6) throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", settings::strategy::target_sector,abs_spin_component));
+                return write_to_file(storage_reason,state_projected,copy_policy);
             }
+
             state_prefix += "/projection";
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
@@ -592,14 +595,10 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::EMIN_STATE: {
             storage_level = settings::output::storage_level_emin_state;
-            state_prefix  = algo_name + "/state_emin";
-            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMAX_STATE: {
             storage_level = settings::output::storage_level_emax_state;
-            state_prefix  = algo_name + "/state_emax";
-            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::MODEL: {
@@ -612,11 +611,15 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
+
+    // The file cam be kept open during writes
+    h5pp_file->setKeepFileOpened();
+
     // Start saving tensors and metadata
     tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state, status);
     tools::finite::io::h5dset::save_entgm(*h5pp_file, state_prefix, storage_level, state, status);
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
-                                         state_name, state_prefix, model_prefix, status);
+                                         state.get_name(), state_prefix, model_prefix, status);
 
     // The main results have now been written. Next we append data to tables
     for(const auto &table_prefix : table_prefxs) {
@@ -625,6 +628,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         tools::finite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
         tools::finite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
     }
+    h5pp_file->setKeepFileClosed();
+
     // Copy from temporary location to destination depending on given policy
     copy_from_tmp(storage_reason, copy_policy);
 }
@@ -635,7 +640,7 @@ void class_algorithm_finite::print_status_update() {
 
     std::string report;
     //    report += fmt::format("{:<} ", algo_name);
-    report += fmt::format("{:<} ", state_name);
+    report += fmt::format("{:<} ", tensors.state->get_name());
     report += fmt::format("iter:{:<4} ", status.iter);
     report += fmt::format("step:{:<5} ", status.step);
     report += fmt::format("L:{} ", tensors.get_length());
@@ -669,7 +674,7 @@ void class_algorithm_finite::print_status_update() {
 void class_algorithm_finite::print_status_full() {
     tensors.do_all_measurements();
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", " Full status: [" + algo_name + "][" + state_name + "]");
+    tools::log->info("= {: ^56} =", " Full status: [" + algo_name + "][" + tensors.state->get_name() + "]");
     tools::log->info("{:=^60}", "");
     tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
     tools::log->info("Sites                              = {}", tensors.state->get_length());

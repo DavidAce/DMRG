@@ -59,9 +59,9 @@ namespace qm{
     }
 
     namespace lbit{
-        extern std::vector<qm::Gate> get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite);
         extern Eigen::Tensor<Scalar,2> get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar,2> &hamiltonian);
-        extern std::vector<Eigen::Tensor<Scalar,2>> get_unitary_twosite_operators(size_t sites, double fmix);
+        extern std::vector<qm::Gate> get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite);
+        extern std::vector<qm::Gate> get_unitary_2gate_layer(size_t sites, double fmix);
         extern std::vector<Eigen::Tensor<Scalar,2>> get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &twosite_hams);
         extern std::vector<Eigen::Tensor<Scalar,2>> get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site);
         extern std::vector<Eigen::Tensor<Scalar,4>> get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<Scalar,4>> &mpos);

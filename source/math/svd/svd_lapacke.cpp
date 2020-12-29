@@ -24,7 +24,6 @@
 #include <Eigen/Core>
 #include <math/svd.h>
 
-
 namespace svd{
     template<typename Scalar>
     void print_matrix_lapacke(const Scalar *mat_ptr, long rows, long cols,long dec = 8){
@@ -44,7 +43,6 @@ namespace svd{
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
-
     // Setup useful sizes
     int rowsA = static_cast<int>(rows);
     int colsA = static_cast<int>(cols);
@@ -216,7 +214,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
         }
     }
-    svd::log->trace("Truncation singular values");
+    svd::log->trace("Truncating singular values");
 
     long max_size = std::min(S.size(), rank_max.value());
     long rank     = (S.head(max_size).array() >= lapacke_svd_threshold).count();
@@ -240,7 +238,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(not use_lapacke) throw std::runtime_error("Lapacke SVD error:  Wrong results");
     }
     svd::log->trace("SVD with lapacke finished successfully. info = {}", info);
-
     return std::make_tuple(U.leftCols(rank), S.head(rank), VT.topRows(rank), rank);
 }
 

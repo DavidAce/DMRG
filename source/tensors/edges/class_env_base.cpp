@@ -65,81 +65,106 @@ class_env_base &class_env_base::operator=(const class_env_base &other) {
 using Scalar = class_env_base::Scalar;
 
 void class_env_base::assert_block() const {
-    if(block == nullptr) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
+    if(not block) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
 }
 
-void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
+void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo){
     /*!< Contracts a site into the block-> */
-    //    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
-    assert_block();
+    // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
+    // This can't be checked here though, so do that before calling this function.
+
+    if(not block) block = std::make_unique<Eigen::Tensor<Scalar, 3>>();
     if(side == "L") {
-        /*! # Left environment contraction
-         * [      ]--0 0--[LB]--1 1--[  GA    ]--2
-         * [      ]                      |
-         * [      ]                      0
-         * [      ]
-         * [      ]                      2
-         * [      ]                      |
-         * [ left ]--2            0--[   M    ]--1
-         * [      ]                      |
-         * [      ]                      3
-         * [      ]
-         * [      ]                      0
-         * [      ]                      |
-         * [      ]--1 0--[LB]--1  1--[GA conj ]--2
+        /*! # Left environment block contraction
+         *   [       ]--0         [       ]--0 0--[LB]--1 1--[  GA    ]--2
+         *   [       ]            [       ]                      |
+         *   [       ]            [       ]                      0
+         *   [       ]            [       ]
+         *   [       ]            [       ]                      2
+         *   [       ]            [       ]                      |
+         *   [ block ]--2     =   [lblock ]--2            0--[   M    ]--1
+         *   [       ]            [       ]                      |
+         *   [       ]            [       ]                      3
+         *   [       ]            [       ]
+         *   [       ]            [       ]                      0
+         *   [       ]            [       ]                      |
+         *   [       ]--1         [       ]--1 0--[LB]--1  1--[GA conj ]--2
          */
 
-        if(MPS.dimension(0) != MPO.dimension(2))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{}]:{}", tag, side, position.value(), 0,
-                                                 MPS.dimension(0), 2, MPO.dimension(2)));
-        if(MPS.dimension(1) != block->dimension(0))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{}]:{}", tag, side, position.value(), 1,
-                                                 MPS.dimension(1), 0, block->dimension(0)));
-        if(MPO.dimension(0) != block->dimension(2))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{}]:{}", tag, side, position.value(), 0,
-                                                 MPO.dimension(0), 2, block->dimension(2)));
+        if(mps.dimension(0) != mpo.dimension(2))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo   dim[{}]:{}",side,tag , position.value(), 0,
+                                                 mps.dimension(0), 2, mpo.dimension(2)));
+        if(mps.dimension(1) != otherblock.dimension(0))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != left-block dim[{}]:{}",side,tag , position.value(), 1,
+                                                 mps.dimension(1), 0, otherblock.dimension(0)));
+        if(mpo.dimension(0) != otherblock.dimension(2))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}",side,tag , position.value(), 0,
+                                                 mpo.dimension(0), 2, otherblock.dimension(2)));
 
-        sites++;
-        Eigen::Tensor<Scalar, 3> block_enlarged(MPS.dimension(2), MPS.dimension(2), MPO.dimension(1));
-        block_enlarged.device(Textra::omp::getDevice()) = block->contract(MPS, Textra::idx({0}, {1}))
-                                                              .contract(MPO, Textra::idx({1, 2}, {0, 2}))
-                                                              .contract(MPS.conjugate(), Textra::idx({0, 3}, {1, 0}))
-                                                              .shuffle(Textra::array3{0, 2, 1});
-        *block = block_enlarged;
+        block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
+        block->device(Textra::omp::getDevice()) =
+            otherblock
+            .contract(mps, Textra::idx({0}, {1}))
+            .contract(mpo, Textra::idx({1, 2}, {0, 2}))
+            .contract(mps.conjugate(), Textra::idx({0, 3}, {1, 0}))
+            .shuffle(Textra::array3{0, 2, 1});
     } else if(side == "R") {
         /*! # Right environment contraction
-         *  1--[ GB conj ]--2 0--[LB]--1  0--[      ]
-         *          |                        [      ]
-         *          0                        [      ]
-         *                                   [      ]
-         *          2                        [      ]
-         *          |                        [      ]
-         *   0--[   M    ]--1             2--[ right]
-         *          |                        [      ]
-         *          3                        [      ]
-         *                                   [      ]
-         *          0                        [      ]
-         *          |                        [      ]
-         *    1--[  GB   ]--2 0--[LB]--1  1--[      ]
+         *   0--[       ]          1--[   GB   ]--2  0--[LB]--1  0--[       ]
+         *      [       ]                  |                        [       ]
+         *      [       ]                  0                        [       ]
+         *      [       ]                                           [       ]
+         *      [       ]                  2                        [       ]
+         *      [       ]                  |                        [       ]
+         *   2--[ block ]     =     0--[   M   ]--1              2--[ rblock]
+         *      [       ]                  |                        [       ]
+         *      [       ]                  3                        [       ]
+         *      [       ]                                           [       ]
+         *      [       ]                  0                        [       ]
+         *      [       ]                  |                        [       ]
+         *   1--[       ]           1--[GB conj]--2  0--[LB]--1  1--[       ]
          */
 
-        if(MPS.dimension(0) != MPO.dimension(2))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{}]:{}", tag, side, position.value(), 0,
-                                                 MPS.dimension(0), 2, MPO.dimension(2)));
-        if(MPS.dimension(2) != block->dimension(0))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{}]:{}", tag, side, position.value(), 2,
-                                                 MPS.dimension(2), 0, block->dimension(0)));
-        if(MPO.dimension(1) != block->dimension(2))
-            throw std::runtime_error(fmt::format("env {} {} pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{}]:{}", tag, side, position.value(), 1,
-                                                 MPO.dimension(1), 2, block->dimension(2)));
-        sites++;
-        Eigen::Tensor<Scalar, 3> block_enlarged(MPS.dimension(1), MPS.dimension(1), MPO.dimension(0));
-        block_enlarged.device(Textra::omp::getDevice()) = block->contract(MPS, Textra::idx({0}, {2}))
-                                                              .contract(MPO, Textra::idx({1, 2}, {1, 2}))
-                                                              .contract(MPS.conjugate(), Textra::idx({0, 3}, {2, 0}))
-                                                              .shuffle(Textra::array3{0, 2, 1});
-        *block = block_enlarged;
+        if(mps.dimension(0) != mpo.dimension(2))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo dim[{}]:{}", side,tag, position.value(), 0,
+                                                 mps.dimension(0), 2, mpo.dimension(2)));
+        if(mps.dimension(2) != otherblock.dimension(0))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != right-block dim[{}]:{}", side,tag, position.value(), 2,
+                                                 mps.dimension(2), 0, otherblock.dimension(0)));
+        if(mpo.dimension(1) != otherblock.dimension(2))
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side,tag, position.value(), 1,
+                                                 mpo.dimension(1), 2, otherblock.dimension(2)));
+        block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
+        block->device(Textra::omp::getDevice()) =
+            otherblock
+            .contract(mps, Textra::idx({0}, {2}))
+            .contract(mpo, Textra::idx({1, 2}, {1, 2}))
+            .contract(mps.conjugate(), Textra::idx({0, 3}, {2, 0}))
+            .shuffle(Textra::array3{0, 2, 1});
     }
+
+}
+
+
+void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
+    /*!< Contracts a site into the current block-> */
+
+    // NOTE:
+    // If side == "L", the mps and mpo should correspond to this env position+1
+    // If side == "R", the mps and mpo should correspond to this env position-1
+    // There is no way to check the positions here, so checks should be done before calling this function
+
+
+    assert_block();
+    Eigen::Tensor<Scalar,3> thisblock = *block;
+    build_block(thisblock,mps,mpo);
+    sites++;
+    if(position){
+        if(side == "L") position = position.value()+1;
+        else if(position.value() > 0 ) position = position.value()-1;
+    }
+
+
 }
 
 void class_env_base::clear() {

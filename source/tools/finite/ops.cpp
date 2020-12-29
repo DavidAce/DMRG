@@ -2,7 +2,7 @@
 // Created by david on 2019-01-30.
 //
 
-#include <config/nmspc_settings.h>
+#include <config/debug.h>
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/rnd.h>
