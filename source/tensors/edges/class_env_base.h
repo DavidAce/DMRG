@@ -19,8 +19,9 @@ class class_env_base {
 
     protected:
     bool edge_has_been_set = false;
-    void enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO);
-    void set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO, const Eigen::Tensor<Scalar, 1> &edge);
+    void build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo);
+    void enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo);
+    void set_edge_dims(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edge);
 
     std::unique_ptr<Eigen::Tensor<Scalar, 3>> block;        /*!< The environment block. */
     size_t                                    sites    = 0; /*!< Number of particles that have been contracted into this environment. */

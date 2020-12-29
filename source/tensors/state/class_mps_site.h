@@ -65,6 +65,7 @@ class class_mps_site {
 
     void set_M(const Eigen::Tensor<Scalar, 3> &M_);
     void set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
+    void set_L(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L_and_error);
     void set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error = 0);
     void set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
     void set_truncation_error(double error);

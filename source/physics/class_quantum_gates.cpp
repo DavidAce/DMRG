@@ -3,8 +3,8 @@
 //
 
 #include "class_quantum_gates.h"
-#include <Eigen/Core>
 #include "general/nmspc_tensor_extra.h"
+#include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
 qm::Gate::Gate(const Eigen::Tensor<Scalar,2>  & op_, const std::vector<size_t> & pos_):op(op_),pos(pos_){}

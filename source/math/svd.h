@@ -42,6 +42,7 @@ namespace svd {
         public:
         solver(size_t logLevel = 2);
         bool   use_lapacke = false;
+        void   setLogLevel(size_t logLevel);
         double get_truncation_error();
         void   setThreshold(double newThreshold, std::optional<double> overrideThreshold = std::nullopt);
         void   setSwitchSize(size_t newSwitchSize, std::optional<size_t> overrideSwitchSize = std::nullopt);

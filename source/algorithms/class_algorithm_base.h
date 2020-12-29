@@ -30,7 +30,6 @@ class class_algorithm_base {
     StopReason                  stop_reason = StopReason::NONE;
     AlgorithmType               algo_type;
     std::string                 algo_name;
-    std::string                 state_name;
     static constexpr double     quietNaN = std::numeric_limits<double>::quiet_NaN();
 
     // Virtual Functions

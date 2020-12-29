@@ -25,10 +25,8 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
     copy_c_str(settings::model::lbit::distribution,h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
-    class_lbit::randomize_hamiltonian();
     h5tb_lbit::register_table_type();
-    all_mpo_parameters_have_been_set = true; // There are no full lattice parameters on this model so we set it true immediately!
-    class_lbit::build_mpo();
+    all_mpo_parameters_have_been_set = false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
 }
 
 double class_lbit::get_field() const { return  + std::pow(h5tb.param.J1, 1 - beta); }
@@ -135,17 +133,17 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 
 void class_lbit::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
-        h5tb.param.J1 = settings::model::lbit::J1 + rnd::normal(0, h5tb.param.w1);
-        h5tb.param.J2 = settings::model::lbit::J2 + rnd::normal(0, h5tb.param.w2);
-        h5tb.param.J3 = settings::model::lbit::J3 + rnd::normal(0, h5tb.param.w3);
+        h5tb.param.J1 = settings::model::lbit::J1 + rnd::normal(0, settings::model::lbit::w1);
+        h5tb.param.J2 = settings::model::lbit::J2 + rnd::normal(0, settings::model::lbit::w2);
+        h5tb.param.J3 = settings::model::lbit::J3 + rnd::normal(0, settings::model::lbit::w3);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.J1 =  settings::model::lbit::J1 + rnd::log_normal(0, h5tb.param.w1);
-        h5tb.param.J2 =  settings::model::lbit::J2 + rnd::log_normal(0, h5tb.param.w2);
-        h5tb.param.J3 =  settings::model::lbit::J3 + rnd::log_normal(0, h5tb.param.w3);
+        h5tb.param.J1 =  settings::model::lbit::J1 + rnd::log_normal(0, settings::model::lbit::w1);
+        h5tb.param.J2 =  settings::model::lbit::J2 + rnd::log_normal(0, settings::model::lbit::w2);
+        h5tb.param.J3 =  settings::model::lbit::J3 + rnd::log_normal(0, settings::model::lbit::w3);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
-        h5tb.param.J1 = settings::model::lbit::J1 + rnd::uniform_double_box(h5tb.param.w1);
-        h5tb.param.J2 = settings::model::lbit::J2 + rnd::uniform_double_box(h5tb.param.w2);
-        h5tb.param.J3 = settings::model::lbit::J3 + rnd::uniform_double_box(h5tb.param.w3);
+        h5tb.param.J1 = settings::model::lbit::J1 + rnd::uniform_double_box(settings::model::lbit::w1);
+        h5tb.param.J2 = settings::model::lbit::J2 + rnd::uniform_double_box(settings::model::lbit::w2);
+        h5tb.param.J3 = settings::model::lbit::J3 + rnd::uniform_double_box(settings::model::lbit::w3);
     }else if(std::string(h5tb.param.distribution) == "constant") {
             h5tb.param.J1 = settings::model::lbit::J1;
             h5tb.param.J2 = settings::model::lbit::J2;

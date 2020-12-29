@@ -13,10 +13,16 @@
 class class_state_finite;
 class class_flbit : public class_algorithm_finite {
     public:
+    std::unique_ptr<class_state_finite> state_lbit;
     std::vector<qm::Gate> ham_gates_1body,time_gates_1site;
     std::vector<qm::Gate> ham_gates_2body,time_gates_2site;
     std::vector<qm::Gate> ham_gates_3body,time_gates_3site;
     std::vector<qm::Gate> ham_gates_Lsite,time_gates_Lsite;
+    std::vector<qm::Gate> unitary_gates_2site_layer0;
+    std::vector<qm::Gate> unitary_gates_2site_layer1;
+    std::vector<qm::Gate> unitary_gates_2site_layer2;
+    std::vector<qm::Gate> unitary_gates_2site_layer3;
+
     Eigen::Tensor<Scalar,1> Upsi_ed;
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
@@ -29,6 +35,9 @@ class class_flbit : public class_algorithm_finite {
     void   run_preprocessing() final;
     void   run_algorithm() final;
     void   check_convergence() final;
+    void   transform_to_real_basis();
+    void   transform_to_lbit_basis();
+    void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
     bool   cfg_algorithm_is_on() final;
     long   cfg_chi_lim_max() final;
     size_t cfg_print_freq() final;

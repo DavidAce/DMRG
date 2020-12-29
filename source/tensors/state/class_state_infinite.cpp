@@ -77,6 +77,9 @@ void class_state_infinite::initialize(ModelType model_type) {
     MPS_A->set_LC(L);
 }
 
+void class_state_infinite::set_name(const std::string & statename){name = statename; }
+std::string class_state_infinite::get_name() const { return name; }
+
 std::pair<size_t, size_t> class_state_infinite::get_positions() { return std::make_pair(MPS_A->get_position(), MPS_B->get_position()); }
 size_t                    class_state_infinite::get_positionA() { return MPS_A->get_position(); }
 size_t                    class_state_infinite::get_positionB() { return MPS_B->get_position(); }

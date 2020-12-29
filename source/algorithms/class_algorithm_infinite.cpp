@@ -305,9 +305,9 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
 
 void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
     StorageLevel             storage_level;
-    std::string              state_prefix = algo_name + '/' + state_name; // May get modified
-    std::string              model_prefix = algo_name + "/model";
-    std::vector<std::string> table_prefxs = {algo_name + '/' + state_name + "/tables"}; // Common tables
+    std::string              state_prefix = fmt::format("{}/{}", algo_name,tensors.state->get_name()); // May get modified
+    std::string              model_prefix = fmt::format("{}/{}", algo_name,"model");
+    std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
 
     switch(storage_reason) {
         case StorageReason::FINISHED: {
@@ -376,7 +376,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
     tools::infinite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::io::h5dset::save_edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
-                                         state_name, state_prefix, model_prefix, status);
+                                         tensors.state->get_name(), state_prefix, model_prefix, status);
     // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;
 
@@ -397,7 +397,7 @@ void class_algorithm_infinite::print_status_update() {
     if(cfg_print_freq() == 0) { return; }
     //    compute_observables();
     std::string report;
-    report += fmt::format("{:<} ", state_name);
+    report += fmt::format("{:<} ", tensors.state->get_name());
     report += fmt::format("iter: {:<4} ", status.iter);
     report += fmt::format("step: {:<5} ", status.step);
 

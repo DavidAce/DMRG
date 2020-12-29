@@ -232,6 +232,7 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
+        case(AlgorithmType::ANY): break;
     }
     h5ppFile.writeAttribute(status.iter, "iteration", table_path);
     h5ppFile.writeAttribute(status.step, "step", table_path);

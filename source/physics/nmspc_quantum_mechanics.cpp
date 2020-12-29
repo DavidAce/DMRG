@@ -246,7 +246,7 @@ namespace qm::timeEvolution {
 
 }
 
-std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(size_t sites, double fmix){
+std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmix){
     /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
      *
      *
@@ -260,7 +260,6 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
     */
 
     tools::log->trace("Generating twosite unitaries");
-    std::vector<Eigen::Tensor<qm::cplx,2>> unitaries(sites-1);
     constexpr bool kroneckerSwap = false;
     auto SZ  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz,kroneckerSwap); // We use these as matrices
     auto SP  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp,kroneckerSwap); // We use these as matrices
@@ -268,6 +267,8 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
     auto ID  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id,kroneckerSwap); // We use these as matrices
     auto N   = std::vector<Eigen::Matrix4cd> {0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
 
+    std::vector<qm::Gate> unitaries;
+    unitaries.reserve(sites-1);
     for (size_t idx = 0; idx < sites-1; idx++){
         double th0 = rnd::uniform_double_box(-1,1);
         double th1 = rnd::uniform_double_box(-1,1);
@@ -292,7 +293,7 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
             //        |               |      |
             //        1               2      3
 
-            unitaries[idx] = Textra::MatrixToTensor2((imn * fmix * H).exp());
+            unitaries.emplace_back(Textra::MatrixToTensor2((imn * fmix * H).exp()), std::vector<size_t>{idx,idx+1});
         }else{
             // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
             // the kronecker product that generated two-site gates above has indexed right-to-left
@@ -303,11 +304,11 @@ std::vector<Eigen::Tensor<qm::cplx,2>> qm::lbit::get_unitary_twosite_operators(s
             //        1                   3      2              2      3                1
             Eigen::Tensor<Scalar,2> H_shuffled = Textra::MatrixTensorMap(H,2,2,2,2).shuffle(Textra::array4{1,0,3,2}).reshape(Textra::array2{4,4});
             Eigen::MatrixXcd expifH = (imn * fmix * Textra::TensorMatrixMap(H_shuffled)).exp();
-            unitaries[idx] = Textra::MatrixTensorMap(expifH);
+            unitaries.emplace_back(Textra::MatrixTensorMap(expifH), std::vector<size_t>{idx,idx+1});
         }
     }
     // Sanity check
-    for(auto && u : unitaries) if(not Textra::TensorMatrixMap(u).isUnitary()) throw std::logic_error("u is not unitary!");
+    for(auto && u : unitaries) if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
     return unitaries;
 }
 
@@ -324,8 +325,8 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
     for(auto & h : hams_nsite ) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-    for(auto & t : time_evolution_gates ) if(not t.isUnitary()) {
-            std::cout << t.op << std::endl;
+    for(auto & t : time_evolution_gates ) if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision()* static_cast<double>(t.op.dimension(0)))) {
+            std::cout << "Supposedly not unitary: \n "<< t.op << std::endl;
             throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary", t.pos)); }
     return time_evolution_gates;
 }

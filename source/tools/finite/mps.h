@@ -52,7 +52,8 @@ namespace tools::finite::mps {
         extern void set_random_product_state_on_axis_using_bitfield(class_state_finite & state, StateInitType type, const std::string &sector, long bitfield);
         extern void set_random_product_state_in_sector_using_eigenspinors(class_state_finite & state, StateInitType type, const std::string &sector);
         extern void set_random_product_state_on_axis(class_state_finite & state, StateInitType type, const std::string &sector);
-        extern void set_product_state(class_state_finite & state, StateInitType type, const std::string &sector);
+        extern void set_product_state_aligned(class_state_finite & state, StateInitType type, const std::string &sector);
+        extern void set_product_state_neel(class_state_finite & state, StateInitType type, const std::string &sector);
 
         // Entangled states
         extern void randomize_given_state (class_state_finite & state, StateInitType type);

@@ -144,42 +144,6 @@ void class_edges_finite::eject_edges_inactive(std::optional<std::vector<size_t>>
     eject_edges_inactive_var(sites);
 }
 
-//void class_edges_finite::eject_edges_stale_ene(const std::vector<EdgeStatus> &status){
-//    if(status.size() != get_length()) throw std::runtime_error(fmt::format("Status size {} != State Length {}",status.size(),get_length()));
-//    std::string msg;
-//    for(auto &  stat: status) msg.append(fmt::format("{} ",enum2str(stat)));
-//    tools::log->trace("Edge status ene: {}", msg);
-//    auto itL = std::find(status.begin(),status.end(),EdgeStatus::STALE);
-//    if(itL != status.end()){
-//        auto posL = static_cast<size_t>(std::distance(status.begin(),itL));
-//        for(auto &env : eneL) if(env->get_position() > posL) { env->clear(); tools::log->trace("Ejected eneL {}",env->get_position()); }
-//    }
-//    auto itR = std::find(status.rbegin(),status.rend(),EdgeStatus::STALE);
-//    if(itR != status.rend()){
-//        auto posR = static_cast<size_t>(std::distance(status.begin(),itR.base())) - 1;
-//        for(auto &env : eneR) if(env->get_position() < posR) { env->clear(); tools::log->trace("Ejected eneR {}",env->get_position()); }
-//    }
-//}
-//void class_edges_finite::eject_edges_stale_var(const std::vector<EdgeStatus> &status){
-//    if(status.size() != get_length()) throw std::runtime_error(fmt::format("Status size {} != State Length {}",status.size(),get_length()));
-//    auto itL = std::find(status.begin(),status.end(),EdgeStatus::STALE);
-//    if(itL != status.end()){
-//        auto posL = static_cast<size_t>(std::distance(status.begin(),itL));
-//        for(auto &env : varL) if(env->get_position() > posL)  { env->clear(); tools::log->trace("Ejected varL {}",env->get_position()); }
-//    }
-//    auto itR = std::find(status.rbegin(),status.rend(),EdgeStatus::STALE);
-//    if(itR != status.rend()){
-//        auto posR = static_cast<size_t>(std::distance(status.begin(),itR.base())) - 1;
-//        for(auto &env : varR) if(env->get_position() < posR)  { env->clear(); tools::log->trace("Ejected varR {}",env->get_position()); }
-//    }
-//}
-//
-//void class_edges_finite::eject_edges_stale(const std::vector<EdgeStatus> &status_ene, const std::vector<EdgeStatus> & status_var){
-//    eject_edges_stale_ene(status_ene);
-//    eject_edges_stale_var(status_var);
-//}
-
-
 void class_edges_finite::eject_edges_all_ene() {
     for(auto &env : eneL) env->clear();
     for(auto &env : eneR) env->clear();
@@ -192,23 +156,6 @@ void class_edges_finite::eject_edges_all() {
     eject_edges_all_ene();
     eject_edges_all_var();
 }
-
-std::pair<size_t, size_t> class_edges_finite::get_ejected_positions_ene() const {
-    auto itL = std::find_if(eneL.begin(),eneL.end(), [](const auto & env){return not env->has_block();});
-    auto posL = std::max<size_t>(get_length()-1, static_cast<size_t>(std::distance(eneL.begin(),itL)));
-    auto itR = std::find_if(eneR.rbegin(),eneR.rend(), [](const auto & env){return not env->has_block();});
-    auto posR = std::max<size_t>(get_length()-1, static_cast<size_t>(std::distance(eneR.rbegin(),itR)));
-    return {posL,posR};
-}
-
-std::pair<size_t, size_t> class_edges_finite::get_ejected_positions_var() const {
-    auto itL = std::find_if(varL.begin(),varL.end(), [](const auto & env){return not env->has_block();});
-    auto posL = std::max<size_t>(get_length()-1, static_cast<size_t>(std::distance(varL.begin(),itL)));
-    auto itR = std::find_if(varR.rbegin(),varR.rend(), [](const auto & env){return not env->has_block();});
-    auto posR = std::max<size_t>(get_length()-1, static_cast<size_t>(std::distance(varR.rbegin(),itR)));
-    return {posL,posR};
-}
-
 
 const class_env_ene &class_edges_finite::get_eneL(size_t pos) const {
     if(pos >= get_length()) throw std::range_error(fmt::format("get_eneL(pos:{}): pos is out of range | system size {}", pos, get_length()));

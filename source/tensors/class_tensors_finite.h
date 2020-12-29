@@ -2,7 +2,6 @@
 #include <complex>
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
-#include <list>
 #include <measure/tensors_measure_finite.h>
 #include <memory>
 
@@ -42,6 +41,8 @@ class class_tensors_finite {
     //    svd_threshold = std::nullopt);
     void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
     //    void randomize_state(const std::string &sector, long bitfield, bool use_eigenspinors);
+
+    class_state_finite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     void project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void damp_model_disorder(double coupling_damp, double field_damp);
@@ -75,11 +76,7 @@ class class_tensors_finite {
     void move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt, LogPolicy log_policy = LogPolicy::QUIET);
-
     void rebuild_edges();
-//    void eject_all_edges();
-//    void eject_inactive_edges();
-//    void eject_stale_edges();
     void clear_measurements() const;
     void clear_cache() const;
 };

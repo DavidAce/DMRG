@@ -9,30 +9,35 @@
 #include <config/debug.h>
 #include <utility>
 
-class_env_ene::class_env_ene(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO) : class_env_base(std::move(side_), MPS, MPO) {
+class_env_ene::class_env_ene(std::string side_, const class_mps_site &mps, const class_mpo_site &mpo) : class_env_base(std::move(side_), mps, mpo) {
     tag = "ene";
-    set_edge_dims(MPS, MPO);
+    set_edge_dims(mps, mpo);
 }
 
 class_env_ene class_env_ene::enlarge(const class_mps_site &mps, const class_mpo_site &mpo) const {
-    if(mps.get_position() != mpo.get_position())
-        throw std::logic_error(fmt::format("mps and mpo have different positions: {} != {}", mps.get_position(), mpo.get_position()));
-
-    if(not edge_has_been_set) throw std::logic_error("Have to set edge dimensions first!");
+    // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
+    if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
+        throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}",
+                                           tag,side, get_position(),get_position(), mps.get_position(), mpo.get_position()));
 
     class_env_ene env = *this;
+
+    if(env.sites == 0 and not env.edge_has_been_set) {
+        env.set_edge_dims(mps, mpo);
+        env.position = mps.get_position();
+        return env;
+    }
 
     env.enlarge(mps.get_M_bare(), mpo.MPO());
     // Update positions assuming this is a finite chain.
     // This needs to be corrected (on the right side) on infinite chains
-    if(env.side == "L") {
-        env.position = mps.get_position() + 1;
-    } else if(env.side == "R") {
-        env.position = mps.get_position() - 1;
-    } else {
+    if(env.side == "L") env.position = mps.get_position() + 1;
+    else if(env.side == "R") env.position = mps.get_position() - 1;
+    else
         throw std::logic_error("Expected environment side L or R, got: " + side);
-    }
+
     env.tag           = "ene";
+    // Save the hash id's used to create the new block in env
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
     env.unique_id_mpo = mpo.get_unique_id();
@@ -89,7 +94,10 @@ void class_env_ene::refresh(const class_env_ene & env, const class_mps_site &mps
     }
     if(refresh){
         if constexpr(settings::debug) tools::log->trace("Refreshing {} env{}({}): modified {}",tag,side,get_position(),reason);
-        *this = env.enlarge(mps,mpo);
+        build_block(*env.block,mps.get_M_bare(),mpo.MPO());
+        unique_id_env = env.get_unique_id();
+        unique_id_mps = mps.get_unique_id();
+        unique_id_mpo = mpo.get_unique_id();
     }
 }
 
@@ -97,6 +105,7 @@ void class_env_ene::refresh(const class_env_ene & env, const class_mps_site &mps
 
 void class_env_ene::set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
+    tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(),tag);
     if(side == "L")
         set_edge_dims(MPS.get_M_bare(),MPO.MPO(),MPO.get_MPO_edge_left());
     else if (side == "R")

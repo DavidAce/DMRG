@@ -1,11 +1,12 @@
 
 #include "class_tensors_finite.h"
+#include <config/debug.h>
 #include <config/nmspc_settings.h>
 #include <iostream>
 #include <math/num.h>
-#include <tensors/state/class_mps_site.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
+#include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/env.h>
@@ -58,7 +59,6 @@ void class_tensors_finite::initialize(ModelType model_type, size_t model_size, s
 void class_tensors_finite::randomize_model() {
     model->randomize();
     model->rebuild_mpo_squared();
-//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -68,8 +68,10 @@ void class_tensors_finite::randomize_state(StateInit state_init,const std::strin
     if(not state_type) state_type = state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     tools::log->info("Randomizing state | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
     tools::finite::mps::randomize_state(*state, state_init, state_type.value(),sector, chi_lim, use_eigenspinors, bitfield);
-    tools::log->info("Projecting state  | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
-    project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens after projection
+    if(settings::strategy::project_initial_state){
+        tools::log->info("Projecting state  | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state), fmt::join(tools::finite::measure::spin_components(*state), ", "));
+        project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens after projection
+    }
 }
 
 void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
@@ -78,10 +80,20 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     if(has_normalized) {
         state->clear_cache();
         clear_measurements();
-//        eject_all_edges();
         rebuild_edges();
         assert_validity();
     }
+}
+
+class_state_finite class_tensors_finite::get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold){
+    auto state_projected = *state;
+    state_projected.clear_measurements();
+    state_projected.clear_cache();
+    if(not chi_lim) chi_lim = state_projected.find_largest_chi();
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
+    tools::finite::ops::get_projection_to_nearest_sector(state_projected, sector);
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::ALWAYS);
+    return state_projected;
 }
 
 void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
@@ -98,7 +110,6 @@ void class_tensors_finite::perturb_model_params(double coupling_ptb, double fiel
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
     model->rebuild_mpo_squared();
     model->assert_validity();
-//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -123,7 +134,6 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
     model->set_reduced_energy_per_site(site_energy.value());
     model->rebuild_mpo_squared();
     model->assert_validity();
-//    eject_all_edges();
     rebuild_edges();
 
     if constexpr(settings::debug) {
@@ -159,7 +169,6 @@ void class_tensors_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
     model->clear_cache();
     model->rebuild_mpo_squared(svdMode);
     model->assert_validity();
-//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -169,7 +178,6 @@ void class_tensors_finite::damp_model_disorder(double coupling_damp, double fiel
     model->damp_model_disorder(coupling_damp, field_damp);
     model->rebuild_mpo_squared();
     model->assert_validity();
-//    eject_all_edges();
     rebuild_edges();
 }
 
@@ -239,6 +247,9 @@ T class_tensors_finite::get_length() const {
     return state->get_length<T>();
 }
 
+template size_t class_tensors_finite::get_length<size_t>() const;
+template long class_tensors_finite::get_length<long>() const;
+
 template<typename T>
 T class_tensors_finite::get_position() const { return state->get_position<T>(); }
 template size_t class_tensors_finite::get_position<size_t>() const;
@@ -268,16 +279,12 @@ void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3>
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_threshold,LogPolicy::NORMAL);
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_threshold,log_policy);
     normalize_state(chi_lim, svd_threshold, NormPolicy::IFNEEDED);
-//    eject_all_edges();
     rebuild_edges();
 }
 
 void class_tensors_finite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }
-//void class_tensors_finite::eject_all_edges() { edges->eject_edges_all(); }
-//void class_tensors_finite::eject_inactive_edges() { edges->eject_edges_inactive(); }
-//void class_tensors_finite::eject_stale_edges() { edges->eject_edges_stale(state->get_edge_ene_status(), state->get_edge_var_status()); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
     measurements = tensors_measure_finite();

@@ -70,12 +70,12 @@ void class_fdmrg::run_task_list(std::list<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
                 ritz       = StateRitz::SR;
-                state_name = "state_e_min";
+                tensors.state->set_name("state_emin");
                 run_algorithm();
                 break;
             case fdmrg_task::FIND_HIGHEST_STATE:
                 ritz       = StateRitz::LR;
-                state_name = "state_e_max";
+                tensors.state->set_name("state_emax");
                 run_algorithm();
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
@@ -114,8 +114,12 @@ void class_fdmrg::run_preprocessing() {
 }
 
 void class_fdmrg::run_algorithm() {
-    if(state_name.empty()) state_name = ritz == StateRitz::SR ? "state_emin" : "state_emax";
-    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    if(tensors.state->get_name().empty()) {
+        if(ritz == StateRitz::SR) tensors.state->set_name("state_emin");
+        else
+            tensors.state->set_name("state_emax");
+    }
+    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     stop_reason = StopReason::NONE;
     while(true) {
@@ -142,7 +146,7 @@ void class_fdmrg::run_algorithm() {
         reduce_mpo_energy();
         move_center_point();
     }
-    tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
+    tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
     tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }

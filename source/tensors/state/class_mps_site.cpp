@@ -146,13 +146,16 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
+void class_mps_site::set_L(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
+
+
 void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
     if(position) {
         LC = LC_;
         MC.reset();
         truncation_error_LC = error;
         unique_id = std::nullopt;
-        tools::log->trace("Setting LC on site {} | size {}", get_position(), LC->dimensions());
+//        tools::log->trace("Setting LC on site {} | size {}", get_position(), LC->dimensions());
         set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
@@ -168,7 +171,7 @@ void   class_mps_site::unset_LC() {
     LC.reset();
     MC.reset();
     unique_id = std::nullopt;
-    tools::log->trace("Unset LC on site {}",get_position());
+//    tools::log->trace("Unset LC on site {}",get_position());
     if(label == "AC") label = "A";
 }
 void class_mps_site::merge_mps(const class_mps_site &other) {
@@ -282,9 +285,13 @@ void class_mps_site::merge_stash(const class_mps_site &other){
         /* Left-to-right move.
          * In this case there should be a "V" in "other" that should be absorbed into this site from the left.
          *
-         *   1 --[New "B"]-- 2       1 --[V]-- 2   1 --[this "M"]-- 2
+         *   1 --[New "M"]-- 2       1 --[V]-- 2   1 --[this "M"]-- 2
          *          |            =        |                |
          *          0                 0(dim=1)             0
+         *
+         *  In addition, if this is an A site we expect an "S" to come along, which didn't become an LC
+         *  for the site on the left. Presumably the true LC is on some site further to the right.
+         *  Here we simply set it as the new L of this site.
          */
 
         auto V = other.unstash_V();
@@ -299,18 +306,25 @@ void class_mps_site::merge_stash(const class_mps_site &other){
         VM.device(Textra::omp::getDevice()) = V.contract(get_M_bare(), Textra::idx({2}, {1}))
                                                  .shuffle(Textra::array4{0,2,1,3}).reshape(dims);
         set_M(VM);
+        if(other.has_stash_S()){
+            if(label == "B") tools::log->warn("Setting L from from the left at pos {} with label {}", get_position(),get_label());
+            set_L(other.unstash_S());
+        }
     }else if (get_position() == other.get_position() - 1){
         /* Right-to-left move.
          * In this case there should be a U and an S in "other".
          * U should be absorbed into this site from the right.
          * S becomes the new LC.
          *
-         *    1 --[New "A"]-- 2       1 --[this "M"]-- 2   1 --[U]-- 2
+         *    1 --[New "M"]-- 2       1 --[this "M"]-- 2   1 --[U]-- 2
          *           |            =          |                  |
          *           0                       0               0(dim=1)
          *
+         *   If this site is already a center, or has label "A" or "AC" then we absorb S as a new LC
+         *
          *   0--[New "LC"]--1     =  0--[S]--1
          *
+         *   Otherwise the S becomes the new "L" for this B site.
          *
          */
         auto U = other.unstash_U();
@@ -327,7 +341,8 @@ void class_mps_site::merge_stash(const class_mps_site &other){
             .shuffle(Textra::array4{0,2,1,3}).reshape(dims);
 
         set_M(MU);
-        set_LC(other.unstash_S());
+        if(isCenter() or label.find('A') != std::string::npos) set_LC(other.unstash_S());
+        else set_L(other.unstash_S());
     }else
         throw std::logic_error(fmt::format("Failed to merge stash: Wrong positions: this {} | other {}",get_position(),other.get_position()));
 }

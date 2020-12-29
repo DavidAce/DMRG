@@ -30,10 +30,8 @@ class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : 
     qm::spinHalf::SZ = qm::gen_manybody_spins(sz, 2);
     qm::spinHalf::II = qm::gen_manybody_spins(id, 2);
 
-    class_ising_tf_rf::randomize_hamiltonian();
     h5tb_ising_tf_rf::register_table_type();
-    all_mpo_parameters_have_been_set = true; // There are no full lattice parameters on this model so we set it true immediately!
-    class_ising_tf_rf::build_mpo();
+    all_mpo_parameters_have_been_set = false; // There are no full lattice parameters but we set it to true here since the model is not supposed to be randomized per site
 }
 
 double class_ising_tf_rf::get_field() const { return h5tb.param.h_tran + std::pow(h5tb.param.h_pert + h5tb.param.h_rand, 1 - beta); }

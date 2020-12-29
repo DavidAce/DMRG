@@ -37,6 +37,7 @@ class h5pp_table_measurements_finite {
         double                truncation_error;
         double                total_time;
         double                algorithm_time;
+        double                physical_time;
     };
 
     h5pp_table_measurements_finite() { register_table_type(); }
@@ -67,6 +68,7 @@ class h5pp_table_measurements_finite {
         H5Tinsert(h5_type, "truncation_error", HOFFSET(table, truncation_error), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "total_time", HOFFSET(table, total_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algorithm_time", HOFFSET(table, algorithm_time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "physical_time", HOFFSET(table, physical_time), H5T_NATIVE_DOUBLE);
     }
 };
 
@@ -290,6 +292,8 @@ class h5pp_table_flbit_profiling {
         double   t_sim     = 0;
         double   t_con     = 0;
         double   t_eig     = 0;
+        double   t_evo     = 0;
+        double   t_map     = 0;
         double   t_svd     = 0;
         double   t_env     = 0;
         double   t_ent     = 0;
@@ -316,6 +320,8 @@ class h5pp_table_flbit_profiling {
         H5Tinsert(h5_type, "t_sim",            HOFFSET(table, t_sim         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_con",            HOFFSET(table, t_con         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_eig",            HOFFSET(table, t_eig         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_evo",            HOFFSET(table, t_evo         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_map",            HOFFSET(table, t_map         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_svd",            HOFFSET(table, t_svd         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_env",            HOFFSET(table, t_env         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_ent",            HOFFSET(table, t_ent         ), H5T_NATIVE_DOUBLE);

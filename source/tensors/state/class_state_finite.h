@@ -45,8 +45,7 @@ class class_state_finite {
     int                       direction = 1;
     mutable Cache             cache;
     mutable std::vector<bool> tag_normalized_sites;
-//    mutable std::vector<EdgeStatus> tag_edge_ene_status;
-//    mutable std::vector<EdgeStatus> tag_edge_var_status;
+    std::string               name;
 
     public:
     std::list<std::unique_ptr<class_mps_site>> mps_sites;
@@ -63,22 +62,24 @@ class class_state_finite {
 
     void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
 
+    void set_name(const std::string & statename);
+    [[nodiscard]] std::string get_name() const;
+
     const Eigen::Tensor<Scalar, 1> &midchain_bond() const;
     const Eigen::Tensor<Scalar, 1> &current_bond() const;
 
-    long find_largest_chi() const;
-
     template<typename T = size_t>
-    T get_length() const;
+    [[nodiscard]] T get_length() const;
     template<typename T = size_t>
-    T get_position() const;
+    [[nodiscard]] T get_position() const;
 
-    void set_positions();
-    void flip_direction();
+    void                                   set_positions();
+    void                                   flip_direction();
     [[nodiscard]] int                      get_direction() const;
     [[nodiscard]] std::vector<std::string> get_labels() const;
     [[nodiscard]] Eigen::DSizes<long, 3>   dimensions_2site() const;
     [[nodiscard]] long                     size_2site() const;
+    [[nodiscard]] long                     find_largest_chi() const;
     [[nodiscard]] bool                     position_is_the_middle() const;
     [[nodiscard]] bool                     position_is_the_middle_any_direction() const;
     [[nodiscard]] bool                     position_is_left_edge(size_t nsite = 1) const;
@@ -91,7 +92,7 @@ class class_state_finite {
     [[nodiscard]] bool                     is_real() const;
     [[nodiscard]] bool                     has_nan() const;
 
-    void                                   assert_validity() const;
+    void assert_validity() const;
 
     template<typename T = size_t>
     const class_mps_site &get_mps_site(T pos) const;
@@ -133,9 +134,4 @@ class class_state_finite {
     bool is_normalized_on_any_sites() const;
     bool is_normalized_on_active_sites() const;
     bool is_normalized_on_non_active_sites() const;
-//    void set_edge_status(size_t pos, EdgeStatus status) const;
-//    void set_edge_ene_status(size_t pos, EdgeStatus status) const;
-//    void set_edge_var_status(size_t pos, EdgeStatus status) const;
-//    std::vector<EdgeStatus> get_edge_ene_status() const;
-//    std::vector<EdgeStatus> get_edge_var_status() const;
 };

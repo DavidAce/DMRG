@@ -9,8 +9,8 @@
 #include "class_state_finite.h"
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_mps_site.h>
-#include <tools/common/log.h>
 #include <tools/common/fmt.h>
+#include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/multisite.h>
@@ -71,6 +71,7 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
     switch(model_type) {
         case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim; break;
         case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim; break;
+        case ModelType::lbit: spin_dim = settings::model::lbit::spin_dim; break;
         default: spin_dim = 2;
     }
 
@@ -97,6 +98,9 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
 //    tag_edge_ene_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
 //    tag_edge_var_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
 }
+
+void class_state_finite::set_name(const std::string & statename){name = statename; }
+std::string class_state_finite::get_name() const { return name; }
 
 void class_state_finite::set_positions() {
     long pos = 0;
@@ -250,7 +254,7 @@ long class_state_finite::active_problem_size() const { return tools::finite::mul
 Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    tools::log->trace("Contracting multisite mps tensor with {} sites", sites.size());
+    tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
     tools::common::profile::get_default_prof()["t_mps"]->tic();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
@@ -273,14 +277,55 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
         temp.device(Textra::omp::getDevice()) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_tensor     = temp;
     }
+    if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B"){
+        // In this case all sites are "B" and we need to prepend the the "L" from the site on the left to make a normalized multisite tensor
+        auto & mps_left = get_mps_site(sites.front()-1);
+        auto & L_left = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+        if(L_left.dimension(0) != multisite_tensor.dimension(1))
+            throw std::logic_error(fmt::format("Mismatching dimensions: L_left {} | multisite_tensor {}",
+                                               L_left.dimensions(), multisite_tensor.dimensions()));
+        temp.resize(multisite_tensor.dimension(0), L_left.dimension(0), multisite_tensor.dimension(2));
+        temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(L_left).contract(multisite_tensor, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+        multisite_tensor = temp;
+    }
+    else if(sites.back() < get_length()-1 and get_mps_site(sites.back()).get_label() == "A"){
+        // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite tensor
+        auto & mps_right = get_mps_site(sites.back()+1);
+        auto & L_right =  mps_right.get_L();
+        if(L_right.dimension(0) != multisite_tensor.dimension(2))
+            throw std::logic_error(fmt::format("Mismatching dimensions: L_right {} | multisite_tensor {}",
+                                               L_right.dimensions(), multisite_tensor.dimensions()));
+        temp.resize(multisite_tensor.dimension(0), multisite_tensor.dimension(1), L_right.dimension(0));
+        temp.device(Textra::omp::getDevice()) = multisite_tensor.contract(Textra::asDiagonal(L_right), Textra::idx({2},{1}));
+        multisite_tensor = temp;
+    }
+
     tools::common::profile::get_default_prof()["t_mps"]->toc();
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
         tools::common::profile::get_default_prof()["t_chk"]->tic();
         Eigen::Tensor<Scalar,0> norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0,1,2},{0,1,2}));
         double norm = std::abs(norm_scalar(0));
-        if(std::abs(norm - 1) > settings::precision::max_norm_error)
+        if(std::abs(norm - 1) > settings::precision::max_norm_error){
+            for(auto && site : sites){
+                auto & mps = get_mps_site(site);
+                auto & M = mps.get_M();
+                tools::log->critical("{}({}) norm: {:.16f}",mps.get_label(), site, Textra::TensorVectorMap(M).norm());
+            }
+            if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B"){
+                // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
+                auto & mps_left = get_mps_site(sites.front()-1);
+                auto & L_left = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+                temp = Textra::asDiagonal(L_left).contract(multisite_tensor, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+                multisite_tensor = temp;
+                norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0,1,2},{0,1,2}));
+                norm = std::abs(norm_scalar(0));
+                tools::log->critical("Norm after adding L from the left: {:.16f}", norm);
+            }
+
             throw std::runtime_error(fmt::format("Multisite tensor is not normalized. Norm = {:.16f} {:+.16f}i", std::real(norm_scalar(0)), std::imag(norm_scalar(0))));
+
+        }
         tools::common::profile::get_default_prof()["t_chk"]->toc();
     }
     return multisite_tensor;
@@ -376,7 +421,7 @@ void class_state_finite::tag_site_normalized(size_t pos, bool tag) const {
 
 bool class_state_finite::is_normalized_on_all_sites() const {
     if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
-    tools::log->trace("Checking update status on all sites", active_sites);
+    tools::log->trace("Checking normalization status on all sites", active_sites);
     return std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
 }
 
@@ -390,7 +435,7 @@ bool class_state_finite::is_normalized_on_active_sites() const {
     if(active_sites.empty()) return false;
     auto first_site_ptr = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.front()));
     auto last_site_ptr  = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.back()));
-    tools::log->trace("Checking update status on active sites: {}", active_sites);
+    tools::log->trace("Checking normalization status on active sites: {}", active_sites);
     bool normalized = std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
     tools::log->trace("Active sites normalized: {}", normalized);
     return normalized;
@@ -404,28 +449,3 @@ bool class_state_finite::is_normalized_on_non_active_sites() const {
         if(std::find(active_sites.begin(),active_sites.end(),idx) == active_sites.end() and not tag_normalized_sites[idx]) return false;
     return true;
 }
-
-//
-//void class_state_finite::set_edge_status(size_t pos, EdgeStatus status) const{
-//    set_edge_ene_status(pos,status);
-//    set_edge_var_status(pos,status);
-//}
-//
-//void class_state_finite::set_edge_ene_status(size_t pos, EdgeStatus status) const{
-//    if(tag_edge_ene_status.size() != get_length()) throw std::runtime_error("Cannot check edge ene status on all sites, mismatch in tags and state size");
-//    tools::log->trace("Setting edge ene status at site {}: {}", pos, enum2str(status));
-//    tag_edge_ene_status.at(pos) = status;
-//}
-//
-//void class_state_finite::set_edge_var_status(size_t pos, EdgeStatus status) const{
-//    if(tag_edge_var_status.size() != get_length()) throw std::runtime_error("Cannot check edge var status on all sites, mismatch in tags and state size");
-//    tools::log->trace("Setting edge var status at site {}: {}", pos, enum2str(status));
-//    tag_edge_var_status.at(pos) = status;
-//}
-//
-//std::vector<EdgeStatus> class_state_finite::get_edge_ene_status() const{
-//    return tag_edge_ene_status;
-//}
-//std::vector<EdgeStatus> class_state_finite::get_edge_var_status() const{
-//    return tag_edge_var_status;
-//}

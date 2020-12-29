@@ -48,9 +48,9 @@ void class_xdmrg::resume() {
     auto number = tools::common::io::h5resume::extract_state_number(state_prefix);
     if(number) {
         excited_state_number = number.value();
-        state_name           = fmt::format("state_{}", excited_state_number);
+        tensors.state->set_name(fmt::format("state_{}", excited_state_number));
     } else if(not name.empty())
-        state_name = name;
+        tensors.state->set_name(name);
 
     // Initialize a custom task list
     std::list<xdmrg_task> task_list;
@@ -78,7 +78,7 @@ void class_xdmrg::resume() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
             case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
@@ -104,8 +104,9 @@ void class_xdmrg::run_default_task_list() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::PRODUCT_STATE: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
             case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet"); break;
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -138,7 +139,7 @@ void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
             case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:
-                state_name = fmt::format("state_{}", excited_state_number);
+                tensors.state->set_name(fmt::format("state_{}", excited_state_number));
                 run_algorithm();
                 break;
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
@@ -199,8 +200,8 @@ void class_xdmrg::run_preprocessing() {
 }
 
 void class_xdmrg::run_algorithm() {
-    if(state_name.empty()) fmt::format("state_{}", excited_state_number);
-    tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), state_name);
+    if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     stop_reason = StopReason::NONE;
     while(true) {
@@ -237,7 +238,7 @@ void class_xdmrg::run_algorithm() {
         move_center_point();
         tools::log->info("Bond dimensions after  move        = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     }
-    tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, state_name, enum2str(stop_reason));
+    tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
     tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }

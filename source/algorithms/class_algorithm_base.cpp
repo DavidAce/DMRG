@@ -17,11 +17,10 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     : h5pp_file(std::move(h5ppFile_)), algo_type(algo_type_) {
     algo_name  = enum2str(algo_type_);
     tools::common::profile::set_default_prof(algo_type);
-    state_name = "state";
+    tools::common::profile::init_profiling();
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(std::string(enum2str(algo_type)), settings::console::verbosity, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
-    tools::common::profile::init_profiling();
 }
 
 

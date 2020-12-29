@@ -42,7 +42,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
 //    posR_active = std::min(posR_ejected,posR_active);
 
 
-    tools::log->debug("Inspecting edges eneL from [{} to {}]", min_pos,posL_active);
+    tools::log->trace("Inspecting edges eneL from [{} to {}]", min_pos,posL_active);
     std::vector<size_t> ene_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene_curr = edges.get_eneL(pos);
@@ -57,9 +57,9 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
         ene_next.refresh(ene_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != ene_next.get_unique_id()) ene_pos_log.emplace_back(ene_next.get_position());
     }
-    if(not ene_pos_log.empty()) tools::log->trace("Rebuilt L ene edges: {}", ene_pos_log);
+    if(not ene_pos_log.empty()) tools::log->debug("Rebuilt L ene edges: {}", ene_pos_log);
     ene_pos_log.clear();
-    tools::log->debug("Inspecting edges eneR from [{} to {}]", posR_active,max_pos);
+    tools::log->trace("Inspecting edges eneR from [{} to {}]", posR_active,max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene_curr = edges.get_eneR(pos);
         if(pos == state.get_length() -1 and not ene_curr.has_block()){
@@ -79,7 +79,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
 //        }
     }
     std::reverse(ene_pos_log.begin(), ene_pos_log.end());
-    if(not ene_pos_log.empty()) tools::log->trace("Rebuilt R ene edges: {}", ene_pos_log);
+    if(not ene_pos_log.empty()) tools::log->debug("Rebuilt R ene edges: {}", ene_pos_log);
     if(not edges.get_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
     if(not edges.get_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
     tools::common::profile::get_default_prof()["t_env"]->toc();
@@ -106,13 +106,15 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
     }
-    tools::log->debug("Inspecting edges varL from [{} to {}]", min_pos,posL_active);
+    tools::log->trace("Inspecting edges varL from [{} to {}]", min_pos,posL_active);
     std::vector<size_t> var_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var_curr = edges.get_varL(pos);
         if(pos == 0 and not var_curr.has_block()){
+            tools::log->trace("Edge not found at pos {}, has_block: {}", var_curr.get_position(), var_curr.has_block());
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
+            if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active,state.get_length()-1)) continue;
         auto &var_next = edges.get_varL(pos + 1);
@@ -121,9 +123,9 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
         if(id != var_next.get_unique_id()) var_pos_log.emplace_back(var_next.get_position());
     }
 
-    if(not var_pos_log.empty()) tools::log->trace("Rebuilt L var edges: {}", var_pos_log);
+    if(not var_pos_log.empty()) tools::log->debug("Rebuilt L var edges: {}", var_pos_log);
     var_pos_log.clear();
-    tools::log->debug("Inspecting edges varR from [{} to {}]", posR_active,max_pos);
+    tools::log->trace("Inspecting edges varR from [{} to {}]", posR_active,max_pos);
     for(size_t pos = max_pos; pos > posR_active and pos < state.get_length(); pos--) {
         auto &var_curr = edges.get_varR(pos);
         if(pos == state.get_length() - 1 and not var_curr.has_block()){
@@ -137,7 +139,7 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
         if(id != var_prev.get_unique_id()) var_pos_log.emplace_back(var_prev.get_position());
     }
     std::reverse(var_pos_log.begin(), var_pos_log.end());
-    if(not var_pos_log.empty()) tools::log->trace("Rebuilt R var edges: {}", var_pos_log);
+    if(not var_pos_log.empty()) tools::log->debug("Rebuilt R var edges: {}", var_pos_log);
     if(not edges.get_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
     if(not edges.get_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
     tools::common::profile::get_default_prof()["t_env"]->toc();

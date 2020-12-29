@@ -1,4 +1,3 @@
-#pragma once
 #include <math/hash.h>
 #include <functional>
 #include <complex>
@@ -12,7 +11,8 @@ namespace hash{
     inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
 
 
-    inline void hash_combine(std::size_t& seed) { }
+    inline void hash_combine([[maybe_unused]] std::size_t& seed) { }
+
     template <typename T, typename... Rest>
     inline void hash_combine(std::size_t& seed, const T& v, Rest... rest) {
         std::hash<T> hasher;

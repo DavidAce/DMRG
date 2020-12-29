@@ -38,7 +38,6 @@ class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : 
 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
-    class_ising_sdual::randomize_hamiltonian();
     h5tb_ising_sdual::register_table_type();
 }
 
