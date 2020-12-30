@@ -40,6 +40,7 @@ class class_mps_site {
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
     void                                          assert_validity() const;
+    void                                          assert_dimensions() const;
     [[nodiscard]] bool                            isCenter() const;
     [[nodiscard]] bool                            has_L() const;
     [[nodiscard]] bool                            has_M() const;
