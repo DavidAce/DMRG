@@ -49,6 +49,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
 void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                            const class_state_finite &state, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
@@ -63,7 +64,6 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     if(save_log[dsetName] != save_point) {
         /*! Writes down the center "Lambda" bond matrix (singular values). */
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
-        tools::common::profile::get_default_prof()["t_hdf"]->tic();
         h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
         h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetName);
         h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
@@ -71,16 +71,17 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         h5ppFile.writeAttribute(status.step, "step", dsetName);
         h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetName);
         h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
-        tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[dsetName] = save_point;
     }
 
-    if(storage_level < StorageLevel::NORMAL) return;
+    if(storage_level < StorageLevel::NORMAL) {
+        tools::common::profile::get_default_prof()["t_hdf"]->toc();
+        return;
+    }
 
     std::string mps_prefix = state_prefix + "/mps";
     if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
-        tools::common::profile::get_default_prof()["t_hdf"]->tic();
         // There should be one more sites+1 number of L's, because there is also a center bond
         // However L_i always belongs M_i. Stick to this rule!
         // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
@@ -106,18 +107,17 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         h5ppFile.writeAttribute(state.get_labels(), "labels", mps_prefix);
         h5ppFile.writeAttribute(status.iter, "iteration", mps_prefix);
         h5ppFile.writeAttribute(status.step, "step", mps_prefix);
-        tools::common::profile::get_default_prof()["t_hdf"]->toc();
     }
 
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
     if(storage_level < StorageLevel::FULL) {
+        tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[mps_prefix] = save_point;
         return;
     }
 
     if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
-        tools::common::profile::get_default_prof()["t_hdf"]->tic();
         for(size_t pos = 0; pos < state.get_length(); pos++) {
             dsetName = fmt::format("{}/M_{}", mps_prefix, pos);
             if(save_log[dsetName] == save_point) continue;
@@ -127,9 +127,9 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
             h5ppFile.writeAttribute(state.get_mps_site(pos).get_label(), "label", dsetName);
             save_log[dsetName] = save_point;
         }
-        tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[mps_prefix] = save_point;
     }
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 /*! Write all the MPO's with site info in attributes */

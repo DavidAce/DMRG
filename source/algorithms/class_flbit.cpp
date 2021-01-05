@@ -282,26 +282,28 @@ void class_flbit::check_convergence() {
 }
 
 void class_flbit::transform_to_real_basis(){
+    tools::common::profile::prof[algo_type]["t_map"]->tic();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->info("Transforming {} to {}", state_lbit->get_name(), tensors.state->get_name());
     tensors.clear_measurements();
     tensors.clear_cache();
-    tools::common::profile::prof[algo_type]["t_map"]->tic();
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer0, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer1, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer2, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer3, false, status.chi_lim);
-    tools::common::profile::prof[algo_type]["t_map"]->toc();
-    auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::ALWAYS);
+    auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace){
+            tools::common::profile::prof[algo_type]["t_dbg"]->tic();
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
             tools::log->trace("After normalization");
             for(auto &&mps : tensors.state->mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
+    tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
 void class_flbit::transform_to_lbit_basis(){
@@ -318,7 +320,9 @@ void class_flbit::transform_to_lbit_basis(){
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer2, true, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer3, true, status.chi_lim);
     tools::common::profile::prof[algo_type]["t_map"]->toc();
+    tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
+    tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace){
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
@@ -330,6 +334,7 @@ void class_flbit::transform_to_lbit_basis(){
 }
 
 void class_flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
+    tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
     tensors.clear_cache();
     tensors.clear_measurements();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
@@ -338,6 +343,8 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     class_algorithm_finite::write_to_file(storage_reason, *state_lbit, copy_file);
     tensors.clear_cache();
     tensors.clear_measurements();
+    tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
+
 }
 
 
@@ -353,7 +360,7 @@ bool   class_flbit::cfg_store_wave_function() { return settings::flbit::store_wa
 void class_flbit::print_status_update() {
     if(num::mod(status.iter, cfg_print_freq()) != 0) return;
     if(cfg_print_freq() == 0) return;
-
+    tools::common::profile::prof[algo_type]["t_out"]->tic();
     std::string report;
     report += fmt::format("{:<} ", tensors.state->get_name());
     report += fmt::format("iter:{:<4} ", status.iter);
@@ -367,8 +374,8 @@ void class_flbit::print_status_update() {
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
-                          std::log10(status.energy_variance_lowest));
+//    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
+//                          std::log10(status.energy_variance_lowest));
     report +=
         fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
 
@@ -380,4 +387,5 @@ void class_flbit::print_status_update() {
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
+    tools::common::profile::prof[algo_type]["t_out"]->toc();
 }

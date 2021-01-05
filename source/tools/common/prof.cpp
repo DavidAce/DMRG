@@ -142,10 +142,12 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::xDMRG].append("t_svd",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          "));
     prof[AlgorithmType::xDMRG].append("t_env",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Environment upd.      "));
     prof[AlgorithmType::xDMRG].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
+    prof[AlgorithmType::xDMRG].append("t_spn",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Spin components       "));
     prof[AlgorithmType::xDMRG].append("t_ene",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                "));
     prof[AlgorithmType::xDMRG].append("t_var",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              "));
     prof[AlgorithmType::xDMRG].append("t_prj",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Projections           "));
-    prof[AlgorithmType::xDMRG].append("t_chk",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                "));
+    prof[AlgorithmType::xDMRG].append("t_dbg",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Debugging checks      "));
+    prof[AlgorithmType::xDMRG].append("t_out",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Print status          "));
     prof[AlgorithmType::xDMRG].append("t_hdf",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          "));
     prof[AlgorithmType::xDMRG].append("t_mps",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         "));
     prof[AlgorithmType::xDMRG].append("t_mpo",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         "));
@@ -178,10 +180,12 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::fDMRG].append("t_svd",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          "));
     prof[AlgorithmType::fDMRG].append("t_env",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Environment upd.      "));
     prof[AlgorithmType::fDMRG].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
+    prof[AlgorithmType::fDMRG].append("t_spn",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Spin components       "));
     prof[AlgorithmType::fDMRG].append("t_ene",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                "));
     prof[AlgorithmType::fDMRG].append("t_var",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              "));
     prof[AlgorithmType::fDMRG].append("t_prj",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Projections           "));
-    prof[AlgorithmType::fDMRG].append("t_chk",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                "));
+    prof[AlgorithmType::fDMRG].append("t_dbg",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Debugging checks      "));
+    prof[AlgorithmType::fDMRG].append("t_out",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Print status          "));
     prof[AlgorithmType::fDMRG].append("t_hdf",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          "));
     prof[AlgorithmType::fDMRG].append("t_mps",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         "));
     prof[AlgorithmType::fDMRG].append("t_mpo",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         "));
@@ -197,10 +201,12 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::fLBIT].append("t_svd",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          "));
     prof[AlgorithmType::fLBIT].append("t_env",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Environment upd.      "));
     prof[AlgorithmType::fLBIT].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
+    prof[AlgorithmType::fLBIT].append("t_spn",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Spin components       "));
     prof[AlgorithmType::fLBIT].append("t_ene",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                "));
     prof[AlgorithmType::fLBIT].append("t_var",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              "));
     prof[AlgorithmType::fLBIT].append("t_prj",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Projections           "));
-    prof[AlgorithmType::fLBIT].append("t_chk",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                "));
+    prof[AlgorithmType::fLBIT].append("t_dbg",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Debugging checks      "));
+    prof[AlgorithmType::fLBIT].append("t_out",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Print status          "));
     prof[AlgorithmType::fLBIT].append("t_hdf",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          "));
     prof[AlgorithmType::fLBIT].append("t_mps",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         "));
     prof[AlgorithmType::fLBIT].append("t_mpo",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         "));
@@ -216,7 +222,8 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::iDMRG].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
     prof[AlgorithmType::iDMRG].append("t_ene",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                "));
     prof[AlgorithmType::iDMRG].append("t_var",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              "));
-    prof[AlgorithmType::iDMRG].append("t_chk",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                "));
+    prof[AlgorithmType::iDMRG].append("t_dbg",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Debugging checks      "));
+    prof[AlgorithmType::iDMRG].append("t_out",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Print status          "));
     prof[AlgorithmType::iDMRG].append("t_hdf",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          "));
     prof[AlgorithmType::iDMRG].append("t_ene_ham",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy (HAM)          "));
     prof[AlgorithmType::iDMRG].append("t_ene_mom",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy (MOM)          "));
@@ -230,7 +237,8 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::iTEBD].append("t_svd",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          "));
     prof[AlgorithmType::iTEBD].append("t_evo",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Time evolution        "));
     prof[AlgorithmType::iTEBD].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
-    prof[AlgorithmType::iTEBD].append("t_chk",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Checks                "));
+    prof[AlgorithmType::iTEBD].append("t_dbg",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Debugging checks      "));
+    prof[AlgorithmType::iTEBD].append("t_out",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Print status          "));
     prof[AlgorithmType::iTEBD].append("t_hdf",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- h5pp storage          "));
     prof[AlgorithmType::iTEBD].append("t_ene_ham",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy (HAM)          "));
     prof[AlgorithmType::iTEBD].append("t_ene_mom",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy (MOM)          "));
@@ -240,6 +248,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::ANY].append("t_gate_move",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Gate: Move            "));
     prof[AlgorithmType::ANY].append("t_gate_apply",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Gate: Apply           "));
     prof[AlgorithmType::ANY].append("t_gate_merge",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Gate: Merge           "));
+    prof[AlgorithmType::ANY].append("t_gate_return",     std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Gate: Return          "));
     prof[AlgorithmType::ANY].append("t_merge_split",     std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Merge: Split          "));
     prof[AlgorithmType::ANY].append("t_merge_merge",     std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Merge: Merge          "));
     prof[AlgorithmType::ANY].append("t_split_svdm",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Split: SVD main       "));
@@ -247,6 +256,8 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::ANY].append("t_split_svdb",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Split: SVD right      "));
     prof[AlgorithmType::ANY].append("t_splitA_svd",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- SplitA:SVD            "));
     prof[AlgorithmType::ANY].append("t_splitB_svd",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- SplitB:SVD            "));
+    prof[AlgorithmType::ANY].append("t_write_h5pp",      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Write h5pp            "));
+    prof[AlgorithmType::ANY].append("t_map_norm"  ,      std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Map normalize         "));
 
     /* clang-format on */
 

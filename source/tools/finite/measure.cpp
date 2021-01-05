@@ -242,6 +242,7 @@ std::array<double, 3> tools::finite::measure::spin_components(const class_state_
 }
 
 double tools::finite::measure::spin_component(const class_state_finite &state, const Eigen::Matrix2cd &paulimatrix) {
+    tools::common::profile::get_default_prof()["t_spn"]->tic();
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<Scalar, 3> temp;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
@@ -254,6 +255,7 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar, 0> spin_tmp = L.contract(R, idx({0, 1, 2}, {0, 1, 2}));
     double                   spin     = std::real(spin_tmp(0));
+    tools::common::profile::get_default_prof()["t_spn"]->toc();
     return spin;
 }
 

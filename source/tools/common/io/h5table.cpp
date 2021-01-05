@@ -81,7 +81,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_ene           = tools::common::profile::prof[algo_type.value()]["t_ene"]->get_measured_time();
             profiling_entry.t_var           = tools::common::profile::prof[algo_type.value()]["t_var"]->get_measured_time();
             profiling_entry.t_prj           = tools::common::profile::prof[algo_type.value()]["t_prj"]->get_measured_time();
-            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_dbg           = tools::common::profile::prof[algo_type.value()]["t_dbg"]->get_measured_time();
+            profiling_entry.t_out           = tools::common::profile::prof[algo_type.value()]["t_out"]->get_measured_time();
             profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
             profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
             profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
@@ -131,7 +132,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_ene           = tools::common::profile::prof[algo_type.value()]["t_ene"]->get_measured_time();
             profiling_entry.t_var           = tools::common::profile::prof[algo_type.value()]["t_var"]->get_measured_time();
             profiling_entry.t_prj           = tools::common::profile::prof[algo_type.value()]["t_prj"]->get_measured_time();
-            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_dbg           = tools::common::profile::prof[algo_type.value()]["t_dbg"]->get_measured_time();
+            profiling_entry.t_out           = tools::common::profile::prof[algo_type.value()]["t_out"]->get_measured_time();
             profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
             profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
             profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
@@ -162,7 +164,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_ene           = tools::common::profile::prof[algo_type.value()]["t_ene"]->get_measured_time();
             profiling_entry.t_var           = tools::common::profile::prof[algo_type.value()]["t_var"]->get_measured_time();
             profiling_entry.t_prj           = tools::common::profile::prof[algo_type.value()]["t_prj"]->get_measured_time();
-            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_dbg           = tools::common::profile::prof[algo_type.value()]["t_dbg"]->get_measured_time();
+            profiling_entry.t_out           = tools::common::profile::prof[algo_type.value()]["t_out"]->get_measured_time();
             profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
             profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
             profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
@@ -192,7 +195,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_ent           = tools::common::profile::prof[algo_type.value()]["t_ent"]->get_measured_time();
             profiling_entry.t_ene           = tools::common::profile::prof[algo_type.value()]["t_ene"]->get_measured_time();
             profiling_entry.t_var           = tools::common::profile::prof[algo_type.value()]["t_var"]->get_measured_time();
-            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_dbg           = tools::common::profile::prof[algo_type.value()]["t_dbg"]->get_measured_time();
+            profiling_entry.t_out           = tools::common::profile::prof[algo_type.value()]["t_out"]->get_measured_time();
             profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
             profiling_entry.t_ene_ham       = tools::common::profile::prof[algo_type.value()]["t_ene_ham"]->get_measured_time();
             profiling_entry.t_ene_mom       = tools::common::profile::prof[algo_type.value()]["t_ene_mom"]->get_measured_time();
@@ -220,7 +224,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_svd           = tools::common::profile::prof[algo_type.value()]["t_svd"]->get_measured_time();
             profiling_entry.t_evo           = tools::common::profile::prof[algo_type.value()]["t_evo"]->get_measured_time();
             profiling_entry.t_ent           = tools::common::profile::prof[algo_type.value()]["t_ent"]->get_measured_time();
-            profiling_entry.t_chk           = tools::common::profile::prof[algo_type.value()]["t_chk"]->get_measured_time();
+            profiling_entry.t_dbg           = tools::common::profile::prof[algo_type.value()]["t_dbg"]->get_measured_time();
+            profiling_entry.t_out           = tools::common::profile::prof[algo_type.value()]["t_out"]->get_measured_time();
             profiling_entry.t_hdf           = tools::common::profile::prof[algo_type.value()]["t_hdf"]->get_measured_time();
             profiling_entry.t_ene_ham       = tools::common::profile::prof[algo_type.value()]["t_ene_ham"]->get_measured_time();
             profiling_entry.t_ene_mom       = tools::common::profile::prof[algo_type.value()]["t_ene_mom"]->get_measured_time();
