@@ -77,6 +77,8 @@ class class_tensors_finite {
     void move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt, LogPolicy log_policy = LogPolicy::QUIET);
     void rebuild_edges();
+    void rebuild_edges_ene();
+    void rebuild_edges_var();
     void clear_measurements() const;
     void clear_cache() const;
 };

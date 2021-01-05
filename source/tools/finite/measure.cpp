@@ -245,8 +245,8 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     tools::common::profile::get_default_prof()["t_spn"]->tic();
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<Scalar, 3> temp;
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const auto &M = state.get_mps_site(pos).get_M();
+    for(auto && mps : state.mps_sites) {
+        const auto &M = mps->get_M();
         temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
         temp.device(Textra::omp::getDevice()) = L.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0}, {1})).contract(mpo, idx({0, 1, 3}, {0, 2, 3}));
         L                                     = temp;
