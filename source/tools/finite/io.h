@@ -6,6 +6,7 @@ class class_edges_finite;
 class class_tensors_finite;
 class class_algorithm_status;
 enum class StorageLevel;
+enum class AlgorithmType;
 namespace h5pp {
     class File;
 }
@@ -21,7 +22,7 @@ namespace tools::finite::io {
     }
 
     namespace h5table{
-        extern void save_measurements   (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_tensors_finite & tensors, const class_algorithm_status & status);
+        extern void save_measurements   (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_tensors_finite & tensors, const class_algorithm_status & status, AlgorithmType algo_type);
         extern void save_model          (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_model_finite & model);
         extern void save_sim_status     (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_algorithm_status & status);
         extern void save_profiling      (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_algorithm_status & status);
