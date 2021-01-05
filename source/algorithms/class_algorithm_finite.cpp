@@ -688,10 +688,10 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_measured_time(),
                      tools::common::profile::t_tot->get_measured_time() / 60);
     tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(tensors));
-    if(algo_type == AlgorithmType::xDMRG) {
+    if(algo_type == AlgorithmType::xDMRG)
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                          tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    }
+
     tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
     tools::log->info("Bond dimension maximum χmax        = {}", cfg_chi_lim_max());
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
