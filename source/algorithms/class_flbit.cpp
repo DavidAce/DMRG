@@ -219,7 +219,7 @@ void class_flbit::single_flbit_step() {
     }
     tensors.clear_measurements();
     tensors.clear_cache();
-    tensors.rebuild_edges();
+    tensors.rebuild_edges_ene();
     status.iter     += 1;
     status.step     += settings::model::model_size;
     status.phys_time += std::abs(status.delta_t);

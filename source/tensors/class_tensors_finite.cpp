@@ -285,6 +285,8 @@ void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3>
 }
 
 void class_tensors_finite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }
+void class_tensors_finite::rebuild_edges_ene() { tools::finite::env::rebuild_edges_ene(*state, *model, *edges); }
+void class_tensors_finite::rebuild_edges_var() { tools::finite::env::rebuild_edges_var(*state, *model, *edges); }
 void class_tensors_finite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void class_tensors_finite::clear_measurements() const {
     measurements = tensors_measure_finite();
