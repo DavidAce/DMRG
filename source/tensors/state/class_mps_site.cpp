@@ -28,10 +28,10 @@ class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_mps_site::~class_mps_site()                               = default;            // default dtor
-class_mps_site::class_mps_site(class_mps_site &&other) noexcept = default;            // default move ctor
-class_mps_site &class_mps_site::operator=(class_mps_site &&other) noexcept = default; // default move assign
-class_mps_site::class_mps_site(const class_mps_site &other)                = default;
+class_mps_site::~class_mps_site()                      = default;            // default dtor
+class_mps_site::class_mps_site(class_mps_site &&other) = default;            // default move ctor
+class_mps_site &class_mps_site::operator=(class_mps_site &&other) = default; // default move assign
+class_mps_site::class_mps_site(const class_mps_site &other)       = default;
 class_mps_site &class_mps_site::operator=(const class_mps_site &other) = default;
 
 bool class_mps_site::isCenter() const { return LC.has_value(); }
@@ -66,15 +66,14 @@ void class_mps_site::assert_dimensions() const {
 }
 
 void class_mps_site::assert_identity() const {
-    if(get_label() == "B"){
-        Eigen::Tensor<Scalar,2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0,2},{0,2}));
-        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)){
+    if(get_label() == "B") {
+        Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 2}, {0, 2}));
+        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
             throw std::runtime_error(fmt::format("class_mps_site: B^dagger B is not identity at pos {}", get_position()));
         }
-    }
-    else{
-        Eigen::Tensor<Scalar,2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0,1},{0,1}));
-        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)){
+    } else {
+        Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 1}, {0, 1}));
+        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
             throw std::runtime_error(fmt::format("class_mps_site: A^dagger A is not identity at pos {}", get_position()));
         }
     }

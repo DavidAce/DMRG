@@ -29,12 +29,12 @@ class class_mps_site {
 
     public:
     ~class_mps_site(); // Read comment on implementation
-    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string  label_);
-    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string  label_);
+    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string label_);
+    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string label_);
     class_mps_site();                                       // ctor
     class_mps_site(const class_mps_site &other);            // default copy ctor
-    class_mps_site(class_mps_site &&other) noexcept ;                 // default move ctor
-    class_mps_site &operator=(class_mps_site &&other) noexcept ;      // default move assign
+    class_mps_site(class_mps_site &&other);                 // default move ctor
+    class_mps_site &operator=(class_mps_site &&other);      // default move assign
     class_mps_site &operator=(const class_mps_site &other); // default copy assign
 
     [[nodiscard]] bool                            is_real() const;
@@ -63,7 +63,8 @@ class class_mps_site {
     [[nodiscard]] long                            get_chiL() const;
     [[nodiscard]] long                            get_chiR() const;
 
-    template<typename T = size_t>  [[nodiscard]] T get_position() const;
+    template<typename T = size_t>
+    [[nodiscard]] T get_position() const;
 
     void set_M(const Eigen::Tensor<Scalar, 3> &M_);
     void set_L(const Eigen::Tensor<Scalar, 1> &L_, double error = 0);
@@ -74,7 +75,7 @@ class class_mps_site {
     void set_truncation_error_LC(double error);
     void set_label(const std::string &label_);
     void set_position(long position_);
-    void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string & label_);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string &label_);
 
     void unset_LC();
     void merge_mps(const class_mps_site &other);
@@ -89,7 +90,6 @@ class class_mps_site {
     bool has_stash_U() const;
     bool has_stash_S() const;
     bool has_stash_V() const;
-
 
     Eigen::Tensor<Scalar, 3>                    unstash_U() const;
     std::pair<Eigen::Tensor<Scalar, 1>, double> unstash_S() const;
