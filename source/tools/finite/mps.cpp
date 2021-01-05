@@ -24,9 +24,121 @@
 #include <utility>
 
 
+
 bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
+
+//void tools::finite::mps::move_center_point_single_site_fast(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+//
+//    if(state.position_is_any_edge()){
+//        if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1 )
+//            throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
+//                                               state.get_mps_site(0l).get_chiL(), state.get_mps_site(0l).dimensions()));
+//        if(state.get_direction() == 1 and state.get_mps_site().get_chiR() != 1 )
+//            throw std::logic_error(fmt::format("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}",
+//                                               state.get_position(), state.get_mps_site().get_chiR(), state.get_mps_site().dimensions()));
+//        return state.flip_direction();  // Instead of moving out of the chain, just flip the direction and return
+//    }else
+//    {
+//        long   pos            = state.get_position<long>(); // If all sites are B's, then this is -1. Otherwise this is the current "A*LC" site
+//        long   posC           = pos + state.get_direction(); // This is the site which becomes the new center position
+//        if(pos  < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}",pos));
+//        if(posC < -1 or posC >= state.get_length<long>()) throw std::runtime_error(fmt::format("posC out of bounds: {}",posC));
+//        if(state.get_direction() != posC - pos) throw std::logic_error(fmt::format("Expected posC - pos == {}. Got {}",state.get_direction(), posC-pos));
+////        auto & mps            = state.get_mps_site(pos);
+////        if(not mps.isCenter()) posC = pos; // In this case we need to create a new center at position 0 since all sites are B's
+////        tools::log->info("Labels before : {} | pos {} | posC {}", state.get_labels(), pos, posC);
+//        Eigen::Tensor<Scalar, 1> LC(1); LC.setConstant(1); // Store the LC bond in a temporary. It will become a regular "L" bond later
+//        double                   truncation_error_LC = 0; // Same story with the truncation error
+//        if(pos >= 0){
+//            auto & mps          = state.get_mps_site(pos);
+//            LC                  = mps.get_LC();
+//            truncation_error_LC = mps.get_truncation_error_LC();
+//            mps.unset_LC();
+//            mps.assert_dimensions();
+//            mps.assert_identity();
+//        }
+//        if(state.get_direction() == 1){
+//            auto & mpsC = state.get_mps_site(posC); //This site is currently a B and becomes the new center position AC
+//            // mpsC is currently a B site = Gamma * Lambda.
+//            // To make an A we right multiply Lambda^-1 and left-multiply the Lambda on the left site (pos), i.e.
+//            // A = LC B L^-1
+//            Eigen::Tensor<Scalar, 3> M(mpsC.dimensions());
+//            M.device(Textra::omp::getDevice()) =
+//                Textra::asDiagonal(LC)
+//                .contract(mpsC.get_M_bare(), Textra::idx({1},{1}))
+//                .contract(Textra::asDiagonalInversed(mpsC.get_L()), Textra::idx({2},{0}))
+//                .shuffle(Textra::array3{1,0,2});
+//            mpsC.set_M(M);
+//
+////
+////
+////            Eigen::Tensor<Scalar, 3> MLinv(mpsC.dimensions());
+////            Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>> MLinv_map (MLinv.data(), MLinv.size());
+////            MLinv.device(Textra::omp::getDevice()) =
+////                mpsC.get_M_bare().contract(Textra::asDiagonalInversed(mpsC.get_L()), Textra::idx({2},{0}));
+////            MLinv_map.normalize();
+////
+////            Eigen::Tensor<Scalar, 3> LMLinv(mpsC.dimensions());
+////            LMLinv.device(Textra::omp::getDevice()) = Textra::asDiagonal(LC)
+////                         .contract(MLinv, Textra::idx({1},{1}))
+////                         .shuffle(Textra::array3{1,0,2});
+////            MLinv.resize(0,0,0);
+////            mpsC.set_M(LMLinv);
+//
+//            // The order of the following 2 lines is important!
+//            mpsC.set_LC(mpsC.get_L(),  mpsC.get_truncation_error()); // Copy old "L" into the "LC" slot of the new "AC" at position "posC"
+//            mpsC.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "AC" at position "posC"
+//            tools::log->info("Labels assert : {} | L: {} | LC: {} | dir {}", state.get_labels(),mpsC.get_L().dimensions(), mpsC.get_LC().dimensions(), state.get_direction());
+//            mpsC.assert_dimensions();
+//            mpsC.assert_identity();
+//        }else if (state.get_direction() == -1) {
+//            auto & mps = state.get_mps_site(pos); //This site was the "AC" and will now become the new B
+//            auto & mpsC = state.get_mps_site(posC); //This site is currently an "A" and will become a new AC
+//            mpsC.set_LC(mps.get_L(),mps.get_truncation_error());
+//            mpsC.assert_dimensions();
+//            mpsC.assert_identity();
+//
+//            // mpsC is currently an A site = Lambda * Gamma so nothing needs to be done on it.
+//            // mps on the other hand, is an A-type Lambda*Gamma and must be transformed to a B-type site.
+//            // To transform A to B we left-multiply Lambda^-1 and right-multiply the Lambda which was previously LC, i.e.
+//            // B = L^-1 A LC
+//            Eigen::Tensor<Scalar, 3> M(mps.dimensions());
+//            M.device(Textra::omp::getDevice()) =
+//                Textra::asDiagonalInversed(mps.get_L())
+//                .contract(mps.get_M_bare(), Textra::idx({1},{1}))
+//                .contract(Textra::asDiagonal(LC), Textra::idx({2},{0}))
+//                .shuffle(Textra::array3{1,0,2});
+//            mps.set_M(M);
+//
+////
+////
+////            Eigen::Tensor<Scalar, 3> LinvM(mps.dimensions());
+////            Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>> LinvM_map (LinvM.data(), LinvM.size());
+////            LinvM.device(Textra::omp::getDevice()) =
+////                mps.get_M_bare()
+////                    .contract(Textra::asDiagonal(LC), Textra::idx({2},{0}));
+////            LinvM_map.normalize();
+////            Eigen::Tensor<Scalar, 3> LinvML(mps.dimensions());
+////            LinvML.device(Textra::omp::getDevice()) = Textra::asDiagonalInversed(mps.get_L())
+////                .contract(LinvM, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+////            LinvM.resize(0,0,0);
+////            mps.set_M(LinvML);
+//            mps.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "B" at position "pos"
+//            mps.set_label("B"); // Manually set the label. On the other direction this happens automatically with set_LC and unset_LC and
+//            tools::log->info("Labels assert : {} | L: {} | LC: {} | dir {}", state.get_labels(),mpsC.get_L().dimensions(), mpsC.get_LC().dimensions(), state.get_direction());
+//            mps.assert_dimensions();
+//            mps.assert_identity();
+//
+//        }
+////        tools::log->info("Labels after  : {}", state.get_labels());
+//        state.clear_cache(LogPolicy::QUIET);
+//        state.clear_measurements(LogPolicy::QUIET);
+//    }
+//}
+
+
 
 void tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
 
@@ -146,7 +258,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
     if constexpr(settings::debug){
         auto norm = Textra::Tensor_to_Vector(multisite_mps).norm();
-        if(std::abs(norm-1) > 1e-8) throw std::runtime_error(fmt::format("Multisite mps norm is too big: {:.16f}",norm));
+        if(std::abs(norm-1) > 1e-8) throw std::runtime_error(fmt::format("Multisite mps norm is too far from unity: {:.16f}",norm));
     }
 
     long              spin_prod = 1;
@@ -334,64 +446,6 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] class_state_finite
     tools::log->warn("Truncate next sites needs an implementation");
     throw std::runtime_error("Truncate next sites needs an implementation");
 }
-
-void is_unitary(const Eigen::Tensor<std::complex<double>, 2> &U_tensor) {
-    Eigen::Tensor<std::complex<double>, 2> UU = U_tensor.contract(U_tensor.conjugate(), Textra::idx({0}, {0}));
-}
-
-//void tools::finite::mps::apply_twosite_gates(class_state_finite &state, const std::vector<qm::Gate> &twosite_gates, bool reverse, long chi_lim,
-//                                             std::optional<double> svd_threshold) {
-//    if(twosite_gates.size() + 1 != state.get_length())
-//        throw std::runtime_error(fmt::format("Size mismatch: Given {} two-site operators for a system of {} sites. Expected {}", twosite_gates.size(),
-//                                             state.get_length(), state.get_length() - 1));
-//
-//    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-//    tools::log->info("Before applying gates");
-//    for(auto &&mps : state.mps_sites)
-//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-//
-//    // Generate staggered indices so that the unitaries are applied on even sites first, then on odd sites.
-//    // When applying the inverse operation, the indices are reversed.
-//
-//    std::vector<size_t> all_idx;
-//    std::vector<size_t> evn_idx = num::range<size_t>(0, twosite_gates.size(), 2);
-//    std::vector<size_t> odd_idx = num::range<size_t>(1, twosite_gates.size(), 2);
-//    if(evn_idx.size() + odd_idx.size() != twosite_gates.size()) throw std::logic_error(fmt::format("Size mismatch"));
-//    all_idx.reserve(twosite_gates.size());
-//    all_idx.insert(all_idx.end(), evn_idx.begin(), evn_idx.end());
-//    all_idx.insert(all_idx.end(), odd_idx.begin(), odd_idx.end());
-//    if(reverse) std::reverse(all_idx.begin(), all_idx.end());
-//
-//    fmt::print("all_idx {}\n", all_idx);
-//    state.clear_cache(LogPolicy::QUIET);
-//    for(auto &&idx : all_idx) {
-////        if(idx == 1) continue;
-//        auto &gate = twosite_gates[idx];
-//        if(gate.posL + 1 != gate.posR) throw std::logic_error(fmt::format("Expected site posL+1 == posR. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
-//        if(gate.posL >= state.get_length() - 1)
-//            throw std::logic_error(fmt::format("Expected site posL < length-1. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
-//        if(gate.posR >= state.get_length())
-//            throw std::logic_error(fmt::format("Expected site posR < length. Got [posL = {}, posR = {}]", gate.posL, gate.posR));
-//        while(state.get_position() != gate.posL) move_center_point(state, chi_lim, svd_threshold); // Move into position
-//        tools::log->debug("Applying two-site gate at sites [{} {}]", gate.posL, gate.posR);
-//        Eigen::Tensor<Scalar, 3> twosite_tensor_op;
-//        if(reverse) twosite_tensor_op = gate.adjoint().contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
-//        else
-//            twosite_tensor_op = gate.op.contract(state.get_multisite_mps({gate.posL, gate.posR}), Textra::idx({0}, {0}));
-//        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor_op, {gate.posL, gate.posR}, gate.posL, chi_lim, svd_threshold);
-//    }
-//
-//    tools::log->info("After applying gates");
-//    for(auto &&mps : state.mps_sites)
-//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-//    tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::ALWAYS);
-//    tools::log->info("After normalization");
-//    for(auto &&mps : state.mps_sites)
-//        std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                  << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-//}
 
 void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &nsite_tensors, size_t gate_size, bool reverse,
                                              long chi_lim, std::optional<double> svd_threshold) {
