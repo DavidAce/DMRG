@@ -50,18 +50,33 @@ void class_mps_site::assert_validity() const {
 
 void class_mps_site::assert_dimensions() const {
     if(get_label() == "B" and get_chiR() != get_L().dimension(0))
-        throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for B are incompatible at site {}: B {} | L {}", get_position(),
+        throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for B and L are incompatible at site {}: B {} | L {}", get_position(),
                                              get_M_bare().dimensions(), get_L().dimensions()));
     if(get_label() == "A" and get_chiL() != get_L().dimension(0))
-        throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for A are incompatible at site {}: A {} | L{}", get_position(),
+        throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for A and L are incompatible at site {}: A {} | L {}", get_position(),
                                              get_M_bare().dimensions(), get_L().dimensions()));
     if(get_label() == "AC") {
         if(get_chiL() != get_L().dimension(0))
-            throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for AC are incompatible at site {}: AC {} | L{}", get_position(),
-                                                 get_M_bare().dimensions(), get_L().dimensions()));
+            throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | L {}",
+                                                 get_position(), get_M_bare().dimensions(), get_L().dimensions()));
         if(get_chiR() != get_LC().dimension(0))
-            throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for AC are incompatible at site {}: AC {} | LC{}", get_position(),
-                                                 get_M_bare().dimensions(), get_L().dimensions()));
+            throw std::runtime_error(fmt::format("class_mps_site: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | LC{}",
+                                                 get_position(), get_M_bare().dimensions(), get_L().dimensions()));
+    }
+}
+
+void class_mps_site::assert_identity() const {
+    if(get_label() == "B"){
+        Eigen::Tensor<Scalar,2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0,2},{0,2}));
+        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)){
+            throw std::runtime_error(fmt::format("class_mps_site: B^dagger B is not identity at pos {}", get_position()));
+        }
+    }
+    else{
+        Eigen::Tensor<Scalar,2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0,1},{0,1}));
+        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)){
+            throw std::runtime_error(fmt::format("class_mps_site: A^dagger A is not identity at pos {}", get_position()));
+        }
     }
 }
 
