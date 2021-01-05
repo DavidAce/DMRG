@@ -631,7 +631,9 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     h5pp_file->setKeepFileClosed();
 
     // Copy from temporary location to destination depending on given policy
+    tools::common::profile::prof[algo_type]["t_hdf"]->tic();
     copy_from_tmp(storage_reason, copy_policy);
+    tools::common::profile::prof[algo_type]["t_hdf"]->toc();
 }
 
 void class_algorithm_finite::print_status_update() {

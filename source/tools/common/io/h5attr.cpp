@@ -5,6 +5,7 @@
 #include <string>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 namespace tools::common::io::h5attr {
     template<typename AttrType>
@@ -59,6 +60,8 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     auto save_point = std::make_pair(status.iter, status.step);
     if(save_log[state_prefix] == save_point) return;
 
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+
     std::string storage_level_str(enum2str(storage_level));
     std::string storage_reason_str(enum2str(storage_reason));
     std::string model_name(enum2str(model_type));
@@ -83,4 +86,5 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     save_attr(h5ppFile, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
     save_attr(h5ppFile, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
     save_log[state_prefix] = save_point;
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }

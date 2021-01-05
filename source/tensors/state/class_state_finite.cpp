@@ -303,7 +303,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
     tools::common::profile::get_default_prof()["t_mps"]->toc();
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
-        tools::common::profile::get_default_prof()["t_chk"]->tic();
+        tools::common::profile::get_default_prof()["t_dbg"]->tic();
         Eigen::Tensor<Scalar,0> norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0,1,2},{0,1,2}));
         double norm = std::abs(norm_scalar(0));
         if(std::abs(norm - 1) > settings::precision::max_norm_error){
@@ -326,7 +326,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
             throw std::runtime_error(fmt::format("Multisite tensor is not normalized. Norm = {:.16f} {:+.16f}i", std::real(norm_scalar(0)), std::imag(norm_scalar(0))));
 
         }
-        tools::common::profile::get_default_prof()["t_chk"]->toc();
+        tools::common::profile::get_default_prof()["t_dbg"]->toc();
     }
     return multisite_tensor;
 }

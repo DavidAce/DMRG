@@ -45,7 +45,7 @@ void tools::finite::debug::check_integrity(const class_tensors_finite & tensors)
 void tools::finite::debug::check_integrity(const class_state_finite & state){
 //    if constexpr (not settings::debug) return;
 //    tools::log->trace("Checking integrity of MPS");
-//    tools::common::profile::t_chk->tic();
+//    tools::common::profile::t_dbg->tic();
 //    try{
 //
 //        if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
@@ -255,13 +255,13 @@ void tools::finite::debug::check_integrity(const class_state_finite & state){
 //        throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
 //    }
 //    tools::log->trace("MPS OK");
-//    tools::common::profile::t_chk->toc();
+//    tools::common::profile::t_dbg->toc();
 }
 
 
 void tools::finite::debug::check_integrity(const class_model_finite & model) {
 //    if constexpr (not settings::debug) return;
-//    tools::common::profile::t_chk->tic();
+//    tools::common::profile::t_dbg->tic();
     model.assert_validity();
 
 
@@ -279,7 +279,7 @@ void tools::finite::debug::check_integrity(const class_model_finite & model) {
 //    catch(std::exception &ex){
 //        throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
 //    }
-//    tools::common::profile::t_chk->toc();
+//    tools::common::profile::t_dbg->toc();
 
 }
 
@@ -287,7 +287,7 @@ void tools::finite::debug::check_integrity(const class_model_finite & model) {
 void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //    if constexpr (not settings::debug) return;
 //    tools::log->trace("Checking integrity of edges");
-//    tools::common::profile::t_chk->tic();
+//    tools::common::profile::t_dbg->tic();
 //    try{
 //
 //        if(not num::all_equal(state.get_length(),model.get_length(), edges.get_length()))
@@ -493,12 +493,12 @@ void tools::finite::debug::check_integrity(const class_edges_finite & edges) {
 //        throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
 //    }
 //    tools::log->trace("MPS OK");
-//    tools::common::profile::t_chk->toc();
+//    tools::common::profile::t_dbg->toc();
 }
 
 void tools::finite::debug::check_integrity(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges) {
 //    if constexpr (not settings::debug) return;
-//    tools::common::profile::t_chk->tic();
+//    tools::common::profile::t_dbg->tic();
 //    tools::log->trace("Integrity check...");
 //    if(not num::all_equal(state.get_length(),model.get_length(), edges.get_length()))
 //        throw std::runtime_error(fmt::format("Lengths not all equal: state {} | model {} | edges {}", state.get_length(),model.get_length(), edges.get_length()));
