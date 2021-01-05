@@ -409,10 +409,12 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
     if constexpr(settings::debug){
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
+            tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("Before applying gates");
             for(auto &&mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
 
@@ -435,18 +437,29 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     // If 3-site gates,
     //      * Apply gates on [0-1-2], [3-4-5]... then on [1-2-3], [4-5-6]..., then on [2-3-4],[5-6-7], and so on.
     //      * The corresponing list is [0,3,6,9...1,4,7,10...2,5,8,11...]
-    // So the list contains the index to the the "first" or left-most" leg of the unitary.
-    // When applying the inverse operation, the indices are reversed.
+    // So the list contains the index to the "first" or left-most" leg of the unitary.
+    // When applying the inverse operation, all the indices are reversed.
+    //
+    // Performance note:
+    // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
+    // to be done before even starting. Additionally, if unlucky, we have to move L-1 times again to return
+    // to the original position.
+
+    bool past_middle = state.get_position<long>() > state.get_length<long>()/2;
+    if(state.get_direction() < 0 and past_middle ) state.flip_direction();
+    if(state.get_direction() > 0 and not past_middle) state.flip_direction();
+    size_t flip = past_middle ? 0 : 1;
     std::vector<size_t> all_idx;
     for(size_t offset = 0; offset < gate_size; offset++){
         if(offset+gate_size > state.get_length()) break;
         auto off_idx = num::range<size_t>(offset, state.get_length()-gate_size+1, gate_size);
+        if(num::mod<size_t>(offset,2) == flip) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
         tools::log->trace("Appending idx {}", off_idx);
         all_idx.insert(all_idx.end(), off_idx.begin(), off_idx.end());
     }
     if(reverse) std::reverse(all_idx.begin(), all_idx.end());
 
-    if constexpr (settings::debug) tools::log->trace("all_idx {}", all_idx);
+    if constexpr (settings::debug) tools::log->trace("current pos {} dir {} | all_idx {}",state.get_position<long>(),state.get_direction(), all_idx);
 
     // Save current position and direction so we can leave this function in the same condition
     auto save_pos = state.get_position();
@@ -464,22 +477,29 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic();
         while(state.get_position() != gate.pos.front()) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
+
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->toc();
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic();
         tools::log->debug("Constructing multisite_mps at sites {}", gate.pos);
         auto multisite_mps = state.get_multisite_mps(gate.pos);
         tools::log->debug("Contracting gate and multisite_mps at sites {}", gate.pos);
         gate_mps.resize({gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        if(reverse) gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().op.contract(multisite_mps, Textra::idx({0}, {0}));
+        if(reverse) gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().contract(multisite_mps, Textra::idx({0}, {0}));
         else
             gate_mps.device(Textra::omp::getDevice()) = gate.op.contract(multisite_mps, Textra::idx({0}, {0}));
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->toc();
+
+        // Calculate new center position
+//        long center_position = std::clamp(
+//            state.get_position<long>() + state.get_direction() * static_cast<long>(gate.pos.size()),
+//            0l, static_cast<long>(state.get_length())-1);
+
         tools::log->debug("Merging at sites {}", gate.pos);
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->tic();
 //        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, static_cast<long>(gate.pos.front()), chi_lim, svd_threshold, LogPolicy::QUIET);
         tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, state.get_position<long>(), chi_lim, svd_threshold, LogPolicy::QUIET);
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->toc();
-        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f} | lapacke {:.4f} ({:.4f}) | jacobi {:.4f} ({:.4f})",
+        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
                           1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_last_interval(),
                           1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_last_interval(),
                           1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_last_interval(),
@@ -496,24 +516,29 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 
     if constexpr(settings::debug){
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6 ){
+            tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("After applying gates");
             for(auto &&mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
 
-
-    while(state.get_position() != save_pos or state.get_direction() != save_dir) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
+    tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->tic();
+    move_center_point_to_edge(state,chi_lim,svd_threshold);
+    tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->toc();
 
 
     auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
+            tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("After normalization");
             for(auto &&mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
 
