@@ -93,7 +93,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     auto mps_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/mps_prefix");
     auto model_type = h5ppFile.readAttribute<std::string>(state_prefix, "common/model_type");
     auto model_size = h5ppFile.readAttribute<size_t>(state_prefix, "common/model_size");
-    auto position   = h5ppFile.readAttribute<size_t>(state_prefix, "common/position");
+    auto position   = h5ppFile.readAttribute<long>(state_prefix, "common/position");
     if(position != status.position)
         throw std::runtime_error(fmt::format("Mismatch when loading MPS: position [{}] != status.position [{}]", position, status.position));
     if(str2enum<ModelType>(model_type) != settings::model::model_type)
@@ -124,9 +124,9 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         auto label = h5ppFile.readAttribute<std::string>("label", dset_M_name);
         state.get_mps_site(pos).set_mps(M, L, error, label);
         // Sanity checks
-        if(pos == position and not state.get_mps_site(pos).isCenter())
+        if(static_cast<long>(pos) == position and not state.get_mps_site(pos).isCenter())
             throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
-        if(pos != position and state.get_mps_site(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
+        if(static_cast<long>(pos) != position and state.get_mps_site(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
         //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
     }
 }
