@@ -232,7 +232,7 @@ void class_flbit::update_time_step(){
     if(std::abs(status.delta_t) * settings::flbit::time_step_growth_factor >= settings::flbit::time_step_max_size) return;
     static double time_last_update = 0;
     if(std::abs(status.delta_t) == 0.0) status.delta_t = std::complex<double>(settings::flbit::time_step_init_real, settings::flbit::time_step_init_imag);
-    double time_until_update = time_last_update + std::abs(status.delta_t) * settings::flbit::time_step_growth_factor*10 - status.phys_time;
+    double time_until_update = time_last_update + std::abs(status.delta_t) * settings::flbit::time_step_per_size - status.phys_time;
     tools::log->trace("time_last_update : {}",time_last_update);
     tools::log->trace("time_until_update: {}",time_until_update);
     tools::log->trace("phys_time        : {}",status.phys_time);
