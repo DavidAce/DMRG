@@ -121,6 +121,7 @@ namespace settings {
             inline double       w1            = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) for on-site interactions */
             inline double       w2            = 0.5;            /*!< Width of the uniform box distribution U(-w2,w2) for two-body interaction */
             inline double       w3            = 0.5;            /*!< Width of the uniform box distribution U(-w3,w3) for three-body interaction */
+            inline double       fmix          = 0.1;            /*!< Mixing factor for unitary transformation to real-space */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for interaction strengths */
         }

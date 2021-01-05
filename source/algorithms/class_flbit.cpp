@@ -146,10 +146,10 @@ void class_flbit::run_preprocessing() {
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 
-    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,0.1);
-    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,0.1);
-    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,0.1);
-    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,0.1);
+    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
 
 
     if(not tensors.state->position_is_any_edge()) throw std::logic_error("Put the state on an edge!");
