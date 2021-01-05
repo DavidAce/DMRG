@@ -21,7 +21,7 @@ namespace Textra::omp {
     Eigen::ThreadPoolDevice & getDevice();
 
 #else
-    & std::unique_ptr<Eigen::DefaultDevice> dev;
+    extern std::unique_ptr<Eigen::DefaultDevice> dev;
     void setNumThreads([[maybe_unused]] int num);
     Eigen::DefaultDevice & getDevice();
 #endif

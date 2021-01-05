@@ -19,8 +19,9 @@ namespace Textra::omp {
 
 #else
     void setNumThreads([[maybe_unused]] int num) {}
+    std::unique_ptr<Eigen::DefaultDevice> dev;
     Eigen::DefaultDevice & getDevice(){
-        if(not dev) dev = = std::make_unique<Eigen::DefaultDevice>();
+        if(not dev) dev = std::make_unique<Eigen::DefaultDevice>();
         return *dev;
     }
 
