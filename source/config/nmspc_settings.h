@@ -223,7 +223,8 @@ namespace settings {
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline double   time_step_init_real     = 0.1;                      /*!< Real part of initial time step delta_t */
         inline double   time_step_init_imag     = 0.0;                      /*!< Imag part of initial time step delta_t */
-        inline double   time_step_max_size      = 10;                       /*!< Maximum time step size */
+        inline double   time_step_max_size      = 1e4;                      /*!< Maximum time step size */
+        inline double   time_step_per_size      = 10;                       /*!< Number of time steps at each time step size */
         inline double   time_step_growth_factor = 10;                       /*!< (Absolute value) Growth factor for time step delta_t */
         inline double   time_limit              = 1;                        /*!< (Absolute value) Maximum physical time to evolve */
         inline size_t   print_freq              = 1;                        /*!< Print frequency for console output. In units of iterations. (0 = off). */

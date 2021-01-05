@@ -122,6 +122,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("flbit::time_step_init_real"     , flbit::time_step_init_real);
     dmrg_config.load_parameter("flbit::time_step_init_imag"     , flbit::time_step_init_imag);
     dmrg_config.load_parameter("flbit::time_step_max_size"      , flbit::time_step_max_size);
+    dmrg_config.load_parameter("flbit::time_step_per_size"      , flbit::time_step_per_size);
     dmrg_config.load_parameter("flbit::time_step_growth_factor" , flbit::time_step_growth_factor);
     dmrg_config.load_parameter("flbit::time_limit"              , flbit::time_limit);
     dmrg_config.load_parameter("flbit::print_freq "             , flbit::print_freq);
