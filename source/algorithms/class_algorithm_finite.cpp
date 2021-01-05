@@ -674,6 +674,7 @@ void class_algorithm_finite::print_status_update() {
 }
 
 void class_algorithm_finite::print_status_full() {
+    tensors.rebuild_edges();
     tensors.do_all_measurements();
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", " Full status: [" + algo_name + "][" + tensors.state->get_name() + "]");

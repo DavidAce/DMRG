@@ -49,6 +49,7 @@ class class_env_base {
     void set_position(const size_t position_) { position = position_; }
     void assert_block() const;
     void assert_validity() const;
+    void assert_unique_id(const class_env_base & env, const class_mps_site &mps, const class_mpo_site &mpo) const;
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_block() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 3> &      get_block();
