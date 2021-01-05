@@ -229,7 +229,7 @@ void class_flbit::single_flbit_step() {
 }
 
 void class_flbit::update_time_step(){
-    if(std::abs(status.delta_t) * settings::flbit::time_step_growth_factor >= settings::flbit::time_step_max_size) return;
+    if(std::abs(status.delta_t) * settings::flbit::time_step_growth_factor > settings::flbit::time_step_max_size) return;
     static double time_last_update = 0;
     if(std::abs(status.delta_t) == 0.0) status.delta_t = std::complex<double>(settings::flbit::time_step_init_real, settings::flbit::time_step_init_imag);
     double time_until_update = time_last_update + std::abs(status.delta_t) * settings::flbit::time_step_per_size - status.phys_time;
