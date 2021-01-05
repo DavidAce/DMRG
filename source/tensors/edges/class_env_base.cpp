@@ -199,6 +199,26 @@ void class_env_base::assert_validity() const {
     }
 }
 
+void class_env_base::assert_unique_id(const class_env_base & env, const class_mps_site &mps, const class_mpo_site &mpo) const{
+    std::string msg;
+    if(env.get_unique_id() != unique_id_env){
+        msg.append(fmt::format("| env({}) {} !=",env.get_position(),env.get_unique_id()));
+        if(unique_id_env) msg.append(fmt::format(" {} ",unique_id_env.value()));
+    }
+    if(mps.get_unique_id() != unique_id_mps){
+        msg.append(fmt::format("| mps({}) {} !=",mps.get_position(),mps.get_unique_id()));
+        if(unique_id_mps) msg.append(fmt::format(" {} ", unique_id_mps.value()));
+    }
+    auto mpo_unique_id = tag == "ene" ? mpo.get_unique_id() : mpo.get_unique_id_sq();
+    if(mpo_unique_id != unique_id_mpo){
+        msg.append(fmt::format("| mpo({}) {} !=",mpo.get_position(),mpo_unique_id));
+        if(unique_id_mpo) msg.append(fmt::format(" {} ", unique_id_mpo.value()));
+    }
+    if(not msg.empty())
+        throw std::runtime_error(fmt::format("Environment {} side {}: unique id mismatch: {}", tag, side,msg));
+}
+
+
 bool class_env_base::is_real() const {
     assert_block();
     return Textra::isReal(*block, fmt::format("env {} {}", tag, side));

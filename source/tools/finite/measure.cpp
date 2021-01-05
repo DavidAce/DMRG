@@ -455,12 +455,14 @@ template double tools::finite::measure::energy_normalized(const Eigen::Tensor<Sc
                                                           double, double, tensors_measure_finite *measurements);
 
 double tools::finite::measure::energy_minus_energy_reduced(const class_tensors_finite &tensors) {
+    tensors.assert_edges_ene();
     return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
 }
 
 double tools::finite::measure::energy(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy) return tensors.measurements.energy.value();
     else {
+        tensors.assert_edges_ene();
         tensors.measurements.energy = tools::finite::measure::energy(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy.value();
     }
@@ -469,6 +471,7 @@ double tools::finite::measure::energy(const class_tensors_finite &tensors) {
 double tools::finite::measure::energy_per_site(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_per_site) return tensors.measurements.energy_per_site.value();
     else {
+        tensors.assert_edges_ene();
         tensors.measurements.energy_per_site = tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_per_site.value();
     }
@@ -477,6 +480,7 @@ double tools::finite::measure::energy_per_site(const class_tensors_finite &tenso
 double tools::finite::measure::energy_variance(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_variance) return tensors.measurements.energy_variance.value();
     else {
+        tensors.assert_edges_var();
         tensors.measurements.energy_variance = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_variance.value();
     }
@@ -485,6 +489,7 @@ double tools::finite::measure::energy_variance(const class_tensors_finite &tenso
 double tools::finite::measure::energy_variance_per_site(const class_tensors_finite &tensors) {
     if(tensors.measurements.energy_variance_per_site) return tensors.measurements.energy_variance_per_site.value();
     else {
+        tensors.assert_edges_var();
         tensors.measurements.energy_variance_per_site =
             tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
         return tensors.measurements.energy_variance_per_site.value();
@@ -492,6 +497,7 @@ double tools::finite::measure::energy_variance_per_site(const class_tensors_fini
 }
 
 double tools::finite::measure::energy_normalized(const class_tensors_finite &tensors, double emin, double emax) {
+    tensors.assert_edges_ene();
     return tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, emin, emax);
 }
 
