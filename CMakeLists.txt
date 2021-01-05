@@ -247,12 +247,15 @@ endif()
 ###    to the end (the wrong order causes linking errors)      ###
 ##################################################################
 if(NOT TARGET Threads::Threads)
-    set(CMAKE_THREAD_PREFER_PTHREAD FALSE)
-    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+#    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
     find_package(Threads)
-    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "")
-    target_link_libraries(Threads::Threads INTERFACE "-Wl,--whole-archive;-lpthread;-Wl,--no-whole-archive;rt;dl")
-    target_link_libraries(Threads::Threads INTERFACE pthread rt dl)
+#    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "")
+    #    target_link_libraries(Threads::Threads INTERFACE "-Wl,--whole-archive;-lpthread;-Wl,--no-whole-archive;rt;dl")
+#    target_link_libraries(Threads::Threads INTERFACE -Wl,--whole-archive,-lpthread,--no-whole-archive;rt;dl)
+    target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive;rt;dl)
+#        target_link_libraries(Threads::Threads INTERFACE pthread rt dl)
+    target_link_libraries(Threads::Threads INTERFACE rt dl)
 endif()
 
 
@@ -315,7 +318,9 @@ endif()
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
+if(TARGET openmp::openmp)
+    target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
+endif()
 target_link_libraries(dmrg-arp  PUBLIC dmrg-flags)
 target_link_libraries(dmrg-eig  PUBLIC dmrg-flags)
 target_link_libraries(dmrg-opt  PUBLIC dmrg-flags)
