@@ -323,7 +323,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
                 tools::log->critical("Norm after adding L from the left: {:.16f}", norm);
             }
 
-            throw std::runtime_error(fmt::format("Multisite tensor is not normalized. Norm = {:.16f} {:+.16f}i", std::real(norm_scalar(0)), std::imag(norm_scalar(0))));
+            throw std::runtime_error(fmt::format("Multisite tensor for sites {} is not normalized. Norm = {:.16f} {:+.16f}i", sites, std::real(norm_scalar(0)), std::imag(norm_scalar(0))));
 
         }
         tools::common::profile::get_default_prof()["t_dbg"]->toc();

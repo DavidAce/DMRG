@@ -78,7 +78,8 @@ void class_xdmrg::resume() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet"); break;
             case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
