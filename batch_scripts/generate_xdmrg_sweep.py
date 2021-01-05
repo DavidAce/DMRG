@@ -6,7 +6,7 @@ from itertools import product
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
 
-template_filename = 'input_template.cfg'
+template_filename = 'input_xdmrg_template.cfg'
 basename    = 'mbl'
 location    = "input"
 
