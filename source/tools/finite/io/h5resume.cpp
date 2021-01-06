@@ -46,44 +46,24 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         throw std::runtime_error("Given prefix to model data with StorageLevel < FULL. The model can only be resumed from FULL storage");
 
     // Find the path to the MPO
-    auto mpo_prefix  = h5ppFile.readAttribute<std::string>(state_prefix, "common/mpo_prefix");
-    auto hamiltonian = h5ppFile.readAttribute<std::string>(state_prefix, "common/hamiltonian");
-    if(h5ppFile.linkExists(hamiltonian)) {
-        tools::log->info("Loading model data from hamiltonian table: [{}]", hamiltonian);
-        auto model_type = h5ppFile.readAttribute<std::string>("model_type", hamiltonian);
-        auto model_size = h5ppFile.readAttribute<size_t>("model_size", hamiltonian);
+    auto model_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/model_prefix");
+    if(h5ppFile.linkExists(model_prefix)) {
+        auto table_path = fmt::format("{}/hamiltonian", model_prefix);
+        if(not h5ppFile.linkExists(table_path)) throw std::runtime_error(fmt::format("Hamiltonian table does not exist: [{}]",table_path));
+        tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
+        auto model_type = h5ppFile.readAttribute<std::string>("model_type", table_path);
+        auto model_size = h5ppFile.readAttribute<size_t>("model_size", table_path);
         if(str2enum<ModelType>(model_type) != settings::model::model_type)
-            throw std::runtime_error(fmt::format("Mismatch when loading MPO: model_type [{}] != settings::model::model_type [{}]", model_type,
+            throw std::runtime_error(fmt::format("Mismatch when loading model: model_type [{}] != settings::model::model_type [{}]", model_type,
                                                  enum2str(settings::model::model_type)));
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
-                fmt::format("Mismatch when loading MPO: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-        //        model.MPO.clear();
-        //        model.initialize(str2enum<ModelType>(model_type), model_size);
+                fmt::format("Mismatch when loading model: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
         for(size_t pos = 0; pos < model_size; pos++) {
-            model.get_mpo(pos).load_hamiltonian(h5ppFile, hamiltonian);
-            // We can use the mpo's on file here to check everything is correct
-            std::string mpo_dset = fmt::format("{}/H_{}", mpo_prefix, pos);
-            if(h5ppFile.linkExists(mpo_dset)) {
-                if(Textra::Tensor_to_Vector(model.get_mpo(pos).MPO()) != Textra::Tensor_to_Vector(h5ppFile.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
-                    throw std::runtime_error("Built MPO does not match the MPO on file");
-            }
+            model.get_mpo(pos).load_hamiltonian(h5ppFile, model_prefix);
         }
-    } else if(h5ppFile.linkExists(mpo_prefix)) {
-        tools::log->debug("Loading model data from MPO in: [{}]", mpo_prefix);
-        auto model_type = h5ppFile.readAttribute<std::string>("model_type", mpo_prefix);
-        auto model_size = h5ppFile.readAttribute<size_t>("model_size", mpo_prefix);
-        if(str2enum<ModelType>(model_type) != settings::model::model_type)
-            throw std::runtime_error(fmt::format("Mismatch when loading MPO: Hamiltonian model_type [{}] != settings::model::model_type [{}]", model_type,
-                                                 enum2str(settings::model::model_type)));
-        if(model_size != settings::model::model_size)
-            throw std::runtime_error(
-                fmt::format("Mismatch when loading MPO: Hamiltonian sites [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-        //        model.MPO.clear();
-        //        model.initialize(str2enum<ModelType>(model_type), model_size);
-        for(size_t pos = 0; pos < model_size; pos++) model.get_mpo(pos).load_mpo(h5ppFile, mpo_prefix);
     } else {
-        throw std::runtime_error(fmt::format("Could not find link to model data in [{}] or [{}]", hamiltonian, mpo_prefix));
+        throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
     }
 }
 

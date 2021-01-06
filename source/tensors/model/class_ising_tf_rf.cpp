@@ -261,26 +261,28 @@ void class_ising_tf_rf::save_hamiltonian(h5pp::File &file, const std::string &ta
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
 
-void class_ising_tf_rf::load_hamiltonian(const h5pp::File &file, const std::string &table_path) {
-    std::string ham_prefix = table_path + "/hamiltonian";
-    if(file.linkExists(ham_prefix)) {
-        h5tb.param                       = file.readTableRecords<h5tb_ising_tf_rf::table>(ham_prefix, position);
+void class_ising_tf_rf::load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
+    auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
+    if(file.linkExists(ham_table)) {
+        h5tb.param                       = file.readTableRecords<h5tb_ising_tf_rf::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
         build_mpo();
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_prefix));
+        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
     }
+
+    // Check that we are on the same point of the phase diagram
+    using namespace settings::model::ising_tf_rf;
+    if(std::abs(h5tb.param.J1 - J1) > 1e-6) throw std::runtime_error(fmt::format("J1_rand {:.16f} != {:.16f} ising_tf_rf::J1_rand", h5tb.param.J1, J1));
+    if(std::abs(h5tb.param.J2 - J2) > 1e-6) throw std::runtime_error(fmt::format("J2_rand {:.16f} != {:.16f} ising_tf_rf::J2_rand", h5tb.param.J2, J2));
+    if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6) throw std::runtime_error(fmt::format("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran));
+    if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6) throw std::runtime_error(fmt::format("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean));
+    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6) throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv));
+
     // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = fmt::format("{}/mpo/H_{}", table_path, get_position());
+    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
     if(file.linkExists(mpo_dset)) {
         if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     }
-
-    // Check that we are on the same point of the phase diagram
-    if(std::abs(h5tb.param.J1 - settings::model::ising_tf_rf::J1) > 1e-6) throw std::runtime_error("J1 != settings::model::ising_tf_rf::J1");
-    if(std::abs(h5tb.param.J2 - settings::model::ising_tf_rf::J2) > 1e-6) throw std::runtime_error("J2 != settings::model::ising_tf_rf::J2");
-    if(std::abs(h5tb.param.h_tran - settings::model::ising_tf_rf::h_tran) > 1e-6) throw std::runtime_error("h_tran != settings::model::ising_tf_rf::h_tran");
-    if(std::abs(h5tb.param.h_mean - settings::model::ising_tf_rf::h_mean) > 1e-6) throw std::runtime_error("h_mean != settings::model::ising_tf_rf::h_mean");
-    if(std::abs(h5tb.param.h_stdv - settings::model::ising_tf_rf::h_stdv) > 1e-6) throw std::runtime_error("h_stdv != settings::model::ising_tf_rf::h_stdv");
 }
