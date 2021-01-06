@@ -5,6 +5,7 @@
 #include <complex>
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_exceptions.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <tensors/class_tensors_finite.h>
@@ -37,7 +38,7 @@ void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, co
         tensors.activate_sites(settings::precision::max_size_full_diag, 2);
         tensors.reduce_mpo_energy();
         tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors);
-    } catch(std::exception &ex) { throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
+    } catch(const std::exception &ex) { throw except::load_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
 }
 
 void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const std::string &state_prefix, class_model_finite &model) {

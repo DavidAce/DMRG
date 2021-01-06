@@ -5,6 +5,7 @@
 #include "class_flbit.h"
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_exceptions.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_mps_site.h>
@@ -38,8 +39,8 @@ void class_flbit::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
-    if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
+    auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type, "state_real");
+    if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
     clear_convergence_status();

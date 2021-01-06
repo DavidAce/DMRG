@@ -16,11 +16,11 @@ public:
     void setup_temp_path();
 
     void run_algorithms();
-    void run_idmrg() const;
-    void run_fdmrg() const;
-    void run_flbit() const;
-    void run_xdmrg() const;
-    void run_itebd() const;
+    void run_idmrg();
+    void run_fdmrg();
+    void run_flbit();
+    void run_xdmrg();
+    void run_itebd();
 
 
 };

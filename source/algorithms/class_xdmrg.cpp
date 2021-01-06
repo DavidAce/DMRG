@@ -37,7 +37,7 @@ void class_xdmrg::resume() {
     // To guide the behavior, we check the setting ResumePolicy.
 
     auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
-    if(state_prefix.empty()) throw ex::state_error("no valid state candidates found for resume");
+    if(state_prefix.empty()) throw except::state_error("no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
     clear_convergence_status();
