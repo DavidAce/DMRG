@@ -115,12 +115,12 @@ namespace settings {
 
         //Parameters for the l-bit hamiltonian
         namespace lbit {
-            inline double       J1            = 0;              /*!< Constant offset for on-site */
-            inline double       J2            = 0;              /*!< Constant offset for two-body interaction */
-            inline double       J3            = 0;              /*!< Constant offset for three-body interaction */
-            inline double       w1            = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) for on-site interactions */
-            inline double       w2            = 0.5;            /*!< Width of the uniform box distribution U(-w2,w2) for two-body interaction */
-            inline double       w3            = 0.5;            /*!< Width of the uniform box distribution U(-w3,w3) for three-body interaction */
+            inline double       J1_mean       = 0;              /*!< Constant offset for on-site */
+            inline double       J2_mean       = 0;              /*!< Constant offset for two-body interaction */
+            inline double       J3_mean       = 0;              /*!< Constant offset for three-body interaction */
+            inline double       J1_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) for on-site interactions */
+            inline double       J2_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) for two-body interaction */
+            inline double       J3_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) for three-body interaction */
             inline double       fmix          = 0.1;            /*!< Mixing factor for unitary transformation to real-space */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for interaction strengths */

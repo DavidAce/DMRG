@@ -15,12 +15,12 @@ using namespace qm::spinHalf;
 using Scalar = std::complex<double>;
 
 class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site(model_type_, position_) {
-    h5tb.param.J1       = settings::model::lbit::J1;
-    h5tb.param.J2       = settings::model::lbit::J2;
-    h5tb.param.J3       = settings::model::lbit::J3;
-    h5tb.param.w1       = settings::model::lbit::w1;
-    h5tb.param.w2       = settings::model::lbit::w2;
-    h5tb.param.w3       = settings::model::lbit::w3;
+    h5tb.param.J1_mean  = settings::model::lbit::J1_mean;
+    h5tb.param.J2_mean  = settings::model::lbit::J2_mean;
+    h5tb.param.J3_mean  = settings::model::lbit::J3_mean;
+    h5tb.param.J1_wdth  = settings::model::lbit::J1_wdth;
+    h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
+    h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
     copy_c_str(settings::model::lbit::distribution,h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -29,18 +29,18 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
     all_mpo_parameters_have_been_set = false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
 }
 
-double class_lbit::get_field() const { return  + std::pow(h5tb.param.J1, 1 - beta); }
-double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2 + h5tb.param.J3, 1 - alpha); }
+double class_lbit::get_field() const { return  + std::pow(h5tb.param.J1_rand, 1 - beta); }
+double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
 void   class_lbit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
 void   class_lbit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void class_lbit::set_parameters(TableMap &parameters) {
-    h5tb.param.J1       = std::any_cast<double>(parameters["J1"]);
-    h5tb.param.J2       = std::any_cast<double>(parameters["J2"]);
-    h5tb.param.J3       = std::any_cast<double>(parameters["J3"]);
-    h5tb.param.w1       = std::any_cast<double>(parameters["w1"]);
-    h5tb.param.w2       = std::any_cast<double>(parameters["w2"]);
-    h5tb.param.w3       = std::any_cast<double>(parameters["w3"]);
+    h5tb.param.J1_rand  = std::any_cast<double>(parameters["J1_rand"]);
+    h5tb.param.J2_rand  = std::any_cast<double>(parameters["J2_rand"]);
+    h5tb.param.J3_rand  = std::any_cast<double>(parameters["J3_rand"]);
+    h5tb.param.J1_wdth  = std::any_cast<double>(parameters["J1_wdth"]);
+    h5tb.param.J2_wdth  = std::any_cast<double>(parameters["J2_wdth"]);
+    h5tb.param.J3_wdth  = std::any_cast<double>(parameters["J3_wdth"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     all_mpo_parameters_have_been_set = true;
@@ -50,12 +50,12 @@ void class_lbit::set_parameters(TableMap &parameters) {
 class_lbit::TableMap class_lbit::get_parameters() const {
     /* clang-format off */
     TableMap parameters;
-    parameters["J1"]            = h5tb.param.J1;
-    parameters["J2"]            = h5tb.param.J2;
-    parameters["J3"]            = h5tb.param.J3;
-    parameters["w1"]            = h5tb.param.w1;
-    parameters["w2"]            = h5tb.param.w2;
-    parameters["w3"]            = h5tb.param.w3;
+    parameters["J1_rand"]            = h5tb.param.J1_rand;
+    parameters["J2_rand"]            = h5tb.param.J2_rand;
+    parameters["J3_rand"]            = h5tb.param.J3_rand;
+    parameters["J1_wdth"]            = h5tb.param.J1_wdth;
+    parameters["J2_wdth"]            = h5tb.param.J2_wdth;
+    parameters["J3_wdth"]            = h5tb.param.J3_wdth;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = std::string(h5tb.param.distribution);
     return parameters;
@@ -65,14 +65,14 @@ class_lbit::TableMap class_lbit::get_parameters() const {
 void class_lbit::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
 
- * H = Σ J1 n_i  + Σ J2 n_{i} n_{i+1} + Σ J3 n_{i} n_{i+1} n_{i+2}
+ * H = Σ J1_rand n_i  + Σ J2_rand n_{i} n_{i+1} + Σ J3_rand n_{i} n_{i+1} n_{i+2}
  *
  * where n_i = 0.5 * (1 + σ_i^z),  and σ_i^z is the diagonal 2x2 pauli matrix
  *
  *       2            |     I      0     0     0   |
  *       |            |     n      0     0     0   |
  *   0---H---1    =   |     0      n     0     0   |
- *       |            |   J1*n   J2*n  J3*n    I   |
+ *       |            |   J1_rand*n   J2_rand*n  J3_rand*n    I   |
  *       3
  *
  *        2
@@ -90,9 +90,9 @@ void class_lbit::build_mpo()
     mpo_internal.slice(Textra::array4{0, 0, 0, 0}, extent4).reshape(extent2) = i;
     mpo_internal.slice(Textra::array4{1, 0, 0, 0}, extent4).reshape(extent2) = n;
     mpo_internal.slice(Textra::array4{2, 1, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1 * n - e_reduced * i;
-    mpo_internal.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2 * n;
-    mpo_internal.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3 * n;
+    mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
+    mpo_internal.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand * n;
+    mpo_internal.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * n;
     mpo_internal.slice(Textra::array4{3, 3, 0, 0}, extent4).reshape(extent2) = i;
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
@@ -133,21 +133,21 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 
 void class_lbit::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
-        h5tb.param.J1 = settings::model::lbit::J1 + rnd::normal(0, settings::model::lbit::w1);
-        h5tb.param.J2 = settings::model::lbit::J2 + rnd::normal(0, settings::model::lbit::w2);
-        h5tb.param.J3 = settings::model::lbit::J3 + rnd::normal(0, settings::model::lbit::w3);
+        h5tb.param.J1_rand = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
+        h5tb.param.J2_rand = rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
+        h5tb.param.J3_rand = rnd::normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.J1 =  settings::model::lbit::J1 + rnd::log_normal(0, settings::model::lbit::w1);
-        h5tb.param.J2 =  settings::model::lbit::J2 + rnd::log_normal(0, settings::model::lbit::w2);
-        h5tb.param.J3 =  settings::model::lbit::J3 + rnd::log_normal(0, settings::model::lbit::w3);
+        h5tb.param.J1_rand =  rnd::log_normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
+        h5tb.param.J2_rand =  rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
+        h5tb.param.J3_rand =  rnd::log_normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
-        h5tb.param.J1 = settings::model::lbit::J1 + rnd::uniform_double_box(settings::model::lbit::w1);
-        h5tb.param.J2 = settings::model::lbit::J2 + rnd::uniform_double_box(settings::model::lbit::w2);
-        h5tb.param.J3 = settings::model::lbit::J3 + rnd::uniform_double_box(settings::model::lbit::w3);
+        h5tb.param.J1_rand = settings::model::lbit::J1_mean + rnd::uniform_double_box(settings::model::lbit::J1_wdth);
+        h5tb.param.J2_rand = settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth);
+        h5tb.param.J3_rand = settings::model::lbit::J3_mean + rnd::uniform_double_box(settings::model::lbit::J3_wdth);
     }else if(std::string(h5tb.param.distribution) == "constant") {
-            h5tb.param.J1 = settings::model::lbit::J1;
-            h5tb.param.J2 = settings::model::lbit::J2;
-            h5tb.param.J3 = settings::model::lbit::J3;
+            h5tb.param.J1_rand = settings::model::lbit::J1_mean;
+            h5tb.param.J2_rand = settings::model::lbit::J2_mean;
+            h5tb.param.J3_rand = settings::model::lbit::J3_mean;
     } else {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform> or <constant>");
     }
@@ -221,9 +221,9 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
     Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
     Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
     Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
-    MPO_nbody.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1 * n - e_reduced * i;
-    MPO_nbody.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2 * n;
-    MPO_nbody.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3 * n;
+    MPO_nbody.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1_rand * n - e_reduced * i;
+    MPO_nbody.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand * n;
+    MPO_nbody.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3_rand * n;
     return MPO_nbody;
 }
 
@@ -249,17 +249,17 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
     }
     if(not infinite){
-        lattice_parameters.back()["J2"] = 0.0;
-        lattice_parameters.back()["J3"] = 0.0;
-        lattice_parameters.end()[-2]["J3"] = 0.0;
+        lattice_parameters.back()["J2_rand"] = 0.0;
+        lattice_parameters.back()["J3_rand"] = 0.0;
+        lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
 
     // Recompute J_avrg and h_avrg from given J_rnrd and h_rnd on all sites
     double J_sum = 0;
     for(auto &site_params : lattice_parameters) {
-        auto J1_     = std::any_cast<double>(site_params["J1"]);
-        auto J2_     = std::any_cast<double>(site_params["J2"]);
-        auto J3_     = std::any_cast<double>(site_params["J3"]);
+        auto J1_     = std::any_cast<double>(site_params["J1_rand"]);
+        auto J2_     = std::any_cast<double>(site_params["J2_rand"]);
+        auto J3_     = std::any_cast<double>(site_params["J3_rand"]);
         J_sum += J1_ + J2_ + J3_;
     }
     if(parity_sep) psfactor = J_sum;
@@ -272,37 +272,39 @@ void class_lbit::save_hamiltonian(h5pp::File &file, const std::string &table_pat
     // Position 0 is also responsible for writing attributes
     if(position.value() != 0) return;
 
-    file.writeAttribute(h5tb.param.J1, "J1", table_path);
-    file.writeAttribute(h5tb.param.J2, "J2", table_path);
-    file.writeAttribute(h5tb.param.J3, "J3", table_path);
-    file.writeAttribute(h5tb.param.w1, "w1", table_path);
-    file.writeAttribute(h5tb.param.w2, "w2", table_path);
-    file.writeAttribute(h5tb.param.w3, "w3", table_path);
+    file.writeAttribute(h5tb.param.J1_mean, "J1_mean", table_path);
+    file.writeAttribute(h5tb.param.J2_mean, "J2_mean", table_path);
+    file.writeAttribute(h5tb.param.J3_mean, "J3_mean", table_path);
+    file.writeAttribute(h5tb.param.J1_wdth, "J1_wdth", table_path);
+    file.writeAttribute(h5tb.param.J2_wdth, "J2_wdth", table_path);
+    file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
 
-void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &table_path) {
-    std::string ham_prefix = table_path + "/hamiltonian";
-    if(file.linkExists(ham_prefix)) {
-        h5tb.param                       = file.readTableRecords<h5tb_lbit::table>(ham_prefix, position);
+void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
+    auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
+    if(file.linkExists(ham_table)) {
+        h5tb.param                       = file.readTableRecords<h5tb_lbit::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
         build_mpo();
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_prefix));
+        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
     }
+
+    // Check that we are on the same point of the phase diagram
+    using namespace settings::model::lbit;
+    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6) throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_rand, J1_mean));
+    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6) throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_rand, J2_mean));
+    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6) throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_rand, J3_mean));
+    if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6) throw std::runtime_error(fmt::format("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth));
+    if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
+    if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
+
     // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = fmt::format("{}/mpo/H_{}", table_path, get_position());
+    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
     if(file.linkExists(mpo_dset)) {
         if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     }
-
-    // Check that we are on the same point of the phase diagram
-    if(std::abs(h5tb.param.J1 - settings::model::lbit::J1) > 1e-6) throw std::runtime_error("J1 != settings::model::lbit::J1");
-    if(std::abs(h5tb.param.J2 - settings::model::lbit::J2) > 1e-6) throw std::runtime_error("J2 != settings::model::lbit::J2");
-    if(std::abs(h5tb.param.J3 - settings::model::lbit::J3) > 1e-6) throw std::runtime_error("J3 != settings::model::lbit::J3");
-    if(std::abs(h5tb.param.w1 - settings::model::lbit::w1) > 1e-6) throw std::runtime_error("w1 != settings::model::lbit::w1");
-    if(std::abs(h5tb.param.w2 - settings::model::lbit::w2) > 1e-6) throw std::runtime_error("w2 != settings::model::lbit::w2");
-    if(std::abs(h5tb.param.w3 - settings::model::lbit::w3) > 1e-6) throw std::runtime_error("w3 != settings::model::lbit::w3");
 }
