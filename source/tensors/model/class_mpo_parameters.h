@@ -117,8 +117,8 @@ class h5tb_ising_tf_rf {
         // Optionally set the null terminator '\0'
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-        H5Tinsert(h5_type, "J1", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J2", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_tran", HOFFSET(table, h_tran), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_mean", HOFFSET(table, h_mean), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_stdv", HOFFSET(table, h_stdv), H5T_NATIVE_DOUBLE);
@@ -128,7 +128,7 @@ class h5tb_ising_tf_rf {
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
-    static std::vector<std::string> get_parameter_names() { return {"J1", "J2", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"}; }
+    static std::vector<std::string> get_parameter_names() { return {"J1_rand", "J2_rand", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"}; }
     static void                     print_parameter_names() {
         auto name = get_parameter_names();
         tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2], name[3], name[4], name[5], name[6],
@@ -143,12 +143,15 @@ class h5tb_ising_tf_rf {
 class h5tb_lbit {
     public:
     struct table {
-        double J1               = 0;         /*!< On-site interaction */
-        double J2               = 0;         /*!< Two-body interaction */
-        double J3               = 0;         /*!< Three-body interaction */
-        double w1               = 0;         /*!< Width of the uniform box distribution U(-w1,w1) */
-        double w2               = 0;         /*!< Width of the uniform box distribution U(-w2,w2) */
-        double w3               = 0;         /*!< Width of the uniform box distribution U(-w3,w3) */
+        double J1_rand          = 0;         /*!< On-site interaction */
+        double J2_rand          = 0;         /*!< Two-body interaction */
+        double J3_rand          = 0;         /*!< Three-body interaction */
+        double J1_mean          = 0;         /*!< Constant offset for on-site */
+        double J2_mean          = 0;         /*!< Constant offset for two-body interaction */
+        double J3_mean          = 0;         /*!< Constant offset for three-body interaction */
+        double J1_wdth          = 0;         /*!< Width of the uniform box distribution U(-w1,w1) */
+        double J2_wdth          = 0;         /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) */
+        double J3_wdth          = 0;         /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) */
         double J1_pert          = 0;         /*!< On-site perturbation */
         double J2_pert          = 0;         /*!< Two-body perturbation */
         double J3_pert          = 0;         /*!< Three-body perturbation */
@@ -171,12 +174,15 @@ class h5tb_lbit {
         // Optionally set the null terminator '\0'
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-        H5Tinsert(h5_type, "J1", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J2", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J3", HOFFSET(table, J3), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "w1", HOFFSET(table, w1), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "w2", HOFFSET(table, w2), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "w3", HOFFSET(table, w3), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1_mean", HOFFSET(table, J1_mean), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_mean", HOFFSET(table, J2_mean), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J3_mean", HOFFSET(table, J3_mean), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1_wdth", HOFFSET(table, J1_wdth), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_wdth", HOFFSET(table, J2_wdth), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J3_wdth", HOFFSET(table, J3_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);
@@ -185,15 +191,15 @@ class h5tb_lbit {
     }
 
     static std::vector<std::string> get_parameter_names() {
-        return {"J1", "J2", "J3", "w1", "w2", "w3", "J1_pert", "J2_pert", "J3_pert", "spin_dim", "distribution"};
+        return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J1_pert", "J2_pert", "J3_pert", "spin_dim", "distribution"};
     }
     static void print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2], name[3], name[4], name[5],
-                         name[6], name[7], name[8], name[9], name[10]);
+        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2], name[3], name[4], name[5],
+                         name[6], name[7], name[8], name[9], name[10],name[11],name[12],name[13]);
     }
     void print_parameter_values() const {
-        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12} {:<12}", param.J1,
-                         param.J2, param.J3, param.w1, param.w2, param.w3, param.J1_pert, param.J2_pert, param.J3_pert, param.spin_dim, param.distribution);
+        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12} {:<12}", param.J1_rand,
+                         param.J2_rand, param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth, param.J1_pert, param.J2_pert, param.J3_pert, param.spin_dim, param.distribution);
     }
 };

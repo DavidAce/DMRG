@@ -606,6 +606,9 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             storage_level = settings::output::storage_level_model;
             tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
             tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
+            tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
+                                                 state.get_name(), state_prefix, model_prefix, status);
+            tools::log->info("Writing to file: Reason [{}] | Level [{}] | model prefix [{}]", enum2str(storage_reason), enum2str(storage_level), model_prefix);
             return copy_from_tmp(storage_reason, CopyPolicy::TRY);
         }
     }
