@@ -41,9 +41,13 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;
     if(not googleLogginghasInitialized) {
-        google::InitGoogleLogging(tools::log->name().c_str());
         googleLogginghasInitialized = true;
+#if defined(CERCES_INTERNAL_MINIGLOG_GLOG_LOGGING_H_)
+        google::InitGoogleLogging(const_cast<char *>(tools::log->name().c_str()));
+#else
+        google::InitGoogleLogging(tools::log->name().c_str());
         google::SetStderrLogging(3);
+#endif
     }
 
     /* clang-format off */
