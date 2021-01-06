@@ -27,6 +27,10 @@
 #include <config/class_dmrg_config.h>
 #include <general/stack_trace.h>
 
+#if __has_include(<unistd.h>)
+#include <unistd.h>
+#endif
+
 void print_usage() {
     std::printf(
         R"(
@@ -83,10 +87,19 @@ int main(int argc, char *argv[]) {
 
     tools::log = tools::Logger::setLogger("DMRG++ main", 0, true);
     using namespace tools;
+
+#if __has_include(<unistd.h>)
+    char name[HOST_NAME_MAX];
+    auto err = gethostname(name, HOST_NAME_MAX);
+    if(err == 0) tools::log->info("Hostname        : {}", name);
+#endif
+
     // print current Git status
     tools::log->info("Git branch      : {}", GIT::BRANCH);
     tools::log->info("    commit hash : {}", GIT::COMMIT_HASH);
     tools::log->info("    revision    : {}", GIT::REVISION);
+
+
 
     // Here we use getopt to parse CLI input
     // Note that CLI input always override config-file values
