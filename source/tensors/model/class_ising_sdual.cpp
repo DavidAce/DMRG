@@ -356,30 +356,36 @@ void class_ising_sdual::save_hamiltonian(h5pp::File &file, const std::string &ha
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", hamiltonian_table_path);
 }
 
-void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::string &hamiltonian_table_path) {
-    if(file.linkExists(hamiltonian_table_path)) {
-        h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(hamiltonian_table_path, position);
+void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::string &model_path) {
+    auto ham_table = fmt::format("{}/hamiltonian", model_path);
+    if(file.linkExists(ham_table)) {
+        h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
         build_mpo();
     } else
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", hamiltonian_table_path));
+        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
 
     // Check that we are on the same point of the phase diagram
-    if(std::abs(h5tb.param.delta - settings::model::ising_sdual::delta) > 1e-6)
-        throw std::runtime_error(
-            fmt::format("delta {:.16f} != {:.16f} settings::model::ising_sdual::delta", h5tb.param.delta, settings::model::ising_sdual::delta));
-    if(std::abs(h5tb.param.lambda - settings::model::ising_sdual::lambda) > 1e-6)
-        throw std::runtime_error(
-            fmt::format("lambda {:.16f} != {:.16f} settings::model::ising_sdual::lambda", h5tb.param.lambda, settings::model::ising_sdual::lambda));
-    if(std::abs(h5tb.param.J_stdv - settings::model::ising_sdual::J_stdv) > 1e-6)
-        throw std::runtime_error(
-            fmt::format("J_stdv {:.16f} != {:.16f} settings::model::ising_sdual::J_stdv", h5tb.param.J_stdv, settings::model::ising_sdual::J_stdv));
-    if(std::abs(h5tb.param.h_stdv - settings::model::ising_sdual::h_stdv) > 1e-6)
-        throw std::runtime_error(
-            fmt::format("h_stdv {:.16f} != {:.16f} settings::model::ising_sdual::h_stdv", h5tb.param.h_stdv, settings::model::ising_sdual::h_stdv));
-    if(h5tb.param.distribution != settings::model::ising_sdual::distribution)
-        throw std::runtime_error(fmt::format("distribution {} != {} settings::model::ising_sdual::distribution", h5tb.param.distribution,
-                                             settings::model::ising_sdual::distribution));
+    using namespace settings::model::ising_sdual;
+    if(std::abs(h5tb.param.delta -  delta) > 1e-6)
+        throw std::runtime_error(fmt::format("delta {:.16f} != {:.16f} settings::model::ising_sdual::delta", h5tb.param.delta, delta));
+    if(std::abs(h5tb.param.lambda - lambda) > 1e-6)
+        throw std::runtime_error(fmt::format("lambda {:.16f} != {:.16f} settings::model::ising_sdual::lambda", h5tb.param.lambda, lambda));
+    if(std::abs(h5tb.param.J_stdv - J_stdv) > 1e-6)
+        throw std::runtime_error(fmt::format("J_stdv {:.16f} != {:.16f} settings::model::ising_sdual::J_stdv", h5tb.param.J_stdv, J_stdv));
+    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6)
+        throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} settings::model::ising_sdual::h_stdv", h5tb.param.h_stdv, h_stdv));
+    if(h5tb.param.distribution !=   distribution)
+        throw std::runtime_error(fmt::format("distribution {} != {} settings::model::ising_sdual::distribution", h5tb.param.distribution, distribution));
+
+
+    // We can use the mpo's on file here to check everything is correct
+    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_path, get_position());
+    if(file.linkExists(mpo_dset)) {
+        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
+            throw std::runtime_error("Built MPO does not match the MPO on file");
+    }
+
 
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);

@@ -75,9 +75,10 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     save_attr(h5ppFile, storage_level_str, state_prefix, "common/storage_level", "Maps state_prefix -> storage_level");
     save_attr(h5ppFile, storage_reason_str, state_prefix, "common/storage_reason", "Maps state_prefix -> storage_reason");
     save_attr(h5ppFile, state_root, state_prefix, "common/state_root", "Maps state_prefix -> state_root");
+    save_attr(h5ppFile, model_prefix, state_prefix, "common/model_prefix", "Maps state_prefix -> model_prefix");
     save_attr(h5ppFile, hamiltonian, state_prefix, "common/hamiltonian", "Maps state_prefix -> hamiltonian");
-    save_attr(h5ppFile, mps_prefix, state_prefix, "common/mps_prefix", "Maps state_prefix -> mps_prefix");
     save_attr(h5ppFile, mpo_prefix, state_prefix, "common/mpo_prefix", "Maps state_prefix -> mpo_prefix");
+    save_attr(h5ppFile, mps_prefix, state_prefix, "common/mps_prefix", "Maps state_prefix -> mps_prefix");
     save_attr(h5ppFile, model_name, state_prefix, "common/model_type", "Maps state_prefix -> model_type");
     save_attr(h5ppFile, model_size, state_prefix, "common/model_size", "Maps state_prefix -> model_size");
     save_attr(h5ppFile, algo_name, state_prefix, "common/algo_type", "Maps state_prefix -> algo_type");
