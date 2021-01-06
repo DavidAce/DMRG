@@ -11,6 +11,7 @@
 #include <h5pp/h5pp.h>
 #include <memory>
 #include <config/nmspc_settings.h>
+#include <general/nmspc_exceptions.h>
 #include <tensors/state/class_state_finite.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/io.h>
@@ -167,7 +168,7 @@ void class_algorithm_launcher::run_algorithms(){
 }
 
 
-void class_algorithm_launcher::run_idmrg() const{
+void class_algorithm_launcher::run_idmrg(){
     if(settings::idmrg::on){
         class_idmrg idmrg(h5pp_file);
         idmrg.run();
@@ -175,29 +176,38 @@ void class_algorithm_launcher::run_idmrg() const{
 }
 
 
-void class_algorithm_launcher::run_fdmrg() const{
+void class_algorithm_launcher::run_fdmrg(){
     if(settings::fdmrg::on){
         class_fdmrg fdmrg(h5pp_file);
         fdmrg.run();
     }
 }
 
-void class_algorithm_launcher::run_flbit() const{
+void class_algorithm_launcher::run_flbit(){
     if(settings::flbit::on){
         class_flbit flbit(h5pp_file);
-        flbit.run();
+        try{
+            flbit.run();
+        }catch(const except::resume_error &ex){
+            tools::log->error("Failed to resume simulation: {}", ex.what());
+            tools::log->info("Truncating file [{}]", settings::output::output_filepath);
+            h5pp::fs::remove(settings::output::output_filepath);
+            start_h5pp_file();
+            setup_temp_path();
+            flbit.run();
+        }
     }
 }
 
 
-void class_algorithm_launcher::run_xdmrg() const{
+void class_algorithm_launcher::run_xdmrg(){
     if(settings::xdmrg::on){
         class_xdmrg xdmrg(h5pp_file);
         xdmrg.run();
     }
 }
 
-void class_algorithm_launcher::run_itebd() const{
+void class_algorithm_launcher::run_itebd(){
     if(settings::itebd::on){
         class_itebd itebd(h5pp_file);
         itebd.run();

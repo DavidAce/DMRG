@@ -74,13 +74,14 @@ void class_algorithm_finite::run()
         try {
             resume();
         }
-        catch (const ex::state_error & ex){
-            tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
-            run_default_task_list();
+        catch (const except::state_error & ex){
+            throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
+        }
+        catch (const except::load_error & ex){
+            throw except::load_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
         catch(const std::exception &ex) {
-            tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
-            exit(1);
+            throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
     } else {
         run_default_task_list();
