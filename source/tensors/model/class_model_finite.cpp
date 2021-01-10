@@ -360,3 +360,11 @@ void class_model_finite::clear_cache() const {
     tools::log->trace("Clearing model cache");
     cache = Cache();
 }
+
+
+std::vector<size_t> class_model_finite::get_active_ids() const{
+    std::vector<size_t> ids;
+    ids.reserve(active_sites.size());
+    for(const auto & pos : active_sites) ids.emplace_back(get_mpo(pos).get_unique_id());
+    return ids;
+}
