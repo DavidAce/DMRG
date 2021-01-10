@@ -27,7 +27,7 @@ namespace tools::common::io::h5attr {
                 if(h5ppFile.linkExists("common/iteration")) iter = h5ppFile.readAttribute<uint64_t>(state_prefix, "common/iteration");
                 save_log[state_prefix] = std::make_pair(iter, step);
 
-            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
         }
     }
 }
