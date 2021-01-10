@@ -458,3 +458,11 @@ bool class_state_finite::is_normalized_on_non_active_sites() const {
         if(std::find(active_sites.begin(),active_sites.end(),idx) == active_sites.end() and not tag_normalized_sites[idx]) return false;
     return true;
 }
+
+
+std::vector<size_t> class_state_finite::get_active_ids() const{
+    std::vector<size_t> ids;
+    ids.reserve(active_sites.size());
+    for(const auto & pos : active_sites) ids.emplace_back(get_mps_site(pos).get_unique_id());
+    return ids;
+}

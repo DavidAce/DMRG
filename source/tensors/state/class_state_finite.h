@@ -136,4 +136,6 @@ class class_state_finite {
     bool is_normalized_on_any_sites() const;
     bool is_normalized_on_active_sites() const;
     bool is_normalized_on_non_active_sites() const;
+
+    std::vector<size_t> get_active_ids() const;
 };
