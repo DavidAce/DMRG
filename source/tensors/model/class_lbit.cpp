@@ -272,7 +272,7 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
 }
 
 void class_lbit::save_hamiltonian(h5pp::File &file, const std::string &table_path) const {
-    if(not file.linkExists(table_path)) file.createTable(h5tb_lbit::h5_type, table_path, "Transverse-field Ising");
+    if(not file.linkExists(table_path)) file.createTable(h5tb_lbit::h5_type, table_path, "LBIT");
     file.appendTableRecords(h5tb, table_path);
     // Position 0 is also responsible for writing attributes
     if(position.value() != 0) return;
