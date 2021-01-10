@@ -3,10 +3,10 @@
 //
 
 #include "class_env_var.h"
+#include <config/debug.h>
+#include <math/num.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
-#include <math/num.h>
-#include <config/debug.h>
 #include <utility>
 
 class_env_var::class_env_var(std::string side_, const class_mps_site &mps, const class_mpo_site &mpo) : class_env_base(std::move(side_), mps, mpo) {
@@ -33,11 +33,12 @@ class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_
     // Update positions assuming this is a finite chain.
     // This needs to be corrected (on the right side) on infinite chains
     if(env.side == "L") env.position = mps.get_position() + 1;
-    else if(env.side == "R") env.position = mps.get_position() - 1;
+    else if(env.side == "R")
+        env.position = mps.get_position() - 1;
     else
         throw std::logic_error("Expected environment side L or R, got: " + side);
 
-    env.tag           = "var";
+    env.tag = "var";
     // Save the hash id's used to create the new block in env
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
@@ -45,7 +46,7 @@ class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_
     return env;
 }
 
-void class_env_var::refresh(const class_env_var & env, const class_mps_site &mps, const class_mpo_site &mpo) {
+void class_env_var::refresh(const class_env_var &env, const class_mps_site &mps, const class_mpo_site &mpo) {
     // If side == L, env,mps and mpo are all corresponding to the neighbor on the left
     // If side == R, env,mps and mpo are all corresponding to the neighbor on the right
     if constexpr(settings::debug)
@@ -53,10 +54,12 @@ void class_env_var::refresh(const class_env_var & env, const class_mps_site &mps
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
 
-    if(side == "L" and get_position() != mps.get_position()+1)
-        throw std::logic_error(fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(),side, get_position()-1));
-    if(side == "R" and get_position()+1 != mps.get_position())
-        throw std::logic_error(fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(),side, get_position()+1));
+    if(side == "L" and get_position() != mps.get_position() + 1)
+        throw std::logic_error(
+            fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(), side, get_position() - 1));
+    if(side == "R" and get_position() + 1 != mps.get_position())
+        throw std::logic_error(
+            fmt::format("class_env_var::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(), side, get_position() + 1));
 
     // We refresh this block if any of these conditions hold:
     //   not has_block()
@@ -69,30 +72,29 @@ void class_env_var::refresh(const class_env_var & env, const class_mps_site &mps
         *this = env.enlarge(mps, mpo);
         return;
     }
-    bool refresh = false;
+    bool        refresh = false;
     std::string reason;
-    if(env.get_unique_id() != unique_id_env){
+    if(env.get_unique_id() != unique_id_env) {
         refresh = true;
         if constexpr(settings::debug) {
             reason.append(fmt::format("| env({}) new {} ", env.get_position(), env.get_unique_id()));
             if(unique_id_env) reason.append(fmt::format("!= old {} ", unique_id_env.value()));
         }
     }
-    if(mps.get_unique_id() != unique_id_mps){
+    if(mps.get_unique_id() != unique_id_mps) {
         refresh = true;
-        if constexpr (settings::debug){
-            reason.append(fmt::format("| mps({}) {} !=",mps.get_position(),mps.get_unique_id()));
-            if(unique_id_mps) reason.append(fmt::format(" {} ", unique_id_mps.value()));
+        if constexpr(settings::debug) {
+            reason.append(fmt::format("| mps({}) new {} ", mps.get_position(), mps.get_unique_id()));
+            if(unique_id_mps) reason.append(fmt::format("!= old {} ", unique_id_mps.value()));
         }
     }
     auto mpo_unique_id = tag == "ene" ? mpo.get_unique_id() : mpo.get_unique_id_sq();
-    if(mpo_unique_id != unique_id_mpo){
+    if(mpo_unique_id != unique_id_mpo) {
         refresh = true;
         if constexpr(settings::debug) {
             reason.append(fmt::format("| mpo({}) new {} ", mpo.get_position(), mpo_unique_id));
             if(unique_id_mpo) reason.append(fmt::format("!= old {} ", unique_id_mpo.value()));
         }
-
     }
     if(refresh) {
         [[maybe_unused]] size_t unique_id_bef;
@@ -115,10 +117,10 @@ void class_env_var::refresh(const class_env_var & env, const class_mps_site &mps
 
 void class_env_var::set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
-    tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(),tag);
-    if(side == "L")
-        set_edge_dims(MPS.get_M_bare(),MPO.MPO2(),MPO.get_MPO2_edge_left());
-    else if (side == "R")
-        set_edge_dims(MPS.get_M_bare(),MPO.MPO2(),MPO.get_MPO2_edge_right());
-    else throw std::runtime_error(fmt::format("Wrong side: {}", side));
+    tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
+    if(side == "L") set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());
+    else if(side == "R")
+        set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_right());
+    else
+        throw std::runtime_error(fmt::format("Wrong side: {}", side));
 }

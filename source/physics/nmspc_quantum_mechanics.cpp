@@ -399,13 +399,13 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Sca
 std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
     qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites, int sign)
 /*! Builds the MPO that projects out the MPS component in a parity sector.
- *      |psi+->  = P |psi>=  1/2sqrt(2) (1 +- S) |psi>
- *      Here 1 = outer product of L=sites 2x2 identity matrices, i.e. Kron_(i=0)^(L-1) I_(2x2)
- *      Also S = outer product of L=sites 2x2 pauli matrices, i.e. Kron_(i=0)^(L-1) s_(2x2)
- *      The sign and the factor 1/2 is put into the left edge at the end.
+ * |psi+->  = P |psi>=  1/2 (1 +- S) |psi>
+ * Here 1 = outer product of L=sites 2x2 identity matrices, i.e. Kron_(i=0)^(L-1) I_(2x2)
+ * Also S = outer product of L=sites 2x2 pauli matrices, i.e. Kron_(i=0)^(L-1) s_(2x2)
+ * The sign and the factor 1/2 is put into the left edge at the end.
  *
  *                     | I   0  |
- * S   =   1/sqrt(2) * | 0   s  |
+ *    S   =      1/2 * | 0   s  |
  *
  *
  *        2
@@ -464,7 +464,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(Eigen::MatrixXcd::Identity(spin_dim, spin_dim));
 
     // We have to push in an even number of pauli matrices to retain the parity sector.
-    // Choosing randomli
+    // Choosing randomly
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {

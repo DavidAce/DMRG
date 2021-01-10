@@ -134,8 +134,6 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
     state.assert_validity();
 }
 
-
-
 void tools::finite::ops::project_to_sector(class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
     // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
     // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
@@ -172,33 +170,34 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
      */
 
     tools::log->info("Projecting state to axis nearest sector {}", sector);
-    std::vector<std::string> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool                     sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
-    auto spin_component_threshold = 1e-3;
+    std::vector<std::string> valid_sectors            = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+    bool                     sector_is_valid          = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
+    auto                     spin_component_threshold = 1e-3;
     if(sector_is_valid) {
-        auto sector_sign = mps::internal::get_sign(sector);
-        auto paulimatrix = mps::internal::get_pauli(sector);
+        auto sector_sign                         = mps::internal::get_sign(sector);
+        auto paulimatrix                         = mps::internal::get_pauli(sector);
         auto spin_component_along_requested_axis = tools::finite::measure::spin_component(state, paulimatrix);
         // Now we have to check that the projection intended projection is safe
         auto alignment = sector_sign * spin_component_along_requested_axis;
         if(alignment > 0)
             // In this case the state has an aligned component along the requested axis --> safe
             project_to_sector(state, paulimatrix, sector_sign);
-        else if (alignment < 0){
+        else if(alignment < 0) {
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
-            if(spin_component_along_requested_axis < 1.0 - spin_component_threshold)
-                project_to_sector(state, paulimatrix, sector_sign);
-            else return tools::log->warn("Skipping projection to [{}]: State spin component is opposite to the requested projection axis: {:.16f}", sector,spin_component_along_requested_axis);
-        }
-        else if(alignment == 0){
+            if(spin_component_along_requested_axis < 1.0 - spin_component_threshold) project_to_sector(state, paulimatrix, sector_sign);
+            else
+                return tools::log->warn("Skipping projection to [{}]: State spin component is opposite to the requested projection axis: {:.16f}", sector,
+                                        spin_component_along_requested_axis);
+        } else if(alignment == 0) {
             // No sector sign was specified, so we select the one along which there is a component
             if(spin_component_along_requested_axis >= 0) sector_sign = 1;
-            else sector_sign = -1;
+            else
+                sector_sign = -1;
             project_to_sector(state, paulimatrix, sector_sign);
         }
     } else if(sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
-        std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size()-1)];
+        std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size() - 1)];
         project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
@@ -218,7 +217,7 @@ class_state_finite tools::finite::ops::get_projection_to_sector(const class_stat
 
 class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const class_state_finite &state, const std::string &sector) {
     auto state_projected = state;
-    project_to_nearest_sector(state_projected,sector);
+    project_to_nearest_sector(state_projected, sector);
     return state_projected;
 }
 

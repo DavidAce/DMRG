@@ -125,7 +125,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
     tools::log->trace("Inspecting edges eneR from [{} to {}]", posR_active,max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene_curr = edges.get_eneR(pos);
-        if(pos == state.get_length() -1 and not ene_curr.has_block()){
+        if(pos == state.get_length() - 1 and not ene_curr.has_block()){
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
 //            state.set_edge_ene_status(pos,EdgeStatus::FRESH);
