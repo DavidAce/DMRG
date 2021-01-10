@@ -119,6 +119,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
         if(pos == 0 and not ene_curr.has_block()){
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
+            if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active,state.get_length()-1)) continue;
         auto &ene_next = edges.get_eneL(pos + 1);
@@ -134,7 +135,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
         if(pos == state.get_length() - 1 and not ene_curr.has_block()){
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
-//            state.set_edge_ene_status(pos,EdgeStatus::FRESH);
+            if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active,0ul)) continue;
         auto &ene_prev = edges.get_eneR(pos - 1);
@@ -177,7 +178,6 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var_curr = edges.get_varL(pos);
         if(pos == 0 and not var_curr.has_block()){
-            tools::log->trace("Edge not found at pos {}, has_block: {}", var_curr.get_position(), var_curr.has_block());
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
             if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
@@ -197,6 +197,7 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
         if(pos == state.get_length() - 1 and not var_curr.has_block()){
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
+            if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active,0ul)) continue;
         auto &var_prev = edges.get_varR(pos - 1);
