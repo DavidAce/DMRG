@@ -58,22 +58,12 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
     if(state.is_normalized_on_all_sites()) {
-        const auto  pos  = state.get_position<size_t>();
-        if (pos == state.get_length()-1){
-            // We know the current position is an "A" matrix, so the norm must be what's left in LC.
-            Eigen::Tensor<Scalar,0>  LCsum = state.get_mps_site(pos).get_LC().square().sum(Textra::array1{0});
-            return std::abs(LCsum(0));
-        }
-        const auto &mpsL = state.get_mps_site(pos);
-        const auto &mpsR = state.get_mps_site(pos + 1);
-        tools::log->trace("Measuring norm using center sites [{},{}] with dimensions [{}, {}]", pos, pos + 1, mpsL.dimensions(), mpsR.dimensions());
-        Eigen::Tensor<Scalar, 0> norm_contraction;
-
-        norm_contraction.device(Textra::omp::getDevice()) = mpsL.get_M()
-                                                                .contract(mpsR.get_M(), Textra::idx({2}, {1}))
-                                                                .contract(mpsL.get_M().conjugate(), Textra::idx({0, 1}, {0, 1}))
-                                                                .contract(mpsR.get_M().conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
-        norm = std::abs(norm_contraction(0));
+        // We know the all sites are normalized. We can check that the current position is normalized
+        const auto pos  = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
+        const auto & mps = state.get_mps_site(pos);
+        tools::log->trace("Measuring norm using site {} with dimensions {}", pos, mps.dimensions());
+        Eigen::Tensor<Scalar, 0> MM = mps.get_M().contract(mps.get_M().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
+        norm = std::real(MM(0));
 
     } else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
         tools::log->trace("Measuring norm using active sites {}", state.active_sites);
