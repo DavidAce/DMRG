@@ -43,8 +43,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<E
     }
     state.clear_measurements();
 
-    for(auto &&[pos,mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
-
+    for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
 
     // Take care of the edges. Apply the left and right MPO-edges on A's and B's
     // so the left- and right-most lambdas become ones.
