@@ -262,7 +262,7 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_nbody_view(const std::vector<siz
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     if(nbody_terms.empty()) return MPO();
     double J1 = 0, J2 = 0;
-    for(auto &&n : nbody_terms){
+    for(const auto & n : nbody_terms){
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }
