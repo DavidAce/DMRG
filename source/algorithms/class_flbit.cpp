@@ -401,14 +401,7 @@ void class_flbit::transform_to_lbit_basis(){
 
 void class_flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
-    tensors.clear_cache();
-    tensors.clear_measurements();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
-    tensors.clear_cache();
-    tensors.clear_measurements();
-    class_algorithm_finite::write_to_file(storage_reason, *state_lbit, copy_file);
-    tensors.clear_cache();
-    tensors.clear_measurements();
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
 
 }
