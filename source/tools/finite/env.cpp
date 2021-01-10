@@ -135,11 +135,6 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
         auto id = ene_prev.get_unique_id();
         ene_prev.refresh(ene_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != ene_prev.get_unique_id()) ene_pos_log.emplace_back(ene_prev.get_position());
-//        if(not ene_prev.has_block()) {
-//            ene_pos_log.emplace_back(pos - 1);
-//            ene_prev = ene_curr.enlarge(state.get_mps_site(pos), model.get_mpo(pos));
-//            state.set_edge_ene_status(pos-1,EdgeStatus::FRESH);
-//        }
     }
     std::reverse(ene_pos_log.begin(), ene_pos_log.end());
     if(not ene_pos_log.empty()) tools::log->debug("Rebuilt R ene edges: {}", ene_pos_log);

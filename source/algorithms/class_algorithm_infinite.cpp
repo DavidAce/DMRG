@@ -401,7 +401,6 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
 
 void class_algorithm_infinite::print_status_update() {
     if(num::mod(status.iter, cfg_print_freq()) != 0) { return; }
-    //    if (not tensors.state->position_is_the_middle()) {return;}
     if(cfg_print_freq() == 0) { return; }
     //    compute_observables();
     std::string report;

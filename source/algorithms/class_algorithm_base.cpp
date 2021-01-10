@@ -78,7 +78,6 @@ void class_algorithm_base::init_bond_dimension_limits() {
  * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */
 class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope(
-    //        std::list<bool>  & B_vec,
     std::vector<double> &Y_vec, std::vector<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance) {
     SaturationReport report;
     size_t           last_measurement = X_vec.empty() ? 0 : X_vec.back();
