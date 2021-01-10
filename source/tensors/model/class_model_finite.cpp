@@ -43,7 +43,7 @@ class_model_finite &class_model_finite::operator=(const class_model_finite &othe
     if(this != &other) {
         cache = other.cache;
         MPO.clear();
-        for(auto &other_mpo : other.MPO) MPO.emplace_back(other_mpo->clone());
+        for(const auto &other_mpo : other.MPO) MPO.emplace_back(other_mpo->clone());
         active_sites = other.active_sites;
         model_type   = other.model_type;
     }
@@ -71,27 +71,27 @@ class_mpo_site &class_model_finite::get_mpo(size_t pos) { return const_cast<clas
 size_t class_model_finite::get_length() const { return MPO.size(); }
 
 bool class_model_finite::is_real() const {
-    for(auto &mpo : MPO)
+    for(const auto &mpo : MPO)
         if(not mpo->is_real()) return false;
     ;
     return true;
 }
 
 bool class_model_finite::has_nan() const {
-    for(auto &mpo : MPO)
+    for(const auto &mpo : MPO)
         if(mpo->has_nan()) return true;
     return false;
 }
 
 void class_model_finite::assert_validity() const {
-    for(auto &mpo : MPO) mpo->assert_validity();
+    for(const auto &mpo : MPO) mpo->assert_validity();
 }
 
 // For reduced energy MPO's
 
 bool class_model_finite::is_reduced() const {
     bool reduced = MPO.front()->is_reduced();
-    for(auto &mpo : MPO)
+    for(const auto &mpo : MPO)
         if(reduced != mpo->is_reduced())
             throw std::runtime_error(
                 fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
@@ -103,7 +103,7 @@ double class_model_finite::get_energy_reduced() const { return get_energy_per_si
 double class_model_finite::get_energy_per_site_reduced() const {
     // Check that all energies are the same
     double e_reduced = MPO.front()->get_reduced_energy();
-    for(auto &mpo : MPO)
+    for(const auto &mpo : MPO)
         if(mpo->get_reduced_energy() != e_reduced) throw std::runtime_error("Reduced energy mismatch!");
     return e_reduced;
 }
@@ -111,23 +111,27 @@ double class_model_finite::get_energy_per_site_reduced() const {
 void class_model_finite::randomize() {
     tools::log->info("Randomizing hamiltonian");
     std::vector<class_mpo_site::TableMap> all_params;
-    for(auto &mpo : MPO) {
+    for(const auto &mpo : MPO) {
         mpo->randomize_hamiltonian();
         all_params.emplace_back(mpo->get_parameters());
     }
-    for(auto &mpo : MPO) mpo->set_averages(all_params, false);
+    for(const auto &mpo : MPO) mpo->set_averages(all_params, false);
+}
+
+bool class_model_finite::has_mpo_squared() const {
+    return std::all_of(MPO.begin(),MPO.end(),[](const auto & mpo){return mpo->has_mpo_squared();});
 }
 
 void class_model_finite::reset_mpo_squared() {
     tools::log->debug("Resetting squared MPO");
-    for(auto &&mpo : MPO) mpo->build_mpo_squared();
+    for(const auto & mpo : MPO) mpo->build_mpo_squared();
 }
 
 void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
     tools::log->debug("Rebuilding squared MPO");
     if(settings::strategy::compress_mpo_squared) {
         auto mpo_compressed = get_compressed_mpo_squared(svdMode);
-        for(auto &&[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
+        for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
     } else
         reset_mpo_squared();
 }
@@ -135,7 +139,7 @@ void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
 std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
-    for(auto &&mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
+    for(const auto & mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
     tools::log->debug("Compressing squared MPO");
 
     // Setup SVD
@@ -158,7 +162,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
         // Next compress from left to right
         Eigen::Tensor<Scalar, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<Scalar, 4> T_mpo_sq;
-        for(auto &&[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+        for(const auto & [idx, mpo_sq] : iter::enumerate(mpos_sq)) {
             if(T_l2r.size() == 0) T_mpo_sq = mpo_sq;
             else
                 T_mpo_sq = T_l2r.contract(mpo_sq, Textra::idx({1}, {0}));
@@ -178,7 +182,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
         // Now we have done left to right. Next we do right to left
         Eigen::Tensor<Scalar, 2> T_r2l;    // Transfer matrix
         Eigen::Tensor<Scalar, 4> mpo_sq_T; // Absorbs transfer matrix
-        for(auto &&[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+        for(const auto & [idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
             if(T_r2l.size() == 0) mpo_sq_T = mpo_sq;
             else
                 mpo_sq_T = mpo_sq.contract(T_r2l, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
@@ -197,7 +201,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(auto &&[idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto & [idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
 
     return mpos_sq;
 }
@@ -207,24 +211,24 @@ void class_model_finite::set_reduced_energy(double total_energy) { set_reduced_e
 void class_model_finite::set_reduced_energy_per_site(double site_energy) {
     if(get_energy_per_site_reduced() == site_energy) return;
     tools::log->debug("Reducing MPO energy");
-    for(auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
+    for(const auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
     clear_cache();
 }
 
 void class_model_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
     std::vector<class_mpo_site::TableMap> all_params;
     clear_cache();
-    for(auto &mpo : MPO) {
+    for(const auto &mpo : MPO) {
         mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
         all_params.push_back(mpo->get_parameters());
     }
-    for(auto &mpo : MPO) mpo->set_averages(all_params, false);
+    for(const auto &mpo : MPO) mpo->set_averages(all_params, false);
     if(coupling_ptb == 0.0 and field_ptb == 0.0 and is_perturbed()) throw std::runtime_error("Model: Should have unperturbed!");
 }
 
 void class_model_finite::damp_model_disorder(double coupling_damp, double field_damp) {
     clear_cache();
-    for(auto &mpo : MPO) {
+    for(const  auto &mpo : MPO) {
         mpo->set_coupling_damping(coupling_damp);
         mpo->set_field_damping(field_damp);
     }
@@ -262,7 +266,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     Textra::array4           new_dims;
     Eigen::Tensor<Scalar, 4> temp;
     bool                     first = true;
-    for(auto &site : sites) {
+    for(const auto &site : sites) {
         if(first) {
             if(nbody.empty())
                 multisite_mpo    = get_mpo(site).MPO();
@@ -326,7 +330,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     Textra::array4           new_dims;
     Eigen::Tensor<Scalar, 4> temp;
     bool                     first = true;
-    for(auto &site : sites) {
+    for(const auto &site : sites) {
         if(first) {
             multisite_mpo_squared = get_mpo(site).MPO2();
             first                 = false;

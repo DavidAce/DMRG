@@ -102,7 +102,7 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
         // Next compress from left to right
         Eigen::Tensor<Scalar, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<Scalar, 4> T_mpo_sq;
-        for(auto &&[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+        for(const auto & [idx, mpo_sq] : iter::enumerate(mpos_sq)) {
             if(T_l2r.size() == 0) T_mpo_sq = mpo_sq;
             else
                 T_mpo_sq = T_l2r.contract(mpo_sq, Textra::idx({1}, {0}));
@@ -122,7 +122,7 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
         // Now we have done left to right. Next we do right to left
         Eigen::Tensor<Scalar, 2> T_r2l;    // Transfer matrix
         Eigen::Tensor<Scalar, 4> mpo_sq_T; // Absorbs transfer matrix
-        for(auto &&[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+        for(const auto & [idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
             if(T_r2l.size() == 0) mpo_sq_T = mpo_sq;
             else
                 mpo_sq_T = mpo_sq.contract(T_r2l, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
@@ -141,7 +141,7 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(auto &&[idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto & [idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
     return mpos_sq;
 }
 
