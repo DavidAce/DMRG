@@ -81,4 +81,6 @@ class class_edges_finite {
     [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+
+    [[nodiscard]] std::pair<std::vector<size_t>, std::vector<size_t>> get_active_ids() const;
 };
