@@ -73,6 +73,10 @@ enum class flbit_task {
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_DEFAULT,
+    INIT_GATES,
+    INIT_TIME,
+    TRANSFORM_TO_LBIT,
+    TRANSFORM_TO_REAL,
     TIME_EVOLVE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
@@ -221,7 +225,25 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == fdmrg_task::PROF_RESET)                              return "PROF_RESET";
 
     }
-
+    if constexpr(std::is_same_v<T,flbit_task>){
+        if(item == flbit_task::INIT_RANDOMIZE_MODEL)                  return "INIT_RANDOMIZE_MODEL";
+        if(item == flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)     return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
+        if(item == flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)   return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
+        if(item == flbit_task::INIT_BOND_DIM_LIMITS)                  return "INIT_BOND_DIM_LIMITS";
+        if(item == flbit_task::INIT_WRITE_MODEL)                      return "INIT_WRITE_MODEL";
+        if(item == flbit_task::INIT_CLEAR_STATUS)                     return "INIT_CLEAR_STATUS";
+        if(item == flbit_task::INIT_DEFAULT)                          return "INIT_DEFAULT";
+        if(item == flbit_task::INIT_GATES)                            return "INIT_GATES";
+        if(item == flbit_task::INIT_TIME)                             return "INIT_TIME";
+        if(item == flbit_task::TRANSFORM_TO_LBIT)                     return "TRANSFORM_TO_LBIT";
+        if(item == flbit_task::TRANSFORM_TO_REAL)                     return "TRANSFORM_TO_REAL";
+        if(item == flbit_task::TIME_EVOLVE)                           return "TIME_EVOLVE";
+        if(item == flbit_task::POST_WRITE_RESULT)                     return "POST_WRITE_RESULT";
+        if(item == flbit_task::POST_PRINT_RESULT)                     return "POST_PRINT_RESULT";
+        if(item == flbit_task::POST_PRINT_PROFILING)                  return "POST_PRINT_PROFILING";
+        if(item == flbit_task::POST_DEFAULT)                          return "POST_DEFAULT";
+        if(item == flbit_task::PROF_RESET)                            return "PROF_RESET";
+    }
     if constexpr(std::is_same_v<T,xdmrg_task>){
         if(item == xdmrg_task::INIT_RANDOMIZE_MODEL)                   return "INIT_RANDOMIZE_MODEL";
         if(item == xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)      return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
@@ -398,6 +420,25 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "PROF_RESET")                            return fdmrg_task::PROF_RESET;
     }
 
+    if constexpr(std::is_same_v<T,flbit_task>){
+        if(item == "INIT_RANDOMIZE_MODEL")                  return flbit_task::INIT_RANDOMIZE_MODEL;
+        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")     return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")   return flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "INIT_BOND_DIM_LIMITS")                  return flbit_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_WRITE_MODEL")                      return flbit_task::INIT_WRITE_MODEL;
+        if(item == "INIT_CLEAR_STATUS")                     return flbit_task::INIT_CLEAR_STATUS;
+        if(item == "INIT_DEFAULT")                          return flbit_task::INIT_DEFAULT;
+        if(item == "INIT_GATES")                            return flbit_task::INIT_GATES;
+        if(item == "INIT_TIME")                             return flbit_task::INIT_TIME;
+        if(item == "TRANSFORM_TO_LBIT")                     return flbit_task::TRANSFORM_TO_LBIT;
+        if(item == "TRANSFORM_TO_REAL")                     return flbit_task::TRANSFORM_TO_REAL;
+        if(item == "TIME_EVOLVE")                           return flbit_task::TIME_EVOLVE;
+        if(item == "POST_WRITE_RESULT")                     return flbit_task::POST_WRITE_RESULT;
+        if(item == "POST_PRINT_RESULT")                     return flbit_task::POST_PRINT_RESULT;
+        if(item == "POST_PRINT_PROFILING")                  return flbit_task::POST_PRINT_PROFILING;
+        if(item == "POST_DEFAULT")                          return flbit_task::POST_DEFAULT;
+        if(item == "PROF_RESET")                            return flbit_task::PROF_RESET;
+    }
     if constexpr(std::is_same_v<T,xdmrg_task>){
         if(item == "INIT_RANDOMIZE_MODEL")                  return xdmrg_task::INIT_RANDOMIZE_MODEL;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")     return xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
