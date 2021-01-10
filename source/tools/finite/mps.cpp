@@ -32,9 +32,7 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
 
 
 
-void tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-
-    if(state.position_is_any_edge()){
+    if(state.position_is_outward_edge()){
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1 )
             throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
                                                 state.get_mps_site(0l).get_chiL(), state.get_mps_site(0l).dimensions()));
@@ -77,8 +75,11 @@ void tools::finite::mps::move_center_point_single_site(class_state_finite &state
 }
 
 
-void tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    if(state.position_is_any_edge(2)) state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
+size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    if(state.position_is_outward_edge(2)) {
+        state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
+        return 0; // No moves this time, return 0
+    }
     else {
         size_t pos  = state.get_position();
         size_t posL = state.get_direction() == 1 ? pos + 1 : pos - 1;

@@ -171,7 +171,7 @@ bool class_state_finite::position_is_the_middle_any_direction() const {
     return get_position() + 1 == static_cast<size_t>(get_length() / 2);
 }
 
-bool class_state_finite::position_is_left_edge([[maybe_unused]] size_t nsite) const {
+bool class_state_finite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) const {
     if(nsite == 1){
         return get_position<long>() <= 0 and direction == -1; // i.e. all sites are B's
 //        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
@@ -179,15 +179,24 @@ bool class_state_finite::position_is_left_edge([[maybe_unused]] size_t nsite) co
         return get_position<long>() == 0 and direction == -1 and get_mps_site().isCenter(); // left-most site is a an AC
 }
 
-bool class_state_finite::position_is_right_edge(size_t nsite) const { return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == 1; }
+bool class_state_finite::position_is_outward_edge_right(size_t nsite) const { return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == 1; }
 
-bool class_state_finite::position_is_any_edge(size_t nsite) const { return position_is_left_edge(nsite) or position_is_right_edge(nsite); }
+bool class_state_finite::position_is_outward_edge(size_t nsite) const { return position_is_outward_edge_left(nsite) or position_is_outward_edge_right(nsite); }
+
+bool class_state_finite::position_is_inward_edge_left([[maybe_unused]] size_t nsite) const {
+    return get_position<long>() == 0 and direction == 1; // i.e. first site is an AC going to the right
+}
+
+bool class_state_finite::position_is_inward_edge_right(size_t nsite) const { return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == -1; }
+
+bool class_state_finite::position_is_inward_edge(size_t nsite) const { return position_is_inward_edge_left(nsite) or position_is_inward_edge_right(nsite); }
+
 
 bool class_state_finite::position_is_at(long pos) const { return get_position<long>() == pos; }
 
 bool class_state_finite::position_is_at(long pos, int dir) const { return get_position<long>() == pos and get_direction() == dir; }
 
-bool class_state_finite::position_is_at(long pos, int dir, bool isCenter) const { return get_position<long>() == pos and get_direction() == dir and get_mps_site(pos).isCenter() == isCenter; }
+bool class_state_finite::position_is_at(long pos, int dir, bool isCenter) const { return get_position<long>() == pos and get_direction() == dir and (pos >= 0) == isCenter; }
 
 bool class_state_finite::has_center_point() const{
     return get_mps_site().isCenter();

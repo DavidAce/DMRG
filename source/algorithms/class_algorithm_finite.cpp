@@ -109,8 +109,7 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
             if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length()-1) or
                (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)){
                 // In this case we have just updated from here to the edge. No point in updating
-                // closer and closer to the edge. Just move until reaching the edge without flipping
-                // position_is_any_edge is defined as the outwards pointing edge, and it is important to reach that stage.
+                // closer and closer to the edge. Just move until reaching the edge without flip
                 num_moves = std::max<long>(1,num_sites - 1); // to the edge without flipping
             }else if(settings::strategy::multisite_move == MultisiteMove::ONE)
                 num_moves = 1ul;
@@ -133,23 +132,12 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
         long moves = 0;
         while(num_moves > moves++){
             if(chi_quench_steps > 0) chi_quench_steps--;
-            if(tensors.position_is_any_edge()) status.iter++;
-#pragma message "testing svd_threshold while moving"
-            tensors.move_center_point(status.chi_lim,1e-14);
-            status.step++;
-            if(status.step > (1+status.iter) * tensors.get_length()) throw std::logic_error(fmt::format("steps {} > (1+iter) * L {}", status.step, (1+status.iter) * tensors.get_length() ));
-            if(tensors.position_is_any_edge()) break; // Do not go past the edge if you aren't there already!
+            if(tensors.position_is_outward_edge()) status.iter++;
+            status.step += tensors.move_center_point(status.chi_lim);
+            // Do not go past the edge if you aren't there already!
+            // It's important to stay at the inward edge so we can do convergence checks and so on
+            if(tensors.position_is_inward_edge()) break;
         }
-//        for(long i = 0; i < num_moves.value(); i++) {
-//            if(tensors.position_is_any_edge()) {
-//                status.iter++;
-//                has_projected = false;
-//            }
-//#pragma message "testing svd_threshold while moving"
-//            tensors.move_center_point(status.chi_lim,1e-14);
-//            status.step++;
-//            if(chi_quench_steps > 0) chi_quench_steps--;
-//        }
         tools::finite::debug::check_integrity(*tensors.state, *tensors.model, *tensors.edges);
         tensors.active_sites.clear();
         tensors.state->active_sites.clear();
@@ -168,13 +156,11 @@ void class_algorithm_finite::reduce_mpo_energy() {
     // Reduce mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle
-    if(settings::precision::use_reduced_energy and tensors.position_is_any_edge()) {
-        tensors.reduce_mpo_energy();
-    }
+    if(settings::precision::use_reduced_energy and tensors.position_is_inward_edge()) tensors.reduce_mpo_energy();
 }
 
 void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
-    if(not tensors.position_is_any_edge()) return;
+    if(not tensors.position_is_inward_edge()) return;
     status.chi_lim_max = cfg_chi_lim_max();
     status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
     if(not cfg_chi_lim_grow()) {
@@ -294,7 +280,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
 }
 
 void class_algorithm_finite::try_projection() {
-    if(not tensors.position_is_any_edge()) return;
+    if(not tensors.position_is_inward_edge()) return;
     if(has_projected) return;
     if(settings::strategy::project_on_every_iter or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
         tools::log->info("Trying projection to {}", settings::strategy::target_sector);
@@ -306,7 +292,7 @@ void class_algorithm_finite::try_projection() {
 
 void class_algorithm_finite::try_discard_small_schmidt() {
     if(not settings::strategy::discard_schmidt_when_stuck) return;
-    if(not tensors.position_is_any_edge()) return;
+    if(not tensors.position_is_inward_edge()) return;
     if(num_discards >= max_discards) return;
     if(status.algorithm_has_stuck_for <= 2) return;
     tools::log->info("Trying discard of smallest schmidt values: trials {}",num_discards);
@@ -324,7 +310,7 @@ void class_algorithm_finite::try_discard_small_schmidt() {
 void class_algorithm_finite::try_bond_dimension_quench() {
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_convergence_status();
-    if(not tensors.position_is_any_edge()) return;
+    if(not tensors.position_is_inward_edge()) return;
     if(chi_quench_steps >= tensors.get_length()) {
         tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
         tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_quench_ahead);
@@ -382,7 +368,7 @@ void class_algorithm_finite::try_hamiltonian_perturbation() {
 }
 
 void class_algorithm_finite::try_disorder_damping() {
-    // if(not state.position_is_left_edge()) return;
+    // if(not state.position_is_inward_edge()) return;
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()) {
         tools::log->info("Setting damping exponent = {}", damping_exponents.back());
@@ -414,10 +400,8 @@ void class_algorithm_finite::try_disorder_damping() {
 
 void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> slope_threshold) {
     // Based on the the slope of the variance
-    // We want to check every time we can because the variance is expensive to compute.
-    //    if(not tensors.state->position_is_any_edge()) {
-    //        return;
-    //    }
+    // We don't want to check every time because the variance is expensive to compute.
+    if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of variance mpo");
     if(not threshold) threshold = settings::precision::variance_convergence_threshold;
     if(not slope_threshold) slope_threshold = settings::precision::variance_slope_threshold;
@@ -455,7 +439,7 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
 void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double> slope_threshold) {
     // Based on the the slope of entanglement entanglement_entropy_midchain
     // This one is cheap to compute.
-    if(not tensors.state->position_is_any_edge()) { return; }
+    if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of entanglement");
     if(not slope_threshold) slope_threshold = settings::precision::entropy_slope_threshold;
     auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
