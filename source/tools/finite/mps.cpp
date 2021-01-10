@@ -63,11 +63,13 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
             onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
             tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
             mpsC.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "A" at position "posC"
+            if constexpr(settings::debug) mpsC.assert_identity();
         }else if (state.get_direction() == -1) {
             auto & mps = state.get_mps_site(pos); //This becomes the new B
             auto &onesite_tensor = mps.get_M(); // No need to contract anything this time.
             tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
             mps.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "B" at position "pos"}
+            if constexpr(settings::debug) mps.assert_identity();
         }
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);

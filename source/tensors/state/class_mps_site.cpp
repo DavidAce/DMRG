@@ -6,6 +6,7 @@
 #include <general/nmspc_tensor_omp.h>
 // textra must appear first
 #include "class_mps_site.h"
+#include <config/debug.h>
 #include <math/hash.h>
 #include <tools/common/fmt.h>
 #include <utility>
@@ -171,6 +172,11 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
         throw std::runtime_error("class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &): Can't set M: Position hasn't been set yet");
 }
 void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
+    if constexpr(settings::debug){
+        auto norm = Textra::TensorVectorMap(L_).norm();
+        if (std::abs(norm - 1) > 1e-8) throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}",norm));
+    }
+
     if(position) {
         L                = L_;
         truncation_error = error;
@@ -181,6 +187,10 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
 void class_mps_site::set_L(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 
 void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
+    if constexpr(settings::debug){
+        auto norm = Textra::TensorVectorMap(LC_).norm();
+        if (std::abs(norm - 1) > 1e-8) throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}",norm));
+    }
     if(position) {
         LC = LC_;
         MC.reset();
@@ -305,7 +315,12 @@ std::pair<Eigen::Tensor<Scalar, 1>, double> class_mps_site::unstash_S() const {
     return tmp;
 }
 
-void class_mps_site::unstash() const {
+void class_mps_site::drop_stash() const {
+    if constexpr(settings::debug){
+        if(U_stash) tools::log->trace("Dropping U_stash");
+        if(S_stash) tools::log->trace("Dropping S_stash");
+        if(V_stash) tools::log->trace("Dropping V_stash");
+    }
     U_stash                  = std::nullopt;
     S_stash                  = std::nullopt;
     V_stash                  = std::nullopt;
