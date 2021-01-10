@@ -5,6 +5,8 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include "class_env_pair.h"
+
 class class_env_ene;
 class class_env_var;
 
@@ -54,16 +56,6 @@ class class_edges_finite {
     void eject_edges_all_ene();
     void eject_edges_all_var();
     void eject_edges_all();
-
-    // This is a reference wrapper for an edge pair
-    template<typename env_type>
-    struct env_pair {
-        env_type &L;
-        env_type &R;
-        void      assert_validity() const;
-        //        env_pair(env_type &L_, env_type &R_) : L(L_), R(R_) {}
-    };
-
 
     [[nodiscard]] env_pair<const class_env_ene> get_ene(size_t posL, size_t posR) const;
     [[nodiscard]] env_pair<const class_env_var> get_var(size_t posL, size_t posR) const;
