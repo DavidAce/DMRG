@@ -254,8 +254,8 @@ void class_flbit::check_convergence() {
     }
 
     status.algorithm_has_saturated = status.entanglement_saturated_for >= min_saturation_iters;
-    status.algorithm_has_converged = status.entanglement_has_converged;
-    status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
+    status.algorithm_has_converged = status.entanglement_has_converged or status.iter >= settings::flbit::time_num_steps;
+    status.algorithm_has_succeeded = status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
 
     if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
@@ -269,9 +269,8 @@ void class_flbit::check_convergence() {
     stop_reason = StopReason::NONE;
     if(tensors.position_is_inward_edge() and status.iter > settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
-        if(status.phys_time >= settings::flbit::time_limit) stop_reason = StopReason::SUCCEEDED;
-//        if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
-//        if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
+        if(status.iter >= settings::flbit::time_num_steps) stop_reason = StopReason::SUCCEEDED;
+        if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real,settings::flbit::time_final_imag))) stop_reason = StopReason::SUCCEEDED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
     }
 
