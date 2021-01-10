@@ -278,15 +278,14 @@ bool class_tensors_finite::position_is_inward_edge(size_t nsite) const { return 
 bool class_tensors_finite::position_is_at(long pos) const { return state->position_is_at(pos); }
 bool class_tensors_finite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool class_tensors_finite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
-void class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
-#pragma message "trying single site move"
-    tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
+    return tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_threshold);
 }
-void class_tensors_finite::move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold) {
-    tools::finite::mps::move_center_point_to_edge(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold) {
+    return tools::finite::mps::move_center_point_to_edge(*state, chi_lim, svd_threshold);
 }
-void class_tensors_finite::move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold) {
-    tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold) {
+    return tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_threshold);
 }
 
 void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold, LogPolicy log_policy) {
