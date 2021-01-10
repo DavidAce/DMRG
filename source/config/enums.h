@@ -7,7 +7,7 @@ enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode { EIGEN, LAPACKE };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
-enum class EdgeStatus {STALE, FRESH};
+enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
@@ -17,7 +17,7 @@ enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
-enum class RandomizerMode {SHUFFLE, SELECT1, ASIS};
+enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
 enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
