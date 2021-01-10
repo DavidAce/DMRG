@@ -73,16 +73,18 @@ class class_tensors_finite {
     [[nodiscard]] bool   position_is_at(long pos, int dir) const;
     [[nodiscard]] bool   position_is_at(long pos, int dir, bool isCenter) const;
 
-    void sync_active_sites();
-    void activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
-    void activate_sites(const std::vector<size_t> &sites);
-    void activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 1);
-    long active_problem_size() const;
-    void do_all_measurements() const;
-    void move_center_point(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt, LogPolicy log_policy = LogPolicy::QUIET);
+    void                   sync_active_sites();
+    void                   activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
+    void                   activate_sites(const std::vector<size_t> &sites);
+    void                   activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites = 1);
+    Eigen::DSizes<long, 3> active_problem_dims() const;
+    long                   active_problem_size() const;
+    void                   do_all_measurements() const;
+    size_t                 move_center_point(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    size_t                 move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    size_t                 move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt,
+                                LogPolicy log_policy = LogPolicy::QUIET);
 
     void assert_edges() const;
     void assert_edges_ene() const;

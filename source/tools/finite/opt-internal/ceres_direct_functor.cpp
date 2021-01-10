@@ -40,10 +40,10 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
         env2R               = env_var.R;
     }
     tools::log->trace("- Allocating memory for matrix-vector products");
-    dsizes = state.active_dimensions();
-    Hv_tensor.resize(dsizes);
-    H2v_tensor.resize(dsizes);
-    num_parameters = static_cast<int>(dsizes[0] * dsizes[1] * dsizes[2]);
+    dims = tensors.active_problem_dims();
+    Hv_tensor.resize(dims);
+    H2v_tensor.resize(dims);
+    num_parameters = static_cast<int>(dims[0] * dims[1] * dims[2]);
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 }
 
