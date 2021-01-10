@@ -60,15 +60,17 @@ size_t tools::finite::mps::move_center_point_single_site(class_state_finite &sta
         }
         if(state.get_direction() == 1){
             auto & mpsC = state.get_mps_site(posC); //This becomes the new center position AC
+            long chi_new = std::min(chi_lim, mpsC.spin_dim() * std::min(mpsC.get_chiL(), mpsC.get_chiR())); // Make sure that the bond dimension does not increase faster than spin_dim per site
             Eigen::Tensor<Scalar, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction of LC * B
             onesite_tensor.device(Textra::omp::getDevice())  = Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(posC)}, posC, chi_new, svd_threshold, LogPolicy::QUIET);
             mpsC.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "A" at position "posC"
             if constexpr(settings::debug) mpsC.assert_identity();
         }else if (state.get_direction() == -1) {
             auto & mps = state.get_mps_site(pos); //This becomes the new B
+            long chi_new = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Make sure that the bond dimension does not increase faster than spin_dim per site
             auto &onesite_tensor = mps.get_M(); // No need to contract anything this time.
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_lim, svd_threshold, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {static_cast<size_t>(pos)}, posC, chi_new, svd_threshold, LogPolicy::QUIET);
             mps.set_L(LC, truncation_error_LC); // Copy old "LC" into the "L" slot of the new "B" at position "pos"}
             if constexpr(settings::debug) mps.assert_identity();
         }
