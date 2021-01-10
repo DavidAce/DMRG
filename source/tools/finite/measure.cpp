@@ -110,7 +110,10 @@ double tools::finite::measure::norm(const class_state_finite &state) {
 
 long tools::finite::measure::bond_dimension_current(const class_state_finite &state) {
     if(state.measurements.bond_dimension_current) { return state.measurements.bond_dimension_current.value(); }
-    state.measurements.bond_dimension_current = state.current_bond().dimension(0);
+    if(state.has_center_point())
+        state.measurements.bond_dimension_current = state.current_bond().dimension(0);
+    else
+        state.measurements.bond_dimension_current = 1;
     return state.measurements.bond_dimension_current.value();
 }
 
@@ -122,11 +125,16 @@ long tools::finite::measure::bond_dimension_midchain(const class_state_finite &s
 
 std::vector<long> tools::finite::measure::bond_dimensions(const class_state_finite &state) {
     if(state.measurements.bond_dimensions) { return state.measurements.bond_dimensions.value(); }
-    state.measurements.bond_dimensions = std::vector<long>{};
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_L().dimension(0));
-        if(state.get_mps_site(pos).isCenter()) { state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
+    std::vector<long> bond_dimensions;
+    bond_dimensions.reserve(state.get_length()+1);
+    if(not state.has_center_point()) bond_dimensions.emplace_back(state.mps_sites.front()->get_chiL());
+    for(const auto & mps : state.mps_sites) {
+        bond_dimensions.emplace_back(mps->get_L().dimension(0));
+        if(mps->isCenter()) { bond_dimensions.emplace_back(mps->get_LC().dimension(0)); }
     }
+    if(bond_dimensions.size() != state.get_length()+1)
+        throw std::logic_error("bond_dimensions.size() should be length+1");
+    state.measurements.bond_dimensions = bond_dimensions;
     return state.measurements.bond_dimensions.value();
 }
 
@@ -146,9 +154,12 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_sta
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite &state) {
     if(state.measurements.entanglement_entropy_current) { return state.measurements.entanglement_entropy_current.value(); }
     tools::common::profile::get_default_prof()["t_ent"]->tic();
-    auto &                   LC                     = state.current_bond();
-    Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
-    state.measurements.entanglement_entropy_current = std::real(SE(0));
+    if(state.has_center_point()){
+        auto &                   LC                     = state.current_bond();
+        Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
+        state.measurements.entanglement_entropy_current = std::real(SE(0));
+    }else
+        state.measurements.entanglement_entropy_current = 0;
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy_current.value();
 }
@@ -167,17 +178,21 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
     if(state.measurements.entanglement_entropies) { return state.measurements.entanglement_entropies.value(); }
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     std::vector<double> entanglement_entropies;
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        auto &                   L  = state.get_mps_site(pos).get_L();
+    entanglement_entropies.reserve(state.get_length()+1);
+    if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
+    for(const auto & mps : state.mps_sites) {
+        auto &                   L  = mps->get_L();
         Eigen::Tensor<Scalar, 0> SE = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         entanglement_entropies.emplace_back(std::real(SE(0)));
-        if(state.get_mps_site(pos).isCenter()) {
-            auto &LC = state.get_mps_site(pos).get_LC();
+        if(mps->isCenter()) {
+            auto &LC = mps->get_LC();
             SE       = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
             entanglement_entropies.emplace_back(std::real(SE(0)));
             state.measurements.entanglement_entropy_current = std::real(SE(0));
         }
     }
+    if(entanglement_entropies.size() != state.get_length()+1)
+        throw std::logic_error("entanglement_entropies.size() should be length+1");
     state.measurements.entanglement_entropies = entanglement_entropies;
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropies.value();
@@ -191,17 +206,21 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
     if(q == 100.0 and state.measurements.renyi_100) return state.measurements.renyi_100.value();
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     std::vector<double> renyi_q;
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const auto &             L = state.get_mps_site(pos).get_L();
+    renyi_q.reserve(state.get_length()+1);
+    if(not state.has_center_point()) renyi_q.emplace_back(0);
+    for(const auto & mps : state.mps_sites) {
+        const auto &             L = mps->get_L();
         Eigen::Tensor<Scalar, 0> RE;
         RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
         renyi_q.emplace_back(std::real(RE(0)));
-        if(state.get_mps_site(pos).isCenter()) {
-            const auto &LC = state.get_mps_site(pos).get_LC();
+        if(mps->isCenter()) {
+            const auto &LC = mps->get_LC();
             RE             = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
             renyi_q.emplace_back(std::real(RE(0)));
         }
     }
+    if(renyi_q.size() != state.get_length()+1)
+        throw std::logic_error("renyi_q.size() should be length+1");
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     if(q == 2.0) {
         state.measurements.renyi_2 = renyi_q;
@@ -259,10 +278,13 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
 std::vector<double> tools::finite::measure::truncation_errors(const class_state_finite &state) {
     if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
     std::vector<double> truncation_errors;
+    if(not state.has_center_point()) truncation_errors.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
         truncation_errors.emplace_back(mps->get_truncation_error());
         if(mps->isCenter()) truncation_errors.emplace_back(mps->get_truncation_error_LC());
     }
+    if(truncation_errors.size() != state.get_length()+1)
+        throw std::logic_error("truncation_errors.size() should be length+1");
     state.measurements.truncation_errors = truncation_errors;
     return state.measurements.truncation_errors.value();
 }
