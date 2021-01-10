@@ -1,6 +1,8 @@
 #include "split.h"
 #include "prof.h"
 #include <config/nmspc_settings.h>
+#include <deque>
+#include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_omp.h>
 #include <iostream>
 #include <math/svd.h>
@@ -8,8 +10,8 @@
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
 
-std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
-                                                          const std::vector<size_t> &sites, long center_position, long chi_limit,
+std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+                                                          const std::vector<size_t> &positions, long center_position, long chi_limit,
                                                           std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites.
      *  Consider a case with 3 sites and
@@ -119,10 +121,8 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     if(chi_limit <= 0) throw std::runtime_error(fmt::format("Invalid bond dimension limit:  chi_limit = {}", chi_limit));
 
     // Split the multisite tensor at the given center position.
-    std::vector<size_t> sites_left;
-    std::vector<size_t> sites_right;
-    std::vector<long>   spin_dims_left;
-    std::vector<long>   spin_dims_right;
+    std::vector<size_t> positions_left, positions_right;
+    std::vector<long> spin_dims_left, spin_dims_right;
 
     // Define dimensions for the first reshape into a rank-4 tensor
     long chiL = multisite_tensor.dimension(1);
@@ -171,10 +171,10 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
 
     // Perform more SVD's to split the left and right parts around the center
     tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
-    auto mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, sites_left, chi_limit, svd_threshold);
+    auto mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, positions_left, chi_limit, svd_threshold);
     tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
     tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
-    auto mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, sites_right, chi_limit, svd_threshold);
+    auto mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_threshold);
     tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
     //    tools::log->trace("SVD split L {} sites | R {} sites", mps_sites_As.size(), mps_sites_Bs.size());
 
@@ -212,8 +212,12 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     if(mps_sites_As.size() != spin_dims_left.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_As of of unexpected size");
     if(mps_sites_Bs.size() != spin_dims_right.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_Bs of of unexpected size");
 
-    // Move the right side onto the left side.
-    mps_sites_As.splice(mps_sites_As.end(), mps_sites_Bs);
+    // Move the right side onto the left side (This is equivalent to std::list::splice)
+    mps_sites_As.insert(
+        mps_sites_As.end(),
+        std::make_move_iterator(mps_sites_Bs.begin()),
+        std::make_move_iterator(mps_sites_Bs.end())
+    );
 
     site_it = sites.begin();
     for(const auto &mps : mps_sites_As) {
@@ -230,9 +234,8 @@ std::list<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Sc
     return mps_sites_As;
 }
 
-std::list<class_mps_site>
-    // std::pair<std::list<class_mps_site>,Eigen::Tensor<class_mps_site::Scalar,3>>
-    tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<Scalar, 3> &multisite_mps, std::vector<long> spin_dims, std::vector<size_t> positions,
+std::vector<class_mps_site>
+    tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> & spin_dims, const std::vector<size_t> & positions,
                                                       long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the left.
      *  Consider a case with 3 sites and
@@ -277,14 +280,14 @@ std::list<class_mps_site>
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
-    if(positions.empty()) return std::list<class_mps_site>();
+    if(positions.empty()) return std::vector<class_mps_site>();
     //    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the left: sites list is empty");
 
     // Another  special case is when we do two-site tensors. Then we expect
     // this function to receive a single site. We can simply return it
     if(spin_dims.size() == 1) { return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "A")}; }
     // Initialize the resulting container of split sites
-    std::list<class_mps_site> mps_sites;
+    std::vector<class_mps_site> mps_sites;
 
     // Now we have multiple spin dimensions
 
@@ -364,10 +367,10 @@ std::list<class_mps_site>
     return mps_sites;
 }
 
-std::list<class_mps_site>
-    // std::pair<Eigen::Tensor<class_mps_site::Scalar,3>,std::list<class_mps_site>>
-    tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, std::vector<long> spin_dims,
-                                                      std::vector<size_t> positions, long chi_limit, std::optional<double> svd_threshold) {
+std::deque<class_mps_site>
+    // std::pair<Eigen::Tensor<class_mps_site::Scalar,3>,std::vector<class_mps_site>>
+    tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, const std::vector<long> & spin_dims,
+                                                      const std::vector<size_t> & positions, long chi_limit, std::optional<double> svd_threshold) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the right
      *  Consider a case with 3 sites and
      *  spin_dims = {2,2,2}
@@ -411,15 +414,14 @@ std::list<class_mps_site>
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
-    if(positions.empty()) return std::list<class_mps_site>();
-    //    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the right: sites list is empty");
+    if(positions.empty()) return std::deque<class_mps_site>();
 
     // Another special case is when we do two-site tensors. Then we expect
     // this function to receive a single site. We can simply return it
     if(spin_dims.size() == 1) return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "B")};
 
     // Initialize the resulting container of split sites
-    std::list<class_mps_site> mps_sites;
+    std::deque<class_mps_site> mps_sites;
     // Now we have multiple spin dimensions
     // Reverse the order of spin_dims so we can iterate starting from its right side.
     std::reverse(spin_dims.begin(), spin_dims.end());
@@ -470,12 +472,11 @@ std::list<class_mps_site>
         // S:   A set of singular values, "L" matrix, belonging to the left site  (i.e. the next B to pop out of U)
         // V:   A right-unitary "B" matrix which is a "Gamma*Lambda" in Vidal's notation
 
-        mps_sites.emplace_front(V, S_prev, positions.back(), S_prev_error, "B"); // S_prev is empty the first iteration.
+        mps_sites.emplace_front(V, S_prev, positions[idx], S_prev_error, "B"); // S_prev is empty the first iteration.
 
         // Store the singular values for the next iteration
         S_prev       = S;
         S_prev_error = svd.get_truncation_error();
-        positions.pop_back();
     }
     // The spin dimension of U should be 1, since it contains no sites anymore!
     if(U.dimension(0) != 1) throw std::runtime_error("Could not split mps from the right: Last U dimension(0) is not 1");

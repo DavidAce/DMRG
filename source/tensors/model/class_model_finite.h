@@ -1,7 +1,6 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <list>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 
@@ -31,7 +30,7 @@ class class_model_finite {
     void                                  damp_model_disorder(double coupling_damp, double field_damp);
 
     public:
-    std::list<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::vector<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::vector<size_t>                        active_sites;
     ModelType                                  model_type = ModelType::ising_tf_rf;
 

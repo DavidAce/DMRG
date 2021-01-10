@@ -1,6 +1,6 @@
 #pragma once
 #include <unsupported/Eigen/CXX11/Tensor>
-#include <list>
+#include <vector>
 class class_state_finite;
 class class_mpo_site;
 
@@ -8,7 +8,7 @@ namespace tools::finite::ops {
     using Scalar = std::complex<double>;
     /* clang-format off */
     extern void apply_mpo                     (class_state_finite & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
-    extern void apply_mpos                    (class_state_finite & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+    extern void apply_mpos                    (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
     extern void  project_to_nearest_sector    (class_state_finite & state, const std::string &sector);
     extern void  project_to_sector            (class_state_finite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
     extern class_state_finite

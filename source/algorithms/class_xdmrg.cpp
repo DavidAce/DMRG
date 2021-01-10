@@ -53,7 +53,7 @@ void class_xdmrg::resume() {
         tensors.state->set_name(name);
 
     // Initialize a custom task list
-    std::list<xdmrg_task> task_list;
+    std::deque<xdmrg_task> task_list;
 
     if(status.algorithm_has_finished) task_list = {xdmrg_task::POST_PRINT_RESULT};
     else
@@ -93,7 +93,7 @@ void class_xdmrg::resume() {
 }
 
 void class_xdmrg::run_default_task_list() {
-    std::list<xdmrg_task> default_task_list = {
+    std::deque<xdmrg_task> default_task_list = {
         xdmrg_task::INIT_DEFAULT,
         xdmrg_task::FIND_EXCITED_STATE,
         xdmrg_task::POST_DEFAULT,
@@ -115,7 +115,7 @@ void class_xdmrg::run_default_task_list() {
     run_task_list(default_task_list);
 }
 
-void class_xdmrg::run_task_list(std::list<xdmrg_task> &task_list) {
+void class_xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
