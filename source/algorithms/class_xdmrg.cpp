@@ -208,13 +208,6 @@ void class_xdmrg::run_algorithm() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
-        tools::log->info("Bond dimensions after  step        = {}", tools::finite::measure::bond_dimensions(*tensors.state));
-
-        if(tools::finite::measure::energy_variance(tensors) < status.energy_variance_lowest) {
-            tools::log->trace("Updating variance record holder");
-            status.energy_variance_lowest = tools::finite::measure::energy_variance(tensors);
-        }
-
         check_convergence();
         print_status_update();
         print_profiling_lap();
@@ -450,6 +443,14 @@ void class_xdmrg::single_xDMRG_step() {
         // Update current energy density ε
         status.energy_dens =
             (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
+
+        if(not tensors.active_sites.empty()) {
+            tools::log->trace("Updating variance record holder");
+            auto var = tools::finite::measure::energy_variance(tensors);
+            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+        }
+    }
+
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
