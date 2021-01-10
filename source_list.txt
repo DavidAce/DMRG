@@ -25,6 +25,7 @@ source/tensors/class_tensors_infinite.cpp
 source/tensors/edges/class_env_base.cpp
 source/tensors/edges/class_env_ene.cpp
 source/tensors/edges/class_env_var.cpp
+source/tensors/edges/class_env_pair.cpp
 source/tensors/edges/class_edges_finite.cpp
 source/tensors/edges/class_edges_infinite.cpp
 source/tensors/model/class_mpo_factory.cpp
