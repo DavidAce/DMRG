@@ -61,17 +61,20 @@ class class_tensors_finite {
     template<typename T = size_t> [[nodiscard]] T get_position() const;
     template<typename T = size_t> [[nodiscard]] T get_length() const;
 
-    [[nodiscard]] bool   is_real() const;
-    [[nodiscard]] bool   has_nan() const;
-    [[nodiscard]] bool   has_center_point() const;
-    [[nodiscard]] bool   position_is_the_middle() const;
-    [[nodiscard]] bool   position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool   position_is_left_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool   position_is_right_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool   position_is_any_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool   position_is_at(long pos) const;
-    [[nodiscard]] bool   position_is_at(long pos, int dir) const;
-    [[nodiscard]] bool   position_is_at(long pos, int dir, bool isCenter) const;
+    [[nodiscard]] bool is_real() const;
+    [[nodiscard]] bool has_nan() const;
+    [[nodiscard]] bool has_center_point() const;
+    [[nodiscard]] bool position_is_the_middle() const;
+    [[nodiscard]] bool position_is_the_middle_any_direction() const;
+    [[nodiscard]] bool position_is_outward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_outward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_outward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_at(long pos) const;
+    [[nodiscard]] bool position_is_at(long pos, int dir) const;
+    [[nodiscard]] bool position_is_at(long pos, int dir, bool isCenter) const;
 
     void                   sync_active_sites();
     void                   activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);

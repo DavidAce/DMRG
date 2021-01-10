@@ -113,9 +113,7 @@ void class_flbit::run_preprocessing() {
 
     // Create a state in the l-bit basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    while(not tensors.state->position_is_any_edge()) tensors.move_center_point(status.chi_lim);
-    if(not tensors.state->position_is_any_edge()){tools::finite::print::dimensions(tensors); throw std::logic_error("Put the state on an edge!");}
-
+    tensors.move_center_point_to_edge(status.chi_lim);
     tools::finite::print::model(*tensors.model);
     status.delta_t = std::complex<double>(settings::flbit::time_step_init_real,settings::flbit::time_step_init_imag);
     if(settings::model::model_size <= 10){
@@ -147,13 +145,7 @@ void class_flbit::run_preprocessing() {
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 
-    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-
-
-    if(not tensors.state->position_is_any_edge()) throw std::logic_error("Put the state on an edge!");
+    if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
@@ -167,7 +159,7 @@ void class_flbit::run_algorithm() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running the flbit algorithm");
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type),  tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
-    if(not tensors.state->position_is_any_edge()) throw std::logic_error("Put the state on an edge!");
+    if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
         check_convergence();
@@ -257,7 +249,7 @@ void class_flbit::update_time_step(){
 
 void class_flbit::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
-    if(tensors.position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         check_convergence_entg_entropy();
     }
 
@@ -266,16 +258,16 @@ void class_flbit::check_convergence() {
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
 
-    if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
+    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    if(tensors.state->position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
                           status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
     stop_reason = StopReason::NONE;
-    if(tensors.position_is_any_edge() and status.iter > settings::flbit::min_iters) {
+    if(tensors.position_is_inward_edge() and status.iter > settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.phys_time >= settings::flbit::time_limit) stop_reason = StopReason::SUCCEEDED;
 //        if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
