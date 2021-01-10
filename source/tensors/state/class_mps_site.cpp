@@ -70,13 +70,18 @@ void class_mps_site::assert_identity() const {
     if(get_label() == "B") {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 2}, {0, 2}));
         if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
-            throw std::runtime_error(fmt::format("class_mps_site: B^dagger B is not identity at pos {}", get_position()));
+            throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}",get_label(), get_position(), get_M_bare()));
         }
     } else {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 1}, {0, 1}));
         if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
-            throw std::runtime_error(fmt::format("class_mps_site: A^dagger A is not identity at pos {}", get_position()));
+            throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}",get_label(), get_position(), get_M_bare()));
         }
+    }
+    if(isCenter() or get_label() == "AC"){
+        Eigen::Tensor<Scalar, 0> MM = get_M().contract(get_M().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
+        auto norm = std::real(MM(0));
+        if(std::abs(norm - 1) > 1e-4) throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not unity at pos {1}: {2:.16f}",get_label(), get_position(),norm));
     }
 }
 
