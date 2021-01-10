@@ -172,7 +172,7 @@ void class_fdmrg::single_fdmrg_step() {
 
 void class_fdmrg::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
-    if(tensors.position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
     }
@@ -187,16 +187,16 @@ void class_fdmrg::check_convergence() {
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
 
-    if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
+    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    if(tensors.state->position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
                           status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
 
-    if(tensors.position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         stop_reason = StopReason::NONE;
         if(status.iter >= settings::fdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;

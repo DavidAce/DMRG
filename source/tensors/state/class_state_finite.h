@@ -81,9 +81,12 @@ class class_state_finite {
     [[nodiscard]] long                     find_largest_chi() const;
     [[nodiscard]] bool                     position_is_the_middle() const;
     [[nodiscard]] bool                     position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool                     position_is_left_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_right_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_any_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_outward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_outward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_outward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_inward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_inward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool                     position_is_inward_edge(size_t nsite = 1) const;
     [[nodiscard]] bool                     position_is_at(long pos) const;
     [[nodiscard]] bool                     position_is_at(long pos, int dir) const;
     [[nodiscard]] bool                     position_is_at(long pos, int dir, bool isCenter) const;
