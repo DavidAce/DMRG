@@ -22,6 +22,7 @@ class class_flbit : public class_algorithm_finite {
     std::vector<qm::Gate> unitary_gates_2site_layer1;
     std::vector<qm::Gate> unitary_gates_2site_layer2;
     std::vector<qm::Gate> unitary_gates_2site_layer3;
+    std::vector<std::complex<double>> time_points;
 
     Eigen::Tensor<Scalar,1> Upsi_ed;
     // Inherit the constructor of class_algorithm_base
