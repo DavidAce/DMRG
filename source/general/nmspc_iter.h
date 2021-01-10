@@ -90,26 +90,8 @@ namespace iter {
         return internal::enumerate_range<typename Container::reverse_iterator,true>(std::rbegin(content), std::rend(content), content.size()-1, 0);
     }
 
-//    template<typename T>
-//    struct reverse_enumerate {
-//        private:
-//        T &container;
-//        struct iterator {
-//            typename T::reverse_iterator iter;
-//            size_t                       index;
-//
-//            bool operator==(const iterator &other) const { return iter == other.iter; }
-//            bool operator!=(const iterator &other) const { return iter != other.iter; }
-//            auto operator*() { return std::pair(index, *iter); }
-//            void operator++() {
-//                --index;
-//                ++iter;
-//            }
-//        };
-//
-//        public:
-//        reverse_enumerate(T &container) : container(container) {}
-//        iterator begin() { return {container.size() - 1, container.rbegin()}; }
-//        iterator end() { return {0, container.rend()}; }
-//    };
+    template<class Container>
+    decltype(auto) enumerate_reverse(const Container &content) {
+        return internal::enumerate_range<typename Container::const_reverse_iterator,true>(std::rbegin(content), std::rend(content), content.size()-1, 0);
+    }
 }
