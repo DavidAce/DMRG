@@ -76,9 +76,11 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
                       state.get_direction(),min_sites, max_sites, threshold);
 
     using namespace Textra;
+    const auto                          initial_position  = state.get_position<long>();
     auto                                direction = state.get_direction();
-    auto                                position  = state.get_position<long>();
-    auto                                length    = state.get_length<long>();
+    long                                position  = initial_position;
+    long                                length    = state.get_length<long>();
+    bool                                at_edge   = position <= -1 or position >= length;
     std::vector<long>                   sizes;
     std::vector<size_t>                 sites;
     std::vector<Eigen::DSizes<long, 3>> shape;
@@ -102,6 +104,10 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
 
     std::string reason;
     while(true) {
+        if(sites.empty() and at_edge){
+            reason = "Can't select sites beyond the edge";
+            break;
+        }
         bool allequal = std::all_of(sizes.begin(), sizes.end(), [sizes](long c) { return c == sizes.front(); });
         auto size     = sizes.back();
         if(size < threshold and sites.size() == max_sites) {
@@ -127,12 +133,20 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
             shape.pop_back();
         }
     }
+
     std::sort(sites.begin(), sites.end());
-    tools::log->debug(
-        "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}", state.get_position(),
-                      state.get_direction(),min_sites, max_sites, threshold, sites, shape.back(), sizes.back(),reason);
-    if(sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})",sites.size(), min_sites));
-    if(sites.size() > max_sites) throw std::runtime_error(fmt::format("Activated sites ({}) > max_sites ({})",sites.size(), max_sites));
+    if(at_edge or shape.empty() or sizes.empty())
+        tools::log->debug(
+            "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}", initial_position,
+            direction, min_sites, max_sites, threshold, sites, reason);
+    else
+        tools::log->debug(
+            "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}", initial_position,
+            direction,min_sites, max_sites, threshold, sites, shape.back(), sizes.back(),reason);
+
+
+    if(not at_edge and sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})",sites.size(), min_sites));
+    if(not at_edge and sites.size() > max_sites) throw std::runtime_error(fmt::format("Activated sites ({}) > max_sites ({})",sites.size(), max_sites));
     return sites;
 }
 

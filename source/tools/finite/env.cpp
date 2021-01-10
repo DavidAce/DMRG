@@ -19,12 +19,15 @@ void tools::finite::env::assert_edges_ene(const class_state_finite &state, const
     size_t max_pos = state.get_length() - 1;
 
     // If there are no active sites then we can build up until current position
-    size_t posL_active = state.get_position();
-    size_t posR_active = state.get_position();
+    // Otherwise it's enough to check up until the bracket defined by active_sites
+    long   current_position = state.get_position<long>();
+    size_t posL_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
+    size_t posR_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
     if(not edges.active_sites.empty()) {
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
     }
+
     tools::log->trace("Asserting edges eneL from [{} to {}]", min_pos,posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene = edges.get_eneL(pos);
@@ -52,8 +55,10 @@ void tools::finite::env::assert_edges_var(const class_state_finite &state, const
     size_t max_pos = state.get_length() - 1;
 
     // If there are no active sites then we can build up until current position
-    size_t posL_active = state.get_position();
-    size_t posR_active = state.get_position();
+    // Otherwise it's enough to check up until the bracket defined by active_sites
+    long   current_position = state.get_position<long>();
+    size_t posL_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
+    size_t posR_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
     if(not edges.active_sites.empty()) {
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
@@ -81,7 +86,7 @@ void tools::finite::env::assert_edges_var(const class_state_finite &state, const
 }
 
 
-void tools::finite::env::assert_edges(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges){
+void tools::finite::env::assert_edges(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges){
     assert_edges_ene(state,model,edges);
     assert_edges_var(state,model,edges);
 }
@@ -99,8 +104,9 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
     size_t max_pos = state.get_length() - 1;
 
     // If there are no active sites then we can build up until current position
-    size_t posL_active = state.get_position();
-    size_t posR_active = state.get_position();
+    long   current_position = state.get_position<long>();
+    size_t posL_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
+    size_t posR_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
     if(not edges.active_sites.empty()) {
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
@@ -158,8 +164,10 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     size_t max_pos = state.get_length() - 1;
 
     // If there are no active sites then we can build up until current position
-    size_t posL_active = state.get_position();
-    size_t posR_active = state.get_position();
+    // Otherwise it's enough to build up until the bracket defined by active_sites
+    long   current_position = state.get_position<long>();
+    size_t posL_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
+    size_t posR_active = static_cast<size_t>(std::clamp<long>(current_position,0, state.get_length<long>()-1));
     if(not edges.active_sites.empty()) {
         posL_active = edges.active_sites.front();
         posR_active = edges.active_sites.back();
@@ -184,7 +192,7 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     if(not var_pos_log.empty()) tools::log->debug("Rebuilt L var edges: {}", var_pos_log);
     var_pos_log.clear();
     tools::log->trace("Inspecting edges varR from [{} to {}]", posR_active,max_pos);
-    for(size_t pos = max_pos; pos > posR_active and pos < state.get_length(); pos--) {
+    for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var_curr = edges.get_varR(pos);
         if(pos == state.get_length() - 1 and not var_curr.has_block()){
             var_pos_log.emplace_back(pos);
