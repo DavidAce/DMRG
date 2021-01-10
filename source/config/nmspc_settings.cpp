@@ -126,12 +126,11 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
     dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
     dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
-    dmrg_config.load_parameter("flbit::time_step_init_real"     , flbit::time_step_init_real);
-    dmrg_config.load_parameter("flbit::time_step_init_imag"     , flbit::time_step_init_imag);
-    dmrg_config.load_parameter("flbit::time_step_max_size"      , flbit::time_step_max_size);
-    dmrg_config.load_parameter("flbit::time_step_per_size"      , flbit::time_step_per_size);
-    dmrg_config.load_parameter("flbit::time_step_growth_factor" , flbit::time_step_growth_factor);
-    dmrg_config.load_parameter("flbit::time_limit"              , flbit::time_limit);
+    dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
+    dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
+    dmrg_config.load_parameter("flbit::time_final_real"         , flbit::time_final_real);
+    dmrg_config.load_parameter("flbit::time_final_imag"         , flbit::time_final_imag);
+    dmrg_config.load_parameter("flbit::time_num_steps"          , flbit::time_num_steps);
     dmrg_config.load_parameter("flbit::print_freq "             , flbit::print_freq);
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
 

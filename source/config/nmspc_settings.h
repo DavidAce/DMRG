@@ -219,17 +219,16 @@ namespace settings {
     //Parameters controlling flbit
     namespace flbit {
         inline bool     on                      = false;                    /*!< Turns flbit simulation on/off. */
-        inline size_t   max_iters               = 10;                       /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   max_iters               = 10000;                    /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                        /*!< Min number of iterations. One iterations moves L steps. */
         inline long     chi_lim_max             = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline double   time_step_init_real     = 0.1;                      /*!< Real part of initial time step delta_t */
-        inline double   time_step_init_imag     = 0.0;                      /*!< Imag part of initial time step delta_t */
-        inline double   time_step_max_size      = 1e4;                      /*!< Maximum time step size */
-        inline double   time_step_per_size      = 10;                       /*!< Number of time steps at each time step size */
-        inline double   time_step_growth_factor = 10;                       /*!< (Absolute value) Growth factor for time step delta_t */
-        inline double   time_limit              = 1;                        /*!< (Absolute value) Maximum physical time to evolve */
+        inline double   time_start_real         = 1e-4;                     /*!< Starting time point (real) */
+        inline double   time_start_imag         = 0;                        /*!< Starting time point (imag) */
+        inline double   time_final_real         = 1e9;                      /*!< Finishing time point (real) */
+        inline double   time_final_imag         = 0;                        /*!< Finishing time point (imag) */
+        inline size_t   time_num_steps          = 500;                      /*!< Number of steps from start to finish */
         inline size_t   print_freq              = 1;                        /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn            = false;                    /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
