@@ -2,7 +2,6 @@
 #include <complex>
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
-#include <list>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -19,10 +18,10 @@ class class_edges_finite {
     //    size_t step      = 0;
     //    int    direction = 1;
 
-    std::list<std::unique_ptr<class_env_ene>> eneL;
-    std::list<std::unique_ptr<class_env_ene>> eneR;
-    std::list<std::unique_ptr<class_env_var>> varL;
-    std::list<std::unique_ptr<class_env_var>> varR;
+    std::vector<std::unique_ptr<class_env_ene>> eneL;
+    std::vector<std::unique_ptr<class_env_ene>> eneR;
+    std::vector<std::unique_ptr<class_env_var>> varL;
+    std::vector<std::unique_ptr<class_env_var>> varR;
 
     public:
     class_edges_finite();

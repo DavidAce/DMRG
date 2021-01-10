@@ -396,7 +396,7 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Sca
     return std::make_tuple(MPO, Ledge, Redge);
 }
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
     qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites, int sign)
 /*! Builds the MPO that projects out the MPS component in a parity sector.
  *      |psi+->  = P |psi>=  1/2sqrt(2) (1 +- S) |psi>
@@ -425,7 +425,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
     MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
 
-    std::list<Eigen::Tensor<Scalar, 4>> mpos(sites, MPO);
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos(sites, MPO);
     // Create compatible edges
     Eigen::Tensor<Scalar, 3> Ledge(1, 1, 2); // The left  edge
     Eigen::Tensor<Scalar, 3> Redge(1, 1, 2); // The right edge
@@ -437,7 +437,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     return std::make_tuple(mpos, Ledge, Redge);
 }
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
     qm::mpo::random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites)
 /*! Builds a string of random pauli matrix MPO's
  *      P = Π  O_i
@@ -473,7 +473,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
         if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
 
-    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos;
     for(auto &val : binary) {
         if(val < 0)
             mpos.push_back(MPO_S);
@@ -489,7 +489,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     return std::make_tuple(mpos, Ledge, Redge);
 }
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
     qm::mpo::random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1, const Eigen::MatrixXcd &paulimatrix2, const size_t sites)
 /*! Builds a string of random pauli matrix MPO's
  *      P = Π  O_i
@@ -539,7 +539,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     }
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list
-    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos;
     for(auto &val : binary) {
         if(val < 0)
             mpos.push_back(MPO_S);
@@ -547,7 +547,6 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
             mpos.push_back(MPO_I);
     }
 
-    //    std::list<Eigen::Tensor<Scalar,4>> mpos(sites,MPO_P);
     // Create compatible edges
     Eigen::Tensor<Scalar, 3> Ledge(1, 1, 2); // The left  edge
     Eigen::Tensor<Scalar, 3> Redge(1, 1, 2); // The right edge
@@ -558,7 +557,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     return std::make_tuple(mpos, Ledge, Redge);
 }
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
     qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites)
 /*! Builds a string of random pauli matrix MPO's
  *      P = Π  O_i
@@ -611,7 +610,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
     }
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list
-    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos;
     std::vector<std::string> mpos_str;
     for(auto &val : binary) {
         if(val < 0){
@@ -635,7 +634,7 @@ std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen:
 
 
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
 qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode)
 /*! Builds a string of MPO's
  *      P = Π  O_i
@@ -680,7 +679,7 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
     Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::array<long, 4>    offset4    = {0, 0, 0, 0};
 
-    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos;
     auto pauli_idx = num::range<size_t>(0, paulimatrices.size(), 1);
 
     for(size_t site = 0; site < sites; site++) {
@@ -739,7 +738,7 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
 }
 
 
-std::tuple<std::list<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
+std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
 qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> & uniform_dist_widths, size_t sites)
 /*! Builds a set of MPO's used for randomizing a state  pauli matrix MPO's with random weights picked from a uniform distribution
  *      P = Π  O_i
@@ -767,7 +766,7 @@ qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, c
     Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
 
-    std::list<Eigen::Tensor<Scalar, 4>> mpos;
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos;
     for(size_t site = 0; site < sites; site++){
         Eigen::Tensor<Scalar, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
         MPO_S.setZero();

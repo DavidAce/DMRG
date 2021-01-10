@@ -7,7 +7,6 @@
 #include <Eigen/Core>
 #include <complex>
 #include <config/enums.h>
-#include <list>
 #include <measure/state_measure_finite.h>
 #include <memory>
 #include <optional>
@@ -48,7 +47,7 @@ class class_state_finite {
     std::string               name;
 
     public:
-    std::list<std::unique_ptr<class_mps_site>> mps_sites;
+    std::vector<std::unique_ptr<class_mps_site>> mps_sites;
     std::vector<size_t>                        active_sites;
     mutable state_measure_finite               measurements;
 

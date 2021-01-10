@@ -34,7 +34,7 @@ namespace tools::finite::io {
         extern void load_state   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_state_finite & state, const class_algorithm_status & status);
         extern void load_model   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_model_finite & model);
         extern void validate (const h5pp::File & h5ppFile, const std::string & state_prefix, class_tensors_finite & tensors);
-//        extern std::list<SimulationTask>
+//        extern std::vector<SimulationTask>
 //            getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const class_tensors_finite & tensors, const class_algorithm_status & status);
     }
     /* clang-format on */

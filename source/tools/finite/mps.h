@@ -3,7 +3,6 @@
 #include <complex>
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
-#include <list>
 #include <optional>
 #include <set>
 #include <string>

@@ -5,7 +5,6 @@
 #pragma once
 
 #include <config/nmspc_settings.h>
-#include <list>
 #include <measure/state_measure_infinite.h>
 #include <memory>
 #include <optional>
@@ -103,7 +102,7 @@ class class_state_infinite {
 
     void swap_AB(); /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
     void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void set_mps(const std::list<class_mps_site> &mps_list);
+    void set_mps(const std::vector<class_mps_site> &mps_list);
     void set_mps(const class_mps_site &mpsA, const class_mps_site &mpsB);
     void set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB);
     void set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB,

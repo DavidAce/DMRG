@@ -19,7 +19,7 @@ class class_fdmrg : public class_algorithm_finite {
     StateRitz ritz = StateRitz::SR;
     void      single_fdmrg_step();
     void      resume() final;
-    void      run_task_list(std::list<fdmrg_task> &task_list);
+    void      run_task_list(std::deque<fdmrg_task> &task_list);
     void      run_default_task_list() final;
     void      run_preprocessing() final;
     void      run_algorithm() final;

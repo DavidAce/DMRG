@@ -7,7 +7,6 @@
 #include <algorithms/class_algorithm_status.h>
 #include <complex>
 #include <config/enums.h>
-#include <list>
 #include <map>
 #include <memory>
 #include <vector>
