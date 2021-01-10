@@ -132,7 +132,8 @@ void class_flbit::run_preprocessing() {
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     tensors.move_center_point_to_edge(status.chi_lim);
     tools::finite::print::model(*tensors.model);
-    status.delta_t = std::complex<double>(settings::flbit::time_step_init_real,settings::flbit::time_step_init_imag);
+    create_time_points();
+    update_time_step();
     if(settings::model::model_size <= 10){
         // Create a copy of the state as a full state vector for ED comparison
         auto list_Lsite = num::range<size_t>(0,settings::model::model_size,1);
@@ -142,25 +143,10 @@ void class_flbit::run_preprocessing() {
         time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
     }
 
-    // Create the hamiltonian gates with n-site terms
-    auto                    list_1site = num::range<size_t>(0,settings::model::model_size-0,1);
-    auto                    list_2site = num::range<size_t>(0,settings::model::model_size-1,1);
-    auto                    list_3site = num::range<size_t>(0,settings::model::model_size-2,1);
-    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
-    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1}, {2}), {pos,pos+1}));
-    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1,pos+2},{3}), {pos,pos+1,pos+2}));
+    create_hamiltonian_gates();
+    create_time_evolution_gates();
+    create_lbit_transform_gates();
 
-    for(auto &&ham : ham_gates_1body) std::cout << "ham 1body:\n" << ham.op << std::endl;
-    for(auto &&ham : ham_gates_2body) std::cout << "ham 2body:\n" << ham.op << std::endl;
-    for(auto &&ham : ham_gates_3body) std::cout << "ham 3body:\n" << ham.op << std::endl;
-    for(auto &&ham : ham_gates_1body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham1 is all zeros");
-    for(auto &&ham : ham_gates_2body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham2 is all zeros");
-    for(auto &&ham : ham_gates_3body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham3 is all zeros");
-
-    // Get the time evolution operators
-    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
-    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
-    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
 
@@ -173,7 +159,9 @@ void class_flbit::run_preprocessing() {
 
 void class_flbit::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name("state_real");
-    if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running the flbit algorithm");
+    if(not state_lbit) transform_to_lbit_basis();
+    if(time_points.empty()) create_time_points();
+    if(std::abs(status.delta_t) == 0) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type),  tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
@@ -202,11 +190,7 @@ void class_flbit::single_flbit_step() {
      * \fn void single_DMRG_step(std::string ritz)
      */
     tools::log->trace("Starting single flbit time-step");
-    tensors.activate_sites({0,1});
-    tensors.clear_measurements();
-    tensors.clear_cache();
-    state_lbit->clear_cache();
-    state_lbit->clear_measurements();
+    if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
 
     // Time evolve here
     tools::common::profile::prof[algo_type]["t_evo"]->tic();
@@ -292,6 +276,70 @@ void class_flbit::check_convergence() {
     }
 
     tools::common::profile::prof[algo_type]["t_con"]->toc();
+}
+
+void class_flbit::create_time_points(){
+    tools::log->trace("Creating time points");
+    auto time_start = std::complex<double>(settings::flbit::time_start_real,settings::flbit::time_start_imag);
+    auto time_final = std::complex<double>(settings::flbit::time_final_real,settings::flbit::time_final_imag);
+    auto time_diff = time_start - time_final;
+    // Check that there will be some time evolution
+    if(std::abs(time_diff) == 0) throw std::logic_error("time_start - time_final == 0");
+    // Check that the time limits are purely real or imaginary!
+    bool time_is_real = std::abs(time_diff.real()) > 0;
+    bool time_is_imag = std::abs(time_diff.imag()) > 0;
+    if(time_is_real and time_is_imag)
+        throw std::logic_error(fmt::format("time_start and time_final must both be either purely real or imaginary. Got:\n"
+                                           "time_start = {:.8f}{:+.8f}\n"
+                                           "time_final = {:.8f}{:+.8f}",
+                                           time_start.real(),time_start.imag(), time_final.real(), time_final.imag()));
+    time_points.reserve(settings::flbit::time_num_steps);
+    if(time_is_real)
+       for(const auto & t : num::LogSpaced(settings::flbit::time_num_steps, std::real(time_start), std::real(time_final))){
+           if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+           time_points.emplace_back(t);
+       }
+    else
+       for(const auto & t : num::LogSpaced(settings::flbit::time_num_steps, std::imag(time_start), std::imag(time_final))) {
+           if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+           time_points.emplace_back(std::complex<double>(0, t));
+        }
+    status.phys_time = std::abs(time_points[std::min(time_points.size()-1,status.iter)]);
+    tools::log->trace("Created time points: {}", time_points);
+    tools::log->trace("Current physical time {:.8e}", status.phys_time);
+}
+
+void class_flbit::create_hamiltonian_gates(){
+    // Create the hamiltonian gates with n-site terms
+    auto                    list_1site = num::range<size_t>(0,settings::model::model_size-0,1);
+    auto                    list_2site = num::range<size_t>(0,settings::model::model_size-1,1);
+    auto                    list_3site = num::range<size_t>(0,settings::model::model_size-2,1);
+    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
+    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1}, {2}), {pos,pos+1}));
+    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1,pos+2},{3}), {pos,pos+1,pos+2}));
+
+    for(const auto &ham : ham_gates_1body) std::cout << "ham 1body:\n" << ham.op << std::endl;
+    for(const auto &ham : ham_gates_2body) std::cout << "ham 2body:\n" << ham.op << std::endl;
+    for(const auto &ham : ham_gates_3body) std::cout << "ham 3body:\n" << ham.op << std::endl;
+//    for(const auto &ham : ham_gates_1body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham1 is all zeros");
+    for(const auto &ham : ham_gates_2body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham2 is all zeros");
+    for(const auto &ham : ham_gates_3body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham3 is all zeros");
+
+}
+void class_flbit::create_time_evolution_gates(){
+    // Create the time evolution operators
+    if(time_points.empty()) create_time_points();
+    if(std::abs(status.delta_t) == 0) update_time_step();
+    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
+    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
+    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+}
+
+void class_flbit::create_lbit_transform_gates(){
+    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
 }
 
 void class_flbit::transform_to_real_basis(){
