@@ -218,7 +218,7 @@ void class_xdmrg::run_algorithm() {
         check_convergence();
         print_status_update();
         print_profiling_lap();
-        if(tensors.position_is_any_edge()) print_status_full();
+        if(tensors.position_is_inward_edge()) print_status_full();
         write_to_file();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
@@ -455,14 +455,14 @@ void class_xdmrg::single_xDMRG_step() {
 
 void class_xdmrg::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
-    if(tensors.state->position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
     }
 
     // TODO: Move this reset block away from here
     bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
-    if(status.iter > 2 and tensors.state->position_is_any_edge()) {
+    if(status.iter > 2 and tensors.position_is_inward_edge()) {
         if(outside_of_window and
            (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
             double      old_energy_dens_window = status.energy_dens_window;
@@ -482,17 +482,17 @@ void class_xdmrg::check_convergence() {
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
     status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
 
-    if(tensors.state->position_is_any_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
+    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    if(tensors.state->position_is_any_edge()) {
+    if(tensors.position_is_inward_edge()) {
         tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
                           status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
 
     stop_reason = StopReason::NONE;
-    if(status.iter >= settings::xdmrg::min_iters and tensors.state->position_is_any_edge() and not tensors.model->is_perturbed() and
+    if(status.iter >= settings::xdmrg::min_iters and tensors.position_is_inward_edge() and not tensors.model->is_perturbed() and
        not tensors.model->is_damped()) {
         if(status.iter >= settings::xdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;

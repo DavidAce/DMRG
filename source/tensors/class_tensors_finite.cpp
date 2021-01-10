@@ -269,9 +269,12 @@ template long class_tensors_finite::get_position<long>() const;
 
 bool class_tensors_finite::position_is_the_middle() const { return state->position_is_the_middle(); }
 bool class_tensors_finite::position_is_the_middle_any_direction() const { return state->position_is_the_middle_any_direction(); }
-bool class_tensors_finite::position_is_left_edge(size_t nsite) const { return state->position_is_left_edge(nsite); }
-bool class_tensors_finite::position_is_right_edge(size_t nsite) const { return state->position_is_right_edge(nsite); }
-bool class_tensors_finite::position_is_any_edge(size_t nsite) const { return state->position_is_any_edge(nsite); }
+bool class_tensors_finite::position_is_outward_edge_left(size_t nsite) const { return state->position_is_outward_edge_left(nsite); }
+bool class_tensors_finite::position_is_outward_edge_right(size_t nsite) const { return state->position_is_outward_edge_right(nsite); }
+bool class_tensors_finite::position_is_outward_edge(size_t nsite) const { return state->position_is_outward_edge(nsite); }
+bool class_tensors_finite::position_is_inward_edge_left(size_t nsite) const { return state->position_is_inward_edge_left(nsite); }
+bool class_tensors_finite::position_is_inward_edge_right(size_t nsite) const { return state->position_is_inward_edge_right(nsite); }
+bool class_tensors_finite::position_is_inward_edge(size_t nsite) const { return state->position_is_inward_edge(nsite); }
 bool class_tensors_finite::position_is_at(long pos) const { return state->position_is_at(pos); }
 bool class_tensors_finite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool class_tensors_finite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
