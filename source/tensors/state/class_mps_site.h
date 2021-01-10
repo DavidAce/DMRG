@@ -17,7 +17,7 @@ class class_mps_site {
     std::optional<Eigen::Tensor<Scalar, 1>>         L                   = std::nullopt; /*!< \f$\Lambda\f$*/
     std::optional<Eigen::Tensor<Scalar, 1>>         LC                  = std::nullopt; /*!< \f$\Lambda_C\f$ Center lambda, if this is a center matrix*/
     mutable std::optional<Eigen::Tensor<Scalar, 3>> MC                  = std::nullopt;
-    std::optional<long>                             position            = std::nullopt;
+    std::optional<size_t>                           position            = std::nullopt;
     double                                          truncation_error    = 0;
     double                                          truncation_error_LC = 0;
     std::string                                     label;
@@ -74,7 +74,7 @@ class class_mps_site {
     void set_truncation_error(double error);
     void set_truncation_error_LC(double error);
     void set_label(const std::string &label_);
-    void set_position(long position_);
+    void set_position(size_t position_);
     void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string &label_);
 
     void unset_LC();
