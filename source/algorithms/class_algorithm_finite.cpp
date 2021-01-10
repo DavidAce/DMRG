@@ -602,33 +602,35 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::MODEL: {
             storage_level = settings::output::storage_level_model;
-            tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
-            tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
-            tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
-                                                 state.get_name(), state_prefix, model_prefix, status);
-            tools::log->info("Writing to file: Reason [{}] | Level [{}] | model prefix [{}]", enum2str(storage_reason), enum2str(storage_level), model_prefix);
-            return copy_from_tmp(storage_reason, CopyPolicy::TRY);
+            break;
         }
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
+    tools::log->info("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix, model_prefix);
 
     // The file cam be kept open during writes
     h5pp_file->setKeepFileOpened();
 
     // Start saving tensors and metadata
-    tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state, status);
-    tools::finite::io::h5dset::save_entgm(*h5pp_file, state_prefix, storage_level, state, status);
+    if(storage_reason == StorageReason::MODEL){
+        tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
+        tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
+    }else{
+        tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state, status);
+        tools::finite::io::h5dset::save_entgm(*h5pp_file, state_prefix, storage_level, state, status);
+    }
+
     tools::common::io::h5attr::save_meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, algo_type,
                                          state.get_name(), state_prefix, model_prefix, status);
 
     // The main results have now been written. Next we append data to tables
     for(const auto &table_prefix : table_prefxs) {
-        tools::finite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, tensors, status, algo_type);
+        if(storage_reason == StorageReason::MODEL) break;
         tools::finite::io::h5table::save_sim_status(*h5pp_file, table_prefix + "/status", storage_level, status);
         tools::finite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
         tools::finite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
+        tools::finite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, tensors, status, algo_type);
     }
     h5pp_file->setKeepFileClosed();
 
