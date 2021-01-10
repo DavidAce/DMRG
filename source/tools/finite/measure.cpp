@@ -466,6 +466,13 @@ template double tools::finite::measure::energy_normalized(const class_state_fini
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<Scalar, 3> &, const class_model_finite &model, const class_edges_finite &edges,
                                                           double, double, tensors_measure_finite *measurements);
 
+extern double tools::finite::measure::energy_reduced(const class_tensors_finite & tensors){
+    return tensors.model->get_energy_reduced();
+}
+extern double tools::finite::measure::energy_per_site_reduced(const class_tensors_finite & tensors){
+    return tensors.model->get_energy_per_site_reduced();
+}
+
 double tools::finite::measure::energy_minus_energy_reduced(const class_tensors_finite &tensors) {
     tensors.assert_edges_ene();
     return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
