@@ -87,9 +87,10 @@ size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi
         return 0; // No moves this time, return 0
     }
     else {
-        size_t pos  = state.get_position();
-        size_t posL = state.get_direction() == 1 ? pos + 1 : pos - 1;
-        size_t posR = state.get_direction() == 1 ? pos + 2 : pos;
+        long   pos  = state.get_position<long>();
+        if(pos  < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}",pos));
+        long   posL = state.get_direction() == 1 ? pos + 1 : pos - 1;
+        long   posR = state.get_direction() == 1 ? pos + 2 : pos;
         auto & mps  = state.get_mps_site();
         auto & mpsL = state.get_mps_site(posL); // Becomes the new center position
         auto & mpsR = state.get_mps_site(posR); // The site to the right of the new center position
@@ -121,7 +122,7 @@ size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi
             twosite_tensor.device(Textra::omp::getDevice()) =
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
-        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {posL, posR}, static_cast<long>(posL), chi_lim, svd_threshold, LogPolicy::QUIET);
+        tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, static_cast<long>(posL), chi_lim, svd_threshold, LogPolicy::QUIET);
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
 
@@ -146,30 +147,31 @@ size_t tools::finite::mps::move_center_point_to_middle(class_state_finite &state
     return moves;
 }
 
-void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
+void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &positions,
                                                 long center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
     std::optional<long> current_position = state.get_position<long>();
 
     if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging multisite tensor for sites {} | chi limit {} | dimensions {} | center {} -> {}",
-                          sites, chi_lim, multisite_mps.dimensions(),current_position.value(), center_position);
+                                                         positions, chi_lim, multisite_mps.dimensions(),current_position.value(), center_position);
     // Some sanity checks
-    if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
+    if(multisite_mps.dimension(1) != state.get_mps_site(positions.front()).get_chiL())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}", multisite_mps.dimension(1),
-                                             state.get_mps_site(sites.front()).get_chiL(), sites.front()));
+                                             state.get_mps_site(positions.front()).get_chiL(), positions.front()));
 
-    if(multisite_mps.dimension(2) != state.get_mps_site(sites.back()).get_chiR())
+    if(multisite_mps.dimension(2) != state.get_mps_site(positions.back()).get_chiR())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
-                                             state.get_mps_site(sites.back()).get_chiR(), sites.back()));
+                                             state.get_mps_site(positions.back()).get_chiR(), positions.back()));
     if constexpr(settings::debug){
+        // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
         auto norm = Textra::Tensor_to_Vector(multisite_mps).norm();
-        if(std::abs(norm-1) > 1e-8) throw std::runtime_error(fmt::format("Multisite mps norm is too far from unity: {:.16f}",norm));
+        if(std::abs(norm-1) > 1e-8) tools::log->debug("Multisite mps for positions {} has norm far from unity: {:.16f}",positions, norm);
     }
 
     long              spin_prod = 1;
     std::vector<long> spin_dims;
-    spin_dims.reserve(sites.size());
-    for(const auto &site : sites) {
-        spin_dims.emplace_back(state.get_mps_site(site).spin_dim());
+    spin_dims.reserve(positions.size());
+    for(const auto &pos : positions) {
+        spin_dims.emplace_back(state.get_mps_site(pos).spin_dim());
         spin_prod *= spin_dims.back();
     }
     if(spin_prod != multisite_mps.dimension(0))
@@ -178,18 +180,19 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
 
     // Split the multisite mps into single-site mps objects
     tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->tic();
-    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, sites, center_position, chi_lim, svd_threshold);
+    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim, svd_threshold);
     tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->toc();
 
     // Sanity checks
-    if(sites.size() != mps_list.size())
+    if(positions.size() != mps_list.size())
         throw std::runtime_error(fmt::format("Could not merge multisite mps into state: number of sites mismatch: positions.size() {} != mps_list.size() {}",
-                                             sites.size(), mps_list.size()));
+                                             positions.size(), mps_list.size()));
 
     // Note that one of the positions on the split will be a center, so we need to unset
     // the center in our current state so we don't get duplicate centers
     if(current_position.value() != center_position) {
-        state.get_mps_site(current_position.value()).unset_LC();
+        if(current_position.value() >= 0)
+            state.get_mps_site(current_position.value()).unset_LC();
         current_position = std::nullopt;
     }
 
@@ -202,7 +205,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
         mps_tgt.merge_mps(mps_src);
         state.tag_site_normalized(pos, true); // Merged site is normalized
         if(mps_src.has_stash_V()){
-            if(pos == state.get_length()-1) mps_src.unstash(); // Discard whatever is stashed at the edge (this normalizes the state)
+            if(pos == state.get_length()-1) mps_src.drop_stash(); // Discard whatever is stashed at the edge (this normalizes the state)
             else{
                 // Extract the stashed V-matrix and multiply onto the "B" on the right
                 if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging stash from site {} into {}",pos,pos+1);
@@ -210,7 +213,7 @@ void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const
             }
         }
         if(mps_src.has_stash_U()){
-            if(pos == 0) mps_src.unstash();  // Discard whatever is stashed at the edge (this normalizes the state)
+            if(pos == 0) mps_src.drop_stash();  // Discard whatever is stashed at the edge (this normalizes the state)
             else{
                 if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Merging stash from site {} into {}",pos,pos-1);
                 state.get_mps_site(pos-1).merge_stash(mps_src); // Absorb remaining U,S=LC
@@ -278,19 +281,34 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     // Save the current position, direction and center status
     auto dir = state.get_direction();
     auto pos = state.get_position<long>();
-    auto cnt = state.get_mps_site().isCenter();
-    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {}", tools::finite::measure::norm(state),pos,dir);
+    auto cnt = pos >= 0;
+    auto steps = 0;
+    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {} | bond dims {}", tools::finite::measure::norm(state), pos,dir, tools::finite::measure::bond_dimensions(state));
 
     // Start with SVD at the current position
-    auto & mps      = state.get_mps_site(pos);
-    tools::finite::mps::merge_multisite_tensor(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, chi_lim, svd_threshold, LogPolicy::QUIET);
-    move_center_point_single_site(state, chi_lim, svd_threshold); // Move once to get started
+    // This makes sure chiL and chiR differ at most by factor spin_dim when we start the normalization
+//    if(pos >= 0){
+//        auto & mps = state.get_mps_site(pos);
+//        long chi_new = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Make sure that the bond dimension does not increase faster than spin_dim per site
+//        tools::finite::mps::merge_multisite_tensor(state, mps.get_M() , {static_cast<size_t>(pos)}, pos, chi_new, svd_threshold, LogPolicy::NORMAL);
+//        if constexpr(settings::debug) mps.assert_identity();
+//    }
     // Now we can move around the chain until we return to the original status
-    while(not state.position_is_at(pos,dir,cnt))
+    while(steps++ < 2 or not state.position_is_at(pos,dir,cnt))
         move_center_point_single_site(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
-    if(tools::Logger::getLogLevel(tools::log) <= 0) tools::log->debug("Normalized state | New norm = {:.16f}", tools::finite::measure::norm(state));
+    auto norm = tools::finite::measure::norm(state);
+    if(tools::log->level() == spdlog::level::trace) tools::log->trace("Normalized state | New norm = {:.16f} | pos {} | dir {} | bond dims {}", norm, pos,dir, tools::finite::measure::bond_dimensions(state));
+    if(std::abs(norm - 1) > settings::precision::max_norm_error){
+        for(const auto & mps : state.mps_sites) {
+            tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), Textra::TensorVectorMap(mps->get_L()).norm(), mps->get_L());
+            if(mps->isCenter())
+                tools::log->warn("LC({}) | norm {:.16f} \n {}", mps->get_position(), Textra::TensorVectorMap(mps->get_LC()).norm(), mps->get_LC());
+            mps->assert_identity();
+        }
+        throw std::runtime_error(fmt::format("Norm too far from unity: {:.16f} | max allowed norm error {}",norm, settings::precision::max_norm_error));
+    }
     state.assert_validity();
     return true;
 }
@@ -412,7 +430,6 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if(offset+gate_size > state.get_length()) break;
         auto off_idx = num::range<size_t>(offset, state.get_length()-gate_size+1, gate_size);
         if(num::mod<size_t>(offset,2) == flip) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
-        tools::log->trace("Appending idx {}", off_idx);
         all_idx.insert(all_idx.end(), off_idx.begin(), off_idx.end());
     }
     if(reverse) std::reverse(all_idx.begin(), all_idx.end());
@@ -428,47 +445,27 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     Eigen::Tensor<Scalar, 3> gate_mps;
     for(const auto & idx : all_idx) {
         auto &gate = gates[idx];
-        if(gate.pos != num::range<size_t>(gate.pos.front(), gate.pos.front()+gate_size, 1))// Just a sanity check that gate.pos is well defined
-            throw std::runtime_error(fmt::format("The positions on gate {} are not well defined for a {}-site gate: {}", idx,gate_size,gate.pos));
+        if constexpr(settings::debug)
+            if(gate.pos != num::range<size_t>(gate.pos.front(), gate.pos.front()+gate_size, 1))// Just a sanity check that gate.pos is well defined
+                throw std::runtime_error(fmt::format("The positions on gate {} are not well defined for a {}-site gate: {}", idx,gate_size,gate.pos));
         if(gate.pos.back() >= state.get_length())
             throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", idx, gate.pos));
 
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic();
-        while(state.get_position() != gate.pos.front()) move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
+        while(not state.position_is_at(static_cast<long>(gate.pos.front())))
+            move_center_point_single_site(state, chi_lim, svd_threshold); // Move into position
 
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->toc();
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic();
-        tools::log->debug("Constructing multisite_mps at sites {}", gate.pos);
         auto multisite_mps = state.get_multisite_mps(gate.pos);
-        tools::log->debug("Contracting gate and multisite_mps at sites {}", gate.pos);
         gate_mps.resize({gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse) gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().contract(multisite_mps, Textra::idx({0}, {0}));
         else
             gate_mps.device(Textra::omp::getDevice()) = gate.op.contract(multisite_mps, Textra::idx({0}, {0}));
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->toc();
-
-        // Calculate new center position
-//        long center_position = std::clamp(
-//            state.get_position<long>() + state.get_direction() * static_cast<long>(gate.pos.size()),
-//            0l, static_cast<long>(state.get_length())-1);
-
-        tools::log->debug("Merging at sites {}", gate.pos);
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->tic();
-//        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, static_cast<long>(gate.pos.front()), chi_lim, svd_threshold, LogPolicy::QUIET);
         tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, state.get_position<long>(), chi_lim, svd_threshold, LogPolicy::QUIET);
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->toc();
-        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->get_last_interval(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->get_measured_time(),
-                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->get_measured_time()
-                          );
-        tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->reset();
-        tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->reset();
     }
 
 
@@ -499,5 +496,26 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
+
+    if constexpr(settings::debug){
+        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->get_measured_time(),
+                          1000*tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->get_measured_time()
+        );
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->reset();
+    }
 
 }
