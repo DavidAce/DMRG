@@ -154,13 +154,30 @@ namespace num {
         return xs;
     }
 
-    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
-        double expA = std::pow(base, a);
-        double expB = std::pow(base, b);
-        auto   vec  = LinSpaced(N, expA, expB);
-        for(auto &val : vec) val = std::abs(std::log(val) / std::log(base));
-        return vec;
+    std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+        if(a <= 0) throw std::range_error("a must be positive");
+        if(b <= 0) throw std::range_error("b must be positive");
+        double loga = std::log(a)/std::log(base);
+        double logb = std::log(b)/std::log(base);
+        double h = (logb - loga) / static_cast<double>(N - 1);
+        double factor = std::pow(base, h);
+        double val    = std::pow(base, loga);
+        std::vector<double> xs(N);
+        for(auto & x : xs) {
+            x = val;
+            val *= factor;
+        }
+        return xs;
     }
+
+
+//    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+//        double expA = std::pow(base, a);
+//        double expB = std::pow(base, b);
+//        auto   vec  = LinSpaced(N, expA, expB);
+//        for(auto &val : vec) val = std::abs(std::log(val) / std::log(base));
+//        return vec;
+//    }
 
     /*! \brief Product operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
