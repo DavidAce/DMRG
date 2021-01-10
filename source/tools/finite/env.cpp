@@ -14,7 +14,7 @@
 #include <tools/common/prof.h>
 
 
-void tools::finite::env::assert_edges_ene(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges){
+void tools::finite::env::assert_edges_ene(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges){
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
@@ -50,7 +50,7 @@ void tools::finite::env::assert_edges_ene(const class_state_finite &state, const
     }
 }
 
-void tools::finite::env::assert_edges_var(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges){
+void tools::finite::env::assert_edges_var(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges){
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
