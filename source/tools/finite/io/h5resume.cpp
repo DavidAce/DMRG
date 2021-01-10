@@ -132,6 +132,8 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     tools::log->debug("Validating resumed state [{}]", state_prefix);
     tools::log->debug("State labels:", tensors.state->get_labels());
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+    tensors.clear_measurements();
+    tensors.do_all_measurements();
     compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
     compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
 }
