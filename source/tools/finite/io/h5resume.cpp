@@ -94,7 +94,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
             auto LC          = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_LC_name);
             auto pos_on_file = h5ppFile.readAttribute<size_t>("position", dset_LC_name);
             if(pos != pos_on_file) throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
-            state.get_mps_site(pos).set_LC(LC);
+            mps->set_LC(LC);
         }
         if(not h5ppFile.linkExists(dset_L_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_L_name));
         if(not h5ppFile.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
