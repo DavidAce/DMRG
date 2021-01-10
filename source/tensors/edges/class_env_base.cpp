@@ -72,6 +72,10 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
+    unique_id = std::nullopt;
+    unique_id_env = std::nullopt;
+    unique_id_mps = std::nullopt;
+    unique_id_mpo = std::nullopt;
 
     if(not block) block = std::make_unique<Eigen::Tensor<Scalar, 3>>();
     if(side == "L") {
