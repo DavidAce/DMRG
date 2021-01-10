@@ -3,6 +3,7 @@
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <measure/tensors_measure_finite.h>
+#include <tensors/edges/class_env_pair.h>
 #include <memory>
 
 class class_state_finite;
