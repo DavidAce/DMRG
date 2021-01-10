@@ -19,9 +19,10 @@
 tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
                                                                      OptSpace optSpace, OptType optType) {
     std::vector<size_t> sites = tensors.active_sites;
+    double energy_reduced = tools::finite::measure::energy_reduced(tensors);
     opt_state           initial_tensor("current state", tensors.get_multisite_mps(), sites,
-                             tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                             tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                             tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
+                             energy_reduced,                                           // Energy reduced for full system
                              tools::finite::measure::energy_variance(tensors),
                              1.0, // Overlap
                              tensors.get_length());
@@ -34,8 +35,8 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
                                                                      OptType optType) {
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2str(optMode),
-                      enum2str(optSpace), enum2str(optType), tensors.get_position(), tensors.active_sites, tensors.state->active_dimensions(),
-                      tensors.state->active_problem_size());
+                      enum2str(optSpace), enum2str(optType), status.position, tensors.active_sites, tensors.active_problem_dims(),
+                      tensors.active_problem_size());
 
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;

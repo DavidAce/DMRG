@@ -112,7 +112,7 @@ void class_tensors_finite::project_to_nearest_sector(const std::string &sector, 
     if(not chi_lim) chi_lim = state->find_largest_chi();
     tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
     tools::finite::ops::project_to_nearest_sector(*state, sector);
-    normalize_state(chi_lim.value(), svd_threshold, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, otherwise the edges are not rebuilt
+    normalize_state(chi_lim.value(), svd_threshold, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
 }
 
 void class_tensors_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
