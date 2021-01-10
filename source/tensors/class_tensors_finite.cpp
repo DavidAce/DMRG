@@ -102,7 +102,7 @@ class_state_finite class_tensors_finite::get_state_projected_to_nearest_sector(c
     state_projected.clear_cache();
     if(not chi_lim) chi_lim = state_projected.find_largest_chi();
     tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
-    tools::finite::ops::get_projection_to_nearest_sector(state_projected, sector);
+    tools::finite::ops::project_to_nearest_sector(state_projected, sector);
     tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::ALWAYS);
     return state_projected;
 }
