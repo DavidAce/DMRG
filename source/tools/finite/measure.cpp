@@ -80,7 +80,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
         Eigen::Tensor<Scalar, 2> chain;
         Eigen::Tensor<Scalar, 2> temp;
         bool                     first = true;
-        for(auto &&pos : state.active_sites) {
+        for(const auto & pos : state.active_sites) {
             const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
             if(first) {
                 chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
@@ -98,8 +98,8 @@ double tools::finite::measure::norm(const class_state_finite &state) {
         Eigen::Tensor<Scalar, 2> chain;
         Eigen::Tensor<Scalar, 2> temp;
         bool                     first = true;
-        for(size_t pos = 0; pos < state.get_length(); pos++) {
-            const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
+        for(const auto & mps : state.mps_sites) {
+            const auto &M = mps->get_M();
             if(first) {
                 chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
                 first = false;
@@ -142,7 +142,7 @@ std::vector<long> tools::finite::measure::bond_dimensions(const class_state_fini
 
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_state_finite &state) {
     std::vector<long> bond_dimensions;
-    for(auto &&pos : state.active_sites) {
+    for(const auto & pos : state.active_sites) {
         bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
         if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
     }
@@ -245,7 +245,7 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     tools::common::profile::get_default_prof()["t_spn"]->tic();
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<Scalar, 3> temp;
-    for(auto && mps : state.mps_sites) {
+    for(const auto & mps : state.mps_sites) {
         const auto &M = mps->get_M();
         temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
         temp.device(Textra::omp::getDevice()) = L.contract(M, idx({0}, {1})).contract(M.conjugate(), idx({0}, {1})).contract(mpo, idx({0, 1, 3}, {0, 2, 3}));

@@ -308,7 +308,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
         }
     }
     // Sanity check
-    for(auto && u : unitaries) if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+    for(const auto & u : unitaries) if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
     return unitaries;
 }
 
@@ -343,7 +343,7 @@ std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_2sit
 
     std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
     time_evolution_operators.reserve(sites-1);
-    for(auto && h : hams_2site)
+    for(const auto & h : hams_2site)
        time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
     return time_evolution_operators;
 }
@@ -358,7 +358,7 @@ std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_3sit
 
     std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
     time_evolution_operators.reserve(sites-1);
-    for(auto && h : hams_3site)
+    for(const auto & h : hams_3site)
         time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
     return time_evolution_operators;
 }

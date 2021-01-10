@@ -73,7 +73,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     Eigen::VectorXd overlaps             = (multisite_mps_vector.adjoint() * eigvecs).cwiseAbs().real();
 
     double candidate_time = 0;
-    for(auto &&item : reports::eigs_log) { candidate_time += item.ham_time + item.lu_time + item.eig_time; }
+    for(const auto & item : reports::eigs_log) { candidate_time += item.ham_time + item.lu_time + item.eig_time; }
 
     std::vector<opt_state> candidate_list;
     candidate_list.reserve(static_cast<size_t>(eigvals.size()));
@@ -248,7 +248,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
         if(max_overlap_idx) {
             // (OA)
 //            if constexpr(settings::debug) {
-//                for(auto &&[idx, candidate] : iter::enumerate(candidate_list)) {
+//                for(const auto & [idx, candidate] : iter::enumerate(candidate_list)) {
 //                    candidate.set_variance(tools::finite::measure::energy_variance(candidate.get_tensor(), tensors));
 //                    std::string msg = fmt::format("Candidate {:10} | overlap {:<14.12f} | energy {:<+20.16f} | variance {:<+20.16f}", candidate.get_name(),
 //                                                  candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()));

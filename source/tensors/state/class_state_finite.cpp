@@ -139,7 +139,7 @@ int  class_state_finite::get_direction() const { return direction; }
 std::vector<std::string> class_state_finite::get_labels() const{
     std::vector<std::string> labels;
     labels.reserve(get_length());
-    for(auto && mps : mps_sites) labels.emplace_back(mps->get_label());
+    for(const auto & mps : mps_sites) labels.emplace_back(mps->get_label());
     return labels;
 }
 
@@ -307,7 +307,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
         Eigen::Tensor<Scalar,0> norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0,1,2},{0,1,2}));
         double norm = std::abs(norm_scalar(0));
         if(std::abs(norm - 1) > settings::precision::max_norm_error){
-            for(auto && site : sites){
+            for(const auto & site : sites){
                 auto & mps = get_mps_site(site);
                 auto & M = mps.get_M();
                 tools::log->critical("{}({}) norm: {:.16f}",mps.get_label(), site, Textra::TensorVectorMap(M).norm());
@@ -365,7 +365,7 @@ std::vector<double> class_state_finite::get_truncation_errors() const { return t
 std::vector<double> class_state_finite::get_truncation_errors_active() const {
     std::vector<double> truncation_errors;
     truncation_errors.reserve(active_sites.size());
-    for(auto && pos : active_sites){
+    for(const auto & pos : active_sites){
         // We are only interested in the truncation on bonds that are updated
         // when operating on active_sites. This excludes the outer bonds.
         if(get_mps_site(pos).isCenter())

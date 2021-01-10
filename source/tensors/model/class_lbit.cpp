@@ -213,7 +213,7 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
     double J1 = 0;
     double J2 = 0;
     double J3 = 0;
-    for(auto &&n : nbody_terms){
+    for(const auto & n : nbody_terms){
         if(n == 1) J1 = 1;
         if(n == 2) J2 = 1;
         if(n == 3) J3 = 1;

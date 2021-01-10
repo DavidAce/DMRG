@@ -114,8 +114,8 @@ void tools::finite::mps::internal::set_product_state_aligned(class_state_finite 
     Eigen::Tensor<Scalar,3>   spinor    = Textra::MatrixToTensor(get_spinor(axis, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
     std::string label = "A";
-    for(auto &&mps_ptr : state.mps_sites) {
-        auto &&mps = *mps_ptr;
+    for(const auto & mps_ptr : state.mps_sites) {
+        auto &mps = *mps_ptr;
         mps.set_mps(spinor, L,0,label);
         if(mps.isCenter()) {
             mps.set_LC(L);
@@ -137,7 +137,7 @@ void tools::finite::mps::internal::set_product_state_neel(class_state_finite &st
                                                         Textra::MatrixToTensor(get_spinor(axis, -1).normalized(), 2, 1, 1) };
     tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites...", axis, axis);
     std::string label = "A";
-    for(auto &&mps_ptr : state.mps_sites) {
+    for(const auto & mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
         auto idx  = num::mod<size_t>(mps.get_position(),2);
         mps.set_mps(spinors.at(idx), L,0,label);

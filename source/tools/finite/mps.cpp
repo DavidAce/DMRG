@@ -452,7 +452,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     // Pack the two-site operators into a vector of UnitaryGates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
-    for(auto &&[idx, op] : iter::enumerate(nsite_tensors)) gates.emplace_back(qm::Gate(nsite_tensors[idx],num::range<size_t>(idx,idx+gate_size,1)));
+    for(const auto & [idx, op] : iter::enumerate(nsite_tensors)) gates.emplace_back(qm::Gate(nsite_tensors[idx],num::range<size_t>(idx,idx+gate_size,1)));
     apply_gates(state, gates, reverse, chi_lim, svd_threshold);
 }
 
@@ -465,7 +465,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("Before applying gates");
-            for(auto &&mps : state.mps_sites)
+            for(const auto & mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
@@ -476,7 +476,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 
     if(gates.empty()) return;
     auto gate_size = gates.front().pos.size(); // The size of each gate, i.e. how many sites are updated by each gate.
-    for (auto && [idx,gate] : iter::enumerate(gates)) // Check that all gates are of the same size
+    for (const auto & [idx,gate] : iter::enumerate(gates)) // Check that all gates are of the same size
         if(gate.pos.size() != gate_size)
             throw std::runtime_error(fmt::format("Gate size mismatch: "
                                                  "Gate 0 has {} sites: {} | "
@@ -522,7 +522,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 
     state.clear_cache(LogPolicy::QUIET);
     Eigen::Tensor<Scalar, 3> gate_mps;
-    for(auto &&idx : all_idx) {
+    for(const auto & idx : all_idx) {
         auto &gate = gates[idx];
         if(gate.pos != num::range<size_t>(gate.pos.front(), gate.pos.front()+gate_size, 1))// Just a sanity check that gate.pos is well defined
             throw std::runtime_error(fmt::format("The positions on gate {} are not well defined for a {}-site gate: {}", idx,gate_size,gate.pos));
@@ -572,7 +572,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6 ){
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("After applying gates");
-            for(auto &&mps : state.mps_sites)
+            for(const auto & mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
@@ -589,7 +589,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6){
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
             tools::log->trace("After normalization");
-            for(auto &&mps : state.mps_sites)
+            for(const auto & mps : state.mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
