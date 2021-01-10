@@ -68,4 +68,6 @@ class class_model_finite {
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
     void                            clear_cache() const;
+
+    std::vector<size_t> get_active_ids() const;
 };

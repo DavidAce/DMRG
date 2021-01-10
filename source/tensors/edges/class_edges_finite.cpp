@@ -262,3 +262,13 @@ env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_m
     auto envs = get_multisite_var(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
+
+
+std::pair<std::vector<size_t>, std::vector<size_t>> class_edges_finite::get_active_ids() const{
+    std::pair<std::vector<size_t>, std::vector<size_t>> ids;
+    auto & ene_ids = ids.first;
+    auto & var_ids = ids.second;
+    ene_ids = {get_eneL(active_sites.front()).get_unique_id(), get_eneR(active_sites.back()).get_unique_id()};
+    var_ids = {get_varL(active_sites.front()).get_unique_id(), get_varR(active_sites.back()).get_unique_id()};
+    return ids;
+}
