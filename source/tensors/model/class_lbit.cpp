@@ -299,17 +299,18 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::lbit;
-    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6) throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_rand, J1_mean));
-    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6) throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_rand, J2_mean));
-    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6) throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_rand, J3_mean));
+    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6) throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_mean, J1_mean));
+    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6) throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_mean, J2_mean));
+    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6) throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_mean, J3_mean));
     if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6) throw std::runtime_error(fmt::format("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth));
     if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
 
     // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
-    if(file.linkExists(mpo_dset)) {
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
+    std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
+    if(file.linkExists(mpo_path)) {
+        auto mpo_dset = file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_path);
+        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(mpo_dset))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     }
 }
