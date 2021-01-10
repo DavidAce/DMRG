@@ -4,8 +4,8 @@
 #include <algorithms/class_algorithm_status.h>
 #include <complex>
 #include <config/nmspc_settings.h>
-#include <general/nmspc_exceptions.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_exceptions.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <tensors/class_tensors_finite.h>
@@ -19,7 +19,6 @@
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
 #include <tools/finite/mps.h>
-#include <tools/finite/print.h>
 #include <typeindex>
 
 using Scalar = std::complex<double>;
@@ -84,7 +83,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     state.initialize(str2enum<ModelType>(model_type), model_size, position);
     tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
     for(const auto & mps : state.mps_sites) {
-        auto pos = mps->get_position();
+        auto pos = mps->get_position<long>();
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
         std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
@@ -92,7 +91,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
             std::string dset_LC_name = fmt::format("{}/{}", mps_prefix, "L_C");
             if(not h5ppFile.linkExists(dset_LC_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
             auto LC          = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_LC_name);
-            auto pos_on_file = h5ppFile.readAttribute<size_t>("position", dset_LC_name);
+            auto pos_on_file = h5ppFile.readAttribute<long>("position", dset_LC_name);
             if(pos != pos_on_file) throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
             mps->set_LC(LC);
         }
@@ -133,9 +132,6 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     tools::log->debug("Validating resumed state [{}]", state_prefix);
     tools::log->debug("State labels:", tensors.state->get_labels());
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
-    tensors.clear_measurements();
-    tensors.do_all_measurements();
     compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
     compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
-
 }
