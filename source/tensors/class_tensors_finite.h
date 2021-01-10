@@ -42,7 +42,14 @@ class class_tensors_finite {
     void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
     //    void randomize_state(const std::string &sector, long bitfield, bool use_eigenspinors);
 
-    class_state_finite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &         get_multisite_mps() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 4> &         get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<Scalar, 4> &         get_multisite_mpo_squared() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk() const;
+
+    [[nodiscard]] class_state_finite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt,
+                                                                           std::optional<double> svd_threshold = std::nullopt);
     void project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void damp_model_disorder(double coupling_damp, double field_damp);

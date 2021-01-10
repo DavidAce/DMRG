@@ -4,9 +4,6 @@
 
 #include "ceres_direct_functor.h"
 #include <tensors/class_tensors_finite.h>
-#include <tensors/edges/class_edges_finite.h>
-#include <tensors/model/class_model_finite.h>
-#include <tensors/state/class_state_finite.h>
 #include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -18,16 +15,13 @@ template<typename Scalar>
 ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &tensors, const class_algorithm_status &status)
     : ceres_base_functor(tensors, status) {
     tools::log->trace("Constructing direct functor");
-    const auto &state = *tensors.state;
-    const auto &model = *tensors.model;
-    const auto &edges = *tensors.edges;
 
     if constexpr(std::is_same<Scalar, double>::value) {
         tools::log->trace("- Generating real-valued multisite components");
-        mpo                 = model.get_multisite_mpo().real();
-        mpo2                = model.get_multisite_mpo_squared().real();
-        const auto &env_ene = edges.get_multisite_ene_blk();
-        const auto &env_var = edges.get_multisite_var_blk();
+        mpo                 = tensors.get_multisite_mpo().real();
+        mpo2                = tensors.get_multisite_mpo_squared().real();
+        const auto &env_ene = tensors.get_multisite_ene_blk();
+        const auto &env_var = tensors.get_multisite_var_blk();
         envL                = env_ene.L.real();
         envR                = env_ene.R.real();
         env2L               = env_var.L.real();
@@ -36,10 +30,10 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         tools::log->trace("- Generating complex-valued multisite components");
-        mpo                 = model.get_multisite_mpo();
-        mpo2                = model.get_multisite_mpo_squared();
-        const auto &env_ene = edges.get_multisite_ene_blk();
-        const auto &env_var = edges.get_multisite_var_blk();
+        mpo                 = tensors.get_multisite_mpo();
+        mpo2                = tensors.get_multisite_mpo_squared();
+        const auto &env_ene = tensors.get_multisite_ene_blk();
+        const auto &env_var = tensors.get_multisite_var_blk();
         envL                = env_ene.L;
         envR                = env_ene.R;
         env2L               = env_var.L;
@@ -131,11 +125,11 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
     t_vH2->tic();
-    auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes);
+    auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2v_tensor, v_tensor, mpo2, env2L, env2R);
     t_vH2->toc();
 
-    ops = tools::finite::opt::internal::get_ops(dsizes[0], dsizes[1], dsizes[2], mpo.dimension(0));
+    ops = tools::finite::opt::internal::get_ops(dims[0], dims[1], dims[2], mpo.dimension(0));
 
     /*
      * NOTE 2020-10-05
@@ -191,7 +185,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
     t_vH->tic();
-    auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dsizes);
+    auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
     t_vH->toc();
 }

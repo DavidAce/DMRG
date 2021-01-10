@@ -6,30 +6,26 @@
 #include <math/eig.h>
 #include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
 #include <tensors/class_tensors_finite.h>
-#include <tensors/edges/class_edges_finite.h>
-#include <tensors/model/class_model_finite.h>
-#include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/measure.h>
 #include <tools/finite/opt-internal/opt-internal.h>
 
 
-Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, StateRitz ritz){
+Eigen::Tensor<class_tensors_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, StateRitz ritz){
     return ground_state_optimization(tensors,enum2str(ritz));
 }
 
-Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
+Eigen::Tensor<class_tensors_finite::Scalar,3> tools::finite::opt::internal::ground_state_optimization(const class_tensors_finite & tensors, std::string_view ritzstring){
     tools::log->debug("Ground state optimization with ritz {} ...", ritzstring);
     using namespace internal;
     using namespace settings::precision;
 
     eig::Ritz ritz = eig::stringToRitz(ritzstring);
-    auto shape_mps = tensors.state->active_dimensions();
-    auto shape_mpo = tensors.model->active_dimensions();
-    const auto & mpo = tensors.model->get_multisite_mpo();
-    const auto & env = tensors.edges->get_multisite_ene_blk();
-//    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
+    const auto & mpo = tensors.get_multisite_mpo();
+    const auto & env = tensors.get_multisite_ene_blk();
+    auto shape_mps = tensors.active_problem_dims();
+    auto shape_mpo = mpo.dimensions();
+    //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     auto        nev       = static_cast<eig::size_type>(1);
     auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
     tools::common::profile::get_default_prof()["t_eig"]->tic();

@@ -85,6 +85,17 @@ void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> s
     }
 }
 
+
+const Eigen::Tensor<class_tensors_finite::Scalar, 3> & class_tensors_finite::get_multisite_mps() const{return state->get_multisite_mps();}
+
+const Eigen::Tensor<class_tensors_finite::Scalar, 4> & class_tensors_finite::get_multisite_mpo() const{return model->get_multisite_mpo();}
+
+const Eigen::Tensor<class_tensors_finite::Scalar, 4> & class_tensors_finite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
+
+env_pair<const Eigen::Tensor<class_tensors_finite::Scalar, 3>> class_tensors_finite::get_multisite_ene_blk() const { return std::as_const(*edges).get_multisite_ene_blk(); }
+env_pair<const Eigen::Tensor<class_tensors_finite::Scalar, 3>> class_tensors_finite::get_multisite_var_blk() const { return std::as_const(*edges).get_multisite_var_blk(); }
+
+
 class_state_finite class_tensors_finite::get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold){
     auto state_projected = *state;
     state_projected.clear_measurements();

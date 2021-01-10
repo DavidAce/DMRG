@@ -99,7 +99,7 @@ template std::vector<opt_state> internal::subspace::find_candidates<real>(const 
 opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
                                                                     OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
-    opt_state           initial_tensor("current state", tensors.state->get_multisite_mps(), sites,
+    opt_state           initial_tensor("current state", tensors.get_multisite_mps(), sites,
                              tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
                              tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
                              tools::finite::measure::energy_variance(tensors),
