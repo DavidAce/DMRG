@@ -80,7 +80,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     if(model_size != settings::model::model_size)
         throw std::runtime_error(
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-    state.initialize(str2enum<ModelType>(model_type), model_size, position);
+    state.initialize(str2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
     tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
     for(const auto & mps : state.mps_sites) {
         auto pos = mps->get_position<long>();
