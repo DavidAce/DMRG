@@ -381,6 +381,7 @@ void class_xdmrg::single_xDMRG_step() {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         tensors.activate_sites(conf.chosen_sites);
+        if(tensors.active_sites.empty()) continue;
 
         variance_old = measure::energy_variance(tensors); // Should just take value from cache
         switch(conf.optInit) {
@@ -409,45 +410,46 @@ void class_xdmrg::single_xDMRG_step() {
             continue;
         }
     }
-    // Sort the results in order of increasing variance
-    std::sort(results.begin(), results.end(), [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
-    if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
-        for(auto &candidate : results)
-            tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-                              candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance()),
-                              candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
+    if(not results.empty()){
+        // Sort the results in order of increasing variance
+        std::sort(results.begin(), results.end(), [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
-    // Take the best result
-    const auto &winner = results.front();
-    last_optspace      = winner.get_optspace();
-    last_optmode       = winner.get_optmode();
-    tensors.activate_sites(winner.get_sites());
-    tensors.state->tag_active_sites_normalized(false);
-    // Truncate even more if doing chi quench
-    //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
+        if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
+            for(auto &candidate : results)
+                tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
+                                  candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance()),
+                                  candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
+        // Take the best result
+        const auto &winner = results.front();
+        last_optspace      = winner.get_optspace();
+        last_optmode       = winner.get_optmode();
+        tensors.activate_sites(winner.get_sites());
+        tensors.state->tag_active_sites_normalized(false);
+        // Truncate even more if doing chi quench
+        //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
-    // Do the truncation with SVD
-    tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
-    if(tools::log->level() <= spdlog::level::debug) {
-        auto truncation_errors = tensors.state->get_truncation_errors_active();
-        for(auto &t : truncation_errors) t = std::log10(t);
-        tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors, ", "));
-    }
+        // Do the truncation with SVD
+        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
+        if(tools::log->level() <= spdlog::level::debug) {
+            auto truncation_errors = tensors.state->get_truncation_errors_active();
+            for(auto &t : truncation_errors) t = std::log10(t);
+            tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors, ", "));
+        }
 
-    if constexpr(settings::debug) {
-        auto variance_before_svd = winner.get_variance();
-        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-        tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-        tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
-        tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_after_svd - variance_before_svd) / variance_after_svd);
-    }
+        if constexpr(settings::debug) {
+            auto variance_before_svd = winner.get_variance();
+            auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+            tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
+            tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+            tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_after_svd - variance_before_svd) / variance_after_svd);
+        }
 
-    debug::check_integrity(*tensors.state);
+        debug::check_integrity(*tensors.state);
 
-    // Update current energy density ε
-    status.energy_dens =
-        (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
+        // Update current energy density ε
+        status.energy_dens =
+            (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
