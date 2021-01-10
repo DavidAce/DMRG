@@ -380,7 +380,7 @@ void class_flbit::print_status_update() {
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("wtime:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
-    report += fmt::format("ptime:{:<} ",fmt::format("{:>6.2f}s",status.phys_time));
+    report += fmt::format("ptime:{:<} ",fmt::format("{:+>8.2e}s",status.phys_time));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);

@@ -650,9 +650,10 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("iter:{:<4} ", status.iter);
     report += fmt::format("step:{:<5} ", status.step);
     report += fmt::format("L:{} ", tensors.get_length());
-    if(tensors.active_sites.empty()) report += fmt::format("l:{:<2} ", tensors.get_position());
+    if(tensors.active_sites.empty())
+        report += fmt::format("l:{:<2} ", status.position);
     else if(tensors.state->get_direction() > 0)
-        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
+        report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
 
@@ -672,7 +673,7 @@ void class_algorithm_finite::print_status_update() {
 
 
     if(last_optmode and last_optspace) report+= fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0,3),enum2str(last_optspace.value()).substr(0,3));
-    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
+    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error()));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("time:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
@@ -688,9 +689,9 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("= {: ^56} =", " Full status: [" + algo_name + "][" + tensors.state->get_name() + "]");
     tools::log->info("{:=^60}", "");
     tools::log->info("Stop reason                        = {}", enum2str(stop_reason));
-    tools::log->info("Sites                              = {}", tensors.state->get_length());
-    tools::log->info("Position                           = {}", tensors.state->get_position());
-    tools::log->info("Direction                          = {}", tensors.state->get_direction());
+    tools::log->info("Sites                              = {}", tensors.get_length());
+    tools::log->info("Position                           = {}", status.position);
+    tools::log->info("Direction                          = {}", status.direction);
     tools::log->info("Iterations (full chain sweeps)     = {}", status.iter);
     tools::log->info("Steps (moves along the chain)      = {}", status.step);
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_measured_time(),
