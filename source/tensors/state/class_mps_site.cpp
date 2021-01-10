@@ -143,7 +143,7 @@ long                         class_mps_site::spin_dim() const { return get_M_bar
 long                         class_mps_site::get_chiL() const { return get_M_bare().dimension(1); }
 long                         class_mps_site::get_chiR() const { return get_M_bare().dimension(2); }
 
-void class_mps_site::set_position(const long position_) {
+void class_mps_site::set_position(const size_t position_) {
     position = position_;
     MC.reset();
 }
