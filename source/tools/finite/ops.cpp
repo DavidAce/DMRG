@@ -34,7 +34,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
     tools::log->trace("Applying MPO's");
     if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
 
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         state.clear_measurements();
         tools::log->debug("Norm                 before applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      before applying mpos: {}", tools::finite::measure::spin_components(state));
@@ -118,7 +118,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
     }
 
 
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         state.clear_measurements();
         state.clear_cache();
         state.tag_all_sites_normalized(false); // This operation denormalizes all sites
