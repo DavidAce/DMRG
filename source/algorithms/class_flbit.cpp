@@ -49,7 +49,7 @@ void class_flbit::resume() {
     auto name = tools::common::io::h5resume::extract_state_name(state_prefix);
 
     // Initialize a custom task list
-    std::list<flbit_task> task_list;
+    std::deque<flbit_task> task_list;
 
     if(not status.algorithm_has_finished) {
         // This could be a savepoint state
@@ -65,7 +65,7 @@ void class_flbit::resume() {
     // TODO: We may still have some more things to do, e.g. the config may be asking for more states
 }
 
-void class_flbit::run_task_list(std::list<flbit_task> &task_list) {
+void class_flbit::run_task_list(std::deque<flbit_task> &task_list) {
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
@@ -91,7 +91,7 @@ void class_flbit::run_task_list(std::list<flbit_task> &task_list) {
 }
 
 void class_flbit::run_default_task_list() {
-    std::list<flbit_task> default_task_list = {
+    std::deque<flbit_task> default_task_list = {
         flbit_task::INIT_DEFAULT,
         flbit_task::TIME_EVOLVE,
         flbit_task::POST_DEFAULT,

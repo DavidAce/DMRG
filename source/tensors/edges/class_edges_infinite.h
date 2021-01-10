@@ -2,7 +2,6 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <list>
 #include <memory>
 #include <optional>
 #include <general/eigen_tensor_fwd_decl.h>

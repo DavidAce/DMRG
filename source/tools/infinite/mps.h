@@ -1,7 +1,6 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <list>
 #include <optional>
 #include <set>
 #include <string>

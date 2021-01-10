@@ -42,7 +42,7 @@ void tools::infinite::mps::random_product_state([[maybe_unused]] const class_sta
 //    if(not chi_lim)
 //        chi_lim = state.get_chi_lim();
 //
-//    std::list<long> spin_dims;
+//    std::vector<long> spin_dims;
 //    for(const auto &site : positions) spin_dims.emplace_back(state.get_mps(site).spin_dim());
 //
 //    // Split the multisite mps into single-site mps objects
