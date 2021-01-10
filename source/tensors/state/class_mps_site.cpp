@@ -264,6 +264,7 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
 
     if(isCenter()) {
         Eigen::Tensor<Scalar, 1> LC_temp = get_LC().broadcast(Textra::array1{mpoDimR});
+        Textra::normalize(LC_temp);
         set_LC(LC_temp);
     }
     Eigen::Tensor<Scalar, 3> M_bare_temp(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
@@ -272,7 +273,7 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
                                                        .shuffle(Textra::array5{4, 0, 2, 1, 3})
                                                        .reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     Eigen::Tensor<Scalar, 1> L_temp = get_L().broadcast(Textra::array1{mpoDimL});
-
+    Textra::normalize(L_temp);
     set_L(L_temp);
     set_M(M_bare_temp);
 }
