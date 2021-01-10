@@ -47,6 +47,7 @@ class_algorithm_launcher::class_algorithm_launcher(){
 
 void class_algorithm_launcher::start_h5pp_file(){
     if( settings::output::storage_level_model      == StorageLevel::NONE and
+        settings::output::storage_level_savepoint  == StorageLevel::NONE and
         settings::output::storage_level_checkpoint == StorageLevel::NONE and
         settings::output::storage_level_good_state == StorageLevel::NONE and
         settings::output::storage_level_fail_state == StorageLevel::NONE and

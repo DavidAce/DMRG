@@ -32,7 +32,7 @@ namespace tools::infinite::io::h5dset {
 
 int tools::infinite::io::h5dset::decide_layout(std::string_view prefix_path) {
     std::string str(prefix_path);
-    std::regex  rx(R"(checkpoint/iter_[0-9])"); // Declare the regex with a raw string literal
+    std::regex  rx(R"(point/iter_[0-9])"); // Declare the regex with a raw string literal
     std::smatch m;
     if(regex_search(str, m, rx)) return H5D_CONTIGUOUS;
     else

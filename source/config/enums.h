@@ -9,7 +9,7 @@ enum class SVDMode { EIGEN, LAPACKE };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class EdgeStatus {STALE, FRESH};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
+enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
@@ -168,6 +168,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == StorageLevel::FULL)                                  return "FULL";
     }
     if constexpr(std::is_same_v<T, StorageReason>) {
+        if(item == StorageReason::SAVEPOINT)                            return "SAVEPOINT";
         if(item == StorageReason::CHECKPOINT)                           return "CHECKPOINT";
         if(item == StorageReason::FINISHED)                             return "FINISHED";
         if(item == StorageReason::CHI_UPDATE)                           return "CHI_UPDATE";
@@ -344,6 +345,7 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "FULL")                                  return StorageLevel::FULL;
     }
     if constexpr(std::is_same_v<T, StorageReason>) {
+        if(item == "SAVEPOINT")                             return StorageReason::SAVEPOINT;
         if(item == "CHECKPOINT")                            return StorageReason::CHECKPOINT;
         if(item == "FINISHED")                              return StorageReason::FINISHED;
         if(item == "CHI_UPDATE")                            return StorageReason::CHI_UPDATE;

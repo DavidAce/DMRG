@@ -550,11 +550,26 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
+        case StorageReason::SAVEPOINT: {
+            if(stop_reason == StopReason::NONE){
+                // During a simulation we may want to limit the number of savepoint saves.
+                // After the simulation has finished, we always want to go through with this save
+                if(not state.position_is_inward_edge()) return;
+                if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) return;
+            }
+            state_prefix += "/savepoint";
+            storage_level = settings::output::storage_level_savepoint;
+            if(settings::output::savepoint_keep_newest_only) state_prefix += "/iter_last";
+            else
+                state_prefix += fmt::format("/iter_{}", status.iter);
+            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
+            break;
+        }
         case StorageReason::CHECKPOINT: {
             if(stop_reason == StopReason::NONE){
                 // During a simulation we may want to limit the number of checkpoint saves.
                 // After the simulation has finished, we always want to go through with this save
-                if(not state.position_is_any_edge()) return;
+                if(not state.position_is_inward_edge()) return;
                 if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
             }
             state_prefix += "/checkpoint";
@@ -569,8 +584,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             if(not cfg_chi_lim_grow()) return;
             // If we have updated chi we may want to write a projection too
             storage_level = settings::output::storage_level_checkpoint;
-            state_prefix += "/checkpoint";
-            state_prefix += fmt::format("/chi_{}", status.chi_lim);
+            state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }

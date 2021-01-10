@@ -115,6 +115,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             for candidate in h5file["common/finished"].attrs.keys():
                 if args.finished and h5file["common/finished"].attrs[candidate] == 0:
                     continue
+                if not args.finished and "savepoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
+                    continue
                 if not args.finished and "checkpoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
                     continue
                 if not args.projection and "projection" in candidate:
