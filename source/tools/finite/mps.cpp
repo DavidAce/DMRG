@@ -30,7 +30,7 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
 }
 
 
-
+size_t tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
 
     if(state.position_is_outward_edge()){
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1 )
@@ -39,7 +39,8 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
         if(state.get_direction() == 1 and state.get_mps_site().get_chiR() != 1 )
             throw std::logic_error(fmt::format("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}",
                                                state.get_position(), state.get_mps_site().get_chiR(), state.get_mps_site().dimensions()));
-        return state.flip_direction();  // Instead of moving out of the chain, just flip the direction and return
+        state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
+        return 0;  // No moves this time, return 0
     }else
     {
         long   pos            = state.get_position<long>(); // If all sites are B's, then this is -1. Otherwise this is the current "A*LC" site
@@ -73,6 +74,7 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
         }
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
+        return 1;  // Moved once, so return 1
     }
 }
 
@@ -126,15 +128,20 @@ size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi
         if(state.get_direction() == 1) mpsL.set_L(LC, truncation_error_LC);
         else
             mpsR.set_L(LC, truncation_error_LC);
+        return 1;  // Moved once, so return 1
     }
 }
 
-void tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    while(not state.position_is_any_edge()) move_center_point_single_site(state, chi_lim, svd_threshold);
+size_t tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    size_t moves = 0;
+    while(not state.position_is_inward_edge()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    return moves;
 }
 
-void tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
-    while(not state.position_is_the_middle()) move_center_point_single_site(state, chi_lim, svd_threshold);
+size_t tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+    size_t moves = 0;
+    while(not state.position_is_the_middle()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    return moves;
 }
 
 void tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &sites,
