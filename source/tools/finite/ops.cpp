@@ -69,24 +69,31 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *    |
          *    |------ 1
          */
-        auto                     label   = state.mps_sites.front()->get_label();
-        long                     mpoDimL = mpos.front().dimension(0);
-        auto                     Ldim    = Ledge.dimension(0);
+        auto &                   mps      = *state.mps_sites.front();
+        auto                     isCenter = mps.isCenter();
+        auto                     label    = mps.get_label();
+        long                     mpoDimL  = mpos.front().dimension(0);
+        auto                     Ldim     = Ledge.dimension(0);
         Eigen::Tensor<Scalar, 3> M_temp =
             Ledge
-                .shuffle(Textra::array3{0, 2, 1})                                       // Start by shuffling the legs into consecutive order before merge
-                .reshape(Textra::array2{Ldim * mpoDimL, Ldim})                          // Merge the legs
-                .contract(state.mps_sites.front()->get_M_bare(), Textra::idx({0}, {1})) // Contract with A which already has the mpo on it
-                .shuffle(Textra::array3{1, 0, 2});                                      // Shuffle back to convention
-        Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
-        state.mps_sites.front()->set_mps(M_temp, one, 0,label);
+                .shuffle(Textra::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
+                .reshape(Textra::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
+                .contract(mps.get_M_bare(), Textra::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
+                .shuffle(Textra::array3{1, 0, 2});                 // Shuffle back to convention
+        if(isCenter or label == "A"){
+            Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
+            mps.set_mps(M_temp, one, 0, label);
+        }else{
+            // The left edge is a B-site.
+            // Then L1 dim has already been increased and L0 doesn't exist. (If it did, it would just be a "1")
+            mps.set_M(M_temp);
+        }
     }
     {
         // Note:
         // If M is an A then M_bare = (L-1)*M, and the mpo was applied on A (this should never happen)
-        // If M is an AC then M_bare = (L-1)*M, (L = LC) and the mpo was applied on M_bare, and LC dim incresed by mpoDim
+        // If M is an AC then M_bare = (L-1)*M, (L = LC) and the mpo was applied on M_bare,L dim incresed by mpoDim and LC
         // If M is a B then M_bare = M * L (L-1 belongs on the site to the right), and the mpo was applied on M_bare
-
 
         /*
          *  0---[L-1]---1  1---[M]---2  0---[L]---1   0 ------|
@@ -100,23 +107,26 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *                                                    |
          *                                            1 ------|
          */
-
-        auto                     label    = state.mps_sites.back()->get_label();
-        bool                     isCenter = state.mps_sites.back()->isCenter();
+        auto &                   mps      = *state.mps_sites.back();
+        auto                     label    = mps.get_label();
+        bool                     isCenter = mps.isCenter();
         long                     mpoDimR  = mpos.back().dimension(1);
         auto                     Rdim     = Redge.dimension(0);
         Eigen::Tensor<Scalar, 3> M_temp   = Redge.shuffle(Textra::array3{0, 2, 1})
                                               .reshape(Textra::array2{Rdim * mpoDimR, Rdim})
-                                              .contract(state.mps_sites.back()->get_M_bare(), Textra::idx({0}, {2}))
+                                              .contract(mps.get_M(), Textra::idx({0}, {2})) // Include LC if it's there
                                               .shuffle(Textra::array3{1, 2, 0});
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
         if(isCenter) {
-            state.mps_sites.back()->set_M(M_temp);
-            state.mps_sites.back()->set_LC(one,0);
-        } else
-            state.mps_sites.back()->set_mps(M_temp, one, 0, label);
+            mps.set_M(M_temp);
+            mps.set_LC(one, 0);
+        } else if(label == "A"){
+            mps.set_M(M_temp);
+        }else if (label == "B"){
+            mps.set_M(M_temp);
+            mps.set_L(one, 0);
+        }
     }
-
 
     if constexpr(settings::debug) {
         state.clear_measurements();
