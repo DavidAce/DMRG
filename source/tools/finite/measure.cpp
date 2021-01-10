@@ -261,7 +261,7 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
         L                                     = temp;
     }
 
-    assert(L.dimensions() == R.dimensions());
+    if(L.dimensions() != R.dimensions()) throw std::runtime_error("spin_component(): L and R dimension mismatch");
     Eigen::Tensor<Scalar, 0> spin_tmp = L.contract(R, idx({0, 1, 2}, {0, 1, 2}));
     double                   spin     = std::real(spin_tmp(0));
     tools::common::profile::get_default_prof()["t_spn"]->toc();
