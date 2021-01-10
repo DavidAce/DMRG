@@ -14,7 +14,7 @@ namespace tools::finite::opt::internal{
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
             using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
             mutable Eigen::Tensor<Scalar,3> Hv_tensor, H2v_tensor;
-            Eigen::DSizes<long,3>   dsizes;
+            Eigen::DSizes<long,3>   dims;
             Eigen::Tensor<Scalar,3> envL, envR;
             Eigen::Tensor<Scalar,3> env2L, env2R;
             Eigen::Tensor<Scalar,4> mpo, mpo2;
