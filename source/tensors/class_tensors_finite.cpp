@@ -185,6 +185,13 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) 
     if constexpr(settings::debug) {
         clear_cache();
         clear_measurements();
+        tools::log->info("Measuring ene aft compr using sites {} with ids: mps {} mpo {} env {}",
+                         active_sites,
+                         state->get_active_ids(),
+                         model->get_active_ids(),
+                         edges->get_active_ids());
+        ene_aft_compr     = tools::finite::measure::energy(*this);
+        var_aft_compr     = tools::finite::measure::energy_variance(*this);
     }
 
     if constexpr(settings::debug) {
