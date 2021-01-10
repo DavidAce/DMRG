@@ -22,57 +22,24 @@ namespace eig {
         int dgeev(const real *matrix, size_type L);
         int zgeev(const cplx *matrix, size_type L);
 
-
         void eig_init(Form form, Type type, Vecs compute_eigvecs, Dephase remove_phase_);
         template<Form form = Form::SYMM, typename Scalar>
         void eig(const Scalar *matrix, size_type L, Vecs compute_eigvecs = Vecs::ON, Dephase remove_phase_ = Dephase::OFF);
 
-
         // Functions for few eigensolutions
 
-
-        void eigs_init(
-            size_type L,
-            size_type nev,
-            size_type ncv,
-            Ritz ritz = Ritz::LM,
-            Form form = Form::SYMM,
-            Type type = Type::REAL,
-            Side side = Side::R,
-            std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF,
-            Storage storage = Storage::DENSE,
-            Vecs compute_eigvecs_ = Vecs::OFF,
-            Dephase remove_phase_ = Dephase::OFF
-            );
-
-
-
+        void eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::LM, Form form = Form::SYMM, Type type = Type::REAL, Side side = Side::R,
+                       std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Storage storage = Storage::DENSE, Vecs compute_eigvecs_ = Vecs::OFF,
+                       Dephase remove_phase_ = Dephase::OFF);
 
         template<typename Scalar, Storage storage = Storage::DENSE>
-        void eigs(const Scalar *matrix,
-                  size_type L,
-                  size_type nev,
-                  size_type ncv,
-                  Ritz ritz = Ritz::SR,
-                  Form form = Form::SYMM,
-                  Side side = Side::R,
-                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF,
-                  Vecs vecs = Vecs::ON,
-                  Dephase remove_phase = Dephase::OFF,
+        void eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
+                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   Scalar *residual = nullptr);
 
-
         template<typename MatrixProductType>
-        void eigs(MatrixProductType &matrix,
-                  size_type nev,
-                  size_type ncv,
-                  Ritz ritz = Ritz::SR,
-                  Form form = Form::SYMM,
-                  Side side = Side::R,
-                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF,
-                  Vecs vecs = Vecs::ON,
-                  Dephase remove_phase = Dephase::OFF,
+        void eigs(MatrixProductType &matrix, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
+                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   typename MatrixProductType::Scalar *residual = nullptr);
-
     };
 }

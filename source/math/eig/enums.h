@@ -13,11 +13,10 @@ namespace eig {
     enum class Type { REAL, CPLX };                         // Real or complex, i.e. double or std::complex<double> matrix
     enum class Side { L, R, LR };                           // Left, right or both eigenvectors (for nsym problems)
     enum class Ritz { LA, SA, LM, SM, LR, SR, LI, SI, BE }; // Choice of eigenvalue. LA is largest algebraic, and so on.
-    enum class Storage { DENSE, SPARSE, TENSOR };              // Eigen Dense or Sparse, or std::vector for container
-    enum class Shinv {ON,OFF};
-    enum class Dephase {ON,OFF};
-    enum class Vecs {ON,OFF};
-
+    enum class Storage { DENSE, SPARSE, TENSOR };           // Eigen Dense or Sparse, or std::vector for container
+    enum class Shinv { ON, OFF };
+    enum class Dephase { ON, OFF };
+    enum class Vecs { ON, OFF };
 
     inline Ritz stringToRitz(std::string_view ritzstring) {
         if(ritzstring == "LA") return Ritz::LA;

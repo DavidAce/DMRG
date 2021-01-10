@@ -1,5 +1,5 @@
-//template<typename mps_type, typename mpo_type, typename env_type>
-//extern double tools::common::contraction::second_moment(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
+// template<typename mps_type, typename mpo_type, typename env_type>
+// extern double tools::common::contraction::second_moment(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
 //    // This measures the second moment <M²> of some multisite operator M given multisite mps', mpos and corresponding environments.
 //    // This is usually the second moment of the hamiltonian <H²>
 //    // Note that the environments must contain the correct type of mpos
@@ -11,7 +11,8 @@
 //        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
 //    if(mps.dimension(2) != envR.dimension(0))
 //        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
-//    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+//    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(),
+//    mpo.dimensions()));
 //
 //    Eigen::Tensor<Scalar, 0> M2;
 //    /* clang-format off */
@@ -57,7 +58,7 @@
 //    return moment;
 //}
 
-//template double tools::common::moments::second_moment(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
-//template double tools::common::moments::second_moment(const T3<cplx> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
-//template double tools::common::moments::second_moment(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
-//template double tools::common::moments::second_moment(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
+// template double tools::common::moments::second_moment(const T3<real> &, const T4<real> &, const T4<real> &, const T4<real> &);
+// template double tools::common::moments::second_moment(const T3<cplx> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);
+// template double tools::common::moments::second_moment(const TM<T3<real>> &, const T4<real> &, const T4<real> &, const T4<real> &);
+// template double tools::common::moments::second_moment(const TM<T3<cplx>> &, const T4<cplx> &, const T4<cplx> &, const T4<cplx> &);

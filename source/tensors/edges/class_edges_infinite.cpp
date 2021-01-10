@@ -8,13 +8,9 @@
 #include <math/num.h>
 #include <tools/common/log.h>
 
-
-class_edges_infinite::class_edges_infinite():
-    eneL(std::make_unique<class_env_ene>()),
-    eneR(std::make_unique<class_env_ene>()),
-    varL(std::make_unique<class_env_var>()),
-    varR(std::make_unique<class_env_var>())
-{}
+class_edges_infinite::class_edges_infinite()
+    : eneL(std::make_unique<class_env_ene>()), eneR(std::make_unique<class_env_ene>()), varL(std::make_unique<class_env_var>()),
+      varR(std::make_unique<class_env_var>()) {}
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -25,15 +21,12 @@ class_edges_infinite::class_edges_infinite():
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_edges_infinite::~class_edges_infinite()                                        = default;   // default dtor
-class_edges_infinite::class_edges_infinite(class_edges_infinite &&other)             = default;   // default move ctor
-class_edges_infinite &class_edges_infinite::operator=(class_edges_infinite &&other)  = default;   // default move assign
-class_edges_infinite::class_edges_infinite(const class_edges_infinite &other):
-    eneL(std::make_unique<class_env_ene>(*other.eneL)),
-    eneR(std::make_unique<class_env_ene>(*other.eneR)),
-    varL(std::make_unique<class_env_var>(*other.varL)),
-    varR(std::make_unique<class_env_var>(*other.varR))
-{}
+class_edges_infinite::~class_edges_infinite()                            = default;            // default dtor
+class_edges_infinite::class_edges_infinite(class_edges_infinite &&other) = default;            // default move ctor
+class_edges_infinite &class_edges_infinite::operator=(class_edges_infinite &&other) = default; // default move assign
+class_edges_infinite::class_edges_infinite(const class_edges_infinite &other)
+    : eneL(std::make_unique<class_env_ene>(*other.eneL)), eneR(std::make_unique<class_env_ene>(*other.eneR)),
+      varL(std::make_unique<class_env_var>(*other.varL)), varR(std::make_unique<class_env_var>(*other.varR)) {}
 
 class_edges_infinite &class_edges_infinite::operator=(const class_edges_infinite &other) {
     // check for self-assignment
@@ -46,20 +39,19 @@ class_edges_infinite &class_edges_infinite::operator=(const class_edges_infinite
     return *this;
 }
 
-void class_edges_infinite::initialize(){
-    eneL = std::make_unique<class_env_ene>("L",0);
-    eneR = std::make_unique<class_env_ene>("L",0);
-    varL = std::make_unique<class_env_var>("R",1);
-    varR = std::make_unique<class_env_var>("R",1);
+void class_edges_infinite::initialize() {
+    eneL = std::make_unique<class_env_ene>("L", 0);
+    eneR = std::make_unique<class_env_ene>("L", 0);
+    varL = std::make_unique<class_env_var>("R", 1);
+    varR = std::make_unique<class_env_var>("R", 1);
 }
 
-void class_edges_infinite::eject_edges(){
+void class_edges_infinite::eject_edges() {
     eneL->clear();
     eneR->clear();
     varL->clear();
     varR->clear();
 }
-
 
 template<typename T, typename = std::void_t<>>
 struct has_validity : public std::false_type {};
@@ -67,7 +59,6 @@ template<typename T>
 struct has_validity<T, std::void_t<decltype(std::declval<T>().assertValidity())>> : public std::true_type {};
 template<typename T>
 inline constexpr bool has_validity_v = has_validity<T>::value;
-
 
 template<typename env_type>
 void class_edges_infinite::env_pair<env_type>::assert_validity() const {
@@ -79,8 +70,8 @@ void class_edges_infinite::env_pair<env_type>::assert_validity() const {
 
 size_t class_edges_infinite::get_length() const {
     if(not num::all_equal(eneL->get_sites(), eneR->get_sites(), varL->get_sites(), varR->get_sites()))
-        throw std::runtime_error(
-            fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->get_sites(), eneR->get_sites(), varL->get_sites(), varR->get_sites()));
+        throw std::runtime_error(fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->get_sites(), eneR->get_sites(),
+                                             varL->get_sites(), varR->get_sites()));
     return eneL->get_sites() + eneR->get_sites() + 2;
 }
 
@@ -117,10 +108,18 @@ void class_edges_infinite::assert_validity() const {
 
 class_edges_infinite::env_pair<const class_env_ene> class_edges_infinite::get_ene() const { return {*eneL, *eneR}; }
 class_edges_infinite::env_pair<const class_env_var> class_edges_infinite::get_var() const { return {*varL, *varR}; }
-class_edges_infinite::env_pair<class_env_ene> class_edges_infinite::get_ene() { return {*eneL, *eneR}; }
-class_edges_infinite::env_pair<class_env_var> class_edges_infinite::get_var() { return {*varL, *varR}; }
+class_edges_infinite::env_pair<class_env_ene>       class_edges_infinite::get_ene() { return {*eneL, *eneR}; }
+class_edges_infinite::env_pair<class_env_var>       class_edges_infinite::get_var() { return {*varL, *varR}; }
 
-class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() const { return {eneL->get_block(), eneR->get_block()}; }
-class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_var_blk() const { return {varL->get_block(), varR->get_block()}; }
-class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_ene_blk() { return {eneL->get_block(), eneR->get_block()}; }
-class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar,3>> class_edges_infinite::get_var_blk() { return {varL->get_block(), varR->get_block()}; }
+class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar, 3>> class_edges_infinite::get_ene_blk() const {
+    return {eneL->get_block(), eneR->get_block()};
+}
+class_edges_infinite::env_pair<const Eigen::Tensor<class_edges_infinite::Scalar, 3>> class_edges_infinite::get_var_blk() const {
+    return {varL->get_block(), varR->get_block()};
+}
+class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar, 3>> class_edges_infinite::get_ene_blk() {
+    return {eneL->get_block(), eneR->get_block()};
+}
+class_edges_infinite::env_pair<Eigen::Tensor<class_edges_infinite::Scalar, 3>> class_edges_infinite::get_var_blk() {
+    return {varL->get_block(), varR->get_block()};
+}

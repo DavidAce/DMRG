@@ -5,17 +5,17 @@
 #include "class_algorithm_base.h"
 #include <complex>
 #include <config/nmspc_settings.h>
+#include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <h5pp/h5pp.h>
 
 using Scalar = class_algorithm_base::Scalar;
 
 class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_)
     : h5pp_file(std::move(h5ppFile_)), algo_type(algo_type_) {
-    algo_name  = enum2str(algo_type_);
+    algo_name = enum2str(algo_type_);
     tools::common::profile::set_default_prof(algo_type);
     tools::common::profile::init_profiling();
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
@@ -23,18 +23,17 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     tools::log->trace("Constructing class_algorithm_base");
 }
 
-
 void class_algorithm_base::copy_from_tmp(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
     if(not h5pp_file) return;
     if(not settings::output::use_temp_dir) return;
-    if(not copy_policy) return copy_from_tmp(storage_reason,CopyPolicy::TRY);
+    if(not copy_policy) return copy_from_tmp(storage_reason, CopyPolicy::TRY);
     if(copy_policy == CopyPolicy::OFF) return;
 
     // Check if we already copied the file this iteration and step
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto save_point = std::make_pair(status.iter,status.step);
+    auto                                                                  save_point = std::make_pair(status.iter, status.step);
 
-    if(copy_policy == CopyPolicy::TRY){
+    if(copy_policy == CopyPolicy::TRY) {
         if(save_log[h5pp_file->getFilePath()] == save_point) return;
         switch(storage_reason) {
             case StorageReason::SAVEPOINT:
@@ -49,19 +48,17 @@ void class_algorithm_base::copy_from_tmp(StorageReason storage_reason, std::opti
             case StorageReason::MODEL: break;
         }
         tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
-    }else if (copy_policy == CopyPolicy::FORCE)
+    } else if(copy_policy == CopyPolicy::FORCE)
         tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 
     save_log[h5pp_file->getFilePath()] = save_point;
 }
 
-
-
-
 void class_algorithm_base::init_bond_dimension_limits() {
     status.chi_lim_init = cfg_chi_lim_init();
     status.chi_lim_max  = cfg_chi_lim_max();
-    if(cfg_chi_lim_grow()) status.chi_lim = cfg_chi_lim_init();
+    if(cfg_chi_lim_grow())
+        status.chi_lim = cfg_chi_lim_init();
     else
         status.chi_lim = cfg_chi_lim_max();
 
@@ -69,16 +66,14 @@ void class_algorithm_base::init_bond_dimension_limits() {
     if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
 }
 
-
-
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
  * Otherwise, compute the slope of the last 25% of the measurements that have been made.
  * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */
-class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope(
-    std::vector<double> &Y_vec, std::vector<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance) {
+class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope(std::vector<double> &Y_vec, std::vector<size_t> &X_vec,
+                                                                                          double new_data, size_t iter, size_t rate, double tolerance) {
     SaturationReport report;
     size_t           last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if(iter < rate + last_measurement) { return report; }
@@ -119,7 +114,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     return report;
 }
 
-void class_algorithm_base::print_profiling_lap(){
+void class_algorithm_base::print_profiling_lap() {
     if(not settings::profiling::extra) return;
     tools::common::profile::print_profiling_laps();
 }

@@ -31,7 +31,8 @@ class_ising_tf_rf::class_ising_tf_rf(ModelType model_type_, size_t position_) : 
     qm::spinHalf::II = qm::gen_manybody_spins(id, 2);
 
     h5tb_ising_tf_rf::register_table_type();
-    all_mpo_parameters_have_been_set = false; // There are no full lattice parameters but we set it to true here since the model is not supposed to be randomized per site
+    all_mpo_parameters_have_been_set =
+        false; // There are no full lattice parameters but we set it to true here since the model is not supposed to be randomized per site
 }
 
 double class_ising_tf_rf::get_field() const { return h5tb.param.h_tran + std::pow(h5tb.param.h_pert + h5tb.param.h_rand, 1 - beta); }
@@ -128,7 +129,6 @@ Eigen::Tensor<Scalar, 1> class_ising_tf_rf::get_MPO2_edge_right() const {
     return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
 }
 
-
 void class_ising_tf_rf::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_stdv);
@@ -187,22 +187,20 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
 
 bool class_ising_tf_rf::is_perturbed() const { return h5tb.param.h_pert != 0.0; }
 
-
 Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     if(nbody_terms.empty()) return MPO();
     double J1 = 0, J2 = 0;
-    for(const auto & n : nbody_terms){
+    for(const auto &n : nbody_terms) {
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
-    MPO_nbody.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J1*get_field() * sx - e_reduced * id);
-    MPO_nbody.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2*get_coupling() * sz);
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                           = MPO();
+    MPO_nbody.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J1 * get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2 * get_coupling() * sz);
     return MPO_nbody;
 }
-
 
 Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
@@ -225,9 +223,9 @@ void class_ising_tf_rf::set_averages([[maybe_unused]] std::vector<TableMap> latt
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
     }
-    if(not infinite){
-        lattice_parameters.back()["J1"] = 0.0;
-        lattice_parameters.back()["J2"] = 0.0;
+    if(not infinite) {
+        lattice_parameters.back()["J1"]    = 0.0;
+        lattice_parameters.back()["J2"]    = 0.0;
         lattice_parameters.end()[-2]["J2"] = 0.0;
     }
     // Recompute J_avrg and h_avrg from given J_rnrd and h_rnd on all sites
@@ -275,9 +273,12 @@ void class_ising_tf_rf::load_hamiltonian(const h5pp::File &file, const std::stri
     using namespace settings::model::ising_tf_rf;
     if(std::abs(h5tb.param.J1 - J1) > 1e-6) throw std::runtime_error(fmt::format("J1_rand {:.16f} != {:.16f} ising_tf_rf::J1_rand", h5tb.param.J1, J1));
     if(std::abs(h5tb.param.J2 - J2) > 1e-6) throw std::runtime_error(fmt::format("J2_rand {:.16f} != {:.16f} ising_tf_rf::J2_rand", h5tb.param.J2, J2));
-    if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6) throw std::runtime_error(fmt::format("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran));
-    if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6) throw std::runtime_error(fmt::format("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean));
-    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6) throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv));
+    if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6)
+        throw std::runtime_error(fmt::format("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran));
+    if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6)
+        throw std::runtime_error(fmt::format("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean));
+    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6)
+        throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv));
 
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_prefix, get_position());

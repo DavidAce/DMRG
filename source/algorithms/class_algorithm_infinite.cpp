@@ -13,8 +13,6 @@
 #include <tools/infinite/measure.h>
 #include <tools/infinite/mps.h>
 
-
-
 class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
     : class_algorithm_base(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing algorithm infinite");
@@ -70,8 +68,8 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
         // 2) chi_lim is initialized, but it is smaller than the init value found in settings
         // Either way, we should set chi_lim to be chi_lim_init, unless cfg_chi_lim_init is larger than tmp_bond_limit
         tools::log->info("Setting initial bond dimension limit: {}", cfg_chi_lim_init());
-        status.chi_lim =  cfg_chi_lim_init();
-        status.chi_lim_init =  cfg_chi_lim_init();
+        status.chi_lim      = cfg_chi_lim_init();
+        status.chi_lim_init = cfg_chi_lim_init();
         return;
     }
 
@@ -305,13 +303,14 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
 
 void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
     StorageLevel             storage_level;
-    std::string              state_prefix = fmt::format("{}/{}", algo_name,tensors.state->get_name()); // May get modified
-    std::string              model_prefix = fmt::format("{}/{}", algo_name,"model");
+    std::string              state_prefix = fmt::format("{}/{}", algo_name, tensors.state->get_name()); // May get modified
+    std::string              model_prefix = fmt::format("{}/{}", algo_name, "model");
     std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
 
     switch(storage_reason) {
         case StorageReason::FINISHED: {
-            if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
+            if(status.algorithm_has_succeeded)
+                storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
             state_prefix += "/finished";
@@ -322,7 +321,8 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
             if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) return;
             state_prefix += "/savepoint";
             storage_level = settings::output::storage_level_savepoint;
-            if(settings::output::savepoint_keep_newest_only) state_prefix += "/iter_last";
+            if(settings::output::savepoint_keep_newest_only)
+                state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
@@ -332,7 +332,8 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason, std::
             if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
             state_prefix += "/checkpoint";
             storage_level = settings::output::storage_level_checkpoint;
-            if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
+            if(settings::output::checkpoint_keep_newest_only)
+                state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones

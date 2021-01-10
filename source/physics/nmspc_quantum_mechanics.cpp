@@ -4,19 +4,17 @@
 //#include <complex.h>
 //#undef I
 
-#include <Eigen/Core>
-#include <vector>
-
-#include "general/nmspc_tensor_extra.h"
 #include "nmspc_quantum_mechanics.h"
+#include "general/nmspc_tensor_extra.h"
+#include <Eigen/Core>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <vector>
 
 using Scalar = std::complex<double>;
 using namespace Eigen;
-
 
 Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool swap)
 /*
@@ -51,7 +49,7 @@ Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_
 
 {
     if(at >= sites) throw std::logic_error("Expected at < sites. Got [at = " + std::to_string(at) + "] [sites = " + std::to_string(sites) + "]");
-    MatrixXcd id = MatrixXcd::Identity(s.rows(),s.cols());
+    MatrixXcd id     = MatrixXcd::Identity(s.rows(), s.cols());
     MatrixXcd result = at == 0 ? s : id;
     if(swap)
         for(size_t site = 1; site < sites; site++) result = kroneckerProduct(site == at ? s : id, result).eval(); // .eval() is required to avoid aliasing!!
@@ -60,10 +58,9 @@ Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_
     return result;
 }
 
-
 std::vector<Eigen::MatrixXcd> qm::gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool swap) {
     std::vector<MatrixXcd> S;
-    for(int site = 0; site < sites; site++) S.emplace_back(qm::gen_embedded_spin_operator(s,site,sites,swap));
+    for(int site = 0; site < sites; site++) S.emplace_back(qm::gen_embedded_spin_operator(s, site, sites, swap));
     return S;
 }
 
@@ -103,12 +100,10 @@ namespace qm::spinHalf {
     std::vector<Eigen::MatrixXcd> II;
     /* clang-format on */
 
-
-    Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::Matrix2cd &s, size_t at, size_t sites,bool swap){
+    Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::Matrix2cd &s, size_t at, size_t sites, bool swap) {
         // Don't forget to set "swap = true" if you intend to use the result as a tensor.
-        return qm::gen_embedded_spin_operator(s,at,sites,swap);
+        return qm::gen_embedded_spin_operator(s, at, sites, swap);
     }
-
 
     std::vector<Eigen::Matrix4cd> gen_twobody_spins(const Eigen::Matrix2cd &s, bool swap)
     // Returns a pair of two-body 4x4 spin operators for embedded in a two-site Hilbert space:
@@ -117,8 +112,7 @@ namespace qm::spinHalf {
     // Don't forget to set "swap = true" if you intend to use the result as a tensor.
     {
         std::vector<Matrix4cd> S;
-        for (size_t site = 0; site < 2; site++)
-            S.emplace_back(qm::gen_embedded_spin_operator(s,site,2,swap));
+        for(size_t site = 0; site < 2; site++) S.emplace_back(qm::gen_embedded_spin_operator(s, site, 2, swap));
         return S;
     }
 
@@ -151,35 +145,30 @@ namespace qm::SpinOne {
     //        (σ ⊗ i, i ⊗ σ)
     // where σ is a 3x3 (pauli) matrix and i is the 3x3 identity matrix.
     // So don't forget to set "swap = true" if you intend to use the result as a tensor.
-{
-        return qm::gen_manybody_spins(s,2,swap);
+    {
+        return qm::gen_manybody_spins(s, 2, swap);
     }
 }
 
 namespace qm::timeEvolution {
 
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
+    std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd) {
         auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
         auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
-        return
-            {
-                Textra::MatrixToTensor((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
-                Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
-            };
-    }
-
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd) {
-        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
-        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
-        return
-        {
-            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp()),
-            Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp()),
-            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp())
+        return {
+            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
+            Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
         };
     }
 
-    std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
+    std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd) {
+        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
+        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        return {Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp()), Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp()),
+                Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp())};
+    }
+
+    std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd)
     /*!
      * Implementation based on
      * Janke, W., & Sauer, T. (1992).
@@ -189,15 +178,15 @@ namespace qm::timeEvolution {
      *
      */
     {
-        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
-        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
-        double cbrt2 = pow(2.0, 1.0 / 3.0);
-        double beta1 = 1.0 / (2.0 - cbrt2);
-        double beta2 = -cbrt2 * beta1;
-        double alph1 = 0.5 * beta1;
-        double alph2 = (1.0 - cbrt2) / 2.0 * beta1;
+        auto   h_evn_matrix = Textra::TensorMatrixMap(h_evn);
+        auto   h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        double cbrt2        = pow(2.0, 1.0 / 3.0);
+        double beta1        = 1.0 / (2.0 - cbrt2);
+        double beta2        = -cbrt2 * beta1;
+        double alph1        = 0.5 * beta1;
+        double alph2        = (1.0 - cbrt2) / 2.0 * beta1;
 
-        std::vector<Eigen::Tensor<Scalar,2>> temp;
+        std::vector<Eigen::Tensor<Scalar, 2>> temp;
         temp.emplace_back(Textra::MatrixToTensor((alph1 * imn * delta_t * h_evn_matrix).exp()));
         temp.emplace_back(Textra::MatrixToTensor((beta1 * imn * delta_t * h_odd_matrix).exp()));
         temp.emplace_back(Textra::MatrixToTensor((alph2 * imn * delta_t * h_evn_matrix).exp()));
@@ -208,23 +197,22 @@ namespace qm::timeEvolution {
         return temp;
     }
 
-    std::vector<Eigen::Tensor<Scalar, 2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order,
-                                                                                  const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
+    std::vector<Eigen::Tensor<Scalar, 2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order, const Eigen::Tensor<Scalar, 2> &h_evn,
+                                                                               const Eigen::Tensor<Scalar, 2> &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
      */
     {
         switch(susuki_trotter_order) {
-            case 1:  return Suzuki_Trotter_1st_order(delta_t, h_evn, h_odd);
-            case 2:  return Suzuki_Trotter_2nd_order(delta_t, h_evn, h_odd);
-            case 4:  return Suzuki_Trotter_4th_order(delta_t, h_evn, h_odd);
+            case 1: return Suzuki_Trotter_1st_order(delta_t, h_evn, h_odd);
+            case 2: return Suzuki_Trotter_2nd_order(delta_t, h_evn, h_odd);
+            case 4: return Suzuki_Trotter_4th_order(delta_t, h_evn, h_odd);
             default: return Suzuki_Trotter_2nd_order(delta_t, h_evn, h_odd);
         }
     }
 
-
-
-    std::vector<Eigen::Tensor<Scalar, 2>> compute_G(const cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd)
+    std::vector<Eigen::Tensor<Scalar, 2>> compute_G(const cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar, 2> &h_evn,
+                                                    const Eigen::Tensor<Scalar, 2> &h_odd)
     /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 2 tensor.
      *  The legs contain two physical spin indices each
     *   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
@@ -246,7 +234,7 @@ namespace qm::timeEvolution {
 
 }
 
-std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmix){
+std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmix) {
     /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
      *
      *
@@ -261,30 +249,24 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
 
     tools::log->trace("Generating twosite unitaries");
     constexpr bool kroneckerSwap = false;
-    auto SZ  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz,kroneckerSwap); // We use these as matrices
-    auto SP  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp,kroneckerSwap); // We use these as matrices
-    auto SM  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm,kroneckerSwap); // We use these as matrices
-    auto ID  = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id,kroneckerSwap); // We use these as matrices
-    auto N   = std::vector<Eigen::Matrix4cd> {0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
+    auto           SZ            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sz, kroneckerSwap); // We use these as matrices
+    auto           SP            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sp, kroneckerSwap); // We use these as matrices
+    auto           SM            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm, kroneckerSwap); // We use these as matrices
+    auto           ID            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id, kroneckerSwap); // We use these as matrices
+    auto           N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
 
     std::vector<qm::Gate> unitaries;
-    unitaries.reserve(sites-1);
-    for (size_t idx = 0; idx < sites-1; idx++){
-        double th0 = rnd::uniform_double_box(-1,1);
-        double th1 = rnd::uniform_double_box(-1,1);
-        double th2 = rnd::uniform_double_box(-1,1);
-        double th3 = rnd::uniform_double_box(-1,1);
-        std::complex<double> t(rnd::uniform_double_box(-1,1), rnd::uniform_double_box(-1,1));
-        Eigen::Matrix4cd H =
-            th3*N[0]*N[1] +
-            th2*N[1]*(ID[0]-N[0]) +
-            th1*N[0]*(ID[1]-N[1]) +
-            th0*(ID[0]-N[0])*(ID[1]-N[1]) +
-            SP[0]* SM[1]*t +
-            SP[1]* SM[0]*std::conj(t);
+    unitaries.reserve(sites - 1);
+    for(size_t idx = 0; idx < sites - 1; idx++) {
+        double               th0 = rnd::uniform_double_box(-1, 1);
+        double               th1 = rnd::uniform_double_box(-1, 1);
+        double               th2 = rnd::uniform_double_box(-1, 1);
+        double               th3 = rnd::uniform_double_box(-1, 1);
+        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
+        Eigen::Matrix4cd     H = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+                             SP[0] * SM[1] * t + SP[1] * SM[0] * std::conj(t);
 
-
-        if constexpr (kroneckerSwap){
+        if constexpr(kroneckerSwap) {
             // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
 
             //         0               0      1
@@ -293,8 +275,8 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //        |               |      |
             //        1               2      3
 
-            unitaries.emplace_back(Textra::MatrixToTensor2((imn * fmix * H).exp()), std::vector<size_t>{idx,idx+1});
-        }else{
+            unitaries.emplace_back(Textra::MatrixToTensor2((imn * fmix * H).exp()), std::vector<size_t>{idx, idx + 1});
+        } else {
             // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
             // the kronecker product that generated two-site gates above has indexed right-to-left
             //         0                   1      0              0      1               0
@@ -302,84 +284,80 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
             //        |                   |      |              |      |                |
             //        1                   3      2              2      3                1
-            Eigen::Tensor<Scalar,2> H_shuffled = Textra::MatrixTensorMap(H,2,2,2,2).shuffle(Textra::array4{1,0,3,2}).reshape(Textra::array2{4,4});
-            Eigen::MatrixXcd expifH = (imn * fmix * Textra::TensorMatrixMap(H_shuffled)).exp();
-            unitaries.emplace_back(Textra::MatrixTensorMap(expifH), std::vector<size_t>{idx,idx+1});
+            Eigen::Tensor<Scalar, 2> H_shuffled = Textra::MatrixTensorMap(H, 2, 2, 2, 2).shuffle(Textra::array4{1, 0, 3, 2}).reshape(Textra::array2{4, 4});
+            Eigen::MatrixXcd         expifH     = (imn * fmix * Textra::TensorMatrixMap(H_shuffled)).exp();
+            unitaries.emplace_back(Textra::MatrixTensorMap(expifH), std::vector<size_t>{idx, idx + 1});
         }
     }
     // Sanity check
-    for(const auto & u : unitaries) if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+    for(const auto &u : unitaries)
+        if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
     return unitaries;
 }
 
-
-
-Eigen::Tensor<Scalar,2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar,2> &H){
+Eigen::Tensor<Scalar, 2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar, 2> &H) {
     // Given a matrix H, this returns exp(delta_t * H)
     // For time evolution, just make sure delta_t = -i*d,  where d is a (small) real positive number.
     return Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(H)).exp());
 }
 
-
-std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite){
+std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite) {
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
-    for(auto & h : hams_nsite ) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-    for(auto & t : time_evolution_gates ) if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision()* static_cast<double>(t.op.dimension(0)))) {
-            std::cout << "Supposedly not unitary: \n "<< t.op << std::endl;
-            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary", t.pos)); }
+    for(auto &h : hams_nsite) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
+    for(auto &t : time_evolution_gates)
+        if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+            std::cout << "Supposedly not unitary: \n " << t.op << std::endl;
+            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary", t.pos));
+        }
     return time_evolution_gates;
 }
 
-
-std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_2site){
+std::vector<Eigen::Tensor<Scalar, 2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx delta_t,
+                                                                                   const std::vector<Eigen::Tensor<Scalar, 2>> &hams_2site) {
     // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
     //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
     // without passing through the Suzuki-Trotter decomposition.
     // Here we expect "hams_2site" to contain terms like  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
 
-    if(hams_2site.size() != sites-1)
-        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", hams_2site.size(),sites-1));
+    if(hams_2site.size() != sites - 1)
+        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", hams_2site.size(), sites - 1));
 
-    std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
-    time_evolution_operators.reserve(sites-1);
-    for(const auto & h : hams_2site)
-       time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
+    std::vector<Eigen::Tensor<Scalar, 2>> time_evolution_operators;
+    time_evolution_operators.reserve(sites - 1);
+    for(const auto &h : hams_2site) time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t, h));
     return time_evolution_operators;
 }
 
-std::vector<Eigen::Tensor<Scalar,2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site){
+std::vector<Eigen::Tensor<Scalar, 2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cplx delta_t,
+                                                                                   const std::vector<Eigen::Tensor<Scalar, 2>> &hams_3site) {
     // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore we can immediately use the relation
     // exp(A + B) = exp(A)exp(B)
     // without passing through the Suzuki-Trotter decomposition.
 
-    if(hams_3site.size() != sites-2)
-        throw std::logic_error(fmt::format("Wrong number of three-site hamiltonians: {}. Expected {}", hams_3site.size(),sites-2));
+    if(hams_3site.size() != sites - 2)
+        throw std::logic_error(fmt::format("Wrong number of three-site hamiltonians: {}. Expected {}", hams_3site.size(), sites - 2));
 
-    std::vector<Eigen::Tensor<Scalar,2>> time_evolution_operators;
-    time_evolution_operators.reserve(sites-1);
-    for(const auto & h : hams_3site)
-        time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t,h));
+    std::vector<Eigen::Tensor<Scalar, 2>> time_evolution_operators;
+    time_evolution_operators.reserve(sites - 1);
+    for(const auto &h : hams_3site) time_evolution_operators.emplace_back(get_time_evolution_operator(delta_t, h));
     return time_evolution_operators;
 }
 
-
-
-
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
 /*! Builds the MPO string for measuring  spin on many-body systems.
-*      P = Π  s_{i}
-* where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
-*
-* MPO = | s | (a 1 by 1 matrix with a single pauli matrix element)
-*
-*        2
-*        |
-*    0---s---1
-*        |
-*        3
-*
-*/
+ *      P = Π  s_{i}
+ * where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
+ *
+ * MPO = | s | (a 1 by 1 matrix with a single pauli matrix element)
+ *
+ *        2
+ *        |
+ *    0---s---1
+ *        |
+ *        3
+ *
+ */
 {
     long                     spin_dim = paulimatrix.rows();
     Eigen::array<long, 4>    extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
@@ -429,7 +407,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     // Create compatible edges
     Eigen::Tensor<Scalar, 3> Ledge(1, 1, 2); // The left  edge
     Eigen::Tensor<Scalar, 3> Redge(1, 1, 2); // The right edge
-    Ledge(0, 0, 0) = 0.5;//0.5;
+    Ledge(0, 0, 0) = 0.5;                    // 0.5;
     Ledge(0, 0, 1) = 0.5 * sign;
     Redge(0, 0, 0) = 1;
     Redge(0, 0, 1) = 1;
@@ -604,24 +582,24 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     std::vector<int> binary(sites, -1);
     int              sum = 0;
     while(true) {
-        binary[rnd::uniform_integer_box<size_t>(0, sites-1)] *= -1;
+        binary[rnd::uniform_integer_box<size_t>(0, sites - 1)] *= -1;
         sum = std::accumulate(binary.begin(), binary.end(), 0);
         if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
     }
     if(binary.size() != sites) throw std::logic_error("Size mismatch");
     // Generate the list
     std::vector<Eigen::Tensor<Scalar, 4>> mpos;
-    std::vector<std::string> mpos_str;
+    std::vector<std::string>              mpos_str;
     for(auto &val : binary) {
-        if(val < 0){
+        if(val < 0) {
             mpos.push_back(MPO_S);
             mpos_str.emplace_back("S");
-        }else {
+        } else {
             mpos.push_back(MPO_I);
             mpos_str.emplace_back("I");
         }
     }
-    tools::log->warn("Generated random pauli MPO string: {}",mpos_str);
+    tools::log->warn("Generated random pauli MPO string: {}", mpos_str);
     // Create compatible edges
     Eigen::Tensor<Scalar, 3> Ledge(1, 1, num_paulis); // The left  edge
     Eigen::Tensor<Scalar, 3> Redge(1, 1, num_paulis); // The right edge
@@ -632,10 +610,8 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     return std::make_tuple(mpos, Ledge, Redge);
 }
 
-
-
 std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
-qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode)
+    qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode)
 /*! Builds a string of MPO's
  *      P = Π  O_i
  * where Π is the product over all sites, and O_i are MPOs with 2x2 (pauli) matrices on the diagonal
@@ -674,13 +650,13 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
 
 {
     if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
-    long                     spin_dim   = 2;
-    Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
-    Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
-    Eigen::array<long, 4>    offset4    = {0, 0, 0, 0};
+    long                  spin_dim = 2;
+    Eigen::array<long, 4> extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2> extent2  = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
+    Eigen::array<long, 4> offset4  = {0, 0, 0, 0};
 
     std::vector<Eigen::Tensor<Scalar, 4>> mpos;
-    auto pauli_idx = num::range<size_t>(0, paulimatrices.size(), 1);
+    auto                                  pauli_idx = num::range<size_t>(0, paulimatrices.size(), 1);
 
     for(size_t site = 0; site < sites; site++) {
         Eigen::Tensor<Scalar, 4> mpo;
@@ -688,22 +664,22 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
             case RandomizerMode::SELECT1: {
                 mpo.resize(1, 1, spin_dim, spin_dim);
                 mpo.setZero();
-                auto        rnd_idx                          = rnd::uniform_integer_box<size_t>(0, paulimatrices.size()-1);
+                auto        rnd_idx                          = rnd::uniform_integer_box<size_t>(0, paulimatrices.size() - 1);
                 const auto &pauli                            = paulimatrices[rnd_idx];
                 mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
                 break;
             }
-            case RandomizerMode::SHUFFLE:{
-                std::shuffle(pauli_idx.begin(),pauli_idx.end(),rnd::internal::rng);
+            case RandomizerMode::SHUFFLE: {
+                std::shuffle(pauli_idx.begin(), pauli_idx.end(), rnd::internal::rng);
                 [[fallthrough]];
             }
-            case RandomizerMode::ASIS:{
+            case RandomizerMode::ASIS: {
                 auto num_paulis = static_cast<long>(paulimatrices.size());
                 mpo.resize(num_paulis, num_paulis, spin_dim, spin_dim);
                 for(long idx = 0; idx < num_paulis; idx++) {
-                    auto uidx = static_cast<size_t>(idx);
-                    const auto & pauli =  paulimatrices[pauli_idx[uidx]];
-                    offset4 = {idx, idx, 0, 0};
+                    auto        uidx                             = static_cast<size_t>(idx);
+                    const auto &pauli                            = paulimatrices[pauli_idx[uidx]];
+                    offset4                                      = {idx, idx, 0, 0};
                     mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
                 }
                 break;
@@ -712,34 +688,31 @@ qm::mpo::sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, si
         mpos.emplace_back(mpo);
     }
 
-
     // Create compatible edges
-    Eigen::Tensor<Scalar, 3> Ledge(1,1,1); // The left  edge
-    Eigen::Tensor<Scalar, 3> Redge(1,1,1); // The right edge
-    switch(mode){
+    Eigen::Tensor<Scalar, 3> Ledge(1, 1, 1); // The left  edge
+    Eigen::Tensor<Scalar, 3> Redge(1, 1, 1); // The right edge
+    switch(mode) {
         case RandomizerMode::SHUFFLE:
-        case RandomizerMode::ASIS:{
+        case RandomizerMode::ASIS: {
             Ledge.resize(1, 1, paulimatrices.size());
             Redge.resize(1, 1, paulimatrices.size());
-            for(size_t idx = 0; idx < paulimatrices.size(); idx++){
+            for(size_t idx = 0; idx < paulimatrices.size(); idx++) {
                 Ledge(0, 0, idx) = 1.0 / std::sqrt(paulimatrices.size());
                 Redge(0, 0, idx) = 1;
             }
             break;
         }
-        case RandomizerMode::SELECT1:{
+        case RandomizerMode::SELECT1: {
             Ledge(0, 0, 0) = 1;
             Redge(0, 0, 0) = 1;
             break;
         }
-
     }
     return std::make_tuple(mpos, Ledge, Redge);
 }
 
-
 std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>>
-qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> & uniform_dist_widths, size_t sites)
+    qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> &uniform_dist_widths, size_t sites)
 /*! Builds a set of MPO's used for randomizing a state  pauli matrix MPO's with random weights picked from a uniform distribution
  *      P = Π  O_i
  * where Π is the product over all sites, and O_i is the MPO sum of pauli matrices with random weights.
@@ -760,21 +733,21 @@ qm::mpo::random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, c
  */
 {
     if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
-    if (paulimatrices.size() != uniform_dist_widths.size()) throw std::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
-    long                     num_paulis = static_cast<long>(paulimatrices.size());
-    long                     spin_dim   = 2;
-    Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
-    Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
+    if(paulimatrices.size() != uniform_dist_widths.size()) throw std::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
+    long                  num_paulis = static_cast<long>(paulimatrices.size());
+    long                  spin_dim   = 2;
+    Eigen::array<long, 4> extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2> extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
 
     std::vector<Eigen::Tensor<Scalar, 4>> mpos;
-    for(size_t site = 0; site < sites; site++){
+    for(size_t site = 0; site < sites; site++) {
         Eigen::Tensor<Scalar, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
         MPO_S.setZero();
         for(long idx = 0; idx < num_paulis; idx++) {
-            auto uidx = static_cast<size_t>(idx);
-            auto coeff   = 1 + rnd::uniform_double_box(uniform_dist_widths[uidx]);
-            auto offset4 = Eigen::array<long, 4>{idx, idx, 0, 0};
-            const auto & pauli =  paulimatrices[uidx];
+            auto        uidx                               = static_cast<size_t>(idx);
+            auto        coeff                              = 1 + rnd::uniform_double_box(uniform_dist_widths[uidx]);
+            auto        offset4                            = Eigen::array<long, 4>{idx, idx, 0, 0};
+            const auto &pauli                              = paulimatrices[uidx];
             MPO_S.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(coeff * pauli);
         }
         mpos.emplace_back(MPO_S);

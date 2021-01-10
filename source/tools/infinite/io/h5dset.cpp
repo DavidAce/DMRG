@@ -34,7 +34,8 @@ int tools::infinite::io::h5dset::decide_layout(std::string_view prefix_path) {
     std::string str(prefix_path);
     std::regex  rx(R"(point/iter_[0-9])"); // Declare the regex with a raw string literal
     std::smatch m;
-    if(regex_search(str, m, rx)) return H5D_CONTIGUOUS;
+    if(regex_search(str, m, rx))
+        return H5D_CONTIGUOUS;
     else
         return H5D_CHUNKED;
 }
@@ -48,7 +49,7 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
     bootstrap_save_log(save_log, h5ppFile, {state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
     auto save_point = std::make_pair(status.iter, status.step);
-    auto        layout   = static_cast<H5D_layout_t>(decide_layout(state_prefix));
+    auto layout     = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
     std::string dsetName = state_prefix + "/schmidt_midchain";
     if(save_log[dsetName] != save_point) {
@@ -67,7 +68,7 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
         tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
         tools::common::profile::get_default_prof()["t_hdf"]->tic();
         dsetName = mps_prefix + "/L_A";
-        if(save_log[dsetName] != save_point){
+        if(save_log[dsetName] != save_point) {
             h5ppFile.writeDataset(state.LA(), dsetName);
             h5ppFile.writeAttribute(state.LA().dimensions(), "dimensions", dsetName);
             h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
@@ -76,7 +77,7 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_B";
-        if(save_log[dsetName] != save_point){
+        if(save_log[dsetName] != save_point) {
             h5ppFile.writeDataset(state.LB(), dsetName);
             h5ppFile.writeAttribute(state.LB().dimensions(), "dimensions", dsetName);
             h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
@@ -85,7 +86,7 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_C";
-        if(save_log[dsetName] != save_point){
+        if(save_log[dsetName] != save_point) {
             h5ppFile.writeDataset(state.LC(), dsetName);
             h5ppFile.writeAttribute(state.LC().dimensions(), "dimensions", dsetName);
             h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
@@ -112,8 +113,6 @@ void tools::infinite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::st
         tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[mps_prefix] = save_point;
     }
-
-
 }
 
 void tools::infinite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::string &mpo_path, const StorageLevel &storage_level,

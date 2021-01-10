@@ -3,14 +3,12 @@
 //
 
 #pragma once
+#include "math/eig/enums.h"
 #include <array>
+#include <general/class_tic_toc.h>
 #include <vector>
 
-#include "math/eig/enums.h"
-#include <general/class_tic_toc.h>
-
 #define profile_matrix_product_hamiltonian 0
-
 
 template<class Scalar_>
 class MatrixProductHamiltonian {
@@ -21,28 +19,28 @@ class MatrixProductHamiltonian {
     constexpr static eig::Storage storage          = eig::Storage::TENSOR;
 
     private:
-    const Scalar_ *      envL;
-    const Scalar_ *      envR;
-    const Scalar_ *      mpo;
-    std::array<long, 3>  shape_mps;
-    std::array<long, 4>  shape_mpo;
-    std::array<long, 3>  shape_envL;
-    std::array<long, 3>  shape_envR;
-    std::vector<Scalar>  shift_mpo;
-    long                 mps_size;
-    eig::Form            form = eig::Form::SYMM;
-    eig::Side            side = eig::Side::R;
+    const Scalar_ *     envL;
+    const Scalar_ *     envR;
+    const Scalar_ *     mpo;
+    std::array<long, 3> shape_mps;
+    std::array<long, 4> shape_mpo;
+    std::array<long, 3> shape_envL;
+    std::array<long, 3> shape_envR;
+    std::vector<Scalar> shift_mpo;
+    long                mps_size;
+    eig::Form           form = eig::Form::SYMM;
+    eig::Side           side = eig::Side::R;
 
     // Shift and shift-invert mode stuff
     std::complex<double> sigma      = 0.0;   // The real part of the shift
     bool                 readyShift = false; // Flag to make sure the shift has occurred
 
     public:
-    MatrixProductHamiltonian(const Scalar_ *     envL_,                    /*!< The left block tensor.  */
-                             const Scalar_ *     envR_,                    /*!< The right block tensor.  */
-                             const Scalar_ *     mpo_,                       /*!< The Hamiltonian MPO's  */
-                             std::array<long, 3> shape_mps_,                 /*!< An array containing the shapes of theta  */
-                             std::array<long, 4> shape_mpo_                 /*!< An array containing the shapes of the MPO  */
+    MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
+                             const Scalar_ *     envR_,      /*!< The right block tensor.  */
+                             const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
+                             std::array<long, 3> shape_mps_, /*!< An array containing the shapes of theta  */
+                             std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
     );
 
     // Functions used in in Arpack++ solver

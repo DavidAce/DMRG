@@ -52,7 +52,8 @@ void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     Eigen::array<long, 4>                            extent4{1, 1, shape_mpo[2], shape_mpo[3]};
     Eigen::array<long, 2>                            extent2{shape_mpo[2], shape_mpo[3]};
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> sigma_Id;
-    if constexpr(std::is_same_v<T, eig::real>) sigma_Id = std::real(sigma) * Eigen::MatrixXd::Identity(extent2[0], extent2[1]);
+    if constexpr(std::is_same_v<T, eig::real>)
+        sigma_Id = std::real(sigma) * Eigen::MatrixXd::Identity(extent2[0], extent2[1]);
     else
         sigma_Id = sigma * Eigen::MatrixXcd::Identity(extent2[0], extent2[1]);
     Eigen::TensorMap<Eigen::Tensor<T, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());

@@ -10,26 +10,25 @@
 
 using Scalar = std::complex<double>;
 
-void tools::infinite::mps::merge_twosite_tensor (class_state_infinite & state, const Eigen::Tensor<Scalar,3> & twosite_tensor, long chi_lim, std::optional<double> svd_threshold){
+void tools::infinite::mps::merge_twosite_tensor(class_state_infinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim,
+                                                std::optional<double> svd_threshold) {
     long   dA       = state.get_spin_dimA();
     long   dB       = state.get_spin_dimB();
     size_t posA     = state.get_positionA();
     size_t posB     = state.get_positionB();
     auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi_lim, svd_threshold);
-    if(mps_list.size() != 2) throw std::logic_error(fmt::format("Got {} MPS sites from two-site tensor.",mps_list.size()));
+    if(mps_list.size() != 2) throw std::logic_error(fmt::format("Got {} MPS sites from two-site tensor.", mps_list.size()));
     state.get_mps_siteA().merge_mps(mps_list.front());
     state.get_mps_siteB().merge_mps(mps_list.back());
 }
 
-
-void tools::infinite::mps::random_product_state([[maybe_unused]] const class_state_infinite &state, [[maybe_unused]] const std::string &sector, [[maybe_unused]] long bitfield,  [[maybe_unused]] bool use_eigenspinors) {
+void tools::infinite::mps::random_product_state([[maybe_unused]] const class_state_infinite &state, [[maybe_unused]] const std::string &sector,
+                                                [[maybe_unused]] long bitfield, [[maybe_unused]] bool use_eigenspinors) {
     throw std::runtime_error("random product state for infinite state not implemented yet");
 }
 
-
-
-
-//void tools::infinite::mps::merge_multisite_mps(class_state_infinite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+// void tools::infinite::mps::merge_multisite_mps(class_state_infinite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, std::optional<long> chi_lim,
+// std::optional<double> svd_threshold) {
 //    // Some sanity checks
 //    state.get_mps()
 //    if(multisite_mps.dimension(1) != state.get_mps(positions.front()).get_chiL())
@@ -37,7 +36,8 @@ void tools::infinite::mps::random_product_state([[maybe_unused]] const class_sta
 //                                             state.get_mps(positions.front()).get_chiL(), positions.front()));
 //
 //    if(multisite_mps.dimension(2) != state.get_mps(positions.back()).get_chiR())
-//        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}", multisite_mps.dimension(2),
+//        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}",
+//        multisite_mps.dimension(2),
 //                                             state.get_mps(positions.back()).get_chiR(), positions.back()));
 //    if(not chi_lim)
 //        chi_lim = state.get_chi_lim();

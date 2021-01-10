@@ -98,7 +98,7 @@ class class_state_infinite {
     [[nodiscard]] const Eigen::Tensor<Scalar, 1> &LB() const;
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_2site_mps(Scalar norm = 1.0) const;
-    void set_positions(size_t position);
+    void                                          set_positions(size_t position);
 
     void swap_AB(); /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
     void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt);

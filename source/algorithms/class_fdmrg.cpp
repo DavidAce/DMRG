@@ -15,7 +15,6 @@
 #include <tools/finite/opt.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
-
 class_fdmrg::class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
     tools::log->trace("Constructing class_fdmrg");
 }
@@ -45,7 +44,8 @@ void class_fdmrg::resume() {
     if(not status.algorithm_has_finished) {
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
-        if(name.find("emax") != std::string::npos) task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
+        if(name.find("emax") != std::string::npos)
+            task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
         else if(name.find("emin") != std::string::npos)
             task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
         else
@@ -69,12 +69,12 @@ void class_fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
-                ritz       = StateRitz::SR;
+                ritz = StateRitz::SR;
                 tensors.state->set_name("state_emin");
                 run_algorithm();
                 break;
             case fdmrg_task::FIND_HIGHEST_STATE:
-                ritz       = StateRitz::LR;
+                ritz = StateRitz::LR;
                 tensors.state->set_name("state_emax");
                 run_algorithm();
                 break;
@@ -115,7 +115,8 @@ void class_fdmrg::run_preprocessing() {
 
 void class_fdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) {
-        if(ritz == StateRitz::SR) tensors.state->set_name("state_emin");
+        if(ritz == StateRitz::SR)
+            tensors.state->set_name("state_emin");
         else
             tensors.state->set_name("state_emax");
     }
@@ -179,11 +180,9 @@ void class_fdmrg::check_convergence() {
         check_convergence_entg_entropy();
     }
 
-    status.algorithm_has_saturated =
-        (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
-//        or
-//        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
-
+    status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
+    //        or
+    //        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
 
     status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
     status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;

@@ -4,8 +4,10 @@
 
 #include "class_flbit.h"
 #include <config/nmspc_settings.h>
-#include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_exceptions.h>
+#include <general/nmspc_tensor_extra.h>
+#include <iostream>
+#include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_mps_site.h>
@@ -21,9 +23,6 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/print.h>
 #include <unsupported/Eigen/CXX11/Tensor>
-
-#include <iostream>
-#include <math/num.h>
 class_flbit::class_flbit(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
     tensors.state->set_name("state_real");
@@ -54,13 +53,12 @@ void class_flbit::resume() {
     if(not status.algorithm_has_finished) {
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
-        if(name.find("real") != std::string::npos){
+        if(name.find("real") != std::string::npos) {
             task_list.emplace_back(flbit_task::INIT_TIME);
             task_list.emplace_back(flbit_task::INIT_GATES);
             task_list.emplace_back(flbit_task::TRANSFORM_TO_LBIT);
             task_list.emplace_back(flbit_task::TIME_EVOLVE);
-        }
-        else
+        } else
             throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
         task_list.emplace_back(flbit_task::POST_DEFAULT);
         run_task_list(task_list);
@@ -85,7 +83,7 @@ void class_flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 update_time_step();
                 break;
             }
-            case flbit_task::INIT_GATES:{
+            case flbit_task::INIT_GATES: {
                 create_hamiltonian_gates();
                 create_time_evolution_gates();
                 create_lbit_transform_gates();
@@ -134,19 +132,18 @@ void class_flbit::run_preprocessing() {
     tools::finite::print::model(*tensors.model);
     create_time_points();
     update_time_step();
-    if(settings::model::model_size <= 10){
+    if(settings::model::model_size <= 10) {
         // Create a copy of the state as a full state vector for ED comparison
-        auto list_Lsite = num::range<size_t>(0,settings::model::model_size,1);
-        Upsi_ed = tools::finite::measure::mps_wavefn(*tensors.state);
-        tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
-        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite,{1,2,3}), list_Lsite));
+        auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
+        Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
+        tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
+        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, {1, 2, 3}), list_Lsite));
         time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
     }
 
     create_hamiltonian_gates();
     create_time_evolution_gates();
     create_lbit_transform_gates();
-
 
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
 
@@ -162,7 +159,7 @@ void class_flbit::run_algorithm() {
     if(not state_lbit) transform_to_lbit_basis();
     if(time_points.empty()) create_time_points();
     if(std::abs(status.delta_t) == 0) update_time_step();
-    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type),  tensors.state->get_name());
+    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
     tools::common::profile::prof[algo_type]["t_sim"]->tic();
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
@@ -178,7 +175,7 @@ void class_flbit::run_algorithm() {
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(stop_reason != StopReason::NONE) break;
         update_time_step();
-//        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        //        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -201,42 +198,41 @@ void class_flbit::single_flbit_step() {
 
     transform_to_real_basis();
 
-    if(settings::model::model_size <= 10 and settings::debug){
-        Eigen::Tensor<Scalar,1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
-        Eigen::Tensor<Scalar,1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, Textra::idx({1},{0}));
-        Upsi_ed = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0,-1));
-        Upsi_mps = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0,-1));
-        Eigen::Tensor<Scalar,0> overlap = Upsi_ed.conjugate().contract(Upsi_mps, Textra::idx({0},{0}));
-        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}",Textra::TensorVectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}",Textra::TensorVectorMap(Upsi_mps).norm());
-        tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i",std::real(overlap(0)),std::imag(overlap(0)));
+    if(settings::model::model_size <= 10 and settings::debug) {
+        Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
+        Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, Textra::idx({1}, {0}));
+        Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
+        Upsi_mps                          = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0, -1));
+        Eigen::Tensor<Scalar, 0> overlap  = Upsi_ed.conjugate().contract(Upsi_mps, Textra::idx({0}, {0}));
+        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}", Textra::TensorVectorMap(Upsi_mps).norm());
+        tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i", std::real(overlap(0)), std::imag(overlap(0)));
     }
     tensors.clear_measurements();
     tensors.clear_cache();
     tensors.rebuild_edges_ene();
-    status.iter     += 1;
-    status.step     += settings::model::model_size;
-    status.position = tensors.get_position<long>();
+    status.iter += 1;
+    status.step += settings::model::model_size;
+    status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
     status.phys_time += std::abs(status.delta_t);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
 
-void class_flbit::update_time_step(){
+void class_flbit::update_time_step() {
     tools::log->trace("Updating time step");
     if(time_points.empty()) create_time_points();
-    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size()-1);
-    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size()-1);
+    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size() - 1);
+    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
     if(time_point_idx0 == time_point_idx1) {
         stop_reason = StopReason::SUCCEEDED;
         return;
     }
-    if(time_point_idx0 > time_point_idx1)
-        throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
+    if(time_point_idx0 > time_point_idx1) throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
     if(std::abs(std::abs(time_points[time_point_idx0]) - status.phys_time) > 1e-10)
-        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}",status.phys_time,  std::abs(time_points[time_point_idx0]));
+        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}", status.phys_time, std::abs(time_points[time_point_idx0]));
     status.delta_t = time_points[time_point_idx1] - time_points[time_point_idx0];
     tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
     if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
@@ -244,16 +240,12 @@ void class_flbit::update_time_step(){
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
     if constexpr(settings::debug)
-        if(settings::model::model_size <= 10)
-            time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
+        if(settings::model::model_size <= 10) time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
 }
-
 
 void class_flbit::check_convergence() {
     tools::common::profile::prof[algo_type]["t_con"]->tic();
-    if(tensors.position_is_inward_edge()) {
-        check_convergence_entg_entropy();
-    }
+    if(tensors.position_is_inward_edge()) { check_convergence_entg_entropy(); }
 
     status.algorithm_has_saturated = status.entanglement_saturated_for >= min_saturation_iters;
     status.algorithm_has_converged = status.entanglement_has_converged or status.iter >= settings::flbit::time_num_steps;
@@ -272,18 +264,19 @@ void class_flbit::check_convergence() {
     if(tensors.position_is_inward_edge() and status.iter > settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) stop_reason = StopReason::SUCCEEDED;
-        if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real,settings::flbit::time_final_imag))) stop_reason = StopReason::SUCCEEDED;
+        if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag)))
+            stop_reason = StopReason::SUCCEEDED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
     }
 
     tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
-void class_flbit::create_time_points(){
+void class_flbit::create_time_points() {
     tools::log->trace("Creating time points");
-    auto time_start = std::complex<double>(settings::flbit::time_start_real,settings::flbit::time_start_imag);
-    auto time_final = std::complex<double>(settings::flbit::time_final_real,settings::flbit::time_final_imag);
-    auto time_diff = time_start - time_final;
+    auto time_start = std::complex<double>(settings::flbit::time_start_real, settings::flbit::time_start_imag);
+    auto time_final = std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag);
+    auto time_diff  = time_start - time_final;
     // Check that there will be some time evolution
     if(std::abs(time_diff) == 0) throw std::logic_error("time_start - time_final == 0");
     // Check that the time limits are purely real or imaginary!
@@ -293,41 +286,42 @@ void class_flbit::create_time_points(){
         throw std::logic_error(fmt::format("time_start and time_final must both be either purely real or imaginary. Got:\n"
                                            "time_start = {:.8f}{:+.8f}\n"
                                            "time_final = {:.8f}{:+.8f}",
-                                           time_start.real(),time_start.imag(), time_final.real(), time_final.imag()));
+                                           time_start.real(), time_start.imag(), time_final.real(), time_final.imag()));
     time_points.reserve(settings::flbit::time_num_steps);
     if(time_is_real)
-       for(const auto & t : num::LogSpaced(settings::flbit::time_num_steps, std::real(time_start), std::real(time_final))){
-           if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
-           time_points.emplace_back(t);
-       }
-    else
-       for(const auto & t : num::LogSpaced(settings::flbit::time_num_steps, std::imag(time_start), std::imag(time_final))) {
-           if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
-           time_points.emplace_back(std::complex<double>(0, t));
+        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, std::real(time_start), std::real(time_final))) {
+            if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+            time_points.emplace_back(t);
         }
-    status.phys_time = std::abs(time_points[std::min(time_points.size()-1,status.iter)]);
+    else
+        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, std::imag(time_start), std::imag(time_final))) {
+            if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+            time_points.emplace_back(std::complex<double>(0, t));
+        }
+    status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
     tools::log->trace("Created time points: {}", time_points);
     tools::log->trace("Current physical time {:.8e}", status.phys_time);
 }
 
-void class_flbit::create_hamiltonian_gates(){
+void class_flbit::create_hamiltonian_gates() {
     // Create the hamiltonian gates with n-site terms
-    auto                    list_1site = num::range<size_t>(0,settings::model::model_size-0,1);
-    auto                    list_2site = num::range<size_t>(0,settings::model::model_size-1,1);
-    auto                    list_3site = num::range<size_t>(0,settings::model::model_size-2,1);
+    auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
+    auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
+    auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
     for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
-    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1}, {2}), {pos,pos+1}));
-    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos,pos+1,pos+2},{3}), {pos,pos+1,pos+2}));
+    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1}));
+    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}));
 
     for(const auto &ham : ham_gates_1body) std::cout << "ham 1body:\n" << ham.op << std::endl;
     for(const auto &ham : ham_gates_2body) std::cout << "ham 2body:\n" << ham.op << std::endl;
     for(const auto &ham : ham_gates_3body) std::cout << "ham 3body:\n" << ham.op << std::endl;
-//    for(const auto &ham : ham_gates_1body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham1 is all zeros");
-    for(const auto &ham : ham_gates_2body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham2 is all zeros");
-    for(const auto &ham : ham_gates_3body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham3 is all zeros");
-
+    //    for(const auto &ham : ham_gates_1body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham1 is all zeros");
+    for(const auto &ham : ham_gates_2body)
+        if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham2 is all zeros");
+    for(const auto &ham : ham_gates_3body)
+        if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham3 is all zeros");
 }
-void class_flbit::create_time_evolution_gates(){
+void class_flbit::create_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
     if(std::abs(status.delta_t) == 0) update_time_step();
@@ -336,63 +330,63 @@ void class_flbit::create_time_evolution_gates(){
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 }
 
-void class_flbit::create_lbit_transform_gates(){
-    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
-    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size,settings::model::lbit::fmix);
+void class_flbit::create_lbit_transform_gates() {
+    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
 }
 
-void class_flbit::transform_to_real_basis(){
+void class_flbit::transform_to_real_basis() {
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->info("Transforming {} to {}", state_lbit->get_name(), tensors.state->get_name());
-    tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer0, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer1, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer2, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer3, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer0, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer1, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer2, false, status.chi_lim);
+    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer3, false, status.chi_lim);
 
     tensors.clear_measurements();
     tensors.clear_cache();
 
     auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug)
-        if(has_normalized and tools::log->level() == spdlog::level::trace){
+        if(has_normalized and tools::log->level() == spdlog::level::trace) {
             tools::common::profile::prof[algo_type]["t_dbg"]->tic();
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
             tools::log->trace("After normalization");
-            for(const auto & mps : tensors.state->mps_sites)
+            for(const auto &mps : tensors.state->mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
 
-    status.position = tensors.get_position<long>();
+    status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
-void class_flbit::transform_to_lbit_basis(){
+void class_flbit::transform_to_lbit_basis() {
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     state_lbit = std::make_unique<class_state_finite>(*tensors.state);
     state_lbit->set_name("state_lbit");
 
-    tools::log->info("Transforming {} to {}", tensors.state->get_name(),state_lbit->get_name());
+    tools::log->info("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer0, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer1, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer2, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer3, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer0, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer1, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer2, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer3, true, status.chi_lim);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
     if constexpr(settings::debug)
-        if(has_normalized and tools::log->level() == spdlog::level::trace){
+        if(has_normalized and tools::log->level() == spdlog::level::trace) {
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
             tools::log->trace("After normalization");
-            for(const auto & mps : state_lbit->mps_sites)
+            for(const auto &mps : state_lbit->mps_sites)
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
         }
@@ -403,9 +397,7 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
-
 }
-
 
 bool   class_flbit::cfg_algorithm_is_on() { return settings::flbit::on; }
 long   class_flbit::cfg_chi_lim_max() { return settings::flbit::chi_lim_max; }
@@ -413,8 +405,6 @@ size_t class_flbit::cfg_print_freq() { return settings::flbit::print_freq; }
 bool   class_flbit::cfg_chi_lim_grow() { return settings::flbit::chi_lim_grow; }
 long   class_flbit::cfg_chi_lim_init() { return settings::flbit::chi_lim_init; }
 bool   class_flbit::cfg_store_wave_function() { return settings::flbit::store_wavefn; }
-
-
 
 void class_flbit::print_status_update() {
     if(num::mod(status.iter, cfg_print_freq()) != 0) return;
@@ -425,7 +415,8 @@ void class_flbit::print_status_update() {
     report += fmt::format("iter:{:<4} ", status.iter);
     report += fmt::format("step:{:<5} ", status.step);
     report += fmt::format("L:{} ", tensors.get_length());
-    if(tensors.active_sites.empty()) report += fmt::format("l:{:<2} ", tensors.get_position());
+    if(tensors.active_sites.empty())
+        report += fmt::format("l:{:<2} ", tensors.get_position());
     else if(tensors.state->get_direction() > 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
@@ -433,16 +424,15 @@ void class_flbit::print_status_update() {
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-//    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
-//                          std::log10(status.energy_variance_lowest));
-    report +=
-        fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
+    //    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
+    //                          std::log10(status.energy_variance_lowest));
+    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
 
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
-    report += fmt::format("wtime:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
-    report += fmt::format("ptime:{:<} ",fmt::format("{:+>8.2e}s",status.phys_time));
+    report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tools::common::profile::t_tot->get_measured_time()));
+    report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);

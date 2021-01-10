@@ -16,28 +16,28 @@ class h5pp_table_measurements_finite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t              iter                              = 0;
-        uint64_t              step                              = 0;
-        long                  position                          = 0;
-        uint64_t              length                            = 0;
-        long                  bond_dimension_midchain           = 0;
-        long                  bond_dimension_current            = 0;
-        long                  bond_dimension_limit              = 0;
-        long                  bond_dimension_maximum            = 0;
-        double                entanglement_entropy_midchain     = 0;
-        double                entanglement_entropy_current      = 0;
-        double                norm                              = 0;
-        double                energy                            = 0;
-        double                energy_per_site                   = 0;
-        double                energy_variance                   = 0;
-        double                energy_variance_per_site          = 0;
-        double                energy_variance_lowest            = 0;
-        double                energy_variance_per_site_lowest   = 0;
-        std::array<double, 3> spin_components                   = {0};
-        double                truncation_error                  = 0;
-        double                total_time                        = 0;
-        double                algorithm_time                    = 0;
-        double                physical_time                     = 0;
+        uint64_t              iter                            = 0;
+        uint64_t              step                            = 0;
+        long                  position                        = 0;
+        uint64_t              length                          = 0;
+        long                  bond_dimension_midchain         = 0;
+        long                  bond_dimension_current          = 0;
+        long                  bond_dimension_limit            = 0;
+        long                  bond_dimension_maximum          = 0;
+        double                entanglement_entropy_midchain   = 0;
+        double                entanglement_entropy_current    = 0;
+        double                norm                            = 0;
+        double                energy                          = 0;
+        double                energy_per_site                 = 0;
+        double                energy_variance                 = 0;
+        double                energy_variance_per_site        = 0;
+        double                energy_variance_lowest          = 0;
+        double                energy_variance_per_site_lowest = 0;
+        std::array<double, 3> spin_components                 = {0};
+        double                truncation_error                = 0;
+        double                total_time                      = 0;
+        double                algorithm_time                  = 0;
+        double                physical_time                   = 0;
     };
 
     h5pp_table_measurements_finite() { register_table_type(); }
@@ -77,26 +77,26 @@ class h5pp_table_measurements_infinite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t iter                           = 0;
-        uint64_t step                           = 0;
-        long     position                       = 0;
-        uint64_t length                         = 0;
-        long     bond_dimension                 = 0;
-        long     bond_dimension_limit           = 0;
-        long     bond_dimension_maximum         = 0;
-        double   entanglement_entropy           = 0;
-        double   norm                           = 0;
-        double   energy_mpo                     = 0;
-        double   energy_per_site_mpo            = 0;
-        double   energy_per_site_ham            = 0;
-        double   energy_per_site_mom            = 0;
-        double   energy_variance_mpo            = 0;
-        double   energy_variance_per_site_mpo   = 0;
-        double   energy_variance_per_site_ham   = 0;
-        double   energy_variance_per_site_mom   = 0;
-        double   truncation_error               = 0;
-        double   wall_time                      = 0;
-        double   phys_time                      = 0;
+        uint64_t             iter                         = 0;
+        uint64_t             step                         = 0;
+        long                 position                     = 0;
+        uint64_t             length                       = 0;
+        long                 bond_dimension               = 0;
+        long                 bond_dimension_limit         = 0;
+        long                 bond_dimension_maximum       = 0;
+        double               entanglement_entropy         = 0;
+        double               norm                         = 0;
+        double               energy_mpo                   = 0;
+        double               energy_per_site_mpo          = 0;
+        double               energy_per_site_ham          = 0;
+        double               energy_per_site_mom          = 0;
+        double               energy_variance_mpo          = 0;
+        double               energy_variance_per_site_mpo = 0;
+        double               energy_variance_per_site_ham = 0;
+        double               energy_variance_per_site_mom = 0;
+        double               truncation_error             = 0;
+        double               wall_time                    = 0;
+        double               phys_time                    = 0;
         std::complex<double> time_step;
     };
 
@@ -128,15 +128,14 @@ class h5pp_table_measurements_infinite {
     }
 };
 
-
 class h5pp_table_xdmrg_profiling {
     public:
     static inline h5pp::hid::h5t h5_type;
     /* clang-format off */
     struct table {
-        uint64_t iter      = 0;
-        uint64_t step      = 0;
-        long     position  = 0;
+        uint64_t iter              = 0;
+        uint64_t step              = 0;
+        long     position          = 0;
         double   t_tot             = 0;
         double   t_pre             = 0;
         double   t_rnd             = 0;
@@ -348,7 +347,6 @@ class h5pp_table_flbit_profiling {
     /* clang-format on */
 };
 
-
 class h5pp_table_idmrg_profiling {
     public:
     static inline h5pp::hid::h5t h5_type;
@@ -413,9 +411,9 @@ class h5pp_table_itebd_profiling {
     static inline h5pp::hid::h5t h5_type;
     /* clang-format off */
     struct table {
-        uint64_t iter      = 0;
-        uint64_t step      = 0;
-        long     position  = 0;
+        uint64_t iter              = 0;
+        uint64_t step              = 0;
+        long     position          = 0;
         double   t_tot             = 0;
         double   t_pre             = 0;
         double   t_pos             = 0;
@@ -459,7 +457,6 @@ class h5pp_table_itebd_profiling {
     /* clang-format on */
 };
 
-
 class h5pp_table_algorithm_status {
     public:
     static inline h5pp::hid::h5t h5_type;
@@ -469,49 +466,51 @@ class h5pp_table_algorithm_status {
     static void register_table_type() {
         if(h5_type.valid()) return;
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-        H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
-        H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "cfg_chi_lim_max", HOFFSET(table, chi_lim_max), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "cfg_chi_lim_init", HOFFSET(table, chi_lim_init), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "chi_lim", HOFFSET(table, chi_lim), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "energy_min_per_site", HOFFSET(table, energy_min_per_site), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_max_per_site", HOFFSET(table, energy_max_per_site), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_tgt_per_site", HOFFSET(table, energy_tgt_per_site), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_ulim_per_site", HOFFSET(table, energy_ulim_per_site), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_llim_per_site", HOFFSET(table, energy_llim_per_site), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens", HOFFSET(table, energy_dens), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens_target", HOFFSET(table, energy_dens_target), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens_window", HOFFSET(table, energy_dens_window), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_variance_lowest", HOFFSET(table, energy_variance_lowest), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "phys_time", HOFFSET(table, phys_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "algo_time", HOFFSET(table, algo_time), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "delta_t", HOFFSET(table, delta_t), h5pp::type::compound::H5T_COMPLEX_DOUBLE);
-        H5Tinsert(h5_type, "simulation_has_stuck_for", HOFFSET(table, algorithm_has_stuck_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "entanglement_saturated_for", HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "variance_mpo_saturated_for", HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "variance_ham_saturated_for", HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "variance_mom_saturated_for", HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "algorithm_has_finished", HOFFSET(table, algorithm_has_finished), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_converged", HOFFSET(table, algorithm_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_saturated", HOFFSET(table, algorithm_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_succeeded", HOFFSET(table, algorithm_has_succeeded), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_got_stuck", HOFFSET(table, algorithm_has_got_stuck), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_to_stop", HOFFSET(table, algorithm_has_to_stop), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "entanglement_has_converged", HOFFSET(table, entanglement_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "entanglement_has_saturated", HOFFSET(table, entanglement_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_mpo_has_converged", HOFFSET(table, variance_mpo_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_mpo_has_saturated", HOFFSET(table, variance_mpo_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_ham_has_converged", HOFFSET(table, variance_ham_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_ham_has_saturated", HOFFSET(table, variance_ham_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_mom_has_converged", HOFFSET(table, variance_mom_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "variance_mom_has_saturated", HOFFSET(table, variance_mom_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "time_step_has_converged", HOFFSET(table, time_step_has_converged), H5T_NATIVE_UINT8);
+        /* clang-format off */
+        H5Tinsert(h5_type, "iter",                        HOFFSET(table, iter),                       H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "step",                        HOFFSET(table, step),                       H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",                    HOFFSET(table, position),                   H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
+        H5Tinsert(h5_type, "num_resets",                  HOFFSET(table, num_resets),                 H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "cfg_chi_lim_max",             HOFFSET(table, chi_lim_max),                H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "cfg_chi_lim_init",            HOFFSET(table, chi_lim_init),               H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "chi_lim",                     HOFFSET(table, chi_lim),                    H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "energy_min_per_site",         HOFFSET(table, energy_min_per_site),        H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_max_per_site",         HOFFSET(table, energy_max_per_site),        H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_tgt_per_site",         HOFFSET(table, energy_tgt_per_site),        H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_ulim_per_site",        HOFFSET(table, energy_ulim_per_site),       H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_llim_per_site",        HOFFSET(table, energy_llim_per_site),       H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_dens",                 HOFFSET(table, energy_dens),                H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_dens_target",          HOFFSET(table, energy_dens_target),         H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_dens_window",          HOFFSET(table, energy_dens_window),         H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_variance_lowest",      HOFFSET(table, energy_variance_lowest),     H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    h5pp::type::compound::H5T_COMPLEX_DOUBLE);
+        H5Tinsert(h5_type, "simulation_has_stuck_for",    HOFFSET(table, algorithm_has_stuck_for),    H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "entanglement_saturated_for",  HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "variance_mpo_saturated_for",  HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "variance_ham_saturated_for",  HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "variance_mom_saturated_for",  HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_converged",     HOFFSET(table, algorithm_has_converged),    H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_saturated",     HOFFSET(table, algorithm_has_saturated),    H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_succeeded",     HOFFSET(table, algorithm_has_succeeded),    H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_got_stuck",     HOFFSET(table, algorithm_has_got_stuck),    H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_to_stop",       HOFFSET(table, algorithm_has_to_stop),      H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max),H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "entanglement_has_converged",  HOFFSET(table, entanglement_has_converged), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "entanglement_has_saturated",  HOFFSET(table, entanglement_has_saturated), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_mpo_has_converged",  HOFFSET(table, variance_mpo_has_converged), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_mpo_has_saturated",  HOFFSET(table, variance_mpo_has_saturated), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_ham_has_converged",  HOFFSET(table, variance_ham_has_converged), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_ham_has_saturated",  HOFFSET(table, variance_ham_has_saturated), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_mom_has_converged",  HOFFSET(table, variance_mom_has_converged), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "variance_mom_has_saturated",  HOFFSET(table, variance_mom_has_saturated), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
+        /* clang-format on */
     }
 };
 

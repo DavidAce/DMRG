@@ -2,11 +2,11 @@
 
 #include <algorithms/class_algorithm_launcher.h>
 #include <config/nmspc_settings.h>
+#include <general/nmspc_tensor_omp.h>
 #include <h5pp/h5pp.h>
 #include <io/nmspc_filesystem.h>
 #include <math/rnd.h>
 #include <tools/common/log.h>
-#include <general/nmspc_tensor_omp.h>
 
 #if defined(OPENBLAS_AVAILABLE)
     #include <cblas.h>
@@ -14,21 +14,20 @@
 #endif
 
 #if defined(MKL_AVAILABLE)
-    #define MKL_Complex8 std::complex<float>
+    #define MKL_Complex8  std::complex<float>
     #define MKL_Complex16 std::complex<double>
 //    #include <mkl.h>
     #include <mkl_service.h>
 #endif
 
+#include <config/class_dmrg_config.h>
+#include <general/stack_trace.h>
 #include <getopt.h>
 #include <gitversion.h>
 #include <thread>
 
-#include <config/class_dmrg_config.h>
-#include <general/stack_trace.h>
-
 #if __has_include(<unistd.h>)
-#include <unistd.h>
+    #include <unistd.h>
 #endif
 
 void print_usage() {
@@ -99,8 +98,6 @@ int main(int argc, char *argv[]) {
     tools::log->info("    commit hash : {}", GIT::COMMIT_HASH);
     tools::log->info("    revision    : {}", GIT::REVISION);
 
-
-
     // Here we use getopt to parse CLI input
     // Note that CLI input always override config-file values
     // wherever they are found (config file, h5 file)
@@ -116,7 +113,8 @@ int main(int argc, char *argv[]) {
     while(true) {
         char opt = static_cast<char>(getopt(argc, argv, "hb:c:i:s:t:o:vx"));
         if(opt == EOF) break;
-        if(optarg == nullptr) tools::log->info("Parsing input argument: -{}", opt);
+        if(optarg == nullptr)
+            tools::log->info("Parsing input argument: -{}", opt);
         else
             tools::log->info("Parsing input argument: -{} {}", opt, optarg);
         switch(opt) {

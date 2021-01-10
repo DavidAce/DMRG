@@ -2,9 +2,9 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
+#include <general/eigen_tensor_fwd_decl.h>
 #include <memory>
 #include <optional>
-#include <general/eigen_tensor_fwd_decl.h>
 
 class class_env_ene;
 class class_env_var;
@@ -21,14 +21,14 @@ class class_edges_infinite {
 
     public:
     class_edges_infinite();
-    ~class_edges_infinite();                                                // Read comment on implementation
-    class_edges_infinite(class_edges_infinite &&other);                     // default move ctor
-    class_edges_infinite &operator=(class_edges_infinite &&other);          // default move assign
-    class_edges_infinite(const class_edges_infinite &other);                // copy ctor
-    class_edges_infinite &operator=(const class_edges_infinite &other);     // copy assign
+    ~class_edges_infinite();                                            // Read comment on implementation
+    class_edges_infinite(class_edges_infinite &&other);                 // default move ctor
+    class_edges_infinite &operator=(class_edges_infinite &&other);      // default move assign
+    class_edges_infinite(const class_edges_infinite &other);            // copy ctor
+    class_edges_infinite &operator=(const class_edges_infinite &other); // copy assign
 
-    void initialize();
-    void eject_edges();
+    void                 initialize();
+    void                 eject_edges();
     void                 assert_validity() const;
     [[nodiscard]] size_t get_length() const;
     size_t               get_position() const; // pos of eneL or varL

@@ -1,7 +1,7 @@
 #pragma once
+#include <config/enums.h>
 #include <string>
 #include <unsupported/Eigen/CXX11/Tensor>
-#include <config/enums.h>
 
 class class_tensors_infinite;
 namespace tools::infinite::opt {

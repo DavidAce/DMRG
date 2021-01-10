@@ -63,7 +63,8 @@ namespace sfinae::eigen {
         static constexpr auto test() {
             if constexpr(is_eigen_map<U>::value) return test<typename U::PlainObject>();
             if constexpr(is_eigen_dense<U>::value) return U::RowsAtCompileTime == 1 or U::ColsAtCompileTime == 1;
-            if constexpr(is_eigen_tensor<U>::value and has_NumIndices<U>::value) return U::NumIndices == 1;
+            if constexpr(is_eigen_tensor<U>::value and has_NumIndices<U>::value)
+                return U::NumIndices == 1;
             else
                 return false;
         }
@@ -79,7 +80,8 @@ namespace sfinae::eigen {
         template<typename U>
         static constexpr bool test() {
             if constexpr(is_eigen_base<U>::value) return not U::IsRowMajor;
-            if constexpr(is_eigen_tensor<U>::value) return Eigen::ColMajor == static_cast<Eigen::StorageOptions>(U::Layout);
+            if constexpr(is_eigen_tensor<U>::value)
+                return Eigen::ColMajor == static_cast<Eigen::StorageOptions>(U::Layout);
             else
                 return false;
         }
@@ -95,7 +97,8 @@ namespace sfinae::eigen {
         template<typename U>
         static constexpr bool test() {
             if constexpr(is_eigen_base<U>::value) return U::IsRowMajor;
-            if constexpr(is_eigen_tensor<U>::value) return Eigen::RowMajor == static_cast<Eigen::StorageOptions>(U::Layout);
+            if constexpr(is_eigen_tensor<U>::value)
+                return Eigen::RowMajor == static_cast<Eigen::StorageOptions>(U::Layout);
             else
                 return false;
         }

@@ -7,11 +7,11 @@ class class_model_infinite;
 class class_algorithm_status;
 enum class StorageLevel;
 enum class SimulationTask;
-namespace h5pp{
+namespace h5pp {
     class File;
 }
 
-namespace tools::infinite::io{
+namespace tools::infinite::io {
     /* clang-format off */
     namespace h5dset{
         extern int decide_layout(std::string_view prefix_path);

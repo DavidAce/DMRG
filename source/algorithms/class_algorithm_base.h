@@ -33,7 +33,7 @@ class class_algorithm_base {
     // Virtual Functions
     virtual void   run()                                                                                                                         = 0;
     virtual void   check_convergence()                                                                                                           = 0;
-    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt)  = 0;
+    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt) = 0;
     virtual bool   cfg_algorithm_is_on()                                                                                                         = 0;
     virtual size_t cfg_print_freq()                                                                                                              = 0;
     virtual long   cfg_chi_lim_max()                                                                                                             = 0;

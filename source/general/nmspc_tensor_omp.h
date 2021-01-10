@@ -15,15 +15,15 @@
 namespace Textra::omp {
     extern int num_threads;
 #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
-    extern std::unique_ptr<Eigen::ThreadPool> tp;
+    extern std::unique_ptr<Eigen::ThreadPool>       tp;
     extern std::unique_ptr<Eigen::ThreadPoolDevice> dev;
-    void setNumThreads(int num);
-    Eigen::ThreadPoolDevice & getDevice();
+    void                                            setNumThreads(int num);
+    Eigen::ThreadPoolDevice &                       getDevice();
 
 #else
     extern std::unique_ptr<Eigen::DefaultDevice> dev;
-    void setNumThreads([[maybe_unused]] int num);
-    Eigen::DefaultDevice & getDevice();
+    void                                         setNumThreads([[maybe_unused]] int num);
+    Eigen::DefaultDevice &                       getDevice();
 #endif
 
 }

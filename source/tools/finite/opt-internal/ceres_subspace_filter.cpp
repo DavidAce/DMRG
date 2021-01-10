@@ -1,53 +1,47 @@
 #include "ceres_subspace_functor.h"
 #include <tools/common/log.h>
-#include <tools/finite/opt_state.h>
 #include <tools/finite/opt-internal/opt-internal.h>
-
+#include <tools/finite/opt_state.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-
-
 void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_state> &candidate_list, double maximum_subspace_error, size_t max_accept) {
     // Sort the candidate list in order of descending overlaps. If the overlaps are the same, compare instead the distance in energy to the
     // current energy
-    std::sort(candidate_list.begin(),candidate_list.end(), std::greater<>());
-    size_t initial_size  = candidate_list.size();
-    size_t min_accept    = std::min(std::min(max_accept,32ul), initial_size);
-    max_accept           = std::min(max_accept, initial_size);
-    auto subspace_errors = subspace::get_subspace_errors(candidate_list); // Vector with decreasing (cumulative) subspace errors, 1-eps(candidate_i)
-    double subspace_error_initial =  subspace_errors.back();
-    while(true){
-        if(candidate_list.size() <= max_accept){
+    std::sort(candidate_list.begin(), candidate_list.end(), std::greater<>());
+    size_t initial_size           = candidate_list.size();
+    size_t min_accept             = std::min(std::min(max_accept, 32ul), initial_size);
+    max_accept                    = std::min(max_accept, initial_size);
+    auto   subspace_errors        = subspace::get_subspace_errors(candidate_list); // Vector with decreasing (cumulative) subspace errors, 1-eps(candidate_i)
+    double subspace_error_initial = subspace_errors.back();
+    while(true) {
+        if(candidate_list.size() <= max_accept) {
             if(candidate_list.size() <= min_accept) break;
             // Check what the subspace error would be if the last candidate was removed
             if(subspace_errors.rbegin()[1] >= maximum_subspace_error) break;
         }
-        if(candidate_list.back().is_basis_vector)
-            subspace_errors.pop_back();
+        if(candidate_list.back().is_basis_vector) subspace_errors.pop_back();
         candidate_list.pop_back();
     }
     double subspace_error_final = subspace_errors.back();
-    size_t idx = 0;
-    for(auto & candidate : candidate_list){
+    size_t idx                  = 0;
+    for(auto &candidate : candidate_list) {
         candidate.set_name(fmt::format("eigenvector {}", idx++));
-//        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", candidate.get_name(), candidate.get_overlap(),
-//                          candidate.get_energy_per_site());
+        //        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", candidate.get_name(), candidate.get_overlap(),
+        //                          candidate.get_energy_per_site());
     }
 
     tools::log->trace("Filtered from {} down to {} states", initial_size, candidate_list.size());
-    tools::log->trace("Filter changed subspace error = {} --> {}", std::log10(subspace_error_initial),  std::log10(subspace_error_final));
+    tools::log->trace("Filter changed subspace error = {} --> {}", std::log10(subspace_error_initial), std::log10(subspace_error_final));
     if(candidate_list.size() < min_accept) throw std::runtime_error("Filtered too many candidates");
 }
 
-
-
-
 std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_highest_overlap(const std::vector<opt_state> &candidate_list,
-                                                                                                        double energy_llim_per_site, double energy_ulim_per_site) {
+                                                                                                        double                        energy_llim_per_site,
+                                                                                                        double                        energy_ulim_per_site) {
     if(candidate_list.empty()) return std::nullopt;
-    auto   overlaps = get_overlaps(candidate_list);
+    auto overlaps = get_overlaps(candidate_list);
     long idx      = 0;
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
@@ -65,10 +59,11 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candida
     return idx;
 }
 
-std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_state> &candidate_list, size_t max_candidates, double energy_llim_per_site,
-                                                               double energy_ulim_per_site) {
+std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_state> &candidate_list,
+                                                                                                       size_t max_candidates, double energy_llim_per_site,
+                                                                                                       double energy_ulim_per_site) {
     if(candidate_list.empty()) return std::vector<size_t>();
-    auto   overlaps = get_overlaps(candidate_list);
+    auto overlaps = get_overlaps(candidate_list);
     long idx      = 0;
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
@@ -96,13 +91,12 @@ std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate
         if(candidate.is_basis_vector) best_val.emplace_back(max_overlap_val);
         if(best_idx.size() > max_candidates) break;
         double sq_sum_overlap = overlaps.cwiseAbs2().sum();
-        if(sq_sum_overlap > 0.6) break;  // Half means cat state.
-        overlaps(idx) = 0.0; // Zero out the current best so the next-best is found in the next iteration
+        if(sq_sum_overlap > 0.6) break; // Half means cat state.
+        overlaps(idx) = 0.0;            // Zero out the current best so the next-best is found in the next iteration
     }
     tools::log->debug("Found {} candidates with good overlap in energy window", best_idx.size());
     return best_idx;
 }
-
 
 Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::vector<opt_state> &candidate_list) {
     long             rows = candidate_list.front().get_tensor().size();
@@ -151,11 +145,10 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(co
     return energies;
 }
 
-
 double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<opt_state> &candidate_list, std::optional<size_t> max_candidates) {
-    double eps = 0;
+    double eps            = 0;
     size_t num_candidates = 0;
-    if (not max_candidates) max_candidates = candidate_list.size();
+    if(not max_candidates) max_candidates = candidate_list.size();
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
         eps += std::pow(candidate.get_overlap(), 2);
@@ -166,26 +159,22 @@ double tools::finite::opt::internal::subspace::get_subspace_error(const std::vec
 }
 
 std::vector<double> tools::finite::opt::internal::subspace::get_subspace_errors(const std::vector<opt_state> &candidate_list) {
-    double eps = 0;
+    double              eps = 0;
     std::vector<double> subspace_errors;
     subspace_errors.reserve(candidate_list.size());
     for(const auto &candidate : candidate_list) {
         if(not candidate.is_basis_vector) continue;
         eps += std::pow(candidate.get_overlap(), 2);
-        subspace_errors.emplace_back(1-eps);
+        subspace_errors.emplace_back(1 - eps);
     }
     return subspace_errors;
 }
 
-
 double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<double> &overlaps) {
     double eps = 0;
-    for(const auto &overlap : overlaps) {
-        eps += std::pow(overlap, 2);
-    }
+    for(const auto &overlap : overlaps) { eps += std::pow(overlap, 2); }
     return 1.0 - eps;
 }
-
 
 Eigen::VectorXd tools::finite::opt::internal::subspace::get_overlaps(const std::vector<opt_state> &candidate_list) {
     Eigen::VectorXd overlaps(static_cast<long>(candidate_list.size()));
@@ -222,11 +211,12 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_state> &candidate_list, const Eigen::VectorXcd & fullspace_vector) {
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_state> &candidate_list,
+                                                                                const Eigen::VectorXcd &      fullspace_vector) {
     // In this function we project a vector to the subspace spanned by a small set of eigenvectors
     // Essentially this old computation
     //      Eigen::VectorXcd subspace_vector = (eigvecs.adjoint() * fullspace_vector).normalized();
-    long             subspace_size    = static_cast<long>(candidate_list.size());
+    long             subspace_size = static_cast<long>(candidate_list.size());
     Eigen::VectorXcd subspace_vector(subspace_size);
     long             subspace_idx = 0;
     for(const auto &candidate : candidate_list) {
@@ -237,9 +227,8 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-
 Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace(const std::vector<opt_state> &candidate_list,
-                                                                                 const Eigen::VectorXcd & subspace_vector) {
+                                                                                 const Eigen::VectorXcd &      subspace_vector) {
     // In this function we project a subspace vector back to the full space
     // Essentially this old computation
     //     Eigen::VectorXcd fullspace_vector = (eigvecs * subspace_vector.asDiagonal()).rowwise().sum().normalized();

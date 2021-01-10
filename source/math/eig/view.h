@@ -10,7 +10,6 @@ namespace eig::view {
     template<typename T>
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
-
     template<typename Scalar>
     Eigen::Map<VectorType<Scalar>> get_eigvals(eig::solution &result) {
         if(not result.meta.eigvals_found)
@@ -18,7 +17,7 @@ namespace eig::view {
         if constexpr(std::is_same_v<Scalar, real>)
             if(not result.eigvals_are_real()) throw std::runtime_error("Can't view real eigenvalues: solution has complex eigenvalues");
 
-        auto & eigvals = result.get_eigvals<Scalar>();
+        auto &eigvals = result.get_eigvals<Scalar>();
         if(eigvals.empty()) throw std::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");
         return Eigen::Map<VectorType<Scalar>>(eigvals.data(), static_cast<long>(eigvals.size()));
     }
@@ -27,7 +26,6 @@ namespace eig::view {
     Scalar get_eigval(eig::solution &result, integral_type num = 0) {
         return get_eigvals<Scalar>(result)(static_cast<long>(num));
     }
-
 
     template<typename Scalar>
     Eigen::Map<MatrixType<Scalar>> get_eigvecs(eig::solution &result, Side side = Side::R) {
@@ -40,7 +38,7 @@ namespace eig::view {
 
         if constexpr(std::is_same_v<Scalar, real>)
             if(not result.eigvecs_are_real()) throw std::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
-        auto & eigvecs = result.get_eigvecs<Scalar>(side);
+        auto &eigvecs = result.get_eigvecs<Scalar>(side);
         if(eigvecs.empty()) throw std::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
         auto rows = result.meta.rows;
         auto cols = result.meta.cols;
@@ -50,12 +48,13 @@ namespace eig::view {
 
     template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
     Eigen::Map<VectorType<Scalar>> get_eigvec(eig::solution &result, integral_type num = 0, Side side = Side::R) {
-        auto eigvecmap = get_eigvecs<Scalar>(result,side).col(static_cast<long>(num));
+        auto eigvecmap = get_eigvecs<Scalar>(result, side).col(static_cast<long>(num));
         return Eigen::Map<VectorType<Scalar>>(eigvecmap.data(), eigvecmap.size());
     }
 
     template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(eig::solution &result, const Eigen::DSizes<long, 3> &dims, integral_type num = 0, Side side = Side::R) {
+    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(eig::solution &result, const Eigen::DSizes<long, 3> &dims, integral_type num = 0,
+                                                          Side side = Side::R) {
         if(result.meta.rows != dims[0] * dims[1] * dims[2])
             throw std::range_error(fmt::format("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0],
                                                dims[1], dims[3], dims[0] * dims[1] * dims[2]));

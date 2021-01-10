@@ -1,7 +1,6 @@
 #pragma once
 
-
-namespace eig::sfinae{
+namespace eig::sfinae {
     // A bit of sfinae deduction
     template<typename T, typename = std::void_t<>>
     struct has_RawEigenvaluesImag : public std::false_type {};

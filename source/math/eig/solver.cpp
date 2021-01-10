@@ -95,8 +95,8 @@ template void eig::solver::eig<eig::Form::NSYM>(const real *matrix, size_type, V
 template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, Vecs, Dephase);
 template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);
 
-void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz,  Form form, Type type,Side side,  std::optional<cplx> sigma,Shinv shift_invert, Storage storage,
-                            Vecs compute_eigvecs, Dephase remove_phase) {
+void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
+                            Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase) {
     eig::log->trace("eigs init");
     result.reset();
     /* clang-format off */
@@ -118,8 +118,8 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(not config.storage)         config.storage         = storage;
     /* clang-format on */
 
-    if(config.eigMaxNev.value() < 1)  config.eigMaxNev = 1;
-    if(config.eigMaxNcv.value() <= 1)  config.eigMaxNcv = 16;
+    if(config.eigMaxNev.value() < 1) config.eigMaxNev = 1;
+    if(config.eigMaxNcv.value() <= 1) config.eigMaxNcv = 16;
 
     if(config.eigMaxNcv.value() < config.eigMaxNev.value()) {
         if(config.eigMaxNev.value() >= 1 and config.eigMaxNev.value() <= 16) {
@@ -138,162 +138,63 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     assert(config.eigMaxNcv.value() >= config.eigMaxNev.value() and "Ncv < Nev");
     assert(config.eigMaxNev.value() <= L and "Nev > L");
 
-    if(config.shift_invert == Shinv::ON and not config.sigma)
-        throw std::runtime_error("Sigma must be set to use shift-invert mode");
+    if(config.shift_invert == Shinv::ON and not config.sigma) throw std::runtime_error("Sigma must be set to use shift-invert mode");
     config.checkRitz();
 }
 
-
-
 template<typename Scalar, eig::Storage storage>
-void eig::solver::eigs(
-          const Scalar *matrix,
-          size_type L,
-          size_type nev,
-          size_type ncv,
-          Ritz ritz,
-          Form form,
-          Side side,
-          std::optional<cplx> sigma,
-          Shinv shift_invert,
-          Vecs compute_eigvecs,
-          Dephase remove_phase,
-          Scalar * residual)
-{
-
-    bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
-    Type type = is_cplx ? Type::CPLX : Type::REAL;
-    eigs_init(L, nev, ncv, ritz, form,type,side,sigma,shift_invert, storage, compute_eigvecs, remove_phase);
-    if constexpr(storage == Storage::DENSE){
-        auto matrix_dense = MatrixProductDense<Scalar> (matrix,L,true);
+void eig::solver::eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma,
+                       Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual) {
+    bool is_cplx = std::is_same<std::complex<double>, Scalar>::value;
+    Type type    = is_cplx ? Type::CPLX : Type::REAL;
+    eigs_init(L, nev, ncv, ritz, form, type, side, sigma, shift_invert, storage, compute_eigvecs, remove_phase);
+    if constexpr(storage == Storage::DENSE) {
+        auto                                      matrix_dense = MatrixProductDense<Scalar>(matrix, L, true);
         arpack_solver<MatrixProductDense<Scalar>> solver(matrix_dense, config, result, residual);
         solver.eigs();
-    }else if constexpr (storage == Storage::SPARSE){
-        auto matrix_sparse = MatrixProductSparse<Scalar,false> (matrix,L,true);
-        arpack_solver<MatrixProductSparse<Scalar,false>> solver(matrix_sparse, config, result, residual);
+    } else if constexpr(storage == Storage::SPARSE) {
+        auto                                              matrix_sparse = MatrixProductSparse<Scalar, false>(matrix, L, true);
+        arpack_solver<MatrixProductSparse<Scalar, false>> solver(matrix_sparse, config, result, residual);
         solver.eigs();
     }
 }
 
-template void eig::solver::eigs(const eig::real * matrix,
-                                size_type L,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::real * residual);
+template void eig::solver::eigs(const eig::real *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
 
-template void eig::solver::eigs(const eig::cplx * matrix,
-                                size_type L,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::cplx * residual);
-
+template void eig::solver::eigs(const eig::cplx *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
 
 template<typename MatrixProductType>
-void eig::solver::eigs(
-    MatrixProductType &matrix,
-    size_type nev,
-    size_type ncv,
-    Ritz ritz,
-    Form form,
-    Side side,
-    std::optional<cplx> sigma,
-    Shinv shift_invert,
-    Vecs compute_eigvecs,
-    Dephase remove_phase,
-    typename MatrixProductType::Scalar *residual)
-{
+void eig::solver::eigs(MatrixProductType &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma, Shinv shift_invert,
+                       Vecs compute_eigvecs, Dephase remove_phase, typename MatrixProductType::Scalar *residual) {
     using Scalar = typename MatrixProductType::Scalar;
     Type type;
-    if constexpr (std::is_same_v<Scalar,real>) type = Type::REAL;
-    else if constexpr (std::is_same_v<Scalar,cplx>) type = Type::CPLX;
-    else throw std::runtime_error("Unsupported type");
-    eigs_init(matrix.rows(), nev, ncv, ritz, form,type,side,sigma,shift_invert, matrix.storage, compute_eigvecs, remove_phase);
+    if constexpr(std::is_same_v<Scalar, real>)
+        type = Type::REAL;
+    else if constexpr(std::is_same_v<Scalar, cplx>)
+        type = Type::CPLX;
+    else
+        throw std::runtime_error("Unsupported type");
+    eigs_init(matrix.rows(), nev, ncv, ritz, form, type, side, sigma, shift_invert, matrix.storage, compute_eigvecs, remove_phase);
     arpack_solver<MatrixProductType> solver(matrix, config, result, residual);
     solver.eigs();
 }
 
-template void eig::solver::eigs(MatrixProductDense<eig::real> &matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::real * residual);
+template void eig::solver::eigs(MatrixProductDense<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
 
-template void eig::solver::eigs(MatrixProductDense<eig::cplx> & matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::cplx * residual);
+template void eig::solver::eigs(MatrixProductDense<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
 
-template void eig::solver::eigs(MatrixProductSparse<eig::real> & matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::real * residual);
+template void eig::solver::eigs(MatrixProductSparse<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
 
-template void eig::solver::eigs(MatrixProductSparse<eig::cplx> & matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::cplx * residual);
+template void eig::solver::eigs(MatrixProductSparse<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
 
-template void eig::solver::eigs(MatrixProductHamiltonian<eig::real> & matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::real * residual);
+template void eig::solver::eigs(MatrixProductHamiltonian<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
 
-template void eig::solver::eigs(MatrixProductHamiltonian<eig::cplx> & matrix,
-                                size_type nev,
-                                size_type ncv,
-                                Ritz ritz,
-                                Form form,
-                                Side side,
-                                std::optional<eig::cplx> sigma,
-                                Shinv shift_invert,
-                                Vecs compute_eigvecs,
-                                Dephase remove_phase,
-                                eig::cplx * residual);
+template void eig::solver::eigs(MatrixProductHamiltonian<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
+                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);

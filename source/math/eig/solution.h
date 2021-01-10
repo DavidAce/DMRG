@@ -3,7 +3,6 @@
 #include <typeindex>
 #include <vector>
 
-
 namespace eig {
     class solver;
     template<typename MatrixType>
@@ -58,13 +57,13 @@ namespace eig {
                 build_eigvecs_real();
                 if constexpr(side == Side::R) return eigvecsR_real;
                 if constexpr(side == Side::L) return eigvecsL_real;
-                if constexpr(side == Side::LR) return std::pair(eigvecsL_real,eigvecsR_real);
+                if constexpr(side == Side::LR) return std::pair(eigvecsL_real, eigvecsR_real);
             }
             if constexpr(std::is_same_v<Scalar, cplx>) {
                 build_eigvecs_cplx();
                 if constexpr(side == Side::R) return eigvecsR_cplx;
                 if constexpr(side == Side::L) return eigvecsL_cplx;
-                if constexpr(side == Side::LR) return std::pair(eigvecsL_cplx,eigvecsR_cplx);
+                if constexpr(side == Side::LR) return std::pair(eigvecsL_cplx, eigvecsR_cplx);
             }
         }
 
@@ -100,7 +99,7 @@ namespace eig {
 
         template<typename Scalar>
         auto &get_eigvals() {
-            if constexpr(std::is_same_v<Scalar, real>){
+            if constexpr(std::is_same_v<Scalar, real>) {
                 build_eigvals_real();
                 return eigvals_real;
             }
@@ -134,7 +133,8 @@ namespace eig {
         bool eigvals_are_real() { return meta.form == Form::SYMM; }
 
         std::type_index get_eigvecs_type() {
-            if(eigvecs_are_real()) return typeid(real);
+            if(eigvecs_are_real())
+                return typeid(real);
             else
                 return typeid(cplx);
         }

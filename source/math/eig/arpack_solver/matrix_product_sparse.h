@@ -5,7 +5,6 @@
 #pragma once
 #include "math/eig/enums.h"
 
-
 class class_tic_toc;
 
 template<typename Scalar_, bool sparseLU = false>
@@ -33,22 +32,22 @@ class MatrixProductSparse {
     MatrixProductSparse(const Scalar *A_, long L_, bool copy_data, eig::Form form_ = eig::Form::SYMM, eig::Side side_ = eig::Side::R);
     ~MatrixProductSparse();
     // Functions used in in Arpack++ solver
-    [[nodiscard]] int  rows() const { return static_cast<int>(L); };
-    [[nodiscard]] int  cols() const { return static_cast<int>(L); };
-    void FactorOP();                                   //  Factors (A-sigma*I) into PLU
-    void MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr); //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
-    void MultAx(Scalar *x_in_ptr, Scalar *x_out_ptr);  //   Computes the matrix-vector multiplication x_out <- A*x_in.
+    [[nodiscard]] int rows() const { return static_cast<int>(L); };
+    [[nodiscard]] int cols() const { return static_cast<int>(L); };
+    void              FactorOP();                                   //  Factors (A-sigma*I) into PLU
+    void              MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr); //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void              MultAx(Scalar *x_in_ptr, Scalar *x_out_ptr);  //   Computes the matrix-vector multiplication x_out <- A*x_in.
 
     // Various utility functions
-    int              counter = 0;
-    void             print() const;
-    void             set_shift(std::complex<double> sigma_);
-    void             set_mode(const eig::Form form_);
-    void             set_side(const eig::Side side_);
-    [[nodiscard]]  const eig::Form &get_form() const;
-    [[nodiscard]]  const eig::Side &get_side() const;
+    int                            counter = 0;
+    void                           print() const;
+    void                           set_shift(std::complex<double> sigma_);
+    void                           set_mode(const eig::Form form_);
+    void                           set_side(const eig::Side side_);
+    [[nodiscard]] const eig::Form &get_form() const;
+    [[nodiscard]] const eig::Side &get_side() const;
     // Profiling
-    void          init_profiling();
+    void                           init_profiling();
     std::unique_ptr<class_tic_toc> t_factorOP;
     std::unique_ptr<class_tic_toc> t_multOPv;
     std::unique_ptr<class_tic_toc> t_multAx;

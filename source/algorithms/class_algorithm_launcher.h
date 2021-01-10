@@ -4,10 +4,12 @@
 #pragma once
 
 #include <memory>
-namespace h5pp{class File;}
+namespace h5pp {
+    class File;
+}
 
-class class_algorithm_launcher  {
-public:
+class class_algorithm_launcher {
+    public:
     std::shared_ptr<h5pp::File> h5pp_file;
 
     explicit class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
@@ -21,7 +23,4 @@ public:
     void run_flbit();
     void run_xdmrg();
     void run_itebd();
-
-
 };
-

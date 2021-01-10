@@ -119,12 +119,12 @@ void class_model_finite::randomize() {
 }
 
 bool class_model_finite::has_mpo_squared() const {
-    return std::all_of(MPO.begin(),MPO.end(),[](const auto & mpo){return mpo->has_mpo_squared();});
+    return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
 void class_model_finite::reset_mpo_squared() {
     tools::log->debug("Resetting squared MPO");
-    for(const auto & mpo : MPO) mpo->build_mpo_squared();
+    for(const auto &mpo : MPO) mpo->build_mpo_squared();
 }
 
 void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
@@ -139,7 +139,7 @@ void class_model_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
 std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
-    for(const auto & mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
+    for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->get_uncompressed_mpo_squared());
     tools::log->debug("Compressing squared MPO");
 
     // Setup SVD
@@ -162,8 +162,9 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
         // Next compress from left to right
         Eigen::Tensor<Scalar, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<Scalar, 4> T_mpo_sq;
-        for(const auto & [idx, mpo_sq] : iter::enumerate(mpos_sq)) {
-            if(T_l2r.size() == 0) T_mpo_sq = mpo_sq;
+        for(const auto &[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+            if(T_l2r.size() == 0)
+                T_mpo_sq = mpo_sq;
             else
                 T_mpo_sq = T_l2r.contract(mpo_sq, Textra::idx({1}, {0}));
 
@@ -172,7 +173,8 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
             } else {
                 auto [U, S, V] = svd.split_mpo_l2r(T_mpo_sq);
                 T_l2r          = Textra::asDiagonal(S).contract(V, Textra::idx({1}, {0}));
-                if(idx < mpos_sq.size() - 1) mpo_sq = U;
+                if(idx < mpos_sq.size() - 1)
+                    mpo_sq = U;
                 else
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
                     mpo_sq = U.contract(T_l2r, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
@@ -182,8 +184,9 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
         // Now we have done left to right. Next we do right to left
         Eigen::Tensor<Scalar, 2> T_r2l;    // Transfer matrix
         Eigen::Tensor<Scalar, 4> mpo_sq_T; // Absorbs transfer matrix
-        for(const auto & [idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
-            if(T_r2l.size() == 0) mpo_sq_T = mpo_sq;
+        for(const auto &[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+            if(T_r2l.size() == 0)
+                mpo_sq_T = mpo_sq;
             else
                 mpo_sq_T = mpo_sq.contract(T_r2l, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
             if(idx == 0) {
@@ -191,7 +194,8 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
             } else {
                 auto [U, S, V] = svd.split_mpo_r2l(mpo_sq_T);
                 T_r2l          = U.contract(Textra::asDiagonal(S), Textra::idx({1}, {0}));
-                if(idx > 0) mpo_sq = V;
+                if(idx > 0)
+                    mpo_sq = V;
                 else
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
                     mpo_sq = T_r2l.contract(V, Textra::idx({1}, {0}));
@@ -201,7 +205,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(const auto & [idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
 
     return mpos_sq;
 }
@@ -228,7 +232,7 @@ void class_model_finite::perturb_hamiltonian(double coupling_ptb, double field_p
 
 void class_model_finite::damp_model_disorder(double coupling_damp, double field_damp) {
     clear_cache();
-    for(const  auto &mpo : MPO) {
+    for(const auto &mpo : MPO) {
         mpo->set_coupling_damping(coupling_damp);
         mpo->set_field_damping(field_damp);
     }
@@ -269,13 +273,13 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     for(const auto &site : sites) {
         if(first) {
             if(nbody.empty())
-                multisite_mpo    = get_mpo(site).MPO();
+                multisite_mpo = get_mpo(site).MPO();
             else
-                multisite_mpo    = get_mpo(site).MPO_nbody_view(nbody);
-            first            = false;
+                multisite_mpo = get_mpo(site).MPO_nbody_view(nbody);
+            first = false;
             continue;
         }
-        const auto & mpo = get_mpo(site);
+        const auto &mpo  = get_mpo(site);
         long        dim0 = multisite_mpo.dimension(0);
         long        dim1 = mpo.MPO().dimension(1);
         long        dim2 = multisite_mpo.dimension(2) * mpo.MPO().dimension(2);
@@ -286,23 +290,23 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
             temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         else
             temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mpo                  = temp;
+        multisite_mpo = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo;
 }
 
-Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> & nbody_terms) const{
+Eigen::Tensor<class_model_finite::Scalar, 2> class_model_finite::get_multisite_ham(const std::vector<size_t> &sites,
+                                                                                   const std::vector<size_t> &nbody_terms) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham and nbody_terms.empty()) return cache.multisite_ham.value();
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
     auto multisite_mpo = get_multisite_mpo(sites, nbody_terms);
-    auto edgeL = get_mpo(sites.front()).get_MPO_edge_left();
-    auto edgeR = get_mpo(sites.back()).get_MPO_edge_right();
-    return multisite_mpo
-                .contract(edgeL, Textra::idx({0},{0}))
-                .contract(edgeR, Textra::idx({0},{0}))
-                .reshape(Textra::array2{multisite_mpo.dimension(2),multisite_mpo.dimension(3)});
+    auto edgeL         = get_mpo(sites.front()).get_MPO_edge_left();
+    auto edgeR         = get_mpo(sites.back()).get_MPO_edge_right();
+    return multisite_mpo.contract(edgeL, Textra::idx({0}, {0}))
+        .contract(edgeR, Textra::idx({0}, {0}))
+        .reshape(Textra::array2{multisite_mpo.dimension(2), multisite_mpo.dimension(3)});
 }
 
 const Eigen::Tensor<class_model_finite::Scalar, 4> &class_model_finite::get_multisite_mpo() const {
@@ -344,7 +348,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         temp.device(Textra::omp::getDevice()) = multisite_mpo_squared.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mpo_squared          = temp;
+        multisite_mpo_squared                 = temp;
     }
     tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo_squared;
@@ -361,10 +365,9 @@ void class_model_finite::clear_cache() const {
     cache = Cache();
 }
 
-
-std::vector<size_t> class_model_finite::get_active_ids() const{
+std::vector<size_t> class_model_finite::get_active_ids() const {
     std::vector<size_t> ids;
     ids.reserve(active_sites.size());
-    for(const auto & pos : active_sites) ids.emplace_back(get_mpo(pos).get_unique_id());
+    for(const auto &pos : active_sites) ids.emplace_back(get_mpo(pos).get_unique_id());
     return ids;
 }

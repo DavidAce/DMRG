@@ -55,8 +55,8 @@ double tools::infinite::measure::truncation_error(const class_state_infinite &st
 double tools::infinite::measure::entanglement_entropy(const class_state_infinite &state) {
     if(state.measurements.entanglement_entropy) return state.measurements.entanglement_entropy.value();
     tools::common::profile::get_default_prof()["t_ent"]->tic();
-    const auto &             LC = state.LC();
-    Eigen::Tensor<Scalar, 0> SA = -LC.square().contract(LC.square().log().eval(), Textra::idx({0}, {0}));
+    const auto &             LC             = state.LC();
+    Eigen::Tensor<Scalar, 0> SA             = -LC.square().contract(LC.square().log().eval(), Textra::idx({0}, {0}));
     state.measurements.entanglement_entropy = std::real(SA(0));
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy.value();
@@ -85,7 +85,8 @@ template double tools::infinite::measure::energy_minus_energy_reduced(const Eige
 
 template<typename state_or_mps_type>
 double tools::infinite::measure::energy_mpo(const state_or_mps_type &state, const class_model_infinite &model, const class_edges_infinite &edges) {
-    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) return tools::infinite::measure::energy_mpo(state.get_2site_mps(), model, edges);
+    if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>)
+        return tools::infinite::measure::energy_mpo(state.get_2site_mps(), model, edges);
     else
         return tools::infinite::measure::energy_minus_energy_reduced(state, model, edges) +
                model.get_energy_per_site_reduced() * static_cast<double>(edges.get_length());
@@ -118,11 +119,12 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
     if constexpr(std::is_same_v<state_or_mps_type, class_state_infinite>) {
-        return  tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
+        return tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
     } else {
         tools::log->trace("Measuring energy variance mpo");
         double energy = 0;
-        if(model.is_reduced()) energy = tools::infinite::measure::energy_minus_energy_reduced(state, model, edges);
+        if(model.is_reduced())
+            energy = tools::infinite::measure::energy_minus_energy_reduced(state, model, edges);
         else
             energy = tools::infinite::measure::energy_mpo(state, model, edges);
         double      E2  = energy * energy;

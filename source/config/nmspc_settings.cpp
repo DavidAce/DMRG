@@ -3,9 +3,9 @@
 //
 
 #include "nmspc_settings.h"
+#include <config/class_dmrg_config.h>
 #include <h5pp/h5pp.h>
 #include <io/class_config_reader.h>
-#include <config/class_dmrg_config.h>
 using namespace std;
 
 /*

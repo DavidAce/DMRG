@@ -13,14 +13,14 @@
 class class_config_reader {
     private:
     fs::path                                     file_path;
-    std::string                                  file_string = "";
+    std::string                                  file_string;
     std::unordered_map<std::string, std::string> param_map;
 
-    [[nodiscard]] bool                   check_if_config_file_exists(const fs::path &path_to_file);
-    [[nodiscard]] fs::path               find_config_file(const fs::path &given_path);
-    [[nodiscard]] std::string            remove_spaces(std::string str);
-    [[nodiscard]] std::string            remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
-    [[nodiscard]] bool                   has_only_digits(const std::string &s);
+    [[nodiscard]] bool                          check_if_config_file_exists(const fs::path &path_to_file);
+    [[nodiscard]] fs::path                      find_config_file(const fs::path &given_path);
+    [[nodiscard]] std::string                   remove_spaces(std::string str);
+    [[nodiscard]] std::string                   remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
+    [[nodiscard]] bool                          has_only_digits(const std::string &s);
     [[nodiscard]] static bool                   is_parameterline(const std::string &s);
     [[nodiscard]] static std::string::size_type find_comment_symbols(const std::string &str);
 
@@ -37,7 +37,8 @@ class class_config_reader {
         try {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
-            if constexpr(std::is_enum_v<T>) tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2str<T>(param_value));
+            if constexpr(std::is_enum_v<T>)
+                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2str<T>(param_value));
             else
                 tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
@@ -52,8 +53,8 @@ class class_config_reader {
     [[nodiscard]] T parse_param(const std::string &param_val, const std::string &param_name) {
         try {
             if(param_val.empty()) throw std::range_error("Parameter [" + param_name + "] has no value");
-            if constexpr(std::is_same_v<T, int>) return    static_cast<T>(std::stoi(param_val));
-            if constexpr(std::is_same_v<T, long>) return   static_cast<T>(std::stol(param_val));
+            if constexpr(std::is_same_v<T, int>) return static_cast<T>(std::stoi(param_val));
+            if constexpr(std::is_same_v<T, long>) return static_cast<T>(std::stol(param_val));
             if constexpr(std::is_same_v<T, size_t>) return static_cast<T>(std::stol(param_val));
             if constexpr(std::is_same_v<T, double>) return static_cast<T>(std::stod(param_val));
             if constexpr(std::is_enum_v<T>) return str2enum<T>(param_val);

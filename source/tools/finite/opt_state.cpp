@@ -25,13 +25,15 @@ opt_state::opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &ten
 }
 
 const std::string &opt_state::get_name() const {
-    if(name) return name.value();
+    if(name)
+        return name.value();
     else
         throw std::runtime_error("opt_state: name not set");
 }
 
 const Eigen::Tensor<opt_state::cplx, 3> &opt_state::get_tensor() const {
-    if(tensor) return tensor.value();
+    if(tensor)
+        return tensor.value();
     else
         throw std::runtime_error("opt_state: tensor not set");
 }
@@ -54,13 +56,15 @@ const std::vector<size_t> &opt_state::get_sites() const {
 }
 
 double opt_state::get_energy() const {
-    if(energy) return energy.value();
+    if(energy)
+        return energy.value();
     else
         throw std::runtime_error("opt_state: energy not set");
 }
 
 double opt_state::get_energy_reduced() const {
-    if(energy_r) return energy_r.value();
+    if(energy_r)
+        return energy_r.value();
     else
         throw std::runtime_error("opt_state: energy_r not set");
 }
@@ -68,13 +72,15 @@ double opt_state::get_energy_reduced() const {
 double opt_state::get_energy_per_site() const { return get_energy() / static_cast<double>(get_length()); }
 
 double opt_state::get_eigval() const {
-    if(eigval) return eigval.value();
+    if(eigval)
+        return eigval.value();
     else
         throw std::runtime_error("opt_state: eigval not set");
 }
 
 double opt_state::get_variance() const {
-    if(variance) return variance.value();
+    if(variance)
+        return variance.value();
     else
         throw std::runtime_error("opt_state: variance not set");
 }
@@ -82,52 +88,58 @@ double opt_state::get_variance() const {
 double opt_state::get_variance_per_site() const { return get_variance() / static_cast<double>(get_length()); }
 
 size_t opt_state::get_iter() const {
-    if(iter) return iter.value();
+    if(iter)
+        return iter.value();
     else
         return 0.0;
 }
 size_t opt_state::get_counter() const {
-    if(counter) return counter.value();
+    if(counter)
+        return counter.value();
     else
         return 0.0;
 }
 
 double opt_state::get_time() const {
-    if(time) return time.value();
+    if(time)
+        return time.value();
     else
         return 0.0;
 }
 
 double opt_state::get_overlap() const {
-    if(overlap) return overlap.value();
+    if(overlap)
+        return overlap.value();
     else
         throw std::runtime_error("opt_state: overlap not set");
 }
 
 double opt_state::get_norm() const {
-    if(norm) return norm.value();
+    if(norm)
+        return norm.value();
     else
         throw std::runtime_error("opt_state: norm not set");
 }
 
 size_t opt_state::get_length() const {
-    if(length) return length.value();
+    if(length)
+        return length.value();
     else
         throw std::runtime_error("opt_state: length not set");
 }
 
 OptSpace opt_state::get_optspace() const {
-    if(optSpace) return optSpace.value();
+    if(optSpace)
+        return optSpace.value();
     else
         throw std::runtime_error("opt_state: optSpace not set");
 }
 OptMode opt_state::get_optmode() const {
-    if(optMode) return optMode.value();
+    if(optMode)
+        return optMode.value();
     else
         throw std::runtime_error("opt_state: optMode not set");
 }
-
-
 
 void opt_state::clear() { tensor = std::nullopt; }
 void opt_state::normalize() {
@@ -187,14 +199,8 @@ void opt_state::set_tensor_real(const double *data, const Eigen::DSizes<long, 3>
     norm   = get_vector().norm();
 }
 
-void opt_state::set_optspace(OptSpace optSpace_){
-    optSpace = optSpace_;
-}
-void opt_state::set_optmode(OptMode optMode_){
-    optMode = optMode_;
-
-}
-
+void opt_state::set_optspace(OptSpace optSpace_) { optSpace = optSpace_; }
+void opt_state::set_optmode(OptMode optMode_) { optMode = optMode_; }
 
 void opt_state::validate_candidate() const {
     std::string error_msg;
@@ -236,16 +242,15 @@ void opt_state::validate_result() const {
 }
 
 bool opt_state::operator<(const opt_state &rhs) const {
-    if(overlap and rhs.overlap){
-        if(this->get_overlap() < rhs.get_overlap()) return true;
+    if(overlap and rhs.overlap) {
+        if(this->get_overlap() < rhs.get_overlap())
+            return true;
         else if(this->get_overlap() > rhs.get_overlap())
             return false;
     }
     // If we reached this point then the overlaps are equal (probably 0)
     // To disambiguate we can use the variance
-    if (this->variance and rhs.variance)
-        return std::abs(this->get_variance()) < std::abs(rhs.get_variance());
-
+    if(this->variance and rhs.variance) return std::abs(this->get_variance()) < std::abs(rhs.get_variance());
 
     // If we reached this point then the overlaps are equal (probably 0) and there are no variances defined
     // To disambiguate we can use the eigenvalue, which should
@@ -253,9 +258,7 @@ bool opt_state::operator<(const opt_state &rhs) const {
     // Eigenvalues nearest 0 are near the target energy, and while
     // not strictly relevant, it's probably the best we can do here.
     // Of course this is only valid if the eigenvalues are defined
-    if (eigval and rhs.eigval)
-        return std::abs(this->get_eigval()) < std::abs(rhs.get_eigval());
-
+    if(eigval and rhs.eigval) return std::abs(this->get_eigval()) < std::abs(rhs.get_eigval());
 
     // If we have reched this point the overlaps, variances and eigenvalues are not defined.
     // There is probably a logical bug somewhere

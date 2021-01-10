@@ -1,6 +1,6 @@
 #pragma once
-#include <io/nmspc_filesystem.h>
 #include <config/enums.h>
+#include <io/nmspc_filesystem.h>
 #include <string>
 #include <tools/common/log.h>
 #include <unordered_map>
@@ -12,7 +12,6 @@ class class_dmrg_config {
     fs::file_time_type file_date;
 
     explicit class_dmrg_config(const fs::path &cfg_or_h5_file);
-
 
     void                      load();
     void                      unload();
@@ -28,9 +27,7 @@ class class_dmrg_config {
             else
                 tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
-        } catch(std::exception &ex) {
-            tools::log->info("Failed to read parameter [{}]: {}", param_name, ex.what());
-        }
+        } catch(std::exception &ex) { tools::log->info("Failed to read parameter [{}]: {}", param_name, ex.what()); }
     }
 
     private:
@@ -47,7 +44,7 @@ class class_dmrg_config {
             if constexpr(std::is_same_v<T, unsigned int>) {
                 auto val = static_cast<int>(std::stoi(param_val));
                 if(val < 0) throw std::runtime_error(fmt::format("Read negative value for unsigned parameter: {}", val));
-                return static_cast<T> (val);
+                return static_cast<T>(val);
             }
             if constexpr(std::is_same_v<T, unsigned long>) return std::stoul(param_val);
             if constexpr(std::is_same_v<T, unsigned long long>) return std::stoull(param_val);
@@ -64,9 +61,7 @@ class class_dmrg_config {
                 throw std::runtime_error(fmt::format("Expected true or false, got {}", param_val));
             }
             throw std::runtime_error("Type mismatch on parameter: " + param_val);
-        } catch(std::exception &ex) {
-            throw std::runtime_error("Error parsing param: " + std::string(ex.what()));
-        } catch(...) {
+        } catch(std::exception &ex) { throw std::runtime_error("Error parsing param: " + std::string(ex.what())); } catch(...) {
             throw std::runtime_error("Error parsing param: Unknown error");
         }
     }
@@ -81,9 +76,7 @@ class class_dmrg_config {
                 return parse_param<T>(param_map[param_requested], param_requested);
             } else
                 throw std::range_error(fmt::format("Config file does not specify the requested parameter: [{}]", param_requested));
-        } catch(std::range_error &ex) {
-            throw std::runtime_error(ex.what());
-        } catch(std::exception &ex) {
+        } catch(std::range_error &ex) { throw std::runtime_error(ex.what()); } catch(std::exception &ex) {
             throw std::runtime_error(fmt::format("Error parsing the requested parameter: [{}]: {}", param_requested, ex.what()));
         }
     }

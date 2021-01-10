@@ -70,18 +70,21 @@ void class_mps_site::assert_identity() const {
     if(get_label() == "B") {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 2}, {0, 2}));
         if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
-            throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}",get_label(), get_position(), get_M_bare()));
+            throw std::runtime_error(
+                fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
     } else {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 1}, {0, 1}));
         if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
-            throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}",get_label(), get_position(), get_M_bare()));
+            throw std::runtime_error(
+                fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
     }
-    if(isCenter() or get_label() == "AC"){
-        Eigen::Tensor<Scalar, 0> MM = get_M().contract(get_M().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
-        auto norm = std::real(MM(0));
-        if(std::abs(norm - 1) > 1e-4) throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not unity at pos {1}: {2:.16f}",get_label(), get_position(),norm));
+    if(isCenter() or get_label() == "AC") {
+        Eigen::Tensor<Scalar, 0> MM   = get_M().contract(get_M().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
+        auto                     norm = std::real(MM(0));
+        if(std::abs(norm - 1) > 1e-4)
+            throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm));
     }
 }
 
@@ -177,9 +180,10 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
         throw std::runtime_error("class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &): Can't set M: Position hasn't been set yet");
 }
 void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         auto norm = Textra::TensorVectorMap(L_).norm();
-        if (std::abs(norm - 1) > 1e-8) throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}",norm));
+        if(std::abs(norm - 1) > 1e-8)
+            throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
     }
 
     if(position) {
@@ -192,9 +196,10 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
 void class_mps_site::set_L(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 
 void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         auto norm = Textra::TensorVectorMap(LC_).norm();
-        if (std::abs(norm - 1) > 1e-8) throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}",norm));
+        if(std::abs(norm - 1) > 1e-8)
+            throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm));
     }
     if(position) {
         LC = LC_;
@@ -237,7 +242,8 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
     // This is intended, but should be checked for.
     // Note that if there is no L on the other mps, there has to exist a previous one
     // on this mps -- we can't leave here without having defined L.
-    if(other.has_L()) set_L(other.get_L(), other.get_truncation_error());
+    if(other.has_L())
+        set_L(other.get_L(), other.get_truncation_error());
     else if(not has_L())
         throw std::runtime_error(fmt::format(
             "class_mps_site::merge_mps(const class_mps_site &): Got mps site with undefined L, and no L is defined on this mps either, at position {}",
@@ -322,7 +328,7 @@ std::pair<Eigen::Tensor<Scalar, 1>, double> class_mps_site::unstash_S() const {
 }
 
 void class_mps_site::drop_stash() const {
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         if(U_stash) tools::log->trace("Dropping U_stash");
         if(S_stash) tools::log->trace("Dropping S_stash");
         if(V_stash) tools::log->trace("Dropping V_stash");
@@ -396,7 +402,8 @@ void class_mps_site::merge_stash(const class_mps_site &other) {
         MU.device(Textra::omp::getDevice()) = get_M_bare().contract(U, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(dims);
 
         set_M(MU);
-        if(isCenter() or label.find('A') != std::string::npos) set_LC(other.unstash_S());
+        if(isCenter() or label.find('A') != std::string::npos)
+            set_LC(other.unstash_S());
         else
             set_L(other.unstash_S());
     } else

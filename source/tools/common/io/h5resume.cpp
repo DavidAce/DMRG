@@ -37,7 +37,8 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
     std::string_view         algo_name = enum2str(algo_type);
     std::vector<std::string> state_prefix_candidates;
 
-    if(search.empty()) tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5ppFile.getFilePath());
+    if(search.empty())
+        tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5ppFile.getFilePath());
     else
         tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5ppFile.getFilePath());
 
@@ -49,7 +50,9 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
 
     // Apply the search filter
     if(not search.empty()) {
-        auto search_filter = [search](std::string_view x) { return x.find(search) == std::string::npos; };
+        auto search_filter = [search](std::string_view x) {
+            return x.find(search) == std::string::npos;
+        };
         state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), search_filter),
                                       state_prefix_candidates.end());
         tools::log->info("States matching keyword [{}]:  {}", search, state_prefix_candidates);
@@ -74,7 +77,9 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
     // Here we sort the state numbers, then erase all but the latest state from the candidate list
     if(not state_nums.empty()) {
         std::sort(state_nums.begin(), state_nums.end());
-        auto state_filter = [state_nums](std::string_view x) { return x.find(state_nums.back()) == std::string::npos; };
+        auto state_filter = [state_nums](std::string_view x) {
+            return x.find(state_nums.back()) == std::string::npos;
+        };
         state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), state_filter),
                                       state_prefix_candidates.end());
     }
@@ -95,7 +100,6 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
     // Sort according to step number in decreasing order
     std::sort(step_sorted_candidates.begin(), step_sorted_candidates.end(), [](auto &left, auto &right) { return left.first > right.first; });
     for(const auto &candidate : step_sorted_candidates) tools::log->info("Candidate step {} : [{}]", candidate.first, candidate.second);
-
 
     // Remove all candidates that have a lower step than the latest ones
     auto latest_step = step_sorted_candidates.front().first;

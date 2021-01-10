@@ -10,13 +10,12 @@ class class_tensors_finite;
 class class_algorithm_status;
 class class_tic_toc;
 
-
-namespace spdlog{
+namespace spdlog {
     class logger;
 }
-namespace tools::finite::opt::internal{
+namespace tools::finite::opt::internal {
 
-    class ceres_base_functor : public ceres::FirstOrderFunction{
+    class ceres_base_functor : public ceres::FirstOrderFunction {
         protected:
         mutable double energy;
         mutable double energy_per_site;
@@ -35,24 +34,24 @@ namespace tools::finite::opt::internal{
         mutable double norm_offset;
         mutable double norm;
         mutable size_t counter = 0;
-        mutable long  ops = 0;
-        size_t length;
-        size_t iteration;
-        int    num_parameters;
-        bool   have_bounds_on_energy = false;
+        mutable long   ops     = 0;
+        size_t         length;
+        size_t         iteration;
+        int            num_parameters;
+        bool           have_bounds_on_energy = false;
 
         public:
-        explicit ceres_base_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);
+        explicit ceres_base_functor(const class_tensors_finite &tensors, const class_algorithm_status &status);
 
-        double get_energy              () const;
-        double get_energy_per_site     () const;
-        double get_variance            () const;
-        double get_variance_per_site   () const;
-        size_t get_count               () const;
-        double get_norm                () const;
-        double get_norm_offset         () const;
-        long   get_ops                 () const;
-        int    NumParameters           () const final;
+        double get_energy() const;
+        double get_energy_per_site() const;
+        double get_variance() const;
+        double get_variance_per_site() const;
+        size_t get_count() const;
+        double get_norm() const;
+        double get_norm_offset() const;
+        long   get_ops() const;
+        int    NumParameters() const final;
 
         std::unique_ptr<class_tic_toc> t_step;
         std::unique_ptr<class_tic_toc> t_vH2;
@@ -67,17 +66,16 @@ namespace tools::finite::opt::internal{
         public:
         std::shared_ptr<spdlog::logger> log;
         const FunctorType &             functor;
-        int    freq_log_iter = 10; //Wait at least this many iterations between logs
-        int    last_log_iter = 0;
-        int    init_log_iter = 0;
-        double last_log_time = 0;
-        double freq_log_time = 5; //Wait at least this many seconds between logs
-        double init_log_time = 5;
-        size_t last_count    = 0;
+        int                             freq_log_iter = 10; // Wait at least this many iterations between logs
+        int                             last_log_iter = 0;
+        int                             init_log_iter = 0;
+        double                          last_log_time = 0;
+        double                          freq_log_time = 5; // Wait at least this many seconds between logs
+        double                          init_log_time = 5;
+        size_t                          last_count    = 0;
 
         explicit CustomLogCallback(const FunctorType &functor_);
         ceres::CallbackReturnType operator()(const ceres::IterationSummary &summary);
-
     };
 
 }

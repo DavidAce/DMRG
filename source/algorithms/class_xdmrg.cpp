@@ -55,7 +55,8 @@ void class_xdmrg::resume() {
     // Initialize a custom task list
     std::deque<xdmrg_task> task_list;
 
-    if(status.algorithm_has_finished) task_list = {xdmrg_task::POST_PRINT_RESULT};
+    if(status.algorithm_has_finished)
+        task_list = {xdmrg_task::POST_PRINT_RESULT};
     else
         task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
 
@@ -192,7 +193,8 @@ void class_xdmrg::run_preprocessing() {
     init_bond_dimension_limits();
     find_energy_range();
     init_energy_limits();
-    if(settings::xdmrg::energy_density_window != 0.5) randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
+    if(settings::xdmrg::energy_density_window != 0.5)
+        randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     write_to_file(StorageReason::MODEL);
@@ -264,7 +266,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
-    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2){
+    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2) {
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
         c1.second_chance = false;
@@ -404,7 +406,7 @@ void class_xdmrg::single_xDMRG_step() {
         }
     }
 
-    if(not results.empty()){
+    if(not results.empty()) {
         // Sort the results in order of increasing variance
         std::sort(results.begin(), results.end(), [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
@@ -450,7 +452,6 @@ void class_xdmrg::single_xDMRG_step() {
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
     }
-
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
@@ -556,7 +557,7 @@ void class_xdmrg::find_energy_range() {
         fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_WRITE_MODEL,    fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
         fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
     std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS,  fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                      fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
+                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
     // Find lowest energy state
     {
         class_fdmrg fdmrg_gs(h5pp_file);

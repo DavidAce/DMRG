@@ -3,14 +3,14 @@
 //
 
 #include "class_env_base.h"
+#include <config/debug.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_tensor_omp.h>
+#include <math/hash.h>
+#include <math/num.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
-#include <math/hash.h>
-#include <math/num.h>
-#include <config/debug.h>
 #include <utility>
 
 // We need to define the destructor and other special functions
@@ -68,11 +68,11 @@ void class_env_base::assert_block() const {
     if(not block) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
 }
 
-void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo){
+void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
-    unique_id = std::nullopt;
+    unique_id     = std::nullopt;
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
@@ -96,22 +96,20 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
          */
 
         if(mps.dimension(0) != mpo.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo   dim[{}]:{}",side,tag , position.value(), 0,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo   dim[{}]:{}", side, tag, position.value(), 0,
                                                  mps.dimension(0), 2, mpo.dimension(2)));
         if(mps.dimension(1) != otherblock.dimension(0))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != left-block dim[{}]:{}",side,tag , position.value(), 1,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 1,
                                                  mps.dimension(1), 0, otherblock.dimension(0)));
         if(mpo.dimension(0) != otherblock.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}",side,tag , position.value(), 0,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 0,
                                                  mpo.dimension(0), 2, otherblock.dimension(2)));
 
         block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
-        block->device(Textra::omp::getDevice()) =
-            otherblock
-            .contract(mps, Textra::idx({0}, {1}))
-            .contract(mpo, Textra::idx({1, 2}, {0, 2}))
-            .contract(mps.conjugate(), Textra::idx({0, 3}, {1, 0}))
-            .shuffle(Textra::array3{0, 2, 1});
+        block->device(Textra::omp::getDevice()) = otherblock.contract(mps, Textra::idx({0}, {1}))
+                                                      .contract(mpo, Textra::idx({1, 2}, {0, 2}))
+                                                      .contract(mps.conjugate(), Textra::idx({0, 3}, {1, 0}))
+                                                      .shuffle(Textra::array3{0, 2, 1});
     } else if(side == "R") {
         /*! # Right environment contraction
          *   0--[       ]          1--[   GB   ]--2  0--[LB]--1  0--[       ]
@@ -130,25 +128,21 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
          */
 
         if(mps.dimension(0) != mpo.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo dim[{}]:{}", side,tag, position.value(), 0,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo dim[{}]:{}", side, tag, position.value(), 0,
                                                  mps.dimension(0), 2, mpo.dimension(2)));
         if(mps.dimension(2) != otherblock.dimension(0))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != right-block dim[{}]:{}", side,tag, position.value(), 2,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 2,
                                                  mps.dimension(2), 0, otherblock.dimension(0)));
         if(mpo.dimension(1) != otherblock.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side,tag, position.value(), 1,
+            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 1,
                                                  mpo.dimension(1), 2, otherblock.dimension(2)));
         block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
-        block->device(Textra::omp::getDevice()) =
-            otherblock
-            .contract(mps, Textra::idx({0}, {2}))
-            .contract(mpo, Textra::idx({1, 2}, {1, 2}))
-            .contract(mps.conjugate(), Textra::idx({0, 3}, {2, 0}))
-            .shuffle(Textra::array3{0, 2, 1});
+        block->device(Textra::omp::getDevice()) = otherblock.contract(mps, Textra::idx({0}, {2}))
+                                                      .contract(mpo, Textra::idx({1, 2}, {1, 2}))
+                                                      .contract(mps.conjugate(), Textra::idx({0, 3}, {2, 0}))
+                                                      .shuffle(Textra::array3{0, 2, 1});
     }
-
 }
-
 
 void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
     /*!< Contracts a site into the current block-> */
@@ -158,17 +152,16 @@ void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::T
     // If side == "R", the mps and mpo should correspond to this env position-1
     // There is no way to check the positions here, so checks should be done before calling this function
 
-
     assert_block();
-    Eigen::Tensor<Scalar,3> thisblock = *block;
-    build_block(thisblock,mps,mpo);
+    Eigen::Tensor<Scalar, 3> thisblock = *block;
+    build_block(thisblock, mps, mpo);
     sites++;
-    if(position){
-        if(side == "L") position = position.value()+1;
-        else if(position.value() > 0 ) position = position.value()-1;
+    if(position) {
+        if(side == "L")
+            position = position.value() + 1;
+        else if(position.value() > 0)
+            position = position.value() - 1;
     }
-
-
 }
 
 void class_env_base::clear() {
@@ -182,7 +175,6 @@ void class_env_base::clear() {
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
-
 }
 
 const Eigen::Tensor<Scalar, 3> &class_env_base::get_block() const {
@@ -203,25 +195,23 @@ void class_env_base::assert_validity() const {
     }
 }
 
-void class_env_base::assert_unique_id(const class_env_base & env, const class_mps_site &mps, const class_mpo_site &mpo) const{
+void class_env_base::assert_unique_id(const class_env_base &env, const class_mps_site &mps, const class_mpo_site &mpo) const {
     std::string msg;
-    if(env.get_unique_id() != unique_id_env){
-        msg.append(fmt::format("| env({}) {} !=",env.get_position(),env.get_unique_id()));
-        if(unique_id_env) msg.append(fmt::format(" {} ",unique_id_env.value()));
+    if(env.get_unique_id() != unique_id_env) {
+        msg.append(fmt::format("| env({}) {} !=", env.get_position(), env.get_unique_id()));
+        if(unique_id_env) msg.append(fmt::format(" {} ", unique_id_env.value()));
     }
-    if(mps.get_unique_id() != unique_id_mps){
-        msg.append(fmt::format("| mps({}) {} !=",mps.get_position(),mps.get_unique_id()));
+    if(mps.get_unique_id() != unique_id_mps) {
+        msg.append(fmt::format("| mps({}) {} !=", mps.get_position(), mps.get_unique_id()));
         if(unique_id_mps) msg.append(fmt::format(" {} ", unique_id_mps.value()));
     }
     auto mpo_unique_id = tag == "ene" ? mpo.get_unique_id() : mpo.get_unique_id_sq();
-    if(mpo_unique_id != unique_id_mpo){
-        msg.append(fmt::format("| mpo({}) {} !=",mpo.get_position(),mpo_unique_id));
+    if(mpo_unique_id != unique_id_mpo) {
+        msg.append(fmt::format("| mpo({}) {} !=", mpo.get_position(), mpo_unique_id));
         if(unique_id_mpo) msg.append(fmt::format(" {} ", unique_id_mpo.value()));
     }
-    if(not msg.empty())
-        throw std::runtime_error(fmt::format("Environment {} side {}: unique id mismatch: {}", tag, side,msg));
+    if(not msg.empty()) throw std::runtime_error(fmt::format("Environment {} side {}: unique id mismatch: {}", tag, side, msg));
 }
-
 
 bool class_env_base::is_real() const {
     assert_block();
@@ -234,7 +224,8 @@ bool class_env_base::has_nan() const {
 }
 
 size_t class_env_base::get_position() const {
-    if(position) return position.value();
+    if(position)
+        return position.value();
     else
         throw std::runtime_error(fmt::format("Position hasn't been set on env side {}", side));
 }
@@ -276,18 +267,12 @@ void class_env_base::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Ei
     unique_id_mpo     = std::nullopt;
 }
 
-std::size_t class_env_base::get_unique_id() const{
+std::size_t class_env_base::get_unique_id() const {
     if(unique_id) return unique_id.value();
     unique_id = hash::hash_buffer(get_block().data(), static_cast<size_t>(get_block().size()));
     return unique_id.value();
 }
 
-std::optional<std::size_t> class_env_base::get_unique_id_env() const{
-    return unique_id_env;
-}
-std::optional<std::size_t> class_env_base::get_unique_id_mps() const{
-    return unique_id_mps;
-}
-std::optional<std::size_t> class_env_base::get_unique_id_mpo() const{
-    return unique_id_mpo;
-}
+std::optional<std::size_t> class_env_base::get_unique_id_env() const { return unique_id_env; }
+std::optional<std::size_t> class_env_base::get_unique_id_mps() const { return unique_id_mps; }
+std::optional<std::size_t> class_env_base::get_unique_id_mpo() const { return unique_id_mpo; }

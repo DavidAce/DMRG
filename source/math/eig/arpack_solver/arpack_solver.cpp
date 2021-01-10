@@ -77,7 +77,8 @@ void eig::arpack_solver<MatrixType>::eigs() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         eigs_comp();
     } else {
-        if(config.form == Form::SYMM) eigs_sym();
+        if(config.form == Form::SYMM)
+            eigs_sym();
         else
             eigs_nsym();
     }
@@ -196,7 +197,8 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
     if(config.compute_eigvecs) {
         eig::log->trace("Finding eigenvectors");
         solver.FindEigenvectors();
-        if(config.side == eig::Side::L) result.meta.eigvecsL_found = solver.EigenvectorsFound();
+        if(config.side == eig::Side::L)
+            result.meta.eigvecsL_found = solver.EigenvectorsFound();
         else
             result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
 

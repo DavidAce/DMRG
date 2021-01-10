@@ -10,7 +10,6 @@ struct has_validity<T, std::void_t<decltype(std::declval<T>().assertValidity())>
 template<typename T>
 inline constexpr bool has_validity_v = has_validity<T>::value;
 
-
 template<typename env_type>
 void env_pair<env_type>::assert_validity() const {
     if constexpr(has_validity_v<env_type>) {
