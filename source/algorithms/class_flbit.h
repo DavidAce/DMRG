@@ -36,6 +36,10 @@ class class_flbit : public class_algorithm_finite {
     void   run_preprocessing() final;
     void   run_algorithm() final;
     void   check_convergence() final;
+    void   create_time_points();
+    void   create_hamiltonian_gates();
+    void   create_time_evolution_gates();
+    void   create_lbit_transform_gates();
     void   transform_to_real_basis();
     void   transform_to_lbit_basis();
     void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
