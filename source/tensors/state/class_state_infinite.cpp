@@ -304,7 +304,7 @@ void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tenso
     tools::infinite::mps::merge_twosite_tensor(*this,twosite_tensor,chi_lim,svd_threshold);
 }
 
-void class_state_infinite::set_mps(const std::list<class_mps_site> &mps_list) {
+void class_state_infinite::set_mps(const std::vector<class_mps_site> &mps_list) {
     if(mps_list.size() != 2) throw std::runtime_error("Expected 2 sites, got: " + std::to_string(mps_list.size()));
     const auto &mpsA = *std::next(mps_list.begin(), 0);
     const auto &mpsB = *std::next(mps_list.begin(), 1);

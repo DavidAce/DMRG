@@ -23,11 +23,11 @@ using namespace Textra;
 
 void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
                                    const Eigen::Tensor<Scalar, 3> &Redge) {
-    std::list<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
+    std::vector<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
     apply_mpos(state, mpos, Ledge, Redge);
 }
 
-void tools::finite::ops::apply_mpos(class_state_finite &state, const std::list<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
+void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
                                     const Eigen::Tensor<Scalar, 3> &Redge) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
@@ -238,7 +238,7 @@ double tools::finite::ops::overlap(const class_state_finite &state1, const class
 }
 
 double tools::finite::ops::expectation_value(const class_state_finite &state1, const class_state_finite &state2,
-                                             const std::list<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 3> &Ledge,
+                                             const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 3> &Ledge,
                                              const Eigen::Tensor<std::complex<double>, 3> &Redge) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -259,7 +259,7 @@ double tools::finite::ops::expectation_value(const class_state_finite &state1, c
 }
 
 double tools::finite::ops::exp_sq_value(const class_state_finite &state1, const class_state_finite &state2,
-                                        const std::list<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
+                                        const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
                                         const Eigen::Tensor<std::complex<double>, 4> &Redge) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");

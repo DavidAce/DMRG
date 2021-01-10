@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <list>
 class class_tensors_infinite;
 class class_state_infinite;
 class class_model_infinite;
@@ -34,7 +33,7 @@ namespace tools::infinite::io{
         extern void load_state (const h5pp::File & h5ppFile, const std::string & state_prefix, class_state_infinite & state, const class_algorithm_status & status);
         extern void load_model (const h5pp::File & h5ppFile, const std::string & state_prefix, class_model_infinite & state, const class_algorithm_status & status);
         extern void validate (const h5pp::File & h5ppFile, const std::string & state_prefix, const class_tensors_infinite & state, const class_algorithm_status & status);
-        extern std::list<SimulationTask>
+        extern std::vector<SimulationTask>
             getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const class_state_infinite & state, const class_algorithm_status & status);
 
     }

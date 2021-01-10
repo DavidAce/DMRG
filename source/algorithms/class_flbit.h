@@ -30,7 +30,7 @@ class class_flbit : public class_algorithm_finite {
     void   single_flbit_step();
     void   update_time_step();
     void   resume() final;
-    void   run_task_list(std::list<flbit_task> &task_list);
+    void   run_task_list(std::deque<flbit_task> &task_list);
     void   run_default_task_list() final;
     void   run_preprocessing() final;
     void   run_algorithm() final;
