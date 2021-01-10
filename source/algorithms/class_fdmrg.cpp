@@ -124,13 +124,6 @@ void class_fdmrg::run_algorithm() {
     stop_reason = StopReason::NONE;
     while(true) {
         single_fdmrg_step();
-        // Update record holder
-        if(tensors.position_is_any_edge() or tensors.measurements.energy_variance) {
-            tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance(tensors);
-            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-        }
-
         check_convergence();
         print_status_update();
         print_profiling_lap();
@@ -164,11 +157,17 @@ void class_fdmrg::single_fdmrg_step() {
         if constexpr(settings::debug)
             tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)));
 
-    tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
-    if constexpr(settings::debug)
-        tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance(tensors)),
-                          tools::finite::measure::truncation_errors_active(*tensors.state));
-
+        tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
+        if constexpr(settings::debug)
+            tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance(tensors)),
+                              tools::finite::measure::truncation_errors_active(*tensors.state));
+        // Update record holder
+        if(not tensors.active_sites.empty()) {
+            tools::log->trace("Updating variance record holder");
+            auto var = tools::finite::measure::energy_variance(tensors);
+            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+        }
+    }
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
 }
