@@ -152,7 +152,7 @@ void class_flbit::run_preprocessing() {
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
-    write_to_file(StorageReason::MODEL);
+    write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
