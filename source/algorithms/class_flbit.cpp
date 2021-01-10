@@ -217,10 +217,11 @@ void class_flbit::single_flbit_step() {
     tensors.rebuild_edges_ene();
     status.iter     += 1;
     status.step     += settings::model::model_size;
+    status.position = tensors.get_position<long>();
+    status.direction = tensors.state->get_direction();
     status.phys_time += std::abs(status.delta_t);
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
     status.algo_time = tools::common::profile::prof[algo_type]["t_sim"]->get_measured_time();
-
 }
 
 void class_flbit::update_time_step(){
@@ -347,12 +348,14 @@ void class_flbit::transform_to_real_basis(){
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->info("Transforming {} to {}", state_lbit->get_name(), tensors.state->get_name());
-    tensors.clear_measurements();
-    tensors.clear_cache();
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer0, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer1, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer2, false, status.chi_lim);
     tools::finite::mps::apply_gates(*tensors.state,unitary_gates_2site_layer3, false, status.chi_lim);
+
+    tensors.clear_measurements();
+    tensors.clear_cache();
+
     auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace){
@@ -364,6 +367,9 @@ void class_flbit::transform_to_real_basis(){
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
+
+    status.position = tensors.get_position<long>();
+    status.direction = tensors.state->get_direction();
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
