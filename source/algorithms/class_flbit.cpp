@@ -374,19 +374,17 @@ void class_flbit::transform_to_real_basis(){
 }
 
 void class_flbit::transform_to_lbit_basis(){
+    tools::common::profile::prof[algo_type]["t_map"]->tic();
     state_lbit = std::make_unique<class_state_finite>(*tensors.state);
     state_lbit->set_name("state_lbit");
+
     tools::log->info("Transforming {} to {}", tensors.state->get_name(),state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    tensors.clear_measurements();
-    tensors.clear_cache();
-    tools::common::profile::prof[algo_type]["t_map"]->tic();
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer0, true, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer1, true, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer2, true, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit,unitary_gates_2site_layer3, true, status.chi_lim);
-    tools::common::profile::prof[algo_type]["t_map"]->toc();
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
@@ -398,6 +396,7 @@ void class_flbit::transform_to_lbit_basis(){
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
         }
+    tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
 void class_flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
