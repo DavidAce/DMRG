@@ -16,28 +16,28 @@ class h5pp_table_measurements_finite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t              iter;
-        uint64_t              step;
-        long                  position;
-        uint64_t              length;
-        long                  bond_dimension_midchain;
-        long                  bond_dimension_current;
-        long                  bond_dimension_limit;
-        long                  bond_dimension_maximum;
-        double                entanglement_entropy_midchain;
-        double                entanglement_entropy_current;
-        double                norm;
-        double                energy;
-        double                energy_per_site;
-        double                energy_variance;
-        double                energy_variance_per_site;
-        double                energy_variance_lowest;
-        double                energy_variance_per_site_lowest;
-        std::array<double, 3> spin_components;
-        double                truncation_error;
-        double                total_time;
-        double                algorithm_time;
-        double                physical_time;
+        uint64_t              iter                              = 0;
+        uint64_t              step                              = 0;
+        long                  position                          = 0;
+        uint64_t              length                            = 0;
+        long                  bond_dimension_midchain           = 0;
+        long                  bond_dimension_current            = 0;
+        long                  bond_dimension_limit              = 0;
+        long                  bond_dimension_maximum            = 0;
+        double                entanglement_entropy_midchain     = 0;
+        double                entanglement_entropy_current      = 0;
+        double                norm                              = 0;
+        double                energy                            = 0;
+        double                energy_per_site                   = 0;
+        double                energy_variance                   = 0;
+        double                energy_variance_per_site          = 0;
+        double                energy_variance_lowest            = 0;
+        double                energy_variance_per_site_lowest   = 0;
+        std::array<double, 3> spin_components                   = 0;
+        double                truncation_error                  = 0;
+        double                total_time                        = 0;
+        double                algorithm_time                    = 0;
+        double                physical_time                     = 0;
     };
 
     h5pp_table_measurements_finite() { register_table_type(); }
@@ -77,26 +77,26 @@ class h5pp_table_measurements_infinite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t iter      = 0;
-        uint64_t step      = 0;
-        long     position  = 0;
-        uint64_t length                       = 0;
-        long     bond_dimension               = 0;
-        long     bond_dimension_limit         = 0;
-        long     bond_dimension_maximum       = 0;
-        double   entanglement_entropy         = 0;
-        double   norm                         = 0;
-        double   energy_mpo                   = 0;
-        double   energy_per_site_mpo          = 0;
-        double   energy_per_site_ham          = 0;
-        double   energy_per_site_mom          = 0;
-        double   energy_variance_mpo          = 0;
-        double   energy_variance_per_site_mpo = 0;
-        double   energy_variance_per_site_ham = 0;
-        double   energy_variance_per_site_mom = 0;
-        double   truncation_error             = 0;
-        double   wall_time                    = 0;
-        double   phys_time                    = 0;
+        uint64_t iter;
+        uint64_t step;
+        long     position;
+        uint64_t length;
+        long     bond_dimension;
+        long     bond_dimension_limit;
+        long     bond_dimension_maximum;
+        double   entanglement_entropy;
+        double   norm;
+        double   energy_mpo;
+        double   energy_per_site_mpo;
+        double   energy_per_site_ham;
+        double   energy_per_site_mom;
+        double   energy_variance_mpo;
+        double   energy_variance_per_site_mpo;
+        double   energy_variance_per_site_ham;
+        double   energy_variance_per_site_mom;
+        double   truncation_error;
+        double   wall_time;
+        double   phys_time;
         std::complex<double> time_step;
     };
 
