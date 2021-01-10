@@ -17,11 +17,11 @@ class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
 //    extern void move_center_point_single_site_fast   (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern void move_center_point_single_site        (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern void move_center_point                    (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern void move_center_point_to_edge            (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern void move_center_point_to_middle          (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern void merge_multisite_tensor               (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::vector<size_t> & sites, long center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt, std::optional<LogPolicy> log_policy = std::nullopt);
+    extern size_t move_center_point_single_site        (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point                    (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point_to_edge            (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point_to_middle          (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern void merge_multisite_tensor               (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::vector<size_t> & positions, long center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt, std::optional<LogPolicy> log_policy = std::nullopt);
     extern bool normalize_state                      (class_state_finite & state,long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void randomize_state                      (class_state_finite & state, StateInit state_type, StateInitType type,const std::string & sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt);
     extern void apply_random_paulis                  (class_state_finite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);
