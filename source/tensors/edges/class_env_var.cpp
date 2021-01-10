@@ -32,7 +32,8 @@ class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_
     env.enlarge(mps.get_M_bare(), mpo.MPO2());
     // Update positions assuming this is a finite chain.
     // This needs to be corrected (on the right side) on infinite chains
-    if(env.side == "L") env.position = mps.get_position() + 1;
+    if(env.side == "L")
+        env.position = mps.get_position() + 1;
     else if(env.side == "R")
         env.position = mps.get_position() - 1;
     else
@@ -118,7 +119,8 @@ void class_env_var::refresh(const class_env_var &env, const class_mps_site &mps,
 void class_env_var::set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
     tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
-    if(side == "L") set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());
+    if(side == "L")
+        set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());
     else if(side == "R")
         set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_right());
     else

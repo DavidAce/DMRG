@@ -80,10 +80,10 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
                 .reshape(Textra::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
                 .contract(mps.get_M_bare(), Textra::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
                 .shuffle(Textra::array3{1, 0, 2});                 // Shuffle back to convention
-        if(isCenter or label == "A"){
+        if(isCenter or label == "A") {
             Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
             mps.set_mps(M_temp, one, 0, label);
-        }else{
+        } else {
             // The left edge is a B-site.
             // Then L1 dim has already been increased and L0 doesn't exist. (If it did, it would just be a "1")
             mps.set_M(M_temp);
@@ -120,9 +120,9 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
         if(isCenter) {
             mps.set_M(M_temp);
             mps.set_LC(one, 0);
-        } else if(label == "A"){
+        } else if(label == "A") {
             mps.set_M(M_temp);
-        }else if (label == "B"){
+        } else if(label == "B") {
             mps.set_M(M_temp);
             mps.set_L(one, 0);
         }
@@ -194,13 +194,15 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
             project_to_sector(state, paulimatrix, sector_sign);
         else if(alignment < 0) {
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
-            if(spin_component_along_requested_axis < 1.0 - spin_component_threshold) project_to_sector(state, paulimatrix, sector_sign);
+            if(spin_component_along_requested_axis < 1.0 - spin_component_threshold)
+                project_to_sector(state, paulimatrix, sector_sign);
             else
                 return tools::log->warn("Skipping projection to [{}]: State spin component is opposite to the requested projection axis: {:.16f}", sector,
                                         spin_component_along_requested_axis);
         } else if(alignment == 0) {
             // No sector sign was specified, so we select the one along which there is a component
-            if(spin_component_along_requested_axis >= 0) sector_sign = 1;
+            if(spin_component_along_requested_axis >= 0)
+                sector_sign = 1;
             else
                 sector_sign = -1;
             project_to_sector(state, paulimatrix, sector_sign);
@@ -247,8 +249,8 @@ double tools::finite::ops::overlap(const class_state_finite &state1, const class
 }
 
 double tools::finite::ops::expectation_value(const class_state_finite &state1, const class_state_finite &state2,
-                                             const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 3> &Ledge,
-                                             const Eigen::Tensor<std::complex<double>, 3> &Redge) {
+                                             const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos,
+                                             const Eigen::Tensor<std::complex<double>, 3> &Ledge, const Eigen::Tensor<std::complex<double>, 3> &Redge) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
     auto                     mpo_it = mpos.begin();

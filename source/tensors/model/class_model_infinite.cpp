@@ -54,8 +54,8 @@ void class_model_infinite::randomize() {
     std::vector<class_mpo_site::TableMap> all_params;
     all_params.push_back(HA->get_parameters());
     all_params.push_back(HB->get_parameters());
-    HA->set_averages(all_params,true);
-    HB->set_averages(all_params,true);
+    HA->set_averages(all_params, true);
+    HB->set_averages(all_params, true);
 }
 
 void class_model_infinite::reset_mpo_squared() {
@@ -102,8 +102,9 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
         // Next compress from left to right
         Eigen::Tensor<Scalar, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<Scalar, 4> T_mpo_sq;
-        for(const auto & [idx, mpo_sq] : iter::enumerate(mpos_sq)) {
-            if(T_l2r.size() == 0) T_mpo_sq = mpo_sq;
+        for(const auto &[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+            if(T_l2r.size() == 0)
+                T_mpo_sq = mpo_sq;
             else
                 T_mpo_sq = T_l2r.contract(mpo_sq, Textra::idx({1}, {0}));
 
@@ -112,7 +113,8 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
             } else {
                 auto [U, S, V] = svd.split_mpo_l2r(T_mpo_sq);
                 T_l2r          = Textra::asDiagonal(S).contract(V, Textra::idx({1}, {0}));
-                if(idx < mpos_sq.size() - 1) mpo_sq = U;
+                if(idx < mpos_sq.size() - 1)
+                    mpo_sq = U;
                 else
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
                     mpo_sq = U.contract(T_l2r, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
@@ -122,8 +124,9 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
         // Now we have done left to right. Next we do right to left
         Eigen::Tensor<Scalar, 2> T_r2l;    // Transfer matrix
         Eigen::Tensor<Scalar, 4> mpo_sq_T; // Absorbs transfer matrix
-        for(const auto & [idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
-            if(T_r2l.size() == 0) mpo_sq_T = mpo_sq;
+        for(const auto &[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+            if(T_r2l.size() == 0)
+                mpo_sq_T = mpo_sq;
             else
                 mpo_sq_T = mpo_sq.contract(T_r2l, Textra::idx({1}, {0})).shuffle(Textra::array4{0, 3, 1, 2});
             if(idx == 0) {
@@ -131,7 +134,8 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
             } else {
                 auto [U, S, V] = svd.split_mpo_r2l(mpo_sq_T);
                 T_r2l          = U.contract(Textra::asDiagonal(S), Textra::idx({1}, {0}));
-                if(idx > 0) mpo_sq = V;
+                if(idx > 0)
+                    mpo_sq = V;
                 else
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
                     mpo_sq = T_r2l.contract(V, Textra::idx({1}, {0}));
@@ -141,7 +145,7 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(const auto & [idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
     return mpos_sq;
 }
 
@@ -200,27 +204,21 @@ const Eigen::Tensor<class_model_infinite::Scalar, 4> &class_model_infinite::get_
     return cache.twosite_mpo_BA.value();
 }
 
-const Eigen::Tensor<class_model_infinite::Scalar, 2> &    class_model_infinite::get_2site_ham_AB() const{
+const Eigen::Tensor<class_model_infinite::Scalar, 2> &class_model_infinite::get_2site_ham_AB() const {
     if(cache.twosite_ham_AB) return cache.twosite_ham_AB.value();
-    auto twosite_mpo_AB = get_2site_mpo_AB();
-    auto edgeL = get_mpo_siteA().get_MPO_edge_left();
-    auto edgeR = get_mpo_siteB().get_MPO_edge_right();
-    cache.twosite_ham_AB = twosite_mpo_AB
-        .contract(edgeL, Textra::idx({0},{0}))
-        .contract(edgeR, Textra::idx({0},{0}));
+    auto twosite_mpo_AB  = get_2site_mpo_AB();
+    auto edgeL           = get_mpo_siteA().get_MPO_edge_left();
+    auto edgeR           = get_mpo_siteB().get_MPO_edge_right();
+    cache.twosite_ham_AB = twosite_mpo_AB.contract(edgeL, Textra::idx({0}, {0})).contract(edgeR, Textra::idx({0}, {0}));
     return cache.twosite_ham_AB.value();
-
 }
-const Eigen::Tensor<class_model_infinite::Scalar, 2> &    class_model_infinite::get_2site_ham_BA() const{
+const Eigen::Tensor<class_model_infinite::Scalar, 2> &class_model_infinite::get_2site_ham_BA() const {
     if(cache.twosite_ham_BA) return cache.twosite_ham_BA.value();
-    auto twosite_mpo_BA = get_2site_mpo_BA();
-    auto edgeL = get_mpo_siteB().get_MPO_edge_left();
-    auto edgeR = get_mpo_siteA().get_MPO_edge_right();
-    cache.twosite_ham_BA = twosite_mpo_BA
-        .contract(edgeL, Textra::idx({0},{0}))
-        .contract(edgeR, Textra::idx({0},{0}));
+    auto twosite_mpo_BA  = get_2site_mpo_BA();
+    auto edgeL           = get_mpo_siteB().get_MPO_edge_left();
+    auto edgeR           = get_mpo_siteA().get_MPO_edge_right();
+    cache.twosite_ham_BA = twosite_mpo_BA.contract(edgeL, Textra::idx({0}, {0})).contract(edgeR, Textra::idx({0}, {0}));
     return cache.twosite_ham_BA.value();
 }
-
 
 void class_model_infinite::clear_cache() { cache = Cache(); }

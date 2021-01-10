@@ -111,9 +111,10 @@ namespace num {
      */
     template<typename T>
     inline T mod(const T x, const T y) {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr(std::is_integral_v<T>)
             return (x % y + y) % y;
-        else return std::fmod((std::fmod(x,y)+y),y);
+        else
+            return std::fmod((std::fmod(x, y) + y), y);
     }
 
     /*! \brief Python-style range generator, i.e. not-including "last"
@@ -133,7 +134,7 @@ namespace num {
 
         std::vector<T> vec;
         vec.reserve(num_steps);
-        for(T current = first; current < last; current+=step ) vec.emplace_back(static_cast<T>(current));
+        for(T current = first; current < last; current += step) vec.emplace_back(static_cast<T>(current));
         return vec;
     }
 
@@ -157,27 +158,26 @@ namespace num {
     std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
-        double loga = std::log(a)/std::log(base);
-        double logb = std::log(b)/std::log(base);
-        double h = (logb - loga) / static_cast<double>(N - 1);
-        double factor = std::pow(base, h);
-        double val    = std::pow(base, loga);
+        double              loga   = std::log(a) / std::log(base);
+        double              logb   = std::log(b) / std::log(base);
+        double              h      = (logb - loga) / static_cast<double>(N - 1);
+        double              factor = std::pow(base, h);
+        double              val    = std::pow(base, loga);
         std::vector<double> xs(N);
-        for(auto & x : xs) {
+        for(auto &x : xs) {
             x = val;
             val *= factor;
         }
         return xs;
     }
 
-
-//    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
-//        double expA = std::pow(base, a);
-//        double expB = std::pow(base, b);
-//        auto   vec  = LinSpaced(N, expA, expB);
-//        for(auto &val : vec) val = std::abs(std::log(val) / std::log(base));
-//        return vec;
-//    }
+    //    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+    //        double expA = std::pow(base, a);
+    //        double expB = std::pow(base, b);
+    //        auto   vec  = LinSpaced(N, expA, expB);
+    //        for(auto &val : vec) val = std::abs(std::log(val) / std::log(base));
+    //        return vec;
+    //    }
 
     /*! \brief Product operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.

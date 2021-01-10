@@ -63,7 +63,6 @@ MatrixProductSparse<Scalar, sparseLU>::MatrixProductSparse(const Scalar *A_, lon
 
 // Function definitions
 
-
 template<typename Scalar, bool sparseLU>
 void MatrixProductSparse<Scalar, sparseLU>::FactorOP()
 
@@ -76,23 +75,19 @@ void MatrixProductSparse<Scalar, sparseLU>::FactorOP()
     if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
     t_factorOP->tic();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
-    
+
     // Real
     if constexpr(std::is_same_v<Scalar, double> and not sparseLU) {
         sparse_lu::lu_real_dense = Eigen::PartialPivLU<MatrixType<Scalar>>();
         sparse_lu::lu_real_dense.value().compute(A_matrix);
     }
-    if constexpr(std::is_same_v<Scalar, double> and sparseLU) {
-        sparse_lu::lu_real_sparse.value().compute(sparse_lu::A_real_sparse.value());
-    }
+    if constexpr(std::is_same_v<Scalar, double> and sparseLU) { sparse_lu::lu_real_sparse.value().compute(sparse_lu::A_real_sparse.value()); }
     // Complex
     if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU) {
         sparse_lu::lu_cplx_dense = Eigen::PartialPivLU<MatrixType<Scalar>>();
         sparse_lu::lu_cplx_dense.value().compute(A_matrix);
     }
-    if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU) {
-        sparse_lu::lu_cplx_sparse.value().compute(sparse_lu::A_cplx_sparse.value());
-    }
+    if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU) { sparse_lu::lu_cplx_sparse.value().compute(sparse_lu::A_cplx_sparse.value()); }
 
     t_factorOP->toc();
     readyFactorOp = true;
@@ -107,7 +102,8 @@ void MatrixProductSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_
 
     switch(side) {
         case eig::Side::R: {
-            if constexpr(std::is_same_v<Scalar, double> and not sparseLU) x_out.noalias() = sparse_lu::lu_real_dense.value().solve(x_in);
+            if constexpr(std::is_same_v<Scalar, double> and not sparseLU)
+                x_out.noalias() = sparse_lu::lu_real_dense.value().solve(x_in);
             else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                 x_out.noalias() = sparse_lu::lu_cplx_dense.value().solve(x_in);
             else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
@@ -117,7 +113,8 @@ void MatrixProductSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_
             break;
         }
         case eig::Side::L: {
-            if constexpr(std::is_same_v<Scalar, double> and not sparseLU) x_out.noalias() = x_in * sparse_lu::lu_real_dense.value().inverse();
+            if constexpr(std::is_same_v<Scalar, double> and not sparseLU)
+                x_out.noalias() = x_in * sparse_lu::lu_real_dense.value().inverse();
             else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                 x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
             else {
@@ -142,7 +139,8 @@ void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) 
                     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
                     Eigen::Map<VectorType> x_vec_in(x_in, L);
                     Eigen::Map<VectorType> x_vec_out(x_out, L);
-                    if constexpr(not sparseLU) x_vec_out.noalias() = A_matrix * x_vec_in;
+                    if constexpr(not sparseLU)
+                        x_vec_out.noalias() = A_matrix * x_vec_in;
                     else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
                         x_vec_out.noalias() = sparse_lu::A_real_sparse.value() * x_vec_in;
                     else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
@@ -153,7 +151,8 @@ void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) 
                     using VectorTypeT = Eigen::Matrix<Scalar, 1, Eigen::Dynamic>;
                     Eigen::Map<VectorTypeT> x_vec_in(x_in, L);
                     Eigen::Map<VectorTypeT> x_vec_out(x_out, L);
-                    if constexpr(not sparseLU) x_vec_out.noalias() = x_vec_in * A_matrix;
+                    if constexpr(not sparseLU)
+                        x_vec_out.noalias() = x_vec_in * A_matrix;
                     else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
                         x_vec_out.noalias() = x_vec_in * sparse_lu::A_real_sparse.value();
                     else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
@@ -180,7 +179,6 @@ void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) 
     counter++;
 }
 
-
 template<typename Scalar, bool sparseLU>
 void MatrixProductSparse<Scalar, sparseLU>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
@@ -189,15 +187,15 @@ void MatrixProductSparse<Scalar, sparseLU>::print() const {
 template<typename Scalar, bool sparseLU>
 void MatrixProductSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma_) {
     if(readyShift) { return; }
-    sigma      = sigma_;
-    if(A_stl.empty()){
+    sigma = sigma_;
+    if(A_stl.empty()) {
         A_stl.resize(static_cast<size_t>(L * L));
         std::copy(A_ptr, A_ptr + static_cast<size_t>(L * L), A_stl.begin());
         A_ptr = A_stl.data();
     }
     Eigen::Map<MatrixType<Scalar>> A_matrix(A_stl.data(), L, L);
-    if constexpr(std::is_same_v<Scalar, eig::real>) A_matrix -=  Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
-    if constexpr(std::is_same_v<Scalar, eig::cplx>) A_matrix -=  Eigen::MatrixXd::Identity(L, L) * sigma;
+    if constexpr(std::is_same_v<Scalar, eig::real>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
+    if constexpr(std::is_same_v<Scalar, eig::cplx>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
 
     if constexpr(sparseLU) {
         if constexpr(std::is_same_v<Scalar, double>) {
@@ -213,7 +211,6 @@ void MatrixProductSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma
     readyShift = true;
 }
 
-
 template<typename Scalar, bool sparseLU>
 void MatrixProductSparse<Scalar, sparseLU>::set_mode(const eig::Form form_) {
     form = form_;
@@ -223,7 +220,7 @@ void MatrixProductSparse<Scalar, sparseLU>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar, bool sparseLU>
-const eig::Form &MatrixProductSparse<Scalar,sparseLU>::get_form() const {
+const eig::Form &MatrixProductSparse<Scalar, sparseLU>::get_form() const {
     return form;
 }
 template<typename Scalar, bool sparseLU>
@@ -237,8 +234,6 @@ void MatrixProductSparse<Scalar, sparseLU>::init_profiling() {
     t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultOpv");
     t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultAx");
 }
-
-
 
 // Explicit instantiations
 template class MatrixProductSparse<double, true>;

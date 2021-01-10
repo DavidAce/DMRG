@@ -4,6 +4,7 @@
 
 #include "class_algorithm_finite.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_exceptions.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
@@ -19,7 +20,6 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/print.h>
-#include <general/nmspc_exceptions.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
     : class_algorithm_base(std::move(h5ppFile_), algo_type) {
@@ -73,14 +73,11 @@ void class_algorithm_finite::run()
     if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
         try {
             resume();
-        }
-        catch (const except::state_error & ex){
+        } catch(const except::state_error &ex) {
             throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
-        }
-        catch (const except::load_error & ex){
+        } catch(const except::load_error &ex) {
             throw except::load_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
-        }
-        catch(const std::exception &ex) {
+        } catch(const std::exception &ex) {
             throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
     } else {
@@ -103,25 +100,24 @@ void class_algorithm_finite::run_postprocessing() {
 
 void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
     if(not num_moves.has_value()) {
-        if(tensors.active_sites.empty()) num_moves = 1;
-        else{
+        if(tensors.active_sites.empty())
+            num_moves = 1;
+        else {
             long num_sites = static_cast<long>(tensors.active_sites.size());
-            if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length()-1) or
-               (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)){
+            if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length() - 1) or
+               (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)) {
                 // In this case we have just updated from here to the edge. No point in updating
                 // closer and closer to the edge. Just move until reaching the edge without flip
-                num_moves = std::max<long>(1,num_sites - 1); // to the edge without flipping
-            }else if(settings::strategy::multisite_move == MultisiteMove::ONE)
+                num_moves = std::max<long>(1, num_sites - 1); // to the edge without flipping
+            } else if(settings::strategy::multisite_move == MultisiteMove::ONE)
                 num_moves = 1ul;
             else if(settings::strategy::multisite_move == MultisiteMove::MID) {
                 num_moves = std::max<long>(1, num_sites / 2);
-            }else if (settings::strategy::multisite_move == MultisiteMove::MAX){
+            } else if(settings::strategy::multisite_move == MultisiteMove::MAX) {
                 num_moves = std::max<long>(1, num_sites - 1); // Move so that the center point moves out of the active region
-            }
-            else
+            } else
                 throw std::logic_error("Could not determine how many sites to move");
         }
-
     }
 
     if(num_moves <= 0) throw std::runtime_error(fmt::format("Cannot move center point {} sites", num_moves.value()));
@@ -130,7 +126,7 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
     tensors.clear_measurements();
     try {
         long moves = 0;
-        while(num_moves > moves++){
+        while(num_moves > moves++) {
             if(chi_quench_steps > 0) chi_quench_steps--;
             if(tensors.position_is_outward_edge()) status.iter++;
             status.step += tensors.move_center_point(status.chi_lim);
@@ -161,7 +157,7 @@ void class_algorithm_finite::reduce_mpo_energy() {
 
 void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
     if(not tensors.position_is_inward_edge()) return;
-    status.chi_lim_max = cfg_chi_lim_max();
+    status.chi_lim_max                 = cfg_chi_lim_max();
     status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
     if(not cfg_chi_lim_grow()) {
         status.chi_lim = status.chi_lim_max;
@@ -225,8 +221,9 @@ void class_algorithm_finite::randomize_model() {
     clear_convergence_status();
 }
 
-void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector, std::optional<long> chi_lim,
-                                             std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<double> svd_threshold) {
+void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type,
+                                             std::optional<std::string> sector, std::optional<long> chi_lim, std::optional<bool> use_eigenspinors,
+                                             std::optional<long> bitfield, std::optional<double> svd_threshold) {
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -245,35 +242,37 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
         if(not cfg_chi_lim_grow() and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
     }
-    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}",chi_lim.value()));
+    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}", chi_lim.value()));
 
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_threshold);
-//    tensors.move_center_point_to_edge(chi_lim.value());
+    //    tensors.move_center_point_to_edge(chi_lim.value());
     clear_convergence_status();
     status.reset();
-    status.iter      = 0;
-    status.step      = 0;
-    status.position  = tensors.state->get_position<long>();
-    status.direction = tensors.state->get_direction();
+    status.iter       = 0;
+    status.step       = 0;
+    status.position   = tensors.state->get_position<long>();
+    status.direction  = tensors.state->get_direction();
     num_perturbations = 0;
-    num_chi_quenches = 0;
-    num_discards = 0;
-    num_dampings = 0;
-    stop_reason = StopReason::NONE;
+    num_chi_quenches  = 0;
+    num_discards      = 0;
+    num_dampings      = 0;
+    stop_reason       = StopReason::NONE;
     if(cfg_chi_lim_grow()) status.chi_lim = chi_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_chi() > chi_lim.value())
-//        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value());
+        //        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(),
+        //        chi_lim.value());
         throw std::runtime_error(
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
-    tools::log->info("-- Normalization            : {:.16f}",tools::finite::measure::norm(*tensors.state));
+    tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-    tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors,status.energy_min_per_site,status.energy_max_per_site));
+    tools::log->info("-- Energy density           : {}",
+                     tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
     tools::log->info("-- Energy variance          : {}", std::log10(tools::finite::measure::energy_variance(tensors)));
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
     tools::common::profile::prof[algo_type]["t_rnd"]->toc();
@@ -295,15 +294,15 @@ void class_algorithm_finite::try_discard_small_schmidt() {
     if(not tensors.position_is_inward_edge()) return;
     if(num_discards >= max_discards) return;
     if(status.algorithm_has_stuck_for <= 2) return;
-    tools::log->info("Trying discard of smallest schmidt values: trials {}",num_discards);
-    tensors.normalize_state(status.chi_lim,1e-3,NormPolicy::ALWAYS);
+    tools::log->info("Trying discard of smallest schmidt values: trials {}", num_discards);
+    tensors.normalize_state(status.chi_lim, 1e-3, NormPolicy::ALWAYS);
     clear_convergence_status();
 #pragma message "testing lower svd_threshold"
-//    settings::precision::svd_threshold = 1e-10;
-    settings::strategy::multisite_move = MultisiteMove::ONE;
+    //    settings::precision::svd_threshold = 1e-10;
+    settings::strategy::multisite_move      = MultisiteMove::ONE;
     settings::strategy::multisite_max_sites = 2;
-    iter_discard = status.iter;
-//    tensors.reduce_mpo_energy(0.0);
+    iter_discard                            = status.iter;
+    //    tensors.reduce_mpo_energy(0.0);
     num_discards++;
 }
 
@@ -518,16 +517,18 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, std::op
     write_to_file(storage_reason, *tensors.state, copy_policy);
 }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy, const std::string &given_prefix) {
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy,
+                                           const std::string &given_prefix) {
     // Setup this save
-    StorageLevel             storage_level;
-    std::string              state_prefix = fmt::format("{}/{}", algo_name,state.get_name()); // May get modified
+    StorageLevel storage_level;
+    std::string  state_prefix = fmt::format("{}/{}", algo_name, state.get_name()); // May get modified
     if(not given_prefix.empty()) state_prefix = given_prefix;
-    std::string              model_prefix = fmt::format("{}/{}", algo_name,"model");
+    std::string              model_prefix = fmt::format("{}/{}", algo_name, "model");
     std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
     switch(storage_reason) {
         case StorageReason::FINISHED: {
-            if(status.algorithm_has_succeeded) storage_level = settings::output::storage_level_good_state;
+            if(status.algorithm_has_succeeded)
+                storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
             state_prefix += "/finished";
@@ -535,7 +536,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::SAVEPOINT: {
-            if(stop_reason == StopReason::NONE){
+            if(stop_reason == StopReason::NONE) {
                 // During a simulation we may want to limit the number of savepoint saves.
                 // After the simulation has finished, we always want to go through with this save
                 if(not state.position_is_inward_edge()) return;
@@ -543,14 +544,15 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             }
             state_prefix += "/savepoint";
             storage_level = settings::output::storage_level_savepoint;
-            if(settings::output::savepoint_keep_newest_only) state_prefix += "/iter_last";
+            if(settings::output::savepoint_keep_newest_only)
+                state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
         case StorageReason::CHECKPOINT: {
-            if(stop_reason == StopReason::NONE){
+            if(stop_reason == StopReason::NONE) {
                 // During a simulation we may want to limit the number of checkpoint saves.
                 // After the simulation has finished, we always want to go through with this save
                 if(not state.position_is_inward_edge()) return;
@@ -558,7 +560,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             }
             state_prefix += "/checkpoint";
             storage_level = settings::output::storage_level_checkpoint;
-            if(settings::output::checkpoint_keep_newest_only) state_prefix += "/iter_last";
+            if(settings::output::checkpoint_keep_newest_only)
+                state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
@@ -573,13 +576,14 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::PROJ_STATE: {
-            storage_level = settings::output::storage_level_proj_state;
-            auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state,settings::strategy::target_sector));
-            if(std::abs(abs_spin_component - 1.0) > 1e-6){
-                auto state_projected = tensors.get_state_projected_to_nearest_sector(settings::strategy::target_sector,status.chi_lim);
-                abs_spin_component = std::abs(tools::finite::measure::spin_component(state_projected,settings::strategy::target_sector));
-                if(std::abs(abs_spin_component - 1.0) > 1e-6) throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", settings::strategy::target_sector,abs_spin_component));
-                return write_to_file(storage_reason,state_projected,copy_policy);
+            storage_level           = settings::output::storage_level_proj_state;
+            auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
+            if(std::abs(abs_spin_component - 1.0) > 1e-6) {
+                auto state_projected = tensors.get_state_projected_to_nearest_sector(settings::strategy::target_sector, status.chi_lim);
+                abs_spin_component   = std::abs(tools::finite::measure::spin_component(state_projected, settings::strategy::target_sector));
+                if(std::abs(abs_spin_component - 1.0) > 1e-6)
+                    throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", settings::strategy::target_sector, abs_spin_component));
+                return write_to_file(storage_reason, state_projected, copy_policy);
             }
 
             state_prefix += "/projection";
@@ -607,16 +611,17 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::log->info("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix, model_prefix);
+    tools::log->info("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2str(storage_reason), enum2str(storage_level),
+                     state_prefix, model_prefix);
 
     // The file cam be kept open during writes
     h5pp_file->setKeepFileOpened();
 
     // Start saving tensors and metadata
-    if(storage_reason == StorageReason::MODEL){
+    if(storage_reason == StorageReason::MODEL) {
         tools::finite::io::h5table::save_model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
         tools::finite::io::h5dset::save_model(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
-    }else{
+    } else {
         tools::finite::io::h5dset::save_state(*h5pp_file, state_prefix, storage_level, state, status);
         tools::finite::io::h5dset::save_entgm(*h5pp_file, state_prefix, storage_level, state, status);
     }
@@ -664,19 +669,18 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("Sₑ(l):{:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
-    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance , std::log10(status.energy_variance_lowest));
-    report +=
-        fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
-    std::string bond_strings = fmt::format("{}",tools::finite::measure::bond_dimensions_merged(*tensors.state));
-    size_t bond_width = 5*(settings::strategy::multisite_max_sites - 1);
+    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance, std::log10(status.energy_variance_lowest));
+    report += fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
+    std::string bond_strings = fmt::format("{}", tools::finite::measure::bond_dimensions_merged(*tensors.state));
+    size_t      bond_width   = 5 * (settings::strategy::multisite_max_sites - 1);
     report += fmt::format("{0:<{1}}", bond_strings, bond_width);
 
-
-    if(last_optmode and last_optspace) report+= fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0,3),enum2str(last_optspace.value()).substr(0,3));
+    if(last_optmode and last_optspace)
+        report += fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0, 3), enum2str(last_optspace.value()).substr(0, 3));
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error()));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
-    report += fmt::format("time:{:<} ",fmt::format("{:>6.2f}s",tools::common::profile::t_tot->get_measured_time()));
+    report += fmt::format("time:{:<} ", fmt::format("{:>6.2f}s", tools::common::profile::t_tot->get_measured_time()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);

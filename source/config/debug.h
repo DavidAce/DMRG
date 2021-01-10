@@ -1,5 +1,5 @@
 #pragma once
-namespace settings{
+namespace settings {
 
 #ifdef NDEBUG
     inline constexpr bool debug = false;

@@ -59,12 +59,12 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
-    energy                         = std::real(ene + energy_reduced);
-    energy_per_site                = energy / static_cast<double>(length);
-    variance                       = std::abs(var);
-    variance_per_site              = variance / static_cast<double>(length);
-    norm_offset                    = std::abs(vv) - 1.0;
-    log10var                       = std::log10(variance);
+    energy            = std::real(ene + energy_reduced);
+    energy_per_site   = energy / static_cast<double>(length);
+    variance          = std::abs(var);
+    variance_per_site = variance / static_cast<double>(length);
+    norm_offset       = std::abs(vv) - 1.0;
+    log10var          = std::log10(variance);
 
     if(fx != nullptr) { fx[0] = log10var; }
 

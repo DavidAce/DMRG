@@ -4,8 +4,8 @@
 #include <algorithms/class_algorithm_status.h>
 #include <complex>
 #include <config/nmspc_settings.h>
-#include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_exceptions.h>
+#include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <tensors/class_tensors_finite.h>
@@ -47,7 +47,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
     auto model_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/model_prefix");
     if(h5ppFile.linkExists(model_prefix)) {
         auto table_path = fmt::format("{}/hamiltonian", model_prefix);
-        if(not h5ppFile.linkExists(table_path)) throw std::runtime_error(fmt::format("Hamiltonian table does not exist: [{}]",table_path));
+        if(not h5ppFile.linkExists(table_path)) throw std::runtime_error(fmt::format("Hamiltonian table does not exist: [{}]", table_path));
         tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", table_path);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", table_path);
@@ -57,8 +57,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading model: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-        for(const auto & mpo : model.MPO)
-            mpo->load_hamiltonian(h5ppFile, model_prefix);
+        for(const auto &mpo : model.MPO) mpo->load_hamiltonian(h5ppFile, model_prefix);
     } else {
         throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
     }
@@ -82,8 +81,8 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
     state.initialize(str2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
     tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
-    for(const auto & mps : state.mps_sites) {
-        auto pos = mps->get_position<long>();
+    for(const auto &mps : state.mps_sites) {
+        auto        pos         = mps->get_position<long>();
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
         std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
@@ -97,8 +96,8 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         }
         if(not h5ppFile.linkExists(dset_L_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_L_name));
         if(not h5ppFile.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
-        auto L = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_L_name);
-        auto M = h5ppFile.readDataset<Eigen::Tensor<Scalar, 3>>(dset_M_name);
+        auto L     = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_L_name);
+        auto M     = h5ppFile.readDataset<Eigen::Tensor<Scalar, 3>>(dset_M_name);
         auto error = h5ppFile.readAttribute<double>("truncation_error", dset_L_name);
         auto label = h5ppFile.readAttribute<std::string>("label", dset_M_name);
         mps->set_mps(M, L, error, label);
@@ -111,9 +110,9 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
 }
 
 void compare(double val1, double val2, double tol, const std::string &tag) {
-    if(val2 == 0){
+    if(val2 == 0) {
         tools::log->warn("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2,
-                                std::abs(val1 - val2), tol);
+                         std::abs(val1 - val2), tol);
         tools::log->warn("Value 2 is zero: It may not have been initialized in the previous simulation");
         return;
     }
@@ -126,8 +125,8 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
 
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
     tools::finite::debug::check_integrity(tensors);
-//    tensors.activate_sites(settings::precision::max_size_full_diag, 1);
-    tensors.activate_sites({0,1});
+    //    tensors.activate_sites(settings::precision::max_size_full_diag, 1);
+    tensors.activate_sites({0, 1});
     tensors.reduce_mpo_energy();
     tools::log->debug("Validating resumed state [{}]", state_prefix);
     tools::log->debug("State labels:", tensors.state->get_labels());

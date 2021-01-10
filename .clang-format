@@ -4,15 +4,21 @@ AccessModifierOffset: 0
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
-AlignOperands:   true
+AlignConsecutiveBitFields: true
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
+AlignOperands:   Align
 AlignTrailingComments: true
+AllowAllConstructorInitializersOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: true
 AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortFunctionsOnASingleLine: All
 AllowShortLoopsOnASingleLine: true
-AlwaysBreakAfterDefinitionReturnType: None
+AllowShortEnumsOnASingleLine: true
+AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
@@ -46,6 +52,7 @@ DerivePointerAlignment: false
 DisableFormat:   false
 FixNamespaceComments: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+IncludeBlocks: Merge
 IncludeCategories:
   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
     Priority:        2

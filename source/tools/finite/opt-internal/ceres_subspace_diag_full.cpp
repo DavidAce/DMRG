@@ -26,7 +26,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
     long                               nev            = eigvecs.cols();
     reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error),
                             tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->get_last_interval(),
-                            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(), 0,1);
+                            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(), 0, 1);
     return std::make_tuple(eigvecs, eigvals);
 }
 

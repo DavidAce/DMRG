@@ -60,11 +60,9 @@ template double tools::common::contraction::expectation_value(const cplx * const
                                                               const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 
-
-
 //
-//template<typename mps_type, typename mpo_type, typename env_type>
-//extern double tools::common::contraction::expectation_value(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
+// template<typename mps_type, typename mpo_type, typename env_type>
+// extern double tools::common::contraction::expectation_value(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
 //    // This measures the expectation value <M> of some multisite operator M given multisite mps', mpos and corresponding environments.
 //    // This is usually the energy E = <H>
 //    // Note that the environments must contain the correct type of mpos
@@ -77,7 +75,8 @@ template double tools::common::contraction::expectation_value(const cplx * const
 //        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
 //    if(mps.dimension(2) != envR.dimension(0))
 //        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
-//    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+//    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(),
+//    mpo.dimensions()));
 //
 //    Eigen::Tensor<Scalar, 0> M1;
 //    /* clang-format off */
@@ -98,8 +97,7 @@ template double tools::common::contraction::expectation_value(const cplx * const
 //}
 //
 //
-//template double tools::common::contraction::expectation_value(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//template double tools::common::contraction::expectation_value(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-//template double tools::common::contraction::expectation_value(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
-//template double tools::common::contraction::expectation_value(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
-
+// template double tools::common::contraction::expectation_value(const T3<real> &, const T4<real> &, const T3<real> &, const T3<real> &);
+// template double tools::common::contraction::expectation_value(const T3<cplx> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);
+// template double tools::common::contraction::expectation_value(const TM<T3<real>> &, const T4<real> &, const T3<real> &, const T3<real> &);
+// template double tools::common::contraction::expectation_value(const TM<T3<cplx>> &, const T4<cplx> &, const T3<cplx> &, const T3<cplx> &);

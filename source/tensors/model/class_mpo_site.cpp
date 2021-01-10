@@ -5,16 +5,16 @@
 #include "class_mpo_site.h"
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
-#include <physics/nmspc_quantum_mechanics.h>
 #include <math/hash.h>
 #include <math/rnd.h>
+#include <physics/nmspc_quantum_mechanics.h>
 
 using namespace qm;
 using Scalar = std::complex<double>;
 
 class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
-Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo_squared() const {
+Eigen::Tensor<Scalar, 4> class_mpo_site::get_uncompressed_mpo_squared() const {
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
@@ -24,8 +24,8 @@ Eigen::Tensor<Scalar, 4>class_mpo_site::get_uncompressed_mpo_squared() const {
 }
 
 void class_mpo_site::build_mpo_squared() {
-    mpo_squared     = get_uncompressed_mpo_squared();
-    unique_id_sq    = std::nullopt;
+    mpo_squared  = get_uncompressed_mpo_squared();
+    unique_id_sq = std::nullopt;
     if(Textra::hasNaN(mpo_squared.value())) {
         print_parameter_names();
         print_parameter_values();
@@ -34,13 +34,11 @@ void class_mpo_site::build_mpo_squared() {
 }
 
 void class_mpo_site::set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq) {
-    mpo_squared = mpo_sq;
+    mpo_squared  = mpo_sq;
     unique_id_sq = std::nullopt;
 }
 
-bool class_mpo_site::has_mpo_squared() const {
-    return mpo_squared.has_value();
-}
+bool class_mpo_site::has_mpo_squared() const { return mpo_squared.has_value(); }
 
 const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
     if(all_mpo_parameters_have_been_set) {
@@ -51,13 +49,15 @@ const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {
 }
 
 const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO2() const {
-    if(mpo_squared and all_mpo_parameters_have_been_set) return mpo_squared.value();
+    if(mpo_squared and all_mpo_parameters_have_been_set)
+        return mpo_squared.value();
     else
         throw std::runtime_error("MPO squared has not been set.");
 }
 
 Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO2() {
-    if(mpo_squared and all_mpo_parameters_have_been_set) return mpo_squared.value();
+    if(mpo_squared and all_mpo_parameters_have_been_set)
+        return mpo_squared.value();
     else {
         build_mpo_squared();
         return mpo_squared.value();
@@ -198,7 +198,6 @@ void class_mpo_site::load_mpo(const h5pp::File &file, const std::string &mpo_pre
         throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));
     }
 }
-
 
 std::size_t class_mpo_site::get_unique_id() const {
     if(unique_id) return unique_id.value();

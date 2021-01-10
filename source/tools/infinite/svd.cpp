@@ -11,13 +11,10 @@ void tools::infinite::svd::truncate_theta(Eigen::Tensor<Scalar, 3> &mps, class_s
     if(mps_list.size() != 2) throw std::runtime_error("Got more than two sites from svd split");
     auto mps_it = mps_list.begin();
 
-
-    for(auto & site: mps_list){
-        site.
-    }
+    for(auto &site : mps_list) { site. }
     state.set_mps(mps_list)
-//    state.MPS->truncation_error = SVD.get_truncation_error();
-//    state.MPS->MPS_A->set_LC(S);
-//    state.MPS->MPS_A->set_M(U);
-//    state.MPS->MPS_B->set_M(V);
+    //    state.MPS->truncation_error = SVD.get_truncation_error();
+    //    state.MPS->MPS_A->set_LC(S);
+    //    state.MPS->MPS_A->set_M(U);
+    //    state.MPS->MPS_B->set_M(V);
 }

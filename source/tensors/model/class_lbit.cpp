@@ -22,14 +22,15 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
     h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
-    copy_c_str(settings::model::lbit::distribution,h5tb.param.distribution);
+    copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     h5tb_lbit::register_table_type();
-    all_mpo_parameters_have_been_set = false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
+    all_mpo_parameters_have_been_set =
+        false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
 }
 
-double class_lbit::get_field() const { return  + std::pow(h5tb.param.J1_rand, 1 - beta); }
+double class_lbit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
 double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
 void   class_lbit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
 void   class_lbit::print_parameter_values() const { h5tb.print_parameter_values(); }
@@ -83,8 +84,8 @@ void class_lbit::build_mpo()
  */
 {
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
-    Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
-    Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 2> n = Textra::MatrixToTensor(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i = Textra::MatrixTensorMap(id);
     mpo_internal.resize(4, 4, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
     mpo_internal.slice(Textra::array4{0, 0, 0, 0}, extent4).reshape(extent2) = i;
@@ -102,7 +103,6 @@ void class_lbit::build_mpo()
     unique_id = std::nullopt;
     build_mpo_squared();
 }
-
 
 Eigen::Tensor<Scalar, 1> class_lbit::get_MPO_edge_left() const {
     Eigen::Tensor<Scalar, 1> ledge(4);
@@ -129,25 +129,23 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
     return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
 }
 
-
-
 void class_lbit::randomize_hamiltonian() {
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
         h5tb.param.J2_rand = rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
         h5tb.param.J3_rand = rnd::normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.J1_rand =  rnd::log_normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
-        h5tb.param.J2_rand =  rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J3_rand =  rnd::log_normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
+        h5tb.param.J1_rand = rnd::log_normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
+        h5tb.param.J2_rand = rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
+        h5tb.param.J3_rand = rnd::log_normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean + rnd::uniform_double_box(settings::model::lbit::J1_wdth);
         h5tb.param.J2_rand = settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth);
         h5tb.param.J3_rand = settings::model::lbit::J3_mean + rnd::uniform_double_box(settings::model::lbit::J3_wdth);
-    }else if(std::string(h5tb.param.distribution) == "constant") {
-            h5tb.param.J1_rand = settings::model::lbit::J1_mean;
-            h5tb.param.J2_rand = settings::model::lbit::J2_mean;
-            h5tb.param.J3_rand = settings::model::lbit::J3_mean;
+    } else if(std::string(h5tb.param.distribution) == "constant") {
+        h5tb.param.J1_rand = settings::model::lbit::J1_mean;
+        h5tb.param.J2_rand = settings::model::lbit::J2_mean;
+        h5tb.param.J3_rand = settings::model::lbit::J3_mean;
     } else {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform> or <constant>");
     }
@@ -159,12 +157,12 @@ void class_lbit::set_coupling_damping(double alpha_) { alpha = alpha_; }
 void class_lbit::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
-        Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+        Eigen::Tensor<Scalar, 2> n                                               = Textra::MatrixToTensor(0.5 * (id + sz));
+        Eigen::Tensor<Scalar, 2> i                                               = Textra::MatrixTensorMap(id);
         mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = get_field() * n - e_reduced * i;
-        mpo_squared                                                                     = std::nullopt;
-        unique_id                                                                       = std::nullopt;
-        unique_id_sq                                                                    = std::nullopt;
+        mpo_squared                                                              = std::nullopt;
+        unique_id                                                                = std::nullopt;
+        unique_id_sq                                                             = std::nullopt;
     }
 }
 
@@ -196,19 +194,18 @@ void class_lbit::set_perturbation(double coupling_ptb, double field_ptb, Perturb
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
-        Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+        Eigen::Tensor<Scalar, 2> n                                               = Textra::MatrixToTensor(0.5 * (id + sz));
+        Eigen::Tensor<Scalar, 2> i                                               = Textra::MatrixTensorMap(id);
         mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = get_field() * n - e_reduced * i;
-        mpo_squared                                                                     = std::nullopt;
-        unique_id                                                                       = std::nullopt;
-        unique_id_sq                                                                    = std::nullopt;
+        mpo_squared                                                              = std::nullopt;
+        unique_id                                                                = std::nullopt;
+        unique_id_sq                                                             = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
 }
 
 bool class_lbit::is_perturbed() const { return h5tb.param.J1_pert != 0.0 or h5tb.param.J2_pert != 0.0 or h5tb.param.J3_pert != 0.0; }
-
 
 Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
     // This function returns a view of the MPO including only n-body terms.
@@ -217,14 +214,14 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
     double J1 = 0;
     double J2 = 0;
     double J3 = 0;
-    for(const auto & n : nbody_terms){
+    for(const auto &n : nbody_terms) {
         if(n == 1) J1 = 1;
         if(n == 2) J2 = 1;
         if(n == 3) J3 = 1;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
-    Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
-    Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                    = MPO();
+    Eigen::Tensor<Scalar, 2> n                                            = Textra::MatrixToTensor(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                            = Textra::MatrixTensorMap(id);
     MPO_nbody.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1_rand * n - e_reduced * i;
     MPO_nbody.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand * n;
     MPO_nbody.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3_rand * n;
@@ -238,9 +235,9 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view() const {
 
 Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view(double site_energy) const {
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<Scalar,4> temp = MPO();
-    Eigen::Tensor<Scalar,2> n = Textra::MatrixToTensor(0.5*(id+sz));
-    Eigen::Tensor<Scalar,2> i = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 4> temp                                    = MPO();
+    Eigen::Tensor<Scalar, 2> n                                       = Textra::MatrixToTensor(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                       = Textra::MatrixTensorMap(id);
     temp.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
     return temp;
 }
@@ -254,17 +251,17 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
     }
-    if(not infinite){
-        lattice_parameters.back()["J2_rand"] = 0.0;
-        lattice_parameters.back()["J3_rand"] = 0.0;
+    if(not infinite) {
+        lattice_parameters.back()["J2_rand"]    = 0.0;
+        lattice_parameters.back()["J3_rand"]    = 0.0;
         lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
 
     double J_sum = 0;
     for(auto &site_params : lattice_parameters) {
-        auto J1_     = std::any_cast<double>(site_params["J1_rand"]);
-        auto J2_     = std::any_cast<double>(site_params["J2_rand"]);
-        auto J3_     = std::any_cast<double>(site_params["J3_rand"]);
+        auto J1_ = std::any_cast<double>(site_params["J1_rand"]);
+        auto J2_ = std::any_cast<double>(site_params["J2_rand"]);
+        auto J3_ = std::any_cast<double>(site_params["J3_rand"]);
         J_sum += J1_ + J2_ + J3_;
     }
     if(parity_sep) psfactor = J_sum;
@@ -299,18 +296,23 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::lbit;
-    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6) throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_mean, J1_mean));
-    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6) throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_mean, J2_mean));
-    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6) throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_mean, J3_mean));
-    if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6) throw std::runtime_error(fmt::format("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth));
-    if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
-    if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
+    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6)
+        throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_mean, J1_mean));
+    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6)
+        throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_mean, J2_mean));
+    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6)
+        throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_mean, J3_mean));
+    if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6)
+        throw std::runtime_error(fmt::format("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth));
+    if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6)
+        throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
+    if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6)
+        throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
 
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
     if(file.linkExists(mpo_path)) {
         auto mpo_dset = file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_path);
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(mpo_dset))
-            throw std::runtime_error("Built MPO does not match the MPO on file");
+        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(mpo_dset)) throw std::runtime_error("Built MPO does not match the MPO on file");
     }
 }

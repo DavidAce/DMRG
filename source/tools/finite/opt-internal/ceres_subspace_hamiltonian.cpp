@@ -9,9 +9,9 @@
 
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/common/contraction.h>
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt_state.h>
 using Scalar = std::complex<double>;
@@ -32,7 +32,8 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     long dim2 = env.R.dimension(0);
 
     Eigen::Tensor<std::complex<double>, 6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham.device(Textra::omp::getDevice()) = env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
+    ham.device(Textra::omp::getDevice()) =
+        env.L.contract(mpo, Textra::idx({2}, {0})).contract(env.R, Textra::idx({2}, {2})).shuffle(Textra::array6{2, 0, 4, 3, 1, 5});
 
     auto cols = ham.dimension(0) * ham.dimension(1) * ham.dimension(2);
     auto rows = ham.dimension(3) * ham.dimension(4) * ham.dimension(5);
@@ -49,16 +50,14 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
     tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->toc();
-    if constexpr(std::is_same_v<T,double>){
+    if constexpr(std::is_same_v<T, double>) {
         return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
-    }else{
+    } else {
         return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
     }
 }
-template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const class_model_finite &model,
-                                                                                           const class_edges_finite &edges);
-template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const class_model_finite &model,
-                                                                                           const class_edges_finite &edges);
+template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const class_model_finite &model, const class_edges_finite &edges);
+template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const class_model_finite &model, const class_edges_finite &edges);
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &model, const class_edges_finite &edges,
@@ -73,10 +72,10 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
     const auto &env = edges.get_multisite_var_blk();
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->tic();
     tools::log->trace("Contracting subspace hamiltonian squared new");
-    long   dim0     = mpo.dimension(2);
-    long   dim1     = env.L.dimension(0);
-    long   dim2     = env.R.dimension(0);
-    long   eignum   = static_cast<long>(candidate_list.size()); // Number of eigenvectors
+    long dim0   = mpo.dimension(2);
+    long dim1   = env.L.dimension(0);
+    long dim2   = env.R.dimension(0);
+    long eignum = static_cast<long>(candidate_list.size()); // Number of eigenvectors
 
     Eigen::Tensor<Scalar, 0> H2_ij;
     Eigen::Tensor<Scalar, 3> Hv(dim0, dim1, dim2);
@@ -84,11 +83,11 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 
     for(auto col = 0; col < eignum; col++) {
         const auto &theta_j = std::next(candidate_list.begin(), col)->get_tensor();
-        tools::common::contraction::matrix_vector_product(Hv,theta_j,mpo,env.L,env.R);
+        tools::common::contraction::matrix_vector_product(Hv, theta_j, mpo, env.L, env.R);
         for(auto row = col; row < eignum; row++) {
-            const auto &theta_i   = std::next(candidate_list.begin(), row)->get_tensor();
+            const auto &theta_i                    = std::next(candidate_list.begin(), row)->get_tensor();
             H2_ij.device(Textra::omp::getDevice()) = theta_i.conjugate().contract(Hv, Textra::idx({0, 1, 2}, {0, 1, 2}));
-            H2(row, col)          = H2_ij(0);
+            H2(row, col)                           = H2_ij(0);
         }
     }
 
@@ -101,16 +100,16 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
     if(H2.hasNaN()) throw std::runtime_error("subspace hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->toc();
-    if constexpr(std::is_same_v<T, double>) return H2.real();
+    if constexpr(std::is_same_v<T, double>)
+        return H2.real();
     else
         return H2;
 }
 
 // Explicit instantiations
-template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &           model,
-                                                                                                          const class_edges_finite &           edges,
+template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &    model,
+                                                                                                          const class_edges_finite &    edges,
                                                                                                           const std::vector<opt_state> &candidate_list);
-template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &           model,
-                                                                                                          const class_edges_finite &           edges,
+template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite &    model,
+                                                                                                          const class_edges_finite &    edges,
                                                                                                           const std::vector<opt_state> &candidate_list);
-

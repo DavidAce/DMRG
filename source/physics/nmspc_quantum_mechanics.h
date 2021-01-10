@@ -7,9 +7,9 @@
 #include <Eigen/Core>
 #include <complex>
 #include <general/eigen_tensor_fwd_decl.h>
-#include <vector>
 #include <physics/class_quantum_gates.h>
-namespace qm{
+#include <vector>
+namespace qm {
     /* clang-format off */
     using Scalar = std::complex<double>;
     using cplx = std::complex<double>;
@@ -114,6 +114,4 @@ namespace qm{
 
     /* clang-format on */
 
-
 }
-

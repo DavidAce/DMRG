@@ -25,9 +25,9 @@ void class_itebd::run_preprocessing() {
     tools::common::profile::prof[algo_type]["t_pre"]->tic();
     init_bond_dimension_limits();
     randomize_model(); // First use of random!
-    status.delta_t = std::complex<double>(settings::itebd::time_step_init_real,settings::itebd::time_step_init_imag);
-    h_evn       = tensors.model->get_2site_ham_AB();
-    h_odd       = tensors.model->get_2site_ham_BA();
+    status.delta_t = std::complex<double>(settings::itebd::time_step_init_real, settings::itebd::time_step_init_imag);
+    h_evn          = tensors.model->get_2site_ham_AB();
+    h_odd          = tensors.model->get_2site_ham_BA();
 
     unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
@@ -62,7 +62,7 @@ void class_itebd::single_TEBD_step() {
      */
     for(auto &U : unitary_time_evolving_operators) {
         Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
-        tensors.merge_twosite_tensor(twosite_tensor,status.chi_lim);
+        tensors.merge_twosite_tensor(twosite_tensor, status.chi_lim);
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
     status.phys_time += std::abs(status.delta_t);

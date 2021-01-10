@@ -7,8 +7,7 @@
 #include <set>
 #include <string>
 
-
-namespace qm{
+namespace qm {
     class Gate;
 }
 

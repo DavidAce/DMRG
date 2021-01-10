@@ -4,8 +4,8 @@
 
 #include "class_edges_finite.h"
 #include "class_env_ene.h"
-#include "class_env_var.h"
 #include "class_env_pair.h"
+#include "class_env_var.h"
 #include <general/nmspc_iter.h>
 #include <math/num.h>
 #include <tools/common/log.h>
@@ -51,7 +51,6 @@ class_edges_finite &class_edges_finite::operator=(const class_edges_finite &othe
     }
     return *this;
 }
-
 
 void class_edges_finite::initialize(size_t model_size) {
     for(size_t pos = 0; pos < model_size; pos++) {
@@ -241,14 +240,12 @@ env_pair<class_env_var> class_edges_finite::get_multisite_var(std::optional<std:
     return get_var(sites.value().front(), sites.value().back());
 }
 
-env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>>
-    class_edges_finite::get_multisite_ene_blk(std::optional<std::vector<size_t>> sites) const {
+env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_multisite_ene_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_ene(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
 
-env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>>
-    class_edges_finite::get_multisite_var_blk(std::optional<std::vector<size_t>> sites) const {
+env_pair<const Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_multisite_var_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_var(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
@@ -263,11 +260,10 @@ env_pair<Eigen::Tensor<class_edges_finite::Scalar, 3>> class_edges_finite::get_m
     return {envs.L.get_block(), envs.R.get_block()};
 }
 
-
-std::pair<std::vector<size_t>, std::vector<size_t>> class_edges_finite::get_active_ids() const{
+std::pair<std::vector<size_t>, std::vector<size_t>> class_edges_finite::get_active_ids() const {
     std::pair<std::vector<size_t>, std::vector<size_t>> ids;
-    auto & ene_ids = ids.first;
-    auto & var_ids = ids.second;
+    auto &                                              ene_ids = ids.first;
+    auto &                                              var_ids = ids.second;
     ene_ids = {get_eneL(active_sites.front()).get_unique_id(), get_eneR(active_sites.back()).get_unique_id()};
     var_ids = {get_varL(active_sites.front()).get_unique_id(), get_varR(active_sites.back()).get_unique_id()};
     return ids;

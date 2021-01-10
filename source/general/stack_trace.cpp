@@ -57,12 +57,11 @@ void debug::register_callbacks() {
     #include <climits>
     #include <cstdio>
     #include <cstdlib>
-    #include <iostream>
+    #include <execinfo.h>
     #include <libunwind.h>
     #include <memory>
     #include <unistd.h>
     #include <vector>
-    #include <execinfo.h>
 std::string getexepath() {
     static char result[PATH_MAX];
     ssize_t     count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -90,18 +89,21 @@ std::string getErrorLocation(unw_word_t addr) {
     // Generate the command and call it
     std::string cmd       = "addr2line --exe " + exec_path + " --functions --demangle " + hex_addr;
     auto        locString = sh(cmd);
-    if (locString.empty()) return locString;
+    if(locString.empty()) return locString;
 
     // Format the string
     size_t start_pos = 0;
     while((start_pos = locString.find('\n', start_pos)) != std::string::npos) {
-        if(start_pos >= locString.size() - 1) locString.replace(start_pos, 1, "");
+        if(start_pos >= locString.size() - 1)
+            locString.replace(start_pos, 1, "");
         else
             locString.replace(start_pos, 1, " in file ");
         start_pos += 1;
     }
-    if(locString.find("??") != std::string::npos) return std::string();
-    else return locString;
+    if(locString.find("??") != std::string::npos)
+        return std::string();
+    else
+        return locString;
 }
 
 void debug::print_stack_trace() {
@@ -120,7 +122,8 @@ void debug::print_stack_trace() {
         if(unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
             std::fprintf(stderr, "#%-3d 0x%-10lx", count++, ip);
             auto estr = getErrorLocation(ip);
-            if(not estr.empty()) std::fprintf(stderr, " %s\n", estr.c_str());
+            if(not estr.empty())
+                std::fprintf(stderr, " %s\n", estr.c_str());
             else {
                 int   status;
                 char *nameptr   = sym;

@@ -142,7 +142,7 @@ namespace Textra {
     // Helpful overload
     template<typename Derived, typename... Dims>
     constexpr Eigen::Tensor<typename Derived::Scalar, static_cast<int>(sizeof...(Dims))> MatrixToTensor(const Eigen::EigenBase<Derived> &matrix,
-                                                                                                          const Dims... dims) {
+                                                                                                        const Dims... dims) {
         static_assert(sizeof...(Dims) > 0, "MatrixToTensor: sizeof... (Dims) must be larger than 0");
         return MatrixToTensor(matrix, array<sizeof...(Dims)>{dims...});
     }
@@ -183,7 +183,6 @@ namespace Textra {
     }
     template<typename Derived, auto rank>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const Eigen::DSizes<long, rank> &dims) = delete; // Prevent map from temporary
-
 
     template<typename Derived, typename... Dims>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
@@ -248,7 +247,6 @@ namespace Textra {
     }
     template<typename Scalar, auto rank>
     constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar, rank> &&tensor) = delete; // Prevent map from temporary
-
 
     //************************//
     // change storage layout //

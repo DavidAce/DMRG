@@ -48,8 +48,8 @@ class class_state_finite {
 
     public:
     std::vector<std::unique_ptr<class_mps_site>> mps_sites;
-    std::vector<size_t>                        active_sites;
-    mutable state_measure_finite               measurements;
+    std::vector<size_t>                          active_sites;
+    mutable state_measure_finite                 measurements;
 
     public:
     class_state_finite();
@@ -61,7 +61,7 @@ class class_state_finite {
 
     void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
 
-    void set_name(const std::string & statename);
+    void                      set_name(const std::string &statename);
     [[nodiscard]] std::string get_name() const;
 
     const Eigen::Tensor<Scalar, 1> &midchain_bond() const;

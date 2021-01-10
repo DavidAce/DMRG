@@ -18,8 +18,8 @@
 
 tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
                                                                      OptSpace optSpace, OptType optType) {
-    std::vector<size_t> sites = tensors.active_sites;
-    double energy_reduced = tools::finite::measure::energy_reduced(tensors);
+    std::vector<size_t> sites          = tensors.active_sites;
+    double              energy_reduced = tools::finite::measure::energy_reduced(tensors);
     opt_state           initial_tensor("current state", tensors.get_multisite_mps(), sites,
                              tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
                              energy_reduced,                                           // Energy reduced for full system
@@ -125,7 +125,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
-       /* clang-format on */
+            /* clang-format on */
     }
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
@@ -142,23 +142,27 @@ Eigen::Tensor<std::complex<double>, 3> tools::finite::opt::find_ground_state(con
 }
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
-    if(std::abs(x) >= window) return std::abs(x) - window;
+    if(std::abs(x) >= window)
+        return std::abs(x) - window;
     else
         return 0;
 }
 double tools::finite::opt::internal::windowed_grad_abs(double x, double window) {
-    if(std::abs(x) >= window) return sgn(x);
+    if(std::abs(x) >= window)
+        return sgn(x);
     else
         return 0.0;
 }
 
 double tools::finite::opt::internal::windowed_func_pow(double x, double window) {
-    if(std::abs(x) >= window) return x * x - window * window;
+    if(std::abs(x) >= window)
+        return x * x - window * window;
     else
         return 0.0;
 }
 double tools::finite::opt::internal::windowed_grad_pow(double x, double window) {
-    if(std::abs(x) >= window) return 2.0 * x;
+    if(std::abs(x) >= window)
+        return 2.0 * x;
     else
         return 0.0;
 }
@@ -209,7 +213,8 @@ tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(
 
 template<typename FunctorType>
 ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
-//    if(summary.iteration > 100 and summary.cost_change < 1e-5 and summary.gradient_max_norm < 10.0 and summary.step_norm < 1e-6) return ceres::SOLVER_ABORT;
+    //    if(summary.iteration > 100 and summary.cost_change < 1e-5 and summary.gradient_max_norm < 10.0 and summary.step_norm < 1e-6) return
+    //    ceres::SOLVER_ABORT;
 
     if(not log) return ceres::SOLVER_CONTINUE;
     if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;

@@ -3,8 +3,8 @@
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <measure/tensors_measure_finite.h>
-#include <tensors/edges/class_env_pair.h>
 #include <memory>
+#include <tensors/edges/class_env_pair.h>
 
 class class_state_finite;
 class class_model_finite;
@@ -54,7 +54,7 @@ class class_tensors_finite {
     void reduce_mpo_energy(std::optional<double> site_energy = std::nullopt);
     void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
 
-    void                 assert_validity() const;
+    void assert_validity() const;
 
     template<typename T = size_t>
     [[nodiscard]] T get_position() const;

@@ -86,13 +86,13 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
-    energy                         = std::real(ene + energy_reduced);
-    energy_per_site                = energy / static_cast<double>(length);
-    variance                       = std::abs(var);
-    variance_per_site              = variance / static_cast<double>(length);
-    norm_offset                    = std::abs(vv) - 1.0;
-    double epsilon                 = 1e-15;
-    log10var                       = std::log10(epsilon + variance);
+    energy            = std::real(ene + energy_reduced);
+    energy_per_site   = energy / static_cast<double>(length);
+    variance          = std::abs(var);
+    variance_per_site = variance / static_cast<double>(length);
+    norm_offset       = std::abs(vv) - 1.0;
+    double epsilon    = 1e-15;
+    log10var          = std::log10(epsilon + variance);
 
     if(fx != nullptr) { fx[0] = log10var; }
 
@@ -179,7 +179,6 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
      * Notice how in the case d^6=64 and chi = 256 the supposed expected improvement should be ~400% which agrees with point (*) above
      *
      */
-
 }
 
 template<typename Scalar>
@@ -189,8 +188,6 @@ void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
     tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
     t_vH->toc();
 }
-
-
 
 template class tools::finite::opt::internal::ceres_direct_functor<double>;
 template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>;

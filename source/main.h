@@ -12,23 +12,27 @@
 
   \section intro DMRG++ (documentation in progress)
 
-  [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique used to study many-body
-  quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the
-  groundstate or an eigenstate of a 1D quantum system with high precision. DMRG++ includes 4 different MPS-based algorithms for 1D systems:
+[Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique used to
+study many-body quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product
+States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the groundstate or an eigenstate of a 1D quantum system with high precision.
+DMRG++ includes 4 different MPS-based algorithms for 1D systems:
 
   - **iDMRG:** *infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
   - **fDMRG:** *finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
   - **xDMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
-  - **iTEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
+  - **iTEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that
+perform imaginary time evolution.
 
-The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the [Installation](#installation) section below.
+The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the
+[Installation](#installation) section below.
 
-Included here are two 1D models of spin chains, the *Quantum Ising model with transverse field* and the *Self-dual quantum Ising model with random couplings and random fields*. The choice of model
-is done in the input configuration file.
+Included here are two 1D models of spin chains, the *Quantum Ising model with transverse field* and the *Self-dual quantum Ising model with random couplings and
+random fields*. The choice of model is done in the input configuration file.
 
 
 \subsection notes Notes (in construction)
-Go to the [working notes](https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf) to learn more about the theoretical aspects of this implementation.
+Go to the [working notes](https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf) to learn more about the theoretical aspects of this
+implementation.
 
 
 ---
@@ -49,12 +53,14 @@ Simply launch the script `.\build.sh` found in the root folder to trigger a CMak
 
 The script takes optional arguments, run `.\build.sh -h` to learn more.
 
-**Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
-is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with the C++ and CMake Tools extensions.
+**Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the
+project root folder. This is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio
+Code](https://code.visualstudio.com/) with the C++ and CMake Tools extensions.
 
 
-CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder `libs` in the project root (see *Optional Requirements* below).
-If the dependencies are successfully found or installed, the project is built and an executable is generated in `./build/Release/DMRG++`.
+CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder `libs` in the project root (see
+*Optional Requirements* below). If the dependencies are successfully found or installed, the project is built and an executable is generated in
+`./build/Release/DMRG++`.
 
 \subsection execution Execution
 To run the executable, launch `.\run.sh`, or `.\run.sh -h` to learn more.
@@ -62,8 +68,8 @@ If no configuration file is given as argument to `run.sh`, the executable will l
 
 
 \subsection configuration-file Configuration file
-The default configuration file in `./input/input.config` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters,
-system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.
+The default configuration file in `./input/input.config` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model,
+model parameters, system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.
 
 \subsection output-file Output file
 After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `./input/input.config`.
@@ -86,25 +92,33 @@ The following software is required to build the project:
  - CMake version >= 3.10. Pro-tip: if you lack administrator rights, use CMake from anaconda!
  - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
 
-**Ubuntu** 18 or higher will have the above versions in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
+**Ubuntu** 18 or higher will have the above versions in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer
+versions.
 
-**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler is not supported at all.
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to
+link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler is not supported at all.
 
 
 \subsubsection optional-requirements Optional Requirements
 The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
 
-  1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `./libs`. This is the default behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `./libs` folder.
-  2. **Manual**: install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
-  3. **Manual with environment modules** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules*. Simply export the variable `<LIBNAME>_DIR` to let CMake know where to look.
+  1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `./libs`. This is the default behavior if the library is
+not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `./libs` folder.
+  2. **Manual**: install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt
+to find the libraries in your system first.
+  3. **Manual with environment modules** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules*. Simply export
+the variable `<LIBNAME>_DIR` to let CMake know where to look.
 
  If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
 
  #### List of libraries
 
- - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS). If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source. If both MKL and OpenBLAS are found in the system, MKL is preferred.
+ - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or
+[OpenBLAS](https://github.com/xianyi/OpenBLAS). If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source.
+If both MKL and OpenBLAS are found in the system, MKL is preferred.
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
- - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
+ - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of
+which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
  - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
@@ -148,7 +162,7 @@ bond dimensions of \f$\Lambda^{n-1}\f$ and \f$\Lambda^{n}\f$, respectively, whic
 
 In diagrammatic tensor notation this is:
 @verbatim
-                 	    [d]          0
+                        [d]          0
             G     =	[a]__|__[b] = 1__|__2
 @endverbatim
 where after the second equality the index order is shown. In code this corresponds to
@@ -162,7 +176,7 @@ where after the second equality the index order is shown. In code this correspon
 An exception to this rule is theta: We have \f$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\f$:
 
 @verbatim
-                 	           	[d] [d]                0   2
+                                [d] [d]                0   2
             Theta     =	[chia]___|___|___[chib] = 1 ___|___|___ 3
 @endverbatim
 
@@ -195,8 +209,8 @@ This implementation is inspired by the notation and steps in these articles:
   > [Infinite size density matrix renormalization group, revisited](http://arxiv.org/abs/0804.2509)<br>
   > by McCulloch, 2008 <br>
 
-  > [Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach](https://doi.org/10.1103/PhysRevLett.116.247204)<br>
-  > by V. Khemani,  F. Pollmann  & S. L. Sondhi, 2016
+  > [Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group
+Approach](https://doi.org/10.1103/PhysRevLett.116.247204)<br> > by V. Khemani,  F. Pollmann  & S. L. Sondhi, 2016
 
 
 
@@ -207,5 +221,4 @@ This implementation is inspired by the notation and steps in these articles:
 
 */
 
-
-#endif //DMRG_MAIN_H
+#endif // DMRG_MAIN_H

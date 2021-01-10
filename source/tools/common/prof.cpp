@@ -2,56 +2,68 @@
 // Created by david on 2019-06-08.
 //
 
-#include <fstream>
-#include <sstream>
-
 #include <config/enums.h>
 #include <config/nmspc_settings.h>
+#include <fstream>
+#include <general/class_tic_toc.h>
+#include <sstream>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <general/class_tic_toc.h>
 
 namespace tools::common::profile::internal {
     // Implement a custom ordered map
     // In the map, we want keep the order in which they were appended. This behavior does not exist in stl ordered maps.
-    template<typename KeyT, typename ValT> using iterator = typename insert_ordered_map<KeyT,ValT>::iterator;
-    template<typename KeyT, typename ValT> using const_iterator = typename insert_ordered_map<KeyT,ValT>::const_iterator;
+    template<typename KeyT, typename ValT>
+    using iterator = typename insert_ordered_map<KeyT, ValT>::iterator;
+    template<typename KeyT, typename ValT>
+    using const_iterator = typename insert_ordered_map<KeyT, ValT>::const_iterator;
 
     template<typename KeyT, typename ValT>
-    ValT & insert_ordered_map<KeyT,ValT>::operator[](const KeyT &key) {
+    ValT &insert_ordered_map<KeyT, ValT>::operator[](const KeyT &key) {
         auto it = find(key);
-        if(it == data.end()){
-            if constexpr(std::is_convertible_v<KeyT,std::string>)
-                throw std::runtime_error(fmt::format("Invalid key: {}",key));
-            else throw std::runtime_error("Invalid key");
+        if(it == data.end()) {
+            if constexpr(std::is_convertible_v<KeyT, std::string>)
+                throw std::runtime_error(fmt::format("Invalid key: {}", key));
+            else
+                throw std::runtime_error("Invalid key");
         }
         return it->second;
     }
 
     template<typename KeyT, typename ValT>
-    void insert_ordered_map<KeyT,ValT>::append(const KeyT & key, ValT val){
+    void insert_ordered_map<KeyT, ValT>::append(const KeyT &key, ValT val) {
         auto it = find(key);
-        if(it == data.end())
-            data.emplace_back(std::make_pair(key, std::move(val)));
+        if(it == data.end()) data.emplace_back(std::make_pair(key, std::move(val)));
     }
 
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::iterator insert_ordered_map<KeyT,ValT>::begin() { return data.begin(); }
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::iterator insert_ordered_map<KeyT,ValT>::end() { return data.end(); }
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::const_iterator insert_ordered_map<KeyT,ValT>::begin() const { return data.begin(); }
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::const_iterator insert_ordered_map<KeyT,ValT>::end() const { return data.end(); }
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::iterator insert_ordered_map<KeyT,ValT>::find(const KeyT & key){
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::iterator insert_ordered_map<KeyT, ValT>::begin() {
+        return data.begin();
+    }
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::iterator insert_ordered_map<KeyT, ValT>::end() {
+        return data.end();
+    }
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::const_iterator insert_ordered_map<KeyT, ValT>::begin() const {
+        return data.begin();
+    }
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::const_iterator insert_ordered_map<KeyT, ValT>::end() const {
+        return data.end();
+    }
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::iterator insert_ordered_map<KeyT, ValT>::find(const KeyT &key) {
         return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
     }
-    template<typename KeyT, typename ValT> typename insert_ordered_map<KeyT,ValT>::const_iterator insert_ordered_map<KeyT,ValT>::find(const KeyT & key) const {
+    template<typename KeyT, typename ValT>
+    typename insert_ordered_map<KeyT, ValT>::const_iterator insert_ordered_map<KeyT, ValT>::find(const KeyT &key) const {
         return std::find_if(data.begin(), data.end(), [&key](const auto &element) { return element.first == key; });
     }
 
     template class insert_ordered_map<std::string, std::unique_ptr<class_tic_toc>>;
     template class insert_ordered_map<AlgorithmType, MapTicTocUnique>;
 }
-
-
-
 
 tools::common::profile::internal::MapTicTocUnique &tools::common::profile::get_default_prof() {
     if(not internal::default_algo_type) throw std::runtime_error("No default algorithm type has been set for profiling");
@@ -260,10 +272,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::ANY].append("t_map_norm"  ,      std::make_unique<class_tic_toc>(settings::debug and settings::profiling::on, settings::profiling::precision, " |- Map normalize         "));
 
     /* clang-format on */
-
-
 }
-
 
 void tools::common::profile::reset_profiling(std::optional<AlgorithmType> algo_type, const std::vector<std::string> &excl) {
     if(t_tot == nullptr) throw std::runtime_error("Profiling timers have not been initialized");
@@ -284,7 +293,7 @@ void tools::common::profile::reset_profiling(std::optional<AlgorithmType> algo_t
             }
 }
 
-//void tools::common::profile::reset_for_run_algorithm(std::optional<AlgorithmType> algo_type, const std::vector<std::string> &excl) {
+// void tools::common::profile::reset_for_run_algorithm(std::optional<AlgorithmType> algo_type, const std::vector<std::string> &excl) {
 //    if(t_tot == nullptr) throw std::runtime_error("Profiling timers have not been initialized");
 //    if(not algo_type) algo_type = tools::common::profile::get_current_algo_type();
 //    // Do not reset total time!

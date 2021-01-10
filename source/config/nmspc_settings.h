@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "debug.h"
+#include "enums.h"
 #include <string>
 #include <vector>
-#include "enums.h"
-#include "debug.h"
 /*!
  *  \namespace settings
  *  This namespace contains settings such as time-step length, number of iterations and precision parameters for

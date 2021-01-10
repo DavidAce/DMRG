@@ -1,6 +1,6 @@
 #include <config/nmspc_settings.h>
-#include <math/eig/arpack_solver/matrix_product_dense.h>
 #include <math/eig.h>
+#include <math/eig/arpack_solver/matrix_product_dense.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/opt-internal.h>
@@ -9,11 +9,11 @@
 
 std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {
     std::vector<int> nev_list = {8};
-    if(shape <= 512) nev_list = {32,128};
-    if(512 < shape and shape <= 1024) nev_list = {64,128,256};
-    if(1024 < shape and shape <= 2048) nev_list = {8,64,256};
-    if(2048 < shape and shape <= 3072)  nev_list = {8,64,128};
-    if(3072 < shape and shape <= 4096)  nev_list = {8,64};
+    if(shape <= 512) nev_list = {32, 128};
+    if(512 < shape and shape <= 1024) nev_list = {64, 128, 256};
+    if(1024 < shape and shape <= 2048) nev_list = {8, 64, 256};
+    if(2048 < shape and shape <= 3072) nev_list = {8, 64, 128};
+    if(3072 < shape and shape <= 4096) nev_list = {8, 64};
     return nev_list;
 }
 
@@ -31,7 +31,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     double time_ham = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->get_last_interval();
 
     eig::solver solver;
-    solver.config.eigThreshold = settings::precision::eig_threshold;
+    solver.config.eigThreshold                = settings::precision::eig_threshold;
     std::string                        reason = "exhausted";
     Eigen::VectorXd                    eigvals;
     Eigen::MatrixXcd                   eigvecs;
@@ -39,7 +39,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     for(auto nev : generate_size_list(static_cast<int>(multisite_vector.size()))) {
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic();
         solver.config.clear();
-        solver.eigs(hamiltonian,nev, -1,eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, energy_target,  eig::Shinv::ON, eig::Vecs::ON, eig::Dephase::OFF);
+        solver.eigs(hamiltonian, nev, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, energy_target, eig::Shinv::ON, eig::Vecs::ON, eig::Dephase::OFF);
         eigvals = eig::view::get_eigvals<eig::real>(solver.result);
         eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R);
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
@@ -50,10 +50,11 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
         double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
         double          subspace_error = 1.0 - sq_sum_overlap;
         reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error),
-                                tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(),time_ham, time_lu, solver.result.meta.counter);
+                                tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(), time_ham, time_lu,
+                                solver.result.meta.counter);
         time_lu  = 0;
         time_ham = 0;
-        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}",max_overlap));
+        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
         if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("eps larger than one: {:.16f}", sq_sum_overlap));
         if(min_overlap < 0.0) throw std::runtime_error(fmt::format("min_overlap smaller than zero: {:.16f}", min_overlap));
         if(subspace_error < subspace_error_threshold) {
@@ -65,7 +66,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
             break;
         }
         if(optSpace == OptSpace::SUBSPACE_ONLY and optMode == OptMode::OVERLAP and max_overlap >= 1.0 / std::sqrt(2.0)) {
-            reason = fmt::format("Overlap sufficient for SUBSPACE_ONLY OVERLAP mode:  {:.16f} >= threshold {:.16f}", max_overlap , 1.0 / std::sqrt(2.0) );
+            reason = fmt::format("Overlap sufficient for SUBSPACE_ONLY OVERLAP mode:  {:.16f} >= threshold {:.16f}", max_overlap, 1.0 / std::sqrt(2.0));
             break;
         }
     }
@@ -73,10 +74,10 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     return std::make_tuple(eigvecs, eigvals);
 }
 
+template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
+    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<real> &H_local, const TensorType<cplx, 3> &multisite_tensor,
+                                                               double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
 
 template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<real> &H_local, const TensorType<cplx,3> &multisite_tensor, double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
-
-template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<cplx> &H_local, const TensorType<cplx,3> &multisite_tensor, double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
-
+    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<cplx> &H_local, const TensorType<cplx, 3> &multisite_tensor,
+                                                               double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);

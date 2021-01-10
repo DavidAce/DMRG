@@ -26,16 +26,16 @@ class class_model_infinite {
     ModelType model_type = ModelType::ising_tf_rf;
 
     class_model_infinite();
-    ~class_model_infinite();                                                // Read comment on implementation
-    class_model_infinite(class_model_infinite &&other);                     // default move ctor
-    class_model_infinite &operator=(class_model_infinite &&other);          // default move assign
-    class_model_infinite(const class_model_infinite &other);                // copy ctor
-    class_model_infinite &operator=(const class_model_infinite &other);     // copy assign
+    ~class_model_infinite();                                            // Read comment on implementation
+    class_model_infinite(class_model_infinite &&other);                 // default move ctor
+    class_model_infinite &operator=(class_model_infinite &&other);      // default move assign
+    class_model_infinite(const class_model_infinite &other);            // copy ctor
+    class_model_infinite &operator=(const class_model_infinite &other); // copy assign
 
-    void initialize(ModelType model_type_);
-    void randomize();
-    void reset_mpo_squared();
-    void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void                                                        initialize(ModelType model_type_);
+    void                                                        randomize();
+    void                                                        reset_mpo_squared();
+    void                                                        rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
     std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
 
     bool is_real() const;
@@ -51,10 +51,10 @@ class class_model_infinite {
     const Eigen::Tensor<Scalar, 2> &    get_2site_ham_AB() const;
     const Eigen::Tensor<Scalar, 2> &    get_2site_ham_BA() const;
 
-    Eigen::DSizes<long, 4>              dimensions() const;
+    Eigen::DSizes<long, 4> dimensions() const;
 
     [[nodiscard]] bool   is_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
-    void set_reduced_energy_per_site(double site_energy);
-    void clear_cache();
+    void                 set_reduced_energy_per_site(double site_energy);
+    void                 clear_cache();
 };

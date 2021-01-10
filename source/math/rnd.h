@@ -15,10 +15,10 @@ namespace rnd {
         //    std::mt19937 rng;
         inline pcg64 rng;
         // Commonly used distributions
-        inline std::uniform_int_distribution<int>      rand_int_01(0, 1);
-        inline std::uniform_real_distribution<double>  rand_double_01(0.0,1.0);
-        inline std::uniform_real_distribution<double>  rand_double_0_2pi(0,2.0*M_PI);
-        inline std::normal_distribution<double>        normal_double_01(0.0,1.0);
+        inline std::uniform_int_distribution<int>     rand_int_01(0, 1);
+        inline std::uniform_real_distribution<double> rand_double_01(0.0, 1.0);
+        inline std::uniform_real_distribution<double> rand_double_0_2pi(0, 2.0 * M_PI);
+        inline std::normal_distribution<double>       normal_double_01(0.0, 1.0);
     }
 
     // Random functions
@@ -29,7 +29,7 @@ namespace rnd {
     extern double               uniform_double_box(double halfwidth);
     extern std::complex<double> uniform_complex_in_unit_circle();
     extern std::complex<double> uniform_complex_on_unit_circle();
-    extern std::complex<double> uniform_complex_box(double real_min,double real_max, double imag_min, double imag_max);
+    extern std::complex<double> uniform_complex_box(double real_min, double real_max, double imag_min, double imag_max);
     extern std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max);
     extern double               normal(double mean, double std);
     extern double               log_normal(double mean, double std);

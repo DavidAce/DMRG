@@ -32,8 +32,8 @@ class class_model_finite {
 
     public:
     std::vector<std::unique_ptr<class_mpo_site>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::vector<size_t>                        active_sites;
-    ModelType                                  model_type = ModelType::ising_tf_rf;
+    std::vector<size_t>                          active_sites;
+    ModelType                                    model_type = ModelType::ising_tf_rf;
 
     public:
     class_model_finite();
@@ -61,7 +61,7 @@ class class_model_finite {
     // For multisite
     Eigen::DSizes<long, 4>          active_dimensions() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> & nbody_terms = {}) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 

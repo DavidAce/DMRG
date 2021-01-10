@@ -1,5 +1,5 @@
 #pragma once
-namespace hash{
+namespace hash {
     template<typename T>
-    std::size_t hash_buffer(const T * v, unsigned long size, std::size_t seed = 0);
+    std::size_t hash_buffer(const T *v, unsigned long size, std::size_t seed = 0);
 }

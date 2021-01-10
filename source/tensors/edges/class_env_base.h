@@ -49,7 +49,7 @@ class class_env_base {
     void set_position(const size_t position_) { position = position_; }
     void assert_block() const;
     void assert_validity() const;
-    void assert_unique_id(const class_env_base & env, const class_mps_site &mps, const class_mpo_site &mpo) const;
+    void assert_unique_id(const class_env_base &env, const class_mps_site &mps, const class_mpo_site &mpo) const;
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_block() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 3> &      get_block();
@@ -61,7 +61,7 @@ class class_env_base {
 
     virtual void set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) = 0;
 
-    std::size_t get_unique_id() const;
+    std::size_t                get_unique_id() const;
     std::optional<std::size_t> get_unique_id_env() const;
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;

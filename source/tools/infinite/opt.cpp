@@ -2,8 +2,9 @@
 // Created by david on 2019-07-06.
 //
 
-#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <general/nmspc_tensor_extra.h>
 #include <math/eig.h>
+#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
@@ -12,7 +13,6 @@
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/prof.h>
 #include <tools/infinite/opt.h>
-#include <general/nmspc_tensor_extra.h>
 using Scalar = tools::infinite::opt::Scalar;
 
 Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_tensors_infinite &state, StateRitz ritz) {

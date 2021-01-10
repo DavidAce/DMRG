@@ -16,9 +16,10 @@
 #include <tools/finite/measure.h>
 using Scalar = std::complex<double>;
 
-namespace tools::finite::io::h5dset{
-    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> & save_log, const h5pp::File &h5ppFile, const std::vector<std::string> & links){
-        if(save_log.empty()){
+namespace tools::finite::io::h5dset {
+    void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5ppFile,
+                            const std::vector<std::string> &links) {
+        if(save_log.empty()) {
             try {
                 for(auto &link : links) {
                     if(h5ppFile.linkExists(link)) {
@@ -27,21 +28,18 @@ namespace tools::finite::io::h5dset{
                         save_log[link] = std::make_pair(iter, step);
                     }
                 }
-            }catch(const std::exception & ex){
-                tools::log->warn("Could not bootstrap save_log: {}", ex.what());
-            }
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
         }
     }
 }
-
-
 
 int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
     return H5D_CHUNKED; // Let everything be chunked a while. When resuming, rewriting into savepoint/iter_? can lead datasets of different sizes
     std::string str(prefix_path);
     std::regex  rx(R"(savepoint/iter_[0-9])"); // Declare the regex with a raw string literal
     std::smatch m;
-    if(regex_search(str, m, rx)) return H5D_CONTIGUOUS;
+    if(regex_search(str, m, rx))
+        return H5D_CONTIGUOUS;
     else
         return H5D_CHUNKED;
 }
@@ -54,7 +52,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    bootstrap_save_log(save_log,h5ppFile,{state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
+    bootstrap_save_log(save_log, h5ppFile, {state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
 
     auto save_point = std::make_pair(status.iter, status.step);
 
@@ -85,7 +83,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         // There should be one more sites+1 number of L's, because there is also a center bond
         // However L_i always belongs M_i. Stick to this rule!
         // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
-        for(const auto & mps : state.mps_sites) {
+        for(const auto &mps : state.mps_sites) {
             dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
             if(save_log[dsetName] == save_point) continue;
             h5ppFile.writeDataset(mps->get_L(), dsetName, layout);
@@ -118,7 +116,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
 
     if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
-        for(const auto & mps : state.mps_sites){
+        for(const auto &mps : state.mps_sites) {
             dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
             if(save_log[dsetName] == save_point) continue;
             h5ppFile.writeDataset(mps->get_M_bare(), dsetName, layout); // Important to write bare matrices!!

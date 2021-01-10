@@ -32,7 +32,6 @@ namespace dense_lu {
 
 }
 
-
 template<typename Scalar>
 MatrixProductDense<Scalar>::~MatrixProductDense() {
     dense_lu::reset();
@@ -50,7 +49,6 @@ MatrixProductDense<Scalar>::MatrixProductDense(const Scalar *const A_, const lon
     dense_lu::init<Scalar>();
     init_profiling();
 }
-
 
 template<typename Scalar>
 void MatrixProductDense<Scalar>::FactorOP()
@@ -132,7 +130,6 @@ void MatrixProductDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
     counter++;
 }
 
-
 template<typename Scalar>
 void MatrixProductDense<Scalar>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
@@ -141,15 +138,15 @@ void MatrixProductDense<Scalar>::print() const {
 template<typename Scalar>
 void MatrixProductDense<Scalar>::set_shift(std::complex<double> sigma_) {
     if(readyShift) { return; }
-    sigma      = sigma_;
-    if(A_stl.empty()){
+    sigma = sigma_;
+    if(A_stl.empty()) {
         A_stl.resize(static_cast<size_t>(L * L));
         std::copy(A_ptr, A_ptr + static_cast<size_t>(L * L), A_stl.begin());
         A_ptr = A_stl.data();
     }
     Eigen::Map<MatrixType<Scalar>> A_matrix(A_stl.data(), L, L);
-    if constexpr(std::is_same_v<Scalar, eig::real>) A_matrix -=  Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
-    if constexpr(std::is_same_v<Scalar, eig::cplx>) A_matrix -=  Eigen::MatrixXd::Identity(L, L) * sigma;
+    if constexpr(std::is_same_v<Scalar, eig::real>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
+    if constexpr(std::is_same_v<Scalar, eig::cplx>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
     readyShift = true;
 }
 
@@ -176,8 +173,6 @@ void MatrixProductDense<Scalar>::init_profiling() {
     t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultOpv");
     t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultAx");
 }
-
-
 
 // Explicit instantiations
 

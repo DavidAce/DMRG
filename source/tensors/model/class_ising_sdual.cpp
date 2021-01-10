@@ -33,7 +33,7 @@ class_ising_sdual::class_ising_sdual(ModelType model_type_, size_t position_) : 
             fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
 
     h5tb.param.spin_dim = settings::model::ising_sdual::spin_dim;
-    copy_c_str(settings::model::ising_sdual::distribution,h5tb.param.distribution);
+    copy_c_str(settings::model::ising_sdual::distribution, h5tb.param.distribution);
     parity_sep = settings::model::ising_sdual::parity_sep;
 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -62,7 +62,7 @@ void class_ising_sdual::set_parameters(TableMap &parameters) {
     h5tb.param.lambda   = std::any_cast<double>(parameters["lambda"]);
     h5tb.param.delta    = std::any_cast<double>(parameters["delta"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    copy_c_str(std::any_cast<std::string>(parameters["distribution"]),h5tb.param.distribution);
+    copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
     all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
@@ -132,7 +132,7 @@ void class_ising_sdual::build_mpo()
         print_parameter_values();
         throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
     }
-    unique_id    = std::nullopt;
+    unique_id = std::nullopt;
     build_mpo_squared();
 }
 
@@ -175,7 +175,6 @@ Eigen::Tensor<Scalar, 1> class_ising_sdual::get_MPO2_edge_right() const {
     return edge.contract(edge, Textra::idx()).reshape(Textra::array1{dim * dim});
 }
 
-
 void class_ising_sdual::randomize_hamiltonian() {
     if(std::string_view(h5tb.param.distribution) == "normal") {
         h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_stdv);
@@ -186,7 +185,7 @@ void class_ising_sdual::randomize_hamiltonian() {
     } else if(std::string_view(h5tb.param.distribution) == "uniform") {
         h5tb.param.J_rand = rnd::uniform_double_box(h5tb.param.J_mean - h5tb.param.J_stdv / 2.0, h5tb.param.J_mean + h5tb.param.J_stdv / 2.0);
         h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_stdv / 2.0, h5tb.param.h_mean + h5tb.param.h_stdv / 2.0);
-    } else if(std::string_view(h5tb.param.distribution) == "constant"){
+    } else if(std::string_view(h5tb.param.distribution) == "constant") {
         h5tb.param.J_rand = h5tb.param.J_mean;
         h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
@@ -197,7 +196,6 @@ void class_ising_sdual::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
     unique_id_sq                     = std::nullopt;
-
 }
 
 void class_ising_sdual::set_coupling_damping(double alpha_) {
@@ -256,24 +254,22 @@ void class_ising_sdual::set_perturbation(double coupling_ptb, double field_ptb, 
 
 bool class_ising_sdual::is_perturbed() const { return h5tb.param.J_pert != 0.0 or h5tb.param.h_pert != 0.0; }
 
-
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     if(nbody_terms.empty()) return MPO();
     double J1 = 0, J2 = 0;
-    for(const auto & n : nbody_terms){
+    for(const auto &n : nbody_terms) {
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();
-    MPO_nbody.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J1*get_field() * sx - e_reduced * id);
-    MPO_nbody.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2*get_coupling() * sz);
-    MPO_nbody.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2*(h5tb.param.lambda * h5tb.param.h_avrg) * sx);
-    MPO_nbody.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2*(h5tb.param.lambda * h5tb.param.J_avrg) * sz);
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                           = MPO();
+    MPO_nbody.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J1 * get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2 * get_coupling() * sz);
+    MPO_nbody.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2 * (h5tb.param.lambda * h5tb.param.h_avrg) * sx);
+    MPO_nbody.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(-J2 * (h5tb.param.lambda * h5tb.param.J_avrg) * sz);
     return MPO_nbody;
 }
-
 
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
@@ -287,7 +283,6 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy)
     return temp;
 }
 
-
 std::unique_ptr<class_mpo_site> class_ising_sdual::clone() const { return std::make_unique<class_ising_sdual>(*this); }
 
 long class_ising_sdual::get_spin_dimension() const { return h5tb.param.spin_dim; }
@@ -299,18 +294,17 @@ void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool 
         for(size_t pos = 0; pos < all_parameters.size(); pos++) {
             all_parameters[pos]["position"] = pos;
             if(pos < all_parameters.size() - 1) {
-                if(infinite){
+                if(infinite) {
                     all_parameters[pos]["J_rand"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_rand"] : all_parameters[0]["J_rand"];
                     all_parameters[pos]["J_pert"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_pert"] : all_parameters[0]["J_pert"];
-                }else {
+                } else {
                     all_parameters[pos]["J_rand"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_rand"] : 0.0;
                     all_parameters[pos]["J_pert"] = pos < all_parameters.size() - 1 ? all_parameters[pos + 1]["J_pert"] : 0.0;
                 }
-
             }
         }
     } else {
-        if(not infinite){
+        if(not infinite) {
             all_parameters.back()["J_rand"] = 0.0;
             all_parameters.back()["J_pert"] = 0.0;
         }
@@ -319,10 +313,10 @@ void class_ising_sdual::set_averages(std::vector<TableMap> all_parameters, bool 
     // Recompute J_avrg and pm.param.h_avrg from given pm.param.J_rand and pm.param.h_rand on all sites
     double J_avrg_ = 0;
     double h_avrg_ = 0;
-    if(infinite){
+    if(infinite) {
         J_avrg_ = h5tb.param.J_mean;
         h_avrg_ = h5tb.param.h_mean;
-    }else{
+    } else {
         for(auto &site_param : all_parameters) {
             J_avrg_ += std::any_cast<double>(site_param["J_rand"]);
             h_avrg_ += std::any_cast<double>(site_param["h_rand"]);
@@ -367,7 +361,7 @@ void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::stri
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::ising_sdual;
-    if(std::abs(h5tb.param.delta -  delta) > 1e-6)
+    if(std::abs(h5tb.param.delta - delta) > 1e-6)
         throw std::runtime_error(fmt::format("delta {:.16f} != {:.16f} settings::model::ising_sdual::delta", h5tb.param.delta, delta));
     if(std::abs(h5tb.param.lambda - lambda) > 1e-6)
         throw std::runtime_error(fmt::format("lambda {:.16f} != {:.16f} settings::model::ising_sdual::lambda", h5tb.param.lambda, lambda));
@@ -375,9 +369,8 @@ void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::stri
         throw std::runtime_error(fmt::format("J_stdv {:.16f} != {:.16f} settings::model::ising_sdual::J_stdv", h5tb.param.J_stdv, J_stdv));
     if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6)
         throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} settings::model::ising_sdual::h_stdv", h5tb.param.h_stdv, h_stdv));
-    if(h5tb.param.distribution !=   distribution)
+    if(h5tb.param.distribution != distribution)
         throw std::runtime_error(fmt::format("distribution {} != {} settings::model::ising_sdual::distribution", h5tb.param.distribution, distribution));
-
 
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_path, get_position());
@@ -386,12 +379,9 @@ void class_ising_sdual::load_hamiltonian(const h5pp::File &file, const std::stri
             throw std::runtime_error("Built MPO does not match the MPO on file");
     }
 
-
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
     if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
         throw std::logic_error(
-                fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
-
-
+            fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
 }

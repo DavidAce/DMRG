@@ -30,7 +30,8 @@ namespace iter {
 
             enumerate_iterator(index_type index, iterator iterator) : index(index), iter(iterator) {}
             enumerate_iterator &operator++() {
-                if constexpr(reverse) --index;
+                if constexpr(reverse)
+                    --index;
                 else
                     ++index;
                 ++iter;
@@ -46,13 +47,12 @@ namespace iter {
             iterator   iter;
         };
 
-        template<class Iterator,bool reverse=false>
+        template<class Iterator, bool reverse = false>
         struct enumerate_range {
             using index_type = std::size_t;
-            using iterator   = enumerate_iterator<Iterator,reverse>;
+            using iterator   = enumerate_iterator<Iterator, reverse>;
 
-            enumerate_range(Iterator first, Iterator last, index_type initial, index_type final)
-                : first(first), last(last), initial(initial),final(final) {}
+            enumerate_range(Iterator first, Iterator last, index_type initial, index_type final) : first(first), last(last), initial(initial), final(final) {}
 
             iterator begin() const { return iterator(initial, first); }
             iterator end() const { return iterator(final, last); }
@@ -67,31 +67,31 @@ namespace iter {
 
     template<class Iterator>
     decltype(auto) enumerate(Iterator first, Iterator last, std::size_t initial) {
-        return internal::enumerate_range<Iterator,false>(first, last, initial);
+        return internal::enumerate_range<Iterator, false>(first, last, initial);
     }
 
     template<class Container>
     decltype(auto) enumerate(Container &content) {
-        return internal::enumerate_range<typename Container::iterator,false>(std::begin(content), std::end(content), 0, content.size()-1);
+        return internal::enumerate_range<typename Container::iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
     }
 
     template<class Container>
     decltype(auto) enumerate(const Container &content) {
-        return internal::enumerate_range<typename Container::const_iterator,false>(std::begin(content), std::end(content), 0, content.size()-1);
+        return internal::enumerate_range<typename Container::const_iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
     }
 
     template<class Iterator>
-    decltype(auto) enumerate_reverse(Iterator first, Iterator last, std::size_t initial,std::size_t final) {
-        return internal::enumerate_range<Iterator,true>(first, last, initial, final);
+    decltype(auto) enumerate_reverse(Iterator first, Iterator last, std::size_t initial, std::size_t final) {
+        return internal::enumerate_range<Iterator, true>(first, last, initial, final);
     }
 
     template<class Container>
     decltype(auto) enumerate_reverse(Container &content) {
-        return internal::enumerate_range<typename Container::reverse_iterator,true>(std::rbegin(content), std::rend(content), content.size()-1, 0);
+        return internal::enumerate_range<typename Container::reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
     }
 
     template<class Container>
     decltype(auto) enumerate_reverse(const Container &content) {
-        return internal::enumerate_range<typename Container::const_reverse_iterator,true>(std::rbegin(content), std::rend(content), content.size()-1, 0);
+        return internal::enumerate_range<typename Container::const_reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
     }
 }

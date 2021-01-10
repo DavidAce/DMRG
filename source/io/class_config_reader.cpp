@@ -130,5 +130,5 @@ std::string::size_type class_config_reader::find_comment_symbols(const std::stri
     std::vector<std::string> comment_symbols = {"//", "/*", "#"};
     for(auto &sym : comment_symbols)
         if(str.find(sym) != std::string::npos) return str.find(sym);
-    return str.npos;
+    return std::string::npos;
 }

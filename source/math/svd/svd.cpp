@@ -8,13 +8,13 @@
 #include <Eigen/QR>
 #include <Eigen/SVD>
 #include <math/svd.h>
-svd::solver::solver(size_t logLevel) {
-    setLogLevel(logLevel);
-}
+svd::solver::solver(size_t logLevel) { setLogLevel(logLevel); }
 
-void svd::solver::setLogLevel(size_t logLevel){
-    if(not svd::log) tools::Logger::setLogger(svd::log, "svd", logLevel, true);
-    else tools::Logger::setLogLevel(svd::log,logLevel);
+void svd::solver::setLogLevel(size_t logLevel) {
+    if(not svd::log)
+        tools::Logger::setLogger(svd::log, "svd", logLevel, true);
+    else
+        tools::Logger::setLogLevel(svd::log, logLevel);
     svd::log->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n]%^[%=8l]%$ %v");
 }
 
@@ -62,22 +62,24 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
     // Setup the SVD solver
-    if(switchsize) SVD.setSwitchSize(static_cast<int>(switchsize.value()));
-    else{
+    if(switchsize)
+        SVD.setSwitchSize(static_cast<int>(switchsize.value()));
+    else {
         switchsize = 16;
         SVD.setSwitchSize(static_cast<int>(switchsize.value()));
     }
-    if(threshold) SVD.setThreshold(threshold.value());
+    if(threshold)
+        SVD.setThreshold(threshold.value());
     else
         threshold = SVD.threshold();
-    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize.value());
-    unsigned int bitfield = Eigen::ComputeThinU | Eigen::ComputeThinV;
-    if(use_jacobi){
+    bool         use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize.value());
+    unsigned int bitfield   = Eigen::ComputeThinU | Eigen::ComputeThinV;
+    if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
         bitfield = Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner;
         svd::log->trace("Using JacobiSVD with flags Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner");
 
-    }else{
+    } else {
         svd::log->trace("Using BDCSVD with flags Eigen::ComputeThinU | Eigen::ComputeThinV");
     }
 

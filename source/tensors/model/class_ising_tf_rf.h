@@ -5,8 +5,8 @@
 #pragma once
 
 #include "class_mpo_site.h"
-#include <h5pp/details/h5ppHid.h>
 #include <general/eigen_tensor_fwd_decl.h>
+#include <h5pp/details/h5ppHid.h>
 
 class class_ising_tf_rf : public class_mpo_site {
     using Scalar = std::complex<double>;

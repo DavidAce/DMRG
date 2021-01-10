@@ -5,8 +5,8 @@
 #pragma once
 
 #include "class_mpo_site.h"
-#include <h5pp/details/h5ppHid.h>
 #include <general/eigen_tensor_fwd_decl.h>
+#include <h5pp/details/h5ppHid.h>
 
 class class_lbit : public class_mpo_site {
     using Scalar = std::complex<double>;
@@ -30,9 +30,10 @@ class class_lbit : public class_mpo_site {
     [[nodiscard]] long                            get_spin_dimension() const override;
     [[nodiscard]] TableMap                        get_parameters() const override;
     [[nodiscard]] bool                            is_perturbed() const override;
-//    [[nodiscard]] Eigen::MatrixXcd single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY,
-//                                                           std::vector<Eigen::MatrixXcd> &SZ) const override;
-//
+    //    [[nodiscard]] Eigen::MatrixXcd single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd>
+    //    &SY,
+    //                                                           std::vector<Eigen::MatrixXcd> &SZ) const override;
+    //
     void print_parameter_names() const override;
     void print_parameter_values() const override;
     void set_parameters(TableMap &parameters) override;
