@@ -254,7 +254,6 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
         lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
 
-    // Recompute J_avrg and h_avrg from given J_rnrd and h_rnd on all sites
     double J_sum = 0;
     for(auto &site_params : lattice_parameters) {
         auto J1_     = std::any_cast<double>(site_params["J1_rand"]);
