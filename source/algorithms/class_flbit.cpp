@@ -54,8 +54,12 @@ void class_flbit::resume() {
     if(not status.algorithm_has_finished) {
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
-        if(name.find("lbit") != std::string::npos)
+        if(name.find("real") != std::string::npos){
+            task_list.emplace_back(flbit_task::INIT_TIME);
+            task_list.emplace_back(flbit_task::INIT_GATES);
+            task_list.emplace_back(flbit_task::TRANSFORM_TO_LBIT);
             task_list.emplace_back(flbit_task::TIME_EVOLVE);
+        }
         else
             throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
         task_list.emplace_back(flbit_task::POST_DEFAULT);
@@ -76,10 +80,23 @@ void class_flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
             case flbit_task::INIT_DEFAULT: run_preprocessing(); break;
+            case flbit_task::INIT_TIME: {
+                create_time_points();
+                update_time_step();
+                break;
+            }
+            case flbit_task::INIT_GATES:{
+                create_hamiltonian_gates();
+                create_time_evolution_gates();
+                create_lbit_transform_gates();
+                break;
+            }
             case flbit_task::TIME_EVOLVE:
                 tensors.state->set_name("state_real");
                 run_algorithm();
                 break;
+            case flbit_task::TRANSFORM_TO_LBIT: transform_to_lbit_basis(); break;
+            case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
             case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
             case flbit_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(algo_type); break;
