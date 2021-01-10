@@ -81,10 +81,10 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
     if(model_size != settings::model::model_size)
         throw std::runtime_error(
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-    state.initialize(str2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
+    state.initialize(str2enum<ModelType>(model_type), model_size, position);
     tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
     for(const auto & mps : state.mps_sites) {
-        auto pos = mps->get_position<long>();
+        auto pos = mps->get_position();
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
         std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
@@ -94,7 +94,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
             auto LC          = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_LC_name);
             auto pos_on_file = h5ppFile.readAttribute<size_t>("position", dset_LC_name);
             if(pos != pos_on_file) throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
-            mps->set_LC(LC);
+            state.get_mps_site(pos).set_LC(LC);
         }
         if(not h5ppFile.linkExists(dset_L_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_L_name));
         if(not h5ppFile.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
