@@ -94,7 +94,7 @@ class class_mps_site {
     Eigen::Tensor<Scalar, 3>                    unstash_U() const;
     std::pair<Eigen::Tensor<Scalar, 1>, double> unstash_S() const;
     Eigen::Tensor<Scalar, 3>                    unstash_V() const;
-    void                                        unstash() const;
+    void                                        drop_stash() const;
     void                                        merge_stash(const class_mps_site &other);
 
     std::size_t get_unique_id() const;
