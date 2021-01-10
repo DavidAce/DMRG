@@ -654,12 +654,16 @@ void class_algorithm_finite::print_status_update() {
     else if(tensors.state->get_direction() > 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
-        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
-    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+        report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
+
+    double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
+    report += fmt::format("E/L:{:<20.16f} ", energy);
+
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(l):{:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
-    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
-                          std::log10(status.energy_variance_lowest));
+
+    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
+    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance , std::log10(status.energy_variance_lowest));
     report +=
         fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
     std::string bond_strings = fmt::format("{}",tools::finite::measure::bond_dimensions_merged(*tensors.state));
@@ -691,12 +695,13 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Steps (moves along the chain)      = {}", status.step);
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_measured_time(),
                      tools::common::profile::t_tot->get_measured_time() / 60);
-    tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(tensors));
+    double energy_per_site = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
+    tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site);
     if(algo_type == AlgorithmType::xDMRG)
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                          tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-
-    tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(tools::finite::measure::energy_variance_per_site(tensors)));
+    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
+    tools::log->info("Energy variance log₁₀ σ²(E)        = {:<.16f}", variance);
     tools::log->info("Bond dimension maximum χmax        = {}", cfg_chi_lim_max());
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
