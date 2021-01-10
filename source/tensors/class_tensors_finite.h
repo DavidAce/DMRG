@@ -56,8 +56,10 @@ class class_tensors_finite {
 
     void                 assert_validity() const;
 
-    template<typename T = size_t> [[nodiscard]] T get_position() const;
-    template<typename T = size_t> [[nodiscard]] T get_length() const;
+    template<typename T = size_t>
+    [[nodiscard]] T get_position() const;
+    template<typename T = size_t>
+    [[nodiscard]] T get_length() const;
 
     [[nodiscard]] bool is_real() const;
     [[nodiscard]] bool has_nan() const;
