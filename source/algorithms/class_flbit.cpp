@@ -231,24 +231,27 @@ void class_flbit::single_flbit_step() {
 }
 
 void class_flbit::update_time_step(){
-    if(std::abs(status.delta_t) * settings::flbit::time_step_growth_factor > settings::flbit::time_step_max_size) return;
-    static double time_last_update = 0;
-    if(std::abs(status.delta_t) == 0.0) status.delta_t = std::complex<double>(settings::flbit::time_step_init_real, settings::flbit::time_step_init_imag);
-    double time_until_update = time_last_update + std::abs(status.delta_t) * settings::flbit::time_step_per_size - status.phys_time;
-    tools::log->trace("time_last_update : {}",time_last_update);
-    tools::log->trace("time_until_update: {}",time_until_update);
-    tools::log->trace("phys_time        : {}",status.phys_time);
-    tools::log->trace("delta_t          : {:.16f}{:+.16f}i",status.delta_t.real(),status.delta_t.imag());
-    if(time_until_update <= 1e-10){
-        time_last_update = status.phys_time;
-        status.delta_t *= settings::flbit::time_step_growth_factor;
-        time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
-        time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
-        time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
-        if(settings::model::model_size <= 10 and settings::debug){
-            time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
-        }
+    tools::log->trace("Updating time step");
+    if(time_points.empty()) create_time_points();
+    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size()-1);
+    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size()-1);
+    if(time_point_idx0 == time_point_idx1) {
+        stop_reason = StopReason::SUCCEEDED;
+        return;
     }
+    if(time_point_idx0 > time_point_idx1)
+        throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
+    if(std::abs(std::abs(time_points[time_point_idx0]) - status.phys_time) > 1e-10)
+        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}",status.phys_time,  std::abs(time_points[time_point_idx0]));
+    status.delta_t = time_points[time_point_idx1] - time_points[time_point_idx0];
+    tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
+    if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
+    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
+    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
+    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+    if constexpr(settings::debug)
+        if(settings::model::model_size <= 10)
+            time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
 }
 
 
