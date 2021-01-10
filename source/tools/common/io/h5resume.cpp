@@ -104,7 +104,7 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
                                  step_sorted_candidates.end());
 
     // We may now have repeated step numbers.
-    // For instance if the state has actually finished we expect to find a state in "finished", "checkpoint/iter_..." or "projection" in the path
+    // For instance if the state has actually finished we expect to find a state in "finished", "savepoint/iter_..." or "projection" in the path
 
     // First, if any candidate has "finished" in its path, return it
     for(const auto &candidate : step_sorted_candidates)

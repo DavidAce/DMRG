@@ -21,8 +21,11 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     /* clang-format off */
     dmrg_config.load_parameter("input::seed"                                  , input::seed);
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
+
     dmrg_config.load_parameter("output::output_filepath"                      , output::output_filepath);
     dmrg_config.load_parameter("output::save_profiling"                       , output::save_profiling);
+    dmrg_config.load_parameter("output::savepoint_keep_newest_only"           , output::savepoint_keep_newest_only);
+    dmrg_config.load_parameter("output::savepoint_frequency"                  , output::savepoint_frequency);
     dmrg_config.load_parameter("output::checkpoint_keep_newest_only"          , output::checkpoint_keep_newest_only);
     dmrg_config.load_parameter("output::checkpoint_keep_chi_updates"          , output::checkpoint_keep_chi_updates);
     dmrg_config.load_parameter("output::checkpoint_frequency"                 , output::checkpoint_frequency);
@@ -33,6 +36,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("output::file_collision_policy"                , output::file_collision_policy);
     dmrg_config.load_parameter("output::file_resume_policy"                   , output::file_resume_policy);
     dmrg_config.load_parameter("output::storage_level_model"                  , output::storage_level_model);
+    dmrg_config.load_parameter("output::storage_level_savepoint"              , output::storage_level_savepoint);
     dmrg_config.load_parameter("output::storage_level_checkpoint"             , output::storage_level_checkpoint);
     dmrg_config.load_parameter("output::storage_level_good_state"             , output::storage_level_good_state);
     dmrg_config.load_parameter("output::storage_level_fail_state"             , output::storage_level_fail_state);
@@ -40,10 +44,11 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("output::storage_level_init_state"             , output::storage_level_init_state);
     dmrg_config.load_parameter("output::storage_level_emin_state"             , output::storage_level_emin_state);
     dmrg_config.load_parameter("output::storage_level_emax_state"             , output::storage_level_emax_state);
+
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);
-    dmrg_config.load_parameter("model::ising_tf_rf::J1_rand"                  , model::ising_tf_rf::J1);
-    dmrg_config.load_parameter("model::ising_tf_rf::J2_rand"                  , model::ising_tf_rf::J2);
+    dmrg_config.load_parameter("model::ising_tf_rf::J1"                       , model::ising_tf_rf::J1);
+    dmrg_config.load_parameter("model::ising_tf_rf::J2"                       , model::ising_tf_rf::J2);
     dmrg_config.load_parameter("model::ising_tf_rf::h_tran"                   , model::ising_tf_rf::h_tran);
     dmrg_config.load_parameter("model::ising_tf_rf::h_mean"                   , model::ising_tf_rf::h_mean);
     dmrg_config.load_parameter("model::ising_tf_rf::h_stdv"                   , model::ising_tf_rf::h_stdv);
@@ -65,6 +70,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::fmix"                            , model::lbit::fmix);
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
+
     dmrg_config.load_parameter("strategy::compress_mpo_squared"               , strategy::compress_mpo_squared);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
@@ -84,6 +90,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
     dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);
+
     dmrg_config.load_parameter("precision::eig_max_iter"                      , precision::eig_max_iter);
     dmrg_config.load_parameter("precision::eig_threshold"                     , precision::eig_threshold);
     dmrg_config.load_parameter("precision::eig_max_ncv"                       , precision::eig_max_ncv);

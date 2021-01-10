@@ -52,7 +52,7 @@ void class_flbit::resume() {
     std::list<flbit_task> task_list;
 
     if(not status.algorithm_has_finished) {
-        // This could be a checkpoint state
+        // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("lbit") != std::string::npos)
             task_list.emplace_back(flbit_task::TIME_EVOLVE);
@@ -173,7 +173,8 @@ void class_flbit::run_algorithm() {
         check_convergence();
         print_status_update();
         print_profiling_lap();
-        write_to_file();
+        write_to_file(StorageReason::SAVEPOINT);
+        write_to_file(StorageReason::CHECKPOINT);
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 

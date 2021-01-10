@@ -37,6 +37,7 @@ void class_algorithm_base::copy_from_tmp(StorageReason storage_reason, std::opti
     if(copy_policy == CopyPolicy::TRY){
         if(save_log[h5pp_file->getFilePath()] == save_point) return;
         switch(storage_reason) {
+            case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT:
                 if(num::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
             case StorageReason::FINISHED:

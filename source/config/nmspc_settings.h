@@ -41,9 +41,11 @@ namespace settings {
     namespace output {
         inline std::string         output_filepath                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
         inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
-        inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, checkpoints on each iteration will overwrite previous snapshots on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline bool                checkpoint_keep_chi_updates     = true;                         /*!< If true, a snapshot is written to file before the bond dimension is updated */
-        inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables regular checkpoints but chi-update checkpoints can still happen */
+        inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
+        inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but chi-update savepoints can still happen */
+        inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
+        inline bool                checkpoint_keep_chi_updates     = true;                         /*!< If true, a savepoint is written to file before the bond dimension is updated */
+        inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints but chi-update checkpoints can still happen */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
@@ -52,14 +54,15 @@ namespace settings {
         inline FileResumePolicy    file_resume_policy              = FileResumePolicy::FULL;       /*!< Depends on dataset "common/finished_all=bool" FULL: Ignore bool -> Scan .cfg to add missing items. FAST: exit if true. */
 
         // Storage Levels.
-        // NOTE 1: A simulation can only be resumed from FULL state storage or checkpoint.
+        // NOTE 1: A simulation can only be resumed from FULL state storage or savepoint.
         // NOTE 2: storage_level_model == NORMAL is enough to recreate MPO's when resuming, since they can be reconstructed from the Hamiltonian parameter table
         //      NONE:   no data is saved at all
         //      LIGHT:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_profiling == true)
         //      NORMAL: Same as LIGHT + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (lambda-matrices), and model Hamiltonian parameters
         //      FULL:   Same as NORMAL + MPS (Gamma + Lambda matrices) + MPO at each site.
         inline StorageLevel     storage_level_model      = StorageLevel::LIGHT;  /*!< Storage level for the model realization. LIGHT stores nothing. NORMAL stores the Hamiltonian parameter table, and FULL also the MPO's */
-        inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are snapshots taken at each iteration or  snapshot taken at the end of each iteration */
+        inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume (if FULL) */
+        inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements (can also be used for resume if FULL) */
         inline StorageLevel     storage_level_good_state = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates successfully */
         inline StorageLevel     storage_level_fail_state = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates unsuccessfully */
         inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */

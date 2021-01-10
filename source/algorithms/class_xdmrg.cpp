@@ -57,7 +57,7 @@ void class_xdmrg::resume() {
 
     if(status.algorithm_has_finished) task_list = {xdmrg_task::POST_PRINT_RESULT};
     else
-        task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT}; // Probably a checkpoint. Simply "continue" the algorithm until convergence
+        task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
 
     // If we reached this point the current state has finished for one reason or another.
     // We may still have some more things to do, e.g. the config may be asking for more states

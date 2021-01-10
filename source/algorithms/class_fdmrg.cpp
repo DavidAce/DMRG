@@ -43,7 +43,7 @@ void class_fdmrg::resume() {
     std::list<fdmrg_task> task_list;
 
     if(not status.algorithm_has_finished) {
-        // This could be a checkpoint state
+        // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("emax") != std::string::npos) task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
         else if(name.find("emin") != std::string::npos)
