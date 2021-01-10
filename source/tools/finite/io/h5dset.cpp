@@ -66,7 +66,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
         h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
         h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetName);
-        h5ppFile.writeAttribute((state.get_length() - 1) / 2, "position", dsetName);
+        h5ppFile.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetName);
         h5ppFile.writeAttribute(status.iter, "iteration", dsetName);
         h5ppFile.writeAttribute(status.step, "step", dsetName);
         h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetName);
@@ -86,23 +86,23 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         // However L_i always belongs M_i. Stick to this rule!
         // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
         for(const auto & mps : state.mps_sites) {
-            dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position());
+            dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
             if(save_log[dsetName] == save_point) continue;
             h5ppFile.writeDataset(mps->get_L(), dsetName, layout);
-            h5ppFile.writeAttribute(mps->get_position(), "position", dsetName);
+            h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
             h5ppFile.writeAttribute(mps->get_L().dimensions(), "dimensions", dsetName);
             h5ppFile.writeAttribute(mps->get_truncation_error(), "truncation_error", dsetName);
             if(mps->isCenter()) {
                 dsetName = mps_prefix + "/L_C";
                 h5ppFile.writeDataset(mps->get_LC(), dsetName, layout);
-                h5ppFile.writeAttribute(mps->get_position(), "position", dsetName);
+                h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
                 h5ppFile.writeAttribute(mps->get_LC().dimensions(), "dimensions", dsetName);
                 h5ppFile.writeAttribute(mps->get_truncation_error_LC(), "truncation_error", dsetName);
             }
             save_log[dsetName] = save_point;
         }
         h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
-        h5ppFile.writeAttribute(state.get_position(), "position", mps_prefix);
+        h5ppFile.writeAttribute(state.get_position<long>(), "position", mps_prefix);
         h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
         h5ppFile.writeAttribute(state.get_labels(), "labels", mps_prefix);
         h5ppFile.writeAttribute(status.iter, "iteration", mps_prefix);
@@ -119,10 +119,10 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
         for(const auto & mps : state.mps_sites){
-            dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position());
+            dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
             if(save_log[dsetName] == save_point) continue;
             h5ppFile.writeDataset(mps->get_M_bare(), dsetName, layout); // Important to write bare matrices!!
-            h5ppFile.writeAttribute(mps->get_position(), "position", dsetName);
+            h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
             h5ppFile.writeAttribute(mps->get_M_bare().dimensions(), "dimensions", dsetName);
             h5ppFile.writeAttribute(mps->get_label(), "label", dsetName);
             h5ppFile.writeAttribute(mps->get_unique_id(), "unique_id", dsetName);

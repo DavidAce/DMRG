@@ -18,7 +18,7 @@ class h5pp_table_measurements_finite {
     struct table {
         uint64_t              iter;
         uint64_t              step;
-        uint64_t              position;
+        long                  position;
         uint64_t              length;
         long                  bond_dimension_midchain;
         long                  bond_dimension_current;
@@ -49,7 +49,7 @@ class h5pp_table_measurements_finite {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "length", HOFFSET(table, length), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "bond_dimension_midchain", HOFFSET(table, bond_dimension_midchain), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_dimension_current", HOFFSET(table, bond_dimension_current), H5T_NATIVE_LONG);
@@ -77,26 +77,26 @@ class h5pp_table_measurements_infinite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t iter;
-        uint64_t step;
-        uint64_t position;
-        uint64_t length;
-        long     bond_dimension;
-        long     bond_dimension_limit;
-        long     bond_dimension_maximum;
-        double   entanglement_entropy;
-        double   norm;
-        double   energy_mpo;
-        double   energy_per_site_mpo;
-        double   energy_per_site_ham;
-        double   energy_per_site_mom;
-        double   energy_variance_mpo;
-        double   energy_variance_per_site_mpo;
-        double   energy_variance_per_site_ham;
-        double   energy_variance_per_site_mom;
-        double   truncation_error;
-        double   wall_time;
-        double   phys_time;
+        uint64_t iter      = 0;
+        uint64_t step      = 0;
+        long     position  = 0;
+        uint64_t length                       = 0;
+        long     bond_dimension               = 0;
+        long     bond_dimension_limit         = 0;
+        long     bond_dimension_maximum       = 0;
+        double   entanglement_entropy         = 0;
+        double   norm                         = 0;
+        double   energy_mpo                   = 0;
+        double   energy_per_site_mpo          = 0;
+        double   energy_per_site_ham          = 0;
+        double   energy_per_site_mom          = 0;
+        double   energy_variance_mpo          = 0;
+        double   energy_variance_per_site_mpo = 0;
+        double   energy_variance_per_site_ham = 0;
+        double   energy_variance_per_site_mom = 0;
+        double   truncation_error             = 0;
+        double   wall_time                    = 0;
+        double   phys_time                    = 0;
         std::complex<double> time_step;
     };
 
@@ -106,7 +106,7 @@ class h5pp_table_measurements_infinite {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "length", HOFFSET(table, length), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "bond_dimension", HOFFSET(table, bond_dimension), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_dimension_limit", HOFFSET(table, bond_dimension_limit), H5T_NATIVE_LONG);
@@ -136,7 +136,7 @@ class h5pp_table_xdmrg_profiling {
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
-        uint64_t position  = 0;
+        long     position  = 0;
         double   t_tot             = 0;
         double   t_pre             = 0;
         double   t_rnd             = 0;
@@ -183,7 +183,7 @@ class h5pp_table_xdmrg_profiling {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_rnd",            HOFFSET(table, t_rnd         ), H5T_NATIVE_DOUBLE);
@@ -233,7 +233,7 @@ class h5pp_table_fdmrg_profiling {
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
-        uint64_t position  = 0;
+        long     position  = 0;
         double   t_tot     = 0;
         double   t_pre     = 0;
         double   t_rnd     = 0;
@@ -261,7 +261,7 @@ class h5pp_table_fdmrg_profiling {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_rnd",            HOFFSET(table, t_rnd         ), H5T_NATIVE_DOUBLE);
@@ -292,7 +292,7 @@ class h5pp_table_flbit_profiling {
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
-        uint64_t position  = 0;
+        long     position  = 0;
         double   t_tot     = 0;
         double   t_pre     = 0;
         double   t_rnd     = 0;
@@ -322,7 +322,7 @@ class h5pp_table_flbit_profiling {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_rnd",            HOFFSET(table, t_rnd         ), H5T_NATIVE_DOUBLE);
@@ -356,7 +356,7 @@ class h5pp_table_idmrg_profiling {
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
-        uint64_t position  = 0;
+        long     position  = 0;
         double   t_tot     = 0;
         double   t_pre     = 0;
         double   t_rnd     = 0;
@@ -384,7 +384,7 @@ class h5pp_table_idmrg_profiling {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_rnd",            HOFFSET(table, t_rnd         ), H5T_NATIVE_DOUBLE);
@@ -415,7 +415,7 @@ class h5pp_table_itebd_profiling {
     struct table {
         uint64_t iter      = 0;
         uint64_t step      = 0;
-        uint64_t position  = 0;
+        long     position  = 0;
         double   t_tot             = 0;
         double   t_pre             = 0;
         double   t_pos             = 0;
@@ -439,7 +439,7 @@ class h5pp_table_itebd_profiling {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter",             HOFFSET(table, iter          ), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step",             HOFFSET(table, step          ), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "position",         HOFFSET(table, position      ), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "t_tot",            HOFFSET(table, t_tot         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pre",            HOFFSET(table, t_pre         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_pos",            HOFFSET(table, t_pos         ), H5T_NATIVE_DOUBLE);
@@ -471,7 +471,7 @@ class h5pp_table_algorithm_status {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_INT64);
+        H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);

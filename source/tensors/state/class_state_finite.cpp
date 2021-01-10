@@ -149,13 +149,13 @@ void class_state_finite::flip_direction() { direction *= -1; }
 Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
     Eigen::DSizes<long, 3> dimensions;
     auto                   pos  = get_position<long>();
-    auto                   posL = std::min(pos, get_length<long>()-2);
-    auto                   posR = std::min(pos + 1, get_length<long>()-1);
+    auto                   posL = std::clamp<long>(pos    , 0, get_length<long>()-2);
+    auto                   posR = std::clamp<long>(pos + 1, 0, get_length<long>()-1);
     const auto &           mpsL = get_mps_site(posL);
     const auto &           mpsR = get_mps_site(posR);
     dimensions[1]               = mpsL.get_chiL();
     dimensions[2]               = mpsR.get_chiR();
-    dimensions[0]               = mpsL.spin_dim() * mpsR.spin_dim();
+    dimensions[0]               = posL != posR ? mpsL.spin_dim() * mpsR.spin_dim() : mpsL.spin_dim();
     return dimensions;
 }
 
@@ -173,8 +173,7 @@ bool class_state_finite::position_is_the_middle_any_direction() const {
 
 bool class_state_finite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) const {
     if(nsite == 1){
-        return get_position<long>() <= 0 and direction == -1; // i.e. all sites are B's
-//        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
+        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
     }else
         return get_position<long>() == 0 and direction == -1 and get_mps_site().isCenter(); // left-most site is a an AC
 }
@@ -199,7 +198,7 @@ bool class_state_finite::position_is_at(long pos, int dir) const { return get_po
 bool class_state_finite::position_is_at(long pos, int dir, bool isCenter) const { return get_position<long>() == pos and get_direction() == dir and (pos >= 0) == isCenter; }
 
 bool class_state_finite::has_center_point() const{
-    return get_mps_site().isCenter();
+    return get_position<long>() >= 0;
 }
 
 
@@ -226,13 +225,11 @@ void class_state_finite::assert_validity() const {
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain_bond() const {
-    size_t center_pos = (get_length<size_t>() - 1) / 2;
-    if(get_position() < center_pos) return get_mps_site(center_pos).get_L();
-    if(get_position() > center_pos) return get_mps_site(center_pos + 1).get_L();
-    if(get_position() == center_pos)
-        return get_mps_site(center_pos).get_LC();
-    else
-        throw std::logic_error("No valid position to find midchain_bond");
+    auto pos = get_position<long>();
+    auto cnt = (get_length<long>() - 1) / 2;
+    if(pos <  cnt) return get_mps_site(cnt).get_L();
+    if(pos >  cnt) return get_mps_site(cnt + 1).get_L();
+    return get_mps_site(cnt).get_LC();
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::current_bond() const { return get_mps_site(get_position()).get_LC(); }
@@ -358,16 +355,20 @@ void class_state_finite::set_truncation_error_LC(double error) {
 
 double class_state_finite::get_truncation_error(size_t pos) const { return get_mps_site(pos).get_truncation_error(); }
 
-double class_state_finite::get_truncation_error() const { return get_mps_site(get_position()).get_truncation_error(); }
+double class_state_finite::get_truncation_error() const {
+    auto pos = get_position<long>();
+    if(pos >= 0)
+        return get_mps_site(pos).get_truncation_error();
+    else return 0;
+}
+
 double class_state_finite::get_truncation_error_LC() const { return get_mps_site(get_position()).get_truncation_error_LC(); }
 double class_state_finite::get_truncation_error_midchain() const {
-    size_t center_pos = (get_length() - 1) / 2;
-    if(center_pos > get_position())
-        return get_mps_site(center_pos).get_truncation_error();
-    else if(center_pos == get_position())
-        return get_mps_site(center_pos).get_truncation_error_LC();
-    else
-        return get_mps_site(center_pos + 1).get_truncation_error();
+    auto pos = get_position<long>();
+    auto cnt = (get_length<long>() - 1) / 2;
+    if(pos <  cnt) return get_mps_site(cnt).get_truncation_error();
+    if(pos >  cnt) return get_mps_site(cnt + 1).get_truncation_error();
+    return get_mps_site(cnt).get_truncation_error_LC();
 }
 
 std::vector<double> class_state_finite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }

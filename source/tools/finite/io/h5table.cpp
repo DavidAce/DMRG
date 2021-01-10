@@ -60,7 +60,7 @@ void tools::finite::io::h5table::save_measurements(h5pp::File &h5ppFile, const s
     h5pp_table_measurements_finite::table measurement_entry{};
     measurement_entry.step                            = static_cast<uint64_t>(status.step);
     measurement_entry.iter                            = static_cast<uint64_t>(status.iter);
-    measurement_entry.position                        = static_cast<uint64_t>(status.position);
+    measurement_entry.position                        = static_cast<long>(status.position);
     measurement_entry.length                          = static_cast<uint64_t>(tools::finite::measure::length(tensors));
     measurement_entry.bond_dimension_midchain         = static_cast<long>(tools::finite::measure::bond_dimension_midchain(*tensors.state));
     measurement_entry.bond_dimension_current          = static_cast<long>(tools::finite::measure::bond_dimension_current(*tensors.state));
