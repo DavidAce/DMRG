@@ -2,7 +2,6 @@
 #include "class_tensors_finite.h"
 #include <config/debug.h>
 #include <config/nmspc_settings.h>
-#include <iostream>
 #include <math/num.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
