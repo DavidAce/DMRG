@@ -5,7 +5,7 @@
 #pragma once
 #include "class_algorithm_finite.h"
 #include <physics/class_quantum_gates.h>
-
+#include <deque>
 /*!
 // * \brief Class that runs the finite LBIT algorithm.
  */

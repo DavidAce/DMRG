@@ -5,7 +5,7 @@
 #pragma once
 
 #include "class_algorithm_finite.h"
-
+#include <deque>
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.
  */
