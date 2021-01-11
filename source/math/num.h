@@ -155,7 +155,7 @@ namespace num {
         return xs;
     }
 
-    std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
         double              loga   = std::log(a) / std::log(base);
