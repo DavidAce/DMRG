@@ -21,14 +21,31 @@
 #########################
 
 #    set(MKL_USE_STATIC_LIBS ON)
+
 if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
-    find_package(OpenMP)
-    find_package(Fortran REQUIRED)
-    find_package(Threads REQUIRED)
-    if(TARGET openmp::openmp)
-        set(MKL_MULTI_THREADED ON)
-        mark_as_advanced(MKL_MULTI_THREADED)
+    if(DMRG_ENABLE_OPENMP)
+        find_package(OpenMP REQUIRED)
     endif()
+    set(MKL_THREAD_DEFAULT none)
+    if(TARGET openmp::openmp)
+        if(OMP_LIBNAME MATCHES gomp|libomp)
+            set(MKL_THREAD_DEFAULT gnu)
+        elseif(OMP_LIBNAME MATCHES iomp)
+            set(MKL_THREAD_DEFAULT intel)
+        endif()
+    endif()
+
+    # Make an "enum" for valid download methods
+    set(MKL_THREADING_VALID none gnu intel tbb)
+    set(MKL_THREADING_LAYER ${MKL_THREAD_DEFAULT} CACHE STRING "Intel MKL Threading Layer")
+    set_property(CACHE MKL_THREADING_LAYER PROPERTY STRINGS ${MKL_THREADING_VALID})
+    if (NOT MKL_THREADING_LAYER IN_LIST MKL_THREADING_VALID)
+        message(FATAL_ERROR "MKL_THREADING_LAYER must be one of ${MKL_THREADING_VALID}")
+    endif ()
+    if(NOT BUILD_SHARED_LIBS AND MKL_THREADING_LAYER MATCHES tbb)
+        message(FATAL_ERROR "MKL Threading library [tbb] requires dynamic linking. Use BUILD_SHARED_LIBS:BOOL=ON")
+    endif()
+
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
     if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
         message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
@@ -49,16 +66,30 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
         # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
         add_library(mkl::mkl INTERFACE IMPORTED)
         target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE)
-        if(MKL_MULTI_THREADED)
+        if(MKL_THREADING_LAYER MATCHES gnu)
+            find_package(OpenMP REQUIRED)
+            find_package(Fortran REQUIRED)
             target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_gthread)
             get_target_property(MKL_INCLUDE_DIR mkl::mkl_gf_lp_gthread INTERFACE_INCLUDE_DIRECTORIES)
             target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-            target_link_libraries(mkl::mkl INTERFACE  gfortran::gfortran openmp::openmp Threads::Threads)
-        else()
+            target_link_libraries(mkl::mkl INTERFACE  gfortran::gfortran openmp::openmp)
+        elseif(MKL_THREADING_LAYER MATCHES intel)
+            find_package(Fortran REQUIRED)
+            target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_ithread gfortran::gfortran mkl::iomp5)
+            get_target_property(MKL_INCLUDE_DIR mkl::mkl_gf_lp_ithread INTERFACE_INCLUDE_DIRECTORIES)
+            target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+        elseif(MKL_THREADING_LAYER MATCHES tbb)
+            find_package(Threads REQUIRED)
+            target_link_libraries(mkl::mkl INTERFACE mkl::mkl_intel_lp_tthread mkl::tbb Threads::Threads m dl)
+            get_target_property(MKL_INCLUDE_DIR mkl::mkl_intel_lp_tthread INTERFACE_INCLUDE_DIRECTORIES)
+            target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+        elseif(MKL_THREADING_LAYER MATCHES none)
+            find_package(Threads REQUIRED)
+            find_package(Fortran REQUIRED)
             target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_seq)
             get_target_property(MKL_INCLUDE_DIR mkl::mkl_gf_lp_seq INTERFACE_INCLUDE_DIRECTORIES)
             target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-            target_link_libraries(mkl::mkl INTERFACE  gfortran::gfortran Threads::Threads)
+            target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran Threads::Threads)
         endif()
 
         # Make the rest of the build structure aware of blas and lapack included in MKL.
@@ -95,9 +126,10 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
                 endif()
                 message(FATAL_ERROR "Unable to compile a simple MKL program")
             endif()
-            if(MKL_MULTI_THREADED)
+                                #include <omp.h>
+
+            if(NOT MKL_THREADING_LAYER MATCHES none)
                 check_cxx_source_compiles("
-                    #include <omp.h>
                     #include <mkl.h>
                     int main() {
                         mkl_set_num_threads(2);
@@ -107,11 +139,10 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
                         dcopy(&nx, x, &incx, y, &incy);
                         return 0;
                     }
-                    " MKL_OMP_COMPILES)
-
-                if(NOT MKL_OMP_COMPILES)
-                    unset(MKL_OMP_COMPILES CACHE)
-                    unset(MKL_OMP_COMPILES PARENT_SCOPE)
+                    " MKL_THREAD_COMPILES)
+                if(NOT MKL_THREAD_COMPILES)
+                    unset(MKL_THREAD_COMPILES CACHE)
+                    unset(MKL_THREAD_COMPILES PARENT_SCOPE)
                     if(DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
                         file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
                         message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
