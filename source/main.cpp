@@ -38,10 +38,11 @@ Usage                       : DMRG++ [-option <value>].
 -h                          : Help. Shows this text.
 -b <positive integer>       : Integer whose bitfield sets the initial product state. Negative is unused (default -1)
 -c <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
+-n <stl threads>            : Number of C++11 threads (Used by Eigen::Tensor)
+-o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
 -i <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
 -s <seed>                   : Positive number that seeds the random number generator (default = 1)
--t <num threads>            : Number of OpenMP threads
--o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
+-t <omp threads>            : Number of OpenMP threads
 -v                          : Enables trace-level verbosity
 -x                          : Do not append seed to the output filename.
 
@@ -108,10 +109,11 @@ int main(int argc, char *argv[]) {
     long        verbosity   = -1;
     long        seed        = -1;
     long        bitfield    = -1;
-    long        num_threads = -1;
+    long        omp_threads = -1;
+    long        stl_threads = -1;
 
     while(true) {
-        char opt = static_cast<char>(getopt(argc, argv, "hb:c:i:s:t:o:vx"));
+        char opt = static_cast<char>(getopt(argc, argv, "hb:c:i:n:o:s:t:vx"));
         if(opt == EOF) break;
         if(optarg == nullptr)
             tools::log->info("Parsing input argument: -{}", opt);
@@ -121,9 +123,10 @@ int main(int argc, char *argv[]) {
             case 'b': bitfield = std::strtol(optarg, nullptr, 10); continue;
             case 'c':
             case 'i': config = std::string(optarg); continue;
-            case 's': seed = std::strtol(optarg, nullptr, 10); continue;
-            case 't': num_threads = std::strtol(optarg, nullptr, 10); continue;
+            case 'n': stl_threads = std::strtol(optarg, nullptr, 10); continue;
             case 'o': output = std::string(optarg); continue;
+            case 's': seed = std::strtol(optarg, nullptr, 10); continue;
+            case 't': omp_threads = std::strtol(optarg, nullptr, 10); continue;
             case 'v': verbosity = 0; continue;
             case 'x': append_seed = false; continue;
             case ':': tools::log->error("Option -{} needs a value", opt); break;
@@ -173,7 +176,8 @@ int main(int argc, char *argv[]) {
     // B: Override settings
     if(seed >= 0) settings::input::seed = seed;
     if(bitfield >= 0) settings::input::bitfield = bitfield;
-    if(num_threads >= 0) settings::threading::num_threads = static_cast<int>(num_threads);
+    if(stl_threads >= 0) settings::threading::stl_threads = static_cast<int>(stl_threads);
+    if(omp_threads >= 0) settings::threading::omp_threads = static_cast<int>(omp_threads);
     if(not output.empty()) settings::output::output_filepath = output;
     if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
@@ -189,25 +193,38 @@ int main(int argc, char *argv[]) {
     rnd::seed(settings::input::seed);
 
 // Set the number of threads to be used
-#if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
-    if(settings::threading::num_threads <= 0) { settings::threading::num_threads = (int) std::thread::hardware_concurrency(); }
-    omp_set_num_threads(settings::threading::num_threads);
-    Eigen::setNbThreads(settings::threading::num_threads);
-    Textra::omp::setNumThreads(settings::threading::num_threads);
-    tools::log->info("Using Eigen Tensor with {} threads", Textra::omp::num_threads);
-    tools::log->info("Using Eigen  with {} threads", Eigen::nbThreads());
-    tools::log->info("Using OpenMP with {} threads", omp_get_max_threads());
-    #ifdef OPENBLAS_AVAILABLE
-    openblas_set_num_threads(settings::threading::num_threads);
-    tools::log->info("{} compiled with parallel mode {} for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,
-                     openblas_get_parallel(), openblas_get_corename(), openblas_get_config(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, openblas_get_num_threads());
-    #endif
-
-    #ifdef MKL_AVAILABLE
-    mkl_set_num_threads(settings::threading::num_threads);
-    tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
-    #endif
+#if defined(EIGEN_USE_THREADS)
+    if(settings::threading::stl_threads <= 0) { settings::threading::stl_threads = (int) std::thread::hardware_concurrency(); }
+    Textra::omp::setNumThreads(settings::threading::stl_threads);
+    tools::log->info("Using Eigen Tensor with {} C++11 threads", Textra::omp::num_threads);
+#else
+    if(settings::threading::stl_threads > 1)
+        tools::log->warn("EIGEN_USE_THREADS is not defined: "
+                         "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
+                         settings::threading::stl_threads);
 #endif
+
+#if defined(_OPENMP)
+    if(settings::threading::omp_threads <= 0) { settings::threading::omp_threads = (int) std::thread::hardware_concurrency(); }
+    omp_set_num_threads(settings::threading::omp_threads); // Should only need this. Both Eigen (non-Tensor) and MKL listen to this
+    omp_set_max_active_levels(1);
+    tools::log->info("Using OpenMP with {} threads and {} active levels", omp_get_max_threads(),omp_get_max_active_levels());
+#endif
+#if defined(OPENBLAS_AVAILABLE)
+    auto openblas_parallel_mode = openblas_get_parallel();
+    std::string openblas_parallel_str;
+    if(openblas_get_parallel() == 0) openblas_parallel_str = "seq";
+    if(openblas_get_parallel() == 1) openblas_parallel_str = "threads";
+    if(openblas_get_parallel() == 2) openblas_parallel_str = "openmp";
+    if(openblas_get_parallel() == 1) openblas_set_num_threads(settings::threading::omp_threads); // Use the omp_threads level for blas-related threading
+    tools::log->info("{} compiled with parallel mode [{}] for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,
+                     openblas_parallel_str, openblas_get_corename(), openblas_get_config(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, openblas_get_num_threads());
+#endif
+#if defined(MKL_AVAILABLE)
+    tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
+#endif
+
+
 
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file

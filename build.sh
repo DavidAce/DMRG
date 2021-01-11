@@ -20,6 +20,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -l | --clear-libs [=args]       : Clear libraries in comma separated list 'lib1,lib2...'. "all" deletes all.
 -s | --enable-shared            : Enable shared library linking (default is static)
      --shared [=ON/OFF]         : Alternative to --enable-shared (default is OFF).
+   | --enable-threads           : Enable C++11 threading used in Eigen::Tensor
    | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
@@ -55,6 +56,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 shared:\
                 gcc-toolchain:\
                 make-threads:\
+                enable-threads\
                 enable-openmp\
                 enable-mkl\
                 enable-lto\
@@ -80,6 +82,7 @@ march="haswell"
 enable_shared="OFF"
 download_method="find"
 enable_tests="OFF"
+enable_threads="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
 enable_lto="OFF"
@@ -112,6 +115,7 @@ do
        --shared)                    enable_shared=$2                ; echo " * Link shared libraries    : $2"      ; shift 2 ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
+       --enable-threads)            enable_threads="ON"             ; echo " * C++11 Threads            : ON"      ; shift   ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * OpenMP                   : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL                : ON"      ; shift   ;;
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization   : ON"      ; shift   ;;
@@ -287,6 +291,7 @@ cat << EOF >&2
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
           -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
+          -DDMRG_ENABLE_THREADS=$enable_threads
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
           -DDMRG_ENABLE_LTO=$enable_lto
@@ -309,6 +314,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
           -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
+          -DDMRG_ENABLE_THREADS=$enable_threads \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
           -DDMRG_ENABLE_LTO=$enable_lto \
