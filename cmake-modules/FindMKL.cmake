@@ -159,6 +159,16 @@ function(find_mkl_libraries)
         add_library(mkl::mkl_gnu_thread ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_gnu_thread PROPERTIES IMPORTED_LOCATION "${MKL_GNUTHREAD_LIBRARY}")
 
+        find_library(MKL_TBBTHREAD_LIBRARY
+                mkl_tbb_thread
+                HINTS ${MKL_ROOT_DIR}
+                PATH_SUFFIXES
+                lib lib/${MKL_ARCH_DIR}
+                )
+        add_library(mkl::mkl_tbb_thread ${LINK_TYPE} IMPORTED)
+        set_target_properties(mkl::mkl_tbb_thread PROPERTIES IMPORTED_LOCATION "${MKL_TBBTHREAD_LIBRARY}")
+
+
 
         # Intel Fortran Libraries
         if(MKL_ARCH_DIR MATCHES "32")
@@ -343,11 +353,39 @@ function(find_mkl_libraries)
             add_library(mkl::iomp5 INTERFACE IMPORTED)
         endif()
 
+        # TBB
+        if("${MKL_ARCH_DIR}" STREQUAL "32")
+            set(TBB_SEARCH ia32)
+        else()
+            set(TBB_SEARCH intel64)
+        endif()
+        find_library(MKL_TBB_LIBRARY
+                NAMES
+                tbb libtbb libtbb.so libtbb.so.2
+                HINTS
+                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
+                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
+                ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
+                )
+        add_library(mkl::tbb SHARED IMPORTED)
+        set_target_properties(mkl::tbb PROPERTIES IMPORTED_LOCATION "${MKL_TBB_LIBRARY}")
+        # TBBMALLOC
+        find_library(MKL_TBBMALLOC_LIBRARY
+                NAMES
+                tbbmalloc libtbbmalloc libtbbmalloc.so libtbbmalloc.so.2
+                HINTS
+                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
+                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
+                ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
+                )
+        add_library(mkl::tbbmalloc SHARED IMPORTED)
+        set_target_properties(mkl::tbbmalloc PROPERTIES IMPORTED_LOCATION "${MKL_TBBMALLOC_LIBRARY}")
+        target_link_libraries(mkl::tbb INTERFACE mkl::tbbmalloc)
 
         # Define usable targets
         set (MKL_FORTRAN_VARIANTS intel gf)
         set (MKL_MODE_VARIANTS ilp lp)
-        set (MKL_THREAD_VARIANTS sequential intel_thread gnu_thread )
+        set (MKL_THREAD_VARIANTS sequential intel_thread gnu_thread tbb_thread )
 
         foreach (FORTRANVAR ${MKL_FORTRAN_VARIANTS})
             foreach (MODEVAR ${MKL_MODE_VARIANTS})
@@ -360,6 +398,9 @@ function(find_mkl_libraries)
                     endif()
                     if(THREADVAR MATCHES "gnu_thread")
                         set(threadv gthread)
+                    endif()
+                    if(THREADVAR MATCHES "tbb_thread")
+                        set(threadv tthread)
                     endif()
                     add_library(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE IMPORTED)
                     target_link_libraries(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE
