@@ -492,8 +492,8 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
-    if constexpr(settings::debug) {
-        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
+    if (settings::profiling::on) {
+        tools::log->info("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_measured_time(),
