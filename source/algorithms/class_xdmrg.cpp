@@ -321,9 +321,6 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
-#pragma message "Testing max sites = multisite_max_sites always"
-    c1.max_sites = settings::strategy::multisite_max_sites;
-
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
     c1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c1.chosen_sites);
     c1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c1.chosen_sites);

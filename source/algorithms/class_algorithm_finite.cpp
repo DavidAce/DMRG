@@ -295,10 +295,8 @@ void class_algorithm_finite::try_discard_small_schmidt() {
     if(num_discards >= max_discards) return;
     if(status.algorithm_has_stuck_for <= 2) return;
     tools::log->info("Trying discard of smallest schmidt values: trials {}", num_discards);
-    tensors.normalize_state(status.chi_lim, 1e-3, NormPolicy::ALWAYS);
+    tensors.normalize_state(status.chi_lim, 1e-4, NormPolicy::ALWAYS);
     clear_convergence_status();
-#pragma message "testing lower svd_threshold"
-    //    settings::precision::svd_threshold = 1e-10;
     settings::strategy::multisite_move      = MultisiteMove::ONE;
     settings::strategy::multisite_max_sites = 2;
     iter_discard                            = status.iter;
