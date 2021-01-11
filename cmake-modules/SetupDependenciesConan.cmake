@@ -10,7 +10,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     ###  static openmp anyway because I find it useful. Installing             ###
     ###  libiomp5 might help for shared linking.                               ###
     ##############################################################################
-    find_package(OpenMP REQUIRED) # Uses DMRG's own find module
+    if(DMRG_ENABLE_OPENMP)
+        find_package(OpenMP) # Uses DMRG's own find module
+    endif()
 
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
@@ -126,19 +128,20 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
 
     endif()
 
+    if(TARGET CONAN_PKG::eigen AND DMRG_ENABLE_THREADS)
+        target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_USE_THREADS)
+    endif()
+
     if(TARGET CONAN_PKG::eigen)
-        if(TARGET openmp::openmp)
-            target_compile_definitions    (CONAN_PKG::eigen INTERFACE -DEIGEN_USE_THREADS)
-        endif()
         if(TARGET mkl::mkl)
             message(STATUS "Eigen3 will use MKL")
-            target_compile_definitions    (CONAN_PKG::eigen INTERFACE -DEIGEN_USE_MKL_ALL)
-            target_compile_definitions    (CONAN_PKG::eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+            target_compile_definitions    (CONAN_PKG::eigen INTERFACE EIGEN_USE_MKL_ALL)
+            target_compile_definitions    (CONAN_PKG::eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
             target_link_libraries         (CONAN_PKG::eigen INTERFACE mkl::mkl)
         elseif(TARGET CONAN_PKG::openblas)
             message(STATUS "Eigen3 will use OpenBLAS")
-            target_compile_definitions    (CONAN_PKG::eigen INTERFACE -DEIGEN_USE_BLAS)
-            target_compile_definitions    (CONAN_PKG::eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+            target_compile_definitions    (CONAN_PKG::eigen INTERFACE EIGEN_USE_BLAS)
+            target_compile_definitions    (CONAN_PKG::eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
             target_link_libraries         (CONAN_PKG::eigen INTERFACE CONAN_PKG::openblas)
         endif()
 

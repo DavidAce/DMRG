@@ -107,7 +107,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
     dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
-    dmrg_config.load_parameter("threading::num_threads"                       , threading::num_threads);
+    dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
+    dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
 
     //Parameters controlling finite-DMRG
     dmrg_config.load_parameter("fdmrg::on"           , fdmrg::on);

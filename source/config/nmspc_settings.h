@@ -28,7 +28,8 @@ namespace settings {
     extern void load_config(const std::string & config_filename);
 
     namespace threading{
-        inline int num_threads = 1;                                              /*!< Number of threads for shared memory parallelism. num_threads <= 0 will try to use as many as possible */
+        inline int omp_threads = 1;                                              /*!< Number of threads for openmp threads used in blas/lapack and Eigen. num_threads <= 0 will try to use as many as possible */
+        inline int stl_threads = 1;                                              /*!< Number of threads for c++11 threading. Used in Eigen::Tensor. stl_threads <= 0 will try to use as many as possible */
     }
 
     namespace input{

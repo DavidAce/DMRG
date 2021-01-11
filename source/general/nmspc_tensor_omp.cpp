@@ -1,7 +1,7 @@
 #include "nmspc_tensor_omp.h"
 namespace Textra::omp {
     int num_threads = 1;
-#if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
+#if defined(EIGEN_USE_THREADS)
     std::unique_ptr<Eigen::ThreadPool>       tp;
     std::unique_ptr<Eigen::ThreadPoolDevice> dev;
     void                                     setNumThreads(int num) {
