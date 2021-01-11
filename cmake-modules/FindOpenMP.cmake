@@ -103,6 +103,7 @@ if(NOT OpenMP_FOUND AND NOT TARGET openmp::openmp AND BUILD_SHARED_LIBS)
         if(OMP_COMPILES AND TARGET OpenMP::OpenMP_CXX)
             add_library(openmp::openmp INTERFACE IMPORTED)
             target_link_libraries(openmp::openmp INTERFACE OpenMP::OpenMP_CXX)
+            get_target_property(OMP_LIBNAME OpenMP::OpenMP_CXX INTERFACE_COMPILE_OPTIONS)
         endif()
     endif()
 endif()
@@ -158,14 +159,15 @@ if(NOT OpenMP_FOUND)
         # Make a target wrapper for a library
         if(IS_ABSOLUTE ${lib})
             get_filename_component(libname ${lib} NAME_WE)
-            set(OMP_DUMMY_TARGET openmp::dummy_${libname})
         else()
-            set(OMP_DUMMY_TARGET openmp::dummy_${lib})
+            set(libname ${lib})
         endif()
-        define_omp_target(${OMP_DUMMY_TARGET} ${lib})
-        check_omp_compiles(${OMP_DUMMY_TARGET})
+        set(OMP_TARGET openmp::_${libname})
+        define_omp_target(${OMP_TARGET} ${lib})
+        check_omp_compiles(${OMP_TARGET})
         if(OMP_COMPILES)
             define_omp_target("openmp::openmp" ${lib})
+            set(OMP_LIBNAME ${libname})
             break()
         endif()
     endforeach()
@@ -173,6 +175,8 @@ endif()
 
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(OpenMP DEFAULT_MSG OMP_COMPILES)
-
-
+find_package_handle_standard_args(OpenMP
+        FOUND_VAR OpenMP_FOUND
+        REQUIRED_VARS OMP_COMPILES OMP_LIBNAME
+        FAIL_MESSAGE "Failed to find OpenMP"
+        )
