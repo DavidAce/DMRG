@@ -60,7 +60,11 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
     endif()
-
+    if(BUILD_SHARED_LIBS)
+        list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=True")
+    else()
+        list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=False")
+    endif()
 
     unset(CONAN_BUILD_INFO)
     unset(CONAN_BUILD_INFO CACHE)
