@@ -4,6 +4,7 @@
 
 #pragma once
 #include "class_algorithm_finite.h"
+#include <deque>
 class class_h5table_measurements_finite;
 
 /*!
