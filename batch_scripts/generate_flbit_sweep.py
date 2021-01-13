@@ -12,9 +12,9 @@ location    = "input"
 
 
 sites               = [16,24,32]
-J                   = [[0.000, 0.500, 0.000]]
-w                   = [[0.500, 0.500, 0.500]]
-f                   = [0.1]
+J                   = [[0.000, 0.250, 0.000]]
+w                   = [[1.000, 0.500, 0.250]]
+f                   = [0.2]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 
@@ -36,8 +36,6 @@ for val_L,val_J,val_w, val_f, init, in  product(sites,J,w, f, initial_state):
 
     settings = {
         "output::output_filepath"            : output_prefix + '/L_'+ str_L + '/' + str_J + '/' + str_w + '/f' + str_f + '/' + basename + '.h5',
-        "threading::stl_threads"             : "1",
-        "threading::omp_threads"             : "2",
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
@@ -47,13 +45,13 @@ for val_L,val_J,val_w, val_f, init, in  product(sites,J,w, f, initial_state):
         "model::lbit::J1_wdth"               : str_w1,
         "model::lbit::J2_wdth"               : str_w2,
         "model::lbit::J3_wdth"               : str_w3,
-        "flbit::max_iters"                   : "1000",
         "flbit::chi_lim_max"                 : "256",
-        "flbit::time_start_real"             : "1e-2",
+        "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "1e6",
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "250",
+        "flbit::time_num_steps"              : "150",
+        "flbit::num_layer"                   : "6",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1

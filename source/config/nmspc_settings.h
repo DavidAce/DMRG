@@ -225,9 +225,10 @@ namespace settings {
         inline long     chi_lim_max             = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline double   time_start_real         = 1e-4;                     /*!< Starting time point (real) */
+        inline size_t   num_layer               = 4;                        /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        inline double   time_start_real         = 1e-1;                     /*!< Starting time point (real) */
         inline double   time_start_imag         = 0;                        /*!< Starting time point (imag) */
-        inline double   time_final_real         = 1e9;                      /*!< Finishing time point (real) */
+        inline double   time_final_real         = 1e6;                      /*!< Finishing time point (real) */
         inline double   time_final_imag         = 0;                        /*!< Finishing time point (imag) */
         inline size_t   time_num_steps          = 500;                      /*!< Number of steps from start to finish */
         inline size_t   print_freq              = 1;                        /*!< Print frequency for console output. In units of iterations. (0 = off). */
