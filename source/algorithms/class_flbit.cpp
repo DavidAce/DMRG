@@ -262,7 +262,7 @@ void class_flbit::check_convergence() {
                           status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
     }
     stop_reason = StopReason::NONE;
-    if(tensors.position_is_inward_edge() and status.iter > settings::flbit::min_iters) {
+    if(tensors.position_is_inward_edge() and status.iter >= settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) stop_reason = StopReason::SUCCEEDED;
         if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag)))
