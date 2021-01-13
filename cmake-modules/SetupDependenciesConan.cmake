@@ -80,7 +80,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         ##################################################################
         message(STATUS "Detected Conan build info: ${CONAN_BUILD_INFO}")
         include(${CONAN_BUILD_INFO})
-        conan_basic_setup(TARGETS)
+        conan_basic_setup(KEEP_RPATHS TARGETS)
     else()
 
         ##################################################################
@@ -127,7 +127,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                 ENV libunwind:CFLAGS=-fcommon
                 PROFILE_AUTO ALL
                 ${DMRG_CONAN_OPTIONS}
-                BUILD missing
+                KEEP_RPATHS
+#                BUILD missing
+                BUILD glog
         )
 
     endif()
@@ -215,6 +217,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     if(TARGET CONAN_PKG::ceres-solver)
         target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::ceres-solver)
     endif()
+#    if(TARGET CONAN_PKG::gflags)
+#        target_link_libraries(dmrg-opt PUBLIC -Wl,--no-as-needed CONAN_PKG::gflags  -Wl,--as-needed)
+#    endif()
     if(TARGET CONAN_PKG::arpack++)
         target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::arpack++)
         if(TARGET mkl::mkl)

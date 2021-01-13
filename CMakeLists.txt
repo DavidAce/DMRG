@@ -87,6 +87,7 @@ include(cmake-modules/CompilerFlags.cmake)
 ################################
 include(source_list.txt)
 add_executable(${PROJECT_NAME})
+#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_WHAT_YOU_USE TRUE)
 add_library(dmrg-main OBJECT ${DMRG_SOURCES})
 
 add_library(dmrg-arp OBJECT
