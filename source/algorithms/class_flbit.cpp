@@ -5,6 +5,7 @@
 #include "class_flbit.h"
 #include <config/nmspc_settings.h>
 #include <general/nmspc_exceptions.h>
+#include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
 #include <iostream>
 #include <math/num.h>
@@ -332,21 +333,22 @@ void class_flbit::create_time_evolution_gates() {
 }
 
 void class_flbit::create_lbit_transform_gates() {
-    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+    unitary_gates_2site_layers.clear();
+    for(size_t idx = 0; idx < settings::flbit::num_layer; idx++ )
+        unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix));
+//    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+//    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+//    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
+//    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
 }
 
 void class_flbit::transform_to_real_basis() {
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
-    tools::log->info("Transforming {} to {}", state_lbit->get_name(), tensors.state->get_name());
-    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer0, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer1, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer2, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*tensors.state, unitary_gates_2site_layer3, false, status.chi_lim);
+    tools::log->info("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
+    for(const auto & layer : unitary_gates_2site_layers)
+        tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
 
     tensors.clear_measurements();
     tensors.clear_cache();
@@ -371,10 +373,8 @@ void class_flbit::transform_to_real_basis() {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
-        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer3, true, status.chi_lim);
-        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer2, true, status.chi_lim);
-        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer1, true, status.chi_lim);
-        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer0, true, status.chi_lim);
+        for(auto & layer : iter::reverse(unitary_gates_2site_layers))
+            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.chi_lim);
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}",overlap));
@@ -392,10 +392,9 @@ void class_flbit::transform_to_lbit_basis() {
     tools::log->info("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer3, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer2, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer1, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer0, true, status.chi_lim);
+    for(auto & layer : iter::reverse(unitary_gates_2site_layers))
+        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
+
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
@@ -413,10 +412,8 @@ void class_flbit::transform_to_lbit_basis() {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
-        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer0, false, status.chi_lim);
-        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer1, false, status.chi_lim);
-        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer2, false, status.chi_lim);
-        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer3, false, status.chi_lim);
+        for(auto & layer : unitary_gates_2site_layers)
+            tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}",overlap));

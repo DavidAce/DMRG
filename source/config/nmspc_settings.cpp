@@ -127,6 +127,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
     dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
     dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
+    dmrg_config.load_parameter("flbit::num_layer"               , flbit::num_layer);
     dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
     dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
     dmrg_config.load_parameter("flbit::time_final_real"         , flbit::time_final_real);

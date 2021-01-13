@@ -18,10 +18,7 @@ class class_flbit : public class_algorithm_finite {
     std::vector<qm::Gate>               ham_gates_2body, time_gates_2site;
     std::vector<qm::Gate>               ham_gates_3body, time_gates_3site;
     std::vector<qm::Gate>               ham_gates_Lsite, time_gates_Lsite;
-    std::vector<qm::Gate>               unitary_gates_2site_layer0;
-    std::vector<qm::Gate>               unitary_gates_2site_layer1;
-    std::vector<qm::Gate>               unitary_gates_2site_layer2;
-    std::vector<qm::Gate>               unitary_gates_2site_layer3;
+    std::vector<std::vector<qm::Gate>>  unitary_gates_2site_layers;
     std::vector<std::complex<double>>   time_points;
 
     Eigen::Tensor<Scalar, 1> Upsi_ed;
