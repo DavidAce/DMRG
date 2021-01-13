@@ -12,6 +12,8 @@
     #define DMRG_EXTERN extern
 #endif
 
+class class_tic_toc;
+
 namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
     class solver {
@@ -40,13 +42,21 @@ namespace svd {
         }
 
         public:
-        solver(size_t logLevel = 2);
+        solver(size_t logLevel = 2, bool profile = false);
         bool   use_lapacke = false;
         bool   use_bdc = true;
+
+        std::shared_ptr<class_tic_toc> t_wrk;
+        std::shared_ptr<class_tic_toc> t_adj;
+        std::shared_ptr<class_tic_toc> t_jac;
+        std::shared_ptr<class_tic_toc> t_svd;
+
         void   setLogLevel(size_t logLevel);
         double get_truncation_error();
         void   setThreshold(double newThreshold, std::optional<double> overrideThreshold = std::nullopt);
         void   setSwitchSize(size_t newSwitchSize, std::optional<size_t> overrideSwitchSize = std::nullopt);
+        void   enableProfiling();
+        void   disableProfiling();
 
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);

@@ -81,8 +81,8 @@ namespace settings {
     //Profiling
     namespace profiling {
         inline bool     on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
+        inline bool     extra     = false;                         /*!< Prints more profiling */
         inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time output. */
-        inline bool     extra     = false;                         /*!< Prints profiling updates after each step */
     }
     //Console settings
     namespace console {

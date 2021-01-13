@@ -8,7 +8,28 @@
 #include <Eigen/QR>
 #include <Eigen/SVD>
 #include <math/svd.h>
-svd::solver::solver(size_t logLevel) { setLogLevel(logLevel); }
+#include <general/class_tic_toc.h>
+
+svd::solver::solver(size_t logLevel, bool profile) {
+    setLogLevel(logLevel);
+    t_wrk = std::make_unique<class_tic_toc>(profile,5, "work");
+    t_adj = std::make_unique<class_tic_toc>(profile,5, "adjoint");
+    t_jac = std::make_unique<class_tic_toc>(profile,5, "jacobi");
+    t_svd = std::make_unique<class_tic_toc>(profile,5, "bdcsvd");
+}
+
+void   svd::solver::enableProfiling(){
+    t_wrk->set_properties(true, 5,"work");
+    t_adj->set_properties(true, 5,"adjoint");
+    t_jac->set_properties(true, 5,"jacobi");
+    t_svd->set_properties(true, 5,"bdcsvd");
+}
+void   svd::solver::disableProfiling(){
+    t_wrk->set_properties(false, 0,"");
+    t_adj->set_properties(false, 0,"");
+    t_jac->set_properties(false, 0,"");
+    t_svd->set_properties(false, 0,"");
+}
 
 void svd::solver::setLogLevel(size_t logLevel) {
     if(not svd::log)
@@ -73,19 +94,22 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     else
         threshold = SVD.threshold();
     bool         use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize.value());
-    unsigned int bitfield   = Eigen::ComputeThinU | Eigen::ComputeThinV;
+    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), switchsize.value(), rank_max.value());
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        bitfield = Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner;
         svd::log->trace("Using JacobiSVD with flags Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner");
-
+        // Run the svd
+        t_jac->tic();
+        SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
+        t_jac->toc();
     } else {
         svd::log->trace("Using BDCSVD with flags Eigen::ComputeThinU | Eigen::ComputeThinV");
+        // Run the svd
+        t_svd->tic();
+        SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        t_svd->toc();
     }
 
-    // Run the svd
-    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), switchsize.value(), rank_max.value());
-    SVD.compute(mat, bitfield);
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= threshold.value()).count();
     svd::log->trace("Truncation singular values");

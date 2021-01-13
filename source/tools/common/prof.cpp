@@ -257,19 +257,23 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::iTEBD].append("t_var_ham",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance (HAM)        "));
     prof[AlgorithmType::iTEBD].append("t_var_mom",       std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance (MOM)        "));
 
-    prof[AlgorithmType::ANY].append("t_gate_move",       std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Gate: Move            "));
-    prof[AlgorithmType::ANY].append("t_gate_apply",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Gate: Apply           "));
-    prof[AlgorithmType::ANY].append("t_gate_merge",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Gate: Merge           "));
-    prof[AlgorithmType::ANY].append("t_gate_return",     std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Gate: Return          "));
-    prof[AlgorithmType::ANY].append("t_merge_split",     std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Merge: Split          "));
-    prof[AlgorithmType::ANY].append("t_merge_merge",     std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Merge: Merge          "));
-    prof[AlgorithmType::ANY].append("t_split_svdm",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Split: SVD main       "));
-    prof[AlgorithmType::ANY].append("t_split_svda",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Split: SVD left       "));
-    prof[AlgorithmType::ANY].append("t_split_svdb",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Split: SVD right      "));
-    prof[AlgorithmType::ANY].append("t_splitA_svd",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- SplitA:SVD            "));
-    prof[AlgorithmType::ANY].append("t_splitB_svd",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- SplitB:SVD            "));
-    prof[AlgorithmType::ANY].append("t_write_h5pp",      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Write h5pp            "));
-    prof[AlgorithmType::ANY].append("t_map_norm"  ,      std::make_unique<class_tic_toc>(false, settings::profiling::precision, " |- Map normalize         "));
+    prof[AlgorithmType::ANY].append("t_gate_move",       std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Gate: Move            "));
+    prof[AlgorithmType::ANY].append("t_gate_apply",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Gate: Apply           "));
+    prof[AlgorithmType::ANY].append("t_gate_merge",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Gate: Merge           "));
+    prof[AlgorithmType::ANY].append("t_gate_return",     std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Gate: Return          "));
+    prof[AlgorithmType::ANY].append("t_merge_split",     std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Merge: Split          "));
+    prof[AlgorithmType::ANY].append("t_merge_merge",     std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Merge: Merge          "));
+    prof[AlgorithmType::ANY].append("t_split_svdm",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Split: SVD main       "));
+    prof[AlgorithmType::ANY].append("t_split_svda",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Split: SVD left       "));
+    prof[AlgorithmType::ANY].append("t_split_svdb",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Split: SVD right      "));
+    prof[AlgorithmType::ANY].append("t_splitA_svd",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SplitA:SVD            "));
+    prof[AlgorithmType::ANY].append("t_splitB_svd",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SplitB:SVD            "));
+    prof[AlgorithmType::ANY].append("t_write_h5pp",      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Write h5pp            "));
+    prof[AlgorithmType::ANY].append("t_map_norm"  ,      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- Map normalize         "));
+    prof[AlgorithmType::ANY].append("t_svd_wrk"   ,      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SVD work              "));
+    prof[AlgorithmType::ANY].append("t_svd_adj"   ,      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SVD adjoint           "));
+    prof[AlgorithmType::ANY].append("t_svd_jac"   ,      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SVD jacobi            "));
+    prof[AlgorithmType::ANY].append("t_svd_svd"   ,      std::make_unique<class_tic_toc>(settings::profiling::extra, settings::profiling::precision, " |- SVD bdcsvd            "));
 
     /* clang-format on */
 }
