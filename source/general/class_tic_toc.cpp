@@ -6,10 +6,11 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <utility>
 
 class_tic_toc::class_tic_toc() : class_tic_toc(true, 5, "") {}
 
-class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text) : name(output_text), enable(on_off), print_precision(prec) {
+class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text) : name(std::move(output_text)), enable(on_off), print_precision(prec) {
     if(enable) {
         if(!name.empty()) { name += ": "; }
         reset();
@@ -35,9 +36,9 @@ void class_tic_toc::toc() {
     }
 }
 
-void class_tic_toc::set_properties(bool on_off, int prec, std::string output_text) { *this = class_tic_toc(on_off, prec, output_text); }
+void class_tic_toc::set_properties(bool on_off, int prec, std::string output_text) { *this = class_tic_toc(on_off, prec, std::move(output_text)); }
 
-void class_tic_toc::set_label(std::string output_text) { *this = class_tic_toc(enable, print_precision, output_text); }
+void class_tic_toc::set_label(std::string output_text) { *this = class_tic_toc(enable, print_precision, std::move(output_text)); }
 
 void class_tic_toc::set_measured_time(double other_time_in_seconds) {
     measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
@@ -134,32 +135,42 @@ void class_tic_toc::reset() {
 }
 
 class_tic_toc &class_tic_toc::operator=(double other_time_in_seconds) {
-    this->measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
-    this->delta_time    = this->measured_time;
+    if(enable){
+        this->measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+        this->delta_time    = this->measured_time;
+    }
     return *this;
 }
 
 class_tic_toc &class_tic_toc::operator+=(double other_time_in_seconds) {
-    this->measured_time += std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
-    this->delta_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    if(enable){
+        this->measured_time += std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+        this->delta_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    }
     return *this;
 }
 
 class_tic_toc &class_tic_toc::operator-=(double other_time_in_seconds) {
-    this->measured_time -= std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
-    this->delta_time = -std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    if(enable){
+        this->measured_time -= std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+        this->delta_time = -std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    }
     return *this;
 }
 
 class_tic_toc &class_tic_toc::operator+=(const class_tic_toc &rhs) {
-    this->measured_time += rhs.measured_time;
-    this->delta_time = rhs.measured_time;
+    if(enable) {
+        this->measured_time += rhs.measured_time;
+        this->delta_time = rhs.measured_time;
+    }
     return *this;
 }
 
 class_tic_toc &class_tic_toc::operator-=(const class_tic_toc &rhs) {
-    this->measured_time -= rhs.measured_time;
-    this->delta_time = -rhs.measured_time;
+    if(enable){
+        this->measured_time -= rhs.measured_time;
+        this->delta_time = -rhs.measured_time;
+    }
     return *this;
 }
 
