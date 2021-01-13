@@ -148,7 +148,9 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     // Set up the SVD
     svd::solver svd;
     svd.use_lapacke = true;
+    svd.use_bdc = true;
     svd.setLogLevel(2);
+//    svd.enableProfiling();
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
@@ -158,6 +160,10 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     auto [U, S, V] = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
     tools::common::profile::get_default_prof()["t_svd"]->toc();
     tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->toc();
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
 
     // Sanity checks
     if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from main svd");

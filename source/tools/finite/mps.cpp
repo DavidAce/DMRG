@@ -492,23 +492,37 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
-    if (settings::profiling::on and tools::log->level() <= spdlog::level::debug) {
-        tools::log->debug("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f}",
+    if (settings::profiling::extra) {
+        tools::log->info("Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | split {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | svdA {:.4f} | svdB {:.4f} | wrk {:.4f} | adj {:.4f} | jac {:.4f} | svd {:.4f}",
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->get_measured_time(),
                           1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->get_measured_time(),
-                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->get_measured_time());
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"]->get_measured_time(),
+                          1000 * tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"]->get_measured_time()
+
+                         );
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->reset();
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"]->reset();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"]->reset();
     }
 }
