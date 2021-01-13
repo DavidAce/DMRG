@@ -74,10 +74,13 @@ void class_algorithm_finite::run()
         try {
             resume();
         } catch(const except::state_error &ex) {
+            tools::common::profile::t_tot->toc();
             throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const except::load_error &ex) {
+            tools::common::profile::t_tot->toc();
             throw except::load_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const std::exception &ex) {
+            tools::common::profile::t_tot->toc();
             throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
     } else {
