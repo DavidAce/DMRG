@@ -146,11 +146,9 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     }
 
     // Set up the SVD
-    svd::solver svd;
+    svd::solver svd(2, settings::profiling::extra);
     svd.use_lapacke = true;
     svd.use_bdc = true;
-    svd.setLogLevel(2);
-//    svd.enableProfiling();
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
