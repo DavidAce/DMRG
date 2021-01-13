@@ -128,8 +128,9 @@ function(find_mkl_libraries)
                 lib lib/${MKL_ARCH_DIR}
                 )
         add_library(mkl::mkl_core ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_core PROPERTIES IMPORTED_LOCATION "${MKL_CORE_LIBRARY}")
         target_include_directories(mkl::mkl_core SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+        set_target_properties(mkl::mkl_core PROPERTIES IMPORTED_LOCATION "${MKL_CORE_LIBRARY}")
+        set_target_properties(mkl::mkl_core PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         # Threading libraries
         find_library(MKL_SEQUENTIAL_LIBRARY
@@ -140,6 +141,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::mkl_sequential ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_sequential PROPERTIES IMPORTED_LOCATION "${MKL_SEQUENTIAL_LIBRARY}")
+        set_target_properties(mkl::mkl_sequential PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         find_library(MKL_INTELTHREAD_LIBRARY
                 mkl_intel_thread
@@ -149,6 +151,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::mkl_intel_thread ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_intel_thread PROPERTIES IMPORTED_LOCATION "${MKL_INTELTHREAD_LIBRARY}")
+        set_target_properties(mkl::mkl_intel_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         find_library(MKL_GNUTHREAD_LIBRARY
                 mkl_gnu_thread
@@ -158,6 +161,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::mkl_gnu_thread ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_gnu_thread PROPERTIES IMPORTED_LOCATION "${MKL_GNUTHREAD_LIBRARY}")
+        set_target_properties(mkl::mkl_gnu_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         find_library(MKL_TBBTHREAD_LIBRARY
                 mkl_tbb_thread
@@ -167,6 +171,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::mkl_tbb_thread ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_tbb_thread PROPERTIES IMPORTED_LOCATION "${MKL_TBBTHREAD_LIBRARY}")
+        set_target_properties(mkl::mkl_tbb_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
 
@@ -205,9 +210,11 @@ function(find_mkl_libraries)
         endif()
         add_library(mkl::mkl_intel_lp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_intel_lp PROPERTIES IMPORTED_LOCATION "${MKL_INTEL_LP_LIBRARY}")
+        set_target_properties(mkl::mkl_intel_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         add_library(mkl::mkl_intel_ilp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_intel_ilp PROPERTIES IMPORTED_LOCATION "${MKL_INTEL_ILP_LIBRARY}")
+        set_target_properties(mkl::mkl_intel_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
 
@@ -242,10 +249,12 @@ function(find_mkl_libraries)
         endif()
         add_library(mkl::mkl_gf_lp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_gf_lp PROPERTIES IMPORTED_LOCATION "${MKL_GF_LP_LIBRARY}")
+        set_target_properties(mkl::mkl_gf_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
         add_library(mkl::mkl_gf_ilp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_gf_ilp PROPERTIES IMPORTED_LOCATION "${MKL_GF_ILP_LIBRARY}")
+        set_target_properties(mkl::mkl_gf_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
         # Blas
@@ -283,9 +292,11 @@ function(find_mkl_libraries)
 
         add_library(mkl::mkl_blas_lp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_blas_lp PROPERTIES IMPORTED_LOCATION "${MKL_BLAS_LP_LIBRARY}")
+        set_target_properties(mkl::mkl_blas_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         add_library(mkl::mkl_blas_ilp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_blas_ilp PROPERTIES IMPORTED_LOCATION "${MKL_BLAS_ILP_LIBRARY}")
+        set_target_properties(mkl::mkl_blas_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
 
@@ -320,9 +331,11 @@ function(find_mkl_libraries)
         endif()
         add_library(mkl::mkl_lapack_lp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_lapack_lp PROPERTIES IMPORTED_LOCATION "${MKL_LAPACK_LP_LIBRARY}")
+        set_target_properties(mkl::mkl_lapack_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
         add_library(mkl::mkl_lapack_ilp ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_lapack_ilp PROPERTIES IMPORTED_LOCATION "${MKL_LAPACK_ILP_LIBRARY}")
+        set_target_properties(mkl::mkl_lapack_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 
 
@@ -336,6 +349,7 @@ function(find_mkl_libraries)
         add_library(mkl::mkl_rt ${LINK_TYPE} IMPORTED)
         set_target_properties(mkl::mkl_rt PROPERTIES IMPORTED_LOCATION "${MKL_RT_LIBRARY}")
         set_target_properties(mkl::mkl_rt PROPERTIES INTERFACE_LINK_DIRECTORIES  ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
+        set_target_properties(mkl::mkl_rt PROPERTIES LINK_WHAT_YOU_USE TRUE)
         target_include_directories(mkl::mkl_rt SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
 
 
@@ -369,6 +383,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::tbb SHARED IMPORTED)
         set_target_properties(mkl::tbb PROPERTIES IMPORTED_LOCATION "${MKL_TBB_LIBRARY}")
+        set_target_properties(mkl::tbb PROPERTIES LINK_WHAT_YOU_USE TRUE)
         # TBBMALLOC
         find_library(MKL_TBBMALLOC_LIBRARY
                 NAMES
@@ -380,6 +395,7 @@ function(find_mkl_libraries)
                 )
         add_library(mkl::tbbmalloc SHARED IMPORTED)
         set_target_properties(mkl::tbbmalloc PROPERTIES IMPORTED_LOCATION "${MKL_TBBMALLOC_LIBRARY}")
+        set_target_properties(mkl::tbbmalloc PROPERTIES LINK_WHAT_YOU_USE TRUE)
         target_link_libraries(mkl::tbb INTERFACE mkl::tbbmalloc)
 
         # Define usable targets
@@ -404,7 +420,7 @@ function(find_mkl_libraries)
                     endif()
                     add_library(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE IMPORTED)
                     target_link_libraries(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE
-                            -Wl,--no-as-needed
+#                            -Wl,--no-as-needed
                             mkl::mkl_blas_${MODEVAR}
                             mkl::mkl_lapack_${MODEVAR}
                             -Wl,--start-group
@@ -412,7 +428,7 @@ function(find_mkl_libraries)
                             mkl::mkl_${THREADVAR}
                             mkl::mkl_core
                             -Wl,--end-group
-                            -Wl,--as-needed
+#                            -Wl,--as-needed
                             m
                             dl
                             )
