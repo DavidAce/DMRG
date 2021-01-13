@@ -149,6 +149,7 @@ void class_flbit::run_preprocessing() {
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
+
     write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
@@ -364,6 +365,22 @@ void class_flbit::transform_to_real_basis() {
 
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
+
+
+    if constexpr(settings::debug){
+        // Double check the transform operation
+        // Check that the transform backwards is equal to to the original state
+        auto state_lbit_debug = *tensors.state;
+        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer3, true, status.chi_lim);
+        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer2, true, status.chi_lim);
+        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer1, true, status.chi_lim);
+        tools::finite::mps::apply_gates(state_lbit_debug, unitary_gates_2site_layer0, true, status.chi_lim);
+        auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
+        tools::log->info("Debug overlap: {:.16f}", overlap);
+        if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}",overlap));
+    }
+
+
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
@@ -375,10 +392,10 @@ void class_flbit::transform_to_lbit_basis() {
     tools::log->info("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer0, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer1, true, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer2, true, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer3, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer2, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer1, true, status.chi_lim);
+    tools::finite::mps::apply_gates(*state_lbit, unitary_gates_2site_layer0, true, status.chi_lim);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
@@ -390,6 +407,22 @@ void class_flbit::transform_to_lbit_basis() {
                 std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
                           << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
         }
+
+
+    if constexpr(settings::debug){
+        // Double check the transform operation
+        // Check that the transform backwards is equal to to the original state
+        auto state_real_debug = *state_lbit;
+        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer0, false, status.chi_lim);
+        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer1, false, status.chi_lim);
+        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer2, false, status.chi_lim);
+        tools::finite::mps::apply_gates(state_real_debug, unitary_gates_2site_layer3, false, status.chi_lim);
+        auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
+        tools::log->info("Debug overlap: {:.16f}", overlap);
+        if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}",overlap));
+    }
+
+
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
