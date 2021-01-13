@@ -36,7 +36,8 @@ for val_L,val_J,val_w, val_f, init, in  product(sites,J,w, f, initial_state):
 
     settings = {
         "output::output_filepath"            : output_prefix + '/L_'+ str_L + '/' + str_J + '/' + str_w + '/f' + str_f + '/' + basename + '.h5',
-        "threading::num_threads"             : "2",
+        "threading::stl_threads"             : "1",
+        "threading::omp_threads"             : "2",
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
