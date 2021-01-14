@@ -549,7 +549,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
                 state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
-            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
+            table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
         }
         case StorageReason::CHECKPOINT: {
@@ -573,7 +573,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             // If we have updated chi we may want to write a projection too
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
+            table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
         }
         case StorageReason::PROJ_STATE: {
@@ -588,13 +588,13 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             }
 
             state_prefix += "/projection";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
+            table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
         }
         case StorageReason::INIT_STATE: {
             storage_level = settings::output::storage_level_init_state;
             state_prefix += "/state_init";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
+            table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
         }
         case StorageReason::EMIN_STATE: {
