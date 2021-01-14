@@ -37,25 +37,28 @@ if [ ! -f $jobfile ]; then
     exit 1
 fi
 
-echo "HOSTNAME          : $HOSTNAME"
-echo "CLUSTER           : $SLURM_CLUSTER_NAME"
-echo "CPUS ON  NODE     : $SLURM_CPUS_ON_NODE"
-echo "CPUS PER NODE     : $SLURM_JOB_CPUS_PER_NODE"
-echo "CPUS PER TASK     : $SLURM_CPUS_PER_TASK"
-echo "MEM PER CPU       : $SLURM_MEM_PER_CPU"
-echo "MEM PER NODE      : $SLURM_MEM_PER_NODE"
-echo "ARRAY JOB ID      : $SLURM_ARRAY_JOB_ID"
-echo "ARRAY TASK ID     : $SLURM_ARRAY_TASK_ID"
-echo "ARRAY TASK STEP   : $SLURM_ARRAY_TASK_STEP"
-echo "ARRAY TASK MIN ID : $SLURM_ARRAY_TASK_MIN"
-echo "ARRAY TASK MAX ID : $SLURM_ARRAY_TASK_MAX"
-echo "JOB FILE          : $jobfile"
+echo "HOSTNAME                 : $HOSTNAME"
+echo "JOB FILE                 : $jobfile"
+echo "SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
+echo "SLURM_CPUS_ON_NODE       : $SLURM_CPUS_ON_NODE"
+echo "SLURM_JOB_CPUS_PER_NODE  : $SLURM_JOB_CPUS_PER_NODE"
+echo "SLURM_CPUS_PER_TASK      : $SLURM_CPUS_PER_TASK"
+echo "SLURM_MEM_PER_CPU        : $SLURM_MEM_PER_CPU"
+echo "SLURM_MEM_PER_NODE       : $SLURM_MEM_PER_NODE"
+echo "SLURM_ARRAY_JOB_ID       : $SLURM_ARRAY_JOB_ID"
+echo "SLURM_ARRAY_TASK_ID      : $SLURM_ARRAY_TASK_ID"
+echo "SLURM_ARRAY_TASK_STEP    : $SLURM_ARRAY_TASK_STEP"
+echo "SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
+echo "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
 
 
 num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 start_id=$SLURM_ARRAY_TASK_ID
-end_id=$((SLURM_ARRAY_TASK_ID+SLURM_ARRAY_TASK_STEP))
+end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
+
+echo "SEED SEQUENCE            : $(seq $start_id $end_id)"
+
 for id in $(seq $start_id $end_id); do
   arg_line=$(tail -n+$id $jobfile | head -1)
   if [ -z "$arg_line" ]; then
@@ -67,20 +70,20 @@ for id in $(seq $start_id $end_id); do
   model_seed=$(echo "$arg_line" | cut -d " " -f2)
   logdir=logs/$config_dir/$config_base
   mkdir -p $logdir
-
-  echo "JOB FILE LINE(S)  : $arg_line"
-  echo "CONFIG FILE       : $config_file"
-  echo "SEED              : $model_seed"
+  echo "JOB FILE LINE(S)         : $arg_line"
+  echo "CONFIG FILE              : $config_file"
+  echo "SEED                     : $model_seed"
+  echo "TIME                     : $(/bin/date)"
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
       if [ -z  "$dryrun" ];then
         $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
         exit_code=$?
         if [ "$exit_code" == "0" ]; then
-          echo "SUCCESS           : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
+          echo "SUCCESS                  : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
         else
-          echo "EXIT CODE         : $exit_code"
-          echo "FAILED            : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
+          echo "EXIT CODE                : $exit_code"
+          echo "FAILED                   : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
           exit_code_save=$exit_code
           continue
         fi
