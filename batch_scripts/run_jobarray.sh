@@ -90,7 +90,7 @@ for id in $(seq $start_id $end_id); do
       fi
   elif [ "$num_cols" -eq 3 ]; then
       bit_field=$(echo $arg_line | cut -d " " -f3)
-      echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
       if [ -z  "$dryrun" ];then
         $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
         exit_code=$?
