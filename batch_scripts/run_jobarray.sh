@@ -57,7 +57,7 @@ start_id=$SLURM_ARRAY_TASK_ID
 end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 
-echo "SEED SEQUENCE            : $(seq $start_id $end_id)"
+echo "TASK ID SEQUENCE         : $(seq $start_id $end_id)"
 
 for id in $(seq $start_id $end_id); do
   arg_line=$(tail -n+$id $jobfile | head -1)
