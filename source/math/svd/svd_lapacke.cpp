@@ -123,7 +123,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             // For this routine we need rows > cols
             t_wrk->tic();
             int lwork = std::max(6, rowsA + colsA);
-            std::vector<Scalar> work(lwork);
+            std::vector<Scalar> work(static_cast<size_t>(lwork));
 //            work.setConstant(0);
 //            work[0] = 1;
             S.resize(sizeS);
@@ -145,7 +145,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_wrk->tic();
             int liwork = std::max(1, 8 * std::min(rowsA, colsA));
             std::vector<Scalar> work(1);
-            std::vector<int>    iwork(liwork);
+            std::vector<int>    iwork(static_cast<size_t>(liwork));
 
             U.resize(rowsU, colsU);
             S.resize(sizeS);
@@ -156,7 +156,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
 
             int lwork = static_cast<int>(work[0]);
-            work.resize(lwork);
+            work.resize(static_cast<size_t>(lwork));
             t_wrk->toc();
 
             svd::log->trace("Running dgesvd");
@@ -178,7 +178,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
 
             int lwork = static_cast<int>(work[0]);
-            work.resize(lwork);
+            work.resize(static_cast<size_t>(lwork));
 
             svd::log->trace("Running dgesvd");
             t_svd->tic();
@@ -207,8 +207,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
             int lwork  = static_cast<int>(std::real(work[0]));
             int lrwork = static_cast<int>(rwork[0]);
-            work.resize(lwork);
-            rwork.resize(lrwork);
+            work.resize(static_cast<size_t>(lwork));
+            rwork.resize(static_cast<size_t>(lrwork));
             Wp = reinterpret_cast<lapack_complex_double *>(work.data());
             t_wrk->toc();
 
@@ -263,7 +263,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_wrk->tic();
             int lrwork = 5 * std::min(rowsA, colsA);
             std::vector<Scalar> work(1);
-            std::vector<double> rwork(lrwork);
+            std::vector<double> rwork(static_cast<size_t>(lrwork));
 
             U.resize(rowsU, colsU);
             S.resize(sizeS);
@@ -279,7 +279,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
 
             int lwork = static_cast<int>(std::real(work[0]));
-            work.resize(lwork);
+            work.resize(static_cast<size_t>(lwork));
             Wp = reinterpret_cast<lapack_complex_double *>(work.data()); // Update the pointer if reallocated
             t_wrk->toc();
 
@@ -291,7 +291,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
     }
     svd::log->trace("Truncating singular values");
-
+    if (count) count.value()++;
     long max_size = std::min(S.size(), rank_max.value());
     long rank     = (S.head(max_size).array() >= lapacke_svd_threshold).count();
     if(rank == S.size()) {
