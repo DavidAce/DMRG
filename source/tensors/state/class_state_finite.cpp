@@ -266,7 +266,7 @@ long class_state_finite::active_problem_size() const { return tools::finite::mul
 Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
+    if constexpr(settings::debug) tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
     tools::common::profile::get_default_prof()["t_mps"]->tic();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
