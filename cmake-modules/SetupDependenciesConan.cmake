@@ -128,8 +128,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                 PROFILE_AUTO ALL
                 ${DMRG_CONAN_OPTIONS}
                 KEEP_RPATHS
-#                BUILD missing
-                BUILD glog
+                BUILD missing
         )
 
     endif()
