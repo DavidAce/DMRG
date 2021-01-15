@@ -95,22 +95,10 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
      *
      * The U and V tensors contain the sites to the left and right of the center bond,
      * and are sent away for further splitting.
-     * S will later become LC after absorbing the remnants of (then split up) U and V.
-     *
-     *
-     *
-     * Special cases:
-     *
-     * 1) center_position is not in positions, and is to the left of all positions:
-     *      Then we should only make a split from the right, turning all positions into "B" type positions.
-     *      The U_residue matrix is
-     *
-     * 2) center_position is not in positions, and is to the right of all positions:
-     *      Then we should only make a split from the left, turning all sites into "A" type sites.
-     *      The V_residue matrix
      *
      *
      */
+
     if(positions.empty()) throw std::runtime_error("Could not split multisite tensor: positions list is empty");
     if(multisite_tensor.size() == 0) throw std::runtime_error("Could not split multisite tensor: tensor is empty");
     if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor: spin_dims list is empty");
@@ -123,7 +111,7 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     std::vector<size_t> positions_left, positions_right;
     std::vector<long>   spin_dims_left, spin_dims_right;
 
-    // Define dimensions for the first reshape into a rank-4 tensor
+    // Define dimensions and positions after the desired split
     long chiL = multisite_tensor.dimension(1);
     long chiR = multisite_tensor.dimension(2);
     long dL   = 1;
@@ -145,73 +133,132 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         dim_it++;
     }
 
-    // Set up the SVD
-    svd::solver svd(2, settings::profiling::extra);
-    svd.use_lapacke = true;
-    svd.use_bdc = true;
-    svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
-    svd.setSwitchSize(settings::precision::svd_switchsize);
 
-    // Perform the first SVD which splits at the center position
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->tic();
-    tools::common::profile::get_default_prof()["t_svd"]->tic();
-    auto [U, S, V] = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
-    tools::common::profile::get_default_prof()["t_svd"]->toc();
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->toc();
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
+    // Initialize the new mps_sites
+    std::vector<class_mps_site> mps_sites_As;
+    std::deque<class_mps_site> mps_sites_Bs;
+    // Initialize the left/right unitary matrices
+    Eigen::Tensor<Scalar,3> U,V;
+    Eigen::Tensor<Scalar,1> S;
 
-    // Sanity checks
-    if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from main svd");
-    if(multisite_tensor.dimension(1) != U.dimension(1))
-        throw std::runtime_error(fmt::format("Could not split multisite tensor: left bond dimension mismatch: before split {} != {} after split",
-                                             multisite_tensor.dimension(1), U.dimension(1)));
-    if(multisite_tensor.dimension(2) != V.dimension(2))
-        throw std::runtime_error(fmt::format("Could not split multisite tensor: right bond dimension mismatch: before split {} != {} after split",
-                                             multisite_tensor.dimension(2), V.dimension(2)));
+    // Now there are 5 options
+    // 1) All sites will become A-sites
+    // 2) All sites will become B-sites
+    // 3) One A and one B-site
+    // 4) Mixture of A and B-sites, with more (or eq) A's than B's
+    // 5) Mixture of A and B-sites, with more B's than A's
 
-    // Perform more SVD's to split the left and right parts around the center
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
-    auto mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, positions_left, chi_limit, svd_threshold);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
-    auto mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_threshold);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
+    if constexpr (settings::debug_split)
+        tools::log->trace("Positions {} | L {} | R {} | C {} | spins {} | spinL {} | spinR {} ",
+                          positions,positions_left,positions_right, center_position, spin_dims, spin_dims_left, spin_dims_right);
+    if(positions.size() == positions_left.size()) {
+        if constexpr(settings::debug_split) tools::log->trace("Option 1");
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
+        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_threshold);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
+        // Remnant stash
+        auto & mps = mps_sites_As.back();
+        auto & S_stash = mps.get_S_stash();
+        auto pos = mps.get_position<long>();
+        if(pos == center_position and S_stash) { // Steal LC from stash
+            mps.set_LC(S_stash->data, S_stash->error);
+            S_stash.reset();
+        }
+    }
+    else if(positions.size() == positions_right.size()) {
+        if constexpr(settings::debug_split) tools::log->trace("Option 2");
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_threshold);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
+        // Take care of stash
+        auto & mps = mps_sites_Bs.front();
+        auto & S_stash = mps.get_S_stash();
+        auto pos = mps.get_position<long>();
+        if(pos == center_position + 1 and S_stash){ // The stash in S becomes the LC for the site on the left
+            mps.stash_C(S_stash->data, S_stash->error,center_position);
+            S_stash.reset();
+        }
+    }
+    else if (positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1){
+        if constexpr(settings::debug_split) tools::log->trace("Option 3");
+        // Set up the SVD
+        svd::solver svd(2, settings::profiling::extra);
+        svd.use_lapacke = true;
+        svd.use_bdc = true;
+        svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
+        svd.setSwitchSize(settings::precision::svd_switchsize);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->tic();
+        tools::common::profile::get_default_prof()["t_svd"]->tic();
+        std::tie(U, S, V) = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
+        tools::common::profile::get_default_prof()["t_svd"]->toc();
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->toc();
+        mps_sites_As.emplace_back(U, std::nullopt, positions.front(),0, "AC");
+        mps_sites_As.back().set_LC(S,svd.get_truncation_error());
+        mps_sites_Bs.emplace_back(V, std::nullopt, positions.back(),0, "B");
+
+        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
+        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
+        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
+        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
+    }
+    else if (positions_left.size() >= positions_right.size()){
+        if constexpr(settings::debug_split) tools::log->trace("Option 4");
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
+        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_threshold);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
+        // We expect stashed S and V. Merge these and send onward to B's
+        auto & V_stash = mps_sites_As.back().get_V_stash();
+        auto & S_stash = mps_sites_As.back().get_S_stash();
+        if(V_stash and S_stash){
+            V = Textra::asDiagonal(S_stash->data).contract(V_stash->data, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+            V_stash.reset();
+            S_stash.reset();
+            tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
+            mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_threshold);
+            tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
+            // Remnant S is now an LC for the last A
+            auto & LC_stash = mps_sites_Bs.front().get_S_stash();
+            auto & mpsA = mps_sites_As.back();
+            mpsA.set_LC(LC_stash->data, LC_stash->error);
+            LC_stash.reset();
+            // Remnant U is merged back into A
+            mpsA.merge_stash(mps_sites_Bs.front());
+        }
+    }
+    else if (positions_left.size() < positions_right.size()) {
+        if constexpr(settings::debug) tools::log->trace("Option 5");
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_threshold);
+        tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
+        // We expect stashed U and S. Merge these and send onward to A's
+        auto & U_stash = mps_sites_Bs.front().get_U_stash();
+        auto & S_stash = mps_sites_Bs.front().get_S_stash();
+        if(U_stash and S_stash){
+            U = U_stash->data.contract(Textra::asDiagonal(S_stash->data), Textra::idx({2},{0}));
+            U_stash.reset();
+            S_stash.reset();
+            tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic();
+            mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, positions_left, chi_limit, svd_threshold);
+            tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->toc();
+            // Remnant S is now an LC for the last A
+            auto & LC_stash = mps_sites_As.back().get_S_stash();
+            auto & mpsA     = mps_sites_As.back();
+            mpsA.set_LC(LC_stash->data, LC_stash->error);
+            LC_stash.reset();
+            mps_sites_Bs.front().merge_stash(mpsA);
+        }
+    }
 
     if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
 
-    if(not mps_sites_As.empty() and mps_sites_Bs.empty()) {
-        // We got only left-normalized "A" matrices from the split.
-        if(multisite_tensor.dimension(1) != mps_sites_As.front().get_chiL())
-            throw std::runtime_error(fmt::format("Could not split multisite tensor: left bond dimension mismatch: "
-                                                 "multisite_tensor {} | mps_sites_As.front() {} | U {} | S {} | V {}",
-                                                 multisite_tensor.dimensions(), mps_sites_As.front().dimensions(), U.dimensions(), S.dimensions(),
-                                                 V.dimensions()));
-        mps_sites_As.back().stash_V(V);
-        if(mps_sites_As.back().get_position<long>() == center_position)
-            mps_sites_As.back().set_LC(S, svd.get_truncation_error());
-        else
-            mps_sites_As.back().stash_S(S, svd.get_truncation_error());
-
-    } else if(mps_sites_As.empty() and not mps_sites_Bs.empty()) {
-        // We got only right-normalized "B" matrices from the split.
-        if(multisite_tensor.dimension(2) != mps_sites_Bs.back().get_chiR())
-            throw std::runtime_error(fmt::format("Could not split multisite tensor: right bond dimension mismatch: "
-                                                 "multisite_tensor {} | mps_sites_Bs.back() {} | U {} | S {} | V {}",
-                                                 multisite_tensor.dimensions(), mps_sites_Bs.back().dimensions(), U.dimensions(), S.dimensions(),
-                                                 V.dimensions()));
-        mps_sites_Bs.front().stash_S(S, svd.get_truncation_error());
-        mps_sites_Bs.front().stash_U(U);
-    } else {
-        // We find this situation when doing SVD on a multisite tensor, i.e. >= 2 positions straddling the center point
-        mps_sites_As.back().set_LC(S, svd.get_truncation_error());
-    }
 
     // Some sanity checks
-    if(mps_sites_As.size() != spin_dims_left.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_As of of unexpected size");
-    if(mps_sites_Bs.size() != spin_dims_right.size()) throw std::runtime_error("Could not split multisite tensor: Got mps_sites_Bs of of unexpected size");
+    if(mps_sites_As.size() != spin_dims_left.size())
+        throw std::runtime_error(fmt::format("Could not split multisite tensor: Got mps_sites_As.size() {} != spins_dims_left {}",
+                                             mps_sites_As.size(), spin_dims_left.size()));
+    if(mps_sites_Bs.size() != spin_dims_right.size())
+        throw std::runtime_error(fmt::format("Could not split multisite tensor: Got mps_sites_Bs.size() {} != spins_dims_right {}",
+                                              mps_sites_Bs.size(), spin_dims_right.size()));
 
     // Move the right side onto the left side (This is equivalent to std::list::splice)
     mps_sites_As.insert(mps_sites_As.end(), std::make_move_iterator(mps_sites_Bs.begin()), std::make_move_iterator(mps_sites_Bs.end()));
@@ -277,21 +324,19 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
     if(positions.empty()) return std::vector<class_mps_site>();
-    //    if(sites.empty()) throw std::runtime_error("Could not split multisite tensor from the left: sites list is empty");
 
-    // Another  special case is when we do two-site tensors. Then we expect
-    // this function to receive a single site. We can simply return it
-    if(spin_dims.size() == 1) { return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "A")}; }
     // Initialize the resulting container of split sites
     std::vector<class_mps_site> mps_sites;
 
     // Now we have multiple spin dimensions
 
     // Set up the SVD
-    svd::solver svd;
+    svd::solver svd(2, settings::profiling::extra);
     svd.use_lapacke = true;
+    svd.use_bdc = true;
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
+
 
     // Declare the tensors that will catch the schmidt (SVD) decompositions
     Eigen::Tensor<Scalar, 3>                U;                           // This will become the first site to be extracted
@@ -338,20 +383,17 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
         S_prev_error = svd.get_truncation_error();
     }
 
-    // The spin dimension of V should be 1 since it does not contain sites anymore!
-    if(V.dimension(0) != 1) throw std::runtime_error("Could not split mps from the left: Last V dimension(0) is not 1");
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
 
     // Now we have a series of A-A-A-A matrices and their corresponding L's
-    // At the last step we have residual S and V left over.
-    // U is already left-normalized but has scrambled rows. Use V to sort them!
-    // S has all entries 1/dim(S) and can be discarded
-    // V is a site-less tensor with scrambled unit-vectors as columns.
-
-    // This operation should not change dimensions!
-    Eigen::Tensor<Scalar, 3> UV =
-        U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{U.dimension(0), U.dimension(1), V.dimension(2)});
-    // Note that after this M M^dagger = Identity
-    mps_sites.back().set_M(UV);
+    // At the last step we have residual S and V left over. Stash them!
+    auto & mps = mps_sites.back();
+    auto   pos = mps.get_position();
+    if(S_prev) mps.stash_S(S_prev.value(),S_prev_error,pos + 1);
+    mps.stash_V(V,pos + 1);
     return mps_sites;
 }
 
@@ -404,17 +446,14 @@ std::deque<class_mps_site>
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
     if(positions.empty()) return std::deque<class_mps_site>();
 
-    // Another special case is when we do two-site tensors. Then we expect
-    // this function to receive a single site. We can simply return it
-    if(spin_dims.size() == 1) return {class_mps_site(multisite_mps, std::nullopt, positions.front(), 0, "B")};
-
     // Initialize the resulting container of split sites
     std::deque<class_mps_site> mps_sites;
     // Now we have multiple spin dimensions
 
     // Set up the SVD
-    svd::solver svd;
+    svd::solver svd(2, settings::profiling::extra);
     svd.use_lapacke = true;
+    svd.use_bdc = true;
     svd.setThreshold(settings::precision::svd_threshold, svd_threshold);
     svd.setSwitchSize(settings::precision::svd_switchsize);
 
@@ -461,18 +500,20 @@ std::deque<class_mps_site>
         S_prev       = S;
         S_prev_error = svd.get_truncation_error();
     }
-    // The spin dimension of U should be 1, since it contains no sites anymore!
-    if(U.dimension(0) != 1) throw std::runtime_error("Could not split mps from the right: Last U dimension(0) is not 1");
+
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
+    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
+
 
     // Now we have a series of B-B-B-B matrices and their corresponding L's
-    // At the last step we have residual U and S left over.
-    // U is a site-less tensor with scrambled unit-vectors as rows.
-    // S has all entries 1/dim(S) and can be discarded
-    // V is already right-normalized but has scrambled columns. Use U to sort them!
-    // This operation should not change dimensions!
-    Eigen::Tensor<Scalar, 3> UV =
-        U.contract(V, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{V.dimension(0), U.dimension(1), V.dimension(2)});
-    // Note that after this M M^dagger = Identity
-    mps_sites.front().set_M(UV);
+    // At the last step we have residual U and S left over. Stash them!
+    auto & mps = mps_sites.front();
+    auto pos = mps.get_position();
+    if(pos > 0){  // More left-normalized sites left in U
+        if(S_prev) mps.stash_S(S_prev.value(),S_prev_error,pos-1);
+        mps.stash_U(U,pos-1);
+    }
     return mps_sites;
 }
