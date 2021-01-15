@@ -11,10 +11,10 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [16,24,32]
+sites               = [16,24]
 J                   = [[0.000, 0.250, 0.000]]
 w                   = [[1.000, 0.500, 0.250]]
-f                   = [0.2]
+f                   = [0.10, 0.20,0.30, 0.40]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 
