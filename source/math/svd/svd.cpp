@@ -10,12 +10,15 @@
 #include <math/svd.h>
 #include <general/class_tic_toc.h>
 
+std::optional<long long> svd::solver::count = 0;
+
 svd::solver::solver(size_t logLevel, bool profile) {
     setLogLevel(logLevel);
     t_wrk = std::make_unique<class_tic_toc>(profile,5, "work");
     t_adj = std::make_unique<class_tic_toc>(profile,5, "adjoint");
     t_jac = std::make_unique<class_tic_toc>(profile,5, "jacobi");
     t_svd = std::make_unique<class_tic_toc>(profile,5, "bdcsvd");
+    if(not count) count = 0;
 }
 
 void   svd::solver::enableProfiling(){
@@ -109,7 +112,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
         t_svd->toc();
     }
-
+    if (count) count.value()++;
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= threshold.value()).count();
     svd::log->trace("Truncation singular values");
