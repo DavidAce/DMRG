@@ -77,11 +77,11 @@ namespace qm::spinHalf {
             1.0, 0.0,
             0.0, -1.0).finished();
     Matrix2cd sp = (Matrix2cd() <<
-            0.0, 2.0,
+            0.0, 1.0,
             0.0, 0.0).finished();
     Matrix2cd sm = (Matrix2cd() <<
             0.0, 0.0,
-            2.0, 0.0).finished();
+            1.0, 0.0).finished();
     Matrix2cd id  = (Matrix2cd() << 1.0, 0.0,
             0.0, 1.0).finished();
 
@@ -258,13 +258,19 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     std::vector<qm::Gate> unitaries;
     unitaries.reserve(sites - 1);
     for(size_t idx = 0; idx < sites - 1; idx++) {
-        double               th0 = rnd::uniform_double_box(-1, 1);
-        double               th1 = rnd::uniform_double_box(-1, 1);
-        double               th2 = rnd::uniform_double_box(-1, 1);
-        double               th3 = rnd::uniform_double_box(-1, 1);
-        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
-        Eigen::Matrix4cd     H = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
-                             SP[0] * SM[1] * t + SP[1] * SM[0] * std::conj(t);
+        double               th0 = rnd::uniform_double_box(1);
+        double               th1 = rnd::uniform_double_box(1);
+        double               th2 = rnd::uniform_double_box(1);
+        double               th3 = rnd::uniform_double_box(1);
+        std::complex<double> t(rnd::uniform_double_box(1), rnd::uniform_double_box(1));
+
+        Eigen::Matrix4cd     H =
+            th3 * N[0] * N[1] +
+            th2 * N[1] * (ID[0] - N[0]) +
+            th1 * N[0] * (ID[1] - N[1]) +
+            th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+            SP[0] * SM[1] * t +
+            SP[1] * SM[0] * std::conj(t);
 
         if constexpr(kroneckerSwap) {
             // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
