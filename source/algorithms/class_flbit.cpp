@@ -177,7 +177,7 @@ void class_flbit::run_algorithm() {
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(stop_reason != StopReason::NONE) break;
         update_time_step();
-        //        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        tools::common::profile::prof[algo_type]["t_sim"]->start_lap();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -454,7 +454,7 @@ void class_flbit::print_status_update() {
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tools::common::profile::t_tot->get_measured_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
-    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tools::common::profile::prof[algo_type]["t_sim"]->get_last_interval()));
+    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tools::common::profile::prof[algo_type]["t_sim"]->get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
