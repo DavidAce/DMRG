@@ -45,7 +45,7 @@ namespace svd {
         solver(size_t logLevel = 2, bool profile = false);
         bool   use_lapacke = false;
         bool   use_bdc = true;
-
+        static std::optional<long long> count;
         std::shared_ptr<class_tic_toc> t_wrk;
         std::shared_ptr<class_tic_toc> t_adj;
         std::shared_ptr<class_tic_toc> t_jac;
