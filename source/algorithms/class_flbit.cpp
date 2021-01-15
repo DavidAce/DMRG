@@ -336,10 +336,6 @@ void class_flbit::create_lbit_transform_gates() {
     unitary_gates_2site_layers.clear();
     for(size_t idx = 0; idx < settings::flbit::num_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix));
-//    unitary_gates_2site_layer0 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-//    unitary_gates_2site_layer1 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-//    unitary_gates_2site_layer2 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
-//    unitary_gates_2site_layer3 = qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix);
 }
 
 void class_flbit::transform_to_real_basis() {
@@ -454,15 +450,11 @@ void class_flbit::print_status_update() {
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-    //    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance(tensors)),
-    //                          std::log10(status.energy_variance_lowest));
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
-
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
-    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
-    report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tools::common::profile::t_tot->get_measured_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
+    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tools::common::profile::prof[algo_type]["t_sim"]->get_last_interval()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
