@@ -34,7 +34,7 @@ for val_L,val_J,val_w, val_f,val_u, init, in  product(sites,J,w, f, u, initial_s
     str_J1,str_J2, str_J3 = "{:+.2f}".format(val_J[0]),"{:+.2f}".format(val_J[1]),"{:+.2f}".format(val_J[2])
     str_w1,str_w2, str_w3 = "{:+.2f}".format(val_w[0]),"{:+.2f}".format(val_w[1]),"{:+.2f}".format(val_w[2])
 
-    input_filename = "{}/{}/L_{}/{}/{}/f_{}/u_{}.cfg".format(location,basename,str_L,str_J,str_w, str_f, str_u)
+    input_filename = "{}/{}_L{}_{}_{}_f{}_u{}.cfg".format(location,basename,str_L,str_J,str_w, str_f, str_u)
 
     settings = {
         "output::output_filepath"            : "L_{}/{}/{}/f_{}/u_{}/{}.h5".format(output_prefix,str_L,str_J,str_w, str_f, str_u, basename),
