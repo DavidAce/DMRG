@@ -275,7 +275,7 @@ void class_flbit::check_convergence() {
 }
 
 void class_flbit::create_time_points() {
-    tools::log->trace("Creating time points");
+    tools::log->info("Creating time points");
     auto time_start = std::complex<double>(settings::flbit::time_start_real, settings::flbit::time_start_imag);
     auto time_final = std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag);
     auto time_diff  = time_start - time_final;
@@ -306,6 +306,8 @@ void class_flbit::create_time_points() {
 }
 
 void class_flbit::create_hamiltonian_gates() {
+    tools::log->info("Creating Hamiltonian gates");
+
     // Create the hamiltonian gates with n-site terms
     auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
@@ -313,36 +315,37 @@ void class_flbit::create_hamiltonian_gates() {
     for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
     for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1}));
     for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}));
-
-    for(const auto &ham : ham_gates_1body) std::cout << "ham 1body:\n" << ham.op << std::endl;
-    for(const auto &ham : ham_gates_2body) std::cout << "ham 2body:\n" << ham.op << std::endl;
-    for(const auto &ham : ham_gates_3body) std::cout << "ham 3body:\n" << ham.op << std::endl;
-    //    for(const auto &ham : ham_gates_1body) if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham1 is all zeros");
+    for(const auto &ham : ham_gates_1body)
+        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
     for(const auto &ham : ham_gates_2body)
-        if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham2 is all zeros");
+        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
     for(const auto &ham : ham_gates_3body)
-        if(Textra::TensorMatrixMap(ham.op).isZero()) throw std::runtime_error("Ham3 is all zeros");
+        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
 }
 void class_flbit::create_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
     if(std::abs(status.delta_t) == 0) update_time_step();
+    tools::log->info("Creating time evolution gates");
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 }
 
 void class_flbit::create_lbit_transform_gates() {
+    tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
     for(size_t idx = 0; idx < settings::flbit::num_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix));
 }
 
 void class_flbit::transform_to_real_basis() {
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer)
+        create_lbit_transform_gates();
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
-    tools::log->info("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
+    tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
     for(const auto & layer : unitary_gates_2site_layers)
         tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
 
@@ -381,11 +384,13 @@ void class_flbit::transform_to_real_basis() {
 }
 
 void class_flbit::transform_to_lbit_basis() {
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer)
+        create_lbit_transform_gates();
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     state_lbit = std::make_unique<class_state_finite>(*tensors.state);
     state_lbit->set_name("state_lbit");
 
-    tools::log->info("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
+    tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     for(auto & layer : iter::reverse(unitary_gates_2site_layers))
