@@ -335,8 +335,8 @@ void class_flbit::create_time_evolution_gates() {
 void class_flbit::create_lbit_transform_gates() {
     tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
-    for(size_t idx = 0; idx < settings::flbit::num_layer; idx++ )
-        unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::fmix));
+    for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
+        unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
 }
 
 void class_flbit::transform_to_real_basis() {

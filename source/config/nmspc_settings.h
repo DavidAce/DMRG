@@ -125,7 +125,8 @@ namespace settings {
             inline double       J1_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-w1,w1) for on-site interactions */
             inline double       J2_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) for two-body interaction */
             inline double       J3_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) for three-body interaction */
-            inline double       fmix          = 0.1;            /*!< Mixing factor for unitary transformation to real-space */
+            inline double       f_mixer       = 0.1;            /*!< Mixing factor for unitary transformation to real-space */
+            inline size_t       u_layer       = 6;              /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for interaction strengths */
         }
@@ -225,7 +226,6 @@ namespace settings {
         inline long     chi_lim_max             = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow            = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t   num_layer               = 4;                        /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
         inline double   time_start_real         = 1e-1;                     /*!< Starting time point (real) */
         inline double   time_start_imag         = 0;                        /*!< Starting time point (imag) */
         inline double   time_final_real         = 1e6;                      /*!< Finishing time point (real) */

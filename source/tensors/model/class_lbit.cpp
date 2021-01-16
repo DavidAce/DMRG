@@ -21,6 +21,8 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
     h5tb.param.J1_wdth  = settings::model::lbit::J1_wdth;
     h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
+    h5tb.param.f_mixer  = settings::model::lbit::f_mixer;
+    h5tb.param.u_layer  = settings::model::lbit::u_layer;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -42,6 +44,8 @@ void class_lbit::set_parameters(TableMap &parameters) {
     h5tb.param.J1_wdth  = std::any_cast<double>(parameters["J1_wdth"]);
     h5tb.param.J2_wdth  = std::any_cast<double>(parameters["J2_wdth"]);
     h5tb.param.J3_wdth  = std::any_cast<double>(parameters["J3_wdth"]);
+    h5tb.param.f_mixer  = std::any_cast<double>(parameters["f_mixer"]);
+    h5tb.param.u_layer  = std::any_cast<size_t>(parameters["u_layer"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     all_mpo_parameters_have_been_set = true;
@@ -57,6 +61,8 @@ class_lbit::TableMap class_lbit::get_parameters() const {
     parameters["J1_wdth"]            = h5tb.param.J1_wdth;
     parameters["J2_wdth"]            = h5tb.param.J2_wdth;
     parameters["J3_wdth"]            = h5tb.param.J3_wdth;
+    parameters["f_mixer"]            = h5tb.param.f_mixer;
+    parameters["u_layer"]            = h5tb.param.u_layer;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = std::string(h5tb.param.distribution);
     return parameters;
@@ -280,6 +286,8 @@ void class_lbit::save_hamiltonian(h5pp::File &file, const std::string &table_pat
     file.writeAttribute(h5tb.param.J1_wdth, "J1_wdth", table_path);
     file.writeAttribute(h5tb.param.J2_wdth, "J2_wdth", table_path);
     file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
+    file.writeAttribute(h5tb.param.f_mixer, "f_mixer", table_path);
+    file.writeAttribute(h5tb.param.u_layer, "u_layer", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
@@ -308,6 +316,10 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
         throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6)
         throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
+    if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6)
+        throw std::runtime_error(fmt::format("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer));
+    if(h5tb.param.u_layer != u_layer)
+        throw std::runtime_error(fmt::format("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer));
 
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());

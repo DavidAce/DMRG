@@ -258,11 +258,11 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     std::vector<qm::Gate> unitaries;
     unitaries.reserve(sites - 1);
     for(size_t idx = 0; idx < sites - 1; idx++) {
-        double               th0 = rnd::uniform_double_box(1);
-        double               th1 = rnd::uniform_double_box(1);
-        double               th2 = rnd::uniform_double_box(1);
-        double               th3 = rnd::uniform_double_box(1);
-        std::complex<double> t(rnd::uniform_double_box(1), rnd::uniform_double_box(1));
+        double               th0 = rnd::uniform_double_box(1,-1);
+        double               th1 = rnd::uniform_double_box(1,-1);
+        double               th2 = rnd::uniform_double_box(1,-1);
+        double               th3 = rnd::uniform_double_box(1,-1);
+        std::complex<double> t(rnd::uniform_double_box(1,-1), rnd::uniform_double_box(1,-1));
 
         Eigen::Matrix4cd     H =
             th3 * N[0] * N[1] +

@@ -156,6 +156,8 @@ class h5tb_lbit {
         double J1_pert          = 0;         /*!< On-site perturbation */
         double J2_pert          = 0;         /*!< Two-body perturbation */
         double J3_pert          = 0;         /*!< Three-body perturbation */
+        double f_mixer          = 0;         /*!< Mixing factor for unitary transformation to real-space */
+        uint64_t u_layer        = 0;         /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
         long   spin_dim         = 2;         /*!< Spin dimension */
         char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
@@ -187,23 +189,25 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "f_mixer", HOFFSET(table, f_mixer), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "u_layer", HOFFSET(table, u_layer), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
     static std::vector<std::string> get_parameter_names() {
         return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean",  "J1_wdth",
-                "J2_wdth", "J3_wdth", "J1_pert", "J2_pert", "J3_pert", "spin_dim", "distribution"};
+                "J2_wdth", "J3_wdth", "J1_pert", "J2_pert", "J3_pert","f_mixer", "u_layer", "spin_dim", "distribution"};
     }
     static void print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2],
-                         name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
+        tools::log->info("{:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12}", name[0], name[1], name[2],
+                         name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13],  name[14],  name[15]);
     }
     void print_parameter_values() const {
-        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} "
-                         "{:<+12} {:<12}",
+        tools::log->info("{:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} {:<+12.8f} "
+                         "{:<12} {:<12} {:<12}",
                          param.J1_rand, param.J2_rand, param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth,
-                         param.J1_pert, param.J2_pert, param.J3_pert, param.spin_dim, param.distribution);
+                         param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim, param.distribution);
     }
 };
