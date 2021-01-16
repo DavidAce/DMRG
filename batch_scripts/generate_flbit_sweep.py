@@ -11,10 +11,10 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [16,24]
-J                   = [[0.000, 0.250, 0.000]]
-w                   = [[1.000, 0.500, 0.250]]
-f                   = [0.10, 0.20,0.30, 0.40]
+sites               = [12]
+J                   = [[0.000, 0.200, 0.000]]
+w                   = [[1.000, 0.200, 0.040]]
+f                   = [0.01, 0.20,0.30, 0.60]
 u                   = [6]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
@@ -34,10 +34,10 @@ for val_L,val_J,val_w, val_f, init, in  product(sites,J,w, f, initial_state):
     str_J1,str_J2, str_J3 = "{:+.2f}".format(val_J[0]),"{:+.2f}".format(val_J[1]),"{:+.2f}".format(val_J[2])
     str_w1,str_w2, str_w3 = "{:+.2f}".format(val_w[0]),"{:+.2f}".format(val_w[1]),"{:+.2f}".format(val_w[2])
 
-    input_filename = location + '/' + basename + '_L'+ str_L + '_' + str_J + '_' + str_w + '_f' + str_f + '.cfg'
+    input_filename = "{}/{}/L_{}/{}/{}/f_{}/u_{}.cfg".format(location,basename,str_L,str_J,str_w, str_f, str_u)
 
     settings = {
-        "output::output_filepath"            : "L_{}/J{}/w{}/f_{}/u_{}/{}.h5".format(output_prefix,str_L,str_J,str_w, str_f, str_u, basename)
+        "output::output_filepath"            : "L_{}/{}/{}/f_{}/u_{}/{}.h5".format(output_prefix,str_L,str_J,str_w, str_f, str_u, basename)
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
