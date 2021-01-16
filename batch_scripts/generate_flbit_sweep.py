@@ -25,7 +25,7 @@ input_filenames = []
 
 print("Generating", len(sites) * len(J) * len(w) * len(f) * len(initial_state), "input files")
 
-for val_L,val_J,val_w, val_f, init, in  product(sites,J,w, f, initial_state):
+for val_L,val_J,val_w, val_f,val_u, init, in  product(sites,J,w, f, u, initial_state):
     str_L = str(val_L)
     str_J = "J[{:+.2f}_{:+.2f}_{:+.2f}]".format(val_J[0], val_J[1], val_J[2])
     str_w = "w[{:+.2f}_{:+.2f}_{:+.2f}]".format(val_w[0], val_w[1], val_w[2])
