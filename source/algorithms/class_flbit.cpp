@@ -138,7 +138,7 @@ void class_flbit::run_preprocessing() {
         auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
         Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
         tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
-        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, {1, 2, 3}), list_Lsite));
+        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, {1, 2, 3}), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));
         time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
     }
 
@@ -312,9 +312,9 @@ void class_flbit::create_hamiltonian_gates() {
     auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
     auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
-    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}));
-    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1}));
-    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}));
+    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}, tensors.state->get_spin_dims({pos})));
+    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1})));
+    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}, tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
     for(const auto &ham : ham_gates_1body)
         if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
     for(const auto &ham : ham_gates_2body)
@@ -337,6 +337,9 @@ void class_flbit::create_lbit_transform_gates() {
     unitary_gates_2site_layers.clear();
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
+
+    auto tr = qm::lbit::get_lbit_exp_value(unitary_gates_2site_layers,qm::spinHalf::sz,2, qm::spinHalf::sz,3);
+    tools::log->info("Trace = {:.16f}", tr);
 }
 
 void class_flbit::transform_to_real_basis() {
@@ -419,8 +422,6 @@ void class_flbit::transform_to_lbit_basis() {
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}",overlap));
     }
-
-
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 

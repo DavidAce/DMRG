@@ -123,8 +123,12 @@ namespace num {
     template<typename T>
     std::vector<T> range(T first, T last, T step = static_cast<T>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
-        if(first > last and step > 0) return range(first, last, -step);
-        if(first < last and step < 0) return range(first, last, -step);
+        if constexpr(std::is_signed_v<T>){
+            if(first > last and step > 0) return range(first, last, -step);
+            if(first < last and step < 0) return range(first, last, -step);
+        }else{
+            if(first > last) throw std::runtime_error("Range of unsigned type cannot have first > last");
+        }
         if(first == last) return {};
         if(first + step == last) return {first};
 

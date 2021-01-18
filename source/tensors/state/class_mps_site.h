@@ -7,17 +7,12 @@
 #include <complex>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include "class_mps_stash.h"
 
 class class_mps_site {
     public:
     using Scalar = std::complex<double>;
 
-    template<typename T>
-    struct stash{
-        T data;
-        double error = 0;
-        size_t pos_dst;
-    };
     private:
     std::optional<Eigen::Tensor<Scalar, 3>>         M                   = std::nullopt; /*!< \f$M\f$ A or B tensor (note: not a Gamma tensor!) */
     std::optional<Eigen::Tensor<Scalar, 1>>         L                   = std::nullopt; /*!< \f$\Lambda\f$*/
@@ -32,10 +27,6 @@ class class_mps_site {
     mutable std::optional<stash<Eigen::Tensor<Scalar,1>>> S_stash = std::nullopt;/*!< \f$S\f$ A "S" matrix from SVD stored temporarily  */
     mutable std::optional<stash<Eigen::Tensor<Scalar,1>>> C_stash = std::nullopt;/*!< \f$S\f$ A "C" matrix from SVD stored temporarily  */
     mutable std::optional<stash<Eigen::Tensor<Scalar,3>>> V_stash = std::nullopt;/*!< \f$V\f$ A "V" matrix from SVD stored temporarily  */
-//    mutable std::optional<Eigen::Tensor<Scalar, 3>> U_stash                  = std::nullopt; /*!< \f$U\f$ A "U" matrix from SVD stored temporarily  */
-//    mutable std::optional<Eigen::Tensor<Scalar, 1>> S_stash                  = std::nullopt; /*!< \f$S\f$ A "S" matrix from SVD stored temporarily  */
-//    mutable std::optional<Eigen::Tensor<Scalar, 3>> V_stash                  = std::nullopt; /*!< \f$V\f$ A "V" matrix from SVD stored temporarily  */
-//    mutable std::optional<double>                   truncation_error_S_stash = std::nullopt;
 
     public:
     ~class_mps_site(); // Read comment on implementation

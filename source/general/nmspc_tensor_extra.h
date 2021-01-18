@@ -118,6 +118,50 @@ namespace Textra {
         map.normalize();
     }
 
+    template<typename Scalar, auto rank>
+    Eigen::Tensor<Scalar, rank-2> trace(const Eigen::Tensor<Scalar, rank> &tensor, const idxlistpair<1> & idx_pair) {
+        static_assert(rank >= 2, "Rank must be >= 2 for trace of an index pair");
+        long idx0 = idx_pair[0].first;
+        long idx1 = idx_pair[0].second;
+        if(tensor.dimension(idx0) != tensor.dimension(idx1)) throw std::logic_error("Can't trace index pair of different dimensions");
+        long dim0 = tensor.dimension(idx0);
+        Eigen::Tensor<Scalar,1> id(dim0);
+        id.setConstant(1.0);
+        return asDiagonal(id).contract(tensor, Textra::idx({0l,1l},{idx0,idx1}));
+    }
+
+//    template<typename Scalar, auto rank>
+//    Eigen::Tensor<Scalar, rank-2> trace(const Eigen::Tensor<Scalar, rank> &tensor, const idxlistpair<1> & idx_pair) {
+//        static_assert(rank >= 2, "Rank must be >= 2 for trace of an index pair");
+//        long idx0 = idx_pair[0].first;
+//        long idx1 = idx_pair[0].second;
+//        if(tensor.dimension(idx0) != tensor.dimension(idx1)) throw std::logic_error("Can't trace index pair of different dimensions");
+//        long dim0 = tensor.dimension(idx0);
+//        Eigen::Tensor<Scalar,1> id(dim0);
+//        id.setConstant(1.0);
+//        return asDiagonal(id).contract(tensor, Textra::idx({0l,1l},{idx0,idx1}));
+//    }
+
+    template<typename Scalar, auto rank>
+    Eigen::Tensor<Scalar, rank-4> trace(const Eigen::Tensor<Scalar, rank> &tensor, const idxlistpair<2> & idx_pair) {
+        static_assert(rank >= 4, "Rank must be >= 4 for trace of 2 index pairs");
+        long idx00 = idx_pair[0].first;
+        long idx01 = idx_pair[0].second;
+        long idx10 = idx_pair[1].first;
+        long idx11 = idx_pair[1].second;
+        if(tensor.dimension(idx00) != tensor.dimension(idx01)) throw std::logic_error("Can't trace index pair of different dimensions");
+        if(tensor.dimension(idx10) != tensor.dimension(idx11)) throw std::logic_error("Can't trace index pair of different dimensions");
+        long dim00 = tensor.dimension(idx00);
+        long dim11 = tensor.dimension(idx11);
+        Eigen::Tensor<Scalar,1> id00(dim00), id11(dim11);
+        id00.setConstant(1.0);
+        id11.setConstant(1.0);
+        return asDiagonal(id00)
+            .contract(asDiagonal(id11), Textra::idx()) // Outer product
+            .contract(tensor, Textra::idx({0l,1l,2l,3l},{idx00,idx01,idx10,idx11}));
+    }
+
+
     //    //****************************//
     //    //Matrix to tensor conversions//
     //    //****************************//
