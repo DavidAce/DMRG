@@ -189,7 +189,7 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
             fmt::format("Could not merge multisite mps into state: multisite_mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod));
 
     // Hold LC if moving. This should be placed in an L-slot later
-    std::optional<class_mps_site::stash<Eigen::Tensor<Scalar,1>>> lc_hold = std::nullopt;
+    std::optional<stash<Eigen::Tensor<Scalar,1>>> lc_hold = std::nullopt;
 
     if(current_position >= 0 and current_position != center_position){
         auto & mps = state.get_mps_site(current_position); // Guaranteed to have LC since that is the definition of current_position
@@ -200,13 +200,13 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
         if(current_position < center_position){ // This AC will become an A (AC moves to the right
             if(center_position < pos_frnt or center_position > pos_back) // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} into a center position {} that is not in positions {}", current_position, center_position, positions));
-            lc_hold = class_mps_site::stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), positions.front()};
+            lc_hold = stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), positions.front()};
         }
         // Detect left-move
         if(current_position > center_position){ // This AC position will become a B (AC moves to the left)
             if(center_position < pos_frnt - 1 or current_position > pos_back + 1) // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} to a center position {} in a non-neighboring group of positions {}", current_position, center_position, positions));
-            lc_hold = class_mps_site::stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
+            lc_hold = stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
         }
         // Note that one of the positions on the split may contain a new center, so we need to unset
         // the center in our current state so we don't get duplicate centers
@@ -362,10 +362,14 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] class_state_finite
 
 void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &nsite_tensors, size_t gate_size, bool reverse,
                                      long chi_lim, std::optional<double> svd_threshold) {
-    // Pack the two-site operators into a vector of UnitaryGates
+    // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
-    for(const auto &[idx, op] : iter::enumerate(nsite_tensors)) gates.emplace_back(qm::Gate(nsite_tensors[idx], num::range<size_t>(idx, idx + gate_size, 1)));
+    for(const auto &[idx, op] : iter::enumerate(nsite_tensors)){
+        auto pos = num::range<size_t>(idx, idx + gate_size, 1);
+        auto dim = std::vector<long>(pos.size(),2);
+        gates.emplace_back(qm::Gate(nsite_tensors[idx], pos, dim));
+    }
     apply_gates(state, gates, reverse, chi_lim, svd_threshold);
 }
 

@@ -263,6 +263,20 @@ Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return to
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
+std::vector<long> class_state_finite::get_spin_dims(const std::vector<size_t> & sites) const{
+    if(sites.empty()) throw std::runtime_error("No sites on which to collect spin dimensions");
+    std::vector<long> dims;
+    dims.reserve(sites.size());
+    for(const auto & site : sites ){
+        dims.emplace_back(get_mps_site(site).spin_dim());
+    }
+    return dims;
+}
+
+std::vector<long> class_state_finite::get_spin_dims() const{
+    return get_spin_dims(active_sites);
+}
+
 Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();

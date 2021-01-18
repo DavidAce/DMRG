@@ -292,70 +292,28 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo) {
 
 
 void class_mps_site::stash_U(const Eigen::Tensor<Scalar, 3> &U, size_t dst) const{
-    U_stash = {U,0,dst};
+    U_stash = stash<Eigen::Tensor<Scalar,3>>{U,0,dst};
 }
 void class_mps_site::stash_S(const Eigen::Tensor<Scalar, 1> &S, double error, size_t dst) const{
-    S_stash = {S,error,dst};
+    S_stash = stash<Eigen::Tensor<Scalar,1>>{S,error,dst};
 }
 void class_mps_site::stash_S(const std::pair<Eigen::Tensor<Scalar, 1>, double> &S_and_error, size_t dst) const{
-    S_stash = {S_and_error.first,S_and_error.second,dst};
+    S_stash = stash<Eigen::Tensor<Scalar,1>>{S_and_error.first,S_and_error.second,dst};
 }
 void class_mps_site::stash_C(const Eigen::Tensor<Scalar, 1> &C, double error, size_t dst) const{
-    C_stash = {C,error,dst};
+    C_stash = stash<Eigen::Tensor<Scalar,1>>{C,error,dst};
 }
 void class_mps_site::stash_C(const std::pair<Eigen::Tensor<Scalar, 1>, double> &C_and_error, size_t dst) const{
-    C_stash = {C_and_error.first,C_and_error.second,dst};
+    C_stash = stash<Eigen::Tensor<Scalar,1>>{C_and_error.first,C_and_error.second,dst};
 }
 void class_mps_site::stash_V(const Eigen::Tensor<Scalar, 3> &V, size_t dst) const{
-    V_stash = {V,0,dst};
+    V_stash = stash<Eigen::Tensor<Scalar,3>>{V,0,dst};
 }
 
-std::optional<class_mps_site::stash<Eigen::Tensor<Scalar,3>>> & class_mps_site::get_U_stash() const {return U_stash;}
-std::optional<class_mps_site::stash<Eigen::Tensor<Scalar,1>>> & class_mps_site::get_S_stash() const {return S_stash;}
-std::optional<class_mps_site::stash<Eigen::Tensor<Scalar,1>>> & class_mps_site::get_C_stash() const {return C_stash;}
-std::optional<class_mps_site::stash<Eigen::Tensor<Scalar,3>>> & class_mps_site::get_V_stash() const {return V_stash;}
-
-
-//
-//void class_mps_site::stash_U(const Eigen::Tensor<Scalar, 3> &U) const { U_stash = U; }
-//void class_mps_site::stash_S(const Eigen::Tensor<Scalar, 1> &S, double error) const {
-//    S_stash                  = S;
-//    truncation_error_S_stash = error;
-//}
-//void class_mps_site::stash_S(const std::pair<Eigen::Tensor<Scalar, 1>, double> &S_and_error) const {
-//    std::tie(S_stash, truncation_error_S_stash) = S_and_error;
-//}
-//
-//void class_mps_site::stash_V(const Eigen::Tensor<Scalar, 3> &V) const { V_stash = V; }
-
-//
-
-//Eigen::Tensor<Scalar, 3> class_mps_site::unstash_U() const {
-//    if(not U_stash) throw std::runtime_error(fmt::format("No U was found stashed at position {}", get_position()));
-//    Eigen::Tensor<Scalar, 3> U_tmp = U_stash.value().data;
-//    U_stash                        = std::nullopt;
-//    return U_tmp;
-//}
-//Eigen::Tensor<Scalar, 3> class_mps_site::unstash_V() const {
-//    if(not V_stash) throw std::runtime_error(fmt::format("No V was found stashed at position {}", get_position()));
-//    Eigen::Tensor<Scalar, 3> V_tmp = V_stash.value().data;
-//    V_stash                        = std::nullopt;
-//    return V_tmp;
-//}
-//
-//std::pair<Eigen::Tensor<Scalar, 1>, double> class_mps_site::unstash_S() const {
-//    if(not S_stash) throw std::runtime_error(fmt::format("No S was found stashed at position {}", get_position()));
-//    auto tmp                 = std::make_pair(S_stash.value().data, S_stash.value().error);
-//    S_stash                  = std::nullopt;
-//    return tmp;
-//}
-//
-//std::pair<Eigen::Tensor<Scalar, 1>, double> class_mps_site::unstash_C() const {
-//    if(not C_stash) throw std::runtime_error(fmt::format("No C was found stashed at position {}", get_position()));
-//    auto tmp                 = std::make_pair(C_stash.value().data, C_stash.value().error);
-//    C_stash                  = std::nullopt;
-//    return tmp;
-//}
+std::optional<stash<Eigen::Tensor<Scalar,3>>> & class_mps_site::get_U_stash() const {return U_stash;}
+std::optional<stash<Eigen::Tensor<Scalar,1>>> & class_mps_site::get_S_stash() const {return S_stash;}
+std::optional<stash<Eigen::Tensor<Scalar,1>>> & class_mps_site::get_C_stash() const {return C_stash;}
+std::optional<stash<Eigen::Tensor<Scalar,3>>> & class_mps_site::get_V_stash() const {return V_stash;}
 
 void class_mps_site::drop_stash() const {
     if constexpr(settings::debug) {
@@ -458,79 +416,6 @@ void class_mps_site::merge_stash(const class_mps_site &other) {
         other.C_stash = std::nullopt;
     }
 }
-
-
-//void class_mps_site::merge_stash(const class_mps_site &other) {
-//    if(get_position() == other.get_position() + 1) {
-//        /* Left-to-right move.
-//         * In this case there should be a "V" in "other" that should be absorbed into this site from the left.
-//         *
-//         *   1 --[New "M"]-- 2       1 --[V]-- 2   1 --[this "M"]-- 2
-//         *          |            =        |                |
-//         *          0                 0(dim=1)             0
-//         *
-//         *  In addition, if this is an A site we expect an "S" to come along, which didn't become an LC
-//         *  for the site on the left. Presumably the true LC is on some site further to the right.
-//         *  Here we simply set it as the new L of this site.
-//         */
-//
-//        auto V = other.unstash_V();
-//        if(V.dimension(0) != 1)
-//            throw std::logic_error(fmt::format("Failed to merge stash from left site {} into {}: "
-//                                               "V has invalid dimensions {}. Dim at idx 0 should be == 1",
-//                                               other.get_position(), get_position(), V.dimensions()));
-//        if(V.dimension(2) != get_chiL())
-//            throw std::logic_error(fmt::format("Failed to merge stash from left site {} into {}: "
-//                                               "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)",
-//                                               other.get_position(), get_position(), dimensions()));
-//        Textra::array3           dims = {spin_dim(), V.dimension(1), get_chiR()};
-//        Eigen::Tensor<Scalar, 3> VM(dims);
-//        VM.device(Textra::omp::getDevice()) = V.contract(get_M_bare(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(dims);
-//        set_M(VM);
-//        if(other.has_stash_S()) {
-//            if(label == "B") tools::log->warn("Setting L from the left at pos {} with label {}", get_position(), get_label());
-//            set_L(other.unstash_S());
-//        }
-//    } else if(get_position() == other.get_position() - 1) {
-//        /* Right-to-left move.
-//         * In this case there should be a U and an S in "other".
-//         * U should be absorbed into this site from the right.
-//         * S becomes the new LC.
-//         *
-//         *    1 --[New "M"]-- 2       1 --[this "M"]-- 2   1 --[U]-- 2
-//         *           |            =          |                  |
-//         *           0                       0               0(dim=1)
-//         *
-//         *   If this site is already a center, or has label "A" or "AC" then we absorb S as a new LC
-//         *
-//         *   0--[New "LC"]--1     =  0--[S]--1
-//         *
-//         *   Otherwise the S becomes the new "L" for this B site.
-//         *
-//         */
-//        auto U = other.unstash_U();
-//        if(U.dimension(0) != 1)
-//            throw std::logic_error(fmt::format("Failed to merge stash from right site {} into {}: "
-//                                               "U has invalid dimensions {}. Dim at idx 0 should be == 1",
-//                                               other.get_position(), get_position(), U.dimensions()));
-//
-//        if(U.dimension(1) != get_chiR())
-//            throw std::logic_error(fmt::format("Failed to merge stash from right site {} into {}: "
-//                                               "M dimensions {} | U dimensions {} | Expected M(2) == U(1)",
-//                                               other.get_position(), get_position(), dimensions()));
-//        Textra::array3           dims = {spin_dim(), get_chiL(), U.dimension(2)};
-//        Eigen::Tensor<Scalar, 3> MU(dims);
-//        MU.device(Textra::omp::getDevice()) = get_M_bare().contract(U, Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(dims);
-//
-//        set_M(MU);
-//        if(isCenter() or label.find('A') != std::string::npos)
-//            set_LC(other.unstash_S());
-//        else
-//            set_L(other.unstash_S());
-//    } else
-//        throw std::logic_error(fmt::format("Failed to merge stash: Wrong positions: this {} | other {}", get_position(), other.get_position()));
-//}
-
 
 
 std::size_t class_mps_site::get_unique_id() const {

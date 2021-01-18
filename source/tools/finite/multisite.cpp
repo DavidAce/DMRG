@@ -15,32 +15,32 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
 
-Eigen::DSizes<long, 3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::vector<size_t>> active_sites) {
-    if(not active_sites) active_sites = state.active_sites;
-    if(active_sites.value().empty()) return Eigen::DSizes<long, 3>{0, 0, 0};
+Eigen::DSizes<long, 3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::vector<size_t>> sites) {
+    if(not sites) sites = state.active_sites;
+    if(sites.value().empty()) return Eigen::DSizes<long, 3>{0, 0, 0};
     Eigen::DSizes<long, 3> dimensions;
-    std::sort(active_sites.value().begin(), active_sites.value().end());
-    if(active_sites.value().front() > active_sites.value().back())
-        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
+    std::sort(sites.value().begin(), sites.value().end());
+    if(sites.value().front() > sites.value().back())
+        throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
 
-    dimensions[1] = state.get_mps_site(active_sites.value().front()).get_M().dimension(1);
-    dimensions[2] = state.get_mps_site(active_sites.value().back()).get_M().dimension(2);
+    dimensions[1] = state.get_mps_site(sites.value().front()).get_M().dimension(1);
+    dimensions[2] = state.get_mps_site(sites.value().back()).get_M().dimension(2);
     dimensions[0] = 1;
-    for(auto &site : active_sites.value()) { dimensions[0] *= state.get_mps_site(site).get_M().dimension(0); }
+    for(auto &site : sites.value()) { dimensions[0] *= state.get_mps_site(site).get_M().dimension(0); }
     return dimensions;
 }
 
-Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::vector<size_t>> active_sites) {
-    if(not active_sites) active_sites = model.active_sites;
-    if(active_sites.value().empty()) return Eigen::DSizes<long, 4>{0, 0, 0, 0};
-    if(active_sites.value().front() > active_sites.value().back())
-        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
+Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::vector<size_t>> sites) {
+    if(not sites) sites = model.active_sites;
+    if(sites.value().empty()) return Eigen::DSizes<long, 4>{0, 0, 0, 0};
+    if(sites.value().front() > sites.value().back())
+        throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
     Eigen::DSizes<long, 4> dimensions;
-    dimensions[0] = model.get_mpo(active_sites.value().front()).MPO().dimension(0);
-    dimensions[1] = model.get_mpo(active_sites.value().back()).MPO().dimension(1);
+    dimensions[0] = model.get_mpo(sites.value().front()).MPO().dimension(0);
+    dimensions[1] = model.get_mpo(sites.value().back()).MPO().dimension(1);
     dimensions[2] = 1;
     dimensions[3] = 1;
-    for(auto &site : active_sites.value()) {
+    for(auto &site : sites.value()) {
         dimensions[2] *= model.get_mpo(site).MPO().dimension(2);
         dimensions[3] *= model.get_mpo(site).MPO().dimension(3);
     }

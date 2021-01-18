@@ -106,6 +106,9 @@ class class_state_finite {
     // For multisite
     Eigen::DSizes<long, 3> active_dimensions() const;
     long                   active_problem_size() const;
+    std::vector<long>      get_spin_dims(const std::vector<size_t> & sites) const;
+    std::vector<long>      get_spin_dims() const;
+
 
     Eigen::Tensor<Scalar, 3>        get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_mps() const;
