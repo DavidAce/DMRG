@@ -91,6 +91,16 @@ auto group(const std::array<long,N> & dim, const std::array<size_t,M> &pattern )
     return res;
 }
 
+template<typename T1, typename T2>
+void erase(std::vector<T1>& vec, T2 val){
+    auto it = vec.begin();
+    while (it != vec.end()) {
+        if (*it == static_cast<T1>(val)) it = vec.erase(it);
+        else
+            ++it;
+    }
+
+}
 
 Eigen::Tensor<qm::Scalar,2> contract(const Eigen::Tensor<qm::Scalar,2> & m,
                                      const Eigen::Tensor<qm::Scalar,2> & ud,
@@ -415,106 +425,8 @@ qm::Gate qm::insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate)
         auto op = contract(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
         return qm::Gate{op,pos,dim};
     }
-    if(pos_isect.size() == 2 and pos_nsect.size() == 3 and middle_gate.pos.size() == 5 and updown_gate.pos.size() == 2){
+    if(pos_isect.size() == 2 and pos_nsect.size() >= 1 and updown_gate.pos.size() == 2){
         // All the updown locations get contracted
-        auto shp_mid10 = middle_gate.shape<10>();
-        // Decide if this is connects on the left, right or somewhere in the center
-        if(middle_gate.pos.front() == pos_isect.front()){
-            /*  Left insert
-             *
-             *           |  |  |  |  |
-             *          [ up ] |  |  |                0   1   2   3   4              0
-             *           |  |  |  |  |                |   |   |   |   |              |
-             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
-             *           |  |  |  |  |               |   |   |    |   |              |
-             *          [ dn ] |  |  |               5   6   7    8   9              1
-             *           |  |  |  |  |
-             *
-             *     Merge the non-contracted mid legs to simplify the insert contraction
-             */
-            auto shp_mid4 = group(shp_mid10, std::array<size_t,4>{2,3,2,3});
-            auto dim2 = middle_gate.shape<2>();
-            Eigen::Tensor<Scalar,2> op =
-                updown_gate.op
-                    .contract(middle_gate.op.reshape(shp_mid4), Textra::idx({1},{0}))
-                    .contract(updown_gate.op.conjugate()      , Textra::idx({2},{0}))
-                    .shuffle(Textra::array4{0,1,3,2})
-                    .reshape(dim2);
-            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
-        }else if(middle_gate.pos.back() == pos_isect.back()){
-            /*  Right insert
-             *
-             *           |  |  |  |  |
-             *           |  |  | [ up ]               0   1   2   3   4              0
-             *           |  |  |  |  |                |   |   |   |   |              |
-             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
-             *           |  |  |  |  |               |   |   |    |   |              |
-             *           |  |  | [ dn ]              5   6   7    8   9              1
-             *           |  |  |  |  |
-             *
-             *     Merge the non-contracted mid legs to simplify the insert contraction
-             */
-            auto shp_mid4 = group(shp_mid10, std::array<size_t,4>{3,2,3,2});
-            auto dim2 = middle_gate.shape<2>();
-            Eigen::Tensor<Scalar,2> op =
-                updown_gate.op
-                    .contract(middle_gate.op.reshape(shp_mid4), Textra::idx({1},{1}))
-                    .contract(updown_gate.op.conjugate(), Textra::idx({3},{0}))
-                    .shuffle(Textra::array4{1,0,2,3})
-                    .reshape(dim2);
-            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
-        }
-        else if(middle_gate.pos[1] == pos_isect.front()){
-            /*  Center insert v1
-             *
-             *           |  |  |  |  |
-             *           | [ up ] |  |                0   1   2   3   4              0
-             *           |  |  |  |  |                |   |   |   |   |              |
-             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
-             *           |  |  |  |  |               |   |   |    |   |              |
-             *           | [ dn ] |  |               5   6   7    8   9              1
-             *           |  |  |  |  |
-             *
-             *
-             */
-            auto shp_mid6 = group(shp_mid10, std::array<size_t,6>{1,2,2,1,2,2});
-            auto dim2 = middle_gate.shape<2>();
-            Eigen::Tensor<Scalar,2> op =
-                updown_gate.op.reshape(shp_udn2)
-                    .contract(middle_gate.op.reshape(shp_mid6), Textra::idx({1},{1}))
-                    .contract(updown_gate.op.conjugate(), Textra::idx({4},{0}))
-                    .shuffle(Textra::array6{1,0,2,3,5,4})
-                    .reshape(dim2);
-            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
-        }
-        else if(middle_gate.pos[2] == pos_isect.front()){
-            /*  Center insert v2
-             *
-             *           |  |  |  |  |
-             *           |  | [ up ] |                0   1   2   3   4              0
-             *           |  |  |  |  |                |   |   |   |   |              |
-             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
-             *           |  |  |  |  |               |   |   |    |   |              |
-             *           |  | [ dn ] |               5   6   7    8   9              1
-             *           |  |  |  |  |
-             *
-             *
-             */
-            auto shp_mid6 = group(shp_mid10, std::array<size_t,6>{2,2,1,2,2,1});
-            auto dim2 = middle_gate.shape<2>();
-            Eigen::Tensor<Scalar,2> op =
-                updown_gate.op.reshape(shp_udn2)
-                    .contract(middle_gate.op.reshape(shp_mid6), Textra::idx({1},{1}))
-                    .contract(updown_gate.op.conjugate(), Textra::idx({4},{0}))
-                    .shuffle(Textra::array6{1,0,2,3,5,4})
-                    .reshape(dim2);
-            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
-        }
-        else throw std::runtime_error(fmt::format("Unhandled case: pos_isect {} | pos_nsect {}", pos_isect, pos_nsect));
-    }
-    if(pos_isect.size() == 2 and pos_nsect.size() == 5 and middle_gate.pos.size() == 7 and updown_gate.pos.size() == 2){
-        // All the updown locations get contracted
-        auto shp_mid14 = middle_gate.shape<14>();
         size_t usize = updown_gate.pos.size();
         size_t msize = middle_gate.pos.size();
         std::array<long,4> shp_mid4{};
@@ -525,39 +437,69 @@ qm::Gate qm::insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate)
         Textra::idxlistpair<1> idx_up, idx_dn;
         Eigen::Tensor<Scalar,2> op;
         auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
-
+        size_t offmin = 0;
+        size_t offmax = middle_gate.pos.size()-updown_gate.pos.size();
+        size_t merged = offmax;
         // Decide if this is connects on the left, right or somewhere in the center
-        if(offset == 0 or offset == 5){
+        if(offset == offmin or offset == offmax){
             if(offset == 0){
                 /*  Insert at offset 0
                  *
-                 *           |  |  |  |  |  |  |
-                 *          [ up ] |  |  |  |  |
-                 *           |  |  |  |  |  |  |
-                 *          [        mid        ]
-                 *           |  |  |  |  |  |  |
-                 *          [ dn ] |  |  |  |  |
-                 *           |  |  |  |  |  |  |
+                 *           |  |  |
+                 *          [ up ] |
+                 *           |  |  |
+                 *          [  mid  ]
+                 *           |  |  |
+                 *          [ dn ] |
+                 *           |  |  |
                  *
                  */
-                shp_mid4 = group(shp_mid14, std::array<size_t,4>{2,5,2,5});
+                if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t,4>{usize,merged,usize,merged});
+                if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t,4>{usize,merged,usize,merged});
                 dim2 = middle_gate.shape<2>();
                 idx_up = Textra::idx({1},{0});
                 idx_dn = Textra::idx({2},{0});
                 shf4 = Textra::array4{0,1,3,2};
-            }else if(offset == 5){
-                /*  Insert at offset 5
+            }else if(offset == offmax){
+                /*  Insert at offset offmax
                  *
-                 *           |  |  |  |  |  |  |
-                 *           |  |  |  |  | [ up ]
-                 *           |  |  |  |  |  |  |
-                 *          [        mid        ]
-                 *           |  |  |  |  |  |  |
-                 *           |  |  |  |  | [ dn ]
-                 *           |  |  |  |  |  |  |
+                 *           |  |  |
+                 *           | [ up ]
+                 *           |  |  |
+                 *          [  mid  ]
+                 *           |  |  |
+                 *           | [ dn ]
+                 *           |  |  |
                  *
                  */
-                shp_mid4 = group(shp_mid14, std::array<size_t,4>{5,2,5,2});
+                if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t,4>{merged,usize,merged,usize});
+                if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t,4>{merged,usize,merged,usize});
                 dim2 = middle_gate.shape<2>();
                 idx_up = Textra::idx({1},{1});
                 idx_dn = Textra::idx({3},{0});
@@ -569,18 +511,30 @@ qm::Gate qm::insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate)
                 .shuffle(shf4)
                 .reshape(dim2);
         }else{
-            /*  Insert at offset 1 to 4
+            /*  Insert at offset 1 to offmax-1
              *
-             *           |  |  |  |  |  |  |
-             *           | [ up ] |  |  |  |
-             *           |  |  |  |  |  |  |
-             *          [        mid        ]
-             *           |  |  |  |  |  |  |
-             *           | [ dn ] |  |  |  |
-             *           |  |  |  |  |  |  |
+             *           |  |  |  |
+             *           | [ up ] |
+             *           |  |  |  |
+             *          [   mid    ]
+             *           |  |  |  |
+             *           | [ dn ] |
+             *           |  |  |  |
              *
              */
-            shp_mid6 = group(shp_mid14, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 4) shp_mid6 = group(middle_gate.shape<8>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 5) shp_mid6 = group(middle_gate.shape<10>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 6) shp_mid6 = group(middle_gate.shape<12>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 7) shp_mid6 = group(middle_gate.shape<14>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 8) shp_mid6 = group(middle_gate.shape<16>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 9) shp_mid6 = group(middle_gate.shape<18>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 10) shp_mid6 = group(middle_gate.shape<20>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 11) shp_mid6 = group(middle_gate.shape<22>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 12) shp_mid6 = group(middle_gate.shape<24>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 13) shp_mid6 = group(middle_gate.shape<26>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 14) shp_mid6 = group(middle_gate.shape<28>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 15) shp_mid6 = group(middle_gate.shape<30>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+            if(msize == 16) shp_mid6 = group(middle_gate.shape<32>(), repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
             dim2 = middle_gate.shape<2>();
             idx_up = Textra::idx({1},{1});
             idx_dn = Textra::idx({4},{0});
@@ -595,89 +549,8 @@ qm::Gate qm::insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate)
         return qm::Gate{op,middle_gate.pos,middle_gate.dim};
 
     }
-    if(pos_isect.size() == 2 and pos_nsect.size() == 7 and middle_gate.pos.size() == 9 and updown_gate.pos.size() == 2){
-        // All the updown locations get contracted
-        auto shp_mid18 = middle_gate.shape<18>();
-        size_t usize = updown_gate.pos.size();
-        size_t msize = middle_gate.pos.size();
-        std::array<long,4> shp_mid4{};
-        std::array<long,6> shp_mid6{};
-        std::array<long,2> dim2{};
-        std::array<Eigen::Index,6> shf6{};
-        std::array<Eigen::Index,4> shf4{};
-        Textra::idxlistpair<1> idx_up, idx_dn;
-        Eigen::Tensor<Scalar,2> op;
-        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
 
-        // Decide if this is connects on the left, right or somewhere in the center
-        if(offset == 0 or offset == 5){
-            if(offset == 0){
-                /*  Insert at offset 0
-                 *
-                 *           |  |  |  |  |  |  |
-                 *          [ up ] |  |  |  |  |
-                 *           |  |  |  |  |  |  |
-                 *          [        mid        ]
-                 *           |  |  |  |  |  |  |
-                 *          [ dn ] |  |  |  |  |
-                 *           |  |  |  |  |  |  |
-                 *
-                 */
-                shp_mid4 = group(shp_mid18, std::array<size_t,4>{2,7,2,7});
-                dim2 = middle_gate.shape<2>();
-                idx_up = Textra::idx({1},{0});
-                idx_dn = Textra::idx({2},{0});
-                shf4 = Textra::array4{0,1,3,2};
-            }else if(offset == 5){
-                /*  Insert at offset 5
-                 *
-                 *           |  |  |  |  |  |  |
-                 *           |  |  |  |  | [ up ]
-                 *           |  |  |  |  |  |  |
-                 *          [        mid        ]
-                 *           |  |  |  |  |  |  |
-                 *           |  |  |  |  | [ dn ]
-                 *           |  |  |  |  |  |  |
-                 *
-                 */
-                shp_mid4 = group(shp_mid18, std::array<size_t,4>{7,2,7,2});
-                dim2 = middle_gate.shape<2>();
-                idx_up = Textra::idx({1},{1});
-                idx_dn = Textra::idx({3},{0});
-                shf4 = Textra::array4{1,0,2,3};
-            }
-            op = updown_gate.op
-                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
-                .contract(updown_gate.op.conjugate(), idx_dn)
-                .shuffle(shf4)
-                .reshape(dim2);
-        }else{
-            /*  Insert at offset 1 to 7
-             *
-             *           |  |  |  |  |  |  |
-             *           | [ up ] |  |  |  |
-             *           |  |  |  |  |  |  |
-             *          [        mid        ]
-             *           |  |  |  |  |  |  |
-             *           | [ dn ] |  |  |  |
-             *           |  |  |  |  |  |  |
-             *
-             */
-            shp_mid6 = group(shp_mid18, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
-            dim2 = middle_gate.shape<2>();
-            idx_up = Textra::idx({1},{1});
-            idx_dn = Textra::idx({4},{0});
-            shf6 = Textra::array6{1,0,2,3,5,4};
-            op = updown_gate.op
-                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
-                .contract(updown_gate.op.conjugate(), idx_dn)
-                .shuffle(shf6)
-                .reshape(dim2);
-        }
 
-        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
-
-    }
     throw std::runtime_error(fmt::format("Case not implemented: pos_isect {} | pos_nsect {}", pos_isect, pos_nsect));
 }
 
@@ -690,13 +563,101 @@ qm::Gate qm::connect(const qm::Gate & dn_gate , const qm::Gate & up_gate){
     std::set_symmetric_difference(dn_gate.pos.begin(),dn_gate.pos.end(),
                                   up_gate.pos.begin(),up_gate.pos.end(),
                                   back_inserter(pos_nsect));
+    bool inc = std::includes(dn_gate.pos.begin(), dn_gate.pos.end(),up_gate.pos.begin(),up_gate.pos.end());
+
+    tools::log->info("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
     if(pos_isect.empty()) return dn_gate;
-    if(pos_isect.size() == 1 and pos_nsect.size() == 2){
-        // One common location, and two uncommon. Then this connects two 2-site gates
-        auto dim_dn4 = dn_gate.shape<4>();
-        auto dim_dn2 = dn_gate.shape<2>();
-        auto dim_up4 = up_gate.shape<4>();
-        auto dim_up2 = up_gate.shape<2>();
+    if(not pos_isect.empty() and not pos_nsect.empty() and inc){
+        std::array<long,6> dn_shp6{};
+        std::array<long,4> dn_shp4{};
+        std::array<long,2> up_shp2{};
+        std::vector<size_t> pos;
+        std::vector<long> dim;
+        auto dn_size = dn_gate.pos.size();
+        auto up_size = up_gate.pos.size();
+        size_t dn_merge = dn_size - pos_isect.size();
+        size_t up_merge = up_size;
+        size_t offset   = up_gate.pos.front() - dn_gate.pos.front();
+        // Decide if this is connects on the right or right leg
+        if(dn_gate.pos.back() == pos_isect.back()){
+            /*  Right connection
+             *
+             *            |    |
+             *            |  [up]
+             *            |   |
+             *          [  dn  ]
+             *           |    |
+             *
+             */
+            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{dn_merge, up_merge}));
+            auto dim2 = dn_gate.shape<2>();
+            Eigen::Tensor<Scalar,2> op =
+                up_gate.op
+                    .contract(dn_gate.op.reshape(dn_shp4), Textra::idx({1},{1}))
+                    .shuffle(Textra::array4{1,0,2,3})
+                    .reshape(dim2);
+            return qm::Gate{op,dn_gate.pos,dn_gate.dim};
+        }else if (dn_gate.pos.front() == pos_isect.front()){
+            /*  Left connection
+             *
+             *            |   |
+             *          [up]  |
+             *           |    |
+             *          [  dn  ]
+             *           |    |
+             */
+            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{up_merge,dn_merge}));
+            auto dim2 = dn_gate.shape<2>();
+            Eigen::Tensor<Scalar,2> op =
+                up_gate.op
+                    .contract(dn_gate.op.reshape(dn_shp4), Textra::idx({1},{0}))
+                    .reshape(dim2);
+            return qm::Gate{op,dn_gate.pos,dn_gate.dim};
+        }
+        else{
+            /*  Center connection
+             *
+             *           |    |   |
+             *           |  [up]  |
+             *           |   |    |
+             *          [    dn    ]
+             *           |    |   |
+             */
+            if(dn_size == 3) dn_shp6 = group(dn_gate.shape<6>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            if(dn_size == 4) dn_shp6 = group(dn_gate.shape<8>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            if(dn_size == 5) dn_shp6 = group(dn_gate.shape<10>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            if(dn_size == 6) dn_shp6 = group(dn_gate.shape<12>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            if(dn_size == 7) dn_shp6 = group(dn_gate.shape<14>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            if(dn_size == 8) dn_shp6 = group(dn_gate.shape<16>(), repeat(std::array<size_t,3>{offset,up_size,dn_size-up_size-offset}));
+            auto dim2 = dn_gate.shape<2>();
+            Eigen::Tensor<Scalar,2> op = up_gate.op
+                                        .contract(dn_gate.op.reshape(dn_shp6), Textra::idx({1},{1}))
+                                        .shuffle(Textra::array6{1,0,2,3,4,5}).reshape(dim2);
+            return qm::Gate{op,dn_gate.pos,dn_gate.dim};
+        }
+    }
+    if(pos_isect.size() == 1 and pos_nsect.size() >= 2){
+        // One common location, and one uncommon. Then this connects two 2-site gates
+        std::array<long,4> dn_shp4{};
+        std::array<long,4> up_shp4{};
+        std::vector<size_t> pos;
+        std::vector<long> dim;
+        auto dn_size = dn_gate.pos.size();
+        auto up_size = up_gate.pos.size();
+        size_t dn_merge = dn_size - pos_isect.size();
+        size_t up_merge = up_size - pos_isect.size();
         // Decide if this is connects on the right or right leg
         bool right = dn_gate.pos.front() == pos_isect.front();
         if(right){
@@ -709,17 +670,29 @@ qm::Gate qm::connect(const qm::Gate & dn_gate , const qm::Gate & up_gate){
              *      |    |     |           3   4   5              1
              *
              */
-
-            auto dim2 = std::array<long,2> {dim_up2[0] * dim_dn4[1], dim_up2[1] * dim_dn4[2]};
+            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{1,dn_merge}));
+            if(up_size == 2) up_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 3) up_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 4) up_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 5) up_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 6) up_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 7) up_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{up_merge,1}));
+            if(up_size == 8) up_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{up_merge,1}));
+            auto dim2 = repeat(std::array<long,1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
             Eigen::Tensor<Scalar,2> op =
-                dn_gate.op.reshape(dim_dn4)
-                    .contract(up_gate.op.reshape(dim_up4), Textra::idx({0},{3}))
+                dn_gate.op.reshape(dn_shp4)
+                    .contract(up_gate.op.reshape(up_shp4), Textra::idx({0},{3}))
                     .shuffle(Textra::array6{3,4,0,5,1,2})
                     .reshape(dim2);
-
-            auto pos3 = std::vector<size_t> {up_gate.pos[0],up_gate.pos[1], dn_gate.pos[1]};
-            auto dim3 = std::vector<long> {up_gate.dim[0],up_gate.dim[1], dn_gate.dim[1]};
-            return qm::Gate{op,pos3,dim3};
+            pos   = concat(up_gate.pos, subset(dn_gate.pos, 1, dn_merge));
+            dim   = concat(up_gate.dim, subset(dn_gate.dim, 1, dn_merge));
+            return qm::Gate{op,pos,dim};
         }else{
             /*  Left connection
              *
@@ -729,18 +702,32 @@ qm::Gate qm::connect(const qm::Gate & dn_gate , const qm::Gate & up_gate){
              *    [  dn  ]    |             |   |   |              |
              *     |     |    |             3   4   5              1
              */
-            auto dim2 = std::array<long,2> {dim_dn4[0]* dim_up2[0], dim_dn4[2] * dim_up2[1] };
+            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{dn_merge,1}));
+            if(up_size == 2) up_shp4 = group(dn_gate.shape<4>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 3) up_shp4 = group(dn_gate.shape<6>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 4) up_shp4 = group(dn_gate.shape<8>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 5) up_shp4 = group(dn_gate.shape<10>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 6) up_shp4 = group(dn_gate.shape<12>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 7) up_shp4 = group(dn_gate.shape<14>() , repeat(std::array<size_t,2>{1,up_merge}));
+            if(up_size == 8) up_shp4 = group(dn_gate.shape<16>() , repeat(std::array<size_t,2>{1,up_merge}));
+            auto dim2 = repeat(std::array<long,1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
             Eigen::Tensor<Scalar,2> op =
-                dn_gate.op.reshape(dim_dn4)
-                    .contract(up_gate.op.reshape(dim_up4), Textra::idx({1},{2}))
+                dn_gate.op.reshape(dn_shp4)
+                    .contract(up_gate.op.reshape(up_shp4), Textra::idx({1},{2}))
                     .shuffle(Textra::array6{0,3,4,1,2,5})
                     .reshape(dim2);
-
-            auto pos3 = std::vector<size_t> {dn_gate.pos[0],up_gate.pos[0], up_gate.pos[1]};
-            auto dim3 = std::vector<long> {dn_gate.dim[0],up_gate.dim[0], up_gate.dim[1]};
-            return qm::Gate{op,pos3,dim3};
+            pos   = concat(subset(dn_gate.pos, 0, dn_merge),up_gate.pos);
+            dim   = concat(subset(dn_gate.dim, 0, dn_merge),up_gate.dim);
+            return qm::Gate{op,pos,dim};
         }
     }
+
     throw std::runtime_error(fmt::format("Case not implemented: pos_isect {} | pos_nsect {}", pos_isect, pos_nsect));
 }
 
@@ -774,25 +761,32 @@ qm::Scalar qm::trace(const qm::Gate & gate)  {
 
 template<auto N>
 qm::Gate qm::trace(const qm::Gate & gate ,  const std::array<Eigen::IndexPair<Eigen::Index>, N>  & idxpairs){
-    // Compute the remaining indices
-    auto idx = gate.idx();
-    for(auto & pair : idxpairs){
-        idx.erase(std::remove(idx.begin(), idx.end(), pair.first), idx.end());
-        idx.erase(std::remove(idx.begin(), idx.end(), pair.second), idx.end());
-    }
 
-    // Extract the remaining positions and dimensions
-    std::vector<size_t> pos;
-    std::vector<long> dim;
-    for(const auto & i : idx) {
-        pos.emplace_back(gate.pos[i]);
-        dim.emplace_back(gate.dim[i]);
+    if constexpr(N == 1)
+        tools::log->info("Tracing:  pos {} | dim {} | pairs [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
+    if constexpr(N == 2)
+        tools::log->info("Tracing:  pos {} | dim {} | pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first, idxpairs[1].second);
+
+    // Compute the remaining indices positions and dimensions
+    auto idx = gate.idx();
+    auto pos = gate.pos;
+    auto dim = gate.dim;
+    for(auto & pair : idxpairs){
+        auto idx_rm = std::distance(idx.begin(), std::find(idx.begin(),idx.end(), std::min(pair.first,pair.second) ));
+        auto idx_rm2 = std::distance(idx.begin(), std::find(idx.begin(),idx.end(), std::max(pair.first,pair.second) ));
+        pos.erase(pos.begin() + idx_rm);
+        dim.erase(dim.begin() + idx_rm);
+        idx.erase(idx.begin() + idx_rm2 );
+        idx.erase(idx.begin() + idx_rm );
     }
+    if(idx.size() != 2*(gate.pos.size()-N)) throw std::logic_error("Wrong number of indices removed");
+
 
     // Assuming the gate is symmetric, we can compute the rank2 dimensions for the storage of the gate op
     long dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies()); // Product of all dimensions of the remaining top legs of the gate
     std::array<long,2> dim2{dim_prod, dim_prod};
 
+    // Shorthand tensors
     using T2 = Eigen::Tensor<Scalar,2>;
     using T4 = Eigen::Tensor<Scalar,4>;
     using T6 = Eigen::Tensor<Scalar,6>;
@@ -807,30 +801,33 @@ qm::Gate qm::trace(const qm::Gate & gate ,  const std::array<Eigen::IndexPair<Ei
     using T24 = Eigen::Tensor<Scalar,24>;
     using T26 = Eigen::Tensor<Scalar,26>;
     Eigen::Tensor<Scalar,2> op_traced;
+
     // Trace
-    if constexpr (N == 1)
-        if(gate.dim.size() == 1){
-            auto shape = gate.shape<2>();
-            op_traced = Textra::trace(static_cast<T2>(gate.op.reshape(shape)), idxpairs).reshape(dim2);
-            return Gate{op_traced,pos,dim};
+    if(gate.dim.size() == 1) {
+        if constexpr(N == 1) {// dim size 1 is special! It can't take 2 index pairs
+            op_traced = Textra::trace(static_cast<T2>(gate.op.reshape(gate.shape<2>())), idxpairs).reshape(dim2);
+        } else {
+            throw std::runtime_error(fmt::format("Can't trace {} index pairs on gate with pos {}", N, gate.pos));
         }
-    if(gate.dim.size() == 2) op_traced = Textra::trace(static_cast<T4>(gate.op.reshape(gate.shape<4>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 3) op_traced = Textra::trace(static_cast<T6>(gate.op.reshape(gate.shape<6>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 4) op_traced = Textra::trace(static_cast<T8>(gate.op.reshape(gate.shape<8>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 5) op_traced = Textra::trace(static_cast<T10>(gate.op.reshape(gate.shape<10>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 6) op_traced = Textra::trace(static_cast<T12>(gate.op.reshape(gate.shape<12>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 7) op_traced = Textra::trace(static_cast<T14>(gate.op.reshape(gate.shape<14>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 8) op_traced = Textra::trace(static_cast<T16>(gate.op.reshape(gate.shape<16>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 9) op_traced = Textra::trace(static_cast<T18>(gate.op.reshape(gate.shape<18>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 10) op_traced = Textra::trace(static_cast<T20>(gate.op.reshape(gate.shape<20>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 11) op_traced = Textra::trace(static_cast<T22>(gate.op.reshape(gate.shape<22>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 12) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<24>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 13) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<26>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 14) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<28>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 15) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<30>())), idxpairs).reshape(dim2);
-    if(gate.dim.size() == 16) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
+    }
+    else if(gate.dim.size() == 2) op_traced = Textra::trace(static_cast<T4>(gate.op.reshape(gate.shape<4>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 3) op_traced = Textra::trace(static_cast<T6>(gate.op.reshape(gate.shape<6>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 4) op_traced = Textra::trace(static_cast<T8>(gate.op.reshape(gate.shape<8>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 5) op_traced = Textra::trace(static_cast<T10>(gate.op.reshape(gate.shape<10>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 6) op_traced = Textra::trace(static_cast<T12>(gate.op.reshape(gate.shape<12>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 7) op_traced = Textra::trace(static_cast<T14>(gate.op.reshape(gate.shape<14>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 8) op_traced = Textra::trace(static_cast<T16>(gate.op.reshape(gate.shape<16>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 9) op_traced = Textra::trace(static_cast<T18>(gate.op.reshape(gate.shape<18>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 10) op_traced = Textra::trace(static_cast<T20>(gate.op.reshape(gate.shape<20>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 11) op_traced = Textra::trace(static_cast<T22>(gate.op.reshape(gate.shape<22>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 12) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<24>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 13) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<26>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 14) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<28>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 15) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<30>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 16) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
+    else throw std::runtime_error(fmt::format("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size()));
+
     return Gate{op_traced,pos,dim};
-    throw std::runtime_error(fmt::format("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size()));
 }
 
 
@@ -1243,4 +1240,539 @@ template qm::Gate qm::trace(const qm::Gate & gate , const std::array<Eigen::Inde
 //        }
 //        auto op = contract(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
 //        return qm::Gate{op,pos,dim};
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 3 and middle_gate.pos.size() == 5 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid10 = middle_gate.shape<10>();
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(middle_gate.pos.front() == pos_isect.front()){
+//            /*  Left insert
+//             *
+//             *           |  |  |  |  |
+//             *          [ up ] |  |  |                0   1   2   3   4              0
+//             *           |  |  |  |  |                |   |   |   |   |              |
+//             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
+//             *           |  |  |  |  |               |   |   |    |   |              |
+//             *          [ dn ] |  |  |               5   6   7    8   9              1
+//             *           |  |  |  |  |
+//             *
+//             *     Merge the non-contracted mid legs to simplify the insert contraction
+//             */
+//            auto shp_mid4 = group(shp_mid10, std::array<size_t,4>{2,3,2,3});
+//            auto dim2 = middle_gate.shape<2>();
+//            Eigen::Tensor<Scalar,2> op =
+//                updown_gate.op
+//                    .contract(middle_gate.op.reshape(shp_mid4), Textra::idx({1},{0}))
+//                    .contract(updown_gate.op.conjugate()      , Textra::idx({2},{0}))
+//                    .shuffle(Textra::array4{0,1,3,2})
+//                    .reshape(dim2);
+//            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//        }else if(middle_gate.pos.back() == pos_isect.back()){
+//            /*  Right insert
+//             *
+//             *           |  |  |  |  |
+//             *           |  |  | [ up ]               0   1   2   3   4              0
+//             *           |  |  |  |  |                |   |   |   |   |              |
+//             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
+//             *           |  |  |  |  |               |   |   |    |   |              |
+//             *           |  |  | [ dn ]              5   6   7    8   9              1
+//             *           |  |  |  |  |
+//             *
+//             *     Merge the non-contracted mid legs to simplify the insert contraction
+//             */
+//            auto shp_mid4 = group(shp_mid10, std::array<size_t,4>{3,2,3,2});
+//            auto dim2 = middle_gate.shape<2>();
+//            Eigen::Tensor<Scalar,2> op =
+//                updown_gate.op
+//                    .contract(middle_gate.op.reshape(shp_mid4), Textra::idx({1},{1}))
+//                    .contract(updown_gate.op.conjugate(), Textra::idx({3},{0}))
+//                    .shuffle(Textra::array4{1,0,2,3})
+//                    .reshape(dim2);
+//            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//        }
+//        else if(middle_gate.pos[1] == pos_isect.front()){
+//            /*  Center insert v1
+//             *
+//             *           |  |  |  |  |
+//             *           | [ up ] |  |                0   1   2   3   4              0
+//             *           |  |  |  |  |                |   |   |   |   |              |
+//             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
+//             *           |  |  |  |  |               |   |   |    |   |              |
+//             *           | [ dn ] |  |               5   6   7    8   9              1
+//             *           |  |  |  |  |
+//             *
+//             *
+//             */
+//            auto shp_mid6 = group(shp_mid10, std::array<size_t,6>{1,2,2,1,2,2});
+//            auto dim2 = middle_gate.shape<2>();
+//            Eigen::Tensor<Scalar,2> op =
+//                updown_gate.op.reshape(shp_udn2)
+//                    .contract(middle_gate.op.reshape(shp_mid6), Textra::idx({1},{1}))
+//                    .contract(updown_gate.op.conjugate(), Textra::idx({4},{0}))
+//                    .shuffle(Textra::array6{1,0,2,3,5,4})
+//                    .reshape(dim2);
+//            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//        }
+//        else if(middle_gate.pos[2] == pos_isect.front()){
+//            /*  Center insert v2
+//             *
+//             *           |  |  |  |  |
+//             *           |  | [ up ] |                0   1   2   3   4              0
+//             *           |  |  |  |  |                |   |   |   |   |              |
+//             *          [     mid     ]       =     [       gate       ]   =   [   gate    ]
+//             *           |  |  |  |  |               |   |   |    |   |              |
+//             *           |  | [ dn ] |               5   6   7    8   9              1
+//             *           |  |  |  |  |
+//             *
+//             *
+//             */
+//            auto shp_mid6 = group(shp_mid10, std::array<size_t,6>{2,2,1,2,2,1});
+//            auto dim2 = middle_gate.shape<2>();
+//            Eigen::Tensor<Scalar,2> op =
+//                updown_gate.op.reshape(shp_udn2)
+//                    .contract(middle_gate.op.reshape(shp_mid6), Textra::idx({1},{1}))
+//                    .contract(updown_gate.op.conjugate(), Textra::idx({4},{0}))
+//                    .shuffle(Textra::array6{1,0,2,3,5,4})
+//                    .reshape(dim2);
+//            return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//        }
+//        else throw std::runtime_error(fmt::format("Unhandled case: pos_isect {} | pos_nsect {}", pos_isect, pos_nsect));
+//    }
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 4 and middle_gate.pos.size() == 6 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid14 = middle_gate.shape<14>();
+//        size_t usize = updown_gate.pos.size();
+//        size_t msize = middle_gate.pos.size();
+//        std::array<long,4> shp_mid4{};
+//        std::array<long,6> shp_mid6{};
+//        std::array<long,2> dim2{};
+//        std::array<Eigen::Index,6> shf6{};
+//        std::array<Eigen::Index,4> shf4{};
+//        Textra::idxlistpair<1> idx_up, idx_dn;
+//        Eigen::Tensor<Scalar,2> op;
+//        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
+//
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(offset == 0 or offset == 5){
+//            if(offset == 0){
+//                /*  Insert at offset 0
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *          [ up ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [ dn ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{2,5,2,5});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{0});
+//                idx_dn = Textra::idx({2},{0});
+//                shf4 = Textra::array4{0,1,3,2};
+//            }else if(offset == 5){
+//                /*  Insert at offset 5
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ up ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ dn ]
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{5,2,5,2});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{1});
+//                idx_dn = Textra::idx({3},{0});
+//                shf4 = Textra::array4{1,0,2,3};
+//            }
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf4)
+//                .reshape(dim2);
+//        }else{
+//            /*  Insert at offset 1 to 4
+//             *
+//             *           |  |  |  |  |  |  |
+//             *           | [ up ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *          [        mid        ]
+//             *           |  |  |  |  |  |  |
+//             *           | [ dn ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *
+//             */
+//            shp_mid6 = group(shp_mid14, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+//            dim2 = middle_gate.shape<2>();
+//            idx_up = Textra::idx({1},{1});
+//            idx_dn = Textra::idx({4},{0});
+//            shf6 = Textra::array6{1,0,2,3,5,4};
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf6)
+//                .reshape(dim2);
+//        }
+//
+//        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//
+//    }
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 5 and middle_gate.pos.size() == 7 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid14 = middle_gate.shape<14>();
+//        size_t usize = updown_gate.pos.size();
+//        size_t msize = middle_gate.pos.size();
+//        std::array<long,4> shp_mid4{};
+//        std::array<long,6> shp_mid6{};
+//        std::array<long,2> dim2{};
+//        std::array<Eigen::Index,6> shf6{};
+//        std::array<Eigen::Index,4> shf4{};
+//        Textra::idxlistpair<1> idx_up, idx_dn;
+//        Eigen::Tensor<Scalar,2> op;
+//        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
+//
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(offset == 0 or offset == 5){
+//            if(offset == 0){
+//                /*  Insert at offset 0
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *          [ up ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [ dn ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{2,5,2,5});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{0});
+//                idx_dn = Textra::idx({2},{0});
+//                shf4 = Textra::array4{0,1,3,2};
+//            }else if(offset == 5){
+//                /*  Insert at offset 5
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ up ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ dn ]
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{5,2,5,2});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{1});
+//                idx_dn = Textra::idx({3},{0});
+//                shf4 = Textra::array4{1,0,2,3};
+//            }
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf4)
+//                .reshape(dim2);
+//        }else{
+//            /*  Insert at offset 1 to 4
+//             *
+//             *           |  |  |  |  |  |  |
+//             *           | [ up ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *          [        mid        ]
+//             *           |  |  |  |  |  |  |
+//             *           | [ dn ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *
+//             */
+//            shp_mid6 = group(shp_mid14, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+//            dim2 = middle_gate.shape<2>();
+//            idx_up = Textra::idx({1},{1});
+//            idx_dn = Textra::idx({4},{0});
+//            shf6 = Textra::array6{1,0,2,3,5,4};
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf6)
+//                .reshape(dim2);
+//        }
+//
+//        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//
+//    }
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 5 and middle_gate.pos.size() == 7 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid14 = middle_gate.shape<14>();
+//        size_t usize = updown_gate.pos.size();
+//        size_t msize = middle_gate.pos.size();
+//        std::array<long,4> shp_mid4{};
+//        std::array<long,6> shp_mid6{};
+//        std::array<long,2> dim2{};
+//        std::array<Eigen::Index,6> shf6{};
+//        std::array<Eigen::Index,4> shf4{};
+//        Textra::idxlistpair<1> idx_up, idx_dn;
+//        Eigen::Tensor<Scalar,2> op;
+//        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
+//
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(offset == 0 or offset == 5){
+//            if(offset == 0){
+//                /*  Insert at offset 0
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *          [ up ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [ dn ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{2,5,2,5});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{0});
+//                idx_dn = Textra::idx({2},{0});
+//                shf4 = Textra::array4{0,1,3,2};
+//            }else if(offset == 5){
+//                /*  Insert at offset 5
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ up ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ dn ]
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid14, std::array<size_t,4>{5,2,5,2});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{1});
+//                idx_dn = Textra::idx({3},{0});
+//                shf4 = Textra::array4{1,0,2,3};
+//            }
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf4)
+//                .reshape(dim2);
+//        }else{
+//            /*  Insert at offset 1 to 4
+//             *
+//             *           |  |  |  |  |  |  |
+//             *           | [ up ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *          [        mid        ]
+//             *           |  |  |  |  |  |  |
+//             *           | [ dn ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *
+//             */
+//            shp_mid6 = group(shp_mid14, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+//            dim2 = middle_gate.shape<2>();
+//            idx_up = Textra::idx({1},{1});
+//            idx_dn = Textra::idx({4},{0});
+//            shf6 = Textra::array6{1,0,2,3,5,4};
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf6)
+//                .reshape(dim2);
+//        }
+//
+//        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//
+//    }
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 6 and middle_gate.pos.size() == 9 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid18 = middle_gate.shape<18>();
+//        size_t usize = updown_gate.pos.size();
+//        size_t msize = middle_gate.pos.size();
+//        std::array<long,4> shp_mid4{};
+//        std::array<long,6> shp_mid6{};
+//        std::array<long,2> dim2{};
+//        std::array<Eigen::Index,6> shf6{};
+//        std::array<Eigen::Index,4> shf4{};
+//        Textra::idxlistpair<1> idx_up, idx_dn;
+//        Eigen::Tensor<Scalar,2> op;
+//        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
+//
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(offset == 0 or offset == middle_gate.pos.size()-updown_gate.pos.size()){
+//            if(offset == 0){
+//                /*  Insert at offset 0
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *          [ up ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [ dn ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid18, std::array<size_t,4>{2,6,2,6});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{0});
+//                idx_dn = Textra::idx({2},{0});
+//                shf4 = Textra::array4{0,1,3,2};
+//            }else if(offset == offset == middle_gate.pos.size()-updown_gate.pos.size()){
+//                /*  Insert at offset 5
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ up ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ dn ]
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid18, std::array<size_t,4>{6,2,6,2});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{1});
+//                idx_dn = Textra::idx({3},{0});
+//                shf4 = Textra::array4{1,0,2,3};
+//            }
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf4)
+//                .reshape(dim2);
+//        }else{
+//            /*  Insert at offset 1 to 7
+//             *
+//             *           |  |  |  |  |  |  |
+//             *           | [ up ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *          [        mid        ]
+//             *           |  |  |  |  |  |  |
+//             *           | [ dn ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *
+//             */
+//            shp_mid6 = group(shp_mid18, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+//            dim2 = middle_gate.shape<2>();
+//            idx_up = Textra::idx({1},{1});
+//            idx_dn = Textra::idx({4},{0});
+//            shf6 = Textra::array6{1,0,2,3,5,4};
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf6)
+//                .reshape(dim2);
+//        }
+//
+//        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//
+//    }
+//    if(pos_isect.size() == 2 and pos_nsect.size() == 7 and middle_gate.pos.size() == 9 and updown_gate.pos.size() == 2){
+//        // All the updown locations get contracted
+//        auto shp_mid18 = middle_gate.shape<18>();
+//        size_t usize = updown_gate.pos.size();
+//        size_t msize = middle_gate.pos.size();
+//        std::array<long,4> shp_mid4{};
+//        std::array<long,6> shp_mid6{};
+//        std::array<long,2> dim2{};
+//        std::array<Eigen::Index,6> shf6{};
+//        std::array<Eigen::Index,4> shf4{};
+//        Textra::idxlistpair<1> idx_up, idx_dn;
+//        Eigen::Tensor<Scalar,2> op;
+//        auto offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), pos_isect.front())));
+//
+//        // Decide if this is connects on the left, right or somewhere in the center
+//        if(offset == 0 or offset == 5){
+//            if(offset == 0){
+//                /*  Insert at offset 0
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *          [ up ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [ dn ] |  |  |  |  |
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid18, std::array<size_t,4>{2,7,2,7});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{0});
+//                idx_dn = Textra::idx({2},{0});
+//                shf4 = Textra::array4{0,1,3,2};
+//            }else if(offset == 5){
+//                /*  Insert at offset 5
+//                 *
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ up ]
+//                 *           |  |  |  |  |  |  |
+//                 *          [        mid        ]
+//                 *           |  |  |  |  |  |  |
+//                 *           |  |  |  |  | [ dn ]
+//                 *           |  |  |  |  |  |  |
+//                 *
+//                 */
+//                shp_mid4 = group(shp_mid18, std::array<size_t,4>{7,2,7,2});
+//                dim2 = middle_gate.shape<2>();
+//                idx_up = Textra::idx({1},{1});
+//                idx_dn = Textra::idx({3},{0});
+//                shf4 = Textra::array4{1,0,2,3};
+//            }
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid4), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf4)
+//                .reshape(dim2);
+//        }else{
+//            /*  Insert at offset 1 to 7
+//             *
+//             *           |  |  |  |  |  |  |
+//             *           | [ up ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *          [        mid        ]
+//             *           |  |  |  |  |  |  |
+//             *           | [ dn ] |  |  |  |
+//             *           |  |  |  |  |  |  |
+//             *
+//             */
+//            shp_mid6 = group(shp_mid18, repeat(std::array<size_t,3>{offset,usize,msize-usize-offset}));
+//            dim2 = middle_gate.shape<2>();
+//            idx_up = Textra::idx({1},{1});
+//            idx_dn = Textra::idx({4},{0});
+//            shf6 = Textra::array6{1,0,2,3,5,4};
+//            op = updown_gate.op
+//                .contract(middle_gate.op.reshape(shp_mid6), idx_up)
+//                .contract(updown_gate.op.conjugate(), idx_dn)
+//                .shuffle(shf6)
+//                .reshape(dim2);
+//        }
+//
+//        return qm::Gate{op,middle_gate.pos,middle_gate.dim};
+//
 //    }

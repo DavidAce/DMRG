@@ -381,30 +381,39 @@ std::vector<size_t> get_pos_in_lightcone(size_t gate_size, size_t pos_max,size_t
     // In such a layer, every position appears "gate_size" times in total (each time in a different gate).
     // In this convention, each layer therefore contains "gate_size" number of sublayers.
     // Therefore idx_layer indexes the normal "outer" layer, and idx_sublayer indexes the inner layer.
-
-    size_t step_size    = gate_size - 1;
-    size_t idx_layer2_tau = 2*idx_layer + idx_sublayer;  // Index sublayers counting from tau
-    size_t idx_layer2_sig = 2*num_layers - (2*idx_layer + idx_sublayer) - 1;  // Index sublayers counting from sig
-    size_t pos_tau_left = pos_tau - num::mod(pos_tau, gate_size);
-    size_t pos_sig_left = pos_sig - num::mod(pos_sig, gate_size);
-    size_t pos_distance = std::max(pos_tau,pos_sig) - std::min(pos_tau,pos_sig);
-    size_t lightcone_max_width = gate_size * num_layers;
-
-    size_t lightcone_pos_tau_min = std::max(static_cast<long>(pos_tau_left) - static_cast<long>(idx_layer2_tau), 0l);
-    size_t lightcone_pos_tau_max = std::min(static_cast<long>(pos_tau_left) + static_cast<long>(idx_layer2_tau) + 1, static_cast<long>(pos_max));
-    size_t lightcone_pos_sig_min = std::max(static_cast<long>(pos_sig_left) - static_cast<long>(idx_layer2_sig), 0l);
-    size_t lightcone_pos_sig_max = std::min(static_cast<long>(pos_sig_left) + static_cast<long>(idx_layer2_sig) + 1, static_cast<long>(pos_max));
-
-    size_t lightcone_pos_min = std::max(lightcone_pos_tau_min, lightcone_pos_sig_min);
-    size_t lightcone_pos_max = std::min(lightcone_pos_tau_max, lightcone_pos_sig_max);
+    long gate_sizel = static_cast<long>(gate_size);
+    long step_size      = gate_sizel - 1;
+    long step_size_odd  = num::mod(step_size, 2l);
+    long idx_layer2_tau = static_cast<long>(2*idx_layer + idx_sublayer);  // Index sublayers counting from tau
+    long idx_layer2_sig = static_cast<long>(2*num_layers - (2*idx_layer + idx_sublayer) - 1);  // Index sublayers counting from sig
+    long posl_max = static_cast<long>(pos_max);
+    long posl_tau = static_cast<long>(pos_tau);
+    long posl_sig = static_cast<long>(pos_sig);
+    long pos_tau_left = std::clamp(posl_tau - num::mod(posl_tau, gate_sizel), 0l, posl_max); // Get the left-most position of the gate on which tau is attached
+    long pos_sig_left = std::clamp(posl_sig - num::mod(posl_sig + step_size_odd, gate_sizel), 0l, posl_max); // Get the left-most position of the gate on which sig is attached
+//    long pos_distance = std::max(pos_tau,pos_sig) - std::min(pos_tau,pos_sig);
+//    long lightcone_max_width = gate_size * num_layers;
+    long keep_legs = idx_layer2_sig == 0 ? 1 : 0;
+    long sig_offset = idx_layer2_sig == 0 ? 0 : 1;
+    long lightcone_pos_tau_min = std::max(static_cast<long>(pos_tau_left) - static_cast<long>(idx_layer2_tau), 0l);
+    long lightcone_pos_tau_max = std::min(static_cast<long>(pos_tau_left) + static_cast<long>(idx_layer2_tau + step_size), static_cast<long>(pos_max));
+    long lightcone_pos_sig_min = std::max(static_cast<long>(pos_sig_left) - static_cast<long>(idx_layer2_sig) + sig_offset, 0l);
+    long lightcone_pos_sig_max = std::min(static_cast<long>(pos_sig_left) + static_cast<long>(idx_layer2_sig + keep_legs), static_cast<long>(pos_max));
+    long lightcone_pos_min = std::max(lightcone_pos_tau_min, lightcone_pos_sig_min);
+    long lightcone_pos_max = std::min(lightcone_pos_tau_max, lightcone_pos_sig_max);
+    if(lightcone_pos_min < 0) throw std::logic_error("lightcone_pos_min < 0");
+    if(lightcone_pos_max > static_cast<long>(pos_max)) throw std::logic_error("lightcone_pos_max > pos_max");
+    tools::log->info("Lightcone  tau [{} {}] sig [{} {}] | lim [{} {}]",lightcone_pos_tau_min,lightcone_pos_tau_max,lightcone_pos_sig_min,lightcone_pos_sig_max,lightcone_pos_min,lightcone_pos_max  );
     std::vector<size_t> pos;
-    size_t p = lightcone_pos_min;
-    while(p <= lightcone_pos_max) pos.emplace_back(p++);
+    long p = lightcone_pos_min;
+    while(p <= lightcone_pos_max) pos.emplace_back(static_cast<size_t>(p++));
+    if(not pos.empty() and pos.front() != static_cast<size_t>(lightcone_pos_min)) throw std::logic_error("pos.front() != lightcone_pos_min");
+    if(not pos.empty() and pos.back()  != static_cast<size_t>(lightcone_pos_max)) throw std::logic_error("pos.back() != lightcone_pos_max");
     return pos;
 }
 
 
-double qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig){
+qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig){
 
 
     // Generate gates for the operators
@@ -412,10 +421,11 @@ double qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & u
     auto sig_gate = qm::Gate{sig, {pos_sig}, {2}};
 
     auto g = tau_gate;
-
+    tools::log->info("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
 
     for(const auto & [idx_layer,layer] : iter::enumerate(unitary_layers)){
         // Generate
+        if(g.pos.empty()) break;
         if(layer.empty()) continue;
         std::vector<size_t> gate_sequence;
         size_t gate_size = layer.front().pos.size();
@@ -428,6 +438,7 @@ double qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & u
         }
         tools::log->info("Gate sequence: {}", gate_sequence);
         for(const auto &[idx, pos_gate] : iter::enumerate(gate_sequence)) {
+            if(g.pos.empty()) break;
             auto &u = layer.at(pos_gate);
             auto idx_sublayer = num::mod<size_t>(pos_gate, gate_size);
             // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
@@ -443,11 +454,11 @@ double qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & u
                                   back_inserter(pos_isect));
 
 
-            tools::log->info("Layer [{},{}] = {} | u.pos {} | g.pos {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, g.pos, pos_isect );
             if(not pos_isect.empty()){
                 // Found a matching u. Connect it
+                auto pos_old = g.pos;
                 g = g.insert(u);
-                tools::log->info("Got new   gate pos {}",g.pos );
+                tools::log->info("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
             }
 
             // Check if g.pos has sites outside of the light-cone intersection
@@ -456,17 +467,26 @@ double qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & u
             std::set_difference(g.pos.begin(),g.pos.end(),
                                 pos_allowed.begin(), pos_allowed.end(),
                                 back_inserter(pos_outside));
-            tools::log->info("pos_allowed {} | pos_outside {}", pos_allowed, pos_outside);
             if(not pos_outside.empty()){
                 // Found positions outside of the light cone. Trace them
-                tools::log->info("Tracing   gate pos {} | {}", g.pos, pos_outside );
+                auto pos_old = g.pos;
                 g = g.trace_pos(pos_outside);
+                tools::log->info("trace : layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | allowed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, pos_old, g.pos, pos_allowed, pos_outside);
             }
         }
     }
-
+    if(g.pos.empty()){
+        long distance = std::abs(static_cast<long>(pos_tau) - static_cast<long>(pos_sig));
+        long max_dist = static_cast<long>(unitary_layers.size()*unitary_layers.front().front().pos.size());
+        if(distance <= max_dist)
+            tools::log->warn("Expected last gate to have size >= 1, since |pos_tau {} - pos_sig {}| = {} <= {}. Got size {}", pos_tau, pos_sig, distance, max_dist,g.pos.size()  );
+//            throw std::runtime_error(fmt::format("Expected last gate to have size >= 1, since |pos_tau {} - pos_sig {}| = {} <= {}. Got size {}", pos_tau, pos_sig, distance, max_dist,g.pos.size() ));
+        if(g.op.dimension(0) * g.op.dimension(1) != 1) throw std::runtime_error(fmt::format("Expected empty gate to have scalar op: Got dims {}", g.op.dimensions()));
+        return g.op.coeff(0);
+    }
+//    if(g.pos.empty()) throw std::logic_error(fmt::format("Expected last gate to have size >= 1. Got size {}", g.pos.size()));
     // In the last step we connect the sigma operator and trace everything down to a scalar
-    return g.connect_under(sig_gate).trace().real();
+    return g.connect_under(sig_gate).trace();
 }
 
 
