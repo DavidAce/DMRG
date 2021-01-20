@@ -337,9 +337,14 @@ void class_flbit::create_lbit_transform_gates() {
     unitary_gates_2site_layers.clear();
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
-    Eigen::MatrixXcd res(tensors.get_length()-1, tensors.get_length()-1);
-    for(long i = 0; i < res.rows(); i++){
-        for(long j = 0; j < res.cols(); j++){
+
+    for(const auto & [idx_layer,layer] : iter::enumerate(unitary_gates_2site_layers)){
+        for(const auto & [idx_u, u] : iter::enumerate(layer))
+            std::cout << "u[" << idx_layer << ", "<< idx_u << "]:\n" << u.op << std::endl;
+    }
+    Eigen::MatrixXcd res(tensors.get_length(), tensors.get_length());
+    for(long j = 0; j < res.cols(); j++){
+        for(long i = 0; i < res.rows(); i++){
             auto tr = qm::lbit::get_lbit_exp_value(unitary_gates_2site_layers,qm::spinHalf::sz,static_cast<size_t>(i), qm::spinHalf::sz,static_cast<size_t>(j));
             res(i,j) = tr;
             tools::log->info("Trace = {:.16f}{:+.16f}", tr.real(), tr.imag());
