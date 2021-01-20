@@ -347,11 +347,15 @@ void class_flbit::create_lbit_transform_gates() {
         for(long i = 0; i < res.rows(); i++){
             auto tr = qm::lbit::get_lbit_exp_value(unitary_gates_2site_layers,qm::spinHalf::sz,static_cast<size_t>(i), qm::spinHalf::sz,static_cast<size_t>(j));
             res(i,j) = tr;
-            tools::log->info("Trace = {:.16f}{:+.16f}", tr.real(), tr.imag());
         }
     }
-    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-    std::cout << "trace res: \n" << res.format(CleanFmt) << std::endl;
+    for(long i = 0; i < res.rows(); i++) {
+        fmt::print("[");
+        for(long j = 0; j < res.cols(); j++) {
+            fmt::print("{:>9.6f}{:+>9.6f}i  ", res(i,j).real(), res(i,j).imag());
+        }
+        fmt::print("]\n");
+    }
     exit(0);
 }
 

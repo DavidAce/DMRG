@@ -94,4 +94,24 @@ namespace iter {
     decltype(auto) enumerate_reverse(const Container &content) {
         return internal::enumerate_range<typename Container::const_reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
     }
+
+
+
+    enum class order{def,rev};
+
+    template<order o, class Container>
+    decltype(auto) enumerate(Container &content) {
+        if constexpr(o == order::rev)
+            return internal::enumerate_range<typename Container::reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+        else
+            return internal::enumerate_range<typename Container::iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+    }
+
+    template<order o, class Container>
+    decltype(auto) enumerate(const Container &content) {
+        if constexpr(o == order::rev)
+            return internal::enumerate_range<typename Container::const_reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+        else
+            return internal::enumerate_range<typename Container::const_iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+    }
 }

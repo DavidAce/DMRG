@@ -405,92 +405,6 @@ std::vector<size_t> get_pos_in_lightcone(size_t gate_size, size_t pos_max,size_t
 }
 
 
-std::vector<std::vector<size_t>> get_pos_in_lightcone2(const std::vector<std::vector<qm::Gate>> & unitary_layers, size_t pos_tau, size_t pos_sig){
-    std::vector<std::vector<size_t>> tau_cone, sig_cone, res_cone;
-    tau_cone.emplace_back(std::vector<size_t>{pos_tau});
-    sig_cone.emplace_back(std::vector<size_t>{pos_sig});
-    for(const auto & [idx_layer,layer] : iter::enumerate(unitary_layers)) {
-        // Generate
-        if(layer.empty()) continue;
-        std::vector<std::vector<size_t>> gate_sequence;
-        size_t gate_size = layer.front().pos.size();
-        size_t pos_max   = layer.back().pos.back();
-        for(size_t offset = 0; offset < gate_size; offset++) {
-            if(offset + gate_size > pos_max +1) break;
-            auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
-            if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
-            gate_sequence.emplace_back(off_idx);
-        }
-        for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
-            std::set<size_t> match;
-            for(const auto & [idx_seq, pos_gate] : iter::enumerate(seq)){
-                auto &u = layer[pos_gate];
-                std::vector<size_t> pos_isect;
-                std::set_intersection(tau_cone.back().begin(),tau_cone.back().end(),
-                                      u.pos.begin(),u.pos.end(),
-                                      back_inserter(pos_isect));
-                if(not pos_isect.empty())
-                    match.insert(u.pos.begin(),u.pos.end()); // Add positions from u if the gate connects to the current cone
-            }
-            if(match.empty()) tau_cone.emplace_back(tau_cone.back());
-            else tau_cone.emplace_back(std::vector<size_t>(match.begin(),match.end()));
-        }
-    }
-    // Do the same in reverse for sig
-    for(const auto & [idx_layer,layer] : iter::enumerate_reverse(unitary_layers)) {
-        // Generate
-        if(layer.empty()) continue;
-        std::vector<std::vector<size_t>> gate_sequence;
-        size_t gate_size = layer.front().pos.size();
-        size_t pos_max   = layer.back().pos.back();
-        for(size_t offset = 0; offset < gate_size; offset++) {
-            if(offset + gate_size > pos_max +1) break;
-            auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
-            if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
-            gate_sequence.emplace_back(off_idx);
-        }
-        for(const auto &[idx_sublayer, seq] : iter::enumerate_reverse(gate_sequence)) {
-            std::set<size_t> match;
-            for(const auto & [idx_seq, pos_gate] : iter::enumerate_reverse(seq)){
-                auto &u = layer[pos_gate];
-                std::vector<size_t> pos_isect;
-                std::set_intersection(sig_cone.back().begin(),sig_cone.back().end(),
-                                      u.pos.begin(),u.pos.end(),
-                                      back_inserter(pos_isect));
-                if(not pos_isect.empty())
-                    match.insert(u.pos.begin(),u.pos.end()); // Add positions from u if the gate connects to the current cone
-            }
-            if(match.empty()) sig_cone.emplace_back(sig_cone.back());
-            else sig_cone.emplace_back(std::vector<size_t>(match.begin(),match.end()));
-        }
-    }
-    if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
-    // Now turn the sig_cone upside down
-    std::reverse(sig_cone.begin(),sig_cone.end());
-    // Find the intersection between tau and sig cones
-    for(size_t idx_sublayer = 0; idx_sublayer < tau_cone.size(); idx_sublayer++ ){
-        auto & tau_sublayer = tau_cone[idx_sublayer];
-        auto & sig_sublayer = sig_cone[idx_sublayer];
-        std::vector<size_t> pos_isect;
-        std::set_intersection(tau_sublayer.begin(),tau_sublayer.end(),
-                              sig_sublayer.begin(),sig_sublayer.end(),
-                              back_inserter(pos_isect));
-        res_cone.emplace_back(pos_isect);
-    }
-
-    for(const auto & [i,c] : iter::enumerate_reverse(tau_cone)){
-        fmt::print("tau{}: {}\n",i,c );
-    }
-    for(const auto & [i,c] : iter::enumerate_reverse(sig_cone)){
-        fmt::print("sig{}: {}\n",i,c );
-    }
-    for(const auto & [i,c] : iter::enumerate_reverse(res_cone)){
-        fmt::print("res{}: {}\n",i,c );
-    }
-    return res_cone;
-}
-
-
 qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig){
 
 
@@ -500,111 +414,109 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
 
     auto g = tau_gate;
     tools::log->info("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
-    auto lc2 = get_pos_in_lightcone2(unitary_layers,pos_tau, pos_sig);
+    auto lc2 = qm::get_lightcone_intersection(unitary_layers,pos_tau, pos_sig);
 
     std::vector<std::string> net;
     std::vector<std::string> log;
     std::string empty_layer;
-    size_t uw = 7; // Width of a unitary box
-    size_t hw = 3; // Half-width of a unitary box
-    size_t op = 3; // Overlap
+    size_t uw = 7; // Width of a unitary 2-site gate box
+    size_t hw = 3; // Half-width of a unitary 2-site gate box
+    size_t op = 3; // Overlap of a unitary 2-site gate box
+    size_t tw = 6; // Tag width
     for(const auto & [idx_layer,layer] : iter::enumerate(unitary_layers)){
         // Generate
-        if(g.pos.empty()) break;
         if(layer.empty()) continue;
-        std::vector<size_t> gate_sequence;
         size_t gate_size = layer.front().pos.size();
         size_t pos_max   = layer.back().pos.back();
-        for(size_t offset = 0; offset < gate_size; offset++) {
-            if(offset + gate_size > pos_max +1) break;
-            auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
-            if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
-            gate_sequence.insert(gate_sequence.end(), off_idx.begin(), off_idx.end());
-        }
-        tools::log->info("Gate sequence: {}", gate_sequence);
+        auto gate_sequence = qm::get_gate_sequence(layer);
+        tools::log->trace("Gate sequence: {}", gate_sequence);
         if(net.empty()){
-            empty_layer = fmt::format("{0:^{1}}"," ", pos_max*(uw-op) + op);
+            empty_layer = fmt::format("{0:^{1}}"," ", tw + pos_max*(uw-op) + op);
             net.emplace_back(empty_layer);
-            net.back().replace(pos_tau * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_tau)));
+            net.back().replace(0,tw,"tau  :");
+            net.back().replace(tw + pos_tau * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_tau)));
             log.emplace_back(fmt::format("insert tau [{}] -> now {}", pos_tau, g.pos));
         }
-        std::vector<std::string> layer_str(gate_size, empty_layer);
-        std::vector<std::string> story_str(gate_size);
-        for(const auto &[idx, pos_gate] : iter::enumerate(gate_sequence)) {
-            if(g.pos.empty()) break;
-            auto &u = layer.at(pos_gate);
-            auto idx_sublayer = num::mod<size_t>(pos_gate, gate_size);
-            // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
-            // For a successful connection, at least one pos in g should be present in u gate.
-            // After connecting, trace away legs of g that are outside of the light-cone intersection between tau and sigma.
-            // Always trace the position furthest away from the target operator
+        for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
+            std::string layer_str = empty_layer;
+            std::string story_str;
+            for(const auto & [idx_seq, pos_gate] : iter::enumerate(seq)){
+                auto &u = layer.at(pos_gate);
+                auto idx_sublayer = num::mod<size_t>(pos_gate, gate_size);
+                layer_str.replace(0,tw,fmt::format("u[{:^2}]:",2*idx_layer+idx_sublayer)); // Setup layer tag
+
+                // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
+                // For a successful connection, at least one pos in g should be present in u gate.
+                // After connecting, trace away legs of g that are outside of the light-cone intersection between tau and sigma.
+                // Always trace the position furthest away from the target operator
 
 
-            // Check if g.pos and u.pos have sites in common
-            std::vector<size_t> pos_isect;
-            std::set_intersection(g.pos.begin(),g.pos.end(),
-                                  u.pos.begin(),u.pos.end(),
-                                  back_inserter(pos_isect));
 
-            if(not pos_isect.empty()){
-                // Found a matching u. Connect it
-                auto pos_old = g.pos;
-                g = g.insert(u);
-                tools::log->info("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
-                layer_str[idx_sublayer].replace(u.pos.front() * (uw-op), uw, fmt::format("[{1:^{0}}]",uw-2, fmt::format("{:<2},{:>2}",u.pos.front(), u.pos.back())));
-                story_str[idx_sublayer].append(fmt::format("insert u{} -> now {} ", u.pos, g.pos));
+                // Check if g.pos and u.pos have sites in common
+                std::vector<size_t> pos_isect;
+                std::set_intersection(g.pos.begin(),g.pos.end(),
+                                      u.pos.begin(),u.pos.end(),
+                                      back_inserter(pos_isect));
+
+                if(not pos_isect.empty()){
+                    // Found a matching u. Connect it
+                    auto pos_old = g.pos;
+                    g = g.insert(u);
+                    tools::log->debug("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
+                    layer_str.replace(tw + u.pos.front() * (uw-op), uw, fmt::format("[{1:^{0}}]",uw-2, fmt::format("{:<2},{:>2}",u.pos.front(), u.pos.back())));
+                    story_str.append(fmt::format("insert u{} -> now {} ", u.pos, g.pos));
+                    std::cout << fmt::format("inserted u{} -> g{} layer [{},{}] = {}:\n",u.pos, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer) << g.op << std::endl;
+                }
+
+                // Determine the positions that are allowed
+                std::vector<size_t> pos_needed = lc2[2*idx_layer+idx_sublayer+1]; // This specifies sites that are needed to connect the coming gate
+                // Go to next layer if no more gates will be applied in this one
+                // Otherwise may risk tracing too early, before we append sig
+                if(pos_needed.empty()) break;
+
+
+                // Check if g.pos has non-needed sites
+                std::vector<size_t> pos_outside;
+                std::set_difference(g.pos.begin(),g.pos.end(), pos_needed.begin(), pos_needed.end(),
+                                    back_inserter(pos_outside));
+                if(not pos_outside.empty()){
+                    // Found positions outside of the light cone. Trace them
+                    auto pos_old = g.pos;
+                    g = g.trace_pos(pos_outside);
+                    tools::log->debug("trace : layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | needed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, pos_old, g.pos, pos_needed, pos_outside);
+                    story_str.append(fmt::format("trace {} -> now {} ", pos_outside, g.pos));
+                    std::cout << fmt::format("traced {} -> g{} layer [{},{}] = {}:\n",pos_outside, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer) << g.op << std::endl;
+                }
+
+
             }
-
-            // Check if g.pos has sites outside of the light-cone intersection
-//            std::vector<size_t> pos_allowed = get_pos_in_lightcone(gate_size, pos_max, unitary_layers.size(), idx_layer, idx_sublayer, pos_tau, pos_sig);
-            std::vector<size_t> pos_allowed = lc2[2*idx_layer+idx_sublayer];
-            std::vector<size_t> pos_outside;
-            std::set_difference(g.pos.begin(),g.pos.end(),
-                                pos_allowed.begin(), pos_allowed.end(),
-                                back_inserter(pos_outside));
-            if(not pos_outside.empty()){
-                // Found positions outside of the light cone. Trace them
-                auto pos_old = g.pos;
-                g = g.trace_pos(pos_outside);
-                tools::log->info("trace : layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | allowed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, pos_old, g.pos, pos_allowed, pos_outside);
-                story_str[idx_sublayer].append(fmt::format("trace {} -> now {} ", pos_outside, g.pos));
-            }
-
-
+            net.emplace_back(layer_str);
+            log.emplace_back(story_str);
         }
-        for(auto & l : layer_str) net.emplace_back(l);
-        for(auto & s : story_str) log.emplace_back(s);
+
     }
 
     Scalar result;
 
     if(g.pos.empty()){
-        long distance = std::abs(static_cast<long>(pos_tau) - static_cast<long>(pos_sig));
-        long max_dist = static_cast<long>(unitary_layers.size()*unitary_layers.front().front().pos.size());
-        if(distance <= max_dist)
-            tools::log->warn("Expected last gate to have size >= 1, since |pos_tau {} - pos_sig {}| = {} <= {}. Got size {}", pos_tau, pos_sig, distance, max_dist,g.pos.size()  );
-//            throw std::runtime_error(fmt::format("Expected last gate to have size >= 1, since |pos_tau {} - pos_sig {}| = {} <= {}. Got size {}", pos_tau, pos_sig, distance, max_dist,g.pos.size() ));
         if(g.op.dimension(0) * g.op.dimension(1) != 1) throw std::runtime_error(fmt::format("Expected empty gate to have scalar op: Got dims {}", g.op.dimensions()));
-        log.emplace_back(fmt::format("-> result = {:.8f}{:+.8f}i", result.real(),result.imag()));
+        net.emplace_back(empty_layer);
+        net.back().replace(0,tw,"sig  :");
+        log.emplace_back(fmt::format("sigma not connected -> result = {:.8f}{:+.8f}i", result.real(),result.imag()));
         result = g.op.coeff(0);
     }else{
-        //    if(g.pos.empty()) throw std::logic_error(fmt::format("Expected last gate to have size >= 1. Got size {}", g.pos.size()));
         // In the last step we connect the sigma operator and trace everything down to a scalar
         result = g.connect_under(sig_gate).trace();
         net.emplace_back(empty_layer);
-        net.back().replace(pos_sig * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_sig)));
+        net.back().replace(0,tw,"sig  :");
+        net.back().replace(tw + pos_sig * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_sig)));
         log.emplace_back(fmt::format("insert sigma [{}] -> now {} -> result = {:.8f}{:+.8f}i", pos_sig, g.pos,result.real(),result.imag()));
     }
 
 
     tools::log->info("Computed Trace (tau_{} sig_{})", pos_tau, pos_sig);
     for(const auto & [idx,layer] :iter::enumerate_reverse(net)){
-        if(idx == 0)
-            std::cout << fmt::format("tau  :") << layer << " | log: " << log[idx] << std::endl;
-        else if( idx == net.size()-1)
-            std::cout << fmt::format("sig  :") << layer << " | log: " << log[idx] << std::endl;
-        else
-            std::cout << fmt::format("u[{:^2}]:",idx-1) << layer << " | log: " << log[idx] << std::endl;
+        std::cout << layer << " | log: " << log[idx] << std::endl;
     }
     return result;
 
