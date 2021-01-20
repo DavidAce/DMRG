@@ -3,9 +3,12 @@
 //
 
 #include "class_quantum_gates.h"
-#include "general/nmspc_tensor_extra.h"
 #include <Eigen/Core>
 #include <general/nmspc_iter.h>
+#include <general/nmspc_tensor_extra.h>
+#include <iostream>
+#include <math/num.h>
+#include <set>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <utility>
 
@@ -52,7 +55,7 @@ std::vector<T> concat(const std::vector<T> &v1, const std::vector<T> &v2) {
 
 template<typename T, auto N, auto M>
 auto concat(const std::array<T, N> &a1, const std::array<T, M> &a2) {
-    std::array<T, N + M> result;
+    std::array<T, N + M> result{};
     std::copy(a1.cbegin(), a1.cend(), result.begin());
     std::copy(a2.cbegin(), a2.cend(), result.begin() + N);
     return result;
@@ -193,6 +196,7 @@ Eigen::Tensor<qm::Scalar, 2> &qm::Gate::adjoint() const {
     return adj.value();
 }
 
+
 template<auto rank>
 std::array<long, rank> qm::Gate::shape() const {
     if constexpr(rank == 1) { return {op.dimension(0) * op.dimension(1)}; }
@@ -279,6 +283,76 @@ qm::Gate   qm::Gate::trace_pos(const std::vector<size_t> &pos_) const { return q
 qm::Gate   qm::Gate::trace_pos(size_t pos_) const { return qm::trace_pos(*this, pos_); }
 qm::Scalar qm::Gate::trace() const { return qm::trace(*this); }
 
+
+std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gate> & layer){
+    std::vector<std::vector<size_t>> gate_sequence;
+    size_t gate_size = layer.front().pos.size();
+    size_t pos_max   = layer.back().pos.back();
+    for(size_t offset = 0; offset < gate_size; offset++) {
+        if(offset + gate_size > pos_max +1) break;
+        auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
+        if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
+        gate_sequence.emplace_back(off_idx);
+    }
+    return gate_sequence;
+}
+
+
+template<iter::order o>
+std::vector<std::vector<size_t>> qm::get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos){
+    std::vector<std::vector<size_t>> cone;
+    cone.emplace_back(std::vector<size_t>{pos});
+    for(const auto & [idx_layer,layer] : iter::enumerate<o>(layers)) {
+        if(layer.empty()) continue;
+        auto gate_sequence = get_gate_sequence(layer);
+        for(const auto &[idx_sublayer, seq] : iter::enumerate<o>(gate_sequence)) {
+            std::set<size_t> match;
+            for(const auto & [idx_seq, pos_gate] : iter::enumerate<o>(seq)){
+                auto &u = layer[pos_gate];
+                std::vector<size_t> pos_isect;
+                std::set_intersection(cone.back().begin(),cone.back().end(),
+                                      u.pos.begin(),u.pos.end(),
+                                      back_inserter(pos_isect));
+                if(not pos_isect.empty())
+                    match.insert(u.pos.begin(),u.pos.end()); // Add positions from u if the gate connects to the current cone
+            }
+            if(match.empty()) cone.emplace_back(cone.back());
+            else cone.emplace_back(std::vector<size_t>(match.begin(),match.end()));
+        }
+    }
+    if constexpr(o == iter::order::rev) std::reverse(cone.begin(),cone.end());
+    return cone;
+}
+
+template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::def>(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
+template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::rev>(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
+
+
+std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & unitary_layers, size_t pos_tau, size_t pos_sig){
+    auto tau_cone = qm::get_lightcone<iter::order::def>(unitary_layers,pos_tau);
+    auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers,pos_sig); // This cone is upside down!
+    if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
+    std::vector<std::vector<size_t>> int_cone;
+
+    // Find the intersection between tau and sig cones
+    for(size_t idx_sublayer = 0; idx_sublayer < tau_cone.size(); idx_sublayer++ ){
+        auto & tau_sublayer = tau_cone[idx_sublayer];
+        auto & sig_sublayer = sig_cone[idx_sublayer];
+        std::vector<size_t> pos_isect;
+        std::set_intersection(tau_sublayer.begin(),tau_sublayer.end(),
+                              sig_sublayer.begin(),sig_sublayer.end(),
+                              back_inserter(pos_isect));
+        int_cone.emplace_back(pos_isect);
+    }
+    fmt::print("Lightcones\n");
+    for(const auto & [i,c] : iter::enumerate_reverse(tau_cone)) fmt::print("tau[{:2<}]: {}\n",i,c );
+    for(const auto & [i,c] : iter::enumerate_reverse(sig_cone)) fmt::print("sig[{:2<}]: {}\n",i,c );
+    for(const auto & [i,c] : iter::enumerate_reverse(int_cone)) fmt::print("int[{:2<}]: {}\n",i,c );
+    return int_cone;
+}
+
+
+
 qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     std::vector<size_t> pos_isect; // locations that intersect: both on middle and updown gates
     std::vector<size_t> pos_nsect; // locations that do not intersect: not in both on middle and updown gates
@@ -287,7 +361,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     if(pos_isect.empty()) return middle_gate;
     bool inc = std::includes(middle_gate.pos.begin(), middle_gate.pos.end(), updown_gate.pos.begin(), updown_gate.pos.end());
 
-    tools::log->info("Inserting gate pos {} between gates pos {}", middle_gate.pos, updown_gate.pos);
+    tools::log->trace("Inserting gate pos {} between gates pos {}", middle_gate.pos, updown_gate.pos);
     auto shp_udn4 = updown_gate.shape<4>();
     auto shp_udn2 = updown_gate.shape<2>();
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
@@ -299,41 +373,54 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     }
     if(pos_isect.size() == 1 and pos_nsect.size() == 1 and middle_gate.pos.size() == 1 and updown_gate.pos.size() == 2) {
         // One common location, one two uncommon. Then this connects a 1-site gate with 2-site gates up and down
-        auto                   shp_mid2 = middle_gate.shape<2>();
         Textra::idxlistpair<1> idx1;
         Textra::idxlistpair<2> idx2;
         // Decide if this is connects on the left or right leg
         if(middle_gate.pos.front() == pos_isect.front()) {
-            /*  Right insert
-             *
-             *      |    |
-             *     [  up  ]
-             *      |    |                0    1          0
-             *      |    |                |    |          |
-             *      | [ mid ]      =     [ gate ]  =   [ gate ]
-             *      |    |                |    |          |
-             *      |    |                2   3           1
-             *     [  dn  ]
-             *      |    |
-             */
-            idx1 = Textra::idx({3}, {0});
-            idx2 = Textra::idx({2, 3}, {0, 1});
-        } else {
             /*  Left insert
+             *            0    1              0    1               0    1
+             *            |    |              |    |               |    |
+             *           [  up  ]            [  up  ]             [  up  ]
+             *            |    |              |    |               |    |
+             *           (2)   3              |   <2>              |    |
+             *           (0)                  |                    |    |
+             *            |                   |                    |    |
+             *          [mid]       ===>    [mid]        ===>    [mid]  |
+             *            |                   |                    |    |
+             *            1                  (3)                   |    |
+             *            0    1             (0)  <1>              |    |
+             *            |    |              |    |               |    |
+             *           [  dn  ]            [  dn  ]             [  dn  ]
+             *            |    |              |    |               |    |
+             *            2    3              2    3               2    3
              *
-             *      |    |
-             *     [  up  ]
-             *      |    |                0    1          0
-             *      |    |                |    |          |
-             *   [ mid ] |         =     [ gate ]  =   [ gate ]
-             *      |    |                |    |          |
-             *      |    |                2   3           1
-             *     [  dn  ]
-             *      |    |
              */
+
 
             idx1 = Textra::idx({2}, {0});
             idx2 = Textra::idx({3, 2}, {0, 1});
+        } else {
+            /*  Right insert
+             *            0    1              0    1               0    1
+             *            |    |              |    |               |    |
+             *           [  up  ]            [  up  ]             [  up  ]
+             *            |    |              |    |               |    |
+             *            2   (3)            <2>   |               |    |
+             *                (0)                  |               |    |
+             *                 |                   |               |    |
+             *               [mid]   ===>        [mid]     ===>    |  [mid]
+             *                 |                   |               |    |
+             *                 1                  (3)              |    |
+             *            0    1             <0>  (1)              |    |
+             *            |    |              |    |               |    |
+             *           [  dn  ]            [  dn  ]             [  dn  ]
+             *            |    |              |    |               |    |
+             *            2    3              2    3               2    3
+             *
+             */
+
+            idx1 = Textra::idx({3}, {0});
+            idx2 = Textra::idx({2, 3}, {0, 1});
         }
         auto op = contract(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
         return qm::Gate{op, updown_gate.pos, updown_gate.dim};
@@ -589,9 +676,10 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
     std::set_intersection(dn_gate.pos.begin(), dn_gate.pos.end(), up_gate.pos.begin(), up_gate.pos.end(), back_inserter(pos_isect));
     std::set_symmetric_difference(dn_gate.pos.begin(), dn_gate.pos.end(), up_gate.pos.begin(), up_gate.pos.end(), back_inserter(pos_nsect));
     bool inc = std::includes(dn_gate.pos.begin(), dn_gate.pos.end(), up_gate.pos.begin(), up_gate.pos.end());
-
-    tools::log->info("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
     if(pos_isect.empty()) return dn_gate;
+
+    tools::log->trace("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
+
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // This case is a vertical stack. Should be the simplest case
         Eigen::Tensor<Scalar,2> op = up_gate.op.contract(dn_gate.op, Textra::idx({1},{0}));
@@ -600,7 +688,6 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
     if(not pos_isect.empty() and not pos_nsect.empty() and inc) {
         std::array<long, 6> dn_shp6{};
         std::array<long, 4> dn_shp4{};
-        std::array<long, 2> up_shp2{};
         std::vector<size_t> pos;
         std::vector<long>   dim;
         auto                dn_size  = dn_gate.pos.size();
@@ -772,6 +859,7 @@ qm::Gate qm::trace_pos(const qm::Gate &gate, const std::vector<size_t> &pos) {
 }
 
 qm::Gate   qm::trace_pos(const qm::Gate &gate, size_t pos) { return qm::trace_pos(gate, gate.idx(std::vector<size_t>{pos})); }
+
 qm::Scalar qm::trace(const qm::Gate &gate) {
     qm::Gate t = qm::trace_pos(gate, gate.pos);
     if(not t.pos.empty()) throw std::logic_error(fmt::format("Gate should be empty after tracing all positions. Got pos: {}", t.pos));
@@ -779,11 +867,198 @@ qm::Scalar qm::trace(const qm::Gate &gate) {
     return t.op(0);
 }
 
+namespace test{
+
+    template<typename Scalar, auto rank>
+    Eigen::Tensor<Scalar, rank> reverse(const Eigen::Tensor<Scalar, rank> &tensor){
+        return tensor;
+        if constexpr(rank <= 2) return tensor;
+        else{
+            std::array<Eigen::Index, rank> shf_idx{};
+            for(size_t i = 0; i < static_cast<size_t>(rank); i++) {
+                shf_idx[i] = static_cast<Eigen::Index>(i);
+            }
+            std::reverse(shf_idx.begin(), shf_idx.begin()+rank/2);
+            std::reverse(shf_idx.begin()+rank/2, shf_idx.end());
+            return tensor.shuffle(shf_idx);
+        }
+    }
+
+
+    template<typename Scalar, auto rank>
+    Eigen::Tensor<Scalar, rank-2> trace_old(const Eigen::Tensor<Scalar, rank> &tensor, const Textra::idxlistpair<1l> & idx_pair) {
+        static_assert(rank >= 2, "Rank must be >= 2 for trace of an index pair");
+        auto idx0 = static_cast<size_t>(idx_pair[0].first);
+        auto idx1 = static_cast<size_t>(idx_pair[0].second);
+        tools::log->info("Tracing pair [{},{}] of tensor {}", idx0,idx1, tensor.dimensions());
+        std::cout << "t before: \n" << tensor << std::endl;
+        if(tensor.dimension(idx0) != tensor.dimension(idx1)) throw std::logic_error("Can't trace index pair of different dimensions");
+        long dim0 = tensor.dimension(idx0);
+        Eigen::Tensor<Scalar,1> id(dim0);
+        id.setConstant(1.0);
+
+        Eigen::Tensor<Scalar, rank-2> result = Textra::asDiagonal(id).contract(tensor, Textra::idx({1ul,0ul},{idx0,idx1}));
+        std::cout << "t after: \n" << result << std::endl;
+
+        return result;
+    }
+    template<typename Scalar, auto rank, auto npair>
+    Eigen::Tensor<Scalar, rank-2*npair> trace(const Eigen::Tensor<Scalar, rank> &tensor_reversed, const Textra::idxlistpair<npair> & idx_pair) {
+        /*
+         * Returns the partial trace of a tensor
+
+         * Note that a this tensor here is built with reversed indexing:
+         *
+         @verbatim
+                0 1 2 3
+                | | | |
+               [  A   ]
+               | | | |
+               4 5 6 7
+         @endverbatim
+         *
+         * whereas the kronecker product would give us the following indexing
+         *
+         @verbatim
+                3 2 1 0
+                | | | |
+               [  A   ]
+               | | | |
+               7 6 5 4
+         @endverbatim
+
+         *
+         * So we make a temporary which has swapped index order by shuffling {3,2,1,0,7,6,5,4}
+         */
+
+
+        static_assert(rank >= 2*npair, "Rank must be large enough");
+
+
+        if constexpr(npair == 1){
+            // define a reversed tensor
+            auto tensor = reverse(tensor_reversed);
+
+            // Collect indices and dimensions traced
+            auto idx1 = static_cast<size_t>(idx_pair[0].first);
+            auto idx2 = static_cast<size_t>(idx_pair[0].second);
+            std::array<size_t,2> idx_tr{idx1,idx2};
+            std::array<Eigen::Index,2> dim_tr{tensor.dimension(idx1), tensor.dimension(idx2)};
+//
+//            // Collect indices and dimensions kept
+//            std::array<Eigen::Index,rank-2> dim_kp{};
+//            std::array<size_t,rank-2> idx_kp{};
+//            size_t k = 0;
+//            for(size_t i = 0; i < rank; i++ ){
+//                if (i == idx1) continue;
+//                if (i == idx2) continue;
+//                idx_kp[k] = i;
+//                dim_kp[k] = tensor.dimension(i);
+//                k++;
+//            }
+//
+//            // Define the slice that we keep
+//            std::array<Eigen::Index,rank> keep_offset{};
+//            std::array<Eigen::Index,rank> keep_extent{};
+//            for(auto & o : keep_offset) o=0; // Initialize to zero
+//            for(auto & s : keep_extent) s=1; // Initialize to one
+//            for(auto & i : idx_kp) keep_extent[i] = tensor.dimension(i);
+            // Construct the tensor slice that we keep
+//            Eigen::Tensor<Scalar,rank-2> result = tensor.slice(keep_offset,keep_extent).reshape(dim_kp);
+            if(dim_tr[0] != dim_tr[1]) throw std::runtime_error("Traced dimensions must be equal size");
+            Eigen::Tensor<Scalar,1> id(dim_tr[0]);
+            id.setConstant(1.0);
+            Eigen::Tensor<Scalar,rank-2> result = Textra::asDiagonal(id).contract(tensor, Textra::idx({1ul,0ul},{idx1,idx2}));
+            return reverse(result);
+        }else if constexpr(npair == 2){
+            std::array<long,2> pair1{idx_pair[1].first, idx_pair[1].second};
+            std::array<long,2> pair0{idx_pair[0].first, idx_pair[0].second};
+            pair0[0] -= std::count_if(pair1.begin(),pair1.end(),[&pair0](auto i){return i < pair0[0];});
+            pair0[1] -= std::count_if(pair1.begin(),pair1.end(),[&pair0](auto i){return i < pair0[1];});
+            auto res1 = test::trace(tensor_reversed,Textra::idx({pair1[0]},{pair1[1]}));
+            return test::trace(res1,Textra::idx({pair0[0]},{pair0[1]}));
+        }else if constexpr(npair == 3){
+            std::array<long,2> pair2{idx_pair[2].first,idx_pair[2].second};
+            std::array<long,2> pair1{idx_pair[1].first,idx_pair[1].second};
+            std::array<long,2> pair0{idx_pair[0].first,idx_pair[0].second};
+            pair1[0] -= std::count_if(pair2.begin(),pair2.end(),[&pair1](auto i){return i < pair1[0];});
+            pair1[1] -= std::count_if(pair2.begin(),pair2.end(),[&pair1](auto i){return i < pair1[1];});
+            pair0[0] -= std::count_if(pair2.begin(),pair2.end(),[&pair0](auto i){return i < pair0[0];});
+            pair0[1] -= std::count_if(pair2.begin(),pair2.end(),[&pair0](auto i){return i < pair0[1];});
+            auto res = test::trace(tensor_reversed,Textra::idx({pair2[0]},{pair2[1]}));
+            return test::trace(tensor_reversed,Textra::idx({pair0[0], pair1[0]}, {pair0[1], pair1[1]}));
+        }else
+            throw std::runtime_error("Trace not implemented");
+
+
+//
+//
+//        // Collect indices and dimensions traced
+//        std::array<size_t,2*npair> idx_tr{};
+//        std::array<Eigen::Index,2*npair> dim_tr{};
+//        for(size_t p = 0; p < static_cast<size_t>(npair); p++){
+//            idx_tr[2*p]   = static_cast<size_t>(idx_pair[p].first);
+//            idx_tr[2*p+1] = static_cast<size_t>(idx_pair[p].second);
+//            dim_tr[2*p]   = static_cast<Eigen::Index>(tensor.dimension(idx_tr[2*p]  ));
+//            dim_tr[2*p+1] = static_cast<Eigen::Index>(tensor.dimension(idx_tr[2*p+1]));
+//        }
+//
+//        // Collect indices and dimensions kept
+//        std::array<Eigen::Index,rank-2*npair> dim_kp{};
+//        std::array<size_t,rank-2*npair> idx_kp{};
+//        size_t k = 0;
+//        for(size_t i = 0; i < rank; i++ ){
+//            if(std::find(idx_tr.begin(),idx_tr.end(),i) == idx_tr.end()){
+//                idx_kp[k] = i;
+//                dim_kp[k] = tensor.dimension(i);
+//                k++;
+//            }
+//        }
+//        for(size_t i = 0; i < idx_kp.size(); i++) dim_kp[i] = tensor.dimension(idx_kp[i]);
+//
+//        // Define the slice that we keep
+//        std::array<Eigen::Index,rank> keep_offset{};
+//        std::array<Eigen::Index,rank> keep_extent{};
+//        for(auto & o : keep_offset) o=0; // Initialize to zero
+//        for(auto & s : keep_extent) s=1; // Initialize to one
+//        for(auto & i : idx_kp) keep_extent[i] = tensor.dimension(i);
+//
+//        // Construct the tensor slice that we keep
+//        Eigen::Tensor<Scalar,rank-2*npair> result = tensor.slice(keep_offset,keep_extent).reshape(dim_kp);
+//        tools::log->info("tensor {} | keep {}{} | trace {}{}", tensor.dimensions(), idx_kp,dim_kp, idx_tr,dim_tr);
+//        std::cout << "result: \n" << result << std::endl;
+//        // Calculate the partial traces
+//        Scalar partial_traces = 1.0;
+//        for(size_t p = 0; p < npair; p++){
+//            // Define the slice corresponding to an index pair
+//            auto idx1 =  static_cast<size_t>(idx_pair[p].first);
+//            auto idx2 =  static_cast<size_t>(idx_pair[p].second);
+//            std::array<Eigen::Index,2> dim_trace = {tensor.dimension(idx1),tensor.dimension(idx2)};
+//            if(dim_trace[0] != dim_trace[1]) throw std::logic_error("Cannot trace indices of unequal dimension");
+//            std::array<Eigen::Index,rank> trace_offset{};
+//            std::array<Eigen::Index,rank> trace_extent{};
+//            for(auto & o : trace_offset) o=0; // Initialize to zero
+//            for(auto & s : trace_extent) s=1; // Initialize to one
+//            trace_extent[idx1] = dim_trace[0];
+//            trace_extent[idx2] = dim_trace[1];
+//            Eigen::Tensor<Scalar,2> slice = tensor.slice(trace_offset,trace_extent).reshape(dim_trace);
+//            Scalar sum = 0;
+//            for(Eigen::Index i = 0; i < dim_trace[0]; i++) sum += slice(i, i);
+//            partial_traces *= sum;
+//            tools::log->info("sum: {:.8f}{:+.8f}", sum.real(),sum.imag());
+//        }
+//        // Multiply the reduced tensor with the partial traces
+//        result = result * result.constant(partial_traces);
+//        return reverse(result);
+    }
+}
+
+
 template<auto N>
 qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpairs) {
-    if constexpr(N == 1) tools::log->info("Tracing:  pos {} | dim {} | pairs [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
+    if constexpr(N == 1) tools::log->trace("Tracing:  pos {} | dim {} | pairs [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
     if constexpr(N == 2)
-        tools::log->info("Tracing:  pos {} | dim {} | pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first,
+        tools::log->trace("Tracing:  pos {} | dim {} | pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first,
                          idxpairs[1].second);
 
     // Compute the remaining indices positions and dimensions
@@ -834,27 +1109,27 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
     // Trace
     if(gate.dim.size() == 1) {
         if constexpr(N == 1) { // dim size 1 is special! It can't take 2 index pairs
-            op_traced = Textra::trace(static_cast<T2>(gate.op.reshape(gate.shape<2>())), idxpairs).reshape(dim2);
+            op_traced = test::trace(static_cast<T2>(gate.op.reshape(gate.shape<2>())), idxpairs).reshape(dim2);
         } else {
             throw std::runtime_error(fmt::format("Can't trace {} index pairs on gate with pos {}", N, gate.pos));
         }
     }
     /* clang-format off */
-    else if(gate.dim.size() == 2) op_traced = Textra::trace(static_cast<T4>(gate.op.reshape(gate.shape<4>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 3) op_traced = Textra::trace(static_cast<T6>(gate.op.reshape(gate.shape<6>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 4) op_traced = Textra::trace(static_cast<T8>(gate.op.reshape(gate.shape<8>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 5) op_traced = Textra::trace(static_cast<T10>(gate.op.reshape(gate.shape<10>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 6) op_traced = Textra::trace(static_cast<T12>(gate.op.reshape(gate.shape<12>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 7) op_traced = Textra::trace(static_cast<T14>(gate.op.reshape(gate.shape<14>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 8) op_traced = Textra::trace(static_cast<T16>(gate.op.reshape(gate.shape<16>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 9) op_traced = Textra::trace(static_cast<T18>(gate.op.reshape(gate.shape<18>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 10) op_traced = Textra::trace(static_cast<T20>(gate.op.reshape(gate.shape<20>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 11) op_traced = Textra::trace(static_cast<T22>(gate.op.reshape(gate.shape<22>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 12) op_traced = Textra::trace(static_cast<T24>(gate.op.reshape(gate.shape<24>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 13) op_traced = Textra::trace(static_cast<T26>(gate.op.reshape(gate.shape<26>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 14) op_traced = Textra::trace(static_cast<T28>(gate.op.reshape(gate.shape<28>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 15) op_traced = Textra::trace(static_cast<T30>(gate.op.reshape(gate.shape<30>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 16) op_traced = Textra::trace(static_cast<T32>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 2) op_traced = test::trace(static_cast<T4>(gate.op.reshape(gate.shape<4>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 3) op_traced = test::trace(static_cast<T6>(gate.op.reshape(gate.shape<6>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 4) op_traced = test::trace(static_cast<T8>(gate.op.reshape(gate.shape<8>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 5) op_traced = test::trace(static_cast<T10>(gate.op.reshape(gate.shape<10>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 6) op_traced = test::trace(static_cast<T12>(gate.op.reshape(gate.shape<12>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 7) op_traced = test::trace(static_cast<T14>(gate.op.reshape(gate.shape<14>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 8) op_traced = test::trace(static_cast<T16>(gate.op.reshape(gate.shape<16>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 9) op_traced = test::trace(static_cast<T18>(gate.op.reshape(gate.shape<18>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 10) op_traced = test::trace(static_cast<T20>(gate.op.reshape(gate.shape<20>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 11) op_traced = test::trace(static_cast<T22>(gate.op.reshape(gate.shape<22>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 12) op_traced = test::trace(static_cast<T24>(gate.op.reshape(gate.shape<24>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 13) op_traced = test::trace(static_cast<T26>(gate.op.reshape(gate.shape<26>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 14) op_traced = test::trace(static_cast<T28>(gate.op.reshape(gate.shape<28>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 15) op_traced = test::trace(static_cast<T30>(gate.op.reshape(gate.shape<30>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 16) op_traced = test::trace(static_cast<T32>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
     /* clang-format on */
     else
         throw std::runtime_error(fmt::format("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size()));

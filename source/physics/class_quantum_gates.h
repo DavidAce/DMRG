@@ -3,6 +3,9 @@
 #include <complex>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <vector>
+namespace iter{
+    enum class order;
+}
 
 namespace qm {
     /* clang-format off */
@@ -10,6 +13,10 @@ namespace qm {
     using cplx = std::complex<double>;
     using real = double;
     class Gate;
+    [[nodiscard]] std::vector<std::vector<size_t>> get_gate_sequence(const std::vector<qm::Gate> & layer);
+    template<iter::order o>
+    [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
+    [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & layers, size_t pos_tau, size_t pos_sig);
 
     [[nodiscard]] qm::Gate insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate);
     [[nodiscard]] qm::Gate connect(const qm::Gate & dn_gate , const qm::Gate & up_gate);
