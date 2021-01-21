@@ -8,17 +8,21 @@
 #include "general/nmspc_tensor_extra.h"
 #include <Eigen/Core>
 #include <general/nmspc_iter.h>
+#include <io/fmt.h>
+#include <io/spdlog.h>
+#include <math/linalg.h>
 #include <math/num.h>
 #include <math/rnd.h>
-#include <unsupported/Eigen/KroneckerProduct>
-#include <unsupported/Eigen/MatrixFunctions>
 #include <set>
+#include <tools/common/log.h>
+#include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 
 using Scalar = std::complex<double>;
 using namespace Eigen;
 
-Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool swap)
+
+Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool mirror)
 /*
  * Returns a spin operator embedded in a larger Hilbert space. For instance, if at == 1 and sites == 4:
  *
@@ -36,7 +40,7 @@ Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_
        7 6 5 4
  @endverbatim
 
- * whereas you would normally want left-to-right indexing:
+ * whereas you would normally want left-to-right indexing in MPS contexts:
  *
  @verbatim
         0 1 2 3
@@ -46,23 +50,20 @@ Eigen::MatrixXcd qm::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_
        4 5 6 7
  @endverbatim
 
- * So don't forget to set "swap = true" if you intend to use the result as a tensor.
+ * So don't forget to set "reverse = true" if you intend to use the result as a tensor.
  */
 
 {
     if(at >= sites) throw std::logic_error("Expected at < sites. Got [at = " + std::to_string(at) + "] [sites = " + std::to_string(sites) + "]");
     MatrixXcd id     = MatrixXcd::Identity(s.rows(), s.cols());
     MatrixXcd result = at == 0 ? s : id;
-    if(swap)
-        for(size_t site = 1; site < sites; site++) result = kroneckerProduct(site == at ? s : id, result).eval(); // .eval() is required to avoid aliasing!!
-    else
-        for(size_t site = 1; site < sites; site++) result = kroneckerProduct(result, site == at ? s : id).eval(); // .eval() is required to avoid aliasing!!
+    for(size_t site = 1; site < sites; site++) result = linalg::matrix::kronecker(result, site == at ? s : id, mirror).eval(); // .eval() is required to avoid aliasing!!
     return result;
 }
 
-std::vector<Eigen::MatrixXcd> qm::gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool swap) {
+std::vector<Eigen::MatrixXcd> qm::gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool reverse) {
     std::vector<MatrixXcd> S;
-    for(int site = 0; site < sites; site++) S.emplace_back(qm::gen_embedded_spin_operator(s, site, sites, swap));
+    for(int site = 0; site < sites; site++) S.emplace_back(qm::gen_embedded_spin_operator(s, site, sites, reverse));
     return S;
 }
 
@@ -465,7 +466,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     tools::log->debug("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
                     layer_str.replace(tw + u.pos.front() * (uw-op), uw, fmt::format("[{1:^{0}}]",uw-2, fmt::format("{:<2},{:>2}",u.pos.front(), u.pos.back())));
                     story_str.append(fmt::format("insert u{} -> now {} ", u.pos, g.pos));
-                    std::cout << fmt::format("inserted u{} -> g{} layer [{},{}] = {}:\n",u.pos, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer) << g.op << std::endl;
+                    fmt::print("inserted u{} -> g{} layer [{},{}] = {}: \n{}\n",u.pos, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,linalg::tensor::to_string(g.op));
                 }
 
                 // Determine the positions that are allowed
@@ -485,7 +486,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     g = g.trace_pos(pos_outside);
                     tools::log->debug("trace : layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | needed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, pos_old, g.pos, pos_needed, pos_outside);
                     story_str.append(fmt::format("trace {} -> now {} ", pos_outside, g.pos));
-                    std::cout << fmt::format("traced {} -> g{} layer [{},{}] = {}:\n",pos_outside, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer) << g.op << std::endl;
+                    fmt::print("traced {} -> g{} layer [{},{}] = {}:\n{}\n",pos_outside, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, linalg::tensor::to_string(g.op));
                 }
 
 
