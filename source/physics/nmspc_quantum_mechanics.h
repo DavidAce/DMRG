@@ -6,17 +6,21 @@
 
 #include <Eigen/Core>
 #include <complex>
+#include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <physics/class_quantum_gates.h>
 #include <vector>
+
+
 namespace qm {
     /* clang-format off */
     using Scalar = std::complex<double>;
     using cplx = std::complex<double>;
     using real = double;
 
-    extern Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t site, bool swap = false);
-    extern std::vector<Eigen::MatrixXcd> gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool swap = false);
+
+    extern Eigen::MatrixXcd gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t site, bool reverse = false);
+    extern std::vector<Eigen::MatrixXcd> gen_manybody_spins(const Eigen::MatrixXcd &s, int sites, bool reverse = false);
 
     constexpr std::complex<double> imp(0.0,1.0);
     constexpr std::complex<double> imn(0.0,-1.0);

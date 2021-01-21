@@ -3,8 +3,13 @@
 #include <complex>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <vector>
+#include <unsupported/Eigen/CXX11/Tensor>
+
 namespace iter{
     enum class order;
+}
+namespace Eigen{
+    template <typename Idx> struct IndexPair;
 }
 
 namespace qm {
@@ -26,7 +31,6 @@ namespace qm {
     [[nodiscard]] Scalar   trace(const qm::Gate & gate);
     template<auto N>
     [[nodiscard]] qm::Gate trace(const qm::Gate & gate , const std::array<Eigen::IndexPair<Eigen::Index>, N>  & idxpair);
-
 
     class Gate {
         private:
