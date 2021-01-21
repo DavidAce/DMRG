@@ -14,6 +14,8 @@ source/math/rnd/rnd.cpp
 source/math/svd/svd.cpp
 source/math/svd/svd_lapacke.cpp
 source/math/hash/hash.cpp
+source/math/linalg/matrix.cpp
+source/math/linalg/tensor.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_tensor_omp.cpp
 source/io/class_config_reader.cpp
