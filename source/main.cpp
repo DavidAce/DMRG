@@ -4,7 +4,7 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_omp.h>
 #include <h5pp/h5pp.h>
-#include <io/nmspc_filesystem.h>
+#include <io/filesystem.h>
 #include <math/rnd.h>
 #include <tools/common/log.h>
 

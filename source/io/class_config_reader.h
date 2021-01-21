@@ -6,7 +6,7 @@
 
 #include <algorithm>
 #include <config/enums.h>
-#include <io/nmspc_filesystem.h>
+#include <io/filesystem.h>
 #include <string>
 #include <tools/common/log.h>
 
