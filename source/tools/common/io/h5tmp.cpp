@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <h5pp/h5pp.h>
-#include <io/nmspc_filesystem.h>
+#include <io/filesystem.h>
 #include <regex>
 #include <tools/common/fmt.h>
 #include <tools/common/io.h>
