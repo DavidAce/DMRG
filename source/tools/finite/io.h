@@ -19,6 +19,8 @@ namespace tools::finite::io {
         extern void save_model            (h5pp::File & h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const class_model_finite & model);
         extern void save_entgm            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_state_finite & state, const class_algorithm_status & status);
 
+        template<typename T>
+        extern void save_data             (h5pp::File & h5ppFile, const T & data, const std::string & data_path, const class_algorithm_status & status);
     }
 
     namespace h5table{

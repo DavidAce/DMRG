@@ -7,7 +7,6 @@
 #include <tools/common/log.h>
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
-#include <iostream>
 #include <math/num.h>
 #include <set>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -130,193 +129,6 @@ Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, con
     return ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn).shuffle(shf4).reshape(dim2);
 }
 
-//namespace test{
-//
-//    template<typename Scalar, auto rank>
-//    Eigen::Tensor<Scalar, rank> reverse(const Eigen::Tensor<Scalar, rank> &tensor){
-//        if constexpr(rank <= 2) return tensor;
-//        else{
-//            std::array<Eigen::Index, rank> shf_idx{};
-//            for(size_t i = 0; i < static_cast<size_t>(rank); i++) {
-//                shf_idx[i] = static_cast<Eigen::Index>(i);
-//            }
-//            std::reverse(shf_idx.begin(), shf_idx.begin()+rank/2);
-//            std::reverse(shf_idx.begin()+rank/2, shf_idx.end());
-//            return tensor.shuffle(shf_idx);
-//        }
-//    }
-//
-//
-//    template<typename Scalar, auto rank>
-//    Eigen::Tensor<Scalar, rank-2> trace_old(const Eigen::Tensor<Scalar, rank> &tensor, const Textra::idxlistpair<1l> & idx_pair) {
-//        static_assert(rank >= 2, "Rank must be >= 2 for trace of an index pair");
-//        auto idx0 = static_cast<size_t>(idx_pair[0].first);
-//        auto idx1 = static_cast<size_t>(idx_pair[0].second);
-//        tools::log->info("Tracing pair [{},{}] of tensor {}", idx0,idx1, tensor.dimensions());
-//        std::cout << "t before: \n" << tensor << std::endl;
-//        if(tensor.dimension(idx0) != tensor.dimension(idx1)) throw std::logic_error("Can't trace index pair of different dimensions");
-//        long dim0 = tensor.dimension(idx0);
-//        Eigen::Tensor<Scalar,1> id(dim0);
-//        id.setConstant(1.0);
-//
-//        Eigen::Tensor<Scalar, rank-2> result = Textra::asDiagonal(id).contract(tensor, Textra::idx({1ul,0ul},{idx0,idx1}));
-//        std::cout << "t after: \n" << result << std::endl;
-//
-//        return result;
-//    }
-//    template<typename Scalar, auto rank, auto npair>
-//    Eigen::Tensor<Scalar, rank-2*npair> trace(const Eigen::Tensor<Scalar, rank> &tensor_reversed, const Textra::idxlistpair<npair> & idx_pair) {
-//        /*
-//         * Returns the partial trace of a tensor
-//
-//         * Note that a this tensor here is built with reversed indexing:
-//         *
-//         @verbatim
-//                0 1 2 3
-//                | | | |
-//               [  A   ]
-//               | | | |
-//               4 5 6 7
-//         @endverbatim
-//         *
-//         * whereas the kronecker product would give us the following indexing
-//         *
-//         @verbatim
-//                3 2 1 0
-//                | | | |
-//               [  A   ]
-//               | | | |
-//               7 6 5 4
-//         @endverbatim
-//
-//         *
-//         * So we make a temporary which has swapped index order by shuffling {3,2,1,0,7,6,5,4}
-//         */
-//
-//
-//        static_assert(rank >= 2*npair, "Rank must be large enough");
-//
-//
-//        if constexpr(npair == 1){
-//            // define a reversed tensor
-////            auto tensor = reverse(tensor_reversed);
-//            auto tensor = tensor_reversed;
-//
-//            // Collect indices and dimensions traced
-//            auto idx1 = static_cast<size_t>(idx_pair[0].first);
-//            auto idx2 = static_cast<size_t>(idx_pair[0].second);
-//            std::array<size_t,2> idx_tr{idx1,idx2};
-//            std::array<Eigen::Index,2> dim_tr{tensor.dimension(idx1), tensor.dimension(idx2)};
-////
-////            // Collect indices and dimensions kept
-////            std::array<Eigen::Index,rank-2> dim_kp{};
-////            std::array<size_t,rank-2> idx_kp{};
-////            size_t k = 0;
-////            for(size_t i = 0; i < rank; i++ ){
-////                if (i == idx1) continue;
-////                if (i == idx2) continue;
-////                idx_kp[k] = i;
-////                dim_kp[k] = tensor.dimension(i);
-////                k++;
-////            }
-////
-////            // Define the slice that we keep
-////            std::array<Eigen::Index,rank> keep_offset{};
-////            std::array<Eigen::Index,rank> keep_extent{};
-////            for(auto & o : keep_offset) o=0; // Initialize to zero
-////            for(auto & s : keep_extent) s=1; // Initialize to one
-////            for(auto & i : idx_kp) keep_extent[i] = tensor.dimension(i);
-//            // Construct the tensor slice that we keep
-////            Eigen::Tensor<Scalar,rank-2> result = tensor.slice(keep_offset,keep_extent).reshape(dim_kp);
-//            if(dim_tr[0] != dim_tr[1]) throw std::runtime_error("Traced dimensions must be equal size");
-//            Eigen::Tensor<Scalar,1> id(dim_tr[0]);
-//            id.setConstant(1.0);
-//            Eigen::Tensor<Scalar,rank-2> result = Textra::asDiagonal(id).contract(tensor, Textra::idx({1ul,0ul},{idx1,idx2}));
-//            return result;
-////            return reverse(result);
-//        }else if constexpr(npair == 2){
-//            std::array<long,2> pair1{idx_pair[1].first, idx_pair[1].second};
-//            std::array<long,2> pair0{idx_pair[0].first, idx_pair[0].second};
-//            pair0[0] -= std::count_if(pair1.begin(),pair1.end(),[&pair0](auto i){return i < pair0[0];});
-//            pair0[1] -= std::count_if(pair1.begin(),pair1.end(),[&pair0](auto i){return i < pair0[1];});
-//            auto res1 = test::trace(tensor_reversed,Textra::idx({pair1[0]},{pair1[1]}));
-//            return test::trace(res1,Textra::idx({pair0[0]},{pair0[1]}));
-//        }else if constexpr(npair == 3){
-//            std::array<long,2> pair2{idx_pair[2].first,idx_pair[2].second};
-//            std::array<long,2> pair1{idx_pair[1].first,idx_pair[1].second};
-//            std::array<long,2> pair0{idx_pair[0].first,idx_pair[0].second};
-//            pair1[0] -= std::count_if(pair2.begin(),pair2.end(),[&pair1](auto i){return i < pair1[0];});
-//            pair1[1] -= std::count_if(pair2.begin(),pair2.end(),[&pair1](auto i){return i < pair1[1];});
-//            pair0[0] -= std::count_if(pair2.begin(),pair2.end(),[&pair0](auto i){return i < pair0[0];});
-//            pair0[1] -= std::count_if(pair2.begin(),pair2.end(),[&pair0](auto i){return i < pair0[1];});
-//            auto res = test::trace(tensor_reversed,Textra::idx({pair2[0]},{pair2[1]}));
-//            return test::trace(tensor_reversed,Textra::idx({pair0[0], pair1[0]}, {pair0[1], pair1[1]}));
-//        }else
-//            throw std::runtime_error("Trace not implemented");
-//
-//
-////
-////
-////        // Collect indices and dimensions traced
-////        std::array<size_t,2*npair> idx_tr{};
-////        std::array<Eigen::Index,2*npair> dim_tr{};
-////        for(size_t p = 0; p < static_cast<size_t>(npair); p++){
-////            idx_tr[2*p]   = static_cast<size_t>(idx_pair[p].first);
-////            idx_tr[2*p+1] = static_cast<size_t>(idx_pair[p].second);
-////            dim_tr[2*p]   = static_cast<Eigen::Index>(tensor.dimension(idx_tr[2*p]  ));
-////            dim_tr[2*p+1] = static_cast<Eigen::Index>(tensor.dimension(idx_tr[2*p+1]));
-////        }
-////
-////        // Collect indices and dimensions kept
-////        std::array<Eigen::Index,rank-2*npair> dim_kp{};
-////        std::array<size_t,rank-2*npair> idx_kp{};
-////        size_t k = 0;
-////        for(size_t i = 0; i < rank; i++ ){
-////            if(std::find(idx_tr.begin(),idx_tr.end(),i) == idx_tr.end()){
-////                idx_kp[k] = i;
-////                dim_kp[k] = tensor.dimension(i);
-////                k++;
-////            }
-////        }
-////        for(size_t i = 0; i < idx_kp.size(); i++) dim_kp[i] = tensor.dimension(idx_kp[i]);
-////
-////        // Define the slice that we keep
-////        std::array<Eigen::Index,rank> keep_offset{};
-////        std::array<Eigen::Index,rank> keep_extent{};
-////        for(auto & o : keep_offset) o=0; // Initialize to zero
-////        for(auto & s : keep_extent) s=1; // Initialize to one
-////        for(auto & i : idx_kp) keep_extent[i] = tensor.dimension(i);
-////
-////        // Construct the tensor slice that we keep
-////        Eigen::Tensor<Scalar,rank-2*npair> result = tensor.slice(keep_offset,keep_extent).reshape(dim_kp);
-////        tools::log->info("tensor {} | keep {}{} | trace {}{}", tensor.dimensions(), idx_kp,dim_kp, idx_tr,dim_tr);
-////        std::cout << "result: \n" << result << std::endl;
-////        // Calculate the partial traces
-////        Scalar partial_traces = 1.0;
-////        for(size_t p = 0; p < npair; p++){
-////            // Define the slice corresponding to an index pair
-////            auto idx1 =  static_cast<size_t>(idx_pair[p].first);
-////            auto idx2 =  static_cast<size_t>(idx_pair[p].second);
-////            std::array<Eigen::Index,2> dim_trace = {tensor.dimension(idx1),tensor.dimension(idx2)};
-////            if(dim_trace[0] != dim_trace[1]) throw std::logic_error("Cannot trace indices of unequal dimension");
-////            std::array<Eigen::Index,rank> trace_offset{};
-////            std::array<Eigen::Index,rank> trace_extent{};
-////            for(auto & o : trace_offset) o=0; // Initialize to zero
-////            for(auto & s : trace_extent) s=1; // Initialize to one
-////            trace_extent[idx1] = dim_trace[0];
-////            trace_extent[idx2] = dim_trace[1];
-////            Eigen::Tensor<Scalar,2> slice = tensor.slice(trace_offset,trace_extent).reshape(dim_trace);
-////            Scalar sum = 0;
-////            for(Eigen::Index i = 0; i < dim_trace[0]; i++) sum += slice(i, i);
-////            partial_traces *= sum;
-////            tools::log->info("sum: {:.8f}{:+.8f}", sum.real(),sum.imag());
-////        }
-////        // Multiply the reduced tensor with the partial traces
-////        result = result * result.constant(partial_traces);
-////        return reverse(result);
-//    }
-//}
-
 
 
 Eigen::Tensor<qm::Scalar, 2> qm::Gate::exp_internal(const Eigen::Tensor<Scalar, 2> &op_, Scalar alpha) const {
@@ -385,48 +197,6 @@ Eigen::Tensor<qm::Scalar, 2> &qm::Gate::adjoint() const {
     adj = op.conjugate().shuffle(Textra::array2{1, 0});
     return adj.value();
 }
-
-
-//Eigen::MatrixXcd qm::Gate::matrix() const{
-//     using T2  = Eigen::Tensor<Scalar, 2>;
-//     using T4  = Eigen::Tensor<Scalar, 4>;
-//     using T6  = Eigen::Tensor<Scalar, 6>;
-//     using T8  = Eigen::Tensor<Scalar, 8>;
-//     using T10 = Eigen::Tensor<Scalar, 10>;
-//     using T12 = Eigen::Tensor<Scalar, 12>;
-//     using T14 = Eigen::Tensor<Scalar, 14>;
-//     using T16 = Eigen::Tensor<Scalar, 16>;
-//     using T18 = Eigen::Tensor<Scalar, 18>;
-//     using T20 = Eigen::Tensor<Scalar, 20>;
-//     using T22 = Eigen::Tensor<Scalar, 22>;
-//     using T24 = Eigen::Tensor<Scalar, 24>;
-//     using T26 = Eigen::Tensor<Scalar, 26>;
-//     using T28 = Eigen::Tensor<Scalar, 28>;
-//     using T30 = Eigen::Tensor<Scalar, 30>;
-//     using T32 = Eigen::Tensor<Scalar, 32>;
-//     Eigen::MatrixXcd rev;
-//
-//    if(dim.size() == 1) return Textra::Tensor_to_Matrix(op, op.dimension(0), op.dimension(1));
-//        /* clang-format off */
-//    else if(dim.size() == 2)  { T4   res = op.reshape(shape<4>()) ; rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 3)  { T6   res = op.reshape(shape<6>()) ; rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 4)  { T8   res = op.reshape(shape<8>()) ; rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 5)  { T10  res = op.reshape(shape<10>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 6)  { T12  res = op.reshape(shape<12>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 7)  { T14  res = op.reshape(shape<14>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 8)  { T16  res = op.reshape(shape<16>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 9)  { T18  res = op.reshape(shape<18>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 10)  {T20  res = op.reshape(shape<20>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 11)  {T22  res = op.reshape(shape<22>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 12)  {T24  res = op.reshape(shape<24>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 13)  {T26  res = op.reshape(shape<26>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 14)  {T28  res = op.reshape(shape<28>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 15)  {T30  res = op.reshape(shape<30>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//    else if(dim.size() == 16)  {T32  res = op.reshape(shape<32>()); rev = Textra::Tensor_to_Matrix(test::reverse(res), op.dimension(0), op.dimension(1));}
-//
-//    /* clang-format on */
-//    return rev;
-//}
 
 
 template<auto rank>
@@ -569,10 +339,6 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
     auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers,pos_sig); // This cone is upside down!
     if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
 
-    // Append each others target positions
-//    tau_cone.emplace_back(std::vector<size_t>{pos_sig});
-//    sig_cone.insert(sig_cone.begin(),std::vector<size_t>{pos_tau});
-
     std::vector<std::vector<size_t>> int_cone;
 
     // Find the intersection between tau and sig cones
@@ -586,13 +352,13 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
         int_cone.emplace_back(pos_isect);
     }
 
-    fmt::print("Lightcones\n");
-    auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
-    auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
-    auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
-    for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
-    for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
-    for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
+//    fmt::print("Lightcones\n");
+//    auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
+//    auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
+//    auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
+//    for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
+//    for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
+//    for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
     return int_cone;
 }
 
@@ -1098,7 +864,6 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
 }
 
 qm::Gate qm::trace_idx(const qm::Gate &gate, const std::vector<long> &idx) {
-    tools::log->trace("Tracing gate {} | idx: {}", gate.pos, idx);
     if(idx.size() == 2) return qm::trace(gate, Textra::idx({idx[0]}, {idx[1]}));
     // idx is already pair-ordered, so when we call Textra::idx we need to undo that order
     // which explains the weird indexing in the following case
@@ -1130,9 +895,9 @@ qm::Scalar qm::trace(const qm::Gate &gate) {
 
 template<auto N>
 qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpairs) {
-    if constexpr(N == 1) tools::log->trace("Tracing:  pos {} | dim {} | pairs [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
+    if constexpr(N == 1) tools::log->trace("Tracing pos {} | dim {} | index pair [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
     if constexpr(N == 2)
-        tools::log->trace("Tracing:  pos {} | dim {} | pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first,
+        tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first,
                          idxpairs[1].second);
 
     // Compute the remaining indices positions and dimensions
@@ -1213,90 +978,3 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
 
 template qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, 1> &idxpairs);
 template qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, 2> &idxpairs);
-
-
-
-
-/*  Right connection
-
-     |    |     |          |     |    |
-    [  up  ]    |          |    [  up  ]
-     |    |     |          |     |    |
-     |   [  dn  ]         [  dn  ]    |
-     |    |     |          |     |    |
-
-     |    |        |   |        |    |   |
-     |  [up]     [up]  |        |  [up]  |
-     |   |        |    |        |   |    |
-   [  dn  ]      [  dn  ]      [    dn    ]
-    |    |        |    |        |    |   |
-
-      0    1        0    1
-      |    |        |    |
-     [  up  ]      [  up  ]
-      |    |        |    |
-      |    |        |    |
-    [mid]  |        |  [mid]
-      |    |        |    |
-      |    |        |    |
-     [  dn  ]      [  dn  ]
-      |    |        |    |
-      2    3        2    3
-
-        0    1         0    1
-        |    |         |    |
-       [  up  ]       [  up  ]
-        |    |         |    |
-  2     |    |         |    |     2
-  |     |    |         |    |     |
- [  mid  ]   |         |   [  mid  ]
-  |     |    |         |    |     |
-  3     |    |         |    |     3
-        |    |         |    |
-       [  dn  ]       [  dn  ]
-        |    |         |    |
-        4    5         4    5
-
-
-       0           0                 0
-       |           |                 |
-      [up]          [up]            [up]
-       |           |                 |
-       |           |                 |
-   1   |           |   1         1   |   2
-   |   |           |   |         |   |   |
- [  mid  ]      [  mid  ]       [   mid   ]
-   |   |          |   |          |   |   |
-   2   |          |   2          3   |   4
-       |          |                  |
-       |          |                  |
-      [dn]         [dn]             [dn]
-       |          |                  |
-       3          3                  5
-
- */
-
-
-
-
-
-
-
-/*  Insert at offmax
- *           0                     0
- *           |                     |
- *          [up]                  [up]
- *           |                     |
- *          (1)                    |
- *       0  (1)  2             1   |   2
- *       |   |   |             |   |   |
- *      [   mid   ]    ===>   [   mid   ]    ===>       ===> shuffle({1,0,2,3,5,4})
- *       |   |   |             |   |   |
- *       3   4   5             3  (4)  5
- *           0                    (0)
- *           |                     |
- *          [dn]                  [dn]
- *           |                     |
- *           1                     1
- *
- */

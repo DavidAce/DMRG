@@ -7,7 +7,6 @@
 #include <general/nmspc_exceptions.h>
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
-#include <iostream>
 #include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/model/class_model_finite.h>
@@ -358,11 +357,11 @@ void class_flbit::transform_to_real_basis() {
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace) {
             tools::common::profile::prof[algo_type]["t_dbg"]->tic();
-            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-            tools::log->trace("After normalization");
-            for(const auto &mps : tensors.state->mps_sites)
-                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
+//            tools::log->trace("After normalization");
+//            for(const auto &mps : tensors.state->mps_sites)
+//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
 
@@ -404,10 +403,10 @@ void class_flbit::transform_to_lbit_basis() {
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace) {
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-            tools::log->trace("After normalization");
-            for(const auto &mps : state_lbit->mps_sites)
-                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//            tools::log->trace("After normalization");
+//            for(const auto &mps : state_lbit->mps_sites)
+//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
         }
 
 
