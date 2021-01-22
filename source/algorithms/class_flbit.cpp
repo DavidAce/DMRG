@@ -338,25 +338,7 @@ void class_flbit::create_lbit_transform_gates() {
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
 
-    for(const auto & [idx_layer,layer] : iter::enumerate(unitary_gates_2site_layers)){
-        for(const auto & [idx_u, u] : iter::enumerate(layer))
-            std::cout << "u[" << idx_layer << ", "<< idx_u << "]:\n" << u.op << std::endl;
-    }
-    Eigen::MatrixXcd res(tensors.get_length(), tensors.get_length());
-    for(long j = 0; j < res.cols(); j++){
-        for(long i = 0; i < res.rows(); i++){
-            auto tr = qm::lbit::get_lbit_exp_value(unitary_gates_2site_layers,qm::spinHalf::sz,static_cast<size_t>(i), qm::spinHalf::sz,static_cast<size_t>(j));
-            res(i,j) = tr;
-        }
-    }
-    for(long i = 0; i < res.rows(); i++) {
-        fmt::print("[");
-        for(long j = 0; j < res.cols(); j++) {
-            fmt::print("{:>9.6f}{:+>9.6f}i  ", res(i,j).real(), res(i,j).imag());
-        }
-        fmt::print("]\n");
-    }
-    exit(0);
+    lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<long>());
 }
 
 void class_flbit::transform_to_real_basis() {
@@ -446,6 +428,9 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
+    if(storage_reason == StorageReason::MODEL)
+        class_algorithm_finite::write_to_file(storage_reason, lbit_overlap, "lbit_overlap", copy_file);
+
 }
 
 bool   class_flbit::cfg_algorithm_is_on() { return settings::flbit::on; }

@@ -79,9 +79,10 @@ class class_algorithm_finite : public class_algorithm_base {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
-    void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt,
-                       const std::string &given_prefix = "");
-
+    void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string & state_name, std::string &state_prefix, std::string &model_prefix, std::vector<std::string> &table_prefxs);
+    void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt);
+    template<typename T>
+    void write_to_file(StorageReason storage_reason, const T & data,const std::string &name, std::optional<CopyPolicy> copy_policy = std::nullopt);
     std::vector<double> V_mpo_vec;    // History of variances
     std::vector<size_t> X_mpo_vec;    // History of moves numbers
     std::vector<double> V_mpo_slopes; // History of variance slopes

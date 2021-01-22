@@ -59,7 +59,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
     std::string dsetName = state_prefix + "/schmidt_midchain";
-    if(save_log[dsetName] != save_point) {
+    if(save_log[dsetName] != save_point or status.step == 0) {
         /*! Writes down the center "Lambda" bond matrix (singular values). */
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
         h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
@@ -78,7 +78,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     }
 
     std::string mps_prefix = state_prefix + "/mps";
-    if(save_log[mps_prefix] != save_point) {
+    if(save_log[mps_prefix] != save_point or status.step == 0) {
         tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
         // There should be one more sites+1 number of L's, because there is also a center bond
         // However L_i always belongs M_i. Stick to this rule!
@@ -114,7 +114,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         return;
     }
 
-    if(save_log[mps_prefix] != save_point) {
+    if(save_log[mps_prefix] != save_point or status.step == 0) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
         for(const auto &mps : state.mps_sites) {
             dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
@@ -168,3 +168,25 @@ void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::stri
     h5ppFile.writeDataset(state.get_truncation_errors(), state_prefix + "/truncation_errors");
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
+
+template<typename T>
+void tools::finite::io::h5dset::save_data(h5pp::File & h5ppFile, const T & data, const std::string & data_path, const class_algorithm_status & status){
+    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+
+    // Checks if the current entry has already been saved
+    // If it is empty because we are resuming, check if there is a log entry on file already
+    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+    bootstrap_save_log(save_log, h5ppFile, {data_path});
+    auto save_point = std::make_pair(status.iter, status.step);
+    if(save_log[data_path] != save_point or status.step == 0){
+        auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
+        h5ppFile.writeDataset(data, data_path, layout );
+        h5ppFile.writeAttribute(status.iter, "iteration", data_path);
+        h5ppFile.writeAttribute(status.step, "step", data_path);
+        save_log[data_path] = save_point;
+    }
+
+    tools::common::profile::get_default_prof()["t_hdf"]->toc();
+}
+template void tools::finite::io::h5dset::save_data(h5pp::File & h5ppFile, const Eigen::Tensor<Scalar,2> & data,
+                                                   const std::string & data_path, const class_algorithm_status & status);
