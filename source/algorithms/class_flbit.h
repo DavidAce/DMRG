@@ -20,7 +20,7 @@ class class_flbit : public class_algorithm_finite {
     std::vector<qm::Gate>               ham_gates_Lsite, time_gates_Lsite;
     std::vector<std::vector<qm::Gate>>  unitary_gates_2site_layers;
     std::vector<std::complex<double>>   time_points;
-
+    Eigen::Tensor<Scalar,2>             lbit_overlap; // The real-space support of the l-bits
     Eigen::Tensor<Scalar, 1> Upsi_ed;
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;

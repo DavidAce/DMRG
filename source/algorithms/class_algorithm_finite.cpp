@@ -514,18 +514,13 @@ void class_algorithm_finite::clear_convergence_status() {
     has_damped                         = false;
 }
 
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
-    write_to_file(storage_reason, *tensors.state, copy_policy);
-}
-
-void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy,
-                                           const std::string &given_prefix) {
+void class_algorithm_finite::setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string & state_name,
+                                          std::string &state_prefix, std::string &model_prefix, std::vector<std::string> &table_prefxs){
     // Setup this save
-    StorageLevel storage_level;
-    std::string  state_prefix = fmt::format("{}/{}", algo_name, state.get_name()); // May get modified
-    if(not given_prefix.empty()) state_prefix = given_prefix;
-    std::string              model_prefix = fmt::format("{}/{}", algo_name, "model");
-    std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
+    state_prefix = fmt::format("{}/{}", algo_name, state_name); // May get modified
+    model_prefix = fmt::format("{}/{}", algo_name, "model");
+    table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
+    storage_level = StorageLevel::NONE;
     switch(storage_reason) {
         case StorageReason::FINISHED: {
             if(status.algorithm_has_succeeded)
@@ -537,14 +532,11 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::SAVEPOINT: {
+            storage_level = settings::output::storage_level_savepoint;
             if(stop_reason == StopReason::NONE) {
-                // During a simulation we may want to limit the number of savepoint saves.
-                // After the simulation has finished, we always want to go through with this save
-                if(not state.position_is_inward_edge()) return;
-                if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) return;
+                if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) storage_level = StorageLevel::NONE;
             }
             state_prefix += "/savepoint";
-            storage_level = settings::output::storage_level_savepoint;
             if(settings::output::savepoint_keep_newest_only)
                 state_prefix += "/iter_last";
             else
@@ -553,14 +545,11 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::CHECKPOINT: {
+            storage_level = settings::output::storage_level_checkpoint;
             if(stop_reason == StopReason::NONE) {
-                // During a simulation we may want to limit the number of checkpoint saves.
-                // After the simulation has finished, we always want to go through with this save
-                if(not state.position_is_inward_edge()) return;
-                if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+                if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) storage_level = StorageLevel::NONE;
             }
             state_prefix += "/checkpoint";
-            storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only)
                 state_prefix += "/iter_last";
             else
@@ -569,24 +558,15 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             break;
         }
         case StorageReason::CHI_UPDATE: {
-            if(not cfg_chi_lim_grow()) return;
-            // If we have updated chi we may want to write a projection too
             storage_level = settings::output::storage_level_checkpoint;
+            if(not cfg_chi_lim_grow()) storage_level = StorageLevel::NONE;
+            // If we have updated chi we may want to write a projection too
             state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
             table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
         }
         case StorageReason::PROJ_STATE: {
-            storage_level           = settings::output::storage_level_proj_state;
-            auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
-            if(std::abs(abs_spin_component - 1.0) > 1e-6) {
-                auto state_projected = tensors.get_state_projected_to_nearest_sector(settings::strategy::target_sector, status.chi_lim);
-                abs_spin_component   = std::abs(tools::finite::measure::spin_component(state_projected, settings::strategy::target_sector));
-                if(std::abs(abs_spin_component - 1.0) > 1e-6)
-                    throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", settings::strategy::target_sector, abs_spin_component));
-                return write_to_file(storage_reason, state_projected, copy_policy);
-            }
-
+            storage_level = settings::output::storage_level_proj_state;
             state_prefix += "/projection";
             table_prefxs = {state_prefix}; // Does not pollute common tables
             break;
@@ -609,6 +589,49 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
             storage_level = settings::output::storage_level_model;
             break;
         }
+    }
+}
+
+
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    write_to_file(storage_reason, *tensors.state, copy_policy);
+}
+
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy) {
+    // Setup this save
+    StorageLevel storage_level;
+    std::string  state_prefix;
+    std::string  model_prefix;
+    std::vector<std::string> table_prefxs;
+    setup_prefix(storage_reason, storage_level, state.get_name(), state_prefix, model_prefix, table_prefxs);
+
+    switch(storage_reason) {
+        case StorageReason::FINISHED: break;
+        case StorageReason::SAVEPOINT:
+        case StorageReason::CHECKPOINT: {
+            if(stop_reason == StopReason::NONE) if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
+            break;
+        }
+        case StorageReason::CHI_UPDATE: {
+            if(not cfg_chi_lim_grow()) storage_level = StorageLevel::NONE;
+            break;
+        }
+        case StorageReason::PROJ_STATE: {
+            auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
+            if(std::abs(abs_spin_component - 1.0) > 1e-6) {
+                auto state_projected = tensors.get_state_projected_to_nearest_sector(settings::strategy::target_sector, status.chi_lim);
+                abs_spin_component   = std::abs(tools::finite::measure::spin_component(state_projected, settings::strategy::target_sector));
+                if(std::abs(abs_spin_component - 1.0) > 1e-6)
+                    throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", settings::strategy::target_sector, abs_spin_component));
+                return write_to_file(storage_reason, state_projected, copy_policy);
+            }
+            break;
+        }
+        case StorageReason::INIT_STATE:
+        case StorageReason::EMIN_STATE:
+        case StorageReason::EMAX_STATE:
+        case StorageReason::MODEL: break;
+
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
@@ -645,6 +668,31 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     copy_from_tmp(storage_reason, copy_policy);
     tools::common::profile::prof[algo_type]["t_hdf"]->toc();
 }
+
+template<typename T>
+void class_algorithm_finite::write_to_file(StorageReason storage_reason, const T & data,const std::string &name, std::optional<CopyPolicy> copy_policy){
+    // Setup this save
+    StorageLevel storage_level;
+    std::string  state_prefix;
+    std::string  model_prefix;
+    std::vector<std::string> table_prefxs;
+    setup_prefix(storage_reason, storage_level, tensors.state->get_name(), state_prefix, model_prefix, table_prefxs);
+
+    std::string data_path = fmt::format("{}/{}", state_prefix, name);
+    if(storage_reason == StorageReason::MODEL) data_path = fmt::format("{}/{}", model_prefix, name);
+
+    tools::finite::io::h5dset::save_data(*h5pp_file, data, data_path, status);
+
+    // Copy from temporary location to destination depending on given policy
+    tools::common::profile::prof[algo_type]["t_hdf"]->tic();
+    copy_from_tmp(storage_reason, copy_policy);
+    tools::common::profile::prof[algo_type]["t_hdf"]->toc();
+}
+
+template void class_algorithm_finite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<Scalar,2> & data,const std::string &name, std::optional<CopyPolicy> copy_policy);
+
+
+
 
 void class_algorithm_finite::print_status_update() {
     if(num::mod(status.step, cfg_print_freq()) != 0) return;
