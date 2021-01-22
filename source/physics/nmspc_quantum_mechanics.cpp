@@ -316,8 +316,7 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     for(auto &h : hams_nsite) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
     for(auto &t : time_evolution_gates)
         if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-            std::cout << "Supposedly not unitary: \n " << t.op << std::endl;
-            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary", t.pos));
+            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
         }
     return time_evolution_gates;
 }
@@ -353,72 +352,17 @@ std::vector<Eigen::Tensor<Scalar, 2>> qm::lbit::get_time_evolution_operators_3si
     return time_evolution_operators;
 }
 
-
-std::vector<const qm::Gate*> get_adjacent_u(const std::vector<qm::Gate> & u_layer, const std::vector<size_t> & pos){
-   std::vector<const qm::Gate*> adjs;
-   adjs.reserve(pos.size());
-    for (const auto & u : u_layer){
-        if(u.pos.front() > pos.back()) continue; // Skip pos too far
-        if(u.pos.back() < pos.front()) continue; // Skip pos too far
-        if(u.pos == pos) continue; // Do not include self
-        if(std::any_of(u.pos.begin(), u.pos.end(),[& pos](const auto & p){ return std::find(pos.begin(),pos.end(),p) != pos.end();})) adjs.push_back(&u);
-        if(adjs.size() >= pos.size()) break;
-   }
-   return adjs;
-}
-
-
-
-std::vector<size_t> get_pos_in_lightcone(size_t gate_size, size_t pos_max,size_t num_layers,  size_t idx_layer, size_t idx_sublayer, size_t pos_tau, size_t pos_sig){
-    // Note that idx_layer2 and num_layers2 must follow the doubled layer convention.
-    // Let 1 normal layer be the set of gates such that each position on the chain appears exactly once on a left-most gate leg.
-    // In such a layer, every position appears "gate_size" times in total (each time in a different gate).
-    // In this convention, each layer therefore contains "gate_size" number of sublayers.
-    // Therefore idx_layer indexes the normal "outer" layer, and idx_sublayer indexes the inner layer.
-    long gate_sizel = static_cast<long>(gate_size);
-    long step_size      = gate_sizel - 1;
-    long step_size_odd  = num::mod(step_size, 2l);
-    long idx_layer2_tau = static_cast<long>(2*idx_layer + idx_sublayer);  // Index sublayers counting from tau
-    long idx_layer2_sig = static_cast<long>(2*num_layers - (2*idx_layer + idx_sublayer) - 1);  // Index sublayers counting from sig
-    long posl_max = static_cast<long>(pos_max);
-    long posl_tau = static_cast<long>(pos_tau);
-    long posl_sig = static_cast<long>(pos_sig);
-    long pos_tau_left = std::clamp(posl_tau - num::mod(posl_tau, gate_sizel), 0l, posl_max); // Get the left-most position of the gate on which tau is attached
-    long pos_sig_left = std::clamp(posl_sig - num::mod(posl_sig + step_size_odd, gate_sizel), 0l, posl_max); // Get the left-most position of the gate on which sig is attached
-//    long keep_legs = idx_layer2_sig == 0 ? 1 : 0;
-//    long sig_offset = idx_layer2_sig == 0 ? 0 : 1;
-
-    long lightcone_pos_tau_min = std::max(static_cast<long>(pos_tau_left) - static_cast<long>(idx_layer2_tau), 0l);
-    long lightcone_pos_tau_max = std::min(static_cast<long>(pos_tau_left) + static_cast<long>(idx_layer2_tau + step_size), static_cast<long>(pos_max));
-    long lightcone_pos_sig_min = std::max(static_cast<long>(pos_sig_left) - static_cast<long>(idx_layer2_sig), 0l);
-    long lightcone_pos_sig_max = std::min(static_cast<long>(pos_sig_left + step_size) + static_cast<long>(idx_layer2_sig), static_cast<long>(pos_max));
-    long lightcone_pos_min = std::max(lightcone_pos_tau_min, lightcone_pos_sig_min);
-    long lightcone_pos_max = std::min(lightcone_pos_tau_max, lightcone_pos_sig_max);
-    if(lightcone_pos_min < 0) throw std::logic_error("lightcone_pos_min < 0");
-    if(lightcone_pos_max > static_cast<long>(pos_max)) throw std::logic_error("lightcone_pos_max > pos_max");
-    tools::log->info("Lightcone layer [{},{}] = {} ({})| tau [{} {}] sig [{} {}] | lim [{} {}]", idx_layer, idx_sublayer, idx_layer2_tau,idx_layer2_sig, lightcone_pos_tau_min,lightcone_pos_tau_max,lightcone_pos_sig_min,lightcone_pos_sig_max,lightcone_pos_min,lightcone_pos_max  );
-    std::vector<size_t> pos;
-    long p = lightcone_pos_min;
-    while(p <= lightcone_pos_max) pos.emplace_back(static_cast<size_t>(p++));
-    if(not pos.empty() and pos.front() != static_cast<size_t>(lightcone_pos_min)) throw std::logic_error("pos.front() != lightcone_pos_min");
-    if(not pos.empty() and pos.back()  != static_cast<size_t>(lightcone_pos_max)) throw std::logic_error("pos.back() != lightcone_pos_max");
-    return pos;
-}
-
-
 qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig){
-
-
     // Generate gates for the operators
+    tools::log->trace("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
     auto tau_gate = qm::Gate{tau, {pos_tau}, {2}};
     auto sig_gate = qm::Gate{sig, {pos_sig}, {2}};
 
-    auto g = tau_gate;
-    tools::log->info("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
+    auto g = tau_gate; // Start with the bottom tau gate
     auto lc2 = qm::get_lightcone_intersection(unitary_layers,pos_tau, pos_sig);
 
-    std::vector<std::string> net;
-    std::vector<std::string> log;
+    std::vector<std::string> net; // Great for debugging
+    std::vector<std::string> log; // Great for debugging
     std::string empty_layer;
     size_t uw = 7; // Width of a unitary 2-site gate box
     size_t hw = 3; // Half-width of a unitary 2-site gate box
@@ -430,7 +374,6 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
         size_t gate_size = layer.front().pos.size();
         size_t pos_max   = layer.back().pos.back();
         auto gate_sequence = qm::get_gate_sequence(layer);
-        tools::log->trace("Gate sequence: {}", gate_sequence);
         if(net.empty()){
             empty_layer = fmt::format("{0:^{1}}"," ", tw + pos_max*(uw-op) + op);
             net.emplace_back(empty_layer);
@@ -448,9 +391,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
 
                 // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
                 // For a successful connection, at least one pos in g should be present in u gate.
-                // After connecting, trace away legs of g that are outside of the light-cone intersection between tau and sigma.
-                // Always trace the position furthest away from the target operator
-
+                // After connecting a full layer, trace away legs of g that are outside of the light-cone intersection between tau and sigma.
 
                 // Check if g.pos and u.pos have sites in common
                 std::vector<size_t> pos_isect;
@@ -462,17 +403,12 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     // Found a matching u. Connect it
                     auto pos_old = g.pos;
                     g = g.insert(u);
-                    tools::log->debug("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
                     layer_str.replace(tw + u.pos.front() * (uw-op), uw, fmt::format("[{1:^{0}}]",uw-2, fmt::format("{:<2},{:>2}",u.pos.front(), u.pos.back())));
                     story_str.append(fmt::format("insert u{} ", u.pos));
-                    fmt::print("inserted u{} -> g{} layer [{},{}] = {}: \n{}\n",u.pos, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,linalg::tensor::to_string(g.op));
                 }
             }
             // Determine the positions that are allowed
             const std::vector<size_t> & pos_needed = lc2[2*idx_layer+idx_sublayer+1]; // This specifies sites that are needed to connect the coming gate
-            // Go to next layer if no more gates will be applied in this one
-            // Otherwise may risk tracing too early, before we append sig
-
             if(not pos_needed.empty()){
                 // Check if g.pos has non-needed sites
                 std::vector<size_t> pos_outside;
@@ -482,14 +418,12 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     // Found positions outside of the light cone. Trace them
                     auto pos_old = g.pos;
                     g = g.trace_pos(pos_outside);
-                    for(auto & p : pos_outside) g.op = g.op * g.op.constant(0.5);
-                    tools::log->debug("trace : layer [{},{}] = {} | g.pos {} -> {} | needed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, pos_old, g.pos, pos_needed, pos_outside);
+                    for([[maybe_unused]] const auto & p : pos_outside) g.op = g.op * g.op.constant(0.5); // Normalize
                     story_str.append(fmt::format("trace{} ", pos_outside));
                 }
             }
 
             story_str.append(fmt::format("now{} ", g.pos));
-
             net.emplace_back(layer_str);
             log.emplace_back(story_str);
         }
@@ -514,7 +448,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
     }
 
 
-    tools::log->info("Computed Trace (tau_{} sig_{})", pos_tau, pos_sig);
+    tools::log->debug("Computed Trace (tau_{} sig_{}) = {2:.6f}{3:+.6f}i", pos_tau, pos_sig,result.real(),result.imag());
     for(const auto & [idx,layer] :iter::enumerate_reverse(net))
         tools::log->debug("{} | log: {}",layer,log[idx]);
 
@@ -522,6 +456,16 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
 
 }
 
+Eigen::Tensor<qm::Scalar,2> qm::lbit::get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> & unitary_layers, long length){
+    Eigen::Tensor<qm::Scalar,2> lbit_overlap;
+    lbit_overlap.resize(length, length);
+    for(long j = 0; j < lbit_overlap.dimension(1); j++)
+        for(long i = 0; i < lbit_overlap.dimension(0); i++)
+            lbit_overlap(i,j) = qm::lbit::get_lbit_exp_value(unitary_layers,qm::spinHalf::sz,static_cast<size_t>(i), qm::spinHalf::sz,static_cast<size_t>(j));
+
+    tools::log->info("lbit overlap: \n{}", linalg::tensor::to_string(lbit_overlap));
+    return lbit_overlap;
+}
 
 
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
@@ -850,7 +794,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
                 break;
             }
             case RandomizerMode::SHUFFLE: {
-                std::shuffle(pauli_idx.begin(), pauli_idx.end(), rnd::internal::rng);
+                rnd::shuffle(pauli_idx);
                 [[fallthrough]];
             }
             case RandomizerMode::ASIS: {

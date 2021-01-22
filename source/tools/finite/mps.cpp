@@ -8,7 +8,6 @@
 #include <config/enums.h>
 #include <config/nmspc_settings.h>
 #include <general/nmspc_iter.h>
-#include <iostream>
 #include <math/num.h>
 #include <math/svd.h>
 #include <physics/nmspc_quantum_mechanics.h>
@@ -379,10 +378,10 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
-            tools::log->trace("Before applying gates");
-            for(const auto &mps : state.mps_sites)
-                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//            tools::log->trace("Before applying gates");
+//            for(const auto &mps : state.mps_sites)
+//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
@@ -462,10 +461,10 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
-            tools::log->trace("After applying gates");
-            for(const auto &mps : state.mps_sites)
-                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//            tools::log->trace("After applying gates");
+//            for(const auto &mps : state.mps_sites)
+//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
@@ -478,10 +477,10 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     if constexpr(settings::debug_gates)
         if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
             tools::common::profile::get_default_prof()["t_dbg"]->tic();
-            tools::log->trace("After normalization");
-            for(const auto &mps : state.mps_sites)
-                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//            tools::log->trace("After normalization");
+//            for(const auto &mps : state.mps_sites)
+//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
+//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
