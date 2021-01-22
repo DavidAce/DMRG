@@ -22,7 +22,9 @@ namespace qm {
     template<iter::order o>
     [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
     [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & layers, size_t pos_tau, size_t pos_sig);
-
+    [[nodiscard]] std::vector<std::string> get_lightcone_picture(const std::vector<std::vector<qm::Gate>> & layers,
+                                                                const std::vector<std::vector<size_t>> & cone, std::string_view tag,
+                                                                size_t point_width = 3, std::string_view sep = ",");
     [[nodiscard]] qm::Gate insert(const qm::Gate & middle_gate , const qm::Gate & updown_gate);
     [[nodiscard]] qm::Gate connect(const qm::Gate & dn_gate , const qm::Gate & up_gate);
     [[nodiscard]] qm::Gate trace_idx(const qm::Gate & gate , const std::vector<long> & idx);
