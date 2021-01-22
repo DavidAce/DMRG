@@ -436,7 +436,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
             net.emplace_back(empty_layer);
             net.back().replace(0,tw,"tau  :");
             net.back().replace(tw + pos_tau * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_tau)));
-            log.emplace_back(fmt::format("insert tau [{}] -> now {}", pos_tau, g.pos));
+            log.emplace_back(fmt::format("insert tau[{}] now{}", pos_tau, g.pos));
         }
         for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
             std::string layer_str = empty_layer;
@@ -452,7 +452,6 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                 // Always trace the position furthest away from the target operator
 
 
-
                 // Check if g.pos and u.pos have sites in common
                 std::vector<size_t> pos_isect;
                 std::set_intersection(g.pos.begin(),g.pos.end(),
@@ -465,17 +464,16 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     g = g.insert(u);
                     tools::log->debug("insert: layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | intersect {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, u.pos, pos_old, g.pos,pos_isect);
                     layer_str.replace(tw + u.pos.front() * (uw-op), uw, fmt::format("[{1:^{0}}]",uw-2, fmt::format("{:<2},{:>2}",u.pos.front(), u.pos.back())));
-                    story_str.append(fmt::format("insert u{} -> now {} ", u.pos, g.pos));
+                    story_str.append(fmt::format("insert u{} ", u.pos));
                     fmt::print("inserted u{} -> g{} layer [{},{}] = {}: \n{}\n",u.pos, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,linalg::tensor::to_string(g.op));
                 }
+            }
+            // Determine the positions that are allowed
+            const std::vector<size_t> & pos_needed = lc2[2*idx_layer+idx_sublayer+1]; // This specifies sites that are needed to connect the coming gate
+            // Go to next layer if no more gates will be applied in this one
+            // Otherwise may risk tracing too early, before we append sig
 
-                // Determine the positions that are allowed
-                std::vector<size_t> pos_needed = lc2[2*idx_layer+idx_sublayer+1]; // This specifies sites that are needed to connect the coming gate
-                // Go to next layer if no more gates will be applied in this one
-                // Otherwise may risk tracing too early, before we append sig
-                if(pos_needed.empty()) break;
-
-
+            if(not pos_needed.empty()){
                 // Check if g.pos has non-needed sites
                 std::vector<size_t> pos_outside;
                 std::set_difference(g.pos.begin(),g.pos.end(), pos_needed.begin(), pos_needed.end(),
@@ -484,41 +482,42 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                     // Found positions outside of the light cone. Trace them
                     auto pos_old = g.pos;
                     g = g.trace_pos(pos_outside);
-                    tools::log->debug("trace : layer [{},{}] = {} | u.pos {} | g.pos {} -> {} | needed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer,u.pos, pos_old, g.pos, pos_needed, pos_outside);
-                    story_str.append(fmt::format("trace {} -> now {} ", pos_outside, g.pos));
-                    fmt::print("traced {} -> g{} layer [{},{}] = {}:\n{}\n",pos_outside, g.pos, idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, linalg::tensor::to_string(g.op));
+                    for(auto & p : pos_outside) g.op = g.op * g.op.constant(0.5);
+                    tools::log->debug("trace : layer [{},{}] = {} | g.pos {} -> {} | needed {} | outside {}",idx_layer,idx_sublayer,2*idx_layer+idx_sublayer, pos_old, g.pos, pos_needed, pos_outside);
+                    story_str.append(fmt::format("trace{} ", pos_outside));
                 }
-
-
             }
+
+            story_str.append(fmt::format("now{} ", g.pos));
+
             net.emplace_back(layer_str);
             log.emplace_back(story_str);
         }
-
     }
-
     Scalar result;
-
     if(g.pos.empty()){
         if(g.op.dimension(0) * g.op.dimension(1) != 1) throw std::runtime_error(fmt::format("Expected empty gate to have scalar op: Got dims {}", g.op.dimensions()));
         net.emplace_back(empty_layer);
         net.back().replace(0,tw,"sig  :");
-        log.emplace_back(fmt::format("sigma not connected -> result = {:.8f}{:+.8f}i", result.real(),result.imag()));
+        log.emplace_back(fmt::format("sigma not connected -> result = {:.1f}{:+.1f}i", result.real(),result.imag()));
+        tools::log->warn("Sigma {} not connected", pos_sig);
         result = g.op.coeff(0);
     }else{
         // In the last step we connect the sigma operator and trace everything down to a scalar
+        auto num_traces = g.pos.size();
         result = g.connect_under(sig_gate).trace();
+        result *= std::pow(0.5, num_traces); // Normalize
         net.emplace_back(empty_layer);
         net.back().replace(0,tw,"sig  :");
         net.back().replace(tw + pos_sig * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_sig)));
-        log.emplace_back(fmt::format("insert sigma [{}] -> now {} -> result = {:.8f}{:+.8f}i", pos_sig, g.pos,result.real(),result.imag()));
+        log.emplace_back(fmt::format("insert sigma[{0}] now{1} trace{1} result = {2:.1f}{3:+.1f}i", pos_sig, g.pos,result.real(),result.imag()));
     }
 
 
     tools::log->info("Computed Trace (tau_{} sig_{})", pos_tau, pos_sig);
-    for(const auto & [idx,layer] :iter::enumerate_reverse(net)){
-        std::cout << layer << " | log: " << log[idx] << std::endl;
-    }
+    for(const auto & [idx,layer] :iter::enumerate_reverse(net))
+        tools::log->debug("{} | log: {}",layer,log[idx]);
+
     return result;
 
 }
@@ -943,3 +942,13 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     Redge(0, 0, 1) = 1;
     return std::make_tuple(mpos, Ledge, Redge);
 }
+
+
+//[ 8   0   0   0   0   0   0   0 ]
+//[ 0  16   0   0   0   0   0   0 ]
+//[ 0   0  32   0   0   0   0   0 ]
+//[ 0   0   0  32   0   0   0   0 ]
+//[ 0   0   0   0  32   0   0   0 ]
+//[ 0   0   0   0   0  32   0   0 ]
+//[ 0   0   0   0   0   0  16   0 ]
+//[ 0   0   0   0   0   0   0   8 ]

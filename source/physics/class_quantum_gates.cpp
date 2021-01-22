@@ -539,7 +539,11 @@ std::vector<std::vector<size_t>> qm::get_lightcone(const std::vector<std::vector
         auto gate_sequence = get_gate_sequence(layer);
         for(const auto &[idx_sublayer, seq] : iter::enumerate<o>(gate_sequence)) {
             std::set<size_t> match;
+            // The cone width is strictly increasing.
+            // So we immediately add the sites from the previous layer.
+            match.insert(cone.back().begin(),cone.back().end());
             for(const auto & [idx_seq, pos_gate] : iter::enumerate<o>(seq)){
+                // Now we try to find some more matching sites in the new layer.
                 auto &u = layer[pos_gate];
                 std::vector<size_t> pos_isect;
                 std::set_intersection(cone.back().begin(),cone.back().end(),
@@ -564,6 +568,11 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
     auto tau_cone = qm::get_lightcone<iter::order::def>(unitary_layers,pos_tau);
     auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers,pos_sig); // This cone is upside down!
     if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
+
+    // Append each others target positions
+//    tau_cone.emplace_back(std::vector<size_t>{pos_sig});
+//    sig_cone.insert(sig_cone.begin(),std::vector<size_t>{pos_tau});
+
     std::vector<std::vector<size_t>> int_cone;
 
     // Find the intersection between tau and sig cones
@@ -576,13 +585,34 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
                               back_inserter(pos_isect));
         int_cone.emplace_back(pos_isect);
     }
+
     fmt::print("Lightcones\n");
-    for(const auto & [i,c] : iter::enumerate_reverse(tau_cone)) fmt::print("tau[{:2<}]: {}\n",i,c );
-    for(const auto & [i,c] : iter::enumerate_reverse(sig_cone)) fmt::print("sig[{:2<}]: {}\n",i,c );
-    for(const auto & [i,c] : iter::enumerate_reverse(int_cone)) fmt::print("int[{:2<}]: {}\n",i,c );
+    auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
+    auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
+    auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
+    for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
+    for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
+    for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
     return int_cone;
 }
 
+std::vector<std::string> qm::get_lightcone_picture(const std::vector<std::vector<qm::Gate>> & layers,
+                                                           const std::vector<std::vector<size_t>> & cone, std::string_view tag,
+                                                           size_t pw, std::string_view sep){
+    std::vector<std::string> pic;
+    if(not layers.empty() and not cone.empty()){
+        size_t sw = sep.size();
+        size_t tw = static_cast<size_t>(tag.size()) + 5; // Tag width (brackets, number and colon)
+        size_t mw = static_cast<size_t>(layers.front().back().pos.back() + 1) * (pw+sw) + 1; // max cone width
+        pic = std::vector<std::string>(cone.size(),fmt::format("{0:^{1}}"," ", tw + mw));
+        for(const auto & [i,c] : iter::enumerate(cone)){
+            pic[i].replace(0, tw, fmt::format("{}[{:^2}]:",tag,i));
+            for(const auto & [j, p] : iter::enumerate(c))
+                pic[i].replace(tw + p*(pw+sw), pw, fmt::format("{0:>{1}}{2}",p,pw,sep));
+        }
+    }
+    return pic;
+}
 
 
 qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
@@ -628,8 +658,6 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *
              */
 
-            tools::log->warn("DEBUGGING RIGHT INSERT tau_7 sig_7 INCORRECT PATH | middle_gate.front {} | pos_isect.front {}",middle_gate.pos.front(), pos_isect.front() );
-
             idx1 = Textra::idx({2}, {0});
             idx2 = Textra::idx({3, 2}, {0, 1});
         } else {
@@ -651,14 +679,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *            2    3              2    3               2    3
              *
              */
-            tools::log->warn("DEBUGGING RIGHT INSERT tau_7 sig_7 CORRECT PATH");
             idx1 = Textra::idx({3}, {0});
             idx2 = Textra::idx({2, 3}, {0, 1});
         }
-        fmt::format("middle\n{}", linalg::tensor::to_string(middle_gate.op));
-        fmt::format("updown\n{}", linalg::tensor::to_string(updown_gate.op));
-//        [{},{}] | idx2[{},{}][{},{}]
-        tools::log->debug("shp_udn2 {} | shp_udn4 {} | idx1 {},{} | idx2 [{},{}][{},{}]", shp_udn2, shp_udn4, idx1[0].first, idx1[0].second,idx2[0].first, idx2[0].second, idx2[1].first, idx2[1].second);
         auto op = contract(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
         return qm::Gate{op, updown_gate.pos, updown_gate.dim};
     }
@@ -1190,3 +1213,90 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
 
 template qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, 1> &idxpairs);
 template qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, 2> &idxpairs);
+
+
+
+
+/*  Right connection
+
+     |    |     |          |     |    |
+    [  up  ]    |          |    [  up  ]
+     |    |     |          |     |    |
+     |   [  dn  ]         [  dn  ]    |
+     |    |     |          |     |    |
+
+     |    |        |   |        |    |   |
+     |  [up]     [up]  |        |  [up]  |
+     |   |        |    |        |   |    |
+   [  dn  ]      [  dn  ]      [    dn    ]
+    |    |        |    |        |    |   |
+
+      0    1        0    1
+      |    |        |    |
+     [  up  ]      [  up  ]
+      |    |        |    |
+      |    |        |    |
+    [mid]  |        |  [mid]
+      |    |        |    |
+      |    |        |    |
+     [  dn  ]      [  dn  ]
+      |    |        |    |
+      2    3        2    3
+
+        0    1         0    1
+        |    |         |    |
+       [  up  ]       [  up  ]
+        |    |         |    |
+  2     |    |         |    |     2
+  |     |    |         |    |     |
+ [  mid  ]   |         |   [  mid  ]
+  |     |    |         |    |     |
+  3     |    |         |    |     3
+        |    |         |    |
+       [  dn  ]       [  dn  ]
+        |    |         |    |
+        4    5         4    5
+
+
+       0           0                 0
+       |           |                 |
+      [up]          [up]            [up]
+       |           |                 |
+       |           |                 |
+   1   |           |   1         1   |   2
+   |   |           |   |         |   |   |
+ [  mid  ]      [  mid  ]       [   mid   ]
+   |   |          |   |          |   |   |
+   2   |          |   2          3   |   4
+       |          |                  |
+       |          |                  |
+      [dn]         [dn]             [dn]
+       |          |                  |
+       3          3                  5
+
+ */
+
+
+
+
+
+
+
+/*  Insert at offmax
+ *           0                     0
+ *           |                     |
+ *          [up]                  [up]
+ *           |                     |
+ *          (1)                    |
+ *       0  (1)  2             1   |   2
+ *       |   |   |             |   |   |
+ *      [   mid   ]    ===>   [   mid   ]    ===>       ===> shuffle({1,0,2,3,5,4})
+ *       |   |   |             |   |   |
+ *       3   4   5             3  (4)  5
+ *           0                    (0)
+ *           |                     |
+ *          [dn]                  [dn]
+ *           |                     |
+ *           1                     1
+ *
+ */
