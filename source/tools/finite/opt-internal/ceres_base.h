@@ -2,7 +2,7 @@
 #pragma once
 #include <ceres/first_order_function.h>
 #include <ceres/iteration_callback.h>
-
+#include <memory>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;

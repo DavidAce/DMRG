@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <complex>
 #include <config/enums.h>
 #include <measure/state_measure_finite.h>
@@ -76,7 +75,7 @@ class class_state_finite {
     void                                   flip_direction();
     [[nodiscard]] int                      get_direction() const;
     [[nodiscard]] std::vector<std::string> get_labels() const;
-    [[nodiscard]] Eigen::DSizes<long, 3>   dimensions_2site() const;
+    [[nodiscard]] std::array<long, 3>      dimensions_2site() const;
     [[nodiscard]] long                     size_2site() const;
     [[nodiscard]] long                     find_largest_chi() const;
     [[nodiscard]] bool                     position_is_the_middle() const;
@@ -104,7 +103,7 @@ class class_state_finite {
     class_mps_site &      get_mps_site();
 
     // For multisite
-    Eigen::DSizes<long, 3> active_dimensions() const;
+    std::array<long, 3>    active_dimensions() const;
     long                   active_problem_size() const;
     std::vector<long>      get_spin_dims(const std::vector<size_t> & sites) const;
     std::vector<long>      get_spin_dims() const;

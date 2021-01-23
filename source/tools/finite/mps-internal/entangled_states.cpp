@@ -32,7 +32,7 @@ std::vector<long> tools::finite::mps::internal::get_valid_bond_dimensions(size_t
     return bond_dimensions;
 }
 
-void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, StateInitType type, const std::string &sector, long chi_lim,
+void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, StateInitType type, [[maybe_unused]] const std::string &sector, long chi_lim,
                                                           bool use_eigenspinors) {
     if(use_eigenspinors)
         set_random_entangled_state_with_random_spinors(state, type, chi_lim);

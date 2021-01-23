@@ -4,104 +4,16 @@
 #include <complex>
 #include <iterator>
 #include <numeric>
-#include <optional>
 #include <vector>
 
 /*!
  *  \namespace num
- *  \brief Small convenience-type num functions like modulo
+ *  \brief Small convenience-type num functions, like modulo
  *  \tableofcontents
  */
 
 namespace num {
 
-    template<typename ContainerType>
-    void check_bounds(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
-        if(start_point.has_value() and (start_point.value() >= static_cast<long>(X.size()) or start_point.value() < 0))
-            throw std::range_error("Start point is out of range");
-        if(end_point.has_value() and (end_point.value() > static_cast<long>(X.size()) or end_point.value() < start_point))
-            throw std::range_error("End point is out of range");
-    }
-
-    template<typename ContainerType>
-    double mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        try {
-            check_bounds(X, start_point, end_point);
-        } catch(std::exception &err) { throw std::range_error("mean: " + std::string(err.what())); }
-        if(not start_point.has_value()) start_point = 0;
-        if(not end_point.has_value()) end_point = X.size();
-        if(end_point.value() == start_point.value()) return 0.0;
-        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
-
-        auto x_it_start = X.begin();
-        auto x_it_end   = X.begin();
-        auto n          = static_cast<double>(end_point.value() - start_point.value());
-        std::advance(x_it_start, start_point.value());
-        std::advance(x_it_end, end_point.value());
-        return accumulate(x_it_start, x_it_end, 0.0) / n;
-    }
-
-    template<typename ContainerType>
-    double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        try {
-            check_bounds(X, start_point, end_point);
-        } catch(std::exception &err) { throw std::range_error("stdev: " + std::string(err.what())); }
-        if(not start_point.has_value()) start_point = 0;
-        if(not end_point.has_value()) end_point = X.size();
-        if(end_point.value() == start_point.value()) return 0.0;
-        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
-
-        double X_mean = num::mean(X, start_point, end_point);
-        auto   n      = static_cast<double>(end_point.value() - start_point.value());
-        auto   x_it   = X.begin();
-        auto   x_en   = X.begin();
-
-        std::advance(x_it, start_point.value());
-        std::advance(x_en, end_point.value());
-
-        double sum = std::accumulate(x_it, x_en, 0.0, [&X_mean](auto &x1, auto &x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
-
-        return std::sqrt(sum / n);
-    }
-
-    template<typename ContainerType>
-    double sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        return stdev(X, start_point, end_point) / std::sqrt(X.size());
-    }
-
-    template<typename ContainerType1, typename ContainerType2>
-    double slope(ContainerType1 &X, ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        if(X.size() != Y.size()) throw std::range_error("slope: Size mismatch in arrays");
-        try {
-            check_bounds(X, start_point, end_point);
-        } catch(std::exception &err) { throw std::range_error("slope: " + std::string(err.what())); }
-        if(not start_point.has_value()) start_point = 0;
-        if(not end_point.has_value()) end_point = X.size();
-        if(end_point.value() == start_point.value()) return 0.0;
-        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
-
-        auto x_it = X.begin();
-        auto x_en = X.begin();
-        auto y_it = Y.begin();
-        auto y_en = Y.begin();
-        std::advance(x_it, start_point.value());
-        std::advance(y_it, start_point.value());
-        std::advance(x_en, end_point.value());
-        std::advance(y_en, end_point.value());
-        auto   n    = static_cast<double>(end_point.value() - start_point.value());
-        double avgX = accumulate(x_it, x_en, 0.0) / n;
-        double avgY = accumulate(y_it, y_en, 0.0) / n;
-
-        double numerator   = 0.0;
-        double denominator = 0.0;
-        while(x_it != x_en) {
-            numerator += (static_cast<double>(*x_it) - avgX) * (static_cast<double>(*y_it) - avgY);
-            denominator += (static_cast<double>(*x_it) - avgX) * (static_cast<double>(*x_it) - avgX);
-            y_it++;
-            x_it++;
-        }
-        return std::abs(numerator / denominator);
-    }
 
     /*! \brief MatLab-style modulo operator
      *   \param x first number
@@ -120,17 +32,17 @@ namespace num {
     /*! \brief Python-style range generator, i.e. not-including "last"
      *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6] </code>
      */
-    template<typename T>
-    std::vector<T> range(T first, T last, T step = static_cast<T>(1)) {
+    template<typename T, typename T1, typename T2>
+    std::vector<T> range(T1 first, T2 last, T step = static_cast<T>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
         if constexpr(std::is_signed_v<T>){
-            if(first > last and step > 0) return range(first, last, -step);
-            if(first < last and step < 0) return range(first, last, -step);
+            if(static_cast<T>(first) > static_cast<T>(last) and step > 0) return range(first, last, -step);
+            if(static_cast<T>(first) < static_cast<T>(last) and step < 0) return range(first, last, -step);
         }else{
-            if(first > last) throw std::runtime_error("Range of unsigned type cannot have first > last");
+            if(static_cast<T>(first) > static_cast<T>(last)) throw std::runtime_error("Range of unsigned type cannot have first > last");
         }
-        if(first == last) return {};
-        if(first + step == last) return {first};
+        if(static_cast<T>(first) == static_cast<T>(last)) return {};
+        if(static_cast<T>(first) + step == static_cast<T>(last)) return {static_cast<T>(first)};
 
         auto num_steps = static_cast<size_t>(
             std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
@@ -138,7 +50,7 @@ namespace num {
 
         std::vector<T> vec;
         vec.reserve(num_steps);
-        for(T current = first; current < last; current += step) vec.emplace_back(static_cast<T>(current));
+        for(T current = first; current < static_cast<T>(last); current += step) vec.emplace_back(current);
         return vec;
     }
 
@@ -174,14 +86,6 @@ namespace num {
         }
         return xs;
     }
-
-    //    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
-    //        double expA = std::pow(base, a);
-    //        double expB = std::pow(base, b);
-    //        auto   vec  = LinSpaced(N, expA, expB);
-    //        for(auto &val : vec) val = std::abs(std::log(val) / std::log(base));
-    //        return vec;
-    //    }
 
     /*! \brief Product operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.

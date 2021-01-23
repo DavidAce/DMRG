@@ -5,7 +5,6 @@
 #pragma once
 
 #include "class_mpo_parameters.h"
-#include <Eigen/Core>
 #include <any>
 #include <config/enums.h>
 #include <map>

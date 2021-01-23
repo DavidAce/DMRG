@@ -2,23 +2,20 @@
 // Created by david on 2019-06-24.
 //
 
-#include <config/nmspc_settings.h>
-#include <general/nmspc_tensor_extra.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/fmt.h>
 #include <tools/common/log.h>
-#include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
 
-Eigen::DSizes<long, 3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::vector<size_t>> sites) {
+std::array<long, 3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = state.active_sites;
-    if(sites.value().empty()) return Eigen::DSizes<long, 3>{0, 0, 0};
-    Eigen::DSizes<long, 3> dimensions;
+    if(sites.value().empty()) return std::array<long, 3>{0, 0, 0};
+    std::array<long, 3> dimensions{};
     std::sort(sites.value().begin(), sites.value().end());
     if(sites.value().front() > sites.value().back())
         throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
@@ -30,12 +27,12 @@ Eigen::DSizes<long, 3> tools::finite::multisite::get_dimensions(const class_stat
     return dimensions;
 }
 
-Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::vector<size_t>> sites) {
+std::array<long, 4> tools::finite::multisite::get_dimensions(const class_model_finite &model, std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = model.active_sites;
-    if(sites.value().empty()) return Eigen::DSizes<long, 4>{0, 0, 0, 0};
+    if(sites.value().empty()) return std::array<long, 4>{0, 0, 0, 0};
     if(sites.value().front() > sites.value().back())
         throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
-    Eigen::DSizes<long, 4> dimensions;
+    std::array<long, 4> dimensions{};
     dimensions[0] = model.get_mpo(sites.value().front()).MPO().dimension(0);
     dimensions[1] = model.get_mpo(sites.value().back()).MPO().dimension(1);
     dimensions[2] = 1;
@@ -47,12 +44,12 @@ Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions(const class_mode
     return dimensions;
 }
 
-Eigen::DSizes<long, 4> tools::finite::multisite::get_dimensions_squared(const class_model_finite &model, std::optional<std::vector<size_t>> active_sites) {
+std::array<long, 4> tools::finite::multisite::get_dimensions_squared(const class_model_finite &model, std::optional<std::vector<size_t>> active_sites) {
     if(not active_sites) active_sites = model.active_sites;
-    if(active_sites.value().empty()) return Eigen::DSizes<long, 4>{0, 0, 0, 0};
+    if(active_sites.value().empty()) return std::array<long, 4>{0, 0, 0, 0};
     if(active_sites.value().front() > active_sites.value().back())
         throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
-    Eigen::DSizes<long, 4> dimensions;
+    std::array<long, 4> dimensions{};
     dimensions[0] = model.get_mpo(active_sites.value().front()).MPO2().dimension(0);
     dimensions[1] = model.get_mpo(active_sites.value().back()).MPO2().dimension(1);
     dimensions[2] = 1;
@@ -74,7 +71,6 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {}", state.get_position<long>(),
                       state.get_direction(), min_sites, max_sites, threshold);
 
-    using namespace Textra;
     const auto                          initial_position = state.get_position<long>();
     auto                                direction        = state.get_direction();
     long                                position         = initial_position;
@@ -82,7 +78,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     bool                                at_edge          = position <= -1 or position >= length;
     std::vector<long>                   sizes;
     std::vector<size_t>                 sites;
-    std::vector<Eigen::DSizes<long, 3>> shape;
+    std::vector<std::array<long, 3>> shape;
     //    if(direction == -1) position = std::min(position + 1, length - 1); // If going to the left, take position to be the site on the right of the center
     //    bond.
     while(true) {
@@ -175,16 +171,3 @@ std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(class
     tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(state));
     return resulting_sites;
 }
-
-//
-// using namespace Textra;
-// using Scalar = class_state_finite::Scalar;
-
-//
-// double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
-//    double max_digits    = std::numeric_limits<double>::max_digits10;
-//    double lost_bits     = -std::log2(1.0 - std::abs(std::min(H2,E2)/std::max(H2,E2)));
-//    double lost_digits   = std::log10(std::pow(2.0,lost_bits));
-////    tools::log->trace("Significant digits: {}",std::floor(max_digits - lost_digits));
-//    return digits = std::floor(max_digits - lost_digits);
-//}

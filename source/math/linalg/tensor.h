@@ -31,7 +31,39 @@ namespace linalg::tensor{
     }
 
     template<typename Scalar, auto rank>
-    extern Eigen::Tensor<Scalar, rank> mirror(const Eigen::Tensor<Scalar, rank> &tensor);
+    Eigen::Tensor<Scalar, rank> mirror(const Eigen::Tensor<Scalar, rank> &tensor){
+        /*
+         Returns a mirrored tensor
+
+         Example: Starting with A
+                0 1 2 3
+                | | | |
+               [  A   ]
+               | | | |
+               4 5 6 7
+
+         returns
+
+                3 2 1 0
+                | | | |
+               [  A   ]
+               | | | |
+               7 6 5 4
+
+         This is useful for compaitibility with kronecker products which gives results indexed right to left.
+
+        */
+        if constexpr(rank <= 2) return tensor;
+        else{
+            std::array<Eigen::Index, rank> shf_idx{};
+            for(size_t i = 0; i < static_cast<size_t>(rank); i++) {
+                shf_idx[i] = static_cast<Eigen::Index>(i);
+            }
+            std::reverse(shf_idx.begin(), shf_idx.begin()+rank/2);
+            std::reverse(shf_idx.begin()+rank/2, shf_idx.end());
+            return tensor.shuffle(shf_idx);
+        }
+    }
 
     template<typename Scalar, auto rank1, auto rank2>
     Eigen::Tensor<Scalar, rank1+rank2> outer(const Eigen::Tensor<Scalar, rank1> &tensor1, const Eigen::Tensor<Scalar, rank2> &tensor2){
@@ -90,10 +122,6 @@ namespace linalg::tensor{
         Eigen::Tensor<Scalar,2> tensorA = Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>>(A.data(),A.rows(),A.cols());
         return linalg::tensor::kronecker(tensorA,tensorB);
     }
-//        template<typename Scalar, auto rank, auto npair>
-//        extern Eigen::Tensor<Scalar, rank-2*npair> trace(const Eigen::Tensor<Scalar, rank> &tensor,
-//                                                         const std::array<Eigen::IndexPair<Eigen::Index>, npair>  & idxpair,
-//                                                         bool mirror = false);
 
 
     template<auto rank>
@@ -177,7 +205,8 @@ namespace linalg::tensor{
             std::string str;
 
             int comma = 1;
-            if constexpr(linalg::is_std_complex_v<Scalar> and std::is_integral_v<typename Scalar::value_type>) {comma = 0;prec = 0;}
+            if constexpr(linalg::is_std_complex_v<Scalar>)
+                if constexpr (std::is_integral_v<typename Scalar::value_type>) {comma = 0;prec = 0;}
             if constexpr(std::is_integral_v<Scalar>) {comma = 0;prec = 0;}
 
             auto max_val = static_cast<double>(matrix.cwiseAbs().maxCoeff());
@@ -199,17 +228,20 @@ namespace linalg::tensor{
             for(long i = 0; i < first_dim; i++) {
                 str += fmt::format("[");
                 for(long j = 0; j < other_dim; j++) {
-                    if constexpr(linalg::is_std_complex_v<Scalar> and std::is_floating_point_v<typename Scalar::value_type>){
-                        std::string real = fmt::format("({0:.{1}f}", matrix(i,j).real(), prec);
-                        std::string imag = fmt::format("{0:.{1}f})", matrix(i,j).imag(), prec);
-                        std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                        str += fmt::format("{0:>{1}}", cplx, min_width_real+min_width_imag+3); // Two doubles, comma, and parentheses
-                    }
-                    else if constexpr(linalg::is_std_complex_v<Scalar> and std::is_integral_v<typename Scalar::value_type>){
-                        std::string real = fmt::format("({}", matrix(i,j).real());
-                        std::string imag = fmt::format("{})", matrix(i,j).imag());
-                        std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                        str += fmt::format("{0:>{1}}", cplx, min_width_real+min_width_imag+3); // Two doubles, comma, and parentheses
+                    if constexpr(linalg::is_std_complex_v<Scalar>) {
+                        if constexpr(std::is_floating_point_v<typename Scalar::value_type>) {
+                            std::string real = fmt::format("({0:.{1}f}", matrix(i, j).real(), prec);
+                            std::string imag = fmt::format("{0:.{1}f})", matrix(i, j).imag(), prec);
+                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+
+                        }
+                        else if constexpr(std::is_integral_v<typename Scalar::value_type>){
+                            std::string real = fmt::format("({}", matrix(i,j).real());
+                            std::string imag = fmt::format("{})", matrix(i,j).imag());
+                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                            str += fmt::format("{0:>{1}}", cplx, min_width_real+min_width_imag+3); // Two doubles, comma, and parentheses
+                        }
                     }
                     else if constexpr(std::is_floating_point_v<Scalar>)
                         str += fmt::format("{0:>{1}.{2}f}", matrix(i,j),min_width, prec);
@@ -218,11 +250,14 @@ namespace linalg::tensor{
                     if(j < other_dim-1)
                         str += sep;
                 }
-                str += fmt::format("]\n");
+                if (i < first_dim-1)
+                    str += fmt::format("]\n");
+                else
+                    str += fmt::format("]");
             }
             return str;
         }else
-            return "[]\n";
+            return "[]";
 
     }
 

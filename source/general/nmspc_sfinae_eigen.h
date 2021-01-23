@@ -1,5 +1,4 @@
 #pragma once
-#include <Eigen/Core>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <general/nmspc_sfinae.h>
 

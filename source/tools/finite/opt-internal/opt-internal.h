@@ -8,7 +8,6 @@
 // overridden and causing trouble at compile time.
 //#include <complex.h>
 //#undef I
-#include <Eigen/Core>
 #include <ceres/gradient_problem_solver.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <tools/common/log.h>

@@ -1,5 +1,4 @@
 #pragma once
-#include <Eigen/Core>
 #include <complex>
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>

@@ -4,6 +4,7 @@
 
 #pragma once
 #include <cstddef>
+#include <complex>
 class class_algorithm_status {
     public:
     // common variables

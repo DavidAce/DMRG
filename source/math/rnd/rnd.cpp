@@ -6,9 +6,8 @@
 #include "pcg_random.hpp"
 #include <cstdio>
 #include <stdexcept>
+#include <algorithm>
 
-using namespace Eigen;
-using namespace std;
 namespace rnd {
 
     namespace internal {
@@ -108,14 +107,14 @@ namespace rnd {
     }
 
     std::vector<int> random_with_replacement(const std::vector<int> &in) {
-        vector<int> boot;
+        std::vector<int> boot;
         boot.reserve(in.size());
         for(size_t i = 0; i < in.size(); i++) boot.emplace_back(in[uniform_integer_box(0ul, in.size() - 1)]);
         return boot;
     }
     std::vector<int> random_with_replacement(const std::vector<int> &in, const size_t n) {
         if(n > in.size()) throw std::logic_error("random_with_replacement: n too large");
-        vector<int> boot;
+        std::vector<int> boot;
         boot.reserve(n);
         for(size_t i = 0; i < n; i++) { boot.emplace_back(in[uniform_integer_box(0ul, in.size() - 1)]); }
         return boot;

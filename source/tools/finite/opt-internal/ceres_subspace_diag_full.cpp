@@ -3,7 +3,7 @@
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt-internal/report.h>
-
+#include <config/enums.h>
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subspace::find_subspace_full(const MatrixType<Scalar> & H_local,
                                                                                                          const TensorType<cplx, 3> &multisite_tensor) {

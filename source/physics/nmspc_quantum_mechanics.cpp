@@ -6,11 +6,11 @@
 
 #include "nmspc_quantum_mechanics.h"
 #include "general/nmspc_tensor_extra.h"
-#include <Eigen/Core>
 #include <general/nmspc_iter.h>
 #include <io/fmt.h>
 #include <io/spdlog.h>
 #include <math/linalg.h>
+#include <math/stat.h>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <set>
@@ -448,7 +448,7 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
     }
 
 
-    tools::log->debug("Computed Trace (tau_{} sig_{}) = {2:.6f}{3:+.6f}i", pos_tau, pos_sig,result.real(),result.imag());
+    tools::log->debug("Computed Trace (tau_{} sig_{}) = {:.6f}{:+.6f}i", pos_tau, pos_sig,result.real(),result.imag());
     for(const auto & [idx,layer] :iter::enumerate_reverse(net))
         tools::log->debug("{} | log: {}",layer,log[idx]);
 
@@ -466,6 +466,61 @@ Eigen::Tensor<qm::Scalar,2> qm::lbit::get_lbit_real_overlap(const std::vector<st
     tools::log->info("lbit overlap: \n{}", linalg::tensor::to_string(lbit_overlap));
     return lbit_overlap;
 }
+
+
+double qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap){
+    // First, subtract the center position of each lbit, so we get L lbits centered around zero.
+    // In practice, we make a cyclic permutation of the rows of lbit_overlap
+    // In addition, we mirror the lbit along its vertical, so that we can average its left and right half together
+    long rows = lbit_overlap.dimension(0);
+    long cols = lbit_overlap.dimension(1);
+    Eigen::Tensor<double,2> lbit_overlap_permuted(rows,cols);
+    lbit_overlap_permuted.setConstant(0);
+    for(long j = 0; j < cols; j ++){
+        for(long i = 0; i < rows; i ++){
+            // If i < j, this corresponds to the left side of an lbit.
+            // Consider i == j to be "origo" for an lbit, so mod(i+j,cols) becomes the index starting from that origo.
+            // In addition, we fold the left side of an lbit back onto the right side.
+            // To get the correct average, add just half of the value;
+            long j_twin = j;
+            long distance = std::abs(i-j);
+            long j_perm = distance;
+            if(j >= i){
+                j_twin = i - distance;
+                if(j_twin < 0) j_twin = j;
+            }else{
+                j_twin = i + distance;
+                if(j_twin >= cols) j_twin = j;
+            }
+            tools::log->debug("({:>2},{:>2}): twin ({:>2},{:>2}) | perm = ({:>2},{:>2}) | values {:.6f}, {:.6f} = {:.6f}",
+                              i,j, i,j_twin, i,j_perm, std::real(lbit_overlap(i,j)) , std::real(lbit_overlap(i,j_twin)),
+                              0.5* (std::real(lbit_overlap(i,j)) + std::real(lbit_overlap(i,j_twin))));
+            if(std::abs(std::imag(lbit_overlap(i,j))) > 1e-12  )
+                tools::log->warn("lbit_overlap({},{}) has imaginary component : |Im({})| > 1e-12",i,j,lbit_overlap(i,j));
+            lbit_overlap_permuted(i,j_perm) = 0.5* (std::real(lbit_overlap(i,j)) + std::real(lbit_overlap(i,j_twin)));
+        }
+    }
+
+    // Average along each column to get an estimate of the lbit
+    Eigen::Tensor<double,1> lbit_overlap_average = lbit_overlap_permuted.mean(std::array<long,1>{0});
+    Eigen::Tensor<double,1> lbit_overlap_log = lbit_overlap_average.log();
+    // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
+//    long c = std::count_if(lbit_overlap_average.data(), lbit_overlap_average.data()+ lbit_overlap_average.size(), [](auto & val){ return val > 1e-4;});
+    auto y = std::vector<double>(lbit_overlap_log.data(),lbit_overlap_log.data() + lbit_overlap_log.size());
+    auto x = num::range<double>(0, y.size());
+    auto c = stat::find_saturation_point(y,1,1);
+    auto [slope,res] = stat::slope(x, y,0,c);
+    tools::log->debug("lbit overlap : \n{}", linalg::tensor::to_string(lbit_overlap.real(), 6));
+    tools::log->debug("lbit permuted: \n{}", linalg::tensor::to_string(lbit_overlap_permuted, 6));
+    tools::log->debug("lbit averaged: \n{}", linalg::tensor::to_string(lbit_overlap_average, 6));
+    tools::log->debug("lbit logged  : \n{}", linalg::tensor::to_string(lbit_overlap_log, 6));
+    tools::log->debug("lbit vectored: \n{}", y);
+    tools::log->debug("Computed slope {:.6f} | sse {:.6f} | using points {} to {} | lbit width: {:.6f}", slope,res, 0,c, 1.0/std::abs(slope));
+    return slope;
+
+}
+
+
 
 
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)

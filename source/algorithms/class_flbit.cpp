@@ -338,6 +338,8 @@ void class_flbit::create_lbit_transform_gates() {
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
 
     lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<long>());
+    auto lbit_decay = qm::lbit::get_characteristic_length_scale(lbit_overlap);
+    exit(0);
 }
 
 void class_flbit::transform_to_real_basis() {

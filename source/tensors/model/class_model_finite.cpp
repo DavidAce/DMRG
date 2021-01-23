@@ -253,7 +253,7 @@ bool class_model_finite::is_damped() const {
     return false;
 }
 
-Eigen::DSizes<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
+std::array<long, 4> class_model_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
 Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
@@ -321,7 +321,7 @@ const Eigen::Tensor<class_model_finite::Scalar, 2> &class_model_finite::get_mult
     return cache.multisite_ham.value();
 }
 
-Eigen::DSizes<long, 4> class_model_finite::active_dimensions_squared() const { return tools::finite::multisite::get_dimensions_squared(*this); }
+std::array<long, 4> class_model_finite::active_dimensions_squared() const { return tools::finite::multisite::get_dimensions_squared(*this); }
 
 Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_mpo_squared(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo squared tensor");

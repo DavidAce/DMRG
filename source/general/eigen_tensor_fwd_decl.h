@@ -37,10 +37,27 @@
     #define EIGEN_DEVICE_FUNC
 
 #endif
-
-#include <Eigen/src/Core/util/Constants.h>
-#include <Eigen/src/Core/util/ForwardDeclarations.h>
+#include <limits>
+#include <complex>
 #include <Eigen/src/Core/util/Macros.h>
+#include <Eigen/src/Core/util/Constants.h>
 #include <Eigen/src/Core/util/Meta.h>
+#include <Eigen/src/Core/util/ForwardDeclarations.h>
 #include <unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h>
 #include <unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h>
+
+
+// Some common typedefs
+namespace Eigen{
+    using Matrix2cd = Eigen::Matrix<std::complex<double>,2,2>;
+    using Matrix3cd = Eigen::Matrix<std::complex<double>,3,3>;
+    using MatrixXcd = Eigen::Matrix<std::complex<double>,Eigen::Dynamic,Eigen::Dynamic>;
+    using Vector2cd = Eigen::Matrix<std::complex<double>,2,1>;
+    using VectorXcd = Eigen::Matrix<std::complex<double>,Eigen::Dynamic,1>;
+
+    using Matrix2d = Eigen::Matrix<double,2,2>;
+    using Matrix3d = Eigen::Matrix<double,3,3>;
+    using MatrixXd = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>;
+    using VectorXd = Eigen::Matrix<double,Eigen::Dynamic,1>;
+
+}

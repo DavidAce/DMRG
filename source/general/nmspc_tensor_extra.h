@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include <Eigen/Core>
 #include <general/nmspc_sfinae.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
@@ -23,7 +22,7 @@ namespace Textra {
     template<typename Scalar>
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     template<Eigen::Index rank>
-    using array = Eigen::array<Eigen::Index, rank>;
+    using array = std::array<Eigen::Index, rank>;
 
     using array8 = array<8>;
     using array7 = array<7>;
@@ -37,7 +36,7 @@ namespace Textra {
 
     // Shorthand for the list of index pairs.
     template<auto N>
-    using idxlistpair = Eigen::array<Eigen::IndexPair<Eigen::Index>, N>;
+    using idxlistpair = std::array<Eigen::IndexPair<Eigen::Index>, N>;
 
     inline constexpr idxlistpair<0> idx() { return {}; }
 
@@ -59,11 +58,11 @@ namespace Textra {
     };
 
     template<std::size_t NB, std::size_t N>
-    constexpr idxlistpair<N> sortIdx(const Eigen::array<Eigen::Index, NB> &dimensions, const Eigen::Index (&idx_ctrct_A)[N],
+    constexpr idxlistpair<N> sortIdx(const std::array<Eigen::Index, NB> &dimensions, const Eigen::Index (&idx_ctrct_A)[N],
                                      const Eigen::Index (&idx_ctrct_B)[N]) {
         // When doing contractions, some indices may be larger than others. For performance, you want to
         // contract the largest indices first. This will return a sorted index list in decreasing order.
-        Eigen::array<idx_dim_pair, N> idx_dim_pair_list;
+        std::array<idx_dim_pair, N> idx_dim_pair_list;
         for(size_t i = 0; i < N; i++) { idx_dim_pair_list[i] = {idx_ctrct_A[i], idx_ctrct_B[i], dimensions[idx_ctrct_B[i]]}; }
         std::sort(idx_dim_pair_list.begin(), idx_dim_pair_list.end(), [](const auto &i, const auto &j) { return i.dimB > j.dimB; });
         idxlistpair<N> pairlistOut;
@@ -180,13 +179,6 @@ namespace Textra {
         static_assert(sizeof...(Dims) > 0, "MatrixToTensor: sizeof... (Dims) must be larger than 0");
         return MatrixToTensor(matrix, array<sizeof...(Dims)>{dims...});
     }
-    // Helpful overload
-    template<typename Derived, auto rank>
-    constexpr Eigen::Tensor<typename Derived::Scalar, rank> MatrixToTensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long, rank> &dims) {
-        array<rank> dim_array = dims;
-        std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
-        return MatrixToTensor(matrix, dim_array);
-    }
 
     template<typename Derived>
     constexpr auto MatrixToTensor(const Eigen::EigenBase<Derived> &matrix) {
@@ -208,7 +200,7 @@ namespace Textra {
     }
 
     template<typename Derived, auto rank>
-    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long, rank> &dims) {
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix, const std::array<long, rank> &dims) {
         if constexpr(is_plainObject<Derived>::value) {
             return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
         } else {
@@ -216,11 +208,11 @@ namespace Textra {
         }
     }
     template<typename Derived, auto rank>
-    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const Eigen::DSizes<long, rank> &dims) = delete; // Prevent map from temporary
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const std::array<long, rank> &dims) = delete; // Prevent map from temporary
 
     template<typename Derived, typename... Dims>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
-        return MatrixTensorMap(matrix, Eigen::DSizes<long, static_cast<int>(sizeof...(Dims))>{dims...});
+        return MatrixTensorMap(matrix, std::array<long, static_cast<int>(sizeof...(Dims))>{dims...});
     }
     template<typename Derived, typename... Dims>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &&matrix, const Dims... dims) = delete; // Prevent map from temporary

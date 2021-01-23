@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include <general/eigen_tensor_fwd_decl.h>
 
 class class_state_finite;
@@ -11,7 +12,10 @@ class class_edges_finite;
 class class_tensors_finite;
 class class_algorithm_status;
 class class_tic_toc;
-
+enum class OptSpace;
+enum class OptType;
+enum class OptMode;
+enum class StateRitz;
 namespace tools::finite::opt {
     class opt_state;
 

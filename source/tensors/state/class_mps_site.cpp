@@ -8,6 +8,7 @@
 #include "class_mps_site.h"
 #include <config/debug.h>
 #include <math/hash.h>
+#include <tools/common/log.h>
 #include <tools/common/fmt.h>
 #include <utility>
 

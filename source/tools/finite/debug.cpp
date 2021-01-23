@@ -37,7 +37,7 @@ void tools::finite::debug::check_integrity(const class_tensors_finite &tensors) 
     //    tensors.clear_measurements();
 }
 
-void tools::finite::debug::check_integrity(const class_state_finite &state) {
+void tools::finite::debug::check_integrity([[maybe_unused]] const class_state_finite &state) {
     //    if constexpr (not settings::debug) return;
     //    tools::log->trace("Checking integrity of MPS");
     //    tools::common::profile::t_dbg->tic();
@@ -306,7 +306,7 @@ void tools::finite::debug::check_integrity(const class_model_finite &model) {
     //    tools::common::profile::t_dbg->toc();
 }
 
-void tools::finite::debug::check_integrity(const class_edges_finite &edges) {
+void tools::finite::debug::check_integrity([[maybe_unused]] const class_edges_finite &edges) {
     //    if constexpr (not settings::debug) return;
     //    tools::log->trace("Checking integrity of edges");
     //    tools::common::profile::t_dbg->tic();
@@ -548,7 +548,7 @@ void tools::finite::debug::check_integrity(const class_edges_finite &edges) {
     //    tools::common::profile::t_dbg->toc();
 }
 
-void tools::finite::debug::check_integrity(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges) {
+void tools::finite::debug::check_integrity([[maybe_unused]] const class_state_finite &state, [[maybe_unused]] const class_model_finite &model, [[maybe_unused]] const class_edges_finite &edges) {
     //    if constexpr (not settings::debug) return;
     //    tools::common::profile::t_dbg->tic();
     //    tools::log->trace("Integrity check...");

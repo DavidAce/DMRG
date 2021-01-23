@@ -7,6 +7,7 @@
 #include <config/nmspc_settings.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
+#include <math/stat.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -95,17 +96,18 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     // threshold, we've found the stabilization point.
     auto recent_point       = static_cast<size_t>(std::floor(0.75 * static_cast<double>(Y_vec.size())));
     recent_point            = std::min(Y_vec.size() - min_data_points, recent_point);
-    double recent_point_std = num::stdev(Y_vec, recent_point); // Computes the standard dev of Y_vec from recent_point to end
+    double recent_point_std = stat::stdev(Y_vec, recent_point); // Computes the standard dev of Y_vec from recent_point to end
     for(size_t some_point = 0; some_point < Y_vec.size(); some_point++) {
-        double some_point_std = num::stdev(Y_vec, some_point); // Computes the standard dev of Y_vec from some_point to end
+        double some_point_std = stat::stdev(Y_vec, some_point); // Computes the standard dev of Y_vec from some_point to end
         if(some_point_std < band_size * recent_point_std and start_point == 0) {
             start_point = some_point;
             break;
         }
     }
     // Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    double avgY  = num::mean(Y_vec, start_point);
-    double slope = num::slope(X_vec, Y_vec, start_point) / avgY * 100 / std::sqrt(Y_vec.size() - start_point); // TODO: Is dividing by sqrt(elems) reasonable?
+    double avgY  = stat::mean(Y_vec, start_point);
+    auto [slope,res] = stat::slope(X_vec, Y_vec, start_point);
+    slope = std::abs(slope) / avgY * 100 / std::sqrt(Y_vec.size() - start_point); // TODO: Is dividing by sqrt(elems) reasonable?
     slope        = std::isnan(slope) ? 0.0 : slope;
     report.slope = slope;
     report.check_from   = start_point;

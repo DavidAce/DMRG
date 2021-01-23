@@ -1,6 +1,7 @@
 //
 // Created by david on 2019-06-24.
 //
+
 #include "class_algorithm_infinite.h"
 #include <config/nmspc_settings.h>
 #include <math/num.h>

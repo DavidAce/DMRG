@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <complex>
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
@@ -70,6 +69,7 @@ namespace qm {
         extern std::vector<Eigen::Tensor<Scalar,4>> get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<Scalar,4>> &mpos);
         extern Scalar get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig);
         extern Eigen::Tensor<Scalar,2> get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> & unitary_layers, long length);
+        extern double get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap);
     }
 
     namespace mpo{

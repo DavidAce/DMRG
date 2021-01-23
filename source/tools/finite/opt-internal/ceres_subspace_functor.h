@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include <Eigen/Core>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <tools/finite/opt-internal/ceres_base.h>
 
