@@ -46,15 +46,14 @@ namespace eig::view {
         return Eigen::Map<MatrixType<Scalar>>(eigvecs.data(), result.meta.rows, result.meta.cols);
     }
 
-    template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
-    Eigen::Map<VectorType<Scalar>> get_eigvec(eig::solution &result, integral_type num = 0, Side side = Side::R) {
-        auto eigvecmap = get_eigvecs<Scalar>(result, side).col(static_cast<long>(num));
+    template<typename Scalar>
+    Eigen::Map<VectorType<Scalar>> get_eigvec(eig::solution &result, long num = 0, Side side = Side::R) {
+        auto eigvecmap = get_eigvecs<Scalar>(result, side).col(num);
         return Eigen::Map<VectorType<Scalar>>(eigvecmap.data(), eigvecmap.size());
     }
 
-    template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(eig::solution &result, const Eigen::DSizes<long, 3> &dims, integral_type num = 0,
-                                                          Side side = Side::R) {
+    template<typename Scalar>
+    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(eig::solution &result, const std::array<long, 3> &dims, long num = 0, Side side = Side::R) {
         if(result.meta.rows != dims[0] * dims[1] * dims[2])
             throw std::range_error(fmt::format("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0],
                                                dims[1], dims[3], dims[0] * dims[1] * dims[2]));

@@ -1,7 +1,8 @@
 
 #pragma once
 #include "class_algorithm_infinite.h"
-class class_h5table_tebd;
+#include <unsupported/Eigen/CXX11/Tensor>
+
 
 /*!
  * \brief Class that runs the imaginary TEBD algorithm.

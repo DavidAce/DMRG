@@ -5,9 +5,9 @@
 #include <config/nmspc_settings.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
+#include <tools/common/fmt.h>
 #include <tools/common/split.h>
 #include <tools/infinite/mps.h>
-
 using Scalar = std::complex<double>;
 
 void tools::infinite::mps::merge_twosite_tensor(class_state_infinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim,

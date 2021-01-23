@@ -1,8 +1,8 @@
 #pragma once
-#include <Eigen/Core>
 #include <complex>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <config/enums.h>
 
 namespace tools::finite::opt {
     class opt_state {

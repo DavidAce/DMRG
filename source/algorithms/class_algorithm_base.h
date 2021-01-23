@@ -9,6 +9,7 @@
 #include <config/enums.h>
 #include <memory>
 #include <vector>
+#include <optional>
 
 namespace h5pp {
     class File;

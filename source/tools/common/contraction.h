@@ -1,7 +1,9 @@
 #pragma once
 
-#include <complex>
 #include <general/eigen_tensor_fwd_decl.h>
+// Eigen goes first
+
+#include <complex>
 
 namespace tools::common::contraction {
     using cplx = std::complex<double>;

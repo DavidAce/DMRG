@@ -283,11 +283,11 @@ void class_tensors_finite::activate_truncated_sites(long threshold, long chi_lim
     //    clear_measurements();
 }
 
-Eigen::DSizes<long, 3> class_tensors_finite::active_problem_dims() const { return tools::finite::multisite::get_dimensions(*state, active_sites); }
-long                   class_tensors_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
-bool                   class_tensors_finite::is_real() const { return state->is_real() and model->is_real() and edges->is_real(); }
-bool                   class_tensors_finite::has_nan() const { return state->has_nan() or model->has_nan() or edges->has_nan(); }
-void                   class_tensors_finite::assert_validity() const {
+std::array<long, 3> class_tensors_finite::active_problem_dims() const { return tools::finite::multisite::get_dimensions(*state, active_sites); }
+long                class_tensors_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
+bool                class_tensors_finite::is_real() const { return state->is_real() and model->is_real() and edges->is_real(); }
+bool                class_tensors_finite::has_nan() const { return state->has_nan() or model->has_nan() or edges->has_nan(); }
+void                class_tensors_finite::assert_validity() const {
     state->assert_validity();
     model->assert_validity();
     edges->assert_validity();

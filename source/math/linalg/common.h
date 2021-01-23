@@ -1,5 +1,4 @@
 #pragma once
-#include <Eigen/Core>
 #include <general/eigen_tensor_fwd_decl.h>
 namespace Eigen{
     template <typename Idx> struct IndexPair;

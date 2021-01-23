@@ -149,8 +149,8 @@ std::vector<std::string> class_state_finite::get_labels() const {
 
 void class_state_finite::flip_direction() { direction *= -1; }
 
-Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
-    Eigen::DSizes<long, 3> dimensions;
+std::array<long, 3> class_state_finite::dimensions_2site() const {
+    std::array<long, 3> dimensions{};
     auto                   pos  = get_position<long>();
     auto                   posL = std::clamp<long>(pos, 0, get_length<long>() - 2);
     auto                   posR = std::clamp<long>(pos + 1, 0, get_length<long>() - 1);
@@ -259,7 +259,7 @@ const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_
 
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
-Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
+std::array<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 

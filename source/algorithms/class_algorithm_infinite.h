@@ -3,7 +3,6 @@
 //
 
 #pragma once
-
 #include <algorithms/class_algorithm_base.h>
 #include <tensors/class_tensors_infinite.h>
 class class_state_infinite;

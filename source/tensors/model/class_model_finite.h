@@ -1,9 +1,9 @@
 #pragma once
+#include <array>
 #include <complex>
 #include <config/enums.h>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
-
 class class_mpo_site;
 class class_tensors_finite;
 
@@ -59,13 +59,13 @@ class class_model_finite {
     [[nodiscard]] double get_energy_per_site_reduced() const;
 
     // For multisite
-    Eigen::DSizes<long, 4>          active_dimensions() const;
+    std::array<long, 4>             active_dimensions() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
     Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 
-    Eigen::DSizes<long, 4>          active_dimensions_squared() const;
+    std::array<long, 4>             active_dimensions_squared() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
     void                            clear_cache() const;
