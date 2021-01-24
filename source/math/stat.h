@@ -25,7 +25,7 @@ namespace stat{
     }
 
     template<typename ContainerType>
-    double mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    typename ContainerType::value_type mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         try {
             check_bounds(X, start_point, end_point);
         } catch(std::exception &err) { throw std::range_error("mean: " + std::string(err.what())); }
@@ -39,7 +39,7 @@ namespace stat{
         auto n          = static_cast<double>(end_point.value() - start_point.value());
         std::advance(x_it_start, start_point.value());
         std::advance(x_it_end, end_point.value());
-        return accumulate(x_it_start, x_it_end, 0.0) / n;
+        return std::accumulate(x_it_start, x_it_end, static_cast<typename ContainerType::value_type>(0.0)) / n;
     }
 
     template<typename ContainerType>
@@ -79,7 +79,7 @@ namespace stat{
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value()) end_point = X.size();
         if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
-        if(end_point.value() - start_point.value() <= 1) return std::make_pair(0.0,0.0); // Need at least 2 points
+        if(end_point.value() - start_point.value() <= 1) return std::make_pair(std::numeric_limits<double>::infinity(),0.0); // Need at least 2 points
 
         auto x_it = X.begin();
         auto x_en = X.begin();
@@ -116,7 +116,7 @@ namespace stat{
         if(not end_point.has_value()) end_point = Y.size();
         if(end_point.value() == start_point.value()) return start_point.value();
         if(end_point.value() < start_point.value()) throw std::runtime_error("find_saturation_point: end_point < start_point");
-        printf("checking saturation from: %ld to slp: %ld\n", start_point.value(),end_point.value());
+//        printf("checking saturation from: %ld to slp: %ld\n", start_point.value(),end_point.value());
 
         // Sometimes we check saturation using logarithms. It is important that the start-end point range doesn't have nan or infs
 
@@ -130,7 +130,7 @@ namespace stat{
             std::advance(y_invalid_it, -1);
             if(y_it == y_invalid_it) return start_point.value();
             else end_point = std::distance(Y.begin(), y_invalid_it);
-            printf("checking saturation from: %ld to slp: %ld instead\n", start_point.value(),end_point.value());
+//            printf("checking saturation from: %ld to slp: %ld instead\n", start_point.value(),end_point.value());
         }
 
 
@@ -147,7 +147,7 @@ namespace stat{
         while(idx < end_point.value()){
             auto std = stat::stdev(Y,idx,end_point.value());
             auto [slp,res] = stat::slope(X,Y,idx,end_point.value());
-            printf("std: %g | slp: %g\n", std,slp);
+//            printf("std: %g | slp: %g\n", std,slp);
             if(std::abs(slp) < slope_tolerance or std < std_tolerance){
                 if(idx > 0) return idx-1; // Backtrack
                 else return idx;

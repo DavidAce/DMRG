@@ -68,8 +68,13 @@ namespace qm {
         extern std::vector<Eigen::Tensor<Scalar,2>> get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<Scalar,2>> &hams_3site);
         extern std::vector<Eigen::Tensor<Scalar,4>> get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<Scalar,4>> &mpos);
         extern Scalar get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> & unitary_layers, const Eigen::Matrix2cd & tau, size_t pos_tau, const Eigen::Matrix2cd & sig, size_t pos_sig);
-        extern Eigen::Tensor<Scalar,2> get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> & unitary_layers, long length);
-        extern double get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap);
+        extern Eigen::Tensor<Scalar,2> get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> & unitary_layers, size_t sites);
+        extern Eigen::Tensor<Scalar,2> get_lbit_overlap_averaged(const std::vector<Eigen::Tensor<Scalar,2>> & lbit_overlap_vec);
+        extern Eigen::Tensor<Scalar,2> get_lbit_overlap_permuted(const Eigen::Tensor<Scalar,2> & lbit_overlap);
+        extern std::tuple<double,double,std::vector<double>> get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap_permuted);
+        extern std::pair<Eigen::MatrixXd,Eigen::MatrixXd> get_lbit_analysis(const std::vector<size_t> & udepth_vec,
+                                                                                                             const std::vector<double> & fmix_vec,
+                                                                                                             size_t sites, size_t reps);
     }
 
     namespace mpo{

@@ -23,6 +23,8 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/print.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <h5pp/h5pp.h>
+
 class_flbit::class_flbit(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
     tensors.state->set_name("state_real");
@@ -337,9 +339,8 @@ void class_flbit::create_lbit_transform_gates() {
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
 
-    lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<long>());
+    lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
     auto lbit_decay = qm::lbit::get_characteristic_length_scale(lbit_overlap);
-    exit(0);
 }
 
 void class_flbit::transform_to_real_basis() {
@@ -429,8 +430,20 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
-    if(storage_reason == StorageReason::MODEL)
+    if(storage_reason == StorageReason::MODEL){
         class_algorithm_finite::write_to_file(storage_reason, lbit_overlap, "lbit_overlap", copy_file);
+        if(h5pp_file->linkExists("/fLBIT/analysis")) return;
+        auto urange = num::range<size_t>(1,6);
+        auto frange = num::range<double>(0,0.8,0.02);
+        auto[cls_avg, sse_avg] = qm::lbit::get_lbit_analysis(urange,frange,tensors.get_length(), 2);
+        h5pp_file->writeDataset(cls_avg,"/fLBIT/analysis/cls_avg");
+        h5pp_file->writeDataset(sse_avg,"/fLBIT/analysis/sse_avg");
+        h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/cls_avg");
+        h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/sse_avg");
+        h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/cls_avg");
+        h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/sse_avg");
+        exit(0);
+    }
 
 }
 

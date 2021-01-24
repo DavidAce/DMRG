@@ -205,9 +205,9 @@ namespace linalg::tensor{
             std::string str;
 
             int comma = 1;
+            if constexpr(std::is_integral_v<Scalar>) {comma = 0;prec = 0;}
             if constexpr(linalg::is_std_complex_v<Scalar>)
                 if constexpr (std::is_integral_v<typename Scalar::value_type>) {comma = 0;prec = 0;}
-            if constexpr(std::is_integral_v<Scalar>) {comma = 0;prec = 0;}
 
             auto max_val = static_cast<double>(matrix.cwiseAbs().maxCoeff());
             int min_width = std::max(width, static_cast<int>(1 + std::max(0.0,std::log10(max_val))) + comma + prec);
