@@ -32,7 +32,7 @@ namespace num {
     /*! \brief Python-style range generator, i.e. not-including "last"
      *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6] </code>
      */
-    template<typename T, typename T1, typename T2>
+    template<typename T = int, typename T1, typename T2>
     std::vector<T> range(T1 first, T2 last, T step = static_cast<T>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
         if constexpr(std::is_signed_v<T>){
