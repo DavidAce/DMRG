@@ -71,8 +71,8 @@ namespace qm {
         extern Eigen::Tensor<Scalar,2> get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> & unitary_layers, size_t sites);
         extern Eigen::Tensor<Scalar,2> get_lbit_overlap_averaged(const std::vector<Eigen::Tensor<Scalar,2>> & lbit_overlap_vec);
         extern Eigen::Tensor<Scalar,2> get_lbit_overlap_permuted(const Eigen::Tensor<Scalar,2> & lbit_overlap);
-        extern std::tuple<double,double,std::vector<double>> get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap_permuted);
-        extern std::pair<Eigen::MatrixXd,Eigen::MatrixXd> get_lbit_analysis(const std::vector<size_t> & udepth_vec,
+        extern std::tuple<double,double,std::vector<double>, size_t> get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap_permuted);
+        extern std::tuple<Eigen::MatrixXd,Eigen::MatrixXd, Eigen::Tensor<double,3>> get_lbit_analysis(const std::vector<size_t> & udepth_vec,
                                                                                                              const std::vector<double> & fmix_vec,
                                                                                                              size_t sites, size_t reps);
     }

@@ -409,20 +409,20 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
             }
             // Determine the positions that are allowed
             const std::vector<size_t> & pos_needed = lc2[2*idx_layer+idx_sublayer+1]; // This specifies sites that are needed to connect the coming gate
-            if(not pos_needed.empty()){
-                // Check if g.pos has non-needed sites
-                std::vector<size_t> pos_outside;
-                std::set_difference(g.pos.begin(),g.pos.end(), pos_needed.begin(), pos_needed.end(),
-                                    back_inserter(pos_outside));
-                if(not pos_outside.empty()){
-                    // Found positions outside of the light cone. Trace them
-                    auto pos_old = g.pos;
-                    g = g.trace_pos(pos_outside);
-                    for([[maybe_unused]] const auto & p : pos_outside) g.op = g.op * g.op.constant(0.5); // Normalize
-                    if(deb) story_str.append(fmt::format("trace{} ", pos_outside));
-                }
+//            if(not pos_needed.empty()){
+//
+//            }
+            // Check if g.pos has non-needed sites
+            std::vector<size_t> pos_outside;
+            std::set_difference(g.pos.begin(),g.pos.end(), pos_needed.begin(), pos_needed.end(),
+                                back_inserter(pos_outside));
+            if(not pos_outside.empty()){
+                // Found positions outside of the light cone. Trace them
+                auto pos_old = g.pos;
+                g = g.trace_pos(pos_outside);
+                for([[maybe_unused]] const auto & p : pos_outside) g.op = g.op * g.op.constant(0.5); // Normalize
+                if(deb) story_str.append(fmt::format("trace{} ", pos_outside));
             }
-
             if(deb) story_str.append(fmt::format("now{} ", g.pos));
             if(deb) net.emplace_back(layer_str);
             if(deb) log.emplace_back(story_str);
@@ -431,11 +431,10 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
     Scalar result;
     if(g.pos.empty()){
         if(g.op.dimension(0) * g.op.dimension(1) != 1) throw std::runtime_error(fmt::format("Expected empty gate to have scalar op: Got dims {}", g.op.dimensions()));
+        result = g.op.coeff(0);
         if(deb) net.emplace_back(empty_layer);
         if(deb) net.back().replace(0,tw,"sig  :");
         if(deb) log.emplace_back(fmt::format("sigma not connected -> result = {:.1f}{:+.1f}i", result.real(),result.imag()));
-        tools::log->warn("Sigma {} not connected", pos_sig);
-        result = g.op.coeff(0);
     }else{
         // In the last step we connect the sigma operator and trace everything down to a scalar
         auto num_traces = g.pos.size();
@@ -501,7 +500,7 @@ Eigen::Tensor<Scalar,2>  qm::lbit::get_lbit_overlap_permuted(const Eigen::Tensor
     return lbit_overlap_permuted;
 }
 
-std::tuple<double,double, std::vector<double>> qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap_permuted){
+std::tuple<double,double, std::vector<double>, size_t> qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<Scalar,2> & lbit_overlap_permuted){
 
     // Average along each column to get an estimate of the lbit
     Eigen::Tensor<double,1> lbit_overlap_avg = lbit_overlap_permuted.real().mean(std::array<long,1>{0});
@@ -509,7 +508,8 @@ std::tuple<double,double, std::vector<double>> qm::lbit::get_characteristic_leng
     // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
     auto y = std::vector<double>(lbit_overlap_log.data(),lbit_overlap_log.data() + lbit_overlap_log.size());
     auto x = num::range<double>(0, y.size());
-    auto c = stat::find_saturation_point(y,1,1);
+    auto v = stat::find_last_valid_point(y);
+    auto c = std::count_if(y.begin(),y.begin()+v, [](auto & val){return val > -12.0;});
     auto [slope,res] = stat::slope(x, y,0,c);
 //    tools::log->debug("lbit overlap : \n{}", linalg::tensor::to_string(lbit_overlap.real(), 6));
 //    tools::log->debug("lbit permuted: \n{}", linalg::tensor::to_string(lbit_overlap_permuted, 6));
@@ -518,8 +518,9 @@ std::tuple<double,double, std::vector<double>> qm::lbit::get_characteristic_leng
 //    tools::log->debug("lbit vectored: \n{}", y);
     double cls = 1.0/std::abs(slope);
     tools::log->debug("Computed lbit width {:.6f} | sse {:.6f} | using {} points", cls,res, c);
-    auto yavg = std::vector<double>(lbit_overlap_avg.data(),lbit_overlap_avg.data() + c);
-    return {cls, res, yavg};
+//    auto yavg = std::vector<double>(lbit_overlap_avg.data(),lbit_overlap_avg.data() + c);
+    auto yavg = std::vector<double>(lbit_overlap_avg.data(),lbit_overlap_avg.data() + lbit_overlap_avg.size());
+    return {cls, res, yavg, c};
 }
 
 Eigen::Tensor<Scalar,2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eigen::Tensor<Scalar,2>> & lbit_overlap_vec){
@@ -546,7 +547,7 @@ Eigen::Tensor<Scalar,2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Ei
     return avg;
 //    return {avg,err};
 }
-std::pair<Eigen::MatrixXd,Eigen::MatrixXd> qm::lbit::get_lbit_analysis(const std::vector<size_t> & udepth_vec, const std::vector<double> & fmix_vec,size_t sites, size_t reps){
+std::tuple<Eigen::MatrixXd,Eigen::MatrixXd,Eigen::Tensor<double,3>> qm::lbit::get_lbit_analysis(const std::vector<size_t> & udepth_vec, const std::vector<double> & fmix_vec,size_t sites, size_t reps){
 
     long rows = static_cast<long>(fmix_vec.size());
     long cols = static_cast<long>(udepth_vec.size());
@@ -554,8 +555,18 @@ std::pair<Eigen::MatrixXd,Eigen::MatrixXd> qm::lbit::get_lbit_analysis(const std
     Eigen::MatrixXd cls_err(rows,cols);
     Eigen::MatrixXd sse_avg(rows,cols);
     Eigen::MatrixXd sse_err(rows,cols);
-    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
-        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
+    Eigen::Tensor<double,3> lbit_curves(rows,cols,sites);
+    lbit_curves.setZero();
+    std::array<long,3> offset{}, extent{};
+
+    #pragma omp parallel for collapse(2) schedule(dynamic)
+    for(size_t uidx = 0; uidx < udepth_vec.size(); uidx++){
+        for(size_t fidx = 0; fidx < fmix_vec.size(); fidx++){
+            //    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
+
+//        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
+            auto fmix = fmix_vec[fidx];
+            auto udep = udepth_vec[uidx];
             std::vector<double> cls_vec(reps);
             std::vector<double> sse_vec(reps);
             std::vector<Eigen::Tensor<Scalar,2>> lbit_overlap_vec(reps);
@@ -569,14 +580,22 @@ std::pair<Eigen::MatrixXd,Eigen::MatrixXd> qm::lbit::get_lbit_analysis(const std
             auto lbit_overlap_avg = qm::lbit::get_lbit_overlap_averaged(lbit_overlap_vec);
             auto lbit_overlap_per = qm::lbit::get_lbit_overlap_permuted(lbit_overlap_avg);
 
-            auto [cls,sse, y] = qm::lbit::get_characteristic_length_scale(lbit_overlap_per);
-            tools::log->info("Computed u {} | f {:.4f} | lbit width {:.6f} | sse {:.6f} | points {}: {:.8f}",udep, fmix, cls,sse,y.size(),fmt::join(y, ", "));
 
+            auto [cls,sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_overlap_per);
+#if defined(_OPENMP)
+            tools::log->info("Computed u {} | f {:.4f} | lbit width {:.6f} | sse {:.6f} | threads {} | points {}: {:.8f}",udep, fmix, cls,sse, omp_get_num_threads(),c,fmt::join(y, ", "));
+#else
+            tools::log->info("Computed u {} | f {:.4f} | lbit width {:.6f} | sse {:.6f} | points {}: {:.8f}",udep, fmix, cls,sse,c,fmt::join(y, ", "));
+#endif
             cls_avg(static_cast<long>(fidx),static_cast<long>(uidx)) = cls;
             sse_avg(static_cast<long>(fidx),static_cast<long>(uidx)) = sse;
+
+            offset = {static_cast<long>(fidx), static_cast<long>(uidx), 0};
+            extent = {1,1, static_cast<long>(y.size())};
+            lbit_curves.slice(offset,extent) = Eigen::TensorMap<Eigen::Tensor<double,1>>(y.data(), y.size());
         }
     }
-    return {cls_avg,sse_avg};
+    return {cls_avg,sse_avg, lbit_curves};
 }
 
 

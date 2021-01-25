@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 #if defined(_OPENMP)
     if(settings::threading::omp_threads <= 0) { settings::threading::omp_threads = (int) std::thread::hardware_concurrency(); }
     omp_set_num_threads(settings::threading::omp_threads); // Should only need this. Both Eigen (non-Tensor) and MKL listen to this
-    omp_set_max_active_levels(1);
+//    omp_set_max_active_levels(1);
     tools::log->info("Using OpenMP with {} threads and {} active levels", omp_get_max_threads(),omp_get_max_active_levels());
 #endif
 #if defined(OPENBLAS_AVAILABLE)
