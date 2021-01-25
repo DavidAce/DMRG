@@ -102,7 +102,7 @@ void erase(std::vector<T1> &vec, T2 val) {
     }
 }
 
-Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
+Eigen::Tensor<qm::Scalar, 2> contract_a(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
                                       const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const Textra::idxlistpair<1> &idx1,
                                       const Textra::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
     return ud.reshape(shp_udn4)
@@ -112,18 +112,22 @@ Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, con
         .reshape(dim2);
 }
 
-Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 2> &shp_udn2,
+Eigen::Tensor<qm::Scalar, 2> contract_b(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 2> &shp_udn2,
                                       const std::array<long, 4> &shp_udn4, const Textra::idxlistpair<1> &idx1, const Textra::idxlistpair<2> &idx2) {
     return ud.reshape(shp_udn4).contract(m, idx1).contract(ud.conjugate().shuffle(Textra::array2{1, 0}).reshape(shp_udn4), idx2).reshape(shp_udn2);
 }
 
-Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 6> &shp_mid6,
+Eigen::Tensor<qm::Scalar, 2> contract_c(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 6> &shp_mid6,
                                       const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 6> &shf6,
                                       const std::array<long, 2> &dim2) {
-    return ud.contract(m.reshape(shp_mid6), idx_up).contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn).shuffle(shf6).reshape(dim2);
+    return ud
+        .contract(m.reshape(shp_mid6), idx_up)
+        .contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn)
+        .shuffle(shf6)
+        .reshape(dim2);
 }
 
-Eigen::Tensor<qm::Scalar, 2> contract(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
+Eigen::Tensor<qm::Scalar, 2> contract_d(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
                                       const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 4> &shf4,
                                       const std::array<long, 2> &dim2) {
     return ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn).shuffle(shf4).reshape(dim2);
@@ -351,14 +355,17 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
                               back_inserter(pos_isect));
         int_cone.emplace_back(pos_isect);
     }
+    bool deb = tools::log->level() == spdlog::level::trace;
+    if(deb){
+        fmt::print("Lightcones\n");
+        auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
+        auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
+        auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
+        for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
+        for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
+        for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
+    }
 
-//    fmt::print("Lightcones\n");
-//    auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
-//    auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
-//    auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
-//    for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
-//    for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
-//    for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
     return int_cone;
 }
 
@@ -389,7 +396,6 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     if(pos_isect.empty()) return middle_gate;
     bool inc = std::includes(middle_gate.pos.begin(), middle_gate.pos.end(), updown_gate.pos.begin(), updown_gate.pos.end());
 
-    tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {}", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
     auto shp_udn4 = updown_gate.shape<4>();
     auto shp_udn2 = updown_gate.shape<2>();
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
@@ -448,7 +454,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx1 = Textra::idx({3}, {0});
             idx2 = Textra::idx({2, 3}, {0, 1});
         }
-        auto op = contract(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
+        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+        auto op = contract_b(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
         return qm::Gate{op, updown_gate.pos, updown_gate.dim};
     }
     if(pos_isect.size() == 1 and pos_nsect.size() >= 2 and updown_gate.pos.size() == 2) {
@@ -548,8 +555,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             dim  = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
             dim2 = repeat(std::array<long, 1>{shp_mid4[0] * shp_udn2[0]});
         }
-
-        auto op = contract(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
+        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+        auto op = contract_a(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
         return qm::Gate{op, pos, dim};
     }
     if(pos_isect.size() == 2 and pos_nsect.size() >= 1 and updown_gate.pos.size() == 2) {
@@ -607,7 +614,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_up = Textra::idx({1}, {0});
                 idx_dn = Textra::idx({2}, {0});
                 shf4   = Textra::array4{0, 1, 3, 2};
-                op     = contract(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
+                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+                op     = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
             } else if(offset == offmax) {
                 /*  Insert at offmax
                  *            0                   0                 0
@@ -648,7 +656,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_dn = Textra::idx({3}, {0});
                 shf4   = Textra::array4{1, 0, 2, 3};
             }
-            op = contract(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+            op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
         } else {
             /*  Insert at offmax
              *           0                     0                      0
@@ -686,7 +695,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx_up = Textra::idx({1}, {1});
             idx_dn = Textra::idx({4}, {0});
             shf6   = Textra::array6{1, 0, 2, 3, 5, 4};
-            op     = contract(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+            op     = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
         }
         if(op.size() == 0) throw std::logic_error("No op computed!");
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};

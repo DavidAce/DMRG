@@ -24,8 +24,9 @@ function(define_omp_target tgt lib)
         endif()
         target_link_libraries(${tgt} INTERFACE ${lib})
     endif()
+            target_compile_options(${tgt} INTERFACE -fopenmp)
     target_link_libraries(${tgt} INTERFACE Threads::Threads)
-    set_target_properties(${tgt} PROPERTIES INTERFACE_COMPILE_DEFINITIONS "_OPENMP")
+#    set_target_properties(${tgt} PROPERTIES INTERFACE_COMPILE_DEFINITIONS "_OPENMP")
 endfunction()
 
 
