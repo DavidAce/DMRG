@@ -398,6 +398,52 @@ void class_algorithm_finite::try_disorder_damping() {
     if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
 
+void class_algorithm_finite::try_subspace_expansion(){
+    bool force_expansion = settings::strategy::multisite_max_sites == 1;
+    if(not force_expansion and not settings::strategy::expand_subspace_when_stuck) return;
+    if(not force_expansion and num_expansions >= max_expansions) return;
+    if(not variance_before_step) return;
+    // NOTE! Here we only enable the alpha_expansion factor. The actual expansion happens in the dmrg-step!
+
+    // Determine the alpha_expansion factor
+    constexpr size_t iter_active = 2;
+    if(status.iter <= iter_expansion+iter_active-1 or alpha_expansion){
+        double alpha_old = alpha_expansion.value();
+        constexpr double alpha_min = 1e-10;
+        constexpr double alpha_max = 1e-4;
+        constexpr double alpha_up  = 2;
+        constexpr double alpha_dn  = 0.1;
+        constexpr double alpha_dn_fast  = 0.01;
+        double variance = tools::finite::measure::energy_variance(tensors);
+        double percent = 100 * variance / variance_before_step.value();
+        if(percent < 99){
+            alpha_expansion = std::clamp(alpha_expansion.value()*alpha_dn, alpha_min,alpha_max); // Variance has improved, so alpha can be reduced!
+            // In addition, if the variance has become better than the best variance ever, we really want this to calm down!
+            percent = 100 * variance / status.energy_variance_lowest;
+            if(percent < 99)
+                alpha_expansion = std::clamp(alpha_expansion.value()*alpha_dn_fast, alpha_min,alpha_max); // Variance has improved, so alpha can be reduced!
+        }
+        else
+            alpha_expansion = std::clamp(alpha_expansion.value()*alpha_up, alpha_min,alpha_max); // Variance has not improved, so alpha can be increased!
+        tools::log->debug("alpha {:.1e} --> {:.1e}",alpha_old, alpha_expansion.value());
+    }
+
+    // Subspace expansion starts
+    if((status.algorithm_has_got_stuck and not alpha_expansion) or force_expansion){
+        alpha_expansion = 1e-7;
+//        clear_convergence_status();
+        iter_expansion = status.iter;
+    }
+    // Subspace expansion ends
+    if(status.iter >= iter_expansion+iter_active and alpha_expansion and not force_expansion){
+        alpha_expansion = std::nullopt;
+        num_expansions++;
+        clear_convergence_status();
+    }
+
+}
+
+
 void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> slope_threshold) {
     // Based on the the slope of the variance
     // We don't want to check every time because the variance is expensive to compute.
@@ -418,8 +464,8 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         status.variance_mpo_saturated_for = std::max(converged_count, saturated_count);
         std::vector<double> V_mpo_vec_log10;
         for(const auto &v : V_mpo_vec) V_mpo_vec_log10.emplace_back(std::log10(v));
-        if(tools::log->level() == spdlog::level::debug)
-            tools::log->debug("Energy variance convergence:  rel. slope {:.3f} | slope tolerance {:.2f}", report.slope, slope_threshold.value());
+        if(tools::log->level() >= spdlog::level::debug)
+            tools::log->info("Energy variance convergence:  rel. slope {:.3f} | slope tolerance {:.2f}", report.slope, slope_threshold.value());
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Energy variance slope details:");
             tools::log->trace(" -- relative slope     = {:.3f} %", report.slope);
@@ -466,8 +512,8 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         std::vector<double> all_slopes;
         for(auto &r : reports) all_avergs.push_back(r.avgY);
         for(auto &r : reports) all_slopes.push_back(r.slope);
-        if(tools::log->level() == spdlog::level::debug)
-            tools::log->debug("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f}", idx_max_slope,
+        if(tools::log->level() >= spdlog::level::debug)
+            tools::log->info("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f}", idx_max_slope,
                               reports[idx_max_slope].slope, slope_threshold.value());
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Entanglement slope details:");
@@ -697,6 +743,7 @@ template void class_algorithm_finite::write_to_file(StorageReason storage_reason
 void class_algorithm_finite::print_status_update() {
     if(num::mod(status.step, cfg_print_freq()) != 0) return;
     if(cfg_print_freq() == 0) return;
+    if(tensors.state->position_is_outward_edge()) return;
 
     std::string report;
     //    report += fmt::format("{:<} ", algo_name);
@@ -705,7 +752,7 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("step:{:<5} ", status.step);
     report += fmt::format("L:{} ", tensors.get_length());
     if(tensors.active_sites.empty())
-        report += fmt::format("l:{:<2} ", status.position);
+        report += fmt::format("l:[{:>2} {:<2}] ", status.position, status.position);
     else if(tensors.state->get_direction() > 0)
         report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
@@ -720,9 +767,12 @@ void class_algorithm_finite::print_status_update() {
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
     report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance, std::log10(status.energy_variance_lowest));
     report += fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
-    std::string bond_strings = fmt::format("{}", tools::finite::measure::bond_dimensions_merged(*tensors.state));
-    size_t      bond_width   = 5 * (settings::strategy::multisite_max_sites - 1);
-    report += fmt::format("{0:<{1}}", bond_strings, bond_width);
+    size_t      comma_width         = settings::strategy::multisite_max_sites <= 2 ? 0 : 2; // ", "
+    size_t      bond_single_width   = static_cast<size_t>(std::log10(cfg_chi_lim_max())) + 1;
+    size_t      bond_string_width   = 2 + (bond_single_width + comma_width)
+                                        * (settings::strategy::multisite_max_sites == 1 ? 1 : settings::strategy::multisite_max_sites -1);
+    std::string bond_string = fmt::format("{}", tools::finite::measure::bond_dimensions_merged(*tensors.state));
+    report += fmt::format("{0:<{1}} ", bond_string, bond_string_width);
 
     if(last_optmode and last_optspace)
         report += fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0, 3), enum2str(last_optspace.value()).substr(0, 3));

@@ -126,9 +126,9 @@ void class_fdmrg::run_algorithm() {
     while(true) {
         single_fdmrg_step();
         check_convergence();
+        write_to_file();
         print_status_update();
         print_profiling_lap();
-        write_to_file();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -137,6 +137,7 @@ void class_fdmrg::run_algorithm() {
 
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
+        try_subspace_expansion();
         reduce_mpo_energy();
         move_center_point();
     }
@@ -154,6 +155,10 @@ void class_fdmrg::single_fdmrg_step() {
     if(tensors.active_sites.empty())
         tensors.activate_sites({0}); // Activate a site so that edge checks can happen
     else {
+        // Use subspace expansion if alpha_expansion is set
+        if(alpha_expansion)
+            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim, settings::precision::svd_threshold);
+
         Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
         if constexpr(settings::debug)
             tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)));

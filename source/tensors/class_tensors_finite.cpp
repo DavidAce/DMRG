@@ -345,6 +345,13 @@ void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3>
     rebuild_edges();
 }
 
+void class_tensors_finite::expand_subspace(double alpha, long chi_lim, std::optional<double> svd_threshold) {
+    if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
+    // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+    tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_threshold);
+    clear_measurements();
+}
+
 void class_tensors_finite::assert_edges() const { tools::finite::env::assert_edges(*state, *model, *edges); }
 void class_tensors_finite::assert_edges_ene() const { tools::finite::env::assert_edges_ene(*state, *model, *edges); }
 void class_tensors_finite::assert_edges_var() const { tools::finite::env::assert_edges_var(*state, *model, *edges); }

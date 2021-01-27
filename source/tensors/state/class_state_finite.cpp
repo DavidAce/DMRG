@@ -149,6 +149,15 @@ std::vector<std::string> class_state_finite::get_labels() const {
 
 void class_state_finite::flip_direction() { direction *= -1; }
 
+
+std::array<long, 3> class_state_finite::dimensions_1site() const {
+    auto pos = get_position<long>();
+    if(pos >= 0)
+        return get_mps_site(pos).dimensions();
+    else
+        return {0,0,0};
+}
+
 std::array<long, 3> class_state_finite::dimensions_2site() const {
     std::array<long, 3> dimensions{};
     auto                   pos  = get_position<long>();
@@ -162,10 +171,26 @@ std::array<long, 3> class_state_finite::dimensions_2site() const {
     return dimensions;
 }
 
+std::array<long, 3> class_state_finite::dimensions_nsite() const {
+    return tools::finite::multisite::get_dimensions(*this,active_sites);
+}
+
+long class_state_finite::size_1site() const {
+    auto dims = dimensions_1site();
+    return dims[0] * dims[1] * dims[2];
+}
+
 long class_state_finite::size_2site() const {
     auto dims = dimensions_2site();
     return dims[0] * dims[1] * dims[2];
 }
+
+
+long class_state_finite::size_nsite() const {
+    auto dims = dimensions_nsite();
+    return dims[0] * dims[1] * dims[2];
+}
+
 
 bool class_state_finite::position_is_the_middle() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2) and direction == 1; }
 bool class_state_finite::position_is_the_middle_any_direction() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2); }

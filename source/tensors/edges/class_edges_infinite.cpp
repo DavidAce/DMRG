@@ -32,18 +32,18 @@ class_edges_infinite &class_edges_infinite::operator=(const class_edges_infinite
     // check for self-assignment
     if(this != &other) {
         eneL = std::make_unique<class_env_ene>(*other.eneL);
-        eneR = std::make_unique<class_env_ene>(*other.eneR);
         varL = std::make_unique<class_env_var>(*other.varL);
+        eneR = std::make_unique<class_env_ene>(*other.eneR);
         varR = std::make_unique<class_env_var>(*other.varR);
     }
     return *this;
 }
 
 void class_edges_infinite::initialize() {
-    eneL = std::make_unique<class_env_ene>("L", 0);
-    eneR = std::make_unique<class_env_ene>("L", 0);
-    varL = std::make_unique<class_env_var>("R", 1);
-    varR = std::make_unique<class_env_var>("R", 1);
+    eneL = std::make_unique<class_env_ene>(0,"L","ene");
+    varL = std::make_unique<class_env_var>(0,"L","var");
+    eneR = std::make_unique<class_env_ene>(1,"R","ene");
+    varR = std::make_unique<class_env_var>(1,"R","var");
 }
 
 void class_edges_infinite::eject_edges() {

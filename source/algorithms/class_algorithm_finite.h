@@ -31,23 +31,28 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t min_saturation_iters = 1;  /*!< If both var and ent saturated  this long -> got_stuck: true */
     size_t max_saturation_iters = 10; /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
 
-    bool                    has_projected        = false; /*!< True if projection has already been tried */
-    bool                    has_damped           = false; /*!< True if damping of hamiltonian parameters is ongoing */
-    size_t                  chi_quench_steps     = 0;     /*!< Number of steps left doing chi-quenching */
-    size_t                  num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
-    size_t                  max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
-    long                    chi_lim_quench_ahead = 32;    /*!< Bond dimension during a quench */
-    long                    chi_lim_quench_trail = 32;    /*!< Bond dimension during a quench */
-    size_t                  num_perturbations    = 0;     /*!< Number of perturbation trials done */
-    size_t                  max_perturbations    = 2;     /*!< Maximum number of perturbation trials allowed */
-    size_t                  perturbation_steps   = 0;     /*!< Number of steps left doing perturbation of MPOs */
-    size_t                  damping_steps        = 0;     /*!< Number of steps left doing disorder damping of MPOs */
-    size_t                  num_dampings         = 0;     /*!< Number of damping trials done */
-    size_t                  max_dampings         = 2;     /*!< Maximum number of damping trials allowed */
-    size_t                  iter_discard         = 0;     /*!< Iteration when last discard occurred */
-    size_t                  num_discards         = 0;     /*!< Counter for number of times discarding the smallest schmidt values */
-    size_t                  max_discards         = 3;     /*!< Maximum number of times to discard the smallest schmidt values */
-    std::vector<double>     damping_exponents;            /*!< Exponents for for the damping trials */
+    bool                    has_projected        = false;        /*!< True if projection has already been tried */
+    bool                    has_damped           = false;        /*!< True if damping of hamiltonian parameters is ongoing */
+    size_t                  chi_quench_steps     = 0;            /*!< Number of steps left doing chi-quenching */
+    size_t                  num_chi_quenches     = 0;            /*!< Number of bond dimension quench trials that have occurred */
+    size_t                  max_chi_quenches     = 2;            /*!< Maximum number of bond dimension quench trials allowed */
+    long                    chi_lim_quench_ahead = 32;           /*!< Bond dimension during a quench */
+    long                    chi_lim_quench_trail = 32;           /*!< Bond dimension during a quench */
+    size_t                  num_perturbations    = 0;            /*!< Number of perturbation trials done */
+    size_t                  max_perturbations    = 2;            /*!< Maximum number of perturbation trials allowed */
+    size_t                  perturbation_steps   = 0;            /*!< Number of steps left doing perturbation of MPOs */
+    size_t                  damping_steps        = 0;            /*!< Number of steps left doing disorder damping of MPOs */
+    size_t                  num_dampings         = 0;            /*!< Number of damping trials done */
+    size_t                  max_dampings         = 2;            /*!< Maximum number of damping trials allowed */
+    size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
+    size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
+    size_t                  max_discards         = 3;            /*!< Maximum number of times to discard the smallest schmidt values */
+    size_t                  num_expansions       = 0;            /*!< Counter for number of times performing a subspace expansion */
+    size_t                  max_expansions       = 3;            /*!< Maximum number of times to allow a subspace expansion. (Once means L*2 steps) */
+    size_t                  iter_expansion       = 0;            /*!< Iteration when the last expansion started (used to turn off when done) */
+    std::optional<double>   alpha_expansion      = std::nullopt; /*!< Amplitude for the expansion term  */
+    std::optional<double>   variance_before_step = std::nullopt; /*!< Keeps track of the variance before the step to guide subspace expansion factor */
+    std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
 
@@ -63,6 +68,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();
+    void         try_subspace_expansion();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
@@ -79,10 +85,11 @@ class class_algorithm_finite : public class_algorithm_base {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
-    void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string & state_name, std::string &state_prefix, std::string &model_prefix, std::vector<std::string> &table_prefxs);
+    void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string &state_name, std::string &state_prefix,
+                      std::string &model_prefix, std::vector<std::string> &table_prefxs);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt);
     template<typename T>
-    void write_to_file(StorageReason storage_reason, const T & data,const std::string &name, std::optional<CopyPolicy> copy_policy = std::nullopt);
+    void write_to_file(StorageReason storage_reason, const T &data, const std::string &name, std::optional<CopyPolicy> copy_policy = std::nullopt);
     std::vector<double> V_mpo_vec;    // History of variances
     std::vector<size_t> X_mpo_vec;    // History of moves numbers
     std::vector<double> V_mpo_slopes; // History of variance slopes

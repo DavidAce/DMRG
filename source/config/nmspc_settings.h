@@ -140,6 +140,7 @@ namespace settings {
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
         inline bool          discard_schmidt_when_stuck = true;                                   /*!< Try discarding smallest schmidt values when stuck */
+        inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima */
         inline bool          project_when_stuck         = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */

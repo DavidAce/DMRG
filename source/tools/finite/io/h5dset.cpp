@@ -59,7 +59,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
     std::string dsetName = state_prefix + "/schmidt_midchain";
-    if(save_log[dsetName] != save_point or status.step == 0) {
+    if(save_log[dsetName] != save_point) {
         /*! Writes down the center "Lambda" bond matrix (singular values). */
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
         h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
@@ -78,7 +78,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
     }
 
     std::string mps_prefix = state_prefix + "/mps";
-    if(save_log[mps_prefix] != save_point or status.step == 0) {
+    if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
         // There should be one more sites+1 number of L's, because there is also a center bond
         // However L_i always belongs M_i. Stick to this rule!
@@ -114,7 +114,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         return;
     }
 
-    if(save_log[mps_prefix] != save_point or status.step == 0) {
+    if(save_log[mps_prefix] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mps tensors", enum2str(storage_level));
         for(const auto &mps : state.mps_sites) {
             dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());

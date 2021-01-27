@@ -107,6 +107,9 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
         ceres_default_options.max_solver_time_in_seconds                = 60*30;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
     }
+
+
+
     //    Progress log definitions:
     //    f is the value of the objective function.
     //    d is the change in the value of the objective function if the step computed in this iteration is accepted.
@@ -217,13 +220,13 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     //    ceres::SOLVER_ABORT;
 
     if(not log) return ceres::SOLVER_CONTINUE;
-    if(log->level() > spdlog::level::debug) return ceres::SOLVER_CONTINUE;
+    if(log->level() >= spdlog::level::debug) return ceres::SOLVER_CONTINUE;
     if(summary.iteration - last_log_iter < freq_log_iter and summary.iteration > init_log_iter) return ceres::SOLVER_CONTINUE;
     if(summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time) return ceres::SOLVER_CONTINUE;
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
+    log->trace("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
                "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                summary.iteration,

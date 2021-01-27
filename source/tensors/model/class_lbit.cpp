@@ -244,7 +244,7 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view(double site_energy) const 
     Eigen::Tensor<Scalar, 4> temp                                    = MPO();
     Eigen::Tensor<Scalar, 2> n                                       = Textra::MatrixToTensor(0.5 * (id + sz));
     Eigen::Tensor<Scalar, 2> i                                       = Textra::MatrixTensorMap(id);
-    temp.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
+    temp.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
     return temp;
 }
 
