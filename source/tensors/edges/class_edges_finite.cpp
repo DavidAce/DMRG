@@ -54,10 +54,10 @@ class_edges_finite &class_edges_finite::operator=(const class_edges_finite &othe
 
 void class_edges_finite::initialize(size_t model_size) {
     for(size_t pos = 0; pos < model_size; pos++) {
-        eneL.emplace_back(std::make_unique<class_env_ene>("L", pos));
-        varL.emplace_back(std::make_unique<class_env_var>("L", pos));
-        eneR.emplace_back(std::make_unique<class_env_ene>("R", pos));
-        varR.emplace_back(std::make_unique<class_env_var>("R", pos));
+        eneL.emplace_back(std::make_unique<class_env_ene>(pos,"L","ene"));
+        varL.emplace_back(std::make_unique<class_env_var>(pos,"L","var"));
+        eneR.emplace_back(std::make_unique<class_env_ene>(pos,"R","ene"));
+        varR.emplace_back(std::make_unique<class_env_var>(pos,"R","var"));
     }
 }
 

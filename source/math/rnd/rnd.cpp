@@ -25,12 +25,12 @@ namespace rnd {
     void seed(std::optional<long> n) {
         if(n.has_value() and n.value() >= 0) {
             auto given_seed = (unsigned long) n.value();
-            std::printf("Seeding: %ld", given_seed);
+            std::printf("Seeding: %ld\n", given_seed);
             pcg_extras::seed_seq_from<pcg64> seq(given_seed);
             //            std::seed_seq seq{given_seed};
             internal::rng.seed(seq);
         } else {
-            std::printf("Seeding: std::random_device");
+            std::printf("Seeding: std::random_device\n");
             pcg_extras::seed_seq_from<std::random_device> seed_source;
             internal::rng.seed(seed_source);
         }

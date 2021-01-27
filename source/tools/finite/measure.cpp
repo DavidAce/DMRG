@@ -143,10 +143,13 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_sta
         bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
         if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
     }
-    if(bond_dimensions.size() > 2) {
+    if(state.active_sites.size() > 1 ) {
         bond_dimensions.pop_back();
         bond_dimensions.erase(bond_dimensions.begin());
-    }
+    }else if(state.get_direction() == 1 )
+        bond_dimensions.pop_back();
+    else
+        bond_dimensions.erase(bond_dimensions.begin());
     return bond_dimensions;
 }
 

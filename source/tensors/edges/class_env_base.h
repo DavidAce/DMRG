@@ -41,8 +41,8 @@ class class_env_base {
     class_env_base(const class_env_base &other);                // copy ctor
     class_env_base &operator=(const class_env_base &other);     // copy assign
 
-    explicit class_env_base(std::string side_, size_t position_);
-    explicit class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO);
+    explicit class_env_base(size_t position_, std::string side_, std::string tag_);
+    explicit class_env_base(std::string side_, std::string tag_, const class_mps_site &MPS, const class_mpo_site &MPO);
 
     void clear();
 
@@ -65,4 +65,6 @@ class class_env_base {
     std::optional<std::size_t> get_unique_id_env() const;
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;
+
+    Eigen::Tensor<Scalar,3> get_expansion_term(const class_mps_site &mps, const class_mpo_site &mpo, double alpha = 0) const;
 };

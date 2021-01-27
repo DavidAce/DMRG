@@ -211,10 +211,10 @@ void class_xdmrg::run_algorithm() {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
         check_convergence();
-        print_status_update();
-        print_profiling_lap();
-        if(tensors.position_is_inward_edge()) print_status_full();
         write_to_file();
+        print_status_update();
+        //        print_profiling_lap();
+        //        if(tensors.position_is_inward_edge()) print_status_full();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -230,9 +230,9 @@ void class_xdmrg::run_algorithm() {
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
+        try_subspace_expansion();
         reduce_mpo_energy();
         move_center_point();
-        tools::log->info("Bond dimensions after  move        = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -253,44 +253,72 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) c1.optType = OptType::REAL;
 
+    // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
+    c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
+
+//    TODO: Remove this temporary test!
+//    if(alpha_expansion)
+//        c1.max_sites = 1;
+
+    // If we are doing 1-site dmrg, then we better expand subspace
+    if(settings::strategy::multisite_max_sites == 1)
+        alpha_expansion = 100 * settings::precision::svd_threshold;
+
+
+
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    // On the zeroth iteration, the rest of the chain is probably just randomized, so don't focus on growing the bond dimension yet.
-    if(status.iter == 0) { status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init()); }
+    if(status.iter == 0) {
+        // On the zeroth iteration, the rest of the chain is probably just randomized, so don't focus on growing the bond dimension yet.
+        status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init());
+    }
 
-    // If early in the simulation, and the bond dimension is small enough we use subspace optimization
     if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
-        c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
-        c1.second_chance = false;
-        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
-    }
-    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2) {
+        // If early in the simulation, and the bond dimension is small enough we use subspace optimization
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
 
-    // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
+    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2) {
+        // When discarded the bond dimensions are highly truncated. We can then afford subspace optimization
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.second_chance = false;
+        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
+    }
+
     if(status.iter < settings::xdmrg::olap_iters) {
+        // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
         c1.optMode       = OptMode::OVERLAP;
         c1.optSpace      = OptSpace::SUBSPACE_ONLY;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_olap > 0) status.chi_lim = settings::xdmrg::chi_lim_olap;
     }
 
-    // If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
-    if(status.algorithm_has_stuck_for > 1 and tensors.state->size_2site() <= settings::precision::max_size_part_diag) {
+    if(status.algorithm_has_stuck_for == 1 and tensors.state->size_1site() <= settings::precision::max_size_part_diag) {
+        // If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.second_chance = true;
+    }
+
+    if(alpha_expansion) {
+        // During subspace expansion we want monotonically decreasing results
+        //        c1.optMode       = OptMode::VARIANCE;
+        //        c1.optSpace      = OptSpace::DIRECT;
+        //        c1.second_chance = false;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::DIRECT;
         c1.second_chance = true;
     }
 
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
+
     if(status.variance_mpo_has_converged) {
         // No need to do expensive operations -- just finish
         c1.optMode       = OptMode::VARIANCE;
@@ -298,10 +326,10 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.second_chance = false;
     }
 
-    // Make sure not to use SUBSPACE if the 2-site problem size is huge
-    // When this happens, we can't use SUBSPACE even with two sites,
-    // so we might as well give it to DIRECT, which handles larger problems.
-    if(tensors.state->size_2site() > settings::precision::max_size_part_diag) {
+    if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
+        // Make sure not to use SUBSPACE if the 2-site problem size is huge
+        // When this happens, we can't use SUBSPACE even with two sites,
+        // so we might as well give it to DIRECT, which handles larger problems.
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::DIRECT;
         c1.second_chance = true;
@@ -316,9 +344,10 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
+    c1.max_sites = settings::strategy::multisite_max_sites; // TODO: This is a test
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+    //    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
+    //    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -351,6 +380,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
     } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 1 and c2.max_sites != settings::strategy::multisite_max_sites) {
+        // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
@@ -368,14 +398,22 @@ void class_xdmrg::single_xDMRG_step() {
 
     auto                   optConf = get_opt_conf_list();
     std::vector<opt_state> results;
-    double                 variance_old = 1;
+    variance_before_step = std::nullopt;
+    bool   expanded      = false;
+    double percent       = 0;
     for(auto &conf : optConf) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         tensors.activate_sites(conf.chosen_sites);
         if(tensors.active_sites.empty()) continue;
+        if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
 
-        variance_old = measure::energy_variance(tensors); // Should just take value from cache
+        // Use subspace expansion if alpha_expansion is set
+        if(alpha_expansion and not expanded) {
+            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim, settings::precision::svd_threshold);
+            expanded = true;
+        }
+
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
@@ -391,14 +429,14 @@ void class_xdmrg::single_xDMRG_step() {
         }
 
         // We can now decide if we are happy with the result or not.
-        double percent = 100 * results.back().get_variance() / variance_old;
+        percent = 100 * results.back().get_variance() / variance_before_step.value();
         if(percent < 99) {
             tools::log->debug("State improved during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_old), percent);
+                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_before_step.value()), percent);
             break;
         } else {
             tools::log->debug("State did not improve enough during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_old), percent);
+                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_before_step.value()), percent);
             continue;
         }
     }

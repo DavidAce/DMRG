@@ -9,8 +9,7 @@
 #include <tensors/state/class_mps_site.h>
 #include <utility>
 
-class_env_ene::class_env_ene(std::string side_, const class_mps_site &mps, const class_mpo_site &mpo) : class_env_base(std::move(side_), mps, mpo) {
-    tag = "ene";
+class_env_ene::class_env_ene(std::string side_, const class_mps_site &mps, const class_mpo_site &mpo) : class_env_base(std::move(side_),"ene", mps, mpo) {
     set_edge_dims(mps, mpo);
 }
 

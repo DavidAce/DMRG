@@ -1,9 +1,9 @@
 #pragma once
 
-#include <general/eigen_tensor_fwd_decl.h>
 #include <array>
 #include <complex>
 #include <config/enums.h>
+#include <general/eigen_tensor_fwd_decl.h>
 #include <measure/tensors_measure_finite.h>
 #include <memory>
 #include <tensors/edges/class_env_pair.h>
@@ -90,6 +90,7 @@ class class_tensors_finite {
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt,
                                 LogPolicy log_policy = LogPolicy::QUIET);
 
+    void expand_subspace(double alpha, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     void assert_edges() const;
     void assert_edges_ene() const;
     void assert_edges_var() const;

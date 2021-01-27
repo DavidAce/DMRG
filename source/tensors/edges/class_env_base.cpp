@@ -33,12 +33,12 @@ class_env_base::class_env_base(const class_env_base &other)
     assert_block();
 }
 
-class_env_base::class_env_base(std::string side_, size_t position_)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)) {
+class_env_base::class_env_base(size_t position_, std::string side_, std::string tag_)
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
     assert_block();
 }
-class_env_base::class_env_base(std::string side_, const class_mps_site &MPS, const class_mpo_site &MPO)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)) {
+class_env_base::class_env_base(std::string side_,std::string tag_, const class_mps_site &MPS, const class_mpo_site &MPO)
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)) ,tag(std::move(tag_)){
     if(MPS.get_position() != MPO.get_position())
         throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
     position = MPS.get_position();
@@ -65,6 +65,8 @@ class_env_base &class_env_base::operator=(const class_env_base &other) {
 using Scalar = class_env_base::Scalar;
 
 void class_env_base::assert_block() const {
+    if(side != "L" and side != "R") throw std::runtime_error("Expected side [L|R]. Got: [" + side + "]");
+    if(tag != "ene" and tag != "var") throw std::runtime_error("Expected tag [var|ene]. Got: [" + tag + "]");
     if(not block) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
 }
 
@@ -276,3 +278,45 @@ std::size_t class_env_base::get_unique_id() const {
 std::optional<std::size_t> class_env_base::get_unique_id_env() const { return unique_id_env; }
 std::optional<std::size_t> class_env_base::get_unique_id_mps() const { return unique_id_mps; }
 std::optional<std::size_t> class_env_base::get_unique_id_mpo() const { return unique_id_mpo; }
+
+
+Eigen::Tensor<Scalar,3> class_env_base::get_expansion_term(const class_mps_site &mps, const class_mpo_site &mpo, double alpha) const{
+    if constexpr(settings::debug)
+        if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
+            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
+                                               get_position(), get_position(), mps.get_position(), mpo.get_position()));
+
+    Eigen::Tensor<Scalar,4> mpo_tensor;
+    if(tag == "ene") mpo_tensor = mpo.MPO();
+    else if(tag == "var") mpo_tensor = mpo.MPO2();
+    else throw std::runtime_error("Expected tag [var|ene]: Got: [" + tag + "]");
+
+    if(side == "L"){
+        long spin = mps.spin_dim();
+        long chiL = mps.get_chiL();
+        long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
+        if(get_block().dimension(0) != chiL) throw std::logic_error("block dim 0 != chiL");
+        Eigen::Tensor<Scalar,3> PL = get_block()
+            .contract(mps.get_M_bare(), Textra::idx({0},{1}))
+            .contract(mpo_tensor, Textra::idx({1,2},{0,2}))
+            .shuffle(Textra::array4{3,0,1,2})
+            .reshape(Textra::array3{spin,chiL,chiR});
+        PL = Textra::asNormalized(PL);
+        return PL * PL.constant(alpha);
+
+    }else if (side == "R"){
+        long spin = mps.spin_dim();
+        long chiL = mps.get_chiL() * mpo_tensor.dimension(0);
+        long chiR = mps.get_chiR();
+        if(get_block().dimension(0) != chiR) throw std::logic_error("block dim 0 != chiR");
+        Eigen::Tensor<Scalar,3> PR = get_block()
+            .contract(mps.get_M_bare(), Textra::idx({0},{2}))
+            .contract(mpo_tensor, Textra::idx({1,2},{1,2}))
+            .shuffle(Textra::array4{3,0,1,2})
+            .reshape(Textra::array3{spin,chiL,chiR});
+        PR = Textra::asNormalized(PR);
+        return PR * PR.constant(alpha);
+
+    }
+    else throw std::runtime_error("Expected side L or R. Got: "+ side);
+}

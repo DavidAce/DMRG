@@ -14,6 +14,7 @@ class class_state_finite;
 class class_xdmrg : public class_algorithm_finite {
     private:
     double energy_window_growth_factor = 1.0;
+    double alpha                       = 1e-10;
 
     struct OptConf {
         OptMode             optMode          = OptMode::VARIANCE;
