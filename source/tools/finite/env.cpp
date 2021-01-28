@@ -13,6 +13,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/mps.h>
+#include <general/nmspc_tensor_extra.h>
 
 void tools::finite::env::expand_subspace(class_state_finite &state, const class_model_finite &model, class_edges_finite &edges, double alpha, long chi_lim, std::optional<double> svd_threshold){
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
@@ -23,6 +24,7 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
     if(alpha < 1e-12) return;
     if(state.active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
+    using Scalar = class_state_finite::Scalar;
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     {
         auto posL = state.active_sites.front();
@@ -39,41 +41,39 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
                 auto &varL = edges.get_varL(posL-1);
                 auto PL1 = eneL.get_expansion_term(mpsL,mpoL,alpha);
                 auto PL2 = varL.get_expansion_term(mpsL,mpoL,alpha);
-                Eigen::Tensor<class_state_finite::Scalar,3> PL = PL1.concatenate(PL2,2);
-                Eigen::Tensor<class_state_finite::Scalar,3> ML_PL = mpsL.get_M_bare().concatenate(PL,2);
+                Eigen::Tensor<Scalar,3> PL = PL1.concatenate(PL2,2);
+                auto zero = Textra::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+                auto ones = Textra::TensorConstant<Scalar>(1.0, PL.dimension(2));
 
-                // Expand the adjacent mps
-                auto zero = Eigen::Tensor<class_state_finite::Scalar,3>(mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
-                auto ones = Eigen::Tensor<class_state_finite::Scalar,1>(PL.dimension(2));
-                ones.setConstant(1.0);
-                zero.setConstant(0.0);
-                Eigen::Tensor<class_state_finite::Scalar,3> MR_zero = mpsR.get_M_bare().concatenate(zero, 1);
-
-                long center = state.get_position<long>();
-                chi_lim = std::min(chi_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                Eigen::Tensor<Scalar,3> ML_PL = Textra::asNormalized(mpsL.get_M_bare().concatenate(PL,2));
+                Eigen::Tensor<Scalar,3> MR_zero = mpsR.get_M_bare().concatenate(zero, 1);
 
                 if(mpsL.isCenter()){
-                    Eigen::Tensor<class_state_finite::Scalar,1> LC_ones = mpsL.get_LC().concatenate(ones, 0);
-                    mpsL.set_LC(LC_ones,0);
+                    Eigen::Tensor<Scalar,1> LC_ones = mpsL.get_LC().concatenate(ones, 0);
+                    mpsL.set_LC(LC_ones,mpsL.get_truncation_error_LC());
+                    tools::log->info("Subspace expansion -> mpsL({}) label {}: Set LC {} with norm {:.16f}",
+                                     mpsL.get_position(),mpsL.get_label(), LC_ones.dimensions(), Textra::norm(LC_ones));
                 }
                 if(mpsL.get_label() == "B"){
-                    Eigen::Tensor<class_state_finite::Scalar,1> L_ones = mpsL.get_L().concatenate(ones, 0);
+                    Eigen::Tensor<Scalar,1> L_ones = mpsL.get_L().concatenate(ones, 0);
                     mpsL.set_L(L_ones,mpsL.get_truncation_error());
+                    tools::log->info("Subspace expansion -> mpsL({}) label {}: Set L {} with norm {:.16f}",
+                                     mpsL.get_position(),mpsL.get_label(), L_ones.dimensions(), Textra::norm(L_ones));
                 }
                 if(mpsR.get_label().find('A') != std::string::npos){
-                    Eigen::Tensor<class_state_finite::Scalar,1> L_ones = mpsR.get_L().concatenate(ones, 0);
+                    Eigen::Tensor<Scalar,1> L_ones = mpsR.get_L().concatenate(ones, 0);
                     mpsR.set_L(L_ones,mpsR.get_truncation_error());
+                    tools::log->info("Subspace expansion -> mpsR({}) label {}: Set L {} with norm {:.16f}",
+                                     mpsR.get_position(),mpsR.get_label(), L_ones.dimensions(), Textra::norm(L_ones));
                 }
 
+                chi_lim = std::min(chi_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
                 mpsL.set_M(ML_PL);
                 mpsR.set_M(MR_zero);
                 state.clear_cache();
 
-
                 // Make both left-normalized
-//            auto multisite_tensor = state.get_multisite_mps({posL-1,posL});
-//            tools::finite::mps::merge_multisite_tensor(state,multisite_tensor,{posL-1,posL}, center, chi_lim, svd_threshold);
-                // Make both left-normalized
+                long center = state.get_position<long>();
                 auto multisite_tensor = state.get_multisite_mps({posL-1});
                 tools::finite::mps::merge_multisite_tensor(state,multisite_tensor,{posL-1}, center, chi_lim, svd_threshold);
 
@@ -105,41 +105,46 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
                 auto &varR = edges.get_varR(posR+1);
                 auto PR1 = eneR.get_expansion_term(mpsR,mpoR,alpha);
                 auto PR2 = varR.get_expansion_term(mpsR,mpoR,alpha);
-                Eigen::Tensor<class_state_finite::Scalar,3> PR = PR1.concatenate(PR2,1);
-                Eigen::Tensor<class_state_finite::Scalar,3> MR_PR = mpsR.get_M_bare().concatenate(PR,1);
+                Eigen::Tensor<Scalar,3> PR = PR1.concatenate(PR2,1);
+                auto zero = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+                auto ones = Textra::TensorConstant<Scalar>(1.0, PR.dimension(1));
 
+                Eigen::Tensor<Scalar,3> MR_PR = mpsR.get_M_bare().concatenate(PR,1);
+                Eigen::Tensor<Scalar,3> ML_zero = mpsL.get_M_bare().concatenate(zero, 2);
 
-                // Expand the adjacent mps
-                auto zero = Eigen::Tensor<class_state_finite::Scalar,3>(mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
-                auto ones = Eigen::Tensor<class_state_finite::Scalar,1>(PR.dimension(1));
-                zero.setZero();
-                ones.setConstant(1.0);
-                Eigen::Tensor<class_state_finite::Scalar,3> ML_zero = mpsL.get_M_bare().concatenate(zero, 2);
-
-                chi_lim = std::min(chi_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                long center = state.get_position<long>();
                 if(mpsL.isCenter()){
-                    Eigen::Tensor<class_state_finite::Scalar,1> LC_ones = mpsL.get_LC().concatenate(ones, 0);
+                    Eigen::Tensor<Scalar,1> LC_ones = mpsL.get_LC().concatenate(ones, 0);
                     mpsL.set_LC(LC_ones,mpsL.get_truncation_error_LC());
+                    tools::log->info("Subspace expansion <- mpsL({}) label {}: Set LC {} with norm {:.16f}",
+                                     mpsL.get_position(),mpsL.get_label(), LC_ones.dimensions(), Textra::norm(LC_ones));
                 }
                 if(mpsL.get_label() == "B"){
-                    Eigen::Tensor<class_state_finite::Scalar,1> L_ones = mpsL.get_L().concatenate(ones, 0);
+                    Eigen::Tensor<Scalar,1> L_ones = mpsL.get_L().concatenate(ones, 0);
                     mpsL.set_L(L_ones,mpsL.get_truncation_error());
+                    tools::log->info("Subspace expansion <- mpsL({}) label {}: Set L {} with norm {:.16f}",
+                                     mpsL.get_position(),mpsL.get_label(), mpsL.get_L().dimensions(), Textra::norm(L_ones));
                 }
                 if(mpsR.get_label().find('A') != std::string::npos){
-                    Eigen::Tensor<class_state_finite::Scalar,1> L_ones = mpsR.get_L().concatenate(ones, 0);
+                    Eigen::Tensor<Scalar,1> L_ones = mpsR.get_L().concatenate(ones, 0);
                     mpsR.set_L(L_ones,mpsR.get_truncation_error());
+                    tools::log->info("Subspace expansion <- mpsR({}) label {}: Set L {} with norm {:.16f}",
+                                     mpsR.get_position(),mpsR.get_label(), mpsR.get_L().dimensions(), Textra::norm(L_ones));
                 }
+                chi_lim = std::min(chi_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
                 mpsL.set_M(ML_zero);
-                mpsR.set_M(MR_PR);
+                mpsR.set_M(Textra::asNormalized(MR_PR));
                 state.clear_cache();
 
-                // Make both right-normalized
-//            auto multisite_tensor = state.get_multisite_mps({posR,posR+1});
-//            tools::finite::mps::merge_multisite_tensor(state,multisite_tensor,{posR,posR+1}, center, chi_lim, svd_threshold);
 
-                // Make both right-normalized
-                auto multisite_tensor = state.get_multisite_mps({posR+1});
+                // Make right-normalized
+                Eigen::Tensor<Scalar,3> multisite_tensor;
+                if(mpsL.isCenter()) multisite_tensor = Textra::asNormalized(
+                                                            mpsR.get_M()
+                                                           .contract(Textra::asDiagonal(mpsL.get_LC()), Textra::idx({1},{0}))
+                                                           .shuffle(Textra::array3{0,2,1}));
+
+                long center = state.get_position<long>();
+//                auto multisite_tensor = state.get_multisite_mps({posR+1});
                 tools::finite::mps::merge_multisite_tensor(state,multisite_tensor,{posR+1}, center, chi_lim, svd_threshold);
                 auto mpsR_new = state.get_mps_site(posR+1);
                 auto mpsL_new = state.get_mps_site(posR);

@@ -149,7 +149,7 @@ Eigen::Tensor<qm::Scalar, 2> qm::Gate::exp_internal(const Eigen::Tensor<Scalar, 
      *
      *  Remember to do the modulo separately on each diagonal entry h!
      */
-    auto op_map = Textra::TensorMatrixMap(op_);
+    auto op_map = Textra::MatrixMap(op_);
     if(op_map.isDiagonal() and op_map.imag().isZero() and std::real(alpha) == 0) {
         auto minus_i = std::complex<double>(0, -1);
 
@@ -157,15 +157,15 @@ Eigen::Tensor<qm::Scalar, 2> qm::Gate::exp_internal(const Eigen::Tensor<Scalar, 
             op_map.diagonal()
                 .unaryViewExpr([&alpha, &minus_i](const Scalar &h) { return std::exp(minus_i * std::fmod(std::imag(-alpha) * std::real(h), 2.0 * M_PI)); })
                 .asDiagonal();
-        return Textra::MatrixToTensor(diag);
+        return Textra::TensorMap(diag.toDenseMatrix());
         //        std::cout << "alpha: " << alpha << std::endl;
         //        std::cout << "op:\n" << op << std::endl;
-        //        std::cout << "old:\n" << (alpha * Textra::TensorMatrixMap(op_)).exp() << std::endl;
-        //        if(not Textra::TensorMatrixMap(op).isApprox((alpha * Textra::TensorMatrixMap(op_)).exp())){
+        //        std::cout << "old:\n" << (alpha * Textra::MatrixMap(op_)).exp() << std::endl;
+        //        if(not Textra::MatrixMap(op).isApprox((alpha * Textra::MatrixMap(op_)).exp())){
         //            throw std::runtime_error("Mismatch");
         //        }
     } else {
-        return Textra::MatrixToTensor((alpha * Textra::TensorMatrixMap(op_)).exp());
+        return Textra::TensorMap((alpha * Textra::MatrixMap(op_)).exp().eval());
     }
 }
 
@@ -175,7 +175,7 @@ qm::Gate::Gate(const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> &op_,
     if(dim_prod != op_.rows() or dim_prod != op_.cols())
         throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.rows(), op_.cols()));
     if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
-    op = Textra::MatrixTensorMap(op_);
+    op = Textra::TensorMap(op_);
 }
 
 qm::Gate::Gate(const Eigen::Tensor<Scalar, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_) : op(op_), pos(std::move(pos_)), dim(std::move(dim_)) {
@@ -195,7 +195,7 @@ qm::Gate::Gate(const Eigen::Tensor<Scalar, 2> &op_, std::vector<size_t> pos_, st
 
 void                          qm::Gate::exp_inplace(Scalar alpha) { op = exp_internal(op, alpha); }
 qm::Gate                      qm::Gate::exp(Scalar alpha) const { return Gate(op, pos, dim, alpha); }
-bool                          qm::Gate::isUnitary(double prec) const { return Textra::TensorMatrixMap(op).isUnitary(prec); }
+bool                          qm::Gate::isUnitary(double prec) const { return Textra::MatrixMap(op).isUnitary(prec); }
 Eigen::Tensor<qm::Scalar, 2> &qm::Gate::adjoint() const {
     if(adj) return adj.value();
     adj = op.conjugate().shuffle(Textra::array2{1, 0});

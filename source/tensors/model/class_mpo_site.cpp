@@ -192,7 +192,7 @@ void class_mpo_site::load_mpo(const h5pp::File &file, const std::string &mpo_pre
         }
         set_parameters(map);
         build_mpo();
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
+        if(Textra::VectorMap(MPO()) != Textra::VectorCast(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     } else {
         throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));

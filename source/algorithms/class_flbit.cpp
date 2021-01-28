@@ -138,7 +138,7 @@ void class_flbit::run_preprocessing() {
         // Create a copy of the state as a full state vector for ED comparison
         auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
         Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
-        tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
+        tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", Textra::VectorMap(Upsi_ed).norm());
         ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, {1, 2, 3}), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));
         time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
     }
@@ -207,9 +207,9 @@ void class_flbit::single_flbit_step() {
         Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
         Upsi_mps                          = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0, -1));
         Eigen::Tensor<Scalar, 0> overlap  = Upsi_ed.conjugate().contract(Upsi_mps, Textra::idx({0}, {0}));
-        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}", Textra::TensorVectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}", Textra::TensorVectorMap(Upsi_mps).norm());
+        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}", Textra::VectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}", Textra::VectorMap(Upsi_ed).norm());
+        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}", Textra::VectorMap(Upsi_mps).norm());
         tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i", std::real(overlap(0)), std::imag(overlap(0)));
     }
     tensors.clear_measurements();
@@ -317,11 +317,11 @@ void class_flbit::create_hamiltonian_gates() {
     for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1})));
     for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}, tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
     for(const auto &ham : ham_gates_1body)
-        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
+        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
     for(const auto &ham : ham_gates_2body)
-        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
+        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
     for(const auto &ham : ham_gates_3body)
-        if(Textra::TensorMatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
+        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
 }
 void class_flbit::create_time_evolution_gates() {
     // Create the time evolution operators
@@ -364,7 +364,7 @@ void class_flbit::transform_to_real_basis() {
 //            tools::log->trace("After normalization");
 //            for(const auto &mps : tensors.state->mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
 
@@ -409,7 +409,7 @@ void class_flbit::transform_to_lbit_basis() {
 //            tools::log->trace("After normalization");
 //            for(const auto &mps : state_lbit->mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
         }
 
 

@@ -65,14 +65,14 @@ namespace svd {
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor,
                                                                                                            std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd(tensor.data(), tensor.dimension(0), tensor.dimension(1), rank_max);
-            return std::make_tuple(Textra::MatrixTensorMap(U), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()), Textra::MatrixTensorMap(V));
+            return std::make_tuple(Textra::TensorMap(U), Textra::TensorMap(S.normalized().template cast<Scalar>()), Textra::TensorMap(V));
         }
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>>
             decompose(const Eigen::Tensor<Scalar, 3> &tensor, const long rows, const long cols, std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd(tensor.data(), rows, cols, rank_max);
-            return std::make_tuple(Textra::MatrixTensorMap(U), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()), Textra::MatrixTensorMap(V));
+            return std::make_tuple(Textra::TensorMap(U), Textra::TensorMap(S.normalized().template cast<Scalar>()), Textra::TensorMap(V));
         }
 
         template<typename Derived>
@@ -99,8 +99,8 @@ namespace svd {
              */
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::MatrixTensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
+            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -112,8 +112,8 @@ namespace svd {
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::MatrixTensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
+            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -125,8 +125,8 @@ namespace svd {
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank), Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::MatrixTensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}), S.norm());
+            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}), S.norm());
         }
 
         template<typename Scalar>
@@ -291,9 +291,9 @@ namespace svd {
             S /= avgS;
             /* clang-format off */
             return std::make_tuple(
-                Textra::MatrixTensorMap(U).reshape(Textra::array4{dim0, dim1, dim2, rank}).shuffle(Textra::array4{2, 3, 0, 1}).template cast<Scalar>(),
-                Textra::MatrixTensorMap(S).template cast<Scalar>(),
-                Textra::MatrixTensorMap(V).template cast<Scalar>());
+                Textra::TensorMap(U).reshape(Textra::array4{dim0, dim1, dim2, rank}).shuffle(Textra::array4{2, 3, 0, 1}).template cast<Scalar>(),
+                Textra::TensorMap(S).template cast<Scalar>(),
+                Textra::TensorMap(V).template cast<Scalar>());
             /* clang-format off */
         }
         template<typename Scalar>
@@ -348,9 +348,9 @@ namespace svd {
             S /= avgS;                                            // Rescaled singular values
             /* clang-format off */
             return std::make_tuple(
-                Textra::MatrixTensorMap(U).template cast<Scalar>(),
-                Textra::MatrixTensorMap(S).template cast<Scalar>(),
-                Textra::MatrixTensorMap(V).reshape(Textra::array4{rank, dim1, dim2, dim3}).shuffle(Textra::array4{0, 3, 1, 2}).template cast<Scalar>());
+                Textra::TensorMap(U).template cast<Scalar>(),
+                Textra::TensorMap(S).template cast<Scalar>(),
+                Textra::TensorMap(V).reshape(Textra::array4{rank, dim1, dim2, dim3}).shuffle(Textra::array4{0, 3, 1, 2}).template cast<Scalar>());
             /* clang-format off */
         }
     };

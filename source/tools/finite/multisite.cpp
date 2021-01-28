@@ -79,8 +79,6 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
     std::vector<long>                   sizes;
     std::vector<size_t>                 sites;
     std::vector<std::array<long, 3>> shape;
-    //    if(direction == -1) position = std::min(position + 1, length - 1); // If going to the left, take position to be the site on the right of the center
-    //    bond.
     while(true) {
         if(position >= 0) {
             sites.emplace_back(position);

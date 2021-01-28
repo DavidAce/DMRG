@@ -66,10 +66,10 @@ void tools::common::views::compute_mps_components(const class_state_infinite &st
     Scalar normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
     Scalar normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
 
-    r_evn = Textra::MatrixTensorMap(eigvec_R_evn).reshape(Textra::array2{state.chiB(), state.chiB()}) / normalization_evn;
-    l_evn = Textra::MatrixTensorMap(eigvec_L_evn).reshape(Textra::array2{state.chiB(), state.chiB()}) / normalization_evn;
-    r_odd = Textra::MatrixTensorMap(eigvec_R_odd).reshape(Textra::array2{state.chiC(), state.chiC()}) / normalization_odd;
-    l_odd = Textra::MatrixTensorMap(eigvec_L_odd).reshape(Textra::array2{state.chiC(), state.chiC()}) / normalization_odd;
+    r_evn = Textra::TensorMap(eigvec_R_evn).reshape(Textra::array2{state.chiB(), state.chiB()}) / normalization_evn;
+    l_evn = Textra::TensorMap(eigvec_L_evn).reshape(Textra::array2{state.chiB(), state.chiB()}) / normalization_evn;
+    r_odd = Textra::TensorMap(eigvec_R_odd).reshape(Textra::array2{state.chiC(), state.chiC()}) / normalization_odd;
+    l_odd = Textra::TensorMap(eigvec_L_odd).reshape(Textra::array2{state.chiC(), state.chiC()}) / normalization_odd;
 
     theta                = get_theta(state);
     theta_sw             = get_theta_swapped(state);

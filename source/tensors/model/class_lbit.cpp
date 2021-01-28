@@ -90,8 +90,8 @@ void class_lbit::build_mpo()
  */
 {
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
-    Eigen::Tensor<Scalar, 2> n = Textra::MatrixToTensor(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 2> n = Textra::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i = Textra::TensorMap(id);
     mpo_internal.resize(4, 4, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
     mpo_internal.slice(Textra::array4{0, 0, 0, 0}, extent4).reshape(extent2) = i;
@@ -163,8 +163,8 @@ void class_lbit::set_coupling_damping(double alpha_) { alpha = alpha_; }
 void class_lbit::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar, 2> n                                               = Textra::MatrixToTensor(0.5 * (id + sz));
-        Eigen::Tensor<Scalar, 2> i                                               = Textra::MatrixTensorMap(id);
+        Eigen::Tensor<Scalar, 2> n                                               = Textra::TensorCast(0.5 * (id + sz));
+        Eigen::Tensor<Scalar, 2> i                                               = Textra::TensorMap(id);
         mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = get_field() * n - e_reduced * i;
         mpo_squared                                                              = std::nullopt;
         unique_id                                                                = std::nullopt;
@@ -200,8 +200,8 @@ void class_lbit::set_perturbation(double coupling_ptb, double field_ptb, Perturb
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar, 2> n                                               = Textra::MatrixToTensor(0.5 * (id + sz));
-        Eigen::Tensor<Scalar, 2> i                                               = Textra::MatrixTensorMap(id);
+        Eigen::Tensor<Scalar, 2> n                                               = Textra::TensorCast(0.5 * (id + sz));
+        Eigen::Tensor<Scalar, 2> i                                               = Textra::TensorMap(id);
         mpo_internal.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = get_field() * n - e_reduced * i;
         mpo_squared                                                              = std::nullopt;
         unique_id                                                                = std::nullopt;
@@ -226,8 +226,8 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
         if(n == 3) J3 = 1;
     }
     Eigen::Tensor<Scalar, 4> MPO_nbody                                    = MPO();
-    Eigen::Tensor<Scalar, 2> n                                            = Textra::MatrixToTensor(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                            = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 2> n                                            = Textra::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                            = Textra::TensorMap(id);
     MPO_nbody.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1_rand * n - e_reduced * i;
     MPO_nbody.slice(Textra::array4{3, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand * n;
     MPO_nbody.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3_rand * n;
@@ -242,8 +242,8 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view() const {
 Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view(double site_energy) const {
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<Scalar, 4> temp                                    = MPO();
-    Eigen::Tensor<Scalar, 2> n                                       = Textra::MatrixToTensor(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                       = Textra::MatrixTensorMap(id);
+    Eigen::Tensor<Scalar, 2> n                                       = Textra::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                       = Textra::TensorMap(id);
     temp.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
     return temp;
 }
@@ -325,6 +325,6 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
     std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
     if(file.linkExists(mpo_path)) {
         auto mpo_dset = file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_path);
-        if(Textra::Tensor_to_Vector(MPO()) != Textra::Tensor_to_Vector(mpo_dset)) throw std::runtime_error("Built MPO does not match the MPO on file");
+        if(Textra::VectorCast(MPO()) != Textra::VectorCast(mpo_dset)) throw std::runtime_error("Built MPO does not match the MPO on file");
     }
 }
