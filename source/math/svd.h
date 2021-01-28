@@ -158,7 +158,7 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>>
-            schmidt_from_right(const Eigen::Tensor<Scalar, 3> &tensor, long dR, std::optional<long> rank_max = std::nullopt) {
+            schmidt_into_right_normalized(const Eigen::Tensor<Scalar, 3> &tensor, long dR, std::optional<long> rank_max = std::nullopt) {
             /* This schmidt decomposition is used to pull a site out of rank-3 tensor from the right
              * We obtain USV matrices from a tensor containing N sites with spin dim = d in two steps:
              *
@@ -199,7 +199,7 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>>
-            schmidt_from_left(const Eigen::Tensor<Scalar, 3> &tensor, long dL, std::optional<long> rank_max = std::nullopt) {
+            schmidt_into_left_normalized(const Eigen::Tensor<Scalar, 3> &tensor, long dL, std::optional<long> rank_max = std::nullopt) {
             /* This schmidt decomposition is used to pull a site out of rank-3 tensor from the left
              * We obtain USV matrices from a tensor containing N sites with spin dim = d in two steps:
              *

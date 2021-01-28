@@ -365,7 +365,7 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
         }
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->tic();
         tools::common::profile::get_default_prof()["t_svd"]->tic();
-        std::tie(U, S, V) = svd.schmidt_from_left(V, spin_dim, chi_limit);
+        std::tie(U, S, V) = svd.schmidt_into_left_normalized(V, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
@@ -483,7 +483,7 @@ std::deque<class_mps_site>
         }
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->tic();
         tools::common::profile::get_default_prof()["t_svd"]->tic();
-        std::tie(U, S, V) = svd.schmidt_from_right(U, spin_dim, chi_limit);
+        std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, chi_limit);
         tools::common::profile::get_default_prof()["t_svd"]->toc();
         tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
