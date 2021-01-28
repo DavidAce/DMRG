@@ -2,7 +2,8 @@
 namespace settings {
 
 #ifdef NDEBUG
-    inline constexpr bool debug = false;
+#pragma message "DISABLE constexpr debug IN RELEASE MODE"
+    inline constexpr bool debug = true;
 #else
     inline constexpr bool debug = true;
 #endif

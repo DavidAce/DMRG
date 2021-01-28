@@ -244,7 +244,7 @@ double tools::finite::ops::overlap(const class_state_finite &state1, const class
         overlap = temp;
     }
 
-    double norm_chain = std::real(Textra::TensorMatrixMap(overlap).trace());
+    double norm_chain = std::real(Textra::MatrixMap(overlap).trace());
     return norm_chain;
 }
 

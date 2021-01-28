@@ -353,13 +353,12 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
         tools::common::profile::get_default_prof()["t_dbg"]->tic();
-        Eigen::Tensor<Scalar, 0> norm_scalar = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
-        double                   norm        = std::abs(norm_scalar(0));
+        double norm = Textra::norm(multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             for(const auto &site : sites) {
                 auto &mps = get_mps_site(site);
                 auto &M   = mps.get_M();
-                tools::log->critical("{}({}) norm: {:.16f}", mps.get_label(), site, Textra::TensorVectorMap(M).norm());
+                tools::log->critical("{}({}) norm: {:.16f}", mps.get_label(), site, Textra::VectorMap(M).norm());
             }
             if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
                 // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
@@ -367,13 +366,11 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
                 auto &L_left     = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
                 temp             = Textra::asDiagonal(L_left).contract(multisite_tensor, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
                 multisite_tensor = temp;
-                norm_scalar      = multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
-                norm             = std::abs(norm_scalar(0));
-                tools::log->critical("Norm after adding L from the left: {:.16f}", norm);
+                norm             = Textra::norm(multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
             }
 
-            throw std::runtime_error(fmt::format("Multisite tensor for sites {} is not normalized. Norm = {:.16f} {:+.16f}i", sites, std::real(norm_scalar(0)),
-                                                 std::imag(norm_scalar(0))));
+            throw std::runtime_error(fmt::format("Multisite tensor for sites {} is not normalized. Norm = {:.16f}", sites, norm));
         }
         tools::common::profile::get_default_prof()["t_dbg"]->toc();
     }

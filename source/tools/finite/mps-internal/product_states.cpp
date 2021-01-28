@@ -111,7 +111,7 @@ void tools::finite::mps::internal::set_product_state_aligned(class_state_finite 
     std::string axis = get_axis(sector);
     int         sign = get_sign(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
-    Eigen::Tensor<Scalar, 3> spinor = Textra::MatrixToTensor(get_spinor(axis, sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<Scalar, 3> spinor = Textra::TensorCast(get_spinor(axis, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
@@ -133,8 +133,8 @@ void tools::finite::mps::internal::set_product_state_neel(class_state_finite &st
     L.setConstant(1.0);
     std::string axis = get_axis(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
-    std::array<Eigen::Tensor<Scalar, 3>, 2> spinors = {Textra::MatrixToTensor(get_spinor(axis, +1).normalized(), 2, 1, 1),
-                                                       Textra::MatrixToTensor(get_spinor(axis, -1).normalized(), 2, 1, 1)};
+    std::array<Eigen::Tensor<Scalar, 3>, 2> spinors = {Textra::TensorCast(get_spinor(axis, +1).normalized(), 2, 1, 1),
+                                                       Textra::TensorCast(get_spinor(axis, -1).normalized(), 2, 1, 1)};
     tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites...", axis, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
@@ -160,9 +160,9 @@ void tools::finite::mps::internal::set_random_product_state_with_random_spinors(
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         if(type == StateInitType::CPLX)
-            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L, 0, label);
+            mps.set_mps(Textra::TensorCast(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L, 0, label);
         else if(type == StateInitType::REAL)
-            mps.set_mps(Textra::MatrixToTensor(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L, 0, label);
+            mps.set_mps(Textra::TensorCast(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
@@ -197,7 +197,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis_using_bitfie
         auto &mps  = *mps_ptr;
         int   sign = 2 * bs[mps.get_position()] - 1;
         carry_sign *= sign;
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(sector).normalized(), 2, 1, 1), L, 0, label);
+        mps.set_mps(Textra::TensorCast(get_spinor(sector).normalized(), 2, 1, 1), L, 0, label);
         std::string arrow = sign < 0 ? "↓" : "↑";
         ud_vec.emplace_back(arrow);
         if(mps.isCenter()) {
@@ -225,7 +225,7 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
         last_sign = 2 * rnd::uniform_integer_01() - 1;
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L, 0, label);
+        mps.set_mps(Textra::TensorCast(get_spinor(axis, last_sign).normalized(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
@@ -234,7 +234,7 @@ void tools::finite::mps::internal::set_random_product_state_in_sector_using_eige
     auto spin_component = tools::finite::measure::spin_component(state, axis);
     if(spin_component * sign < 0) {
         auto &mps = *state.mps_sites.back();
-        mps.set_mps(Textra::MatrixToTensor(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L, 0, label);
+        mps.set_mps(Textra::TensorCast(get_spinor(axis, -last_sign).normalized(), 2, 1, 1), L, 0, label);
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
@@ -264,7 +264,7 @@ void tools::finite::mps::internal::set_random_product_state_on_axis(class_state_
             ab = Eigen::Vector2cd::Random().normalized();
 
         Eigen::VectorXcd spinor = ab(0) * spinor_up + ab(1) * spinor_dn;
-        mps.set_mps(Textra::MatrixToTensor(spinor.normalized(), 2, 1, 1), L, 0, label);
+        mps.set_mps(Textra::TensorCast(spinor.normalized(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";

@@ -82,7 +82,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
 
             chain = temp;
         }
-        norm = std::abs(Textra::TensorMatrixMap(chain).trace());
+        norm = std::abs(Textra::MatrixMap(chain).trace());
     } else {
         tools::log->trace("Measuring norm on full chain");
         Eigen::Tensor<Scalar, 2> chain;
@@ -100,7 +100,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
 
             chain = temp;
         }
-        norm = std::abs(Textra::TensorMatrixMap(chain).trace());
+        norm = std::abs(Textra::MatrixMap(chain).trace());
     }
 
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm);
@@ -318,7 +318,7 @@ Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_fi
     }
 
     Eigen::Tensor<Scalar, 1> mps_chain  = chain.reshape(array1{chain.dimension(0)});
-    double                   norm_chain = Textra::TensorVectorMap(chain).norm();
+    double                   norm_chain = Textra::VectorMap(chain).norm();
     if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
         tools::log->warn("Norm far from unity: {}", norm_chain);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));

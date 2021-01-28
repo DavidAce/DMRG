@@ -77,7 +77,7 @@ std::vector<opt_state> internal::subspace::find_candidates(const class_tensors_f
     std::vector<opt_state> candidate_list;
     candidate_list.reserve(static_cast<size_t>(eigvals.size()));
     for(long idx = 0; idx < eigvals.size(); idx++) {
-        auto eigvec_i = Textra::MatrixToTensor(eigvecs.col(idx), state.active_dimensions());
+        auto eigvec_i = Textra::TensorCast(eigvecs.col(idx), state.active_dimensions());
         candidate_list.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
                                     overlaps(idx), tensors.get_length());
         candidate_list.back().set_time(candidate_time);
@@ -346,7 +346,7 @@ opt_state tools::finite::opt::internal::ceres_subspace_optimization(const class_
                     // Check current tensor
                     tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
                     Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
-                    auto             theta_0_tensor = Textra::MatrixTensorMap(theta_0, state.active_dimensions());
+                    auto             theta_0_tensor = Textra::TensorMap(theta_0, state.active_dimensions());
                     double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                     double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                     double           overlap_0      = std::abs(initial_tensor.get_vector().dot(theta_0));

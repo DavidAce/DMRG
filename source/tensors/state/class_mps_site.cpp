@@ -70,13 +70,13 @@ void class_mps_site::assert_dimensions() const {
 void class_mps_site::assert_identity() const {
     if(get_label() == "B") {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 2}, {0, 2}));
-        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
+        if(not Textra::MatrixMap(id).isIdentity(1e-4)) {
             throw std::runtime_error(
                 fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
     } else {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 1}, {0, 1}));
-        if(not Textra::TensorMatrixMap(id).isIdentity(1e-4)) {
+        if(not Textra::MatrixMap(id).isIdentity(1e-4)) {
             throw std::runtime_error(
                 fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
@@ -182,9 +182,10 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
 }
 void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
     if constexpr(settings::debug) {
-        auto norm = Textra::TensorVectorMap(L_).norm();
+        auto norm = Textra::VectorMap(L_).norm();
         if(std::abs(norm - 1) > 1e-8)
-            throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
+            tools::log->warn("class_mps_site::set_L(): Norm of L is too far from unity: {:.16f}", norm);
+//            throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
     }
 
     if(position) {
@@ -198,9 +199,10 @@ void class_mps_site::set_L(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L_
 
 void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
     if constexpr(settings::debug) {
-        auto norm = Textra::TensorVectorMap(LC_).norm();
+        auto norm = Textra::VectorMap(LC_).norm();
         if(std::abs(norm - 1) > 1e-8)
-            throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm));
+            tools::log->warn("class_mps_site::set_LC(): Norm of LC is too far from unity: {:.16f}", norm);
+//            throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm));
     }
     if(position) {
         LC = LC_;

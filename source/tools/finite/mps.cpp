@@ -166,7 +166,7 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
                                              state.get_mps_site(positions.back()).get_chiR(), positions.back()));
     if constexpr(settings::debug_merge) {
         // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
-        auto norm = Textra::Tensor_to_Vector(multisite_mps).norm();
+        auto norm = Textra::VectorCast(multisite_mps).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->debug("Multisite mps for positions {} has norm far from unity: {:.16f}", positions, norm);
     }
 
@@ -294,9 +294,9 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
                           tools::finite::measure::bond_dimensions(state));
     if(std::abs(norm - 1) > settings::precision::max_norm_error) {
         for(const auto &mps : state.mps_sites) {
-            tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), Textra::TensorVectorMap(mps->get_L()).norm(), mps->get_L());
+            tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), Textra::VectorMap(mps->get_L()).norm(), mps->get_L());
             if(mps->isCenter())
-                tools::log->warn("LC({}) | norm {:.16f} \n {}", mps->get_position(), Textra::TensorVectorMap(mps->get_LC()).norm(), mps->get_LC());
+                tools::log->warn("LC({}) | norm {:.16f} \n {}", mps->get_position(), Textra::VectorMap(mps->get_LC()).norm(), mps->get_LC());
             mps->assert_identity();
         }
         throw std::runtime_error(fmt::format("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error));
@@ -381,7 +381,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 //            tools::log->trace("Before applying gates");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
@@ -464,7 +464,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 //            tools::log->trace("After applying gates");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
@@ -480,7 +480,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
 //            tools::log->trace("After normalization");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::TensorMatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
             tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 

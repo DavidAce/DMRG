@@ -156,19 +156,19 @@ namespace qm::SpinOne {
 namespace qm::timeEvolution {
 
     std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd) {
-        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
-        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        auto h_evn_matrix = Textra::MatrixMap(h_evn);
+        auto h_odd_matrix = Textra::MatrixMap(h_odd);
         return {
-            Textra::MatrixToTensor((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
-            Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
+            Textra::TensorCast((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
+            Textra::TensorCast((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
         };
     }
 
     std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd) {
-        auto h_evn_matrix = Textra::TensorMatrixMap(h_evn);
-        auto h_odd_matrix = Textra::TensorMatrixMap(h_odd);
-        return {Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp()), Textra::MatrixToTensor((imn * delta_t * h_odd_matrix).exp()),
-                Textra::MatrixToTensor((imn * delta_t * h_evn_matrix / 2.0).exp())};
+        auto h_evn_matrix = Textra::MatrixMap(h_evn);
+        auto h_odd_matrix = Textra::MatrixMap(h_odd);
+        return {Textra::TensorCast((imn * delta_t * h_evn_matrix / 2.0).exp()), Textra::TensorCast((imn * delta_t * h_odd_matrix).exp()),
+                Textra::TensorCast((imn * delta_t * h_evn_matrix / 2.0).exp())};
     }
 
     std::vector<Eigen::Tensor<Scalar, 2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar, 2> &h_evn, const Eigen::Tensor<Scalar, 2> &h_odd)
@@ -181,8 +181,8 @@ namespace qm::timeEvolution {
      *
      */
     {
-        auto   h_evn_matrix = Textra::TensorMatrixMap(h_evn);
-        auto   h_odd_matrix = Textra::TensorMatrixMap(h_odd);
+        auto   h_evn_matrix = Textra::MatrixMap(h_evn);
+        auto   h_odd_matrix = Textra::MatrixMap(h_odd);
         double cbrt2        = pow(2.0, 1.0 / 3.0);
         double beta1        = 1.0 / (2.0 - cbrt2);
         double beta2        = -cbrt2 * beta1;
@@ -190,13 +190,13 @@ namespace qm::timeEvolution {
         double alph2        = (1.0 - cbrt2) / 2.0 * beta1;
 
         std::vector<Eigen::Tensor<Scalar, 2>> temp;
-        temp.emplace_back(Textra::MatrixToTensor((alph1 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta1 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph2 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta2 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph2 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((beta1 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(Textra::MatrixToTensor((alph1 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((alph1 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((beta1 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((alph2 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((beta2 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((alph2 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((beta1 * imn * delta_t * h_odd_matrix).exp()));
+        temp.emplace_back(Textra::TensorCast((alph1 * imn * delta_t * h_evn_matrix).exp()));
         return temp;
     }
 
@@ -284,7 +284,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //        |               |      |
             //        1               2      3
 
-            unitaries.emplace_back(Textra::MatrixToTensor2((imn * fmix * H).exp()), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2,2});
+            unitaries.emplace_back(Textra::TensorMap((imn * fmix * H).exp().eval()), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2,2});
         } else {
             // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
             // the kronecker product that generated two-site gates above has indexed right-to-left
@@ -293,21 +293,21 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
             //        |                   |      |              |      |                |
             //        1                   3      2              2      3                1
-            Eigen::Tensor<Scalar, 2> H_shuffled = Textra::MatrixTensorMap(H, 2, 2, 2, 2).shuffle(Textra::array4{1, 0, 3, 2}).reshape(Textra::array2{4, 4});
-            Eigen::MatrixXcd         expifH     = (imn * fmix * Textra::TensorMatrixMap(H_shuffled)).exp();
-            unitaries.emplace_back(Textra::MatrixTensorMap(expifH), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2, 2});
+            Eigen::Tensor<Scalar, 2> H_shuffled = Textra::TensorMap(H, 2, 2, 2, 2).shuffle(Textra::array4{1, 0, 3, 2}).reshape(Textra::array2{4, 4});
+            Eigen::MatrixXcd         expifH     = (imn * fmix * Textra::MatrixMap(H_shuffled)).exp();
+            unitaries.emplace_back(Textra::TensorMap(expifH), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2, 2});
         }
     }
     // Sanity check
     for(const auto &u : unitaries)
-        if(not Textra::TensorMatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+        if(not Textra::MatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
     return unitaries;
 }
 
 Eigen::Tensor<Scalar, 2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<Scalar, 2> &H) {
     // Given a matrix H, this returns exp(delta_t * H)
     // For time evolution, just make sure delta_t = -i*d,  where d is a (small) real positive number.
-    return Textra::MatrixToTensor((delta_t * Textra::TensorMatrixMap(H)).exp());
+    return Textra::TensorCast((delta_t * Textra::MatrixMap(H)).exp());
 }
 
 std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite) {
@@ -623,7 +623,7 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Sca
     Eigen::array<long, 2>    extent2  = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar, 4> MPO(1, 1, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix);
 
     // Create compatible edges
     Eigen::Tensor<Scalar, 3> Ledge(1, 1, 1); // The left  edge
@@ -654,13 +654,13 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
  */
 {
     long                     spin_dim = paulimatrix.rows();
-    auto                     I        = Eigen::MatrixXcd::Identity(spin_dim, spin_dim);
+    auto                     I        = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
     Eigen::array<long, 4>    extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2>    extent2  = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar, 4> MPO(2, 2, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
-    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(I);
+    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix);
 
     std::vector<Eigen::Tensor<Scalar, 4>> mpos(sites, MPO);
     // Create compatible edges
@@ -697,8 +697,8 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     Eigen::Tensor<Scalar, 4> MPO_S(1, 1, spin_dim, spin_dim);
     MPO_I.setZero();
     MPO_S.setZero();
-    MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
-    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixToTensor(Eigen::MatrixXcd::Identity(spin_dim, spin_dim));
+    MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix);
+    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(Eigen::MatrixXcd::Identity(spin_dim, spin_dim));
 
     // We have to push in an even number of pauli matrices to retain the parity sector.
     // Choosing randomly
@@ -749,7 +749,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
 {
     if(paulimatrix1.rows() != paulimatrix2.rows()) throw std::logic_error("Pauli matrices must be of equal size");
     long                     spin_dim = paulimatrix1.rows();
-    auto                     I        = Eigen::MatrixXcd::Identity(spin_dim, spin_dim);
+    auto                     I        = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
     Eigen::array<long, 4>    extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2>    extent2  = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar, 4> MPO_S(2, 2, spin_dim, spin_dim);
@@ -759,12 +759,12 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     MPO_I.setZero();
     MPO_P.setZero();
 
-    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix1);
-    MPO_S.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix2);
-    MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
-    MPO_I.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
-    MPO_P.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
-    MPO_P.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix1);
+    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix1);
+    MPO_S.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix2);
+    MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(I);
+    MPO_I.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(I);
+    MPO_P.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(I);
+    MPO_P.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(paulimatrix1);
 
     // Push in an even number of operators
     std::vector<int> binary(sites, -1);
@@ -823,7 +823,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
     long                     num_paulis = static_cast<long>(paulimatrices.size());
     long                     spin_dim   = 2;
-    auto                     I          = Eigen::MatrixXcd::Identity(spin_dim, spin_dim);
+    auto                     I          = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
     Eigen::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2>    extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
@@ -832,8 +832,8 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
     MPO_I.setZero();
     for(long diag_pos = 0; diag_pos < num_paulis; diag_pos++) {
         MPO_S.slice(Eigen::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) =
-            Textra::MatrixTensorMap(paulimatrices[static_cast<size_t>(diag_pos)]);
-        MPO_I.slice(Eigen::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+            Textra::TensorMap(paulimatrices[static_cast<size_t>(diag_pos)]);
+        MPO_I.slice(Eigen::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(I);
     }
 
     // Push in an even number of operators
@@ -925,7 +925,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
                 mpo.setZero();
                 auto        rnd_idx                          = rnd::uniform_integer_box<size_t>(0, paulimatrices.size() - 1);
                 const auto &pauli                            = paulimatrices[rnd_idx];
-                mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
+                mpo.slice(offset4, extent4).reshape(extent2) = Textra::TensorCast(pauli);
                 break;
             }
             case RandomizerMode::SHUFFLE: {
@@ -939,7 +939,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
                     auto        uidx                             = static_cast<size_t>(idx);
                     const auto &pauli                            = paulimatrices[pauli_idx[uidx]];
                     offset4                                      = {idx, idx, 0, 0};
-                    mpo.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(pauli);
+                    mpo.slice(offset4, extent4).reshape(extent2) = Textra::TensorCast(pauli);
                 }
                 break;
             }
@@ -1007,7 +1007,7 @@ std::tuple<std::vector<Eigen::Tensor<Scalar, 4>>, Eigen::Tensor<Scalar, 3>, Eige
             auto        coeff                              = 1 + rnd::uniform_double_box(uniform_dist_widths[uidx]);
             auto        offset4                            = Eigen::array<long, 4>{idx, idx, 0, 0};
             const auto &pauli                              = paulimatrices[uidx];
-            MPO_S.slice(offset4, extent4).reshape(extent2) = Textra::MatrixToTensor(coeff * pauli);
+            MPO_S.slice(offset4, extent4).reshape(extent2) = Textra::TensorCast(coeff * pauli);
         }
         mpos.emplace_back(MPO_S);
     }
