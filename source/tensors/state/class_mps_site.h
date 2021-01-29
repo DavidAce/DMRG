@@ -30,8 +30,8 @@ class class_mps_site {
 
     public:
     ~class_mps_site(); // Read comment on implementation
-    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string label_);
-    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string label_);
+    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, const std::string& label_);
+    class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, const std::string& label_);
     class_mps_site();                                       // ctor
     class_mps_site(const class_mps_site &other);            // default copy ctor
     class_mps_site(class_mps_site &&other);                 // default move ctor
@@ -79,6 +79,7 @@ class class_mps_site {
     void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string &label_);
 
     void unset_LC();
+    void unset_L();
     void merge_mps(const class_mps_site &other);
     void apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo);
     void apply_mpo(const Eigen::Tensor<Scalar, 2> &mpo);

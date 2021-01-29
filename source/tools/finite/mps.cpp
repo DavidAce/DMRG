@@ -227,9 +227,15 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
     // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
     // Copy the split up mps components into the current state
     tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->tic();
-    for(const auto &mps_src : mps_list) {
+    for(auto &mps_src : mps_list) {
         auto  pos     = mps_src.get_position();
         auto &mps_tgt = state.get_mps_site(pos);
+
+        // inject lc_hold if there is any waiting
+        if(lc_hold and pos == lc_hold->pos_dst){
+            mps_src.set_L(lc_hold->data, lc_hold->error);
+        }
+
         mps_tgt.merge_mps(mps_src);
         state.tag_site_normalized(pos, true); // Merged site is normalized
 
@@ -241,9 +247,6 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
         mps_src.drop_stash(); // Discard whatever is left stashed at the edge (this normalizes the state)
     }
     tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->toc();
-    if(lc_hold){
-        state.get_mps_site(lc_hold->pos_dst).set_L(lc_hold->data, lc_hold->error);
-    }
 
     current_position = state.get_position<long>();
     if(current_position != center_position)

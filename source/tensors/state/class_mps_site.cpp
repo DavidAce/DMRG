@@ -15,11 +15,27 @@
 using Scalar = class_mps_site::Scalar;
 
 class_mps_site::class_mps_site() = default;
-class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string label_)
-    : M(M_), L(L_), position(pos), truncation_error(error), label(std::move(label_)) {}
+class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, const std::string& label_)
+//    : M(M_), L(L_), position(pos), truncation_error(error), label(std::move(label_))
+{
+    set_position(pos);
+    set_label(label_);
+    set_M(M_);
+    set_L(L_);
+    set_truncation_error(error);
+}
 
-class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string label_)
-    : M(M_), L(std::move(L_)), position(pos), truncation_error(error), label(std::move(label_)) {}
+class_mps_site::class_mps_site(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, const std::string& label_)
+//    : M(M_), L(std::move(L_)), position(pos), truncation_error(error), label(std::move(label_))
+{
+    set_position(pos);
+    set_label(label_);
+    set_M(M_);
+    if(L_) set_L(L_.value());
+    set_truncation_error(error);
+
+
+}
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -70,13 +86,13 @@ void class_mps_site::assert_dimensions() const {
 void class_mps_site::assert_identity() const {
     if(get_label() == "B") {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 2}, {0, 2}));
-        if(not Textra::MatrixMap(id).isIdentity(1e-4)) {
+        if(not Textra::MatrixMap(id).isIdentity(1e-10)) {
             throw std::runtime_error(
                 fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
     } else {
         Eigen::Tensor<Scalar, 2> id = get_M_bare().contract(get_M_bare().conjugate(), Textra::idx({0, 1}, {0, 1}));
-        if(not Textra::MatrixMap(id).isIdentity(1e-4)) {
+        if(not Textra::MatrixMap(id).isIdentity(1e-10)) {
             throw std::runtime_error(
                 fmt::format("class_mps_site: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
         }
@@ -84,7 +100,7 @@ void class_mps_site::assert_identity() const {
     if(isCenter() or get_label() == "AC") {
         Eigen::Tensor<Scalar, 0> MM   = get_M().contract(get_M().conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2}));
         auto                     norm = std::real(MM(0));
-        if(std::abs(norm - 1) > 1e-4)
+        if(std::abs(norm - 1) > 1e-10)
             throw std::runtime_error(fmt::format("class_mps_site: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm));
     }
 }
@@ -116,14 +132,20 @@ const Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() const {
 
 const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const {
     if(L) {
-        if(L.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_L(): L has size 0 at position {}", get_position()));
+        if constexpr(settings::debug){
+            if(L->size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_L(): L has size 0 at position {} | label {}", get_position(), get_label()));
+            if(get_label() != "B" and L->size() != get_chiL())
+                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiL {} at position {} | label {}",L->size(), get_chiL(), get_position(), get_label()));
+            if(get_label() == "B" and L->size() != get_chiR())
+                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiR {} at position {} | label {}",L->size(), get_chiR(), get_position(), get_label()));
+        }
         return L.value();
     } else
         throw std::runtime_error(fmt::format("class_mps_site::get_L(): L has not been set at position {}", get_position()));
 }
 const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
     if(isCenter()) {
-        if(LC.value().dimension(0) != get_M_bare().dimension(2))
+        if(LC->dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(fmt::format("class_mps_site::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}",
                                                  get_M_bare().dimensions(), LC.value().dimensions(), get_position()));
         if(LC.value().size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_LC(): LC has size 0 at position {}", get_position()));
@@ -186,6 +208,10 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
         if(std::abs(norm - 1) > 1e-8)
             tools::log->warn("class_mps_site::set_L(): Norm of L is too far from unity: {:.16f}", norm);
 //            throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
+        if(position and position.value() == 0 and get_label() != "B"){
+            if(L_.size() != 1) throw std::logic_error("Left edge L should have size 1");
+            if(std::abs(L_.coeff(0)) != 1.0) throw std::logic_error("Left edge L should be equal to 1");
+        }
     }
 
     if(position) {
@@ -203,13 +229,15 @@ void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
         if(std::abs(norm - 1) > 1e-8)
             tools::log->warn("class_mps_site::set_LC(): Norm of LC is too far from unity: {:.16f}", norm);
 //            throw std::runtime_error(fmt::format("class_mps_site::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm));
+        if(position and position.value() == 0 and get_label() == "B"){
+            throw std::logic_error("Only an A-site can become an AC site (not really true though");
+        }
     }
     if(position) {
         LC = LC_;
         MC.reset();
         truncation_error_LC = error;
         unique_id           = std::nullopt;
-        //        tools::log->trace("Setting LC on site {} | size {}", get_position(), LC->dimensions());
         set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
@@ -219,14 +247,27 @@ void class_mps_site::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &L
 
 void class_mps_site::set_truncation_error(double error) { truncation_error = error; }
 void class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
-void class_mps_site::set_label(const std::string &label_) { label = label_; }
+void class_mps_site::set_label(const std::string &label_) {
+    // If we are flipping the kind of site from B to non B (or vice-versa), then the L matrix
+    // should be removed since it changes side.
+    if(not label.empty() and not label_.empty() and label.front() != label_.front()) unset_L();
+    label = label_;
+
+}
 void class_mps_site::unset_LC() {
     LC = std::nullopt;
     MC = std::nullopt;
     unique_id = std::nullopt;
-    //    tools::log->trace("Unset LC on site {}",get_position());
     if(label == "AC") label = "A";
 }
+
+void class_mps_site::unset_L(){
+    L = std::nullopt;
+    unique_id = std::nullopt;
+}
+
+
+
 void class_mps_site::merge_mps(const class_mps_site &other) {
     // This operation is done when merging mps after an svd split, for instance
     if(get_position() != other.get_position())
@@ -238,6 +279,13 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
     // We have to copy the bare "M", i.e. not MC, which would include LC.
     set_M(other.get_M_bare());
 
+    // Copy the A/AC/B label
+    set_label(other.get_label());
+
+    // If we are flipping the kind of site from B to non B (or vice versa), then the L matrix
+    // should be removed since it changes side.
+    if(get_label().front() != other.get_label().front()) unset_L();
+
     // We should only copy the L matrix if it exists
     // If it does not exist it may just not have been set.
     // For instance, when splitting a multisite tensor into its contituent mps sites,
@@ -245,18 +293,23 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
     // This is intended, but should be checked for.
     // Note that if there is no L on the other mps, there has to exist a previous one
     // on this mps -- we can't leave here without having defined L.
+
+
     if(other.has_L())
         set_L(other.get_L(), other.get_truncation_error());
-    else if(not has_L())
-        throw std::runtime_error(fmt::format(
-            "class_mps_site::merge_mps(const class_mps_site &): Got mps site with undefined L, and no L is defined on this mps either, at position {}",
-            get_position()));
+    else if(not has_L()){
+        // Now we have a situation where no L was given, and no L is found on this site.
+        // For edge-sites this is simple: then the mps has edge-dimension == 1, so the only
+        // way to have a normalized L is to set it to 1. Otherwise, this is a failure.
+        auto one = Eigen::Tensor<Scalar,1>(1).setConstant(1.0);
+        if((label != "B" and get_chiL() == 1) or (label == "B" and get_chiR() == 1)) set_L(one);
+        else throw std::runtime_error(fmt::format(
+                "class_mps_site::merge_mps(const class_mps_site &): position {} | label {} | "
+                "Got other mps without an L, and there is no preexisting L",
+                get_position(), get_label()));
+    }
 
-    set_label(other.get_label()); // Copy the A/B label
-
-    // If the other is a center it should be fine to copy its contents
-    // without checking its size. However for debugging purposes, since
-    // that would be unexpected, just give a warning.
+    // Copy the center LC if it's in other
     if(other.isCenter()) {
         set_LC(other.get_LC(), other.get_truncation_error_LC());
         if(get_M_bare().dimension(2) != get_LC().dimension(0))

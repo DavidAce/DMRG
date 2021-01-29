@@ -159,7 +159,7 @@ double tools::finite::measure::entanglement_entropy_current(const class_state_fi
     if(state.has_center_point()) {
         auto &                   LC                     = state.current_bond();
         Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
-        state.measurements.entanglement_entropy_current = std::real(SE(0));
+        state.measurements.entanglement_entropy_current = std::abs(SE(0));
     } else
         state.measurements.entanglement_entropy_current = 0;
     tools::common::profile::get_default_prof()["t_ent"]->toc();
@@ -171,7 +171,7 @@ double tools::finite::measure::entanglement_entropy_midchain(const class_state_f
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     auto &                   LC                      = state.midchain_bond();
     Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
-    state.measurements.entanglement_entropy_midchain = std::real(SE(0));
+    state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropy_midchain.value();
 }
@@ -185,15 +185,17 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
     for(const auto &mps : state.mps_sites) {
         auto &                   L  = mps->get_L();
         Eigen::Tensor<Scalar, 0> SE = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
-        entanglement_entropies.emplace_back(std::real(SE(0)));
+        entanglement_entropies.emplace_back(std::abs(SE(0)));
         if(mps->isCenter()) {
             auto &LC = mps->get_LC();
             SE       = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
-            entanglement_entropies.emplace_back(std::real(SE(0)));
-            state.measurements.entanglement_entropy_current = std::real(SE(0));
+            entanglement_entropies.emplace_back(std::abs(SE(0)));
+            state.measurements.entanglement_entropy_current = std::abs(SE(0));
         }
     }
     if(entanglement_entropies.size() != state.get_length() + 1) throw std::logic_error("entanglement_entropies.size() should be length+1");
+    if(entanglement_entropies.front() != 0.0) throw std::logic_error(fmt::format("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front()));
+    if(entanglement_entropies.back() != 0.0) throw std::logic_error(fmt::format("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back()));
     state.measurements.entanglement_entropies = entanglement_entropies;
     tools::common::profile::get_default_prof()["t_ent"]->toc();
     return state.measurements.entanglement_entropies.value();
@@ -213,11 +215,11 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
         const auto &             L = mps->get_L();
         Eigen::Tensor<Scalar, 0> RE;
         RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
-        renyi_q.emplace_back(std::real(RE(0)));
+        renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
             const auto &LC = mps->get_LC();
             RE             = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
-            renyi_q.emplace_back(std::real(RE(0)));
+            renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
     if(renyi_q.size() != state.get_length() + 1) throw std::logic_error("renyi_q.size() should be length+1");
