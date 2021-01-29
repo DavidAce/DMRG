@@ -41,6 +41,8 @@ void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log
     //    other_log->debug("Log verbosity level: {}", static_cast<int>(other_log->level()));
 }
 
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, int levelZeroToFive);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, long levelZeroToFive);
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, size_t levelZeroToFive);
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<size_t> levelZeroToFive);
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<spdlog::level::level_enum> levelZeroToFive);
