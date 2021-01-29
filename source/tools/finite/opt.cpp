@@ -88,7 +88,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     ceres_default_options.gradient_tolerance                         = 1e-4; // Not tested yet
     ceres_default_options.parameter_tolerance                        = 1e-12;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
-    ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
+    ceres_default_options.logging_type                               = ceres::LoggingType::SILENT;
     if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations                        = 4000;
         ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
