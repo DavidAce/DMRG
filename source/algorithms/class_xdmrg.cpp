@@ -40,7 +40,6 @@ void class_xdmrg::resume() {
     if(state_prefix.empty()) throw except::state_error("no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
-    clear_convergence_status();
 
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to infer it from the state prefix itself
@@ -55,10 +54,14 @@ void class_xdmrg::resume() {
     // Initialize a custom task list
     std::deque<xdmrg_task> task_list;
 
-    if(status.algorithm_has_finished)
+    if(status.algorithm_has_succeeded)
         task_list = {xdmrg_task::POST_PRINT_RESULT};
     else
-        task_list = {xdmrg_task::FIND_EXCITED_STATE, xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
+        task_list = {xdmrg_task::INIT_CLEAR_CONVERGENCE,
+                     xdmrg_task::FIND_EXCITED_STATE,
+                     xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
+
+
 
     // If we reached this point the current state has finished for one reason or another.
     // We may still have some more things to do, e.g. the config may be asking for more states
@@ -131,6 +134,7 @@ void class_xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
+            case xdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case xdmrg_task::INIT_DEFAULT:
                 run_preprocessing();
                 break;
@@ -256,9 +260,10 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
 
-    // If we are doing 1-site dmrg, then we better expand subspace
+    // If we are doing 1-site dmrg, then we better use subspace expansion
     if(settings::strategy::multisite_max_sites == 1 and not alpha_expansion)
-        alpha_expansion = 100 * settings::precision::svd_threshold;
+        alpha_expansion = alpha_min;
+
 
 
 
@@ -301,15 +306,15 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.second_chance = true;
     }
 
-    if(alpha_expansion) {
+//    if(alpha_expansion) {
         // During subspace expansion we want monotonically decreasing results
         //        c1.optMode       = OptMode::VARIANCE;
         //        c1.optSpace      = OptSpace::DIRECT;
         //        c1.second_chance = false;
-        c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::DIRECT;
-        c1.second_chance = true;
-    }
+//        c1.optMode       = OptMode::VARIANCE;
+//        c1.optSpace      = OptSpace::DIRECT;
+//        c1.second_chance = true;
+//    }
 
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
@@ -481,6 +486,8 @@ void class_xdmrg::single_xDMRG_step() {
             auto var = tools::finite::measure::energy_variance(tensors);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
+        // Adjust alpha if necessary
+        adjust_alpha_expansion();
     }
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();

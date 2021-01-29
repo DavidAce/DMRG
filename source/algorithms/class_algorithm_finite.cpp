@@ -399,21 +399,20 @@ void class_algorithm_finite::try_disorder_damping() {
 }
 
 void class_algorithm_finite::try_subspace_expansion(){
-    bool force_expansion = settings::strategy::multisite_max_sites == 1;
-    if(not force_expansion and not settings::strategy::expand_subspace_when_stuck) return;
-    if(not force_expansion and num_expansions >= max_expansions) return;
+    if(not settings::strategy::expand_subspace_when_stuck) return;
+    if(settings::strategy::multisite_max_sites == 1) return; // Should already be on!
+    if(num_expansions >= max_expansions) return;
     if(not variance_before_step) return;
     // NOTE! Here we only enable the alpha_expansion factor. The actual expansion happens in the dmrg-step!
 
-    // Determine the alpha_expansion factor
     constexpr size_t iter_active = 2;
     if(status.iter <= iter_expansion+iter_active-1 and alpha_expansion){
-        double alpha_old = alpha_expansion.value();
-        constexpr double alpha_min = 1e-10;
-        constexpr double alpha_max = 1e-4;
+//        adjust_alpha_expansion();
+//        alpha_min = 10 * settings::precision::svd_threshold;
         constexpr double alpha_up  = 2;
         constexpr double alpha_dn  = 0.1;
         constexpr double alpha_dn_fast  = 0.01;
+        double alpha_old = alpha_expansion.value();
         double variance = tools::finite::measure::energy_variance(tensors);
         double percent = 100 * variance / variance_before_step.value();
         if(percent < 99){
@@ -425,23 +424,50 @@ void class_algorithm_finite::try_subspace_expansion(){
         }
         else
             alpha_expansion = std::clamp(alpha_expansion.value()*alpha_up, alpha_min,alpha_max); // Variance has not improved, so alpha can be increased!
-        tools::log->debug("alpha {:.1e} --> {:.1e}",alpha_old, alpha_expansion.value());
     }
 
     // Subspace expansion starts
-    if((status.algorithm_has_got_stuck and not alpha_expansion) or force_expansion){
-        alpha_expansion = 1e-7;
-//        clear_convergence_status();
+    if(status.algorithm_has_got_stuck and not alpha_expansion){
+        alpha_expansion = alpha_min;
         iter_expansion = status.iter;
     }
     // Subspace expansion ends
-    if(status.iter >= iter_expansion+iter_active and alpha_expansion and not force_expansion){
+    if(status.iter >= iter_expansion+iter_active and alpha_expansion){
         alpha_expansion = std::nullopt;
         num_expansions++;
         clear_convergence_status();
     }
 
 }
+void class_algorithm_finite::adjust_alpha_expansion(){
+    if(not alpha_expansion) return;
+//    if(not variance_before_step) return;
+    alpha_expansion = std::clamp(status.energy_variance_lowest, alpha_min,alpha_max);
+//
+//
+//
+//    if(not tensors.measurements.energy_variance and tensors.active_sites.empty())
+//        throw std::runtime_error("Can't adjust alpha without variance calculation"); // Need to compute variance here, which needs some active sites
+//    alpha_min = 10 * settings::precision::svd_threshold;
+//    constexpr double alpha_up  = 2;
+//    constexpr double alpha_dn  = 0.1;
+//    constexpr double alpha_dn_fast  = 0.01;
+//    double alpha_old = alpha_expansion.value();
+//    double variance = tools::finite::measure::energy_variance(tensors);
+//    double percent = 100 * variance / variance_before_step.value();
+//    if(percent < 99){
+//        alpha_expansion = std::clamp(alpha_expansion.value()*alpha_dn, alpha_min,alpha_max); // Variance has improved, so alpha can be reduced!
+//        // In addition, if the variance has become better than the best variance ever, we really want this to calm down!
+//        percent = 100 * variance / status.energy_variance_lowest;
+//        if(percent < 99)
+//            alpha_expansion = std::clamp(alpha_expansion.value()*alpha_dn_fast, alpha_min,alpha_max); // Variance has improved, so alpha can be reduced!
+//    }
+//    else
+//        alpha_expansion = std::clamp(alpha_expansion.value()*alpha_up, alpha_min,alpha_max); // Variance has not improved, so alpha can be increased!
+//    alpha_expansion = status.energy_variance_lowest;
+//    tools::log->debug("alpha {:.1e} --> {:.1e}",alpha_old, alpha_expansion.value());
+}
+
 
 
 void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> slope_threshold) {
