@@ -50,6 +50,8 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t                  num_expansions       = 0;            /*!< Counter for number of times performing a subspace expansion */
     size_t                  max_expansions       = 3;            /*!< Maximum number of times to allow a subspace expansion. (Once means L*2 steps) */
     size_t                  iter_expansion       = 0;            /*!< Iteration when the last expansion started (used to turn off when done) */
+    double                  alpha_min            = 1e-14;        /*!< Lower limit of alpha expansion factor */
+    double                  alpha_max            = 1e-2;         /*!< Upper limit of alpha expansion factor */
     std::optional<double>   alpha_expansion      = std::nullopt; /*!< Amplitude for the expansion term  */
     std::optional<double>   variance_before_step = std::nullopt; /*!< Keeps track of the variance before the step to guide subspace expansion factor */
     std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
@@ -69,6 +71,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();
     void         try_subspace_expansion();
+    void         adjust_alpha_expansion();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;

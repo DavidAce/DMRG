@@ -33,7 +33,6 @@ void class_fdmrg::resume() {
     if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
     tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
-    clear_convergence_status();
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to inferr it from the state prefix itself
     auto name = tools::common::io::h5resume::extract_state_name(state_prefix);
@@ -41,7 +40,10 @@ void class_fdmrg::resume() {
     // Initialize a custom task list
     std::deque<fdmrg_task> task_list;
 
-    if(not status.algorithm_has_finished) {
+    if(status.algorithm_has_succeeded)
+        task_list = {fdmrg_task::POST_PRINT_RESULT};
+    else{
+        task_list.emplace_back(fdmrg_task::INIT_CLEAR_CONVERGENCE);
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("emax") != std::string::npos)
@@ -51,10 +53,8 @@ void class_fdmrg::resume() {
         else
             throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]", name));
         task_list.emplace_back(fdmrg_task::POST_DEFAULT);
-        run_task_list(task_list);
     }
-    // If we reached this point the current state has finished for one reason or another.
-    // TODO: We may still have some more things to do, e.g. the config may be asking for more states
+    run_task_list(task_list);
 }
 
 void class_fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
@@ -67,6 +67,7 @@ void class_fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
+            case fdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
                 ritz = StateRitz::SR;

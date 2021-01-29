@@ -52,7 +52,9 @@ void class_flbit::resume() {
     // Initialize a custom task list
     std::deque<flbit_task> task_list;
 
-    if(not status.algorithm_has_finished) {
+    if(status.algorithm_has_finished) {
+        task_list.emplace_back(flbit_task::POST_PRINT_RESULT);
+    }else{
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("real") != std::string::npos) {
@@ -63,8 +65,8 @@ void class_flbit::resume() {
         } else
             throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
         task_list.emplace_back(flbit_task::POST_DEFAULT);
-        run_task_list(task_list);
     }
+    run_task_list(task_list);
     // If we reached this point the current state has finished for one reason or another.
     // TODO: We may still have some more things to do, e.g. the config may be asking for more states
 }
@@ -79,6 +81,7 @@ void class_flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
+            case flbit_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case flbit_task::INIT_DEFAULT: run_preprocessing(); break;
             case flbit_task::INIT_TIME: {
                 create_time_points();

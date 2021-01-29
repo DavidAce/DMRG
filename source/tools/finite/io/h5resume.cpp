@@ -57,7 +57,8 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading model: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-        for(const auto &mpo : model.MPO) mpo->load_hamiltonian(h5ppFile, model_prefix);
+        for(const auto & mpo : model.MPO) mpo->load_hamiltonian(h5ppFile, model_prefix);
+        for(const auto & mpo : model.MPO)tools::log->trace("Loaded mpo: {}({})", enum2str(mpo->model_type), mpo->get_position());
     } else {
         throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
     }
@@ -101,6 +102,7 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         auto error = h5ppFile.readAttribute<double>("truncation_error", dset_L_name);
         auto label = h5ppFile.readAttribute<std::string>("label", dset_M_name);
         mps->set_mps(M, L, error, label);
+        tools::log->trace("Loaded mps: {}({})", mps->get_label(), mps->get_position());
         // Sanity checks
         if(static_cast<long>(pos) == position and not mps->isCenter())
             throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
@@ -129,7 +131,7 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     tensors.activate_sites({tensors.get_position<size_t>()});
     tensors.reduce_mpo_energy();
     tools::log->debug("Validating resumed state [{}]", state_prefix);
-    tools::log->debug("State labels:", tensors.state->get_labels());
+    tools::log->debug("State labels: {}", tensors.state->get_labels());
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tensors.clear_measurements();
     tensors.do_all_measurements();
