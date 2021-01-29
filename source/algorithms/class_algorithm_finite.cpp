@@ -407,8 +407,8 @@ void class_algorithm_finite::try_subspace_expansion(){
 
     // Determine the alpha_expansion factor
     constexpr size_t iter_active = 2;
-    if(status.iter <= iter_expansion+iter_active-1 or alpha_expansion){
-        double alpha_old = alpha_expansion ? alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN();
+    if(status.iter <= iter_expansion+iter_active-1 and alpha_expansion){
+        double alpha_old = alpha_expansion.value();
         constexpr double alpha_min = 1e-10;
         constexpr double alpha_max = 1e-4;
         constexpr double alpha_up  = 2;
