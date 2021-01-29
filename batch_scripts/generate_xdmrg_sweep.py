@@ -11,11 +11,11 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([32,40])
+sites               = np.array([16,24,32])
 lambdas             = [0.000]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [6]
+multisite_max_sites = [1]
 output_prefix       = "output"
 
 
@@ -56,19 +56,19 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
     if len(multisite_max_sites) > 1:
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
-
-    input_filename = location + extra_prefix + '/' + basename + '_L'+ str_L + '_l' + str_l + '_d'+ str_d + '.cfg'
+    input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location,basename,str_L,str_l,str_d)
     settings = {
-        "output::output_filepath"            : output_prefix + extra_prefix + '/L_'+ str_L + '/l_'+ str_l + '/d_' + str_d + '/' + basename + '.h5',
-        "threading::num_threads"             : "4",
+        "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix,str_L,str_l,str_d, basename),
+        "threading::stl_threads"             : "2",
+        "threading::omp_threads"             : "1",
         "console::verbosity"                 : "2",
         "model::model_size"                  : str_L,
         "model::ising_sdual::delta"          : str_d,
         "model::ising_sdual::lambda"         : str_l,
         "model::ising_sdual::J_stdv"         : "1.0",
         "model::ising_sdual::h_stdv"         : "1.0",
-        "xdmrg::chi_lim_max"                 : "256",
-        "xdmrg::max_states"                  : "10",
+        "xdmrg::chi_lim_max"                 : "512",
+        "xdmrg::max_states"                  : "1",
         "strategy::multisite_max_sites"      : str(multi),
         "strategy::initial_state"            : str(init),
     }
