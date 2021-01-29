@@ -2,8 +2,11 @@
 // Created by david on 2020-05-13.
 //
 #include "env.h"
+#include <config/debug.h>
 #include <general/nmspc_tensor_extra.h>
+#include <math/linalg/tensor.h>
 #include <math/num.h>
+#include <math/svd.h>
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/edges/class_env_ene.h>
 #include <tensors/edges/class_env_var.h>
@@ -14,7 +17,6 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/mps.h>
-#include <math/svd.h>
 
 void tools::finite::env::expand_subspace(class_state_finite &state, const class_model_finite &model, class_edges_finite &edges, double alpha, long chi_lim,
                                          std::optional<double> svd_threshold) {
@@ -26,8 +28,9 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
     if(alpha < 1e-12) return;
     if(state.active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
-    using Scalar = class_state_finite::Scalar;
+    state.clear_cache();
 
+    using Scalar = class_state_finite::Scalar;
     // Set up the SVD
     svd::solver svd;
     svd.setThreshold(1e-8,svd_threshold);
@@ -60,28 +63,48 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
 
                 chi_lim = std::min(chi_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
                 auto [U,S,V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), chi_lim);
-
                 mpsL.set_M(U);
                 mpsR.set_M(MR_P0);
                 if(mpsL.isCenter()){
-                    // Here we expect mpsR to be a "B"
+                    // Here we expect mpsL to be "AC" and mpsR to be a "B"
                     mpsL.set_LC(S, svd.get_truncation_error());
                     mpsL.stash_V(V, mpsR.get_position());
                 }else {
-                    // Here we expect mpsR to be an "A"
+                    // Here we expect mpsL to be "A" and mpsR to be an "A" or "AC"
                     mpsL.stash_S(S, svd.get_truncation_error(), mpsR.get_position());
                     mpsL.stash_V(V, mpsR.get_position());
                 }
                 mpsR.merge_stash(mpsL);
                 mpsL.assert_identity();
-                state.clear_cache();
+
+
+                // Make mpsR normalized
+                {
+                    Eigen::Tensor<Scalar,3> M_tmp; // A one-site "theta" i.e. a we want this to have norm 1, but currently it does not, so we rescale mpsR
+                    if(mpsR.isCenter() or posL == state.get_length<size_t>() - 1) M_tmp = mpsR.get_M();
+                    else if(mpsR.get_label() == "A" and posL < state.get_length<size_t>() - 1){
+                        auto & LR = state.get_mps_site(posL+1).get_L();
+                        M_tmp = mpsR.get_M().contract(LR,Textra::idx({2},{0}));
+                    }else
+                        throw std::logic_error(fmt::format("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})",
+                                                           mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
+
+                    double norm_old = Textra::norm(M_tmp.contract(M_tmp.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                    M_tmp = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
+                    mpsR.set_M(M_tmp);
+                    if constexpr (settings::debug){
+                        auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
+                        double norm_new = Textra::norm(mpsR_final.contract(mpsR_final.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                        tools::log->debug("Normalized expanded mps: {:.16f} -> {:.16f}", norm_old, norm_new);
+                    }
+                }
 
                 auto mpsL_new = state.get_mps_site(posL - 1); // The site to the left
                 auto mpsR_new = state.get_mps_site(posL);     // The site to the right
                 auto chiL_new = mpsL_new.get_chiR();
                 auto dimL_new = mpsL_new.dimensions();
                 auto dimR_new = mpsR_new.dimensions();
-                tools::log->info("Subspace expansion pos L {} {} | alpha {:.2e} | ML {} -> {} | MR {} -> {} | ML_PL {} | MR_0 {} | χ {} -> {} -> {} | χlim {} ",
+                tools::log->trace("Subspace expansion pos L {} {} | alpha {:.2e} | ML {} -> {} | MR {} -> {} | ML_PL {} | MR_0 {} | χ {} -> {} -> {} | χlim {} ",
                                  posL - 1, posL, alpha, dimL_old, dimL_new, dimR_old, dimR_new, ML_PL.dimensions(), MR_P0.dimensions(), chiL_old,
                                  ML_PL.dimension(2), chiL_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
@@ -113,17 +136,16 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
                 Eigen::Tensor<Scalar, 3> P0       = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
 //                Eigen::Tensor<Scalar, 3> MR_PR    = Textra::asNormalized(mpsR.get_M_bare().concatenate(PR, 1));
                 Eigen::Tensor<Scalar, 3> MR_PR    = mpsR.get_M_bare().concatenate(PR, 1);
-                Eigen::Tensor<Scalar, 3> ML_P0    = mpsL.get_M_bare().concatenate(P0, 2);
+                Eigen::Tensor<Scalar, 3> ML_P0    = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
 
                 chi_lim = std::min(chi_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
                 auto [U,S,V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), chi_lim);
-
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 if(mpsL.isCenter()){
                     mpsR.stash_C(S, svd.get_truncation_error(),mpsL.get_position());
-                    mpsR.stash_U(U,posR);
+                    mpsR.stash_U(U,mpsL.get_position());
                 }else{
                     // Here we expect mpsL to be a "B" as well
                     mpsR.stash_S(S, svd.get_truncation_error(), mpsL.get_position());
@@ -131,7 +153,30 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
                 }
                 mpsL.merge_stash(mpsR);
                 mpsR.assert_identity();
-                state.clear_cache();
+
+                // Make mpsL normalized
+                {
+                    Eigen::Tensor<Scalar,3> M_tmp; // A one-site "theta" i.e. we want this object to have norm 1, but currently it does not, so we rescale mpsL
+                    if(mpsL.isCenter() or posR == 0) M_tmp = mpsL.get_M();
+                    else if (mpsL.get_label() == "B" and posR > 0){
+                        auto & mpsLL = state.get_mps_site(posR-1);
+                        if(mpsLL.isCenter())
+                            M_tmp = mpsLL.get_LC().contract(mpsL.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+                        else
+                            M_tmp = mpsLL.get_L().contract(mpsL.get_M(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+                    }else
+                        throw std::logic_error(fmt::format("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})",
+                                                           mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
+
+                    double norm_old = Textra::norm(M_tmp.contract(M_tmp.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                    M_tmp = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
+                    mpsL.set_M(M_tmp);
+                    if constexpr(settings::debug){
+                        auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
+                        double norm_new = Textra::norm(mpsL_final.contract(mpsL_final.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                        tools::log->debug("Normalized expanded mps: {:.16f} -> {:.16f}", norm_old, norm_new);
+                    }
+                }
 
                 auto mpsR_new = state.get_mps_site(posR + 1);
                 auto mpsL_new = state.get_mps_site(posR);
@@ -139,7 +184,7 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
                 auto dimR_new = mpsR_new.dimensions();
                 auto dimL_new = mpsL_new.dimensions();
 
-                tools::log->info("Subspace expansion pos R {} {} | alpha {:.2e} | ML {} -> {} | MR {} -> {} | ML_P0 {} | MR_PR {} | χ {} -> {} "
+                tools::log->trace("Subspace expansion pos R {} {} | alpha {:.2e} | ML {} -> {} | MR {} -> {} | ML_P0 {} | MR_PR {} | χ {} -> {} "
                                  "-> {} | χlim {} ", posR, posR + 1, alpha, dimL_old, dimL_new, dimR_old, dimR_new, ML_P0.dimensions(),
                                  MR_PR.dimensions(), chiR_old, MR_PR.dimension(1), chiR_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
@@ -149,7 +194,6 @@ void tools::finite::env::expand_subspace(class_state_finite &state, const class_
             }
         }
     }
-
     env::rebuild_edges(state, model, edges);
 }
 
