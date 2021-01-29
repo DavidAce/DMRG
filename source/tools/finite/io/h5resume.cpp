@@ -126,7 +126,7 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
     tools::finite::debug::check_integrity(tensors);
     //    tensors.activate_sites(settings::precision::max_size_full_diag, 1);
-    tensors.activate_sites({0, 1});
+    tensors.activate_sites({tensors.get_position<size_t>()});
     tensors.reduce_mpo_energy();
     tools::log->debug("Validating resumed state [{}]", state_prefix);
     tools::log->debug("State labels:", tensors.state->get_labels());
