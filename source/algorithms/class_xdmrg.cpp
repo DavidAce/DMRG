@@ -256,12 +256,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
 
-//    TODO: Remove this temporary test!
-//    if(alpha_expansion)
-//        c1.max_sites = 1;
-
     // If we are doing 1-site dmrg, then we better expand subspace
-    if(settings::strategy::multisite_max_sites == 1)
+    if(settings::strategy::multisite_max_sites == 1 and not alpha_expansion)
         alpha_expansion = 100 * settings::precision::svd_threshold;
 
 
@@ -344,10 +340,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    c1.max_sites = settings::strategy::multisite_max_sites; // TODO: This is a test
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    //    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
-    //    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+//    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
+//    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
