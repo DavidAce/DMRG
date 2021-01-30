@@ -35,12 +35,11 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     direction(other.direction),
     cache(other.cache),
     tag_normalized_sites(other.tag_normalized_sites),
-//    tag_edge_ene_status(other.tag_edge_ene_status),
-//    tag_edge_var_status(other.tag_edge_var_status),
     active_sites(other.active_sites),
     measurements(other.measurements)
 {
     mps_sites.clear();
+    mps_sites.reserve(other.mps_sites.size());
     for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
 }
 /* clang-format on */
@@ -51,8 +50,6 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         direction            = other.direction;
         cache                = other.cache;
         tag_normalized_sites = other.tag_normalized_sites;
-        //        tag_edge_ene_status      = other.tag_edge_ene_status;
-        //        tag_edge_var_status      = other.tag_edge_var_status;
         active_sites = other.active_sites;
         measurements = other.measurements;
         mps_sites.clear();
@@ -113,6 +110,7 @@ T class_state_finite::get_length() const {
 }
 template size_t class_state_finite::get_length<size_t>() const;
 template long   class_state_finite::get_length<long>() const;
+template int    class_state_finite::get_length<int>() const;
 
 template<typename T>
 T class_state_finite::get_position() const {
@@ -283,6 +281,17 @@ template class_mps_site &class_state_finite::get_mps_site(long pos);
 const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_site(get_position()); }
 
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
+
+std::vector<class_mps_site> class_state_finite::get_mps_sites(const std::vector<size_t> & sites) const{
+    std::vector<class_mps_site> mps_at_sites;
+    for(const auto & site: sites) mps_at_sites.emplace_back(get_mps_site(site));
+    return mps_at_sites;
+}
+void class_state_finite::set_mps_sites(const std::vector<class_mps_site> & new_mps){
+    for(const auto & mps : new_mps)
+        get_mps_site(mps.get_position()) = mps;
+}
+
 
 std::array<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 

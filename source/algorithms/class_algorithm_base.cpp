@@ -80,8 +80,16 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_us
     if(iter < rate + last_measurement) { return report; }
 
     // It's time to check. Insert current numbers
-    Y_vec.push_back(new_data);
-    X_vec.push_back(iter);
+    if(not X_vec.empty() and iter == X_vec.back()){
+        // Replace latest data
+        Y_vec.back() = new_data;
+        X_vec.back() = iter;
+    }else{
+        // Append latest data
+        Y_vec.push_back(new_data);
+        X_vec.push_back(iter);
+    }
+
     size_t min_data_points = 2;
     if(Y_vec.size() < min_data_points) { return report; }
     size_t start_point = 0;

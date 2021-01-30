@@ -34,7 +34,11 @@ class_model_finite::class_model_finite(const class_model_finite &other) :
     model_type(other.model_type)
 {
     MPO.clear();
+    MPO.reserve(other.MPO.size());
     for(const auto &other_mpo : other.MPO) MPO.emplace_back(other_mpo->clone());
+    if constexpr (settings::debug)
+        for(const auto &[idx,other_mpo] : iter::enumerate(other.MPO))
+            if(MPO[idx]->get_unique_id() != other_mpo->get_unique_id()) throw std::runtime_error("ID mismatch after copying mpo");
 }
 /* clang-format on */
 
@@ -43,9 +47,13 @@ class_model_finite &class_model_finite::operator=(const class_model_finite &othe
     if(this != &other) {
         cache = other.cache;
         MPO.clear();
+        MPO.reserve(other.MPO.size());
         for(const auto &other_mpo : other.MPO) MPO.emplace_back(other_mpo->clone());
         active_sites = other.active_sites;
         model_type   = other.model_type;
+        if constexpr (settings::debug)
+            for(const auto &[idx,other_mpo] : iter::enumerate(other.MPO))
+                if(MPO[idx]->get_unique_id() != other_mpo->get_unique_id()) throw std::runtime_error("ID mismatch after copying mpo");
     }
     return *this;
 }

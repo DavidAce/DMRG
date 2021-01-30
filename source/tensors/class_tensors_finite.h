@@ -90,7 +90,8 @@ class class_tensors_finite {
     void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt,
                                 LogPolicy log_policy = LogPolicy::QUIET);
 
-    void expand_subspace(double alpha, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+
     void assert_edges() const;
     void assert_edges_ene() const;
     void assert_edges_var() const;

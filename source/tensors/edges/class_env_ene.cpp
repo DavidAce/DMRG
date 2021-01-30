@@ -111,7 +111,8 @@ void class_env_ene::refresh(const class_env_ene &env, const class_mps_site &mps,
 
         if constexpr(settings::debug) {
             if(unique_id_bef == get_unique_id())
-                throw std::logic_error(fmt::format("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(), unique_id_bef));
+                tools::log->warn("Refreshing {} env{}({}): id did not change: {}", tag, side, get_position(), unique_id_bef);
+//                throw std::logic_error(fmt::format("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(), unique_id_bef));
         }
     }
 }

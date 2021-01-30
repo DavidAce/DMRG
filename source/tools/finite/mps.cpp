@@ -260,7 +260,7 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
 bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
     // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
     // Each move performs an SVD decomposition which leaves unitaries behind, effectively normalizing the state.
-    // NOTE! It may be important to start with the current position.
+    // NOTE! It IS important to start with the current position.
 
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
@@ -275,26 +275,32 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     auto pos   = state.get_position<long>();
     auto cnt   = pos >= 0;
     auto steps = 0;
-    if(tools::Logger::getLogLevel(tools::log) <= 0)
-        tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {} | bond dims {}", tools::finite::measure::norm(state), pos, dir,
-                          tools::finite::measure::bond_dimensions(state));
+    if(tools::log->level() == spdlog::level::trace)
+        tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {} | chi_lim {} | svd thresh {:.1e} | bond dims {}",
+                         tools::finite::measure::norm(state), pos, dir, chi_lim,
+                         svd_threshold ? svd_threshold.value() : std::numeric_limits<double>::quiet_NaN(),
+                         tools::finite::measure::bond_dimensions(state));
 
-    // Start with SVD at the current position
-    // This makes sure chiL and chiR differ at most by factor spin_dim when we start the normalization
-    //    if(pos >= 0){
-    //        auto & mps = state.get_mps_site(pos);
-    //        long chi_new = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Make sure that the bond dimension does not
-    //        increase faster than spin_dim per site tools::finite::mps::merge_multisite_tensor(state, mps.get_M() , {static_cast<size_t>(pos)}, pos, chi_new,
-    //        svd_threshold, LogPolicy::NORMAL); if constexpr(settings::debug) mps.assert_identity();
-    //    }
+    // Start with SVD at the current center position
+    // NOTE: You have thought that this is unnecessary and removed it, only to find bugs much later.
+    //       In particular, the bond dimension will shrink too much when doing projections, if this step is skipped.
+    //       This makes sure chiL and chiR differ at most by factor spin_dim when we start the normalization
+    if(pos >= 0){
+        auto & mps = state.get_mps_site(pos);
+        // Make sure that the bond dimension does not increase faster than spin_dim per site
+        long chi_new = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR()));
+        tools::finite::mps::merge_multisite_tensor(state, mps.get_M() , {static_cast<size_t>(pos)}, pos, chi_new, svd_threshold, LogPolicy::QUIET);
+        if constexpr(settings::debug) mps.assert_identity();
+    }
     // Now we can move around the chain until we return to the original status
     while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, chi_lim, svd_threshold);
     state.clear_measurements();
     state.clear_cache();
     auto norm = tools::finite::measure::norm(state);
     if(tools::log->level() == spdlog::level::trace)
-        tools::log->trace("Normalized state | New norm = {:.16f} | pos {} | dir {} | bond dims {}", norm, pos, dir,
-                          tools::finite::measure::bond_dimensions(state));
+        tools::log->trace("Normalized  state | New norm = {:.16f} | pos {} | dir {} | chi_lim {} | svd thresh {:.1e} | bond dims {}",
+                         norm, pos, dir, chi_lim, svd_threshold ? svd_threshold.value() : std::numeric_limits<double>::quiet_NaN(),
+                         tools::finite::measure::bond_dimensions(state));
     if(std::abs(norm - 1) > settings::precision::max_norm_error) {
         for(const auto &mps : state.mps_sites) {
             tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), Textra::VectorMap(mps->get_L()).norm(), mps->get_L());

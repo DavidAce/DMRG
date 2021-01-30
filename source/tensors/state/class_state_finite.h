@@ -105,7 +105,8 @@ class class_state_finite {
     class_mps_site &      get_mps_site(T pos);
     const class_mps_site &get_mps_site() const;
     class_mps_site &      get_mps_site();
-
+    std::vector<class_mps_site> get_mps_sites(const std::vector<size_t> & sites) const;
+    void set_mps_sites(const std::vector<class_mps_site> & new_mps);
     // For multisite
     std::array<long, 3>    active_dimensions() const;
     long                   active_problem_size() const;

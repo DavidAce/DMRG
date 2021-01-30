@@ -14,20 +14,20 @@ class class_state_finite;
 class class_xdmrg : public class_algorithm_finite {
     private:
     double energy_window_growth_factor = 1.0;
-    double alpha                       = 1e-10;
 
     struct OptConf {
-        OptMode             optMode          = OptMode::VARIANCE;
-        OptSpace            optSpace         = OptSpace::DIRECT;
-        OptType             optType          = OptType::CPLX;
-        OptInit             optInit          = OptInit::CURRENT_STATE;
-        size_t              max_sites        = 2;
-        size_t              min_sites        = 1;
-        long                max_problem_size = 0;
-        long                problem_size     = 0;
-        bool                second_chance    = true;
-        std::array<long, 3> problem_dims;
-        std::vector<size_t> chosen_sites;
+        OptMode               optMode           = OptMode::VARIANCE;
+        OptSpace              optSpace          = OptSpace::DIRECT;
+        OptType               optType           = OptType::CPLX;
+        OptInit               optInit           = OptInit::CURRENT_STATE;
+        size_t                max_sites         = 2;
+        size_t                min_sites         = 1;
+        long                  max_problem_size  = 0;
+        long                  problem_size      = 0;
+        bool                  second_chance     = true;
+        std::optional<double> alpha_expansion   = std::nullopt;
+        std::array<long, 3>   problem_dims;
+        std::vector<size_t>   chosen_sites;
     };
     std::vector<OptConf> get_opt_conf_list();
 
@@ -37,7 +37,7 @@ class class_xdmrg : public class_algorithm_finite {
     explicit class_xdmrg(std::shared_ptr<h5pp::File> h5ppFile_);
     void   find_energy_range();
     void   init_energy_limits(std::optional<double> energy_density_target = std::nullopt, std::optional<double> energy_density_window = std::nullopt);
-    void   single_xDMRG_step();
+    void   single_xDMRG_step(std::vector<class_xdmrg::OptConf> conf = {});
     void   randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector = std::nullopt);
     void   run_task_list(std::deque<xdmrg_task> &task_list);
     void   run_preprocessing() final;

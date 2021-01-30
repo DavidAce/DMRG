@@ -69,7 +69,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *    |
          *    |------ 1
          */
-        auto &                   mps      = *state.mps_sites.front();
+        auto &                   mps      = state.get_mps_site(0ul);
         auto                     isCenter = mps.isCenter();
         auto                     label    = mps.get_label();
         long                     mpoDimL  = mpos.front().dimension(0);
@@ -80,7 +80,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
                 .reshape(Textra::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
                 .contract(mps.get_M_bare(), Textra::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
                 .shuffle(Textra::array3{1, 0, 2});                 // Shuffle back to convention
-        if(isCenter or label == "A") {
+        if(isCenter or label != "B") {
             Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
             mps.set_mps(M_temp, one, 0, label);
         } else {
@@ -107,7 +107,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *                                                    |
          *                                            1 ------|
          */
-        auto &                   mps      = *state.mps_sites.back();
+        auto &                   mps      = state.get_mps_site(state.get_length()-1);
         auto                     label    = mps.get_label();
         bool                     isCenter = mps.isCenter();
         long                     mpoDimR  = mpos.back().dimension(1);

@@ -208,10 +208,10 @@ void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
         if(std::abs(norm - 1) > 1e-8)
             tools::log->warn("class_mps_site::set_L(): Norm of L is too far from unity: {:.16f}", norm);
 //            throw std::runtime_error(fmt::format("class_mps_site::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
-        if(position and position.value() == 0 and get_label() != "B"){
-            if(L_.size() != 1) throw std::logic_error("Left edge L should have size 1");
-            if(std::abs(L_.coeff(0)) != 1.0) throw std::logic_error("Left edge L should be equal to 1");
-        }
+//        if(position and position.value() == 0 and get_label() != "B"){
+//            if(L_.size() != 1) throw std::logic_error("Left edge L should have size 1");
+//            if(std::abs(L_.coeff(0)) != 1.0) throw std::logic_error("Left edge L should be equal to 1");
+//        }
     }
 
     if(position) {
