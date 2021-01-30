@@ -3,6 +3,7 @@
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <config/enums.h>
+#include <tensors/state/class_mps_site.h>
 
 namespace tools::finite::opt {
     class opt_state {
@@ -11,24 +12,25 @@ namespace tools::finite::opt {
 
         private:
         // All of these values are supposed to be for the full system size
-        std::optional<std::string>            name     = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 3>> tensor   = std::nullopt;
-        std::optional<std::vector<size_t>>    sites    = std::nullopt;
-        std::optional<double>                 eigval   = std::nullopt;
-        std::optional<double>                 energy_r = std::nullopt;
-        std::optional<double>                 energy   = std::nullopt;
-        std::optional<double>                 variance = std::nullopt;
-        std::optional<double>                 overlap  = std::nullopt;
-        std::optional<double>                 norm     = std::nullopt;
-        std::optional<size_t>                 length   = std::nullopt;
-        std::optional<size_t>                 iter     = std::nullopt;
-        std::optional<size_t>                 counter  = std::nullopt;
-        std::optional<double>                 time     = std::nullopt;
-        std::optional<OptMode>                optMode  = std::nullopt;
-        std::optional<OptSpace>               optSpace = std::nullopt;
+        std::optional<std::string>            name      = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 3>> tensor    = std::nullopt;
+        std::optional<std::vector<size_t>>    sites     = std::nullopt;
+        std::optional<double>                 eigval    = std::nullopt;
+        std::optional<double>                 energy_r  = std::nullopt;
+        std::optional<double>                 energy    = std::nullopt;
+        std::optional<double>                 variance  = std::nullopt;
+        std::optional<double>                 overlap   = std::nullopt;
+        std::optional<double>                 norm      = std::nullopt;
+        std::optional<size_t>                 length    = std::nullopt;
+        std::optional<size_t>                 iter      = std::nullopt;
+        std::optional<size_t>                 counter   = std::nullopt;
+        std::optional<double>                 time      = std::nullopt;
+        std::optional<OptMode>                optMode   = std::nullopt;
+        std::optional<OptSpace>               optSpace  = std::nullopt;
 
         public:
         bool is_basis_vector = false;
+        std::vector<class_mps_site> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
 
         opt_state() = default;
         // Constructor used for candidates

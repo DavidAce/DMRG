@@ -30,6 +30,10 @@ class_edges_finite::class_edges_finite(const class_edges_finite &other) : active
     eneR.clear();
     varL.clear();
     varR.clear();
+    eneL.reserve(other.eneL.size());
+    eneR.reserve(other.eneR.size());
+    varL.reserve(other.varL.size());
+    varR.reserve(other.varR.size());
     for(const auto &other_eneL : other.eneL) eneL.emplace_back(std::make_unique<class_env_ene>(*other_eneL));
     for(const auto &other_eneR : other.eneR) eneR.emplace_back(std::make_unique<class_env_ene>(*other_eneR));
     for(const auto &other_varL : other.varL) varL.emplace_back(std::make_unique<class_env_var>(*other_varL));
@@ -44,6 +48,10 @@ class_edges_finite &class_edges_finite::operator=(const class_edges_finite &othe
         eneR.clear();
         varL.clear();
         varR.clear();
+        eneL.reserve(other.eneL.size());
+        eneR.reserve(other.eneR.size());
+        varL.reserve(other.varL.size());
+        varR.reserve(other.varR.size());
         for(const auto &other_eneL : other.eneL) eneL.emplace_back(std::make_unique<class_env_ene>(*other_eneL));
         for(const auto &other_eneR : other.eneR) eneR.emplace_back(std::make_unique<class_env_ene>(*other_eneR));
         for(const auto &other_varL : other.varL) varL.emplace_back(std::make_unique<class_env_var>(*other_varL));

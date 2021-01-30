@@ -43,6 +43,7 @@ class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite
         edges        = std::make_unique<class_edges_finite>(*other.edges);
         active_sites = other.active_sites;
         measurements = other.measurements;
+        sync_active_sites();
     }
     return *this;
 }
@@ -305,6 +306,7 @@ T class_tensors_finite::get_length() const {
 
 template size_t class_tensors_finite::get_length<size_t>() const;
 template long   class_tensors_finite::get_length<long>() const;
+template int    class_tensors_finite::get_length<int>() const;
 
 template<typename T>
 T class_tensors_finite::get_position() const {
@@ -345,11 +347,12 @@ void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3>
     rebuild_edges();
 }
 
-void class_tensors_finite::expand_subspace(double alpha, long chi_lim, std::optional<double> svd_threshold) {
+std::vector<size_t> class_tensors_finite::expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<double> svd_threshold) {
     if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_threshold);
-    clear_measurements();
+    auto pos_expanded = tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_threshold);
+    if(alpha) clear_measurements(); // No change if alpha == std::nullopt
+    return pos_expanded;
 }
 
 void class_tensors_finite::assert_edges() const { tools::finite::env::assert_edges(*state, *model, *edges); }

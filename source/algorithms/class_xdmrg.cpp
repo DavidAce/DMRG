@@ -6,6 +6,7 @@
 #include "class_fdmrg.h"
 #include <config/nmspc_settings.h>
 #include <general/nmspc_exceptions.h>
+#include <general/nmspc_iter.h>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <tensors/edges/class_edges_finite.h>
@@ -213,6 +214,7 @@ void class_xdmrg::run_algorithm() {
     stop_reason = StopReason::NONE;
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+//        find_best_alpha();
         single_xDMRG_step();
         check_convergence();
         write_to_file();
@@ -234,7 +236,6 @@ void class_xdmrg::run_algorithm() {
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
-        try_subspace_expansion();
         reduce_mpo_energy();
         move_center_point();
     }
@@ -261,11 +262,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_max_sites == 1 and not alpha_expansion)
-        alpha_expansion = alpha_min;
-
-
-
+    if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_got_stuck)
+        c1.alpha_expansion = std::min(0.1,status.energy_variance_lowest);// Usually a good value to start with
 
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
@@ -283,7 +281,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
 
-    if(num_discards > 0 and std::abs<long>(status.iter - iter_discard) <= 2) {
+    if(num_discards > 0 and status.iter < iter_discard + 2) {
         // When discarded the bond dimensions are highly truncated. We can then afford subspace optimization
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
@@ -346,6 +344,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.algorithm_has_stuck_for > 1) c1.max_sites = 2; // TODO: Testing
 //    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
 //    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
@@ -379,7 +378,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 1 and c2.max_sites != settings::strategy::multisite_max_sites) {
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites != settings::strategy::multisite_max_sites) {
         // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
@@ -388,20 +387,45 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
     }
 
+    if(not c2.second_chance) return configs;
+    /*
+     *
+     *  Third trial. Here we mainly try other subspace expansion factors "alpha"
+     *
+     */
+
+    OptConf c3 = c2; // Start with c2 as a baseline
+    c3.optInit = OptInit::CURRENT_STATE;
+    if(c3.alpha_expansion) c3.alpha_expansion = std::min(0.1, 1e3 * status.energy_variance_lowest);
+    else c3.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
+    configs.emplace_back(c3);
+
+    /*
+     *
+     *  Fourth trial. Here we mainly try other subspace expansion factors "alpha"
+     *
+     */
+
+    OptConf c4 = c3; // Start with c2 as a baseline
+    c4.optInit = OptInit::CURRENT_STATE;
+    if(c4.alpha_expansion) c4.alpha_expansion = std::min(0.1, 1e6 * status.energy_variance_lowest);
+    else c4.alpha_expansion = std::min(0.1, 1e3 * status.energy_variance_lowest);
+    configs.emplace_back(c4);
+
     return configs;
 }
 
-void class_xdmrg::single_xDMRG_step() {
+
+void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
 
-    auto                   optConf = get_opt_conf_list();
+    if (optConf.empty()) optConf = get_opt_conf_list();
     std::vector<opt_state> results;
-    variance_before_step = std::nullopt;
-    bool   expanded      = false;
+    std::optional<double> variance_before_step = std::nullopt;
     double percent       = 0;
-    for(auto &conf : optConf) {
+    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction, optConf.size());
+    for(const auto &[idx_conf, conf] : iter::enumerate(optConf)) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         tensors.activate_sites(conf.chosen_sites);
@@ -409,9 +433,13 @@ void class_xdmrg::single_xDMRG_step() {
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
 
         // Use subspace expansion if alpha_expansion is set
-        if(alpha_expansion and not expanded) {
-            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim, settings::precision::svd_threshold);
-            expanded = true;
+        if(conf.alpha_expansion){
+            if(not results.empty()){
+                // We better store the mps sites that the previous result is compatible with
+                auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim, settings::precision::svd_threshold); // nullopt implies a pos query
+                results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the compatible mps sites
+            }
+            tensors.expand_subspace(conf.alpha_expansion, status.chi_lim, settings::precision::svd_threshold);
         }
 
         switch(conf.optInit) {
@@ -456,8 +484,11 @@ void class_xdmrg::single_xDMRG_step() {
         last_optmode       = winner.get_optmode();
         tensors.activate_sites(winner.get_sites());
         tensors.state->tag_active_sites_normalized(false);
-        // Truncate even more if doing chi quench
-        //   if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
+        if(not winner.mps_backup.empty()){
+            // Restore the neighboring mps that are compatible with this winner
+            tensors.state->set_mps_sites(winner.mps_backup);
+            tensors.rebuild_edges();
+        }
 
         // Do the truncation with SVD
         tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
@@ -486,8 +517,6 @@ void class_xdmrg::single_xDMRG_step() {
             auto var = tools::finite::measure::energy_variance(tensors);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
-        // Adjust alpha if necessary
-        adjust_alpha_expansion();
     }
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();

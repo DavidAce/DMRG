@@ -29,7 +29,12 @@ class_env_base &class_env_base::operator=(class_env_base &&other) noexcept = def
 
 class_env_base::class_env_base(const class_env_base &other)
     : edge_has_been_set(other.edge_has_been_set), block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position),
-      side(other.side), tag(other.tag) {
+      side(other.side), tag(other.tag),
+      unique_id(other.unique_id),
+      unique_id_mps(other.unique_id_mps),
+      unique_id_mpo(other.unique_id_mpo),
+      unique_id_env(other.unique_id_env)
+{
     assert_block();
 }
 
@@ -54,9 +59,9 @@ class_env_base &class_env_base::operator=(const class_env_base &other) {
         side              = other.side;
         tag               = other.tag;
         unique_id         = other.unique_id;
-        unique_id_env     = other.unique_id_env;
         unique_id_mps     = other.unique_id_mps;
         unique_id_mpo     = other.unique_id_mpo;
+        unique_id_env     = other.unique_id_env;
     }
     assert_block();
     return *this;
