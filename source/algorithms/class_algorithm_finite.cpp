@@ -284,7 +284,8 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_inward_edge()) return;
     if(has_projected) return;
-    if(settings::strategy::project_on_every_iter or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
+    if(settings::strategy::project_on_every_iter or
+       (status.algorithm_has_got_stuck and num::mod(status.iter, settings::strategy::project_when_stuck_freq)==0)) {
         tools::log->info("Trying projection to {} | pos {}", settings::strategy::target_sector, tensors.get_position<long>());
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
@@ -294,7 +295,6 @@ void class_algorithm_finite::try_projection() {
         tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}",
                          std::log10(variance_old), std::log10(variance_new),fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         has_projected = true;
-        if(status.algorithm_has_got_stuck) check_convergence(); // Check again! We may have fixed something
         write_to_file(StorageReason::PROJ_STATE, *tensors.state, CopyPolicy::OFF);
     }
 }
@@ -404,45 +404,6 @@ void class_algorithm_finite::try_disorder_damping() {
     damping_exponents.pop_back();
     if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
-
-//void class_algorithm_finite::try_subspace_expansion(){
-//    if(not settings::strategy::expand_subspace_when_stuck) return;
-//    if(settings::strategy::multisite_max_sites == 1) return; // Should already be on!
-//    if(num_expansions >= max_expansions) return;
-//    if(not variance_before_step) return;
-//    // NOTE! Here we only enable the alpha_expansion factor. The actual expansion happens in the dmrg-step!
-//
-//    // Adjust if alpha_expansion is already defined
-//    adjust_alpha_expansion();
-//
-//    constexpr size_t iter_active = 2;
-//    // Subspace expansion starts
-//    if(status.algorithm_has_got_stuck and not alpha_expansion){
-//        tools::log->info("Starting subspace expansion trial");
-//        alpha_expansion = std::clamp(status.energy_variance_lowest, alpha_min,alpha_max);
-//        iter_expansion = status.iter;
-//    }
-//    // Subspace expansion ends
-//    if(status.iter >= iter_expansion+iter_active and alpha_expansion){
-//        alpha_expansion = std::nullopt;
-//        num_expansions++;
-//        clear_convergence_status();
-//    }
-//
-//}
-//void class_algorithm_finite::adjust_alpha_expansion(){
-//    if(not alpha_expansion) return;
-//    double variance = tools::finite::measure::energy_variance(tensors);
-//    double percent = 100 * variance / variance_before_step.value();
-//    double alpha_up  = 10.0/tensors.get_length<int>();
-//    double alpha_dn  = 1.00/tensors.get_length<int>();
-//    if(percent < 99 or percent >= 105)
-//        alpha_expansion = std::clamp(alpha_expansion.value()*alpha_dn, alpha_min,alpha_max); // Variance has improved, or worsened dramatically, so alpha can be reduced!
-//    else if(percent <= 100)
-//        alpha_expansion = std::clamp(alpha_expansion.value()*alpha_up, alpha_min,alpha_max); // Variance has not improved, so alpha can be increased!
-//
-//}
-
 
 
 void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> slope_threshold) {

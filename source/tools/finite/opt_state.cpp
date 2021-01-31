@@ -114,6 +114,13 @@ double opt_state::get_overlap() const {
         throw std::runtime_error("opt_state: overlap not set");
 }
 
+double opt_state::get_alpha() const {
+    if(alpha)
+        return alpha.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
 double opt_state::get_norm() const {
     if(norm)
         return norm.value();
@@ -179,6 +186,7 @@ void opt_state::set_energy_per_site(double energy_per_site_) { set_energy(energy
 void opt_state::set_variance(double variance_) { variance = variance_; }
 void opt_state::set_variance_per_site(double variance_per_site_) { set_variance(variance_per_site_ * static_cast<double>(get_length())); }
 void opt_state::set_overlap(double overlap_) { overlap = overlap_; }
+void opt_state::set_alpha(std::optional<double> alpha_) { alpha = alpha_; }
 void opt_state::set_length(size_t length_) { length = length_; }
 void opt_state::set_iter(size_t iter_) { iter = iter_; }
 void opt_state::set_counter(size_t counter_) { counter = counter_; }

@@ -16,10 +16,6 @@ class class_algorithm_finite : public class_algorithm_base {
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
     explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
-    //    ~class_algorithm_finite();    // Read comment on implementation
-    //    std::unique_ptr<class_state_finite> state;// The finite chain state
-    //    std::unique_ptr<class_model_finite> model;// The finite chain model
-    //    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
     class_tensors_finite tensors; // State, model and edges
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. Convention: "0" is the biased seed,
@@ -47,13 +43,6 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
     size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
     size_t                  max_discards         = 3;            /*!< Maximum number of times to discard the smallest schmidt values */
-//    size_t                  num_expansions       = 0;            /*!< Counter for number of times performing a subspace expansion */
-//    size_t                  max_expansions       = 3;            /*!< Maximum number of times to allow a subspace expansion. (Once means L*2 steps) */
-//    size_t                  iter_expansion       = 0;            /*!< Iteration when the last expansion started (used to turn off when done) */
-//    double                  alpha_min            = 1e-14;        /*!< Lower limit of alpha expansion factor */
-//    double                  alpha_max            = 1e-2;         /*!< Upper limit of alpha expansion factor */
-//    std::optional<double>   alpha_expansion      = std::nullopt; /*!< Amplitude for the expansion term  */
-//    std::optional<double>   variance_before_step = std::nullopt; /*!< Keeps track of the variance before the step to guide subspace expansion factor */
     std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
@@ -70,8 +59,6 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         try_disorder_damping();
-//    void         try_subspace_expansion();
-//    void         adjust_alpha_expansion();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;

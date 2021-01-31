@@ -52,7 +52,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
     using Scalar = class_state_finite::Scalar;
     // Set up the SVD
     svd::solver svd;
-    svd.setThreshold(1e-12);
+    svd.setThreshold(1e-12, svd_threshold);
     svd.use_lapacke = true;
     svd.use_bdc     = false;
 
@@ -73,11 +73,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 auto &varL     = edges.get_varL(posL - 1);
 
                 mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
-                //                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha);
-                //                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha);
-                //                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
-                //                Eigen::Tensor<Scalar, 3> PL      = varL.get_expansion_term(mpsL, mpoL, alpha);
-                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
+//                Eigen::Tensor<Scalar, 3> PL      = varL.get_expansion_term(mpsL, mpoL, alpha);
+//                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
                 Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
@@ -125,7 +125,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 auto chiL_new = mpsL_new.get_chiR();
                 auto dimL_new = mpsL_new.dimensions();
                 auto dimR_new = mpsR_new.dimensions();
-                tools::log->info("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
+                tools::log->debug("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
                                  ML_PL.dimension(2), chiL_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
                     throw std::runtime_error(fmt::format("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new));
@@ -151,11 +151,10 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 auto &varR     = edges.get_varR(posR + 1);
 
                 mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
-                //                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha);
-                //                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha);
-                //                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
-                //                Eigen::Tensor<Scalar, 3> PR       = varR.get_expansion_term(mpsR, mpoR, alpha);
-                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
+//                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
                 Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
@@ -206,7 +205,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 auto dimR_new = mpsR_new.dimensions();
                 auto dimL_new = mpsL_new.dimensions();
 
-                tools::log->info("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
+                tools::log->debug("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
                                  MR_PR.dimension(1), chiR_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
                     throw std::runtime_error(fmt::format("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new));
