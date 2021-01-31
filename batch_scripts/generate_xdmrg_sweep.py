@@ -11,11 +11,11 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([16,24])
-lambdas             = [0.000]
+sites               = np.array([16])
+lambdas             = [0.100]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [4]
+multisite_max_sites = [2]
 output_prefix       = "output"
 
 
