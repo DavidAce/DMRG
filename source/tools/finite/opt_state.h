@@ -20,6 +20,7 @@ namespace tools::finite::opt {
         std::optional<double>                 energy    = std::nullopt;
         std::optional<double>                 variance  = std::nullopt;
         std::optional<double>                 overlap   = std::nullopt;
+        std::optional<double>                 alpha     = std::nullopt;
         std::optional<double>                 norm      = std::nullopt;
         std::optional<size_t>                 length    = std::nullopt;
         std::optional<size_t>                 iter      = std::nullopt;
@@ -53,6 +54,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                             get_variance() const;
         [[nodiscard]] double                             get_variance_per_site() const;
         [[nodiscard]] double                             get_overlap() const;
+        [[nodiscard]] double                             get_alpha() const;
         [[nodiscard]] double                             get_norm() const;
         [[nodiscard]] size_t                             get_length() const;
         [[nodiscard]] size_t                             get_iter() const;
@@ -73,6 +75,7 @@ namespace tools::finite::opt {
         void                                             set_variance(double variance_);
         void                                             set_variance_per_site(double variance_per_site_);
         void                                             set_overlap(double overlap_);
+        void                                             set_alpha(std::optional<double> alpha_);
         void                                             set_length(size_t length);
         void                                             set_iter(size_t iter_);
         void                                             set_counter(size_t counter_);

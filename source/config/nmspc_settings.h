@@ -141,7 +141,7 @@ namespace settings {
         inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
         inline bool          discard_schmidt_when_stuck = true;                                   /*!< Try discarding smallest schmidt values when stuck */
         inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima */
-        inline bool          project_when_stuck         = true;                                   /*!< Project to target parity sector at the end of an iteration when stuck. */
+        inline size_t        project_when_stuck_freq    = 4;                                      /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
         inline bool          project_initial_state      = false;                                  /*!< Project to target parity sector when initializing a state. */
@@ -253,7 +253,7 @@ namespace settings {
         inline double   energy_density_window           = 0.05;             /*!< Accept states inside of energy_tgt_per_site +- energy_dens_window. */
         inline size_t   max_states                      = 1;                /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool     store_wavefn                    = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool     finish_if_entanglm_saturated     = true;            /*!< Finish early as soon as entanglement has saturated */
+        inline bool     finish_if_entanglm_saturated    = true;             /*!< Finish early as soon as entanglement has saturated */
         inline bool     finish_if_variance_saturated    = false;            /*!< Finish early as soon as energy variance has saturated */
 
     }

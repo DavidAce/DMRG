@@ -344,9 +344,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(status.algorithm_has_stuck_for > 1) c1.max_sites = 2; // TODO: Testing
-//    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
-//    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -396,7 +395,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     OptConf c3 = c2; // Start with c2 as a baseline
     c3.optInit = OptInit::CURRENT_STATE;
-    if(c3.alpha_expansion) c3.alpha_expansion = std::min(0.1, 1e3 * status.energy_variance_lowest);
+    if(c2.alpha_expansion) c3.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
     else c3.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
     configs.emplace_back(c3);
 
@@ -408,8 +407,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     OptConf c4 = c3; // Start with c2 as a baseline
     c4.optInit = OptInit::CURRENT_STATE;
-    if(c4.alpha_expansion) c4.alpha_expansion = std::min(0.1, 1e6 * status.energy_variance_lowest);
-    else c4.alpha_expansion = std::min(0.1, 1e3 * status.energy_variance_lowest);
+    if(c2.alpha_expansion) c4.alpha_expansion = std::max(1e-1, status.energy_variance_lowest);
+    else c4.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
     configs.emplace_back(c4);
 
     return configs;
@@ -439,19 +438,25 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
                 auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim, settings::precision::svd_threshold); // nullopt implies a pos query
                 results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the compatible mps sites
             }
+//            if(status.algorithm_has_got_stuck)
+//                tensors.expand_subspace(conf.alpha_expansion, status.chi_lim, 1e-14);
+//            else
             tensors.expand_subspace(conf.alpha_expansion, status.chi_lim, settings::precision::svd_threshold);
+
         }
 
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
                 results.back().validate_result();
+                results.back().set_alpha(conf.alpha_expansion);
                 break;
             }
             case OptInit::LAST_RESULT: {
                 if(results.empty()) throw std::logic_error("There are no previous results to select an initial state");
                 results.emplace_back(opt::find_excited_state(tensors, results.back(), status, conf.optMode, conf.optSpace, conf.optType));
                 results.back().validate_result();
+                results.back().set_alpha(conf.alpha_expansion);
                 break;
             }
         }
@@ -473,11 +478,12 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         // Sort the results in order of increasing variance
         std::sort(results.begin(), results.end(), [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
-        if(tools::log->level() == spdlog::level::trace and results.size() > 1ul)
+        if(tools::log->level() <= spdlog::level::info and results.size() > 1ul)
             for(auto &candidate : results)
-                tools::log->trace("Candidate: {} | sites [{:>2}-{:<2}] | variance {:.16f} | energy {:.16f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
-                                  candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), std::log10(candidate.get_variance()),
-                                  candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(), 1000 * candidate.get_time());
+                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} | time {:.4f} ms",
+                                  candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(),
+                                  std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
+                                  1000 * candidate.get_time());
         // Take the best result
         const auto &winner = results.front();
         last_optspace      = winner.get_optspace();
