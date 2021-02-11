@@ -40,7 +40,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     t_vHv->toc();
 
     t_vH2->tic();
-    H2v = H2.template selfadjointView<Eigen::Upper>() * v;
+    H2v = H2.template selfadjointView<Eigen::Lower>() * v;
     t_vH2->toc();
 
     t_vH2v->tic();

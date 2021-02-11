@@ -19,7 +19,7 @@ std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<Scalar> &H_local, const TensorType<cplx, 3> &multisite_tensor,
+    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<Scalar> &H_local, const TensorType<cplx, 3> &multisite_mps,
                                                                double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace) {
     tools::log->trace("Finding subspace -- partial");
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
@@ -35,7 +35,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     std::string                        reason = "exhausted";
     Eigen::VectorXd                    eigvals;
     Eigen::MatrixXcd                   eigvecs;
-    Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_tensor.data(), multisite_tensor.size());
+    Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_mps.data(), multisite_mps.size());
     for(auto nev : generate_size_list(static_cast<int>(multisite_vector.size()))) {
         tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic();
         solver.config.clear();
@@ -75,9 +75,9 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
 }
 
 template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<real> &H_local, const TensorType<cplx, 3> &multisite_tensor,
+    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<real> &H_local, const TensorType<cplx, 3> &multisite_mps,
                                                                double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
 
 template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<cplx> &H_local, const TensorType<cplx, 3> &multisite_tensor,
+    tools::finite::opt::internal::subspace::find_subspace_part(const MatrixType<cplx> &H_local, const TensorType<cplx, 3> &multisite_mps,
                                                                double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);

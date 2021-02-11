@@ -1,12 +1,13 @@
 #include "ceres_subspace_functor.h"
+#include <general/nmspc_iter.h>
 #include <tools/common/log.h>
 #include <tools/finite/opt-internal/opt-internal.h>
-#include <tools/finite/opt_state.h>
+#include <tools/finite/opt_mps.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_state> &candidate_list, double maximum_subspace_error, size_t max_accept) {
+void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_mps> &candidate_list, double maximum_subspace_error, size_t max_accept) {
     // Sort the candidate list in order of descending overlaps. If the overlaps are the same, compare instead the distance in energy to the
     // current energy
     std::sort(candidate_list.begin(), candidate_list.end(), std::greater<>());
@@ -37,7 +38,7 @@ void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_s
     if(candidate_list.size() < min_accept) throw std::runtime_error("Filtered too many candidates");
 }
 
-std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_highest_overlap(const std::vector<opt_state> &candidate_list,
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_highest_overlap(const std::vector<opt_mps> &candidate_list,
                                                                                                         double                        energy_llim_per_site,
                                                                                                         double                        energy_ulim_per_site) {
     if(candidate_list.empty()) return std::nullopt;
@@ -59,7 +60,20 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candida
     return idx;
 }
 
-std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_state> &candidate_list,
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_lowest_variance(const std::vector<opt_mps> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site){
+    if(candidate_list.empty()) return std::nullopt;
+    auto var = candidate_list.front().get_variance();
+    size_t idx = 0;
+    for(const auto &[i,candidate] : iter::enumerate(candidate_list)) {
+        if(not candidate.is_basis_vector) continue;
+        if(candidate.get_variance() < var) idx = i;
+    }
+    return idx;
+}
+
+
+
+std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidates_with_highest_overlap(const std::vector<opt_mps> &candidate_list,
                                                                                                        size_t max_candidates, double energy_llim_per_site,
                                                                                                        double energy_ulim_per_site) {
     if(candidate_list.empty()) return std::vector<size_t>();
@@ -98,7 +112,7 @@ std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate
     return best_idx;
 }
 
-Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::vector<opt_state> &candidate_list) {
+Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::vector<opt_mps> &candidate_list) {
     long             rows = candidate_list.front().get_tensor().size();
     long             cols = static_cast<long>(candidate_list.size());
     Eigen::MatrixXcd eigvecs(rows, cols);
@@ -111,7 +125,7 @@ Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::
     return eigvecs;
 }
 
-Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::vector<opt_state> &candidate_list) {
+Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::vector<opt_mps> &candidate_list) {
     long            size = static_cast<long>(candidate_list.size());
     Eigen::VectorXd eigvals(size);
     long            idx = 0;
@@ -123,7 +137,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::v
     return eigvals;
 }
 
-Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::vector<opt_state> &candidate_list) {
+Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::vector<opt_mps> &candidate_list) {
     Eigen::VectorXd energies(static_cast<long>(candidate_list.size()));
     long            idx = 0;
     for(const auto &candidate : candidate_list) {
@@ -134,7 +148,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::
     return energies;
 }
 
-Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(const std::vector<opt_state> &candidate_list) {
+Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(const std::vector<opt_mps> &candidate_list) {
     Eigen::VectorXd energies(static_cast<long>(candidate_list.size()));
     long            idx = 0;
     for(const auto &candidate : candidate_list) {
@@ -145,7 +159,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(co
     return energies;
 }
 
-double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<opt_state> &candidate_list, std::optional<size_t> max_candidates) {
+double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<opt_mps> &candidate_list, std::optional<size_t> max_candidates) {
     double eps            = 0;
     size_t num_candidates = 0;
     if(not max_candidates) max_candidates = candidate_list.size();
@@ -158,7 +172,7 @@ double tools::finite::opt::internal::subspace::get_subspace_error(const std::vec
     return 1.0 - eps;
 }
 
-std::vector<double> tools::finite::opt::internal::subspace::get_subspace_errors(const std::vector<opt_state> &candidate_list) {
+std::vector<double> tools::finite::opt::internal::subspace::get_subspace_errors(const std::vector<opt_mps> &candidate_list) {
     double              eps = 0;
     std::vector<double> subspace_errors;
     subspace_errors.reserve(candidate_list.size());
@@ -176,7 +190,7 @@ double tools::finite::opt::internal::subspace::get_subspace_error(const std::vec
     return 1.0 - eps;
 }
 
-Eigen::VectorXd tools::finite::opt::internal::subspace::get_overlaps(const std::vector<opt_state> &candidate_list) {
+Eigen::VectorXd tools::finite::opt::internal::subspace::get_overlaps(const std::vector<opt_mps> &candidate_list) {
     Eigen::VectorXd overlaps(static_cast<long>(candidate_list.size()));
     long            idx = 0;
     for(const auto &candidate : candidate_list) {
@@ -194,7 +208,7 @@ std::pair<double, size_t> find_max_overlap(const std::vector<double> &overlaps) 
     return {max_val, static_cast<size_t>(max_idx)};
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_state> &candidate_list, size_t idx) {
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_mps> &candidate_list, size_t idx) {
     // In this function we project a vector to the subspace spanned by a small set of eigenvectors
     // Essentially this old computation
     //      Eigen::VectorXcd subspace_vector = (eigvecs.adjoint() * fullspace_vector).normalized();
@@ -211,7 +225,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_state> &candidate_list,
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_mps> &candidate_list,
                                                                                 const Eigen::VectorXcd &      fullspace_vector) {
     // In this function we project a vector to the subspace spanned by a small set of eigenvectors
     // Essentially this old computation
@@ -227,7 +241,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace(const std::vector<opt_state> &candidate_list,
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace(const std::vector<opt_mps> &candidate_list,
                                                                                  const Eigen::VectorXcd &      subspace_vector) {
     // In this function we project a subspace vector back to the full space
     // Essentially this old computation
@@ -245,4 +259,9 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace
         fullspace_vector += candidate.get_vector() * subspace_vector(subspace_idx++);
     }
     return fullspace_vector.normalized();
+}
+
+Eigen::Tensor<Scalar,3> tools::finite::opt::internal::subspace::get_tensor_in_fullspace(const std::vector<opt_mps> &candidate_list,
+                                                                                   const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims) {
+    return Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(subspace::get_vector_in_fullspace(candidate_list, subspace_vector).data(), dims);
 }

@@ -6,7 +6,7 @@
 #include <config/enums.h>
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subspace::find_subspace_full(const MatrixType<Scalar> & H_local,
-                                                                                                         const TensorType<cplx, 3> &multisite_tensor) {
+                                                                                                         const TensorType<cplx, 3> &multisite_mps) {
     tools::log->trace("Finding subspace -- full");
     if(H_local.rows() != H_local.cols()) throw std::runtime_error(fmt::format("H_local is not square: rows [{}] | cols [{}]", H_local.rows(), H_local.cols()));
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic();
@@ -16,7 +16,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
     auto eigvecs = eig::view::get_eigvecs<Scalar>(solver.result);
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
-    Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_tensor.data(), multisite_tensor.size());
+    Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_mps.data(), multisite_mps.size());
     Eigen::VectorXd                    overlaps = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
     int                                idx;
     double                             max_overlap    = overlaps.maxCoeff(&idx);
@@ -31,7 +31,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
 }
 
 template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subspace::find_subspace_full(const MatrixType<cplx> &   H_local,
-                                                                                                                  const TensorType<cplx, 3> &multisite_tensor);
+                                                                                                                  const TensorType<cplx, 3> &multisite_mps);
 
 template std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subspace::find_subspace_full(const MatrixType<real> &   H_local,
-                                                                                                                  const TensorType<cplx, 3> &multisite_tensor);
+                                                                                                                  const TensorType<cplx, 3> &multisite_mps);
