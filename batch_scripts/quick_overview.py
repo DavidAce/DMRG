@@ -149,7 +149,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 iter.append(status_last_entry['iter'])
                 step.append(status_last_entry['step'])
                 energy.append(msrmnt_last_entry['energy_per_site'])
-                variance.append(msrmnt_last_entry['energy_variance_per_site'])
+                variance.append(msrmnt_last_entry['energy_variance'])
                 variancel.append(status_last_entry['energy_variance_lowest'])
                 ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
                 walltime.append(status_last_entry['wall_time'])
