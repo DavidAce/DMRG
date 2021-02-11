@@ -6,7 +6,7 @@
 #include <tensors/state/class_mps_site.h>
 
 namespace tools::finite::opt {
-    class opt_state {
+    class opt_mps {
         using cplx = std::complex<double>;
         using real = double;
 
@@ -33,12 +33,12 @@ namespace tools::finite::opt {
         bool is_basis_vector = false;
         std::vector<class_mps_site> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
 
-        opt_state() = default;
+        opt_mps() = default;
         // Constructor used for candidates
-        opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+        opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
                   std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
-        opt_state(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+        opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                   double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
         [[nodiscard]] const std::string &                get_name() const;
@@ -86,7 +86,7 @@ namespace tools::finite::opt {
         void                                             set_optmode(OptMode optmode_);
         void                                             validate_candidate() const;
         void                                             validate_result() const;
-        bool                                             operator<(const opt_state &rhs) const;
-        bool                                             operator>(const opt_state &rhs) const;
+        bool                                             operator<(const opt_mps &rhs) const;
+        bool                                             operator>(const opt_mps &rhs) const;
     };
 }
