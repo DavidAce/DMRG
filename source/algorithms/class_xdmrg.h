@@ -6,6 +6,8 @@
 
 #include "class_algorithm_finite.h"
 #include <deque>
+#include <physics/class_quantum_gates.h>
+
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.
  */
@@ -14,6 +16,15 @@ class class_state_finite;
 class class_xdmrg : public class_algorithm_finite {
     private:
     double energy_window_growth_factor = 1.0;
+    std::optional<double> variance_before_step;
+    std::optional<double> variance_after_step;
+    std::vector<qm::Gate> ham_gates_1body;
+    std::vector<qm::Gate> ham_gates_2body;
+    std::vector<qm::Gate> ham_gates_3body;
+    std::pair<std::vector<qm::Gate>,std::vector<qm::Gate>> time_gates_1site;
+    std::pair<std::vector<qm::Gate>,std::vector<qm::Gate>> time_gates_2site;
+    std::pair<std::vector<qm::Gate>,std::vector<qm::Gate>> time_gates_3site;
+
 
     struct OptConf {
         OptMode               optMode           = OptMode::VARIANCE;
