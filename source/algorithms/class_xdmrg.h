@@ -39,6 +39,7 @@ class class_xdmrg : public class_algorithm_finite {
         std::optional<double> alpha_expansion   = std::nullopt;
         std::array<long, 3>   problem_dims;
         std::vector<size_t>   chosen_sites;
+        std::string           label;
     };
     std::vector<OptConf> get_opt_conf_list();
 
@@ -56,6 +57,9 @@ class class_xdmrg : public class_algorithm_finite {
     void   run_default_task_list() final;
     void   run_algorithm() final;
     void   check_convergence() final;
+    void   update_time_step();
+    void   create_hamiltonian_gates();
+    void   create_time_evolution_gates();
     bool   cfg_algorithm_is_on() final;
     long   cfg_chi_lim_max() final;
     size_t cfg_print_freq() final;
