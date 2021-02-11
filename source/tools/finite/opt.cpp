@@ -14,13 +14,13 @@
 #include <tools/finite/opt-internal/ceres_subspace_functor.h>
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt-internal/report.h>
-#include <tools/finite/opt_state.h>
+#include <tools/finite/opt_mps.h>
 
-tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
+tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
                                                                      OptSpace optSpace, OptType optType) {
     std::vector<size_t> sites          = tensors.active_sites;
     double              energy_reduced = tools::finite::measure::energy_reduced(tensors);
-    opt_state           initial_tensor("current state", tensors.get_multisite_mps(), sites,
+    opt_mps             initial_tensor("current state", tensors.get_multisite_mps(), sites,
                              tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
                              energy_reduced,                                           // Energy reduced for full system
                              tools::finite::measure::energy_variance(tensors),
@@ -30,7 +30,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     return find_excited_state(tensors, initial_tensor, status, optMode, optSpace, optType);
 }
 
-tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_state &initial_tensor,
+tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_tensor,
                                                                      const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
                                                                      OptType optType) {
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
@@ -122,12 +122,14 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
     /* clang-format on */
 
     initial_tensor.validate_candidate();
-    opt_state result;
+    opt_mps result;
     switch(optSpace) {
         /* clang-format off */
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
+        case OptSpace::POWER_ENERGY:        result = internal::arpack_energy_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
+        case OptSpace::POWER_VARIANCE:      result = internal::arpack_variance_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
     tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
@@ -143,6 +145,7 @@ tools::finite::opt::opt_state tools::finite::opt::find_excited_state(const class
 Eigen::Tensor<std::complex<double>, 3> tools::finite::opt::find_ground_state(const class_tensors_finite &tensors, StateRitz ritz) {
     return internal::ground_state_optimization(tensors, ritz);
 }
+
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
     if(std::abs(x) >= window)

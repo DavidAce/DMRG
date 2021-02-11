@@ -2,7 +2,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/report.h>
-#include <tools/finite/opt_state.h>
+#include <tools/finite/opt_mps.h>
 
 /* clang-format off */
 void tools::finite::opt::internal::reports::print_bfgs_report(){
@@ -101,7 +101,7 @@ void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & d
     if (tools::log->level() > spdlog::level::debug) return;
     bfgs_log.push_back({description, size,space, energy, variance, overlap, norm, iter, counter, time});
 }
-void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_state & tensor, std::optional<long> space){
+void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_mps & tensor, std::optional<long> space){
     if (tools::log->level() > spdlog::level::debug) return;
     if(not space) space = tensor.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}",mode,tensor.get_name(),tag);

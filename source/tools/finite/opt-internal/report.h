@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 namespace tools::finite::opt {
-    class opt_state;
+    class opt_mps;
 }
 
 namespace tools::finite::opt::internal::reports {
@@ -32,7 +32,7 @@ namespace tools::finite::opt::internal::reports {
     extern void print_eigs_report();
     extern void bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap, double norm, size_t iter,
                                size_t counter, double time);
-    extern void bfgs_add_entry(const std::string &mode, const std::string &tag, const opt_state &tensor, std::optional<long> space = std::nullopt);
+    extern void bfgs_add_entry(const std::string &mode, const std::string &tag, const opt_mps &tensor, std::optional<long> space = std::nullopt);
     extern void time_add_dir_entry();
     extern void time_add_sub_entry();
     extern void eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, size_t steps);
