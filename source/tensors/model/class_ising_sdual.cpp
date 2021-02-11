@@ -257,17 +257,20 @@ bool class_ising_sdual::is_perturbed() const { return h5tb.param.J_pert != 0.0 o
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
+    // Next-nearest neighbor terms are counted as 3-body terms because 3 sites are involved: the skipped site counts
+
     if(nbody_terms.empty()) return MPO();
-    double J1 = 0, J2 = 0;
+    double J1 = 0, J2 = 0, J3 = 0;
     for(const auto &n : nbody_terms) {
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
+        if(n == 3) J3 = 1.0;
     }
     Eigen::Tensor<Scalar, 4> MPO_nbody                                           = MPO();
     MPO_nbody.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J1 * get_field() * sx - e_reduced * id);
     MPO_nbody.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J2 * get_coupling() * sz);
     MPO_nbody.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J2 * (h5tb.param.lambda * h5tb.param.h_avrg) * sx);
-    MPO_nbody.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J2 * (h5tb.param.lambda * h5tb.param.J_avrg) * sz);
+    MPO_nbody.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J3 * (h5tb.param.lambda * h5tb.param.J_avrg) * sz);
     return MPO_nbody;
 }
 
