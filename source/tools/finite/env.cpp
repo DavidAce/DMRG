@@ -28,7 +28,6 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
     //    if(alpha < 1e-12) return;
     if(state.active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
-    state.clear_cache();
     std::vector<size_t> pos_expanded;
 
     if(not alpha){
@@ -37,24 +36,30 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
         auto posL = state.active_sites.front();
         auto posR = state.active_sites.back();
         // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
-        if(posL > 0 and posL < state.get_length<size_t>() and state.get_direction() == 1) {
+        if(posL > 0 and posL < state.get_length<size_t>()) {
             auto &mpsL = state.get_mps_site(posL - 1); // The site to the left
-            if(mpsL.get_label() == "A" or mpsL.get_label() == "AC") pos_expanded = {posL - 1, posL};
+            if(mpsL.get_label() == "A" or mpsL.get_label() == "AC"){
+                pos_expanded.emplace_back(posL - 1);
+                pos_expanded.emplace_back(posL);
+            }
         }
         // Construct PL = alpha * eneL(i+1) * mps(i+1) * mpo(i+1)
-        if(posR < state.get_length<size_t>() - 1 and state.get_direction() == -1) {
+        if(posR < state.get_length<size_t>() - 1) {
             auto &mpsR = state.get_mps_site(posR + 1); // The the site to the right
-            if(mpsR.get_label() == "B") pos_expanded =  {posR, posR + 1};
+            if(mpsR.get_label() == "B"){
+                pos_expanded.emplace_back(posR);
+                pos_expanded.emplace_back(posR + 1);
+            }
         }
         return pos_expanded;
     }
-
     using Scalar = class_state_finite::Scalar;
     // Set up the SVD
     svd::solver svd;
     svd.setThreshold(1e-12, svd_threshold);
     svd.use_lapacke = true;
     svd.use_bdc     = false;
+    state.clear_cache();
 
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     {
@@ -64,20 +69,21 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
             auto &mpsL = state.get_mps_site(posL - 1); // The site to the left
             auto &mpsR = state.get_mps_site(posL);     // The site to the right
             if(mpsL.get_label() == "A" or mpsL.get_label() == "AC") {
-                pos_expanded   = {posL - 1, posL};
+                pos_expanded.emplace_back(posL - 1);
+                pos_expanded.emplace_back(posL);
                 auto  chiL_old = mpsL.get_chiR();
                 auto  dimL_old = mpsL.dimensions();
                 auto  dimR_old = mpsR.dimensions();
                 auto &mpoL     = model.get_mpo(posL - 1);
                 auto &eneL     = edges.get_eneL(posL - 1);
-                auto &varL     = edges.get_varL(posL - 1);
+//                auto &varL     = edges.get_varL(posL - 1);
 
                 mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
-                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
-                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha.value());
-                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
-//                Eigen::Tensor<Scalar, 3> PL      = varL.get_expansion_term(mpsL, mpoL, alpha);
-//                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
+//                Eigen::Tensor<Scalar, 3> PL = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
                 Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
@@ -105,7 +111,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                         M_tmp = mpsR.get_M();
                     else if(mpsR.get_label() == "A" and posL < state.get_length<size_t>() - 1) {
                         auto &LR = state.get_mps_site(posL + 1).get_L();
-                        M_tmp    = mpsR.get_M().contract(LR, Textra::idx({2}, {0}));
+                        M_tmp    = mpsR.get_M().contract(Textra::asDiagonal(LR), Textra::idx({2}, {0}));
                     } else
                         throw std::logic_error(fmt::format("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
                                                            mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
@@ -116,7 +122,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                     if constexpr(settings::debug) {
                         auto   mpsR_final = state.get_multisite_mps({mpsR.get_position()});
                         double norm_new   = Textra::norm(mpsR_final.contract(mpsR_final.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
-                        tools::log->debug("Normalized expanded mps: {:.16f} -> {:.16f}", norm_old, norm_new);
+                        tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}",mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
                     }
                 }
 
@@ -134,7 +140,6 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
             }
         }
     }
-
     {
         auto posR = state.active_sites.back();
         // Construct PL = alpha * eneL(i+1) * mps(i+1) * mpo(i+1)
@@ -142,19 +147,21 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
             auto &mpsR = state.get_mps_site(posR + 1); // The the site to the right
             auto &mpsL = state.get_mps_site(posR);     // The site to the left
             if(mpsR.get_label() == "B") {
-                pos_expanded   = {posR, posR + 1};
+                pos_expanded.emplace_back(posR);
+                pos_expanded.emplace_back(posR + 1);
                 auto  chiR_old = mpsR.get_chiL();
                 auto  dimR_old = mpsR.dimensions();
                 auto  dimL_old = mpsL.dimensions();
                 auto &mpoR     = model.get_mpo(posR + 1);
                 auto &eneR     = edges.get_eneR(posR + 1);
-                auto &varR     = edges.get_varR(posR + 1);
+//                auto &varR     = edges.get_varR(posR + 1);
 
                 mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
-                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
-                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha.value());
-                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
-//                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+//                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
+//                Eigen::Tensor<Scalar, 3> PR = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
                 Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
@@ -182,9 +189,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                     else if(mpsL.get_label() == "B" and posR > 0) {
                         auto &mpsLL = state.get_mps_site(posR - 1);
                         if(mpsLL.isCenter())
-                            M_tmp = mpsLL.get_LC().contract(mpsL.get_M(), Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+                            M_tmp = Textra::asDiagonal(mpsLL.get_LC()).contract(mpsL.get_M(), Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
                         else
-                            M_tmp = mpsLL.get_L().contract(mpsL.get_M(), Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+                            M_tmp = Textra::asDiagonal(mpsLL.get_L()).contract(mpsL.get_M(), Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
                     } else
                         throw std::logic_error(fmt::format("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
                                                            mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
@@ -195,7 +202,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                     if constexpr(settings::debug) {
                         auto   mpsL_final = state.get_multisite_mps({mpsL.get_position()});
                         double norm_new   = Textra::norm(mpsL_final.contract(mpsL_final.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
-                        tools::log->debug("Normalized expanded mps: {:.16f} -> {:.16f}", norm_old, norm_new);
+                        tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}",mpsL.get_label(), mpsL.get_position(), norm_old, norm_new);
                     }
                 }
 

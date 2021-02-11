@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <vector>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
