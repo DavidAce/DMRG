@@ -46,6 +46,7 @@ int eig::solver::zheevd(const cplx *matrix, size_type L) {
         result.meta.rows           = L;
         result.meta.cols           = L;
         result.meta.nev            = L;
+        result.meta.nev_converged  = L;
         result.meta.n              = L;
         result.meta.form           = Form::SYMM;
         result.meta.type           = Type::CPLX;
