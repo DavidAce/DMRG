@@ -11,7 +11,7 @@ namespace eig::view {
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
     template<typename Scalar>
-    Eigen::Map<VectorType<Scalar>> get_eigvals(eig::solution &result) {
+    Eigen::Map<VectorType<Scalar>> get_eigvals(eig::solution &result, bool converged_only = true) {
         if(not result.meta.eigvals_found)
             throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found));
         if constexpr(std::is_same_v<Scalar, real>)
@@ -19,16 +19,17 @@ namespace eig::view {
 
         auto &eigvals = result.get_eigvals<Scalar>();
         if(eigvals.empty()) throw std::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");
-        return Eigen::Map<VectorType<Scalar>>(eigvals.data(), static_cast<long>(eigvals.size()));
+        long size = converged_only ? result.meta.nev_converged : eigvals.size();
+        return Eigen::Map<VectorType<Scalar>>(eigvals.data(), size);
     }
 
     template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
     Scalar get_eigval(eig::solution &result, integral_type num = 0) {
-        return get_eigvals<Scalar>(result)(static_cast<long>(num));
+        return get_eigvals<Scalar>(result,false)(static_cast<long>(num));
     }
 
     template<typename Scalar>
-    Eigen::Map<MatrixType<Scalar>> get_eigvecs(eig::solution &result, Side side = Side::R) {
+    Eigen::Map<MatrixType<Scalar>> get_eigvecs(eig::solution &result, Side side = Side::R, bool converged_only = true) {
         if(side == Side::R and not result.meta.eigvecsR_found)
             throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvecs R found [{}]", result.meta.eigvecsR_found));
         else if(side == Side::L and not result.meta.eigvecsL_found)
@@ -40,15 +41,15 @@ namespace eig::view {
             if(not result.eigvecs_are_real()) throw std::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
         auto &eigvecs = result.get_eigvecs<Scalar>(side);
         if(eigvecs.empty()) throw std::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
+        if(result.meta.rows * result.meta.cols != static_cast<eig::size_type>(eigvecs.size())) throw std::logic_error("Size mismatch in results");
         auto rows = result.meta.rows;
-        auto cols = result.meta.cols;
-        if(rows * cols != static_cast<eig::size_type>(eigvecs.size())) throw std::logic_error("Size mismatch in results");
-        return Eigen::Map<MatrixType<Scalar>>(eigvecs.data(), result.meta.rows, result.meta.cols);
+        auto cols = converged_only ? result.meta.nev_converged : result.meta.cols;
+        return Eigen::Map<MatrixType<Scalar>>(eigvecs.data(), rows, cols);
     }
 
     template<typename Scalar>
     Eigen::Map<VectorType<Scalar>> get_eigvec(eig::solution &result, long num = 0, Side side = Side::R) {
-        auto eigvecmap = get_eigvecs<Scalar>(result, side).col(num);
+        auto eigvecmap = get_eigvecs<Scalar>(result, side, false).col(num);
         return Eigen::Map<VectorType<Scalar>>(eigvecmap.data(), eigvecmap.size());
     }
 
