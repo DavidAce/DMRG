@@ -311,7 +311,9 @@ void class_flbit::create_time_points() {
 
 void class_flbit::create_hamiltonian_gates() {
     tools::log->info("Creating Hamiltonian gates");
-
+    ham_gates_1body.clear();
+    ham_gates_2body.clear();
+    ham_gates_3body.clear();
     // Create the hamiltonian gates with n-site terms
     auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
