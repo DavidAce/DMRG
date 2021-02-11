@@ -46,6 +46,7 @@ template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, size_t levelZeroToFive);
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<size_t> levelZeroToFive);
 template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<spdlog::level::level_enum> levelZeroToFive);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, spdlog::level::level_enum levelZeroToFive);
 
 size_t tools::Logger::getLogLevel(const std::shared_ptr<spdlog::logger> &other_log) {
     if(other_log != nullptr)
