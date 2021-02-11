@@ -206,8 +206,13 @@ namespace Textra {
     template<typename Derived>
     using is_plainObject = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived>>, std::decay_t<Derived>>;
 
-    template<typename Derived, auto rank>
-    Eigen::Tensor<typename Derived::Scalar, rank> TensorCast(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims) {
+    template<typename Derived, typename T, auto rank>
+    Eigen::Tensor<typename Derived::Scalar, rank> TensorCast(const Eigen::EigenBase<Derived> &matrix, const std::array<T,rank> &dims) {
+        return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+    }
+
+    template<typename Derived, typename T, auto rank>
+    Eigen::Tensor<typename Derived::Scalar, rank> TensorCast(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<T,rank> &dims) {
         return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
     }
 
