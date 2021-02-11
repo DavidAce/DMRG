@@ -15,6 +15,9 @@ eig::solver::solver() {
 eig::solver::solver(size_t logLevel) : solver() { tools::Logger::setLogLevel(eig::log, logLevel); }
 eig::solver::solver(std::shared_ptr<spdlog::logger> logger) { eig::log = std::move(logger); }
 
+void eig::solver::setLogLevel(spdlog::level::level_enum level) const { tools::Logger::setLogLevel(eig::log, level); }
+void eig::solver::setLogLevel(size_t level) const { tools::Logger::setLogLevel(eig::log, level); }
+
 template<typename Scalar>
 void eig::solver::subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev)
 // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor, i.e., if v
