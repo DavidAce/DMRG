@@ -52,6 +52,7 @@ class class_mpo_site {
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO2() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 4> &      MPO2();
+    [[nodiscard]] Eigen::Tensor<Scalar, 4>        MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const;
     [[nodiscard]] size_t                          get_position() const;
     [[nodiscard]] std::vector<std::string>        get_parameter_names() const;
     [[nodiscard]] std::vector<std::any>           get_parameter_values() const;

@@ -64,6 +64,18 @@ Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO2() {
     }
 }
 
+Eigen::Tensor<Scalar, 4> class_mpo_site::MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const {
+    if(nbody_terms.empty()) return MPO2();
+    auto mpo1 = MPO_nbody_view(nbody_terms);
+    auto dim0 = mpo1.dimension(0)*mpo1.dimension(0);
+    auto dim1 = mpo1.dimension(1)*mpo1.dimension(1);
+    auto dim2 = mpo1.dimension(2);
+    auto dim3 = mpo1.dimension(3);
+    return mpo1.contract(mpo1, Textra::idx({3},{2})).shuffle(Textra::array6{0,3,1,4,2,5}).reshape(Textra::array4{dim0,dim1,dim2,dim3});
+}
+
+
+
 bool class_mpo_site::is_real() const { return Textra::isReal(MPO(), "MPO"); }
 
 bool class_mpo_site::has_nan() const {
