@@ -20,7 +20,7 @@ enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
-enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT };
+enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT, POWER_ENERGY, POWER_VARIANCE };
 enum class OptWhen {
     ALWAYS,
     NEVER,
@@ -294,6 +294,8 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == OptSpace::SUBSPACE_ONLY)                            return "SUBSPACE_ONLY";
         if(item == OptSpace::SUBSPACE_AND_DIRECT)                      return "SUBSPACE_AND_DIRECT";
         if(item == OptSpace::DIRECT)                                   return "DIRECT";
+        if(item == OptSpace::POWER_ENERGY)                             return "POWER_ENERGY";
+        if(item == OptSpace::POWER_VARIANCE)                           return "POWER_VARIANCE";
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
@@ -492,6 +494,8 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "SUBSPACE_ONLY")                         return OptSpace::SUBSPACE_ONLY;
         if(item == "SUBSPACE_AND_DIRECT")                   return OptSpace::SUBSPACE_AND_DIRECT;
         if(item == "DIRECT")                                return OptSpace::DIRECT;
+        if(item == "POWER_ENERGY")                          return OptSpace::POWER_ENERGY;
+        if(item == "POWER_VARIANCE")                        return OptSpace::POWER_VARIANCE;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "ALWAYS")                                return OptWhen::ALWAYS;
