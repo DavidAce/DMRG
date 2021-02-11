@@ -226,10 +226,11 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
         eig::log->trace("- {:<30} = {}" ,"cols",           result.meta.cols);
         eig::log->trace("- {:<30} = {}" ,"counter",        result.meta.counter);
         /* clang-format on */
-        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
-        assert(result.meta.eigvals_found and "Eigenvalues were not found");
-        assert(solver.EigenvectorsFound() and "Eigenvectors were not found");
-
+//        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
+//        assert(result.meta.eigvals_found and "Eigenvalues were not found");
+        if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
+        if(not result.meta.eigvals_found) eig::log->warn("Eigenvalues were not found");
+        if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
     } else {
         eig::log->trace("Finding eigenvalues");
         solver.FindEigenvalues();
@@ -258,8 +259,10 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
         eig::log->trace("- {:<30} = {}" ,"counter",        result.meta.counter);
         /* clang-format on */
 
-        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
-        assert(result.meta.eigvals_found and "Eigenvalues were not found");
+//        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
+//        assert(result.meta.eigvals_found and "Eigenvalues were not found");
+        if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
+        if(not result.meta.eigvals_found) eig::log->warn("Eigenvalues were not found");
     }
 }
 
