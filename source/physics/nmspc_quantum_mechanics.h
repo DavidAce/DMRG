@@ -58,6 +58,7 @@ namespace qm {
         extern std::vector<Eigen::Tensor<Scalar,2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
         extern std::vector<Eigen::Tensor<Scalar,2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
         extern std::vector<Eigen::Tensor<Scalar,2>> compute_G(cplx a, size_t susuki_trotter_order, const Eigen::Tensor<Scalar,2> &h_evn, const Eigen::Tensor<Scalar,2> &h_odd);
+        extern std::pair<std::vector<qm::Gate>,std::vector<qm::Gate>> get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite);
     }
 
     namespace lbit{
