@@ -50,12 +50,16 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     // Do this next bit carefully to avoid negative variance when numbers are very small
     ene  = vHv / vv;
     ene2 = vH2v / vv;
-    if(std::real(ene2) < 0.0) tools::log->debug("Counter = {}. ene2 is negative:  {:.16f} + i {:.16f}", counter, std::real(ene2), std::imag(ene2));
+    if(std::real(ene2) < 0.0)
+        tools::log->debug("Counter = {}. ene2 is negative:  {:.16f} + i {:.16f} | ene {:.16f} + i {:.16f} | norm {:.16f}",
+                          counter, std::real(ene2), std::imag(ene2),std::real(ene), std::imag(ene), norm);
     ene2 = std::real(ene2) < 0.0 ? std::abs(ene2) : std::real(ene2);
     ene2 = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
 
     var = ene2 - ene * ene;
-    if(std::real(var) < 0.0) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}", counter, std::real(var), std::imag(var));
+    if(std::real(var) < 0.0)
+        tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f} | ene {:.16f} + i {:.16f} | norm {:.16f}",
+                          counter, std::real(var), std::imag(var),std::real(ene), std::imag(ene), norm);
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
