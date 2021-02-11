@@ -18,6 +18,7 @@ class class_model_finite {
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo         = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham         = std::nullopt;
         std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo_squared = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham_squared = std::nullopt;
     };
     mutable Cache                         cache;
     std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
@@ -66,8 +67,10 @@ class class_model_finite {
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 
     std::array<long, 4>             active_dimensions_squared() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
+    const Eigen::Tensor<Scalar, 2> &get_multisite_ham_squared() const;
     void                            clear_cache() const;
 
     std::vector<size_t> get_active_ids() const;
