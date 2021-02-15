@@ -2,14 +2,11 @@
 // Created by david on 2019-02-01.
 //
 
-//
-// Created by david on 2017-11-12.
-//
-
 #include "measure.h"
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_tensor_omp.h>
+#include <math/linalg/tensor.h>
 #include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/class_tensors_finite.h>
@@ -242,6 +239,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
     }
     return renyi_q;
 }
+
 
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
     if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
