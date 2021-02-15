@@ -422,13 +422,14 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
         // Generate
         if(layer.empty()) continue;
         size_t gate_size = layer.front().pos.size();
-        size_t pos_max   = layer.back().pos.back();
+        size_t pos_max   = std::max(layer.front().pos.back(),layer.back().pos.back());
         auto gate_sequence = qm::get_gate_sequence(layer);
         if(deb and net.empty()){
+            auto str_tau = fmt::format("[{}]", pos_tau);
             empty_layer = fmt::format("{0:^{1}}"," ", tw + pos_max*(uw-op) + op);
             net.emplace_back(empty_layer);
             net.back().replace(0,tw,"tau  :");
-            net.back().replace(tw + pos_tau * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_tau)));
+            net.back().replace(tw + pos_tau * (uw-op), str_tau.size(), str_tau);
             log.emplace_back(fmt::format("insert tau[{}] now{}", pos_tau, g.pos));
         }
         for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
@@ -490,10 +491,13 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
         auto num_traces = g.pos.size();
         result = g.connect_under(sig_gate).trace();
         result *= std::pow(0.5, num_traces); // Normalize
-        if(deb) net.emplace_back(empty_layer);
-        if(deb) net.back().replace(0,tw,"sig  :");
-        if(deb) net.back().replace(tw + pos_sig * (uw-op), hw, fmt::format("[{1:^{0}}]",hw-2, fmt::format("{}",pos_sig)));
-        if(deb) log.emplace_back(fmt::format("insert sigma[{0}] now{1} trace{1} result = {2:.1f}{3:+.1f}i", pos_sig, g.pos,result.real(),result.imag()));
+        if(deb){
+            auto str_sig = fmt::format("[{}]", pos_sig);
+            net.emplace_back(empty_layer);
+            net.back().replace(0,tw,"sig  :");
+            net.back().replace(tw + pos_sig * (uw-op), str_sig.size(), str_sig );
+            log.emplace_back(fmt::format("insert sigma[{0}] now{1} trace{1} result = {2:.1f}{3:+.1f}i", pos_sig, g.pos,result.real(),result.imag()));
+        }
     }
 
 
