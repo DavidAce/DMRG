@@ -25,6 +25,33 @@ namespace stat{
     }
 
     template<typename ContainerType>
+    typename ContainerType::value_type median(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        try {
+            check_bounds(X, start_point, end_point);
+        } catch(std::exception &err) { throw std::range_error("mean: " + std::string(err.what())); }
+        if(not start_point.has_value()) start_point = 0;
+        if(not end_point.has_value()) end_point = X.size();
+        if(end_point.value() == start_point.value()) return 0.0;
+        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
+
+        auto x_it_mid   = X.begin();
+        auto n          = static_cast<double>(end_point.value() - start_point.value());
+        std::advance(x_it_mid, n/2);
+
+        // Find the middle point between start and end
+        if(n > 0 and num::mod<size_t>(static_cast<size_t>(n),2) == 0){
+            // Even number of elements, take mean between middle elements
+            auto a = *x_it_mid;
+            std::advance(x_it_mid, -1);
+            auto b = *x_it_mid;
+            return 0.5*(a+b);
+        }else{
+            // odd number of elements
+            return *x_it_mid;
+        }
+    }
+
+    template<typename ContainerType>
     typename ContainerType::value_type mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         try {
             check_bounds(X, start_point, end_point);
