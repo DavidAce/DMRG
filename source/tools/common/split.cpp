@@ -166,7 +166,7 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         }
     }
     else if(positions.size() == positions_right.size()) {
-        if constexpr(settings::debug_split) tools::log->trace("Option 2");
+        if constexpr(settings::debug_split) tools::log->trace("Option 2 - sites {} become B's", positions);
         tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic();
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_threshold);
         tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->toc();
@@ -175,7 +175,7 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         auto & S_stash = mps.get_S_stash();
         auto pos = mps.get_position<long>();
         if(pos == center_position + 1 and S_stash){ // The stash in S becomes the LC for the site on the left
-            mps.stash_C(S_stash->data, S_stash->error,center_position);
+            mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
             S_stash.reset();
         }
     }
