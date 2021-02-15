@@ -32,17 +32,24 @@ namespace num {
     /*! \brief Python-style range generator, i.e. not-including "last"
      *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6] </code>
      */
-    template<typename T = int, typename T1, typename T2>
-    std::vector<T> range(T1 first, T2 last, T step = static_cast<T>(1)) {
+
+    namespace internal{
+        template<typename TA,typename TB>
+        using int_or_dbl =
+        typename std::conditional<std::is_floating_point_v<TA> or std::is_floating_point_v<TB>, double, int>::type;
+    }
+
+    template<typename T = int, typename T1, typename T2, typename T3 = internal::int_or_dbl<T1,T2>>
+    std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
-        if constexpr(std::is_signed_v<T>){
-            if(static_cast<T>(first) > static_cast<T>(last) and step > 0) return range(first, last, -step);
-            if(static_cast<T>(first) < static_cast<T>(last) and step < 0) return range(first, last, -step);
+        if constexpr(std::is_signed_v<T3>){
+            if(static_cast<T3>(first) > static_cast<T3>(last) and step > 0) return range<T>(first, last, -step);
+            if(static_cast<T3>(first) < static_cast<T3>(last) and step < 0) return range<T>(first, last, -step);
         }else{
-            if(static_cast<T>(first) > static_cast<T>(last)) throw std::runtime_error("Range of unsigned type cannot have first > last");
+            if(static_cast<T3>(first) > static_cast<T3>(last)) throw std::runtime_error("Range of unsigned step type cannot have first > last");
         }
-        if(static_cast<T>(first) == static_cast<T>(last)) return {};
-        if(static_cast<T>(first) + step == static_cast<T>(last)) return {static_cast<T>(first)};
+        if(static_cast<T3>(first) == static_cast<T3>(last)) return {};
+        if(static_cast<T3>(first) + step == static_cast<T3>(last)) return std::vector<T>{static_cast<T>(first)};
 
         auto num_steps = static_cast<size_t>(
             std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
@@ -50,7 +57,7 @@ namespace num {
 
         std::vector<T> vec;
         vec.reserve(num_steps);
-        for(T current = first; current < static_cast<T>(last); current += step) vec.emplace_back(current);
+        for(T3 current = static_cast<T3>(first); current < static_cast<T3>(last); current += step) vec.emplace_back(current);
         return vec;
     }
 
