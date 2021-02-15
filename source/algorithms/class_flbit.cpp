@@ -155,6 +155,7 @@ void class_flbit::run_preprocessing() {
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
 
+
     write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
@@ -173,6 +174,7 @@ void class_flbit::run_algorithm() {
         check_convergence();
         print_status_update();
         print_profiling_lap();
+        tools::log->info("Number entropies: {:.8f}",fmt::join(tools::finite::measure::number_entropies(*tensors.state),","));
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
 
@@ -436,21 +438,25 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
     if(storage_reason == StorageReason::MODEL){
-        class_algorithm_finite::write_to_file(storage_reason, lbit_overlap, "lbit_overlap", copy_file);
-        if(h5pp_file->linkExists("/fLBIT/analysis")) return;
-        auto urange = num::range<size_t>(1,4);
-        auto frange = num::range<double>(0,0.8,0.02);
-        auto[cls_avg, sse_avg, curves] = qm::lbit::get_lbit_analysis(urange,frange,tensors.get_length(), 50);
-        h5pp_file->writeDataset(cls_avg,"/fLBIT/analysis/cls_avg");
-        h5pp_file->writeDataset(sse_avg,"/fLBIT/analysis/sse_avg");
-        h5pp_file->writeDataset(curves,"/fLBIT/analysis/curves");
-        h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/cls_avg");
-        h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/sse_avg");
-        h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/curves");
-        h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/cls_avg");
-        h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/sse_avg");
-        h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/curves");
-        exit(0);
+        if(settings::flbit::compute_lbit_length){
+            if(h5pp_file->linkExists("/fLBIT/analysis")) return;
+            lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
+            auto lbit_decay = qm::lbit::get_characteristic_length_scale(lbit_overlap);
+            class_algorithm_finite::write_to_file(storage_reason, lbit_overlap, "lbit_overlap", copy_file);
+            auto urange = num::range<size_t>(1,4);
+            auto frange = num::range<double>(0,0.8,0.02);
+            auto[cls_avg, sse_avg, curves] = qm::lbit::get_lbit_analysis(urange,frange,tensors.get_length(), 50);
+            h5pp_file->writeDataset(cls_avg,"/fLBIT/analysis/cls_avg");
+            h5pp_file->writeDataset(sse_avg,"/fLBIT/analysis/sse_avg");
+            h5pp_file->writeDataset(curves,"/fLBIT/analysis/curves");
+            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/cls_avg");
+            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/sse_avg");
+            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/curves");
+            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/cls_avg");
+            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/sse_avg");
+            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/curves");
+        }
+
     }
 
 }

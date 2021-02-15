@@ -39,6 +39,7 @@ namespace tools::finite::measure{
     [[nodiscard]] extern double entanglement_entropy_midchain               (const class_state_finite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const class_state_finite & state);
     [[nodiscard]] extern std::vector<double> renyi_entropies                (const class_state_finite & state, double q);
+    [[nodiscard]] extern std::vector<double> number_entropies               (class_state_finite & state);
     [[nodiscard]] extern std::array<double,3> spin_components               (const class_state_finite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors              (const class_state_finite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors_active       (const class_state_finite & state);

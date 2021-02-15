@@ -18,9 +18,10 @@ class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
 //    extern void move_center_point_single_site_fast   (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern size_t move_center_point_single_site        (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    extern size_t move_center_point                    (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point_single_site      (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point                  (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern size_t move_center_point_to_pos           (class_state_finite & state, long pos, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    extern size_t move_center_point_to_pos_dir       (class_state_finite & state, long pos, int dir, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern size_t move_center_point_to_edge          (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern size_t move_center_point_to_middle        (class_state_finite & state, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
     extern size_t merge_multisite_tensor             (class_state_finite & state, const Eigen::Tensor<Scalar,3> & multisite_tensor, const std::vector<size_t> & positions, long center_position, long chi_lim, std::optional<double> svd_threshold = std::nullopt, std::optional<LogPolicy> log_policy = std::nullopt);

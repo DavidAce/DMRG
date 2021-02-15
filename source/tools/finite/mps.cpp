@@ -136,6 +136,15 @@ size_t tools::finite::mps::move_center_point_to_pos(class_state_finite &state, l
     return moves;
 }
 
+size_t tools::finite::mps::move_center_point_to_pos_dir(class_state_finite &state, long pos, int dir, long chi_lim, std::optional<double> svd_threshold) {
+    if((state.get_direction() < 0 and pos > state.get_position<long>()) or //
+       (state.get_direction() > 0 and pos < state.get_position<long>()))   //
+        state.flip_direction(); // Turn direction towards new position
+    size_t moves = 0;
+    while(not state.position_is_at(pos,dir)) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    return moves;
+}
+
 size_t tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     size_t moves = 0;
     while(not state.position_is_inward_edge()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
@@ -196,13 +205,13 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
         auto pos_frnt = static_cast<long>(positions.front());
         auto pos_curr = static_cast<size_t>(current_position);
         // Detect right-move
-        if(current_position < center_position){ // This AC will become an A (AC moves to the right
+        if(current_position < center_position and positions.size() == 1){ // This AC will become an A (AC moves to the right
             if(center_position < pos_frnt or center_position > pos_back) // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} into a center position {} that is not in positions {}", current_position, center_position, positions));
             lc_hold = stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), positions.front()};
         }
         // Detect left-move
-        if(current_position > center_position){ // This AC position will become a B (AC moves to the left)
+        if(current_position > center_position and positions.size() == 1){ // This AC position will become a B (AC moves to the left)
             if(center_position < pos_frnt - 1 or current_position > pos_back + 1) // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} to a center position {} in a non-neighboring group of positions {}", current_position, center_position, positions));
             lc_hold = stash<Eigen::Tensor<Scalar,1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
@@ -233,6 +242,7 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
 
         // inject lc_hold if there is any waiting
         if(lc_hold and pos == lc_hold->pos_dst){
+            tools::log->trace("Injecting lc hold pos {} dims {}", pos, lc_hold->data.dimensions());
             mps_src.set_L(lc_hold->data, lc_hold->error);
         }
 
@@ -461,8 +471,9 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         long max_position = static_cast<long>(gate.pos.back());
         long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
         long new_position = std::clamp<long>(tgt_position, min_position, max_position);
+        for(auto pos : gate.pos) tools::log->trace("Pos {} dims {}",pos, state.get_mps_site(pos).dimensions());
         if constexpr (settings::debug_gates)
-            tools::log->trace("pos {} | tgt {} | new {} | from {} - {}", gate.pos, tgt_position, new_position, state.get_position<long>(), new_position);
+            tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(), new_position, state.get_labels());
         tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_threshold, LogPolicy::NORMAL);
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->toc();
     }

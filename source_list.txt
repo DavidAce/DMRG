@@ -56,6 +56,7 @@ source/tools/finite/io/h5dset.cpp
 source/tools/finite/io/h5resume.cpp
 source/tools/finite/io/h5table.cpp
 source/tools/finite/measure.cpp
+source/tools/finite/measure/entropy.cpp
 source/tools/finite/mps-internal/product_states.cpp
 source/tools/finite/mps-internal/entangled_states.cpp
 source/tools/finite/mps.cpp
