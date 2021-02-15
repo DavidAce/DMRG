@@ -135,9 +135,9 @@ const Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() const {
         if constexpr(settings::debug){
             if(L->size() == 0) throw std::runtime_error(fmt::format("class_mps_site::get_L(): L has size 0 at position {} | label {}", get_position(), get_label()));
             if(get_label() != "B" and L->size() != get_chiL())
-                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiL {} at position {} | label {}",L->size(), get_chiL(), get_position(), get_label()));
+                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiL {} at position {} | M dims {} | label {}",L->size(), get_chiL(), get_position(), dimensions(), get_label()));
             if(get_label() == "B" and L->size() != get_chiR())
-                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiR {} at position {} | label {}",L->size(), get_chiR(), get_position(), get_label()));
+                throw std::runtime_error(fmt::format("class_mps_site::get_L(): L.size() {} != chiR {} at position {} | M dims {} | label {}",L->size(), get_chiR(), get_position(), dimensions(), get_label()));
         }
         return L.value();
     } else
@@ -275,6 +275,12 @@ void class_mps_site::merge_mps(const class_mps_site &other) {
                                              get_position(), other.get_position()));
 
     if(not other.has_M()) throw std::runtime_error("class_mps_site::merge_mps(const class_mps_site &): Got mps site with undefined M");
+    if constexpr (settings::debug){
+        if(other.has_L())
+            tools::log->trace("Merging {}[{}] | M dims {} | L dim {}", other.get_label(), other.get_position(), other.dimensions(), other.get_L().dimensions());
+        else
+            tools::log->trace("{}[{}] | M dims {}", other.get_label(), other.get_position(), other.dimensions());
+    }
 
     // We have to copy the bare "M", i.e. not MC, which would include LC.
     set_M(other.get_M_bare());
