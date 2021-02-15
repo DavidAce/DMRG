@@ -62,12 +62,18 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candida
 
 std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_candidate_with_lowest_variance(const std::vector<opt_mps> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site){
     if(candidate_list.empty()) return std::nullopt;
-    auto var = candidate_list.front().get_variance();
+    auto var = std::numeric_limits<double>::infinity();
     size_t idx = 0;
     for(const auto &[i,candidate] : iter::enumerate(candidate_list)) {
         if(not candidate.is_basis_vector) continue;
-        if(candidate.get_variance() < var) idx = i;
+        if(candidate.get_variance() < var and
+           candidate.get_energy_per_site() <= energy_ulim_per_site and
+           candidate.get_energy_per_site() >= energy_llim_per_site){
+            idx = i;
+            var = candidate.get_variance();
+        }
     }
+    if(std::isinf(var)) return std::nullopt;
     return idx;
 }
 
