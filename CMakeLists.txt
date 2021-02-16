@@ -132,15 +132,15 @@ add_library(dmrg-dbg OBJECT
 
 
 
-#target_include_directories(${PROJECT_NAME} PRIVATE source)
 target_include_directories(dmrg-main PRIVATE source)
-target_include_directories(dmrg-eig PRIVATE source)
-target_include_directories(dmrg-arp PRIVATE source)
-target_include_directories(dmrg-opt PRIVATE source)
-target_include_directories(dmrg-dbg PRIVATE source)
-
+target_include_directories(dmrg-eig  PRIVATE source)
+target_include_directories(dmrg-arp  PRIVATE source)
+target_include_directories(dmrg-opt  PRIVATE source)
+target_include_directories(dmrg-dbg  PRIVATE source)
 
 add_library(dmrg-flags INTERFACE)
+target_include_directories(dmrg-flags SYSTEM INTERFACE source)
+
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
@@ -271,17 +271,40 @@ include(cmake-modules/SetupDependenciesFetch.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
 ##################################################################
+### Link all the things!                                       ###
+##################################################################
+if(TARGET openmp::openmp)
+    target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
+endif()
+target_link_libraries(dmrg-arp  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-eig  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-opt  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-main PUBLIC dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PUBLIC  dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-flags)  # Link everything to main project
+#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
+#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
+#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
+#endif()
+
+
+
+##################################################################
 ### Speed up compilation with precompiled headers              ###
 ##################################################################
 if(DMRG_ENABLE_PCH)
     if(COMMAND target_precompile_headers)
         target_precompile_headers(dmrg-flags INTERFACE <string> <vector> <array> <optional> <complex> <memory>)
-        target_precompile_headers(dmrg-eig PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
         target_precompile_headers(dmrg-eig PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
-        target_precompile_headers(dmrg-opt PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
         target_precompile_headers(dmrg-opt PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
-        target_precompile_headers(dmrg-main PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
         target_precompile_headers(dmrg-main PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor> <chrono> <string_view>)
+
+        target_precompile_headers(dmrg-eig PRIVATE  <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-opt PRIVATE  <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-main PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
     endif()
 endif()
 
@@ -291,9 +314,9 @@ endif()
 if(DMRG_ENABLE_CCACHE)
     set(COMPILER_OK ON)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-#        target_compile_options(dmrg-main PRIVATE -Xclang -fno-pch-timestamp)
-#        target_compile_options(dmrg-eig PRIVATE -Xclang -fno-pch-timestamp)
-#        target_compile_options(dmrg-opt PRIVATE -Xclang -fno-pch-timestamp)
+        #        target_compile_options(dmrg-main PRIVATE -Xclang -fno-pch-timestamp)
+        #        target_compile_options(dmrg-eig PRIVATE -Xclang -fno-pch-timestamp)
+        #        target_compile_options(dmrg-opt PRIVATE -Xclang -fno-pch-timestamp)
     endif()
 
     mark_as_advanced(COMPILER_OK)
@@ -319,25 +342,7 @@ if(DMRG_ENABLE_CCACHE)
     endif()
 endif()
 
-##################################################################
-### Link all the things!                                       ###
-##################################################################
-if(TARGET openmp::openmp)
-    target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
-endif()
-target_link_libraries(dmrg-arp  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-eig  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-opt  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-main PUBLIC dmrg-flags)
-target_link_libraries(${PROJECT_NAME} PUBLIC  dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-flags)  # Link everything to main project
-#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
-#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
-#endif()
+
 
 
 # Uninstall target
