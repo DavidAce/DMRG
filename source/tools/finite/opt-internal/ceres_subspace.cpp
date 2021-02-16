@@ -104,7 +104,6 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
     // Handy references
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
-    const auto &edges = *tensors.edges;
 
     opt_mps   optimized_mps;
     auto      candidate_best_idx =
