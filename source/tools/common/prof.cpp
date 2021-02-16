@@ -213,6 +213,7 @@ void tools::common::profile::init_profiling() {
     prof[AlgorithmType::fLBIT].append("t_svd",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          "));
     prof[AlgorithmType::fLBIT].append("t_env",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Environment upd.      "));
     prof[AlgorithmType::fLBIT].append("t_ent",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Entanglement entropy  "));
+    prof[AlgorithmType::fLBIT].append("t_num",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Number entropy        "));
     prof[AlgorithmType::fLBIT].append("t_spn",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Spin components       "));
     prof[AlgorithmType::fLBIT].append("t_ene",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Energy                "));
     prof[AlgorithmType::fLBIT].append("t_var",           std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Variance              "));

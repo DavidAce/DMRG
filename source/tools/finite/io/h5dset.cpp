@@ -163,9 +163,10 @@ void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::stri
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 3), state_prefix + "/renyi_3");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 4), state_prefix + "/renyi_4");
     h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 100), state_prefix + "/renyi_100");
+    h5ppFile.writeDataset(tools::finite::measure::truncation_errors(state)   , state_prefix + "/truncation_errors");
+    if(not tools::finite::measure::number_entropies(state).empty())
+        h5ppFile.writeDataset(tools::finite::measure::number_entropies(state), state_prefix + "/number_entropies");
 
-    tools::log->trace("Storing [{: ^6}]: truncation errors", enum2str(storage_level));
-    h5ppFile.writeDataset(state.get_truncation_errors(), state_prefix + "/truncation_errors");
     tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
