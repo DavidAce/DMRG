@@ -18,6 +18,7 @@ class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h
     : class_algorithm_base(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing algorithm infinite");
     tensors.initialize(settings::model::model_type);
+    tensors.state->set_algorithm(algo_type);
     tools::infinite::debug::check_integrity(tensors);
 }
 

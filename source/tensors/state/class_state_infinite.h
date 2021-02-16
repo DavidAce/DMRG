@@ -40,6 +40,7 @@ class class_state_infinite {
     bool                            swapped = false; /*!< Tracks the swapped state of A and B positions. */
     mutable Cache                   cache;
     std::string                     name;
+    AlgorithmType                   algo = AlgorithmType::ANY;
 
     public:
     mutable state_measure_infinite measurements;
@@ -57,6 +58,9 @@ class class_state_infinite {
 
     void                      set_name(const std::string &statename);
     [[nodiscard]] std::string get_name() const;
+
+    void                        set_algorithm(const AlgorithmType &algo_type);
+    [[nodiscard]] AlgorithmType get_algorithm() const;
 
     void                                    assert_validity() const;
     [[nodiscard]] bool                      is_real() const;

@@ -35,6 +35,8 @@ class_state_finite::class_state_finite(const class_state_finite &other):
     direction(other.direction),
     cache(other.cache),
     tag_normalized_sites(other.tag_normalized_sites),
+    name(other.name),
+    algo(other.algo),
     active_sites(other.active_sites),
     measurements(other.measurements)
 {
@@ -50,8 +52,10 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
         direction            = other.direction;
         cache                = other.cache;
         tag_normalized_sites = other.tag_normalized_sites;
-        active_sites = other.active_sites;
-        measurements = other.measurements;
+        name                 = other.name;
+        algo                 = other.algo;
+        active_sites         = other.active_sites;
+        measurements         = other.measurements;
         mps_sites.clear();
         for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<class_mps_site>(*mps));
     }
@@ -98,6 +102,9 @@ void class_state_finite::initialize(ModelType model_type, size_t model_size, siz
 
 void        class_state_finite::set_name(const std::string &statename) { name = statename; }
 std::string class_state_finite::get_name() const { return name; }
+
+void          class_state_finite::set_algorithm(const AlgorithmType &algo_type) { algo = algo_type; }
+AlgorithmType class_state_finite::get_algorithm() const { return algo; }
 
 void class_state_finite::set_positions() {
     long pos = 0;
@@ -147,31 +154,28 @@ std::vector<std::string> class_state_finite::get_labels() const {
 
 void class_state_finite::flip_direction() { direction *= -1; }
 
-
 std::array<long, 3> class_state_finite::dimensions_1site() const {
     auto pos = get_position<long>();
     if(pos >= 0)
         return get_mps_site(pos).dimensions();
     else
-        return {0,0,0};
+        return {0, 0, 0};
 }
 
 std::array<long, 3> class_state_finite::dimensions_2site() const {
     std::array<long, 3> dimensions{};
-    auto                   pos  = get_position<long>();
-    auto                   posL = std::clamp<long>(pos, 0, get_length<long>() - 2);
-    auto                   posR = std::clamp<long>(pos + 1, 0, get_length<long>() - 1);
-    const auto &           mpsL = get_mps_site(posL);
-    const auto &           mpsR = get_mps_site(posR);
-    dimensions[1]               = mpsL.get_chiL();
-    dimensions[2]               = mpsR.get_chiR();
-    dimensions[0]               = posL != posR ? mpsL.spin_dim() * mpsR.spin_dim() : mpsL.spin_dim();
+    auto                pos  = get_position<long>();
+    auto                posL = std::clamp<long>(pos, 0, get_length<long>() - 2);
+    auto                posR = std::clamp<long>(pos + 1, 0, get_length<long>() - 1);
+    const auto &        mpsL = get_mps_site(posL);
+    const auto &        mpsR = get_mps_site(posR);
+    dimensions[1]            = mpsL.get_chiL();
+    dimensions[2]            = mpsR.get_chiR();
+    dimensions[0]            = posL != posR ? mpsL.spin_dim() * mpsR.spin_dim() : mpsL.spin_dim();
     return dimensions;
 }
 
-std::array<long, 3> class_state_finite::dimensions_nsite() const {
-    return tools::finite::multisite::get_dimensions(*this,active_sites);
-}
+std::array<long, 3> class_state_finite::dimensions_nsite() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long class_state_finite::size_1site() const {
     auto dims = dimensions_1site();
@@ -183,12 +187,10 @@ long class_state_finite::size_2site() const {
     return dims[0] * dims[1] * dims[2];
 }
 
-
 long class_state_finite::size_nsite() const {
     auto dims = dimensions_nsite();
     return dims[0] * dims[1] * dims[2];
 }
-
 
 bool class_state_finite::position_is_the_middle() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2) and direction == 1; }
 bool class_state_finite::position_is_the_middle_any_direction() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2); }
@@ -282,34 +284,28 @@ const class_mps_site &class_state_finite::get_mps_site() const { return get_mps_
 
 class_mps_site &class_state_finite::get_mps_site() { return get_mps_site(get_position()); }
 
-std::vector<class_mps_site> class_state_finite::get_mps_sites(const std::vector<size_t> & sites) const{
+std::vector<class_mps_site> class_state_finite::get_mps_sites(const std::vector<size_t> &sites) const {
     std::vector<class_mps_site> mps_at_sites;
-    for(const auto & site: sites) mps_at_sites.emplace_back(get_mps_site(site));
+    for(const auto &site : sites) mps_at_sites.emplace_back(get_mps_site(site));
     return mps_at_sites;
 }
-void class_state_finite::set_mps_sites(const std::vector<class_mps_site> & new_mps){
-    for(const auto & mps : new_mps)
-        get_mps_site(mps.get_position()) = mps;
+void class_state_finite::set_mps_sites(const std::vector<class_mps_site> &new_mps) {
+    for(const auto &mps : new_mps) get_mps_site(mps.get_position()) = mps;
 }
-
 
 std::array<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
-std::vector<long> class_state_finite::get_spin_dims(const std::vector<size_t> & sites) const{
+std::vector<long> class_state_finite::get_spin_dims(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No sites on which to collect spin dimensions");
     std::vector<long> dims;
     dims.reserve(sites.size());
-    for(const auto & site : sites ){
-        dims.emplace_back(get_mps_site(site).spin_dim());
-    }
+    for(const auto &site : sites) { dims.emplace_back(get_mps_site(site).spin_dim()); }
     return dims;
 }
 
-std::vector<long> class_state_finite::get_spin_dims() const{
-    return get_spin_dims(active_sites);
-}
+std::vector<long> class_state_finite::get_spin_dims() const { return get_spin_dims(active_sites); }
 
 Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
