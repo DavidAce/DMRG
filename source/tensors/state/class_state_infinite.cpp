@@ -32,26 +32,27 @@ class_state_infinite &class_state_infinite::operator=(class_state_infinite &&oth
 
 /* clang-format off */
 class_state_infinite::class_state_infinite(const class_state_infinite &other):
-MPS_A(std::make_unique<class_mps_site>(*other.MPS_A)),
-MPS_B(std::make_unique<class_mps_site>(*other.MPS_B)),
-swapped(other.swapped),
-//chi_lim(other.chi_lim),
-//chi_max(other.chi_max),
-cache(other.cache),
-measurements(other.measurements),
-lowest_recorded_variance(other.lowest_recorded_variance)
-{}
+    MPS_A(std::make_unique<class_mps_site>(*other.MPS_A)),
+    MPS_B(std::make_unique<class_mps_site>(*other.MPS_B)),
+    swapped(other.swapped),
+    cache(other.cache),
+    name(other.name),
+    algo(other.algo),
+    measurements(other.measurements),
+    lowest_recorded_variance(other.lowest_recorded_variance){
+
+}
 /* clang-format on */
 
 class_state_infinite &class_state_infinite::operator=(const class_state_infinite &other) {
     // check for self-assignment
     if(this != &other) {
-        MPS_A   = std::make_unique<class_mps_site>(*other.MPS_A);
-        MPS_B   = std::make_unique<class_mps_site>(*other.MPS_B);
-        swapped = other.swapped;
-        //        chi_lim                  = other.chi_lim;
-        //        chi_max                  = other.chi_max;
+        MPS_A                    = std::make_unique<class_mps_site>(*other.MPS_A);
+        MPS_B                    = std::make_unique<class_mps_site>(*other.MPS_B);
+        swapped                  = other.swapped;
         cache                    = other.cache;
+        name                     = other.name;
+        algo                     = other.algo;
         measurements             = other.measurements;
         lowest_recorded_variance = other.lowest_recorded_variance;
     }
@@ -79,6 +80,9 @@ void class_state_infinite::initialize(ModelType model_type) {
 
 void        class_state_infinite::set_name(const std::string &statename) { name = statename; }
 std::string class_state_infinite::get_name() const { return name; }
+
+void          class_state_infinite::set_algorithm(const AlgorithmType &algo_type) { algo = algo_type; }
+AlgorithmType class_state_infinite::get_algorithm() const { return algo; }
 
 std::pair<size_t, size_t> class_state_infinite::get_positions() { return std::make_pair(MPS_A->get_position(), MPS_B->get_position()); }
 size_t                    class_state_infinite::get_positionA() { return MPS_A->get_position(); }

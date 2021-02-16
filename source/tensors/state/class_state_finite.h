@@ -44,6 +44,7 @@ class class_state_finite {
     mutable Cache             cache;
     mutable std::vector<bool> tag_normalized_sites;
     std::string               name;
+    AlgorithmType             algo = AlgorithmType::ANY;
 
     public:
     std::vector<std::unique_ptr<class_mps_site>> mps_sites;
@@ -62,6 +63,9 @@ class class_state_finite {
 
     void                      set_name(const std::string &statename);
     [[nodiscard]] std::string get_name() const;
+
+    void                        set_algorithm(const AlgorithmType &algo_type);
+    [[nodiscard]] AlgorithmType get_algorithm() const;
 
     const Eigen::Tensor<Scalar, 1> &midchain_bond() const;
     const Eigen::Tensor<Scalar, 1> &current_bond() const;
@@ -102,17 +106,16 @@ class class_state_finite {
     template<typename T = size_t>
     const class_mps_site &get_mps_site(T pos) const;
     template<typename T = size_t>
-    class_mps_site &      get_mps_site(T pos);
-    const class_mps_site &get_mps_site() const;
-    class_mps_site &      get_mps_site();
-    std::vector<class_mps_site> get_mps_sites(const std::vector<size_t> & sites) const;
-    void set_mps_sites(const std::vector<class_mps_site> & new_mps);
+    class_mps_site &            get_mps_site(T pos);
+    const class_mps_site &      get_mps_site() const;
+    class_mps_site &            get_mps_site();
+    std::vector<class_mps_site> get_mps_sites(const std::vector<size_t> &sites) const;
+    void                        set_mps_sites(const std::vector<class_mps_site> &new_mps);
     // For multisite
-    std::array<long, 3>    active_dimensions() const;
-    long                   active_problem_size() const;
-    std::vector<long>      get_spin_dims(const std::vector<size_t> & sites) const;
-    std::vector<long>      get_spin_dims() const;
-
+    std::array<long, 3> active_dimensions() const;
+    long                active_problem_size() const;
+    std::vector<long>   get_spin_dims(const std::vector<size_t> &sites) const;
+    std::vector<long>   get_spin_dims() const;
 
     Eigen::Tensor<Scalar, 3>        get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_mps() const;
