@@ -14,6 +14,9 @@ struct state_measure_finite {
     std::optional<double>                entanglement_entropy_midchain = std::nullopt;
     std::optional<double>                entanglement_entropy_current  = std::nullopt;
     std::optional<std::vector<double>>   entanglement_entropies        = std::nullopt;
+    std::optional<double>                number_entropy_midchain       = std::nullopt;
+    std::optional<double>                number_entropy_current        = std::nullopt;
+    std::optional<std::vector<double>>   number_entropies              = std::nullopt;
     std::optional<std::vector<double>>   renyi_2                       = std::nullopt;
     std::optional<std::vector<double>>   renyi_3                       = std::nullopt;
     std::optional<std::vector<double>>   renyi_4                       = std::nullopt;

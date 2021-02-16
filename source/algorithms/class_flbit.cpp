@@ -174,7 +174,6 @@ void class_flbit::run_algorithm() {
         check_convergence();
         print_status_update();
         print_profiling_lap();
-        tools::log->info("Number entropies: {:.8f}",fmt::join(tools::finite::measure::number_entropies(*tensors.state),","));
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
 

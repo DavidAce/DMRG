@@ -41,6 +41,9 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
     state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
     state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
     state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
+    state.measurements.number_entropy_current        = measure::number_entropy_current(state);
+    state.measurements.number_entropy_midchain       = measure::number_entropy_midchain(state);
+    state.measurements.number_entropies              = measure::number_entropies(state);
     state.measurements.renyi_2                       = measure::renyi_entropies(state, 2);
     state.measurements.renyi_3                       = measure::renyi_entropies(state, 3);
     state.measurements.renyi_4                       = measure::renyi_entropies(state, 4);
@@ -106,7 +109,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
 }
 
 long tools::finite::measure::bond_dimension_current(const class_state_finite &state) {
-    if(state.measurements.bond_dimension_current) { return state.measurements.bond_dimension_current.value(); }
+    if(state.measurements.bond_dimension_current) return state.measurements.bond_dimension_current.value();
     if(state.has_center_point())
         state.measurements.bond_dimension_current = state.current_bond().dimension(0);
     else
@@ -115,13 +118,13 @@ long tools::finite::measure::bond_dimension_current(const class_state_finite &st
 }
 
 long tools::finite::measure::bond_dimension_midchain(const class_state_finite &state) {
-    if(state.measurements.bond_dimension_midchain) { return state.measurements.bond_dimension_midchain.value(); }
+    if(state.measurements.bond_dimension_midchain) return state.measurements.bond_dimension_midchain.value();
     state.measurements.bond_dimension_midchain = state.midchain_bond().dimension(0);
     return state.measurements.bond_dimension_midchain.value();
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions(const class_state_finite &state) {
-    if(state.measurements.bond_dimensions) { return state.measurements.bond_dimensions.value(); }
+    if(state.measurements.bond_dimensions) return state.measurements.bond_dimensions.value();
     std::vector<long> bond_dimensions;
     bond_dimensions.reserve(state.get_length() + 1);
     if(not state.has_center_point()) bond_dimensions.emplace_back(state.mps_sites.front()->get_chiL());
@@ -140,10 +143,10 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_sta
         bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
         if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
     }
-    if(state.active_sites.size() > 1 ) {
+    if(state.active_sites.size() > 1) {
         bond_dimensions.pop_back();
         bond_dimensions.erase(bond_dimensions.begin());
-    }else if(state.get_direction() == 1 )
+    } else if(state.get_direction() == 1)
         bond_dimensions.pop_back();
     else
         bond_dimensions.erase(bond_dimensions.begin());
@@ -151,7 +154,7 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const class_sta
 }
 
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropy_current) { return state.measurements.entanglement_entropy_current.value(); }
+    if(state.measurements.entanglement_entropy_current) return state.measurements.entanglement_entropy_current.value();
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     if(state.has_center_point()) {
         auto &                   LC                     = state.current_bond();
@@ -164,7 +167,7 @@ double tools::finite::measure::entanglement_entropy_current(const class_state_fi
 }
 
 double tools::finite::measure::entanglement_entropy_midchain(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropy_midchain) { return state.measurements.entanglement_entropy_midchain.value(); }
+    if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     auto &                   LC                      = state.midchain_bond();
     Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
@@ -174,7 +177,7 @@ double tools::finite::measure::entanglement_entropy_midchain(const class_state_f
 }
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_state_finite &state) {
-    if(state.measurements.entanglement_entropies) { return state.measurements.entanglement_entropies.value(); }
+    if(state.measurements.entanglement_entropies) return state.measurements.entanglement_entropies.value();
     tools::common::profile::get_default_prof()["t_ent"]->tic();
     std::vector<double> entanglement_entropies;
     entanglement_entropies.reserve(state.get_length() + 1);
@@ -240,9 +243,8 @@ std::vector<double> tools::finite::measure::renyi_entropies(const class_state_fi
     return renyi_q;
 }
 
-
 std::array<double, 3> tools::finite::measure::spin_components(const class_state_finite &state) {
-    if(state.measurements.spin_components) { return state.measurements.spin_components.value(); }
+    if(state.measurements.spin_components) return state.measurements.spin_components.value();
     double spin_x                      = measure::spin_component(state, qm::spinHalf::sx);
     double spin_y                      = measure::spin_component(state, qm::spinHalf::sy);
     double spin_z                      = measure::spin_component(state, qm::spinHalf::sz);

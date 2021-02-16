@@ -26,6 +26,8 @@ class h5pp_table_measurements_finite {
         long                  bond_dimension_maximum          = 0;
         double                entanglement_entropy_midchain   = 0;
         double                entanglement_entropy_current    = 0;
+        double                number_entropy_midchain         = 0;
+        double                number_entropy_current          = 0;
         double                norm                            = 0;
         double                energy                          = 0;
         double                energy_per_site                 = 0;
@@ -57,6 +59,8 @@ class h5pp_table_measurements_finite {
         H5Tinsert(h5_type, "bond_dimension_maximum", HOFFSET(table, bond_dimension_maximum), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "entanglement_entropy_midchain", HOFFSET(table, entanglement_entropy_midchain), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "entanglement_entropy_current", HOFFSET(table, entanglement_entropy_current), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "number_entropy_midchain", HOFFSET(table, number_entropy_midchain), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "number_entropy_current", HOFFSET(table, number_entropy_current), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "norm", HOFFSET(table, norm), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy", HOFFSET(table, energy), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_per_site", HOFFSET(table, energy_per_site), H5T_NATIVE_DOUBLE);
@@ -304,6 +308,7 @@ class h5pp_table_flbit_profiling {
         double   t_svd     = 0;
         double   t_env     = 0;
         double   t_ent     = 0;
+        double   t_num     = 0;
         double   t_spn     = 0;
         double   t_ene     = 0;
         double   t_var     = 0;
@@ -334,6 +339,7 @@ class h5pp_table_flbit_profiling {
         H5Tinsert(h5_type, "t_svd",            HOFFSET(table, t_svd         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_env",            HOFFSET(table, t_env         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_ent",            HOFFSET(table, t_ent         ), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_num",            HOFFSET(table, t_num         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_spn",            HOFFSET(table, t_spn         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_ene",            HOFFSET(table, t_ene         ), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_var",            HOFFSET(table, t_var         ), H5T_NATIVE_DOUBLE);
