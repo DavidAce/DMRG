@@ -14,8 +14,8 @@ class class_lbit : public class_mpo_site {
     private:
     h5tb_lbit h5tb;
 
-    [[nodiscard]] double get_field() const;
-    [[nodiscard]] double get_coupling() const;
+//    [[nodiscard]] double get_field() const;
+//    [[nodiscard]] double get_coupling() const;
 
     public:
     class_lbit(ModelType model_type_, size_t position_);

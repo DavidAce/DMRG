@@ -67,6 +67,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::J1_wdth"                         , model::lbit::J1_wdth);
     dmrg_config.load_parameter("model::lbit::J2_wdth"                         , model::lbit::J2_wdth);
     dmrg_config.load_parameter("model::lbit::J3_wdth"                         , model::lbit::J3_wdth);
+    dmrg_config.load_parameter("model::lbit::J2_base"                         , model::lbit::J2_base);
     dmrg_config.load_parameter("model::lbit::f_mixer"                         , model::lbit::f_mixer);
     dmrg_config.load_parameter("model::lbit::u_layer"                         , model::lbit::u_layer);
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
