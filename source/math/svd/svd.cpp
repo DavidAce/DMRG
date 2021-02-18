@@ -10,6 +10,8 @@
 #include <math/svd.h>
 #include <general/class_tic_toc.h>
 
+#include <iostream>
+
 std::optional<long long> svd::solver::count = 0;
 
 svd::solver::solver(size_t logLevel, bool profile) {
@@ -95,7 +97,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(threshold)
         SVD.setThreshold(threshold.value());
     else
-        threshold = SVD.threshold();
+        throw std::runtime_error("svd threshold has not been set");
+
     bool         use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize.value());
     svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), switchsize.value(), rank_max.value());
     if(use_jacobi) {
