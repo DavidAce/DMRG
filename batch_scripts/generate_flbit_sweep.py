@@ -12,10 +12,10 @@ location    = "input"
 
 
 sites               = [12]
-J                   = [[0.000, 0.200, 0.000]]
+J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.200, 0.040]]
-f                   = [0.01, 0.20, 0.60]
-u                   = [6]
+f                   = [0.01, 0.10, 0.25, 0.4, 0.6]
+u                   = [1,2,4]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 
@@ -48,14 +48,15 @@ for val_L,val_J,val_w, val_f,val_u, init, in  product(sites,J,w, f, u, initial_s
         "model::lbit::J2_wdth"               : str_w2,
         "model::lbit::J3_wdth"               : str_w3,
         "model::lbit::J3_wdth"               : str_w3,
+        "model::lbit::J2_base"               : "5",
         "model::lbit::f_mixer"               : str_f,
         "model::lbit::u_layer"               : str_u,
-        "flbit::chi_lim_max"                 : "256",
+        "flbit::chi_lim_max"                 : "512",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "1e6",
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "150",
+        "flbit::time_num_steps"              : "100",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1
