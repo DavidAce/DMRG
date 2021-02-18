@@ -51,9 +51,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     // Setup the SVD solver
-    double lapacke_svd_threshold  = static_cast<double>(sizeS) * std::numeric_limits<double>::epsilon();
     size_t lapacke_svd_switchsize = 16ul; // Same as Eigen
-    if(threshold) lapacke_svd_threshold = threshold.value();
+    if(not threshold) throw std::runtime_error("svd threshold has not been set");
     if(switchsize) lapacke_svd_switchsize = switchsize.value();
     bool use_jacobi = static_cast<size_t>(sizeS) < lapacke_svd_switchsize;
     if(use_jacobi and rows < cols) {
@@ -78,7 +77,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         t_adj->toc();
         auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
         long max_size         = std::min(S.size(), rank_max.value());
-        rank                  = (S.head(max_size).real().array() >= lapacke_svd_threshold).count();
+        rank                  = (S.head(max_size).real().array() >= threshold.value()).count();
         if(U.rows() != A.rows()) throw std::logic_error(fmt::format("U.rows():{} != A.rows():{}", U.rows(), A.rows()));
         if(VT.cols() != A.cols()) throw std::logic_error(fmt::format("VT.cols():{} != A.cols():{}", VT.cols(), A.cols()));
         return std::make_tuple(VT.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
@@ -118,7 +117,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     if constexpr(std::is_same<Scalar, double>::value) {
         if(use_jacobi) {
-            svd::log->trace("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
             // For this routine we need rows > cols
             t_wrk->tic();
@@ -136,12 +135,12 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_jac->toc();
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
             long max_size = std::min(S.size(), rank_max.value());
-            long rank     = (S.head(max_size).array() >= lapacke_svd_threshold).count();
+            long rank     = (S.head(max_size).array() >= threshold.value()).count();
             U             = A.leftCols(rank);
             VT            = V.adjoint().topRows(rank);
         }
         else if (use_bdc) {
-            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             t_wrk->tic();
             int liwork = std::max(1, 8 * std::min(rowsA, colsA));
             std::vector<Scalar> work(1);
@@ -166,7 +165,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
         }
         else {
-            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             std::vector<Scalar> work(1);
 
             U.resize(rowsU, colsU);
@@ -189,7 +188,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     }
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         if(use_jacobi) {
-            svd::log->trace("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             t_wrk->tic();
             std::vector<Scalar> work(1);
             std::vector<double> rwork(1);
@@ -218,13 +217,13 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_jac->toc();
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
             long max_size = std::min(S.size(), rank_max.value());
-            long rank     = (S.head(max_size).array() >= lapacke_svd_threshold).count();
+            long rank     = (S.head(max_size).array() >= threshold.value()).count();
             U             = A.leftCols(rank);
             VT            = V.adjoint().topRows(rank);
 
         } else if (use_bdc)
         {
-            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             t_wrk->tic();
             int mx = std::max(rowsA,colsA);
             int mn = std::min(rowsA,colsA);
@@ -259,7 +258,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         else
         {
-            svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", lapacke_svd_threshold, lapacke_svd_switchsize, sizeS);
+            svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), lapacke_svd_switchsize, sizeS);
             t_wrk->tic();
             int lrwork = 5 * std::min(rowsA, colsA);
             std::vector<Scalar> work(1);
@@ -293,7 +292,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     svd::log->trace("Truncating singular values");
     if (count) count.value()++;
     long max_size = std::min(S.size(), rank_max.value());
-    long rank     = (S.head(max_size).array() >= lapacke_svd_threshold).count();
+    long rank     = (S.head(max_size).array() >= threshold.value()).count();
     if(rank == S.size()) {
         truncation_error = 0;
     } else {
@@ -309,7 +308,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                        "  S all finite     : {}\n"
                        "  V all finite     : {}\n"
                        "  Lapacke info     : {}\n",
-                       lapacke_svd_threshold, truncation_error, rank, U.leftCols(rank).allFinite(), S.head(rank).allFinite(), VT.topRows(rank).allFinite(),
+                       threshold.value(), truncation_error, rank, U.leftCols(rank).allFinite(), S.head(rank).allFinite(), VT.topRows(rank).allFinite(),
                        info);
         if(not use_lapacke) throw std::runtime_error("Lapacke SVD error:  Wrong results");
     }
