@@ -192,8 +192,8 @@ long class_state_finite::size_nsite() const {
     return dims[0] * dims[1] * dims[2];
 }
 
-bool class_state_finite::position_is_the_middle() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2) and direction == 1; }
-bool class_state_finite::position_is_the_middle_any_direction() const { return get_position() + 1 == static_cast<size_t>(get_length() / 2); }
+bool class_state_finite::position_is_the_middle() const { return get_position<long>() + 1 == get_length<long>() / 2 and direction == 1; }
+bool class_state_finite::position_is_the_middle_any_direction() const { return get_position<long>() + 1 == get_length<long>() / 2; }
 
 bool class_state_finite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) const {
     if(nsite == 1) {

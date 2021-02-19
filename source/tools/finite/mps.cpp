@@ -153,7 +153,7 @@ size_t tools::finite::mps::move_center_point_to_edge(class_state_finite &state, 
 
 size_t tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
     size_t moves = 0;
-    while(not state.position_is_the_middle()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(not state.position_is_the_middle_any_direction()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
     return moves;
 }
 
