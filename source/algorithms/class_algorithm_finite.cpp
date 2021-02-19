@@ -773,10 +773,10 @@ void class_algorithm_finite::print_status_full() {
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
     tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
-    tools::log->info("Entanglement entropy Sₑ (mid)      = {:.5f}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
+    tools::log->info("Entanglement entropy   Sₑ (mid)    = {:.5f}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
     if(algo_type == AlgorithmType::fLBIT){
-        tools::log->info("Number entropies Sₑ                = {:.5f}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
-        tools::log->info("Number entropy Sₑ (mid)            = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
+        tools::log->info("Number entropies Sₙ                = {:.5f}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
+        tools::log->info("Number entropy   Sₙ (mid)          = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
     tools::log->info("Truncation Errors                  = {:.3e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has converged            = {:<}", status.algorithm_has_converged);
