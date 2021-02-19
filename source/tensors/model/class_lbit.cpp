@@ -73,40 +73,53 @@ class_lbit::TableMap class_lbit::get_parameters() const {
 }
 
 void class_lbit::build_mpo()
-/*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
 
- * H = Σ J1_rand n_i  + Σ J2_rand n_{i} n_{i+1} + Σ J3_rand n_{i} n_{i+1} n_{i+2}
- *
- * where n_i = 0.5 * (1 + σ_i^z),  and σ_i^z is the diagonal 2x2 pauli matrix
- *
- *       2            |    I     .     .     .     .     .     .     .   |
- *       |            |    n     .     .     .     .     .     .     .   |
- *   0---H---1    =   |    .     I     .     .     .     .     .     .   |
- *       |            |    .     .     I     .     .     .     .     .   |
- *       3            |    .     .     .     I     .     .     .     .   |
- *                    |    .     .     .     .     I     .     .     .   |
- *                    |    .     n     .     .     .     .     .     .   |
- *                    | J1*n J21*n J22*n J23*n J24*n J25*n  J3*n     I   |
- *
- *
- *  Built from the following finite-state machine ([k] are matrix indices)
- *
- *
- *   I==[0]-------------J1*n(i)--------------[7]==I
- *       |                                    |
- *       |----n(i)---[1]---J2*n(i+1)----------|
- *                    |\                      |
- *                    | I--[2]---J2*n(i+2)----|
- *                    | |                     |
- *                    | I--[3]---J2*n(i+3)----|
- *                    | |                     |
- *                    | I--[4]---J2*n(i+4)----|
- *                    | |                     |
- *                    | I--[5]---J2*n(i+5)- --|
- *                    |                       |
- *                    |--n(i+1)--[6]--J3(n+2)-|
- *
- */
+/*
+      Builds the MPO for the l-bit Hamiltonian as a rank-4 tensor.
+
+      H =   Σ_i  J1(i)   * n_{i}
+          + Σ_ij J2(i,j) * n_{i} * n_{i+j}
+          + Σ_i  J3(i)   * n_{i} * n_{i+1} * n_{i+2}
+
+      MPO:
+
+            2            |    I     .     .     .     .     .     .     .   |
+            |            |    n     .     .     .     .     .     .     .   |
+        0---M---1    =   |    .     I     .     .     .     .     .     .   |
+            |            |    .     .     I     .     .     .     .     .   |
+            3            |    .     .     .     I     .     .     .     .   |
+                         |    .     .     .     .     I     .     .     .   |
+                         |    .     n     .     .     .     .     .     .   |
+                         | J1*n J21*n J22*n J23*n J24*n J25*n  J3*n     I   |
+
+       where
+        *	i,j are site indices
+        *   n = 0.5 * (1 + σ^z),
+        *   σ^z is the diagonal 2x2 pauli matrix
+        *   I is the 2x2 identity matrix
+        *   J1,J2? and J3 are random 1,2 and 3-body couplings
+        *   Jij = J21, J22... couples sites i,j at |i-j| <= 5
+        *   Jij = J2_rand(i,j) = Uniform(-w+m,w+m) * b^-|i-j|, where
+                * b is a suitable base, such as 5
+                * w is the box width of the uniform distribution
+                * m=mean is a constant offset of the distribution
+
+       Built from the following finite-state-machine ([k] are matrix indices)
+
+       I==[0]-------------J1*n(i)--------------[7]==I
+           |                                    |
+           |---n(i)---[1]----J21*n(i+1)---------|
+                       | \                      |
+                       |  I--[2]---J22*n(i+2)---|
+                       |  |                     |
+                       |  I--[3]---J23*n(i+3)---|
+                       |  |                     |
+                       |  I--[4]---J24*n(i+4)---|
+                       |  |                     |
+                       |  I--[5]---J25*n(i+5)---|
+                       |                        |
+                       |-n(i+1)--[6]--J3*n(i+2)-|
+  */
 
 {
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");

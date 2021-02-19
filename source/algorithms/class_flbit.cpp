@@ -7,6 +7,7 @@
 #include <general/nmspc_exceptions.h>
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
+#include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <physics/nmspc_quantum_mechanics.h>
 #include <tensors/model/class_model_finite.h>
@@ -23,7 +24,6 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/print.h>
 #include <unsupported/Eigen/CXX11/Tensor>
-#include <h5pp/h5pp.h>
 
 class_flbit::class_flbit(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
@@ -54,7 +54,7 @@ void class_flbit::resume() {
 
     if(status.algorithm_has_finished) {
         task_list.emplace_back(flbit_task::POST_PRINT_RESULT);
-    }else{
+    } else {
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
         if(name.find("real") != std::string::npos) {
@@ -154,7 +154,6 @@ void class_flbit::run_preprocessing() {
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
-
 
     write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
     tools::common::profile::prof[algo_type]["t_pre"]->toc();
@@ -319,9 +318,27 @@ void class_flbit::create_hamiltonian_gates() {
     auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
     auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
-    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}, tensors.state->get_spin_dims({pos})));
-    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1})));
-    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}, tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
+    for(auto pos : list_1site) {
+        auto range = 1;                                    // Number of site indices
+        auto sites = num::range<size_t>(pos, pos + range); // A list of site indices
+        auto nbody = std::vector<size_t>{1};               // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
+        auto spins = tensors.state->get_spin_dims(sites);  // A list of spin dimensions for each site (should all be 2 for two-level systems)
+        ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
+    }
+    for(auto pos : list_2site) {
+        auto range = std::min<size_t>(6, settings::model::model_size - pos);
+        auto sites = num::range<size_t>(pos, pos + range);
+        auto nbody = std::vector<size_t>{2};
+        auto spins = tensors.state->get_spin_dims(sites);
+        ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
+    for(auto pos : list_3site) {
+        auto range = std::min<size_t>(3, settings::model::model_size - pos);
+        auto sites = num::range<size_t>(pos, pos + range);
+        auto nbody = std::vector<size_t>{3};
+        auto spins = tensors.state->get_spin_dims(sites);
+        ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
     for(const auto &ham : ham_gates_1body)
         if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
     for(const auto &ham : ham_gates_2body)
@@ -342,22 +359,20 @@ void class_flbit::create_time_evolution_gates() {
 void class_flbit::create_lbit_transform_gates() {
     tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
-    for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++ )
+    for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++)
         unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
 
-    lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
+    lbit_overlap    = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
     auto lbit_decay = qm::lbit::get_characteristic_length_scale(lbit_overlap);
 }
 
 void class_flbit::transform_to_real_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer)
-        create_lbit_transform_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
-    for(const auto & layer : unitary_gates_2site_layers)
-        tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
+    for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
 
     tensors.clear_measurements();
     tensors.clear_cache();
@@ -366,36 +381,34 @@ void class_flbit::transform_to_real_basis() {
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace) {
             tools::common::profile::prof[algo_type]["t_dbg"]->tic();
-//            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-//            tools::log->trace("After normalization");
-//            for(const auto &mps : tensors.state->mps_sites)
-//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            //            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
+            //            tools::log->trace("After normalization");
+            //            for(const auto &mps : tensors.state->mps_sites)
+            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() <<
+            //                "]:\n"
+            //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
+            //                          std::endl;
             tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
 
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
-
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
-        for(auto & layer : iter::reverse(unitary_gates_2site_layers))
-            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.chi_lim);
+        for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.chi_lim);
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}",overlap));
+        if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
     }
-
 
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
 void class_flbit::transform_to_lbit_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer)
-        create_lbit_transform_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
     tools::common::profile::prof[algo_type]["t_map"]->tic();
     state_lbit = std::make_unique<class_state_finite>(*tensors.state);
     state_lbit->set_name("state_lbit");
@@ -403,8 +416,7 @@ void class_flbit::transform_to_lbit_basis() {
     tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    for(auto & layer : iter::reverse(unitary_gates_2site_layers))
-        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
+    for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
 
     tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
@@ -412,22 +424,22 @@ void class_flbit::transform_to_lbit_basis() {
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace) {
             Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-//            tools::log->trace("After normalization");
-//            for(const auto &mps : state_lbit->mps_sites)
-//                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
-//                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
+            //            tools::log->trace("After normalization");
+            //            for(const auto &mps : state_lbit->mps_sites)
+            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() <<
+            //                "]:\n"
+            //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
+            //                          std::endl;
         }
 
-
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
-        for(auto & layer : unitary_gates_2site_layers)
-            tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
+        for(auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap-1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}",overlap));
+        if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap));
     }
     tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
@@ -436,28 +448,26 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
     tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
-    if(storage_reason == StorageReason::MODEL){
-        if(settings::flbit::compute_lbit_length){
+    if(storage_reason == StorageReason::MODEL) {
+        if(settings::flbit::compute_lbit_length) {
             if(h5pp_file->linkExists("/fLBIT/analysis")) return;
-            lbit_overlap = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
+            lbit_overlap    = qm::lbit::get_lbit_real_overlap(unitary_gates_2site_layers, tensors.get_length<size_t>());
             auto lbit_decay = qm::lbit::get_characteristic_length_scale(lbit_overlap);
             class_algorithm_finite::write_to_file(storage_reason, lbit_overlap, "lbit_overlap", copy_file);
-            auto urange = num::range<size_t>(1,4);
-            auto frange = num::range<double>(0,0.8,0.02);
-            auto[cls_avg, sse_avg, curves] = qm::lbit::get_lbit_analysis(urange,frange,tensors.get_length(), 50);
-            h5pp_file->writeDataset(cls_avg,"/fLBIT/analysis/cls_avg");
-            h5pp_file->writeDataset(sse_avg,"/fLBIT/analysis/sse_avg");
-            h5pp_file->writeDataset(curves,"/fLBIT/analysis/curves");
-            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeAttribute(urange,"u_depth", "/fLBIT/analysis/curves");
-            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeAttribute(frange,"f_mixer", "/fLBIT/analysis/curves");
+            auto urange                     = num::range<size_t>(1, 4);
+            auto frange                     = num::range<double>(0, 0.8, 0.02);
+            auto [cls_avg, sse_avg, curves] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), 50);
+            h5pp_file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
+            h5pp_file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
+            h5pp_file->writeDataset(curves, "/fLBIT/analysis/curves");
+            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/cls_avg");
+            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/sse_avg");
+            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/curves");
+            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/cls_avg");
+            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/sse_avg");
+            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/curves");
         }
-
     }
-
 }
 
 bool   class_flbit::cfg_algorithm_is_on() { return settings::flbit::on; }
@@ -483,8 +493,9 @@ void class_flbit::print_status_update() {
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
-    if(algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
+    report += fmt::format("Sₙ(L/2):{:<10.8f} ", tools::finite::measure::number_entropy_midchain(*tensors.state));
+
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", cfg_chi_lim_max(), status.chi_lim, tools::finite::measure::bond_dimension_midchain(*tensors.state));
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tools::common::profile::t_tot->get_measured_time()));
