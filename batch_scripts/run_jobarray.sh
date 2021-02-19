@@ -75,7 +75,7 @@ for id in $(seq $start_id $end_id); do
   echo "SEED                     : $model_seed"
   echo "TIME                     : $(/bin/date)"
   if [ "$num_cols" -eq 2 ]; then
-      echo "EXEC LINE         : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
+      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
       if [ -z  "$dryrun" ];then
         $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
         exit_code=$?
