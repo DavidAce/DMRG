@@ -278,7 +278,7 @@ qm::Gate qm::Gate::connect_above(const Gate &other) const { return qm::connect(o
 qm::Gate qm::Gate::connect_under(const Gate &other) const { return qm::connect(*this, other); }
 
 template<auto N>
-qm::Gate qm::Gate::trace(const Eigen::array<Eigen::IndexPair<Eigen::Index>, N> &idxpair) const {
+qm::Gate qm::Gate::trace(const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpair) const {
     return qm::trace(*this, idxpair);
 }
 template qm::Gate qm::Gate::trace(const std::array<Eigen::IndexPair<Eigen::Index>, 1> &idxpairs) const;

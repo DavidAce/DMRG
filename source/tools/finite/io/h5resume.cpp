@@ -19,6 +19,7 @@
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
 #include <tools/finite/mps.h>
+#include <tools/finite/print.h>
 #include <typeindex>
 
 using Scalar = std::complex<double>;
@@ -62,6 +63,8 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
     } else {
         throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
     }
+    tools::log->info("Finished loading model");
+    tools::finite::print::model(model);
 }
 
 void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const std::string &state_prefix, class_state_finite &state,
@@ -129,10 +132,19 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     tools::finite::debug::check_integrity(tensors);
     //    tensors.activate_sites(settings::precision::max_size_full_diag, 1);
     tensors.activate_sites({tensors.get_position<size_t>()});
-    tensors.reduce_mpo_energy();
-    tools::log->debug("Validating resumed state [{}]", state_prefix);
-    tools::log->debug("State labels: {}", tensors.state->get_labels());
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+    tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
+    tools::log->debug("State labels: {}", tensors.state->get_labels());
+    tensors.clear_measurements();
+    tensors.do_all_measurements();
+    compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
+    compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+
+
+
+    tensors.reduce_mpo_energy();
+    tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+    tools::log->debug("State labels: {}", tensors.state->get_labels());
     tensors.clear_measurements();
     tensors.do_all_measurements();
     compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");

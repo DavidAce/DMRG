@@ -224,7 +224,7 @@ Eigen::Tensor<Scalar, 4> tools::common::views::get_transfer_matrix_zero(const cl
     long                     dim = state.chiC();
     Eigen::Tensor<Scalar, 2> I   = Textra::asDiagonal(Eigen::Tensor<Scalar, 1>(dim));
     I.setConstant(1.0);
-    Eigen::array<Eigen::IndexPair<long>, 0> pair = {};
+    std::array<Eigen::IndexPair<long>, 0> pair = {};
     return I.contract(I, pair).shuffle(Textra::array4{0, 2, 1, 3});
 }
 

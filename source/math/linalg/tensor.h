@@ -7,7 +7,7 @@ namespace linalg::tensor{
 
     // Shorthand for the list of index pairs.
     template<auto N>
-    using idxlistpair = Eigen::array<Eigen::IndexPair<Eigen::Index>, N>;
+    using idxlistpair = std::array<Eigen::IndexPair<Eigen::Index>, N>;
 
     inline constexpr idxlistpair<0> idx() { return {}; }
 
@@ -67,12 +67,12 @@ namespace linalg::tensor{
 
     template<typename Scalar, auto rank1, auto rank2>
     Eigen::Tensor<Scalar, rank1+rank2> outer(const Eigen::Tensor<Scalar, rank1> &tensor1, const Eigen::Tensor<Scalar, rank2> &tensor2){
-        Eigen::array<Eigen::IndexPair<Eigen::Index>, 0> idx{};
+        std::array<Eigen::IndexPair<Eigen::Index>, 0> idx{};
         return tensor1.contract(tensor2, idx);
     }
     template<typename Scalar>
     Eigen::Tensor<Scalar, 4> outer(const EigenMatrix<Scalar> &matrix1, const EigenMatrix<Scalar> &matrix2){
-        Eigen::array<Eigen::IndexPair<Eigen::Index>, 0> idx{};
+        std::array<Eigen::IndexPair<Eigen::Index>, 0> idx{};
         auto tensor1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>>(matrix1.data(),matrix1.rows(),matrix1.cols());
         auto tensor2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>>(matrix2.data(),matrix2.rows(),matrix2.cols());
         return tensor1.contract(tensor2, idx);

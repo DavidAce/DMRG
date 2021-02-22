@@ -14,6 +14,7 @@ class_env_ene::class_env_ene(std::string side_, const class_mps_site &mps, const
 }
 
 class_env_ene class_env_ene::enlarge(const class_mps_site &mps, const class_mpo_site &mpo) const {
+    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})...",tag,side,get_position());
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
@@ -25,6 +26,7 @@ class_env_ene class_env_ene::enlarge(const class_mps_site &mps, const class_mpo_
     if(env.sites == 0 and not env.edge_has_been_set) {
         env.set_edge_dims(mps, mpo);
         env.position = mps.get_position();
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
         return env;
     }
 
@@ -43,6 +45,7 @@ class_env_ene class_env_ene::enlarge(const class_mps_site &mps, const class_mpo_
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
     env.unique_id_mpo = mpo.get_unique_id();
+    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
     return env;
 }
 
