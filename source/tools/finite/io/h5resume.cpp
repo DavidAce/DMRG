@@ -130,7 +130,6 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
 
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
     tools::finite::debug::check_integrity(tensors);
-    //    tensors.activate_sites(settings::precision::max_size_full_diag, 1);
     tensors.activate_sites({tensors.get_position<size_t>()});
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
@@ -140,13 +139,13 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
     compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
     compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
 
-
-
-    tensors.reduce_mpo_energy();
-    tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
-    tools::log->debug("State labels: {}", tensors.state->get_labels());
-    tensors.clear_measurements();
-    tensors.do_all_measurements();
-    compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
-    compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+    if(settings::precision::use_reduced_energy){
+        tensors.reduce_mpo_energy();
+        tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+        tools::log->debug("State labels: {}", tensors.state->get_labels());
+        tensors.clear_measurements();
+        tensors.do_all_measurements();
+        compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
+        compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+    }
 }

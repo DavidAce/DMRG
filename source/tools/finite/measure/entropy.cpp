@@ -187,10 +187,11 @@ std::vector<double> compute_probability(const class_state_finite &state, long tg
                 tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f} *", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
                                   ampl_sqr);
                 break;
-            } else {
-                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f}", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
-                                  ampl_sqr);
             }
+//            else {
+//                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f}", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
+//                                  ampl_sqr);
+//            }
         }
     }
 
@@ -215,7 +216,7 @@ std::vector<Amplitude> generate_amplitude_list(const class_state_finite &state, 
     };
     // Generate a list of bit sequences of size prod_{i=0}^l spin_dim_i.
     // For spin-half this is just 2^l elements, where l is the mps position
-    long num_bitseqs = 0;
+    long num_bitseqs;
     if(mps_pos <= state_pos) {
         num_bitseqs = std::accumulate(state.mps_sites.begin(), state.mps_sites.begin() + mps_pos + 1, 1l, spinprod);
     } else {
@@ -224,8 +225,9 @@ std::vector<Amplitude> generate_amplitude_list(const class_state_finite &state, 
     }
 
     std::vector<Amplitude> amplitudes;
-    amplitudes.reserve(num_bitseqs);
-    for(long count = 0; count < num_bitseqs; count++) amplitudes.emplace_back(Amplitude{count, std::nullopt, {}});
+    amplitudes.reserve(static_cast<size_t>(num_bitseqs));
+    for(long count = 0; count < num_bitseqs; count++)
+        amplitudes.emplace_back(Amplitude{static_cast<unsigned long long int>(count), std::nullopt, {}});
     return amplitudes;
 }
 

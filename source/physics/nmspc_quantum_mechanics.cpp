@@ -590,7 +590,7 @@ Eigen::Tensor<Scalar, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<E
     return avg;
     //    return {avg,err};
 }
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>>
+std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>,Eigen::Tensor<double, 4>>
     qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t sites, size_t reps) {
     long                     rows = static_cast<long>(fmix_vec.size());
     long                     cols = static_cast<long>(udepth_vec.size());
@@ -598,9 +598,12 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>>
     Eigen::MatrixXd          cls_err(rows, cols);
     Eigen::MatrixXd          sse_avg(rows, cols);
     Eigen::MatrixXd          sse_err(rows, cols);
-    Eigen::Tensor<double, 3> lbit_curves(rows, cols, sites);
-    lbit_curves.setZero();
-    std::array<long, 3> offset{}, extent{};
+    Eigen::Tensor<double, 3> lbit_decay(rows, cols, sites);
+    Eigen::Tensor<double, 4> lbit_lioms(rows, cols, sites, sites);
+    lbit_decay.setZero();
+    lbit_lioms.setZero();
+    std::array<long, 3> offset3{}, extent3{};
+    std::array<long, 4> offset4{}, extent4{};
 
 #pragma omp parallel for collapse(2) schedule(dynamic)
     for(size_t uidx = 0; uidx < udepth_vec.size(); uidx++) {
@@ -632,12 +635,15 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>>
             cls_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = cls;
             sse_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = sse;
 
-            offset                            = {static_cast<long>(fidx), static_cast<long>(uidx), 0};
-            extent                            = {1, 1, static_cast<long>(y.size())};
-            lbit_curves.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 1>>(y.data(), y.size());
+            offset3                             = {static_cast<long>(fidx), static_cast<long>(uidx), 0};
+            extent3                             = {1, 1, static_cast<long>(y.size())};
+            offset4                             = {static_cast<long>(fidx), static_cast<long>(uidx), 0, 0};
+            extent4                             = {1, 1, lbit_overlap_avg.dimension(0), lbit_overlap_avg.dimension(1)};
+            lbit_decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 1>>(y.data(), y.size());
+            lbit_lioms.slice(offset4, extent4) = lbit_overlap_avg.real().reshape(extent4);
         }
     }
-    return {cls_avg, sse_avg, lbit_curves};
+    return {cls_avg, sse_avg, lbit_decay, lbit_lioms};
 }
 
 std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 3>, Eigen::Tensor<Scalar, 3>> qm::mpo::pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
