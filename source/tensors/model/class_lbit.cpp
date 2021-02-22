@@ -33,14 +33,14 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
         false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
 }
 
-//double class_lbit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
-//double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
-void   class_lbit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
-void   class_lbit::print_parameter_values() const { h5tb.print_parameter_values(); }
+// double class_lbit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
+// double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
+void class_lbit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
+void class_lbit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void class_lbit::set_parameters(TableMap &parameters) {
     h5tb.param.J1_rand  = std::any_cast<double>(parameters["J1_rand"]);
-    h5tb.param.J2_rand  = std::any_cast<std::array<double,6>>(parameters["J2_rand"]);
+    h5tb.param.J2_rand  = std::any_cast<std::array<double, 6>>(parameters["J2_rand"]);
     h5tb.param.J3_rand  = std::any_cast<double>(parameters["J3_rand"]);
     h5tb.param.J1_wdth  = std::any_cast<double>(parameters["J1_wdth"]);
     h5tb.param.J2_wdth  = std::any_cast<double>(parameters["J2_wdth"]);
@@ -152,15 +152,15 @@ void class_lbit::build_mpo()
 }
 
 Eigen::Tensor<Scalar, 1> class_lbit::get_MPO_edge_left() const {
-    auto ldim = mpo_internal.dimension(0);
+    auto                     ldim = mpo_internal.dimension(0);
     Eigen::Tensor<Scalar, 1> ledge(ldim);
     ledge.setZero();
-    ledge(ldim-1) = 1;
+    ledge(ldim - 1) = 1;
     return ledge;
 }
 
 Eigen::Tensor<Scalar, 1> class_lbit::get_MPO_edge_right() const {
-    auto rdim = mpo_internal.dimension(1);
+    auto                     rdim = mpo_internal.dimension(1);
     Eigen::Tensor<Scalar, 1> redge(rdim);
     redge.setZero();
     redge(0) = 1;
@@ -181,11 +181,11 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 
 void class_lbit::randomize_hamiltonian() {
     h5tb.param.J2_rand[0] = settings::model::lbit::J2_mean;
-    h5tb.param.J2_rand[1] = std::pow(settings::model::lbit::J2_base,-1);
-    h5tb.param.J2_rand[2] = std::pow(settings::model::lbit::J2_base,-2);
-    h5tb.param.J2_rand[3] = std::pow(settings::model::lbit::J2_base,-3);
-    h5tb.param.J2_rand[4] = std::pow(settings::model::lbit::J2_base,-4);
-    h5tb.param.J2_rand[5] = std::pow(settings::model::lbit::J2_base,-5);
+    h5tb.param.J2_rand[1] = std::pow(settings::model::lbit::J2_base, -1);
+    h5tb.param.J2_rand[2] = std::pow(settings::model::lbit::J2_base, -2);
+    h5tb.param.J2_rand[3] = std::pow(settings::model::lbit::J2_base, -3);
+    h5tb.param.J2_rand[4] = std::pow(settings::model::lbit::J2_base, -4);
+    h5tb.param.J2_rand[5] = std::pow(settings::model::lbit::J2_base, -5);
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
         h5tb.param.J3_rand = rnd::normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
@@ -266,8 +266,8 @@ void class_lbit::set_perturbation(double coupling_ptb, double field_ptb, Perturb
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        //double class_lbit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
-        //double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
+        // double class_lbit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
+        // double class_lbit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
 
         Eigen::Tensor<Scalar, 2> n                                               = Textra::TensorCast(0.5 * (id + sz));
         Eigen::Tensor<Scalar, 2> i                                               = Textra::TensorMap(id);
@@ -314,10 +314,12 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view() const {
 
 Eigen::Tensor<Scalar, 4> class_lbit::MPO_reduced_view(double site_energy) const {
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<Scalar, 4> temp                                    = MPO();
-    Eigen::Tensor<Scalar, 2> n                                       = Textra::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                       = Textra::TensorMap(id);
-    temp.slice(Textra::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
+    Eigen::Tensor<Scalar, 4> temp                                        = MPO();
+    long                     row                                         = temp.dimension(0) - 1;
+    long                     col                                         = 0;
+    Eigen::Tensor<Scalar, 2> n                                           = Textra::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                           = Textra::TensorMap(id);
+    temp.slice(Textra::array4{row, col, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
     return temp;
 }
 
@@ -331,7 +333,7 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
     }
     if(not infinite) {
-        lattice_parameters.back()["J2_rand"]    = std::array<double,6>{0,0,0,0,0,0};
+        lattice_parameters.back()["J2_rand"]    = std::array<double, 6>{0, 0, 0, 0, 0, 0};
         lattice_parameters.back()["J3_rand"]    = 0.0;
         lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
@@ -340,8 +342,8 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
     for(auto &site_params : lattice_parameters) {
         auto J1_ = std::any_cast<double>(site_params["J1_rand"]);
         auto J3_ = std::any_cast<double>(site_params["J3_rand"]);
-        auto J2_ = std::any_cast<std::array<double,6>>(site_params["J2_rand"]);
-        J_sum += J1_ + J3_ + J2_[1] + J2_[2] + J2_[3] + J2_[4] + J2_[5] ;
+        auto J2_ = std::any_cast<std::array<double, 6>>(site_params["J2_rand"]);
+        J_sum += J1_ + J3_ + J2_[1] + J2_[2] + J2_[3] + J2_[4] + J2_[5];
     }
     if(parity_sep) psfactor = J_sum;
     set_parameters(lattice_parameters[get_position()]);
@@ -391,8 +393,7 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
         throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
     if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6)
         throw std::runtime_error(fmt::format("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer));
-    if(h5tb.param.u_layer != u_layer)
-        throw std::runtime_error(fmt::format("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer));
+    if(h5tb.param.u_layer != u_layer) throw std::runtime_error(fmt::format("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer));
 
     // We can use the mpo's on file here to check everything is correct
     std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());

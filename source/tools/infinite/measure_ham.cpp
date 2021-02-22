@@ -75,10 +75,8 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
                                          .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
 
-    Eigen::Tensor<Scalar, 4> h0 =
-        Textra::TensorCast((Textra::MatrixMap(h_evn) - E_evn(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
-    Eigen::Tensor<Scalar, 4> h1 =
-        Textra::TensorCast((Textra::MatrixMap(h_odd) - E_odd(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
+    Eigen::Tensor<Scalar, 4> h0 = Textra::TensorCast((Textra::MatrixMap(h_evn) - E_evn(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
+    Eigen::Tensor<Scalar, 4> h1 = Textra::TensorCast((Textra::MatrixMap(h_odd) - E_odd(0) * Textra::MatrixType<Scalar>::Identity(4, 4)).eval(), 2, 2, 2, 2);
 
     Eigen::Tensor<Scalar, 0> E2AB = theta_evn_normalized.contract(h0, Textra::idx({0, 2}, {0, 1}))
                                         .contract(h0, Textra::idx({2, 3}, {0, 1}))
@@ -135,18 +133,16 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
                                              .contract(theta_odd_normalized.conjugate(), Textra::idx({2, 3}, {0, 2}))
                                              .contract(r_odd, Textra::idx({1, 3}, {0, 1}));
 
-    Eigen::array<Eigen::IndexPair<long>, 0> pair         = {};
-    Eigen::Tensor<Scalar, 4>                fixpoint_evn = r_evn.contract(l_evn, pair);
-    Eigen::Tensor<Scalar, 4>                fixpoint_odd = r_odd.contract(l_odd, pair);
+    std::array<Eigen::IndexPair<long>, 0> pair         = {};
+    Eigen::Tensor<Scalar, 4>              fixpoint_evn = r_evn.contract(l_evn, pair);
+    Eigen::Tensor<Scalar, 4>              fixpoint_odd = r_odd.contract(l_odd, pair);
 
-    long                     sizeLA = state.chiC();
-    long                     sizeLB = state.chiB();
-    Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_evn =
-        Textra::TensorCast(Textra::MatrixType<Scalar>::Identity(sizeLB * sizeLB, sizeLA * sizeLA).eval()) -
-        (transfer_matrix_evn - fixpoint_evn).reshape(Textra::array2{sizeLB * sizeLB, sizeLA * sizeLA});
-    Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_odd =
-        Textra::TensorCast(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
-        (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
+    long                     sizeLA                        = state.chiC();
+    long                     sizeLB                        = state.chiB();
+    Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_evn = Textra::TensorCast(Textra::MatrixType<Scalar>::Identity(sizeLB * sizeLB, sizeLA * sizeLA).eval()) -
+                                                             (transfer_matrix_evn - fixpoint_evn).reshape(Textra::array2{sizeLB * sizeLB, sizeLA * sizeLA});
+    Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_odd = Textra::TensorCast(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
+                                                             (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
     svd::solver svd;
     svd.use_lapacke = true;
     svd.setThreshold(settings::precision::svd_threshold);

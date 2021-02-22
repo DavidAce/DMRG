@@ -32,8 +32,8 @@ class class_mpo_site {
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
 
-    Eigen::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
-    Eigen::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
+    std::array<long, 4>                     extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
+    std::array<long, 2>                     extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
     std::optional<size_t>                   position;  /*!< Position on a finite chain */
     Eigen::Tensor<Scalar, 4>                mpo_internal;
     std::optional<Eigen::Tensor<Scalar, 4>> mpo_squared = std::nullopt;

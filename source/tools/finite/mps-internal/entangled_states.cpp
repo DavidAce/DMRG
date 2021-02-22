@@ -32,8 +32,8 @@ std::vector<long> tools::finite::mps::internal::get_valid_bond_dimensions(size_t
     return bond_dimensions;
 }
 
-void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, StateInitType type, [[maybe_unused]] const std::string &sector, long chi_lim,
-                                                          bool use_eigenspinors) {
+void tools::finite::mps::internal::random_entangled_state(class_state_finite &state, StateInitType type, [[maybe_unused]] const std::string &sector,
+                                                          long chi_lim, bool use_eigenspinors) {
     if(use_eigenspinors)
         set_random_entangled_state_with_random_spinors(state, type, chi_lim);
     else
@@ -97,13 +97,13 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
         auto                                                              rows = past_center ? chiL : chiL * spin_dim;
         auto                                                              cols = past_center ? chiR * spin_dim : chiR;
-        Eigen::Tensor<Scalar, 1>                                          L = Textra::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
+        Eigen::Tensor<Scalar, 1>                                          L    = Textra::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
         Eigen::Tensor<Scalar, 3>                                          G(spin_dim, chiL, chiR);
         Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         // Here we construct the set of spinors for each site using randomly selected eigenspinors
-        Eigen::array<long, 3> offset3;
-        Eigen::array<long, 3> extent3{spin_dim, 1, 1};
-        Eigen::array<long, 1> extent1{spin_dim};
+        std::array<long, 3> offset3;
+        std::array<long, 3> extent3{spin_dim, 1, 1};
+        std::array<long, 1> extent1{spin_dim};
         for(long col = 0; col < chiR; col++) {
             for(long row = 0; row < chiL; row++) {
                 auto rnd_sign                              = 2 * rnd::uniform_integer_01() - 1;
@@ -134,9 +134,9 @@ void tools::finite::mps::internal::set_random_entangled_state_in_sector_using_ei
         auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
         auto                                                              rows = past_center ? chiL : chiL * spin_dim;
         auto                                                              cols = past_center ? chiR * spin_dim : chiR;
-        Eigen::array<long, 3>                                             offset3;
-        Eigen::array<long, 3>                                             extent3{spin_dim, 1, 1};
-        Eigen::array<long, 1>                                             extent1{spin_dim};
+        std::array<long, 3>                                               offset3;
+        std::array<long, 3>                                               extent3{spin_dim, 1, 1};
+        std::array<long, 1>                                               extent1{spin_dim};
         Eigen::Tensor<Scalar, 3>                                          G(spin_dim, chiL, chiR);
         Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         for(long col = 0; col < chiR; col++) {

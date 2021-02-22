@@ -29,12 +29,8 @@ class_env_base &class_env_base::operator=(class_env_base &&other) noexcept = def
 
 class_env_base::class_env_base(const class_env_base &other)
     : edge_has_been_set(other.edge_has_been_set), block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position),
-      side(other.side), tag(other.tag),
-      unique_id(other.unique_id),
-      unique_id_mps(other.unique_id_mps),
-      unique_id_mpo(other.unique_id_mpo),
-      unique_id_env(other.unique_id_env)
-{
+      side(other.side), tag(other.tag), unique_id(other.unique_id), unique_id_mps(other.unique_id_mps), unique_id_mpo(other.unique_id_mpo),
+      unique_id_env(other.unique_id_env) {
     assert_block();
 }
 
@@ -42,8 +38,8 @@ class_env_base::class_env_base(size_t position_, std::string side_, std::string 
     : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
     assert_block();
 }
-class_env_base::class_env_base(std::string side_,std::string tag_, const class_mps_site &MPS, const class_mpo_site &MPO)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)) ,tag(std::move(tag_)){
+class_env_base::class_env_base(std::string side_, std::string tag_, const class_mps_site &MPS, const class_mpo_site &MPO)
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
     if(MPS.get_position() != MPO.get_position())
         throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
     position = MPS.get_position();
@@ -79,6 +75,7 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
+    tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})...", side, get_position());
     unique_id     = std::nullopt;
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
@@ -149,6 +146,7 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
                                                       .contract(mps.conjugate(), Textra::idx({0, 3}, {2, 0}))
                                                       .shuffle(Textra::array3{0, 2, 1});
     }
+    tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})... OK", side, get_position());
 }
 
 void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
@@ -248,9 +246,9 @@ void class_env_base::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Ei
         block->resize(Textra::array3{mpsDim, mpsDim, mpoDim});
         block->setZero();
         for(long i = 0; i < mpsDim; i++) {
-            Eigen::array<long, 1> extent1                   = {mpoDim};
-            Eigen::array<long, 3> offset3                   = {i, i, 0};
-            Eigen::array<long, 3> extent3                   = {1, 1, mpoDim};
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
             block->slice(offset3, extent3).reshape(extent1) = edge;
         }
     }
@@ -260,9 +258,9 @@ void class_env_base::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Ei
         block->resize(Textra::array3{mpsDim, mpsDim, mpoDim});
         block->setZero();
         for(long i = 0; i < mpsDim; i++) {
-            Eigen::array<long, 1> extent1                   = {mpoDim};
-            Eigen::array<long, 3> offset3                   = {i, i, 0};
-            Eigen::array<long, 3> extent3                   = {1, 1, mpoDim};
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
             block->slice(offset3, extent3).reshape(extent1) = edge;
         }
     }
@@ -284,44 +282,46 @@ std::optional<std::size_t> class_env_base::get_unique_id_env() const { return un
 std::optional<std::size_t> class_env_base::get_unique_id_mps() const { return unique_id_mps; }
 std::optional<std::size_t> class_env_base::get_unique_id_mpo() const { return unique_id_mpo; }
 
-
-Eigen::Tensor<Scalar,3> class_env_base::get_expansion_term(const class_mps_site &mps, const class_mpo_site &mpo, double alpha) const{
+Eigen::Tensor<Scalar, 3> class_env_base::get_expansion_term(const class_mps_site &mps, const class_mpo_site &mpo, double alpha) const {
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
 
-    Eigen::Tensor<Scalar,4> mpo_tensor;
-    if(tag == "ene") mpo_tensor = mpo.MPO();
-    else if(tag == "var") mpo_tensor = mpo.MPO2();
-    else throw std::runtime_error("Expected tag [var|ene]: Got: [" + tag + "]");
+    Eigen::Tensor<Scalar, 4> mpo_tensor;
+    if(tag == "ene")
+        mpo_tensor = mpo.MPO();
+    else if(tag == "var")
+        mpo_tensor = mpo.MPO2();
+    else
+        throw std::runtime_error("Expected tag [var|ene]: Got: [" + tag + "]");
 
-    if(side == "L"){
+    if(side == "L") {
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL();
         long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
         if(get_block().dimension(0) != chiL) throw std::logic_error("block dim 0 != chiL");
-        Eigen::Tensor<Scalar,3> PL = get_block()
-            .contract(mps.get_M_bare(), Textra::idx({0},{1}))
-            .contract(mpo_tensor, Textra::idx({1,2},{0,2}))
-            .shuffle(Textra::array4{3,0,1,2})
-            .reshape(Textra::array3{spin,chiL,chiR});
+        Eigen::Tensor<Scalar, 3> PL = get_block()
+                                          .contract(mps.get_M_bare(), Textra::idx({0}, {1}))
+                                          .contract(mpo_tensor, Textra::idx({1, 2}, {0, 2}))
+                                          .shuffle(Textra::array4{3, 0, 1, 2})
+                                          .reshape(Textra::array3{spin, chiL, chiR});
         PL = Textra::asNormalized(PL);
         return PL * PL.constant(alpha);
 
-    }else if (side == "R"){
+    } else if(side == "R") {
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL() * mpo_tensor.dimension(0);
         long chiR = mps.get_chiR();
         if(get_block().dimension(0) != chiR) throw std::logic_error("block dim 0 != chiR");
-        Eigen::Tensor<Scalar,3> PR = get_block()
-            .contract(mps.get_M_bare(), Textra::idx({0},{2}))
-            .contract(mpo_tensor, Textra::idx({1,2},{1,2}))
-            .shuffle(Textra::array4{3,0,1,2})
-            .reshape(Textra::array3{spin,chiL,chiR});
+        Eigen::Tensor<Scalar, 3> PR = get_block()
+                                          .contract(mps.get_M_bare(), Textra::idx({0}, {2}))
+                                          .contract(mpo_tensor, Textra::idx({1, 2}, {1, 2}))
+                                          .shuffle(Textra::array4{3, 0, 1, 2})
+                                          .reshape(Textra::array3{spin, chiL, chiR});
         PR = Textra::asNormalized(PR);
         return PR * PR.constant(alpha);
 
-    }
-    else throw std::runtime_error("Expected side L or R. Got: "+ side);
+    } else
+        throw std::runtime_error("Expected side L or R. Got: " + side);
 }

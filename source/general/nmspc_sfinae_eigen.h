@@ -40,7 +40,7 @@ namespace sfinae::eigen {
     template<typename T, int rows, int cols, int StorageOrder>
     struct is_eigen_core<Eigen::Matrix<T, rows, cols, StorageOrder>> : public std::true_type {};
     template<typename T, int rows, int cols, int StorageOrder>
-    struct is_eigen_core<Eigen::Array<T, rows, cols, StorageOrder>> : public std::true_type {};
+    struct is_eigen_core<std::Array<T, rows, cols, StorageOrder>> : public std::true_type {};
     template<typename T>
     inline constexpr bool is_eigen_core_v = is_eigen_core<T>::value;
     template<typename T>

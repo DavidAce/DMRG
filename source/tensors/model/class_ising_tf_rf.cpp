@@ -91,11 +91,11 @@ void class_ising_tf_rf::build_mpo()
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
     mpo_internal.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(id);
-    mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_coupling() * sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(id);
+    mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(id);
+    mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(sz);
+    mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
+    mpo_internal.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_coupling() * sz);
+    mpo_internal.slice(std::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::TensorMap(id);
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
@@ -149,10 +149,10 @@ void class_ising_tf_rf::set_coupling_damping(double alpha_) { alpha = alpha_; }
 void class_ising_tf_rf::set_field_damping(double beta_) {
     beta = beta_;
     if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
-        mpo_squared                                                                     = std::nullopt;
-        unique_id                                                                       = std::nullopt;
-        unique_id_sq                                                                    = std::nullopt;
+        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
+        mpo_squared                                                                   = std::nullopt;
+        unique_id                                                                     = std::nullopt;
+        unique_id_sq                                                                  = std::nullopt;
     }
 }
 
@@ -176,10 +176,10 @@ void class_ising_tf_rf::set_perturbation(double coupling_ptb, double field_ptb, 
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
-        mpo_squared                                                                     = std::nullopt;
-        unique_id                                                                       = std::nullopt;
-        unique_id_sq                                                                    = std::nullopt;
+        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - e_reduced * id);
+        mpo_squared                                                                   = std::nullopt;
+        unique_id                                                                     = std::nullopt;
+        unique_id_sq                                                                  = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
         throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
@@ -196,9 +196,9 @@ Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_nbody_view(const std::vector<siz
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J1 * get_field() * sx - e_reduced * id);
-    MPO_nbody.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J2 * get_coupling() * sz);
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                         = MPO();
+    MPO_nbody.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J1 * get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-J2 * get_coupling() * sz);
     return MPO_nbody;
 }
 
@@ -209,8 +209,10 @@ Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view() const {
 
 Eigen::Tensor<Scalar, 4> class_ising_tf_rf::MPO_reduced_view(double site_energy) const {
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<Scalar, 4> temp                                           = MPO();
-    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - site_energy * id);
+    Eigen::Tensor<Scalar, 4> temp                                             = MPO();
+    long                     row                                              = temp.dimension(0) - 1;
+    long                     col                                              = 0;
+    temp.slice(std::array<long, 4>{row, col, 0, 0}, extent4).reshape(extent2) = Textra::TensorCast(-get_field() * sx - site_energy * id);
     return temp;
 }
 
