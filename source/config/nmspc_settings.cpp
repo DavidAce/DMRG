@@ -137,6 +137,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("flbit::time_num_steps"          , flbit::time_num_steps);
     dmrg_config.load_parameter("flbit::print_freq"              , flbit::print_freq);
     dmrg_config.load_parameter("flbit::compute_lbit_length"     , flbit::compute_lbit_length);
+    dmrg_config.load_parameter("flbit::compute_lbit_stats"      , flbit::compute_lbit_stats);
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
 
     //Parameters controlling excited state DMRG
