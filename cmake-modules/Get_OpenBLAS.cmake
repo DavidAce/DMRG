@@ -5,12 +5,12 @@ if(TARGET mkl::mkl)
 endif()
 
 
-if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find")
+if(NOT TARGET openblas::openblas AND DMRG_PACKAGE_MANAGER MATCHES "find")
     set(OpenBLAS_FIND_VERBOSE ON)
     find_package(OpenBLAS)
 endif()
 
-if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET openblas::openblas AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
     message(STATUS "OpenBLAS will be installed into ${CMAKE_INSTALL_PREFIX}/OpenBLAS")
     set(OPENBLAS_MULTITHREADED 1 )
     if(TARGET openmp::openmp AND BUILD_SHARED_LIBS)

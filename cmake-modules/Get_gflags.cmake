@@ -11,7 +11,7 @@ elseif(DMRG_PREFER_CONDA_LIBS)
     set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
 endif()
 
-if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET gflags AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     # Gflags comes in static flavor in conda also!
     find_package(gflags
             HINTS ${GFLAGS_CONDA_PREFIX}
@@ -24,7 +24,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 endif()
 
-if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch" )
+if(NOT TARGET gflags AND DMRG_PACKAGE_MANAGER MATCHES "cmake" )
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")

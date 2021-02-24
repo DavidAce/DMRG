@@ -25,11 +25,11 @@ option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PR
 option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
 
 # Make an "enum" for valid download methods
-set(DMRG_DOWNLOAD_METHODS_VALID find fetch find-or-fetch conan)
-set(DMRG_DOWNLOAD_METHOD find CACHE STRING "Download method for external dependencies")
-set_property(CACHE DMRG_DOWNLOAD_METHOD PROPERTY STRINGS ${DMRG_DOWNLOAD_METHODS_VALID})
-if (NOT DMRG_DOWNLOAD_METHOD IN_LIST DMRG_DOWNLOAD_METHODS_VALID)
-    message(FATAL_ERROR "DMRG_DOWNLOAD_METHOD must be one of ${DMRG_DOWNLOAD_METHODS_VALID}")
+set(DMRG_PACKAGE_MANAGERS_VALID find cmake find-or-cmake conan)
+set(DMRG_PACKAGE_MANAGER find CACHE STRING "Download method for external dependencies")
+set_property(CACHE DMRG_PACKAGE_MANAGER PROPERTY STRINGS ${DMRG_PACKAGE_MANAGERS_VALID})
+if (NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
+    message(FATAL_ERROR "DMRG_PACKAGE_MANAGER must be one of ${DMRG_PACKAGE_MANAGERS_VALID}")
 endif ()
 
 
@@ -267,7 +267,7 @@ endif()
 ### Fetch or find all the dependencies  ###
 ###########################################
 include(cmake-modules/SetupSearchPaths.cmake)
-include(cmake-modules/SetupDependenciesFetch.cmake)
+include(cmake-modules/SetupDependenciesCMake.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
 ##################################################################

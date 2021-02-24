@@ -1,9 +1,9 @@
 
-if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
-    message(STATUS "DMRG needs a patched version of Eigen 3.3.7 and will downloaded despite DMRG_DOWNLOAD_METHOD=find")
+if(NOT TARGET Eigen3::Eigen AND DMRG_PACKAGE_MANAGER STREQUAL "find")
+    message(STATUS "DMRG needs a patched version of Eigen 3.3.7 and will downloaded despite DMRG_PACKAGE_MANAGER=find")
 endif()
 
-if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET Eigen3::Eigen AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     # We want to find our own Eigen3 to make sure we patch it properly
     find_package(Eigen3
         HINTS ${CMAKE_INSTALL_PREFIX}
@@ -14,7 +14,7 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 endif()
 
-if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET Eigen3::Eigen AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     message(STATUS "Eigen3 will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(Eigen3 "${CMAKE_INSTALL_PREFIX}" "")

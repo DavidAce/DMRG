@@ -1,4 +1,4 @@
-if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     foreach (tgt glog::glog;gflags;Eigen3::Eigen)
         if(NOT TARGET ${tgt})
             list(APPEND CERES_MISSING_TARGET ${tgt})
@@ -11,7 +11,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
 endif()
 
 
-if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     include(cmake-modules/CheckCeresCompiles.cmake)
 
     # Can't use conda here since they only have shared libraries.
@@ -74,7 +74,7 @@ if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
 endif()
 
 
-if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET Ceres::ceres AND NOT TARGET ceres AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     list(APPEND CERES_CMAKE_OPTIONS  -DEigen3_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3)
     list(APPEND CERES_CMAKE_OPTIONS  -Dgflags_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/gflags)

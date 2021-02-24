@@ -14,7 +14,7 @@ if(DMRG_PRINT_INFO)
             "-- | DMRG_ENABLE_PCH        : ${DMRG_ENABLE_PCH}\n"
             "-- | DMRG_ENABLE_CCACHE     : ${DMRG_ENABLE_CCACHE}\n"
             "-- | DMRG_BUILD_EXAMPLES    : ${DMRG_BUILD_EXAMPLES}\n"
-            "-- | DMRG_DOWNLOAD_METHOD   : ${DMRG_DOWNLOAD_METHOD}\n"
+            "-- | DMRG_PACKAGE_MANAGER   : ${DMRG_PACKAGE_MANAGER}\n"
             "-- | DMRG_PRINT_INFO        : ${DMRG_PRINT_INFO}\n"
             "-- | DMRG_PRINT_CHECKS      : ${DMRG_PRINT_CHECKS}\n"
             "-- | DMRG_DEPS_IN_SUBDIR    : ${DMRG_DEPS_IN_SUBDIR}\n"

@@ -119,7 +119,7 @@ set(CMAKE_SKIP_BUILD_RPATH FALSE)
 # when building, don't use the install RPATH already (but later on when installing)
 # Note: Since DMRG++ is often run from the build folder we want to keep the build-folder RPATH in the executable.
 #       Therefore it makes sense to keep this setting "FALSE" here but "TRUE" for dependencies that are
-#       installed with in "fetch" mode with externalproject_add
+#       installed with in "cmake" mode with externalproject_add
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # add the automatically determined parts of the RPATH

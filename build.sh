@@ -10,7 +10,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
-   | --download-method          : Download method for dependencies [ find | fetch | find-or-fetch | conan ] (default = find)
+   | --package-manager          : Select package manager for dependencies [ find | cmake | find-or-cmake | conan ] (default = find)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | Tau (default = "")
 -G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
@@ -33,7 +33,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -v | --verbose-make             : Verbose Makefiles
 -v | --verbose-cmake            : Verbose CMake
 EXAMPLE:
-./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-method=find
+./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --package-manager=find
 EOF
   exit 1
 }
@@ -50,7 +50,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 clear-libs:\
                 compiler:\
                 dry-run\
-                download-method:\
+                package-manager:\
                 enable-tests\
                 enable-shared\
                 shared:\
@@ -80,7 +80,7 @@ build_type="Release"
 target="all"
 march="haswell"
 enable_shared="OFF"
-download_method="find"
+package_manager="find"
 enable_tests="OFF"
 enable_threads="OFF"
 enable_openmp="OFF"
@@ -106,7 +106,7 @@ do
     -l|--clear-libs)
             clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
     -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
-       --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
+       --package-manager)           package_manager=$2              ; echo " * Package Manager          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
     -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
@@ -158,8 +158,8 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-if [[ ! "$download_method" =~ find|fetch|conan ]]; then
-    echo "Download method unsupported: $download_method"
+if [[ ! "$package_manager" =~ find|cmake|conan ]]; then
+    echo "Package manager unsupported: $package_manager"
     exit 1
 fi
 
@@ -211,7 +211,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         if [ "$enable_mkl" = "ON" ] ; then
             export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
             export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
-        elif [[ "$download_method" =~ find ]]; then
+        elif [[ "$package_manager" =~ find ]]; then
             module load OpenBLAS
         fi
         if [[ "$compiler" =~ Clang|clang|cl ]] ; then
@@ -228,7 +228,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
         if [ "$enable_mkl" = "ON" ] ; then
             module load imkl
         fi
-        if [[ "$download_method" =~ find ]] ; then
+        if [[ "$package_manager" =~ find ]] ; then
                 module load HDF5
                 if [ "$enable_mkl" = "OFF" ] ; then
                     module load OpenBLAS
@@ -287,7 +287,7 @@ cat << EOF >&2
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
           -DDMRG_PRINT_INFO=$verbose_cmake
           -DDMRG_PRINT_CHECKS=$verbose_cmake
-          -DDMRG_DOWNLOAD_METHOD=$download_method
+          -DDMRG_PACKAGE_MANAGER=$package_manager
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
           -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
@@ -310,7 +310,7 @@ if [ -z "$dry_run" ] ;then
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
           -DDMRG_PRINT_INFO=$verbose_cmake \
           -DDMRG_PRINT_CHECKS=$verbose_cmake \
-          -DDMRG_DOWNLOAD_METHOD=$download_method \
+          -DDMRG_PACKAGE_MANAGER=$package_manager \
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
           -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \

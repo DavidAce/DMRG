@@ -30,7 +30,7 @@ if (DMRG_PREFER_CONDA_LIBS)
             )
 endif ()
 
-if (DMRG_DOWNLOAD_METHOD MATCHES "conan")
+if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Paths to search for conan installation.
     list(APPEND DMRG_CONAN_CANDIDATE_PATHS
             ${CONAN_PREFIX}
@@ -50,7 +50,7 @@ if (DMRG_DOWNLOAD_METHOD MATCHES "conan")
             )
 endif ()
 
-if (DMRG_DOWNLOAD_METHOD MATCHES "find")
+if (DMRG_PACKAGE_MANAGER MATCHES "find")
     # If modules are loaded check those paths as well
     list(APPEND CMAKE_PREFIX_PATH
             $ENV{EBROOTIMKL}
