@@ -10,7 +10,7 @@ branches:
 matrix:
   fast_finish: true
   include:
-    - name: "xenial gcc-7 | static | find-or-fetch"
+    - name: "xenial gcc-7 | static | find-or-cmake"
       dist: xenial
       os: linux
       compiler: gcc
@@ -19,7 +19,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch"
+        - FLAGS="--package-manager=find-or-cmake"
         - BUILD_TYPE="Debug"
       addons:
         apt:
@@ -35,7 +35,7 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "xenial gcc-8 | static | find-or-fetch"
+    - name: "xenial gcc-8 | static | find-or-cmake"
       dist: xenial
       os: linux
       compiler: gcc
@@ -44,7 +44,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch"
+        - FLAGS="--package-manager=find-or-cmake"
         - BUILD_TYPE="Debug"
       addons:
         apt:
@@ -60,7 +60,7 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "xenial clang-7 | static | find-or-fetch"
+    - name: "xenial clang-7 | static | find-or-cmake"
       dist: xenial
       os: linux
       compiler: clang
@@ -69,7 +69,7 @@ matrix:
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch"
+        - FLAGS="--package-manager=find-or-cmake"
         - BUILD_TYPE="Debug"
       addons:
         apt:
@@ -88,7 +88,7 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "xenial gcc-7 | static | apt | find-or-fetch"
+    - name: "xenial gcc-7 | static | apt | find-or-cmake"
       dist: xenial
       os: linux
       compiler: gcc
@@ -97,7 +97,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch"
+        - FLAGS="--package-manager=find-or-cmake"
         - BUILD_TYPE="Debug"
       addons:
         apt:
@@ -126,7 +126,7 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "bionic gcc-8 | static | apt | find-or-fetch"
+    - name: "bionic gcc-8 | static | apt | find-or-cmake"
       dist: bionic
       os: linux
       compiler: gcc
@@ -135,7 +135,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch"
+        - FLAGS="--package-manager=find-or-cmake"
         - BUILD_TYPE="Debug"
       addons:
         apt:
@@ -171,7 +171,7 @@ matrix:
       env:
         - CACHE_NAME=bionic-clang-static-conan
         - FC=gfortran-8
-        - FLAGS="--download-method=conan"
+        - FLAGS="--package-manager=conan"
         - BUILD_TYPE="Release"
       addons:
         apt:
@@ -196,7 +196,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=conan"
+        - FLAGS="--package-manager=conan"
         - BUILD_TYPE="Release"
       addons:
         apt:

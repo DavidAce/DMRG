@@ -1,5 +1,5 @@
 
-if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
+if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
     #  Make sure we use DMRG's own find modules
     list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
@@ -88,8 +88,8 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
         ### Install dependencies from conanfile.txt                    ###
         ### This uses conan to get spdlog,eigen3,h5pp,ceres-solver     ###
         ###    ceres-solver/2.0.0@davidace/development                 ###
-        ###    h5pp/1.7.3@davidace/stable                              ###
-        ###    eigen/3.3.7@davidace/patched                            ###
+        ###    h5pp/1.8.5@davidace/stable                              ###
+        ###    eigen/3.3.9@davidace/patched                            ###
         ##################################################################
 
         find_program (
@@ -176,7 +176,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             #
             # Up until now, [0,16,none,none] has worked but now for some reason it stopped now.
             # I noticed the stdc++=17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
-            # I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
+            # I fixed this in the conanfile.py of the ceres build. The -package-manager=cmake method already had this fixed.
             # When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
             # In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
             # It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to

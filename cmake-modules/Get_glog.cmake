@@ -1,4 +1,4 @@
-if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     if(NOT TARGET gflags)
         message(FATAL_ERROR "glog::glog: dependencies missing [gflags]")
     endif()
@@ -7,7 +7,7 @@ endif()
 
 
 
-if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET glog::glog AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
 
     include(cmake-modules/CheckGlogCompiles.cmake)
 
@@ -64,7 +64,7 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
 endif()
 
 
-if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET glog::glog AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${CMAKE_INSTALL_PREFIX}/gflags)

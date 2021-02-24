@@ -1,4 +1,4 @@
-if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     foreach (tgt blas::blas;lapack::lapack;gfortran::gfortran)
         if(NOT TARGET ${tgt})
             list(APPEND arpack_ng_MISSING_TARGET ${tgt})
@@ -52,7 +52,7 @@ endfunction()
 
 
 
-if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET arpack::arpack AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     find_arpack_ng("")
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Found arpack-ng: ${arpack_ng_LIBRARIES}")
@@ -63,7 +63,7 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 endif()
 
-if (NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
+if (NOT TARGET arpack::arpack AND DMRG_PACKAGE_MANAGER STREQUAL "find")
     message(STATUS "Looking for arpack-ng in system")
     find_arpack_ng(REQUIRED)
     if(NOT arpack_ng_LIBRARIES)
@@ -85,7 +85,7 @@ if (NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
 endif()
 
 
-if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET arpack::arpack AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
     message(STATUS "arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
     #####################################################################
     ### Prepare lists with generator expressions, replacing all semicolons.

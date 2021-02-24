@@ -1,5 +1,5 @@
 find_package(Lapacke) # Lapacke needed by arpack++
-if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     foreach (tgt blas::blas;lapack::lapack;lapacke::lapacke;gfortran::gfortran)
         if(NOT TARGET ${tgt})
             list(APPEND ARPACKPP_MISSING_TARGET ${tgt})
@@ -11,7 +11,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 endif()
 
-if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
+if(NOT TARGET arpack::arpack++ AND DMRG_PACKAGE_MANAGER STREQUAL "find")
     find_package(arpack++ REQUIRED)
     if (TARGET arpack::arpack++)
         message(STATUS "Found arpack++")
@@ -19,14 +19,14 @@ if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
 endif()
 
 
-if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(NOT TARGET arpack::arpack++ AND DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     find_package(arpack++)
     if (TARGET arpack::arpack++)
         message(STATUS "Found arpack++")
     endif()
 endif()
 
-if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
+if(NOT TARGET arpack::arpack++ AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
     message(STATUS "arpack++ will be installed into ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack++ on first build.")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(arpack++ "${CMAKE_INSTALL_PREFIX}" "")

@@ -1,4 +1,4 @@
-if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
 
     ##############################################################################
     ###  Optional OpenMP support                                               ###
@@ -12,14 +12,14 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
     find_package(Fortran REQUIRED)
     include(cmake-modules/SetupMKL.cmake)                           # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-    include(cmake-modules/Fetch_OpenBLAS.cmake)                     # If MKL is not on openblas will be used instead. Includes lapack.
-    include(cmake-modules/Fetch_Eigen3.cmake)                       # Eigen3 numerical library (needed by ceres and h5pp)
-    include(cmake-modules/Fetch_h5pp.cmake)                         # h5pp for writing to file binary in format
-    include(cmake-modules/Fetch_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-    include(cmake-modules/Fetch_arpack++.cmake)                     # C++ frontend for arpack-ng
-    include(cmake-modules/Fetch_gflags.cmake)                       # Google Flags library needed by ceres-solver
-    include(cmake-modules/Fetch_glog.cmake)                         # Google logging library needed by ceres-solver
-    include(cmake-modules/Fetch_ceres-solver.cmake)                 # ceres-solver (for L-BFGS routine)
+    include(cmake-modules/Get_OpenBLAS.cmake)                     # If MKL is not on openblas will be used instead. Includes lapack.
+    include(cmake-modules/Get_Eigen3.cmake)                       # Eigen3 numerical library (needed by ceres and h5pp)
+    include(cmake-modules/Get_h5pp.cmake)                         # h5pp for writing to file binary in format
+    include(cmake-modules/Get_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
+    include(cmake-modules/Get_arpack++.cmake)                     # C++ frontend for arpack-ng
+    include(cmake-modules/Get_gflags.cmake)                       # Google Flags library needed by ceres-solver
+    include(cmake-modules/Get_glog.cmake)                         # Google logging library needed by ceres-solver
+    include(cmake-modules/Get_ceres-solver.cmake)                 # ceres-solver (for L-BFGS routine)
 
 
     if(TARGET Eigen3::Eigen AND DMRG_ENABLE_THREADS)

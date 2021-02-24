@@ -18,22 +18,22 @@ jobs:
       fail-fast: true # True stops all on first error. Stick to false when debugging
       matrix:
         include:
-          - { compiler: gcc,   source: fetch        , build_type: Debug   , shared: OFF}
-          - { compiler: gcc,   source: fetch        , build_type: Debug   , shared: ON}
+          - { compiler: gcc,   source: cmake        , build_type: Debug   , shared: OFF}
+          - { compiler: gcc,   source: cmake        , build_type: Debug   , shared: ON}
           - { compiler: gcc,   source: conan        , build_type: Release , shared: OFF}
           - { compiler: gcc,   source: conan        , build_type: Release , shared: ON}
-          - { compiler: gcc,   source: find-or-fetch, build_type: Debug   , shared: OFF}
-          - { compiler: gcc,   source: find-or-fetch, build_type: Debug   , shared: ON}
-          - { compiler: gcc,   source: find-or-fetch, build_type: Debug   , shared: OFF}
-          - { compiler: gcc,   source: find-or-fetch, build_type: Debug   , shared: ON}
-          - { compiler: clang, source: fetch        , build_type: Debug   , shared: OFF}
-          - { compiler: clang, source: fetch        , build_type: Debug   , shared: ON}
+          - { compiler: gcc,   source: find-or-cmake, build_type: Debug   , shared: OFF}
+          - { compiler: gcc,   source: find-or-cmake, build_type: Debug   , shared: ON}
+          - { compiler: gcc,   source: find-or-cmake, build_type: Debug   , shared: OFF}
+          - { compiler: gcc,   source: find-or-cmake, build_type: Debug   , shared: ON}
+          - { compiler: clang, source: cmake        , build_type: Debug   , shared: OFF}
+          - { compiler: clang, source: cmake        , build_type: Debug   , shared: ON}
           - { compiler: clang, source: conan        , build_type: Release , shared: OFF}
           - { compiler: clang, source: conan        , build_type: Release , shared: ON}
-          - { compiler: clang, source: find-or-fetch, build_type: Debug   , shared: OFF}
-          - { compiler: clang, source: find-or-fetch, build_type: Debug   , shared: ON}
-          - { compiler: clang, source: find-or-fetch, build_type: Debug   , shared: OFF}
-          - { compiler: clang, source: find-or-fetch, build_type: Debug   , shared: ON}
+          - { compiler: clang, source: find-or-cmake, build_type: Debug   , shared: OFF}
+          - { compiler: clang, source: find-or-cmake, build_type: Debug   , shared: ON}
+          - { compiler: clang, source: find-or-cmake, build_type: Debug   , shared: OFF}
+          - { compiler: clang, source: find-or-cmake, build_type: Debug   , shared: ON}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -76,7 +76,7 @@ jobs:
         # ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
         run: |
-          ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=${{ matrix.build_type }} -j 2 --verbose --verbose-cmake --download-method=${{ matrix.source }} --compiler=${{ matrix.compiler }} --shared=${{ matrix.shared }}
+          ./build.sh  --enable-openmp --enable-tests -a haswell --build-type=${{ matrix.build_type }} -j 2 --verbose --verbose-cmake --package-manager=${{ matrix.source }} --compiler=${{ matrix.compiler }} --shared=${{ matrix.shared }}
 
       - name: Test
         run: |
