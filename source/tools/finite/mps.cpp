@@ -481,7 +481,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->toc();
         tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic();
         auto multisite_mps = state.get_multisite_mps(gate.pos);
-        gate_mps.resize({gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        gate_mps.resize(std::array<long,3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
             gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().contract(multisite_mps, Textra::idx({0}, {0}));
         else
