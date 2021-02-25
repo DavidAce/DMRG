@@ -397,8 +397,10 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                                         const Eigen::Matrix2cd &sig, size_t pos_sig) {
     // Generate gates for the operators
     tools::log->trace("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
-    auto tau_gate = qm::Gate{tau, {pos_tau}, {2}};
-    auto sig_gate = qm::Gate{sig, {pos_sig}, {2}};
+    auto tau_gate = qm::Gate(tau, std::vector<size_t>{pos_tau}, std::vector<long>{2});
+    auto sig_gate = qm::Gate(sig, std::vector<size_t>{pos_sig}, std::vector<long>{2});
+//    auto tau_gate = qm::Gate{tau, {pos_tau}, {2}};
+//    auto sig_gate = qm::Gate{sig, {pos_sig}, {2}};
 
     auto                     g   = tau_gate; // Start with the bottom tau gate
     auto                     lc2 = qm::get_lightcone_intersection(unitary_layers, pos_tau, pos_sig);
