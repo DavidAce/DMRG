@@ -171,7 +171,7 @@ Eigen::Tensor<qm::Scalar, 2> qm::Gate::exp_internal(const Eigen::Tensor<Scalar, 
 
 qm::Gate::Gate(const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> &op_, std::vector<size_t> pos_, std::vector<long> dim_)
     : pos(std::move(pos_)), dim(std::move(dim_)) {
-    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies());
+    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1l, std::multiplies<>());
     if(dim_prod != op_.rows() or dim_prod != op_.cols())
         throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.rows(), op_.cols()));
     if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
@@ -179,14 +179,14 @@ qm::Gate::Gate(const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> &op_,
 }
 
 qm::Gate::Gate(const Eigen::Tensor<Scalar, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_) : op(op_), pos(std::move(pos_)), dim(std::move(dim_)) {
-    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies());
+    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
         throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1)));
     if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
 }
 qm::Gate::Gate(const Eigen::Tensor<Scalar, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, Scalar alpha)
     : pos(std::move(pos_)), dim(std::move(dim_)) {
-    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies());
+    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
         throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1)));
     if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
@@ -933,7 +933,7 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
     if(idx.size() != 2 * (gate.pos.size() - N)) throw std::logic_error("Wrong number of indices removed");
 
     // Assuming the gate is symmetric, we can compute the rank2 dimensions for the storage of the gate op
-    long dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies()); // Product of all dimensions of the remaining top legs of the gate
+    long dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>()); // Product of all dimensions of the remaining top legs of the gate
     std::array<long, 2> dim2{dim_prod, dim_prod};
 
     // Shorthand tensors
