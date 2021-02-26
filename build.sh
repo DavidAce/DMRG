@@ -10,6 +10,8 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
+   | --default-tetralith        : Set all settings for building on Tetralith
+   | --default-kraken           : Set all settings for building on Kraken
    | --package-manager          : Select package manager for dependencies [ find | cmake | find-or-cmake | conan ] (default = find)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | Tau (default = "")
@@ -31,8 +33,8 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --print-cmake-error        : Prints CMakeError.log upon failure
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose CMake and Makefiles
--v | --verbose-make             : Verbose Makefiles
--v | --verbose-cmake            : Verbose CMake
+   | --verbose-make             : Verbose Makefiles
+   | --verbose-cmake            : Verbose CMake
 EXAMPLE:
 ./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --package-manager=find
 EOF
@@ -109,13 +111,39 @@ do
     -l|--clear-libs)
             clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
     -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
+       --default-tetralith)
+                                    march="native"                  ; echo " * Architecture             : $march"          ;
+                                    build_type="Release"            ; echo " * Build type               : $build_type"     ;
+                                    compiler="GCC"                  ; echo " * C++ Compiler             : $compiler"       ;
+                                    package_manager="conan"         ; echo " * Package Manager          : $package_manager";
+                                    enable_shared="OFF"             ; echo " * Shared libraries         : $enable_shared"  ;
+                                    enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
+                                    enable_openmp="ON"              ; echo " * OpenMP                   : $enable_openmp"  ;
+                                    enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
+                                    enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
+                                    make_threads=16                 ; echo " * MAKE threads             : $make_threads"   ;
+                                    target="all"                    ; echo " * CMake Build target       : $target"         ;
+                                    shift ;;
+       --default-kraken)
+                                    march="haswell"                 ; echo " * Architecture             : $march"          ;
+                                    build_type="Release"            ; echo " * Build type               : $build_type"     ;
+                                    compiler="GCC"                  ; echo " * C++ Compiler             : $compiler"       ;
+                                    package_manager="conan"         ; echo " * Package Manager          : $package_manager";
+                                    enable_shared="OFF"             ; echo " * Shared libraries         : $enable_shared"  ;
+                                    enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
+                                    enable_openmp="ON"              ; echo " * OpenMP                   : $enable_openmp"  ;
+                                    enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
+                                    enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
+                                    make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
+                                    target="all"                    ; echo " * CMake Build target       : $target"         ;
+                                    shift ;;
        --package-manager)           package_manager=$2              ; echo " * Package Manager          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
     -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
-    -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
-       --shared)                    enable_shared=$2                ; echo " * Link shared libraries    : $2"      ; shift 2 ;;
+    -s|--enable-shared)             enable_shared="ON"              ; echo " * Shared libraries         : ON"      ; shift   ;;
+       --shared)                    enable_shared=$2                ; echo " * Shared libraries         : $2"      ; shift 2 ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-threads)            enable_threads="ON"             ; echo " * C++11 Threads            : ON"      ; shift   ;;
