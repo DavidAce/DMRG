@@ -4,14 +4,15 @@
 
 #include "class_quantum_gates.h"
 #include <Eigen/Core>
-#include <tools/common/log.h>
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
+#include <math/linalg/tensor.h>
 #include <math/num.h>
 #include <set>
+#include <tools/common/log.h>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <utility>
-#include <math/linalg/tensor.h>
+
 template<typename T>
 std::vector<T> subset(const std::vector<T> &vec, size_t idx_start, size_t num) {
     if(idx_start + num > vec.size())
@@ -103,8 +104,8 @@ void erase(std::vector<T1> &vec, T2 val) {
 }
 
 Eigen::Tensor<qm::Scalar, 2> contract_a(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
-                                      const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const Textra::idxlistpair<1> &idx1,
-                                      const Textra::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
+                                        const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const Textra::idxlistpair<1> &idx1,
+                                        const Textra::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
     return ud.reshape(shp_udn4)
         .contract(m.reshape(shp_mid4), idx1)
         .contract(ud.conjugate().shuffle(Textra::array2{1, 0}).reshape(shp_udn4), idx2)
@@ -113,27 +114,21 @@ Eigen::Tensor<qm::Scalar, 2> contract_a(const Eigen::Tensor<qm::Scalar, 2> &m, c
 }
 
 Eigen::Tensor<qm::Scalar, 2> contract_b(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 2> &shp_udn2,
-                                      const std::array<long, 4> &shp_udn4, const Textra::idxlistpair<1> &idx1, const Textra::idxlistpair<2> &idx2) {
+                                        const std::array<long, 4> &shp_udn4, const Textra::idxlistpair<1> &idx1, const Textra::idxlistpair<2> &idx2) {
     return ud.reshape(shp_udn4).contract(m, idx1).contract(ud.conjugate().shuffle(Textra::array2{1, 0}).reshape(shp_udn4), idx2).reshape(shp_udn2);
 }
 
 Eigen::Tensor<qm::Scalar, 2> contract_c(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 6> &shp_mid6,
-                                      const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 6> &shf6,
-                                      const std::array<long, 2> &dim2) {
-    return ud
-        .contract(m.reshape(shp_mid6), idx_up)
-        .contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn)
-        .shuffle(shf6)
-        .reshape(dim2);
+                                        const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 6> &shf6,
+                                        const std::array<long, 2> &dim2) {
+    return ud.contract(m.reshape(shp_mid6), idx_up).contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn).shuffle(shf6).reshape(dim2);
 }
 
 Eigen::Tensor<qm::Scalar, 2> contract_d(const Eigen::Tensor<qm::Scalar, 2> &m, const Eigen::Tensor<qm::Scalar, 2> &ud, const std::array<long, 4> &shp_mid4,
-                                      const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 4> &shf4,
-                                      const std::array<long, 2> &dim2) {
+                                        const Textra::idxlistpair<1> &idx_up, const Textra::idxlistpair<1> &idx_dn, const std::array<long, 4> &shf4,
+                                        const std::array<long, 2> &dim2) {
     return ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate().shuffle(Textra::array2{1, 0}), idx_dn).shuffle(shf4).reshape(dim2);
 }
-
-
 
 Eigen::Tensor<qm::Scalar, 2> qm::Gate::exp_internal(const Eigen::Tensor<Scalar, 2> &op_, Scalar alpha) const {
     /* Note fore flbit:
@@ -201,7 +196,6 @@ Eigen::Tensor<qm::Scalar, 2> &qm::Gate::adjoint() const {
     adj = op.conjugate().shuffle(Textra::array2{1, 0});
     return adj.value();
 }
-
 
 template<auto rank>
 std::array<long, rank> qm::Gate::shape() const {
@@ -289,13 +283,12 @@ qm::Gate   qm::Gate::trace_pos(const std::vector<size_t> &pos_) const { return q
 qm::Gate   qm::Gate::trace_pos(size_t pos_) const { return qm::trace_pos(*this, pos_); }
 qm::Scalar qm::Gate::trace() const { return qm::trace(*this); }
 
-
-std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gate> & layer){
+std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gate> &layer) {
     std::vector<std::vector<size_t>> gate_sequence;
-    size_t gate_size = layer.front().pos.size();
-    size_t pos_max   = layer.back().pos.back();
+    size_t                           gate_size = layer.front().pos.size();
+    size_t                           pos_max   = layer.back().pos.back();
     for(size_t offset = 0; offset < gate_size; offset++) {
-        if(offset + gate_size > pos_max +1) break;
+        if(offset + gate_size > pos_max + 1) break;
         auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
         if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
         gate_sequence.emplace_back(off_idx);
@@ -303,90 +296,82 @@ std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gat
     return gate_sequence;
 }
 
-
 template<iter::order o>
-std::vector<std::vector<size_t>> qm::get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos){
+std::vector<std::vector<size_t>> qm::get_lightcone(const std::vector<std::vector<qm::Gate>> &layers, size_t pos) {
     std::vector<std::vector<size_t>> cone;
     cone.emplace_back(std::vector<size_t>{pos});
-    for(const auto & [idx_layer,layer] : iter::enumerate<o>(layers)) {
+    for(const auto &[idx_layer, layer] : iter::enumerate<o>(layers)) {
         if(layer.empty()) continue;
         auto gate_sequence = get_gate_sequence(layer);
         for(const auto &[idx_sublayer, seq] : iter::enumerate<o>(gate_sequence)) {
             std::set<size_t> match;
             // The cone width is strictly increasing.
             // So we immediately add the sites from the previous layer.
-            match.insert(cone.back().begin(),cone.back().end());
-            for(const auto & [idx_seq, pos_gate] : iter::enumerate<o>(seq)){
+            match.insert(cone.back().begin(), cone.back().end());
+            for(const auto &[idx_seq, pos_gate] : iter::enumerate<o>(seq)) {
                 // Now we try to find some more matching sites in the new layer.
-                auto &u = layer[pos_gate];
+                auto &              u = layer[pos_gate];
                 std::vector<size_t> pos_isect;
-                std::set_intersection(cone.back().begin(),cone.back().end(),
-                                      u.pos.begin(),u.pos.end(),
-                                      back_inserter(pos_isect));
-                if(not pos_isect.empty())
-                    match.insert(u.pos.begin(),u.pos.end()); // Add positions from u if the gate connects to the current cone
+                std::set_intersection(cone.back().begin(), cone.back().end(), u.pos.begin(), u.pos.end(), back_inserter(pos_isect));
+                if(not pos_isect.empty()) match.insert(u.pos.begin(), u.pos.end()); // Add positions from u if the gate connects to the current cone
             }
-            if(match.empty()) cone.emplace_back(cone.back());
-            else cone.emplace_back(std::vector<size_t>(match.begin(),match.end()));
+            if(match.empty())
+                cone.emplace_back(cone.back());
+            else
+                cone.emplace_back(std::vector<size_t>(match.begin(), match.end()));
         }
     }
-    if constexpr(o == iter::order::rev) std::reverse(cone.begin(),cone.end());
+    if constexpr(o == iter::order::rev) std::reverse(cone.begin(), cone.end());
     return cone;
 }
 
-template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::def>(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
-template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::rev>(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
+template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::def>(const std::vector<std::vector<qm::Gate>> &layers, size_t pos);
+template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::rev>(const std::vector<std::vector<qm::Gate>> &layers, size_t pos);
 
-
-std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & unitary_layers, size_t pos_tau, size_t pos_sig){
-    auto tau_cone = qm::get_lightcone<iter::order::def>(unitary_layers,pos_tau);
-    auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers,pos_sig); // This cone is upside down!
+std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t pos_tau, size_t pos_sig) {
+    auto tau_cone = qm::get_lightcone<iter::order::def>(unitary_layers, pos_tau);
+    auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers, pos_sig); // This cone is upside down!
     if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
 
     std::vector<std::vector<size_t>> int_cone;
 
     // Find the intersection between tau and sig cones
-    for(size_t idx_sublayer = 0; idx_sublayer < tau_cone.size(); idx_sublayer++ ){
-        auto & tau_sublayer = tau_cone[idx_sublayer];
-        auto & sig_sublayer = sig_cone[idx_sublayer];
+    for(size_t idx_sublayer = 0; idx_sublayer < tau_cone.size(); idx_sublayer++) {
+        auto &              tau_sublayer = tau_cone[idx_sublayer];
+        auto &              sig_sublayer = sig_cone[idx_sublayer];
         std::vector<size_t> pos_isect;
-        std::set_intersection(tau_sublayer.begin(),tau_sublayer.end(),
-                              sig_sublayer.begin(),sig_sublayer.end(),
-                              back_inserter(pos_isect));
+        std::set_intersection(tau_sublayer.begin(), tau_sublayer.end(), sig_sublayer.begin(), sig_sublayer.end(), back_inserter(pos_isect));
         int_cone.emplace_back(pos_isect);
     }
     bool deb = tools::log->level() == spdlog::level::trace;
-    if(deb){
+    if(deb) {
         fmt::print("Lightcones\n");
-        auto tau_pic = get_lightcone_picture(unitary_layers,tau_cone, "tau");
-        auto sig_pic = get_lightcone_picture(unitary_layers,sig_cone, "sig");
-        auto int_pic = get_lightcone_picture(unitary_layers,int_cone, "int");
-        for(const auto & c : iter::reverse(tau_pic)) fmt::print("{}\n",c);
-        for(const auto & c : iter::reverse(sig_pic)) fmt::print("{}\n",c);
-        for(const auto & c : iter::reverse(int_pic)) fmt::print("{}\n",c);
+        auto tau_pic = get_lightcone_picture(unitary_layers, tau_cone, "tau");
+        auto sig_pic = get_lightcone_picture(unitary_layers, sig_cone, "sig");
+        auto int_pic = get_lightcone_picture(unitary_layers, int_cone, "int");
+        for(const auto &c : iter::reverse(tau_pic)) fmt::print("{}\n", c);
+        for(const auto &c : iter::reverse(sig_pic)) fmt::print("{}\n", c);
+        for(const auto &c : iter::reverse(int_pic)) fmt::print("{}\n", c);
     }
 
     return int_cone;
 }
 
-std::vector<std::string> qm::get_lightcone_picture(const std::vector<std::vector<qm::Gate>> & layers,
-                                                           const std::vector<std::vector<size_t>> & cone, std::string_view tag,
-                                                           size_t pw, std::string_view sep){
+std::vector<std::string> qm::get_lightcone_picture(const std::vector<std::vector<qm::Gate>> &layers, const std::vector<std::vector<size_t>> &cone,
+                                                   std::string_view tag, size_t pw, std::string_view sep) {
     std::vector<std::string> pic;
-    if(not layers.empty() and not cone.empty()){
+    if(not layers.empty() and not cone.empty()) {
         size_t sw = sep.size();
-        size_t tw = static_cast<size_t>(tag.size()) + 5; // Tag width (brackets, number and colon)
-        size_t mw = static_cast<size_t>(layers.front().back().pos.back() + 1) * (pw+sw) + 1; // max cone width
-        pic = std::vector<std::string>(cone.size(),fmt::format("{0:^{1}}"," ", tw + mw));
-        for(const auto & [i,c] : iter::enumerate(cone)){
-            pic[i].replace(0, tw, fmt::format("{}[{:^2}]:",tag,i));
-            for(const auto & [j, p] : iter::enumerate(c))
-                pic[i].replace(tw + p*(pw+sw), pw, fmt::format("{0:>{1}}{2}",p,pw,sep));
+        size_t tw = static_cast<size_t>(tag.size()) + 5;                                       // Tag width (brackets, number and colon)
+        size_t mw = static_cast<size_t>(layers.front().back().pos.back() + 1) * (pw + sw) + 1; // max cone width
+        pic       = std::vector<std::string>(cone.size(), fmt::format("{0:^{1}}", " ", tw + mw));
+        for(const auto &[i, c] : iter::enumerate(cone)) {
+            pic[i].replace(0, tw, fmt::format("{}[{:^2}]:", tag, i));
+            for(const auto &[j, p] : iter::enumerate(c)) pic[i].replace(tw + p * (pw + sw), pw, fmt::format("{0:>{1}}{2}", p, pw, sep));
         }
     }
     return pic;
 }
-
 
 qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     std::vector<size_t> pos_isect; // locations that intersect: both on middle and updown gates
@@ -401,8 +386,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // In this case we stack gates vertically that are equally wide.
         // Should be the simplest case
-        Eigen::Tensor<Scalar, 2> op =
-            updown_gate.op.contract(middle_gate.op, Textra::idx({1}, {0})).contract(updown_gate.op.conjugate().shuffle(Textra::array2{1,0}), Textra::idx({1}, {0}));
+        Eigen::Tensor<Scalar, 2> op = updown_gate.op.contract(middle_gate.op, Textra::idx({1}, {0}))
+                                          .contract(updown_gate.op.conjugate().shuffle(Textra::array2{1, 0}), Textra::idx({1}, {0}));
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};
     }
     if(pos_isect.size() == 1 and pos_nsect.size() == 1 and middle_gate.pos.size() == 1 and updown_gate.pos.size() == 2) {
@@ -454,7 +439,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx1 = Textra::idx({3}, {0});
             idx2 = Textra::idx({2, 3}, {0, 1});
         }
-        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos, updown_gate.pos,
+                          pos_isect, pos_nsect, inc);
         auto op = contract_b(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
         return qm::Gate{op, updown_gate.pos, updown_gate.dim};
     }
@@ -555,7 +541,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             dim  = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
             dim2 = repeat(std::array<long, 1>{shp_mid4[0] * shp_udn2[0]});
         }
-        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos, updown_gate.pos,
+                          pos_isect, pos_nsect, inc);
         auto op = contract_a(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
         return qm::Gate{op, pos, dim};
     }
@@ -570,7 +557,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         std::array<Eigen::Index, 4> shf4{};
         Textra::idxlistpair<1>      idx_up, idx_dn;
         Eigen::Tensor<Scalar, 2>    op;
-        auto   offset = static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), updown_gate.pos.front())));
+        auto                        offset =
+            static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), updown_gate.pos.front())));
         size_t offmin = 0;
         size_t offmax = middle_gate.pos.size() - updown_gate.pos.size();
         size_t merged = offmax;
@@ -614,8 +602,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_up = Textra::idx({1}, {0});
                 idx_dn = Textra::idx({2}, {0});
                 shf4   = Textra::array4{0, 1, 3, 2};
-                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
-                op     = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
+                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
+                                  updown_gate.pos, pos_isect, pos_nsect, inc);
+                op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
             } else if(offset == offmax) {
                 /*  Insert at offmax
                  *            0                   0                 0
@@ -656,7 +645,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_dn = Textra::idx({3}, {0});
                 shf4   = Textra::array4{1, 0, 2, 3};
             }
-            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
+                              updown_gate.pos, pos_isect, pos_nsect, inc);
             op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
         } else {
             /*  Insert at offmax
@@ -695,8 +685,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx_up = Textra::idx({1}, {1});
             idx_dn = Textra::idx({4}, {0});
             shf6   = Textra::array6{1, 0, 2, 3, 5, 4};
-            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos, updown_gate.pos, pos_isect, pos_nsect, inc);
-            op     = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos,
+                              updown_gate.pos, pos_isect, pos_nsect, inc);
+            op = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
         }
         if(op.size() == 0) throw std::logic_error("No op computed!");
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};
@@ -718,8 +709,8 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
 
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // This case is a vertical stack. Should be the simplest case
-        Eigen::Tensor<Scalar,2> op = up_gate.op.contract(dn_gate.op, Textra::idx({1},{0}));
-        return qm::Gate {op, dn_gate.pos, dn_gate.dim};
+        Eigen::Tensor<Scalar, 2> op = up_gate.op.contract(dn_gate.op, Textra::idx({1}, {0}));
+        return qm::Gate{op, dn_gate.pos, dn_gate.dim};
     }
     if(not pos_isect.empty() and not pos_nsect.empty() and inc) {
         std::array<long, 6> dn_shp6{};
@@ -870,7 +861,8 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         }
     }
 
-    throw std::runtime_error(fmt::format("Connect case not implemented: dn pos {} | up pos {} | pos_isect {} | pos_nsect {}",dn_gate.pos, up_gate.pos, pos_isect, pos_nsect));
+    throw std::runtime_error(
+        fmt::format("Connect case not implemented: dn pos {} | up pos {} | pos_isect {} | pos_nsect {}", dn_gate.pos, up_gate.pos, pos_isect, pos_nsect));
 }
 
 qm::Gate qm::trace_idx(const qm::Gate &gate, const std::vector<long> &idx) {
@@ -892,23 +884,22 @@ qm::Gate qm::trace_pos(const qm::Gate &gate, const std::vector<size_t> &pos) {
     return tmp;
 }
 
-qm::Gate   qm::trace_pos(const qm::Gate &gate, size_t pos) { return qm::trace_pos(gate, gate.idx(std::vector<size_t>{pos})); }
+qm::Gate qm::trace_pos(const qm::Gate &gate, size_t pos) { return qm::trace_pos(gate, gate.idx(std::vector<size_t>{pos})); }
 
 qm::Scalar qm::trace(const qm::Gate &gate) {
     qm::Gate t = qm::trace_pos(gate, gate.pos);
     if(not t.pos.empty()) throw std::logic_error(fmt::format("Gate should be empty after tracing all positions. Got pos: {}", t.pos));
-    if(t.op.dimension(0) * t.op.dimension(1) != 1) throw std::logic_error(fmt::format("Gate should have scalar op after tracing all positions. Got dims: {}", t.op.dimensions()));
+    if(t.op.dimension(0) * t.op.dimension(1) != 1)
+        throw std::logic_error(fmt::format("Gate should have scalar op after tracing all positions. Got dims: {}", t.op.dimensions()));
     return t.op(0);
 }
-
-
 
 template<auto N>
 qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpairs) {
     if constexpr(N == 1) tools::log->trace("Tracing pos {} | dim {} | index pair [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
     if constexpr(N == 2)
-        tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second, idxpairs[1].first,
-                         idxpairs[1].second);
+        tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second,
+                          idxpairs[1].first, idxpairs[1].second);
 
     // Compute the remaining indices positions and dimensions
     auto idx = gate.idx(); // Twice as long as pos and dim! It has the top and bottom indices

@@ -28,6 +28,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
+   | --print-cmake-error        : Prints CMakeError.log upon failure
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose CMake and Makefiles
 -v | --verbose-make             : Verbose Makefiles
@@ -63,6 +64,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 enable-asan\
                 no-modules\
                 prefer-conda\
+                print-cmake-error
                 verbose\
                 verbose-make\
                 verbose-cmake\
@@ -89,6 +91,7 @@ enable_lto="OFF"
 enable_asan="OFF"
 make_threads=8
 prefer_conda="OFF"
+print_cmake_error="OFF"
 verbose="OFF"
 verbose_make="OFF"
 verbose_cmake="OFF"
@@ -122,6 +125,7 @@ do
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs     : ON"      ; shift   ;;
+       --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose cmake & make     : ON"      ; shift   ;;
        --verbose-make)              verbose_make="ON"               ; echo " * Verbose make             : ON"      ; shift   ;;
        --verbose-cmake)             verbose_cmake="ON"              ; echo " * Verbose cmake            : ON"      ; shift   ;;
@@ -326,10 +330,12 @@ if [ -z "$dry_run" ] ;then
     if [ "$exit_code" != "0" ]; then
             echo ""
             echo "Exit code: $exit_code"
-            echo "==================================================================="
-            echo "CMakeFiles/CMakeError.log:"
-            cat CMakeFiles/CMakeError.log
-            echo "==================================================================="
+            if [ "$print_cmake_error" = "ON" ] ; then
+                echo "==================================================================="
+                echo "CMakeFiles/CMakeError.log:"
+                cat CMakeFiles/CMakeError.log
+                echo "==================================================================="
+            fi
             exit "$exit_code"
     fi
 
@@ -338,10 +344,12 @@ if [ -z "$dry_run" ] ;then
     if [ "$exit_code" != "0" ]; then
             echo ""
             echo "Exit code: $exit_code"
-            echo "==================================================================="
-            echo "CMakeFiles/CMakeError.log:"
-            cat CMakeFiles/CMakeError.log
-            echo "==================================================================="
+            if [ "$print_cmake_error" = "ON" ] ; then
+                echo "==================================================================="
+                echo "CMakeFiles/CMakeError.log:"
+                cat CMakeFiles/CMakeError.log
+                echo "==================================================================="
+            fi
             exit "$exit_code"
     fi
 

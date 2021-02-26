@@ -1,14 +1,15 @@
 #pragma once
 #include <complex>
 #include <general/eigen_tensor_fwd_decl.h>
-#include <vector>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <vector>
 
-namespace iter{
+namespace iter {
     enum class order;
 }
-namespace Eigen{
-    template <typename Idx> struct IndexPair;
+namespace Eigen {
+    template<typename Idx>
+    struct IndexPair;
 }
 
 namespace qm {
@@ -41,9 +42,9 @@ namespace qm {
         Eigen::Tensor<Scalar,2> op;
         std::vector<size_t> pos;
         std::vector<long> dim;
-        Gate(const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>  & op_, std::vector<size_t>  pos_, std::vector<long> dim_);
-        Gate(const Eigen::Tensor<Scalar,2>  & op_, std::vector<size_t>  pos_, std::vector<long> dim_);
-        Gate(const Eigen::Tensor<Scalar,2>  & op_, std::vector<size_t>  pos_, std::vector<long> dim_, Scalar alpha);
+        Gate(const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
+        Gate(const Eigen::Tensor<Scalar,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
+        Gate(const Eigen::Tensor<Scalar,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, Scalar alpha);
         void exp_inplace(Scalar alpha);
         [[nodiscard]] Gate exp(Scalar alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
