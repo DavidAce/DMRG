@@ -75,6 +75,8 @@ endif()
 include(cmake-modules/PrintHostInfo.cmake)
 include(cmake-modules/PrintOptionInfo.cmake)
 
+include(cmake-modules/Warnings.cmake)
+
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################

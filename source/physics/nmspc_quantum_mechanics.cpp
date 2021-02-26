@@ -303,7 +303,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     auto           SM            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::sm, kroneckerSwap); // We use these as matrices
     auto           ID            = qm::spinHalf::gen_twobody_spins(qm::spinHalf::id, kroneckerSwap); // We use these as matrices
     auto           N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
-
+    auto           spin_dims     = std::vector<long>{2l,2l};
     std::vector<qm::Gate> unitaries;
     unitaries.reserve(sites - 1);
     for(size_t idx = 0; idx < sites - 1; idx++) {
@@ -312,7 +312,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
         double               th2 = rnd::uniform_double_box(1, -1);
         double               th3 = rnd::uniform_double_box(1, -1);
         std::complex<double> t(rnd::uniform_double_box(1, -1), rnd::uniform_double_box(1, -1));
-
+        auto indices = std::vector<size_t>{idx, idx + 1};
         Eigen::Matrix4cd H = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
                              SP[0] * SM[1] * t + SP[1] * SM[0] * std::conj(t);
 
@@ -325,7 +325,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //        |               |      |
             //        1               2      3
 
-            unitaries.emplace_back(Textra::TensorMap((imn * fmix * H).exp().eval()), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2, 2});
+            unitaries.emplace_back(Textra::TensorMap((imn * fmix * H).exp().eval()), indices, spin_dims);
         } else {
             // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
             // the kronecker product that generated two-site gates above has indexed right-to-left
@@ -336,7 +336,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             //        1                   3      2              2      3                1
             Eigen::Tensor<Scalar, 2> H_shuffled = Textra::TensorMap(H, 2, 2, 2, 2).shuffle(Textra::array4{1, 0, 3, 2}).reshape(Textra::array2{4, 4});
             Eigen::MatrixXcd         expifH     = (imn * fmix * Textra::MatrixMap(H_shuffled)).exp();
-            unitaries.emplace_back(Textra::TensorMap(expifH), std::vector<size_t>{idx, idx + 1}, std::vector<long>{2, 2});
+            unitaries.emplace_back(Textra::TensorMap(expifH), indices, spin_dims);
         }
     }
     // Sanity check
@@ -397,11 +397,10 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
                                         const Eigen::Matrix2cd &sig, size_t pos_sig) {
     // Generate gates for the operators
     tools::log->trace("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
-    auto tau_gate = qm::Gate(tau, std::vector<size_t>{pos_tau}, std::vector<long>{2});
-    auto sig_gate = qm::Gate(sig, std::vector<size_t>{pos_sig}, std::vector<long>{2});
-//    auto tau_gate = qm::Gate{tau, {pos_tau}, {2}};
-//    auto sig_gate = qm::Gate{sig, {pos_sig}, {2}};
-
+//    auto tau_gate = qm::Gate{tau, {pos_tau}, {2l}};
+//    auto sig_gate = qm::Gate{sig, {pos_sig}, {2l}};
+    auto tau_gate = qm::Gate(tau, {pos_tau}, {2l});
+    auto sig_gate = qm::Gate(sig, {pos_sig}, {2l});
     auto                     g   = tau_gate; // Start with the bottom tau gate
     auto                     lc2 = qm::get_lightcone_intersection(unitary_layers, pos_tau, pos_sig);
     bool                     deb = tools::log->level() <= spdlog::level::debug;
