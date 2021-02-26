@@ -53,6 +53,8 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 clear-libs:\
                 compiler:\
                 dry-run\
+                default-tetralith\
+                default-kraken\
                 package-manager:\
                 enable-tests\
                 enable-shared\
