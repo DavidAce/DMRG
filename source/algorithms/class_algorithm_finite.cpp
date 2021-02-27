@@ -13,7 +13,6 @@
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/debug.h>
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
@@ -68,36 +67,31 @@ void class_algorithm_finite::run()
  */
 {
     tools::log->info("Starting {}", algo_name);
-    tools::common::profile::t_tot->tic();
+    auto t_tot = tools::common::profile::t_tot->tic_token();
 
     // We may want to resume this simulation.
     if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
         try {
             resume();
         } catch(const except::state_error &ex) {
-            tools::common::profile::t_tot->toc();
             throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const except::load_error &ex) {
-            tools::common::profile::t_tot->toc();
             throw except::load_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const std::exception &ex) {
-            tools::common::profile::t_tot->toc();
             throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
     } else {
         run_default_task_list();
     }
-    tools::common::profile::t_tot->toc();
 }
 
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", algo_name);
-    tools::common::profile::prof[algo_type]["t_pos"]->tic();
+    auto t_pos = tools::common::profile::prof[algo_type]["t_pos"]->tic_token();
     write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
     write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);
     print_status_full();
-    tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::log->info("Finished default postprocessing for {}", algo_name);
     tools::common::profile::print_profiling_all();
 }
@@ -138,7 +132,6 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
             // It's important to stay at the inward edge so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
         }
-        tools::finite::debug::check_integrity(*tensors.state, *tensors.model, *tensors.edges);
         tensors.active_sites.clear();
         tensors.state->active_sites.clear();
         tensors.model->active_sites.clear();
@@ -235,7 +228,7 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
         else
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
-    tools::common::profile::prof[algo_type]["t_rnd"]->tic();
+    auto t_rnd = tools::common::profile::prof[algo_type]["t_rnd"]->tic_token();
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     if(not sector) sector = settings::strategy::target_sector;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
@@ -279,7 +272,6 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
                      tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
     tools::log->info("-- Energy variance          : {}", std::log10(tools::finite::measure::energy_variance(tensors)));
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
-    tools::common::profile::prof[algo_type]["t_rnd"]->toc();
 }
 
 void class_algorithm_finite::try_projection() {
@@ -673,9 +665,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     h5pp_file->setKeepFileClosed();
 
     // Copy from temporary location to destination depending on given policy
-    tools::common::profile::prof[algo_type]["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::prof[algo_type]["t_hdf"]->tic_token();
     copy_from_tmp(storage_reason, copy_policy);
-    tools::common::profile::prof[algo_type]["t_hdf"]->toc();
 }
 
 template<typename T>
@@ -693,9 +684,8 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const T
     tools::finite::io::h5dset::save_data(*h5pp_file, data, data_path, status);
 
     // Copy from temporary location to destination depending on given policy
-    tools::common::profile::prof[algo_type]["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::prof[algo_type]["t_hdf"]->tic_token();
     copy_from_tmp(storage_reason, copy_policy);
-    tools::common::profile::prof[algo_type]["t_hdf"]->toc();
 }
 
 template void class_algorithm_finite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<Scalar,2> & data,const std::string &name, std::optional<CopyPolicy> copy_policy);

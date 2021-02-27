@@ -9,7 +9,6 @@
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/infinite/debug.h>
 #include <tools/infinite/io.h>
 #include <tools/infinite/measure.h>
 #include <tools/infinite/mps.h>
@@ -19,33 +18,29 @@ class_algorithm_infinite::class_algorithm_infinite(std::shared_ptr<h5pp::File> h
     tools::log->trace("Constructing algorithm infinite");
     tensors.initialize(settings::model::model_type);
     tensors.state->set_algorithm(algo_type);
-    tools::infinite::debug::check_integrity(tensors);
 }
 
 void class_algorithm_infinite::run() {
     if(not cfg_algorithm_is_on()) return;
-    tools::common::profile::t_tot->tic();
+    auto t_tot = tools::common::profile::t_tot->tic_token();
     run_preprocessing();
     run_simulation();
     run_postprocessing();
-    tools::common::profile::t_tot->toc();
 }
 
 void class_algorithm_infinite::run_preprocessing() {
-    tools::common::profile::prof[algo_type]["t_pre"]->tic();
+    auto t_pre = tools::common::profile::prof[algo_type]["t_pre"]->tic_token();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
     write_to_file(StorageReason::MODEL);
-    tools::common::profile::prof[algo_type]["t_pre"]->toc();
 }
 
 void class_algorithm_infinite::run_postprocessing() {
-    tools::common::profile::prof[algo_type]["t_pos"]->tic();
+    auto t_pos = tools::common::profile::prof[algo_type]["t_pos"]->tic_token();
     write_to_file(StorageReason::FINISHED);
     copy_from_tmp(StorageReason::FINISHED);
     print_status_full();
-    tools::common::profile::prof[algo_type]["t_pos"]->toc();
     tools::common::profile::print_profiling();
 }
 

@@ -9,12 +9,11 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> tools::finite::opt::internal::subs
                                                                                                          const TensorType<cplx, 3> &multisite_mps) {
     tools::log->trace("Finding subspace -- full");
     if(H_local.rows() != H_local.cols()) throw std::runtime_error(fmt::format("H_local is not square: rows [{}] | cols [{}]", H_local.rows(), H_local.cols()));
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic();
+    auto t_opt_sub_eig = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->tic_token();
     eig::solver solver;
     solver.eig<eig::Form::SYMM>(H_local.data(), H_local.rows(), eig::Vecs::ON, eig::Dephase::OFF);
     auto eigvals = eig::view::get_eigvals<double>(solver.result);
     auto eigvecs = eig::view::get_eigvecs<Scalar>(solver.result);
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
     Eigen::Map<const Eigen::VectorXcd> multisite_vector(multisite_mps.data(), multisite_mps.size());
     Eigen::VectorXd                    overlaps = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();

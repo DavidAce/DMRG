@@ -311,7 +311,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
     if constexpr(settings::debug) tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
-    tools::common::profile::get_default_prof()["t_mps"]->tic();
+    auto t_mps = tools::common::profile::get_default_prof()["t_mps"]->tic_token();
     Eigen::Tensor<Scalar, 3> multisite_tensor;
     constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
     constexpr auto           contract_idx = Textra::idx({2}, {1});
@@ -354,10 +354,10 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
         multisite_tensor                      = temp;
     }
 
-    tools::common::profile::get_default_prof()["t_mps"]->toc();
+    t_mps.toc();
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
-        tools::common::profile::get_default_prof()["t_dbg"]->tic();
+        auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
         double norm = Textra::norm(multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             for(const auto &site : sites) {
@@ -377,7 +377,6 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
 
             throw std::runtime_error(fmt::format("Multisite tensor for sites {} is not normalized. Norm = {:.16f}", sites, norm));
         }
-        tools::common::profile::get_default_prof()["t_dbg"]->toc();
     }
     return multisite_tensor;
 }

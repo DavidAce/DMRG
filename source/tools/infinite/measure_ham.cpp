@@ -16,16 +16,15 @@
 #include <tools/infinite/measure.h>
 
 double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinite &tensors) {
+    auto t_ene_ham = tools::common::profile::get_default_prof()["t_ene_ham"]->tic_token();
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
-
     if(tensors.measurements.energy_per_site_ham) return tensors.measurements.energy_per_site_ham.value();
     if(state.measurements.bond_dimension <= 2) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiA() != state.chiB()) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiA() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiB() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();
     tools::log->trace("Measuring energy ham");
-    tools::common::profile::get_default_prof()["t_ene_ham"]->tic();
     auto &h_evn = model.get_2site_ham_AB();
     auto &h_odd = model.get_2site_ham_BA();
     tools::common::views::compute_mps_components(state);
@@ -41,7 +40,6 @@ double tools::infinite::measure::energy_per_site_ham(const class_tensors_infinit
                                          .contract(l_odd, Textra::idx({0, 2}, {0, 1}))
                                          .contract(r_odd, Textra::idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0) + E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!");
-    tools::common::profile::get_default_prof()["t_ene_ham"]->toc();
     tensors.measurements.energy_per_site_ham = 0.5 * std::real(E_evn(0) + E_odd(0));
     return tensors.measurements.energy_per_site_ham.value();
 }
@@ -58,7 +56,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
 
     tools::log->trace("Measuring energy variance ham from tensors");
 
-    tools::common::profile::get_default_prof()["t_var_ham"]->tic();
+    auto t_var_ham = tools::common::profile::get_default_prof()["t_var_ham"]->tic_token();
     using namespace tools::common::views;
 
     auto &h_evn = model.get_2site_ham_AB();
@@ -169,7 +167,6 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
     Scalar e2lrpabba = E2LRP_ABBA(0);
     Scalar e2lrpbaba = E2LRP_BABA(0);
     Scalar e2lrpbaab = E2LRP_BAAB(0);
-    tools::common::profile::get_default_prof()["t_var_ham"]->toc();
     tensors.measurements.energy_variance_per_site_ham =
         std::real(0.5 * (e2ab + e2ba) + 0.5 * (e2aba_1 + e2bab_1 + e2aba_2 + e2bab_2) + e2lrpabab + e2lrpabba + e2lrpbaba + e2lrpbaab);
     return tensors.measurements.energy_variance_per_site_ham.value();

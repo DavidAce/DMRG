@@ -19,6 +19,7 @@ Eigen::Tensor<class_tensors_finite::Scalar, 3> tools::finite::opt::internal::gro
     tools::log->debug("Ground state optimization with ritz {} ...", ritzstring);
     using namespace internal;
     using namespace settings::precision;
+    auto t_eig = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
 
     eig::Ritz   ritz      = eig::stringToRitz(ritzstring);
     const auto &mpo       = tensors.get_multisite_mpo();
@@ -28,7 +29,6 @@ Eigen::Tensor<class_tensors_finite::Scalar, 3> tools::finite::opt::internal::gro
     //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     auto nev = static_cast<eig::size_type>(1);
     auto ncv = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
-    tools::common::profile::get_default_prof()["t_eig"]->tic();
     tools::log->trace("Defining Hamiltonian matrix-vector product");
     MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     tools::log->trace("Defining eigenvalue solver");
@@ -38,6 +38,5 @@ Eigen::Tensor<class_tensors_finite::Scalar, 3> tools::finite::opt::internal::gro
     // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
     tools::log->trace("Finding ground state");
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
-    tools::common::profile::get_default_prof()["t_eig"]->toc();
     return eig::view::get_eigvec<Scalar>(solver.result, shape_mps, 0);
 }

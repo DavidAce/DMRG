@@ -21,6 +21,7 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
 
 Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_tensors_infinite &tensors, std::string_view ritzstring) {
     tools::log->trace("Starting ground state optimization");
+    auto t_eig = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
 
     eig::Ritz ritz = eig::stringToRitz(ritzstring);
 
@@ -31,11 +32,9 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
     auto        nev       = static_cast<eig::size_type>(1);
     auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
 
-    tools::common::profile::get_default_prof()["t_eig"]->tic();
     MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     eig::solver                      solver;
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::ON);
-    tools::common::profile::get_default_prof()["t_eig"]->toc();
     return eig::view::get_eigvec<Scalar>(solver.result, shape_mps);
 }
 

@@ -223,9 +223,9 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
 
 
     // Split the multisite mps into single-site mps objects
-    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->tic();
+    auto t_merge_split = tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->tic_token();
     auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim, svd_threshold);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->toc();
+    t_merge_split.toc();
 
     // Sanity checks
     if(positions.size() != mps_list.size())
@@ -235,8 +235,8 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
 
     // In multisite mergers the LC is already where we expect it to be (i.e. on the right-most "A" matrix)
     // Copy the split up mps components into the current state
-    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->tic();
     for(auto &mps_src : mps_list) {
+        auto t_merge_merge = tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->tic_token();
         auto  pos     = mps_src.get_position();
         auto &mps_tgt = state.get_mps_site(pos);
 
@@ -256,7 +256,6 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
             state.get_mps_site(pos - 1).merge_stash(mps_src); // Absorb stashed U,S (and possibly LC)
         mps_src.drop_stash(); // Discard whatever is left stashed at the edge (this normalizes the state)
     }
-    tools::common::profile::prof[AlgorithmType::ANY]["t_merge_merge"]->toc();
 
     current_position = state.get_position<long>();
     if(current_position != center_position)
@@ -455,12 +454,11 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
-            tools::common::profile::get_default_prof()["t_dbg"]->tic();
+            auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
 //            tools::log->trace("Before applying gates");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
 //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
 
@@ -474,20 +472,19 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         auto &gate = gates[pos];
         if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
 
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic();
+        auto t_gate_move = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic_token();
         move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_threshold);
+        t_gate_move.toc();
 
-
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->toc();
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic();
+        auto t_gate_apply = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic_token();
         auto multisite_mps = state.get_multisite_mps(gate.pos);
         gate_mps.resize(std::array<long,3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
             gate_mps.device(Textra::omp::getDevice()) = gate.adjoint().contract(multisite_mps, Textra::idx({0}, {0}));
         else
             gate_mps.device(Textra::omp::getDevice()) = gate.op.contract(multisite_mps, Textra::idx({0}, {0}));
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->toc();
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->tic();
+        t_gate_apply.toc();
+        auto t_gate_merge = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->tic_token();
         long min_position = static_cast<long>(gate.pos.front()) - 1 ;
         long max_position = static_cast<long>(gate.pos.back());
         long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
@@ -496,33 +493,30 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if constexpr (settings::debug_gates)
             tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(), new_position, state.get_labels());
         tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_threshold, LogPolicy::NORMAL);
-        tools::common::profile::prof[AlgorithmType::ANY]["t_gate_merge"]->toc();
     }
 
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
-            tools::common::profile::get_default_prof()["t_dbg"]->tic();
+            auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
 //            tools::log->trace("After applying gates");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
 //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
     }
 
-    tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->tic();
+    auto t_gate_return = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->tic_token();
     move_center_point_to_edge(state, chi_lim, svd_threshold);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->toc();
+    t_gate_return.toc();
 
     auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug_gates)
         if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
-            tools::common::profile::get_default_prof()["t_dbg"]->tic();
+            auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
 //            tools::log->trace("After normalization");
 //            for(const auto &mps : state.mps_sites)
 //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() << "]:\n"
 //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) << std::endl;
-            tools::common::profile::get_default_prof()["t_dbg"]->toc();
         }
 
     if (settings::profiling::extra) {

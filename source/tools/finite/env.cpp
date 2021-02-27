@@ -308,7 +308,7 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
-    tools::common::profile::get_default_prof()["t_env"]->tic();
+    auto t_env = tools::common::profile::get_default_prof()["t_env"]->tic_token();
 
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
@@ -357,7 +357,6 @@ void tools::finite::env::rebuild_edges_ene(const class_state_finite &state, cons
     if(not ene_pos_log.empty()) tools::log->trace("Rebuilt R ene edges: {}", ene_pos_log);
     if(not edges.get_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
     if(not edges.get_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
-    tools::common::profile::get_default_prof()["t_env"]->toc();
 }
 
 void tools::finite::env::rebuild_edges_var(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges) {
@@ -367,7 +366,7 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
-    tools::common::profile::get_default_prof()["t_env"]->tic();
+    auto t_env = tools::common::profile::get_default_prof()["t_env"]->tic_token();
 
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
@@ -417,7 +416,6 @@ void tools::finite::env::rebuild_edges_var(const class_state_finite &state, cons
     if(not var_pos_log.empty()) tools::log->trace("Rebuilt R var edges: {}", var_pos_log);
     if(not edges.get_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
     if(not edges.get_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
-    tools::common::profile::get_default_prof()["t_env"]->toc();
 }
 
 void tools::finite::env::rebuild_edges(const class_state_finite &state, const class_model_finite &model, class_edges_finite &edges) {

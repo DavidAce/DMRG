@@ -28,13 +28,13 @@ void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std
     if(storage_level == StorageLevel::NONE) return;
     // Check if the current entry has already been appended
     // Status is special, flags can be updated without changing iter or step
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
     bootstrap_save_log(save_log, h5ppFile, table_path);
     auto save_point = std::make_pair(status.iter, status.step);
     tools::log->trace("Appending to table: {}", table_path);
     h5pp_table_algorithm_status::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
     if(save_log[table_path] == save_point) {
         // The table has been saved at this iteration, so we overwrite the last entry.
         auto tableInfo = h5ppFile.getTableInfo(table_path);
@@ -44,7 +44,6 @@ void tools::common::io::h5table::save_sim_status(h5pp::File &h5ppFile, const std
     h5ppFile.writeAttribute(status.iter, "iteration", table_path);
     h5ppFile.writeAttribute(status.step, "step", table_path);
 
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
 }
 
@@ -106,9 +105,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_opt_sub_vH    = tools::common::profile::prof[algo_type.value()]["t_opt_sub_vH"]->get_measured_time();
             profiling_entry.t_opt_sub_vHv   = tools::common::profile::prof[algo_type.value()]["t_opt_sub_vHv"]->get_measured_time();
             /* clang-format on */
-            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
             h5ppFile.appendTableRecords(profiling_entry, table_path);
-            tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
         case(AlgorithmType::fDMRG): {
@@ -138,9 +136,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
             profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
             /* clang-format on */
-            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
             h5ppFile.appendTableRecords(profiling_entry, table_path);
-            tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
         case(AlgorithmType::fLBIT): {
@@ -170,9 +167,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_mps           = tools::common::profile::prof[algo_type.value()]["t_mps"]->get_measured_time();
             profiling_entry.t_mpo           = tools::common::profile::prof[algo_type.value()]["t_mpo"]->get_measured_time();
             /* clang-format on */
-            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
             h5ppFile.appendTableRecords(profiling_entry, table_path);
-            tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
         case(AlgorithmType::iDMRG): {
@@ -203,9 +199,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_var_ham       = tools::common::profile::prof[algo_type.value()]["t_var_ham"]->get_measured_time();
             profiling_entry.t_var_mom       = tools::common::profile::prof[algo_type.value()]["t_var_mom"]->get_measured_time();
             /* clang-format on */
-            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
             h5ppFile.appendTableRecords(profiling_entry, table_path);
-            tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
         case(AlgorithmType::iTEBD): {
@@ -232,9 +227,8 @@ void tools::common::io::h5table::save_profiling(h5pp::File &h5ppFile, const std:
             profiling_entry.t_var_ham       = tools::common::profile::prof[algo_type.value()]["t_var_ham"]->get_measured_time();
             profiling_entry.t_var_mom       = tools::common::profile::prof[algo_type.value()]["t_var_mom"]->get_measured_time();
             /* clang-format on */
-            tools::common::profile::get_default_prof()["t_hdf"]->tic();
+            auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
             h5ppFile.appendTableRecords(profiling_entry, table_path);
-            tools::common::profile::get_default_prof()["t_hdf"]->toc();
             break;
         }
         case(AlgorithmType::ANY): break;
@@ -263,16 +257,15 @@ void tools::common::io::h5table::save_mem_usage(h5pp::File &h5ppFile, const std:
     mem_usage_entry.rss  = tools::common::profile::mem_rss_in_mb();
     mem_usage_entry.hwm  = tools::common::profile::mem_hwm_in_mb();
     mem_usage_entry.vm   = tools::common::profile::mem_vm_in_mb();
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     h5ppFile.appendTableRecords(mem_usage_entry, table_path);
     h5ppFile.writeAttribute(status.iter, "iteration", table_path);
     h5ppFile.writeAttribute(status.step, "step", table_path);
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
 }
 
 void tools::common::io::h5table::load_sim_status(const h5pp::File &h5ppFile, const std::string &state_prefix, class_algorithm_status &status) {
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     std::string table_path = fmt::format("{}/status", state_prefix);
     if(h5ppFile.linkExists(table_path)) {
         tools::log->info("Loading status from table: [{}]", table_path);
@@ -281,7 +274,6 @@ void tools::common::io::h5table::load_sim_status(const h5pp::File &h5ppFile, con
         throw std::runtime_error(
             fmt::format("Could not find table [status] in file [{}] at prefix [{}] at path [{}]", h5ppFile.getFilePath(), state_prefix, table_path));
     }
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 void tools::common::io::h5table::load_profiling(const h5pp::File &h5ppFile, const std::string &state_prefix, std::optional<AlgorithmType> algo_type) {

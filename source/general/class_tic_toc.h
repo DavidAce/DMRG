@@ -21,7 +21,6 @@ class class_tic_toc {
     std::string name;
     bool        enable          = true; // Whether we are profiling or not.
     int         print_precision = 5;
-    int         padding         = 5;
 
     public:
     bool is_measuring = false;
@@ -29,6 +28,7 @@ class class_tic_toc {
     class_tic_toc();
     void                      tic();
     void                      toc();
+
     void                      reset();
     void                      set_properties(bool on_off, int prec, std::string output_text);
     void                      set_label(std::string output_text);
@@ -46,4 +46,15 @@ class class_tic_toc {
     class_tic_toc &      operator-=(double other_time_in_seconds);
     class_tic_toc &      operator+=(const class_tic_toc &rhs);
     class_tic_toc &      operator-=(const class_tic_toc &rhs);
+
+    class token {
+        class_tic_toc & t;
+        public:
+        explicit token(class_tic_toc & t_);
+        ~token() noexcept;
+        void tic();
+        void toc();
+    };
+    [[nodiscard]] token tic_token(); // Gives a token RAII-style tic-toc: toc() is called by destructor!
+
 };

@@ -20,6 +20,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
                                                                                        OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
+    auto t_eig  = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
     auto dims_mps = initial_mps.get_tensor().dimensions();
     auto size     = initial_mps.get_tensor().size();
     auto nev      = std::clamp<eig::size_type>(size / 16, std::min(size, 4l), 8);
@@ -46,10 +47,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
         MatrixProductHamiltonian<double> matrix(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo);
 
         tools::log->trace("Finding excited state");
-        tools::common::profile::get_default_prof()["t_eig"]->tic();
         Eigen::Tensor<double, 3> residual = initial_mps.get_tensor().real();
         solver_part.eigs(matrix, nev, ncv, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-        tools::common::profile::get_default_prof()["t_eig"]->toc();
     }
     if(optType == OptType::CPLX) {
         tools::log->trace("- Generating cplx-valued multisite components");
@@ -66,11 +65,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
         // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
         Eigen::Tensor<Scalar, 3> residual = initial_mps.get_tensor();
         tools::log->trace("Finding excited state");
-        tools::common::profile::get_default_prof()["t_eig"]->tic();
         solver_part.eigs(matrix, nev, ncv,  eig::Ritz::SR, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF,residual.data());
-        tools::common::profile::get_default_prof()["t_eig"]->toc();
     }
-
+    t_eig.toc();
 
     std::vector<opt_mps> eigvecs_mps;
     if(solver_part.result.meta.eigvals_found){

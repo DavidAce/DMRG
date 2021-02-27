@@ -48,7 +48,6 @@ class_state_infinite::Scalar moment_generating_function(const class_state_infini
                 eig::Vecs::OFF, eig::Dephase::OFF);
     //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
     auto lambdaG = eig::view::get_eigval<eig::cplx>(solver.result, 0);
-    //    t_temp1->toc();
     return lambdaG;
 }
 
@@ -62,7 +61,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
         return tensors.measurements.energy_per_site_mom.value();
     }
     tools::log->trace("Measuring energy mom");
-    tools::common::profile::get_default_prof()["t_ene_mom"]->tic();
+    auto t_ene_mom = tools::common::profile::get_default_prof()["t_ene_mom"]->tic_token();
 
     Scalar a      = Scalar(0.0, 1.0) * 5e-3;
     auto & h_evn  = model.get_2site_ham_AB();
@@ -79,7 +78,6 @@ double tools::infinite::measure::energy_per_site_mom(const class_tensors_infinit
     Scalar VarO                                       = 2.0 * std::log(abs(G)) / (a * a);
     tensors.measurements.energy_per_site_mom          = std::real(O);
     tensors.measurements.energy_variance_per_site_mom = std::real(VarO);
-    tools::common::profile::get_default_prof()["t_ene_mom"]->toc();
     return tensors.measurements.energy_per_site_mom.value();
 }
 

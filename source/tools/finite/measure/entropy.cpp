@@ -243,7 +243,7 @@ std::vector<double> tools::finite::measure::number_entropies(const class_state_f
     auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy, state_copy.find_largest_chi());
 
-    tools::common::profile::get_default_prof()["t_num"]->tic();
+    auto t_num = tools::common::profile::get_default_prof()["t_num"]->tic_token();
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
     auto von_neumann_sum = [](double sum, const double p) {
@@ -278,7 +278,6 @@ std::vector<double> tools::finite::measure::number_entropies(const class_state_f
     }
 
     tools::log->disable_backtrace();
-    tools::common::profile::get_default_prof()["t_num"]->toc();
     state.measurements.number_entropies = number_entropies;
     tools::log->info("Number entropies: {}", number_entropies);
     return state.measurements.number_entropies.value();

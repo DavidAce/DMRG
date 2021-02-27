@@ -15,7 +15,6 @@
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
-#include <tools/finite/debug.h>
 #include <tools/finite/env.h>
 #include <tools/finite/io.h>
 #include <tools/finite/mps.h>
@@ -129,7 +128,6 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
 }
 
 void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
-    tools::finite::debug::check_integrity(tensors);
     tensors.activate_sites({tensors.get_position<size_t>()});
     auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
     tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);

@@ -47,7 +47,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
 void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                            const class_state_finite &state, const class_algorithm_status &status) {
     if(storage_level == StorageLevel::NONE) return;
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
@@ -72,10 +72,7 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         save_log[dsetName] = save_point;
     }
 
-    if(storage_level < StorageLevel::NORMAL) {
-        tools::common::profile::get_default_prof()["t_hdf"]->toc();
-        return;
-    }
+    if(storage_level < StorageLevel::NORMAL) return;
 
     std::string mps_prefix = state_prefix + "/mps";
     if(save_log[mps_prefix] != save_point) {
@@ -109,7 +106,6 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
 
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
     if(storage_level < StorageLevel::FULL) {
-        tools::common::profile::get_default_prof()["t_hdf"]->toc();
         save_log[mps_prefix] = save_point;
         return;
     }
@@ -128,7 +124,6 @@ void tools::finite::io::h5dset::save_state(h5pp::File &h5ppFile, const std::stri
         }
         save_log[mps_prefix] = save_point;
     }
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 /*! Write all the MPO's with site info in attributes */
@@ -137,12 +132,11 @@ void tools::finite::io::h5dset::save_model(h5pp::File &h5ppFile, const std::stri
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
     if(h5ppFile.linkExists(model_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix);
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
     for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, model_prefix); }
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", model_prefix);
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix);
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 /*! Write down measurements that can't fit in a table */
@@ -150,7 +144,7 @@ void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::stri
                                            const class_state_finite &state, const class_algorithm_status &status) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
 
     tools::log->trace("Storing [{: ^6}]: bond dimensions", enum2str(storage_level));
     h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), state_prefix + "/bond_dimensions");
@@ -167,12 +161,11 @@ void tools::finite::io::h5dset::save_entgm(h5pp::File &h5ppFile, const std::stri
     if(not tools::finite::measure::number_entropies(state).empty())
         h5ppFile.writeDataset(tools::finite::measure::number_entropies(state), state_prefix + "/number_entropies");
 
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 template<typename T>
 void tools::finite::io::h5dset::save_data(h5pp::File & h5ppFile, const T & data, const std::string & data_path, const class_algorithm_status & status){
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
@@ -186,8 +179,6 @@ void tools::finite::io::h5dset::save_data(h5pp::File & h5ppFile, const T & data,
         h5ppFile.writeAttribute(status.step, "step", data_path);
         save_log[data_path] = save_point;
     }
-
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 template void tools::finite::io::h5dset::save_data(h5pp::File & h5ppFile, const Eigen::Tensor<Scalar,2> & data,
                                                    const std::string & data_path, const class_algorithm_status & status);
