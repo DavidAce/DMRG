@@ -13,7 +13,6 @@
 #include <tools/common/fmt.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/debug.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
@@ -153,8 +152,8 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
     // rebuild of environments.
 
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
-    tools::common::profile::get_default_prof()["t_prj"]->tic();
     tools::log->info("Projecting state into sector with sign {}", sign);
+    auto t_prj = tools::common::profile::get_default_prof()["t_prj"]->tic_token();
     auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     state.clear_measurements();
@@ -164,7 +163,6 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
     apply_mpos(state, mpos, L, R);
     spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
-    tools::common::profile::get_default_prof()["t_prj"]->toc();
 }
 
 void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {

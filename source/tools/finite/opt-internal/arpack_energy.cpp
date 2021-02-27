@@ -18,6 +18,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_energy_optimiza
                                                                                                OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
+    auto t_eig = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
 
 
 
@@ -32,7 +33,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_energy_optimiza
     auto ncv = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
     tools::log->info("Excited state energy optimization with ritz SM | dims {} = {}", shape_mps, size);
 
-    tools::common::profile::get_default_prof()["t_eig"]->tic();
     tools::log->trace("Defining reduced Hamiltonian matrix-vector product");
     MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     tools::log->trace("Defining eigenvalue solver");
@@ -46,8 +46,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_energy_optimiza
     tools::log->trace("Finding excited state");
     auto residual = initial_mps.get_tensor();
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, initial_mps.get_eigval(), eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-    tools::common::profile::get_default_prof()["t_eig"]->toc();
-
+    t_eig.toc();
     auto eigvecs = eig::view::get_eigvecs<Scalar>(solver.result);
     auto eigvals = eig::view::get_eigvals<double>(solver.result);
     std::vector<opt_mps> candidate_list;

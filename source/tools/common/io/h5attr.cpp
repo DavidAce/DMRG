@@ -54,13 +54,14 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     // -- position       | state_prefix -> position of the mps
 
     // Checks if the current entries have already been written
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
+
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
     bootstrap_save_log(save_log, h5ppFile, state_prefix);
 
     auto save_point = std::make_pair(status.iter, status.step);
     if(save_log[state_prefix] == save_point) return;
 
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
 
     std::string storage_level_str(enum2str(storage_level));
     std::string storage_reason_str(enum2str(storage_reason));
@@ -87,5 +88,4 @@ void tools::common::io::h5attr::save_meta(h5pp::File &h5ppFile, const StorageLev
     save_attr(h5ppFile, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
     save_attr(h5ppFile, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
     save_log[state_prefix] = save_point;
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }

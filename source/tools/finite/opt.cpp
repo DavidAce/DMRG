@@ -33,7 +33,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_tensor,
                                                                      const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
                                                                      OptType optType) {
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic();
+    auto t_opt = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic_token();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2str(optMode),
                       enum2str(optSpace), enum2str(optType), status.position, tensors.active_sites, tensors.active_problem_dims(),
                       tensors.active_problem_size());
@@ -132,7 +132,6 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
         case OptSpace::POWER_VARIANCE:      result = internal::arpack_variance_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->toc();
     // Finish up and print reports
     reports::print_bfgs_report();
     reports::print_time_report();

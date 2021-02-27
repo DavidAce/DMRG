@@ -22,12 +22,11 @@ void tools::infinite::io::h5table::save_model(h5pp::File &h5ppFile, const std::s
     if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
     tools::log->trace("Storing table: [{}]", table_path);
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     model.get_mpo_siteA().save_hamiltonian(h5ppFile, table_path);
     model.get_mpo_siteB().save_hamiltonian(h5ppFile, table_path);
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", table_path);
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
 }
 
 void tools::infinite::io::h5table::save_measurements(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
@@ -70,9 +69,8 @@ void tools::infinite::io::h5table::save_measurements(h5pp::File &h5ppFile, const
     measurement_entry.wall_time                    = status.wall_time;
     measurement_entry.phys_time                    = status.phys_time;
     measurement_entry.time_step                    = status.delta_t;
-    tools::common::profile::get_default_prof()["t_hdf"]->tic();
+    auto t_hdf = tools::common::profile::get_default_prof()["t_hdf"]->tic_token();
     h5ppFile.appendTableRecords(measurement_entry, table_path);
-    tools::common::profile::get_default_prof()["t_hdf"]->toc();
     save_log[table_path] = save_point;
 }
 

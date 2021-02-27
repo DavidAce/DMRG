@@ -26,7 +26,7 @@ void class_idmrg::run_simulation() {
     else
         tensors.state->set_name("state_emax");
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    tools::common::profile::prof[algo_type]["t_sim"]->tic();
+    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     while(true) {
         single_iDMRG_step();
         print_status_update();
@@ -73,7 +73,6 @@ void class_idmrg::run_simulation() {
         status.step++;
     }
     tools::log->info("Finished {} simulation -- reason: {}", algo_name, enum2str(stop_reason));
-    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_idmrg::single_iDMRG_step() {
@@ -89,7 +88,7 @@ void class_idmrg::single_iDMRG_step() {
 
 void class_idmrg::check_convergence() {
     tools::log->trace("Checking convergence");
-    tools::common::profile::prof[algo_type]["t_con"]->tic();
+    auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
     check_convergence_entg_entropy();
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
@@ -98,7 +97,6 @@ void class_idmrg::check_convergence() {
        status.chi_lim_has_reached_chi_max) {
         status.algorithm_has_converged = true;
     }
-    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 bool   class_idmrg::cfg_algorithm_is_on() { return settings::idmrg::on; }

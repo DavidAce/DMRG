@@ -105,12 +105,11 @@ void class_fdmrg::run_default_task_list() {
 
 void class_fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    tools::common::profile::prof[algo_type]["t_pre"]->tic();
+    auto t_pre = tools::common::profile::prof[algo_type]["t_pre"]->tic_token();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
@@ -122,7 +121,7 @@ void class_fdmrg::run_algorithm() {
             tensors.state->set_name("state_emax");
     }
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    tools::common::profile::prof[algo_type]["t_sim"]->tic();
+    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     stop_reason = StopReason::NONE;
     while(true) {
         single_fdmrg_step();
@@ -143,7 +142,6 @@ void class_fdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
-    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_fdmrg::single_fdmrg_step() {
@@ -182,7 +180,7 @@ void class_fdmrg::single_fdmrg_step() {
 }
 
 void class_fdmrg::check_convergence() {
-    tools::common::profile::prof[algo_type]["t_con"]->tic();
+    auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
     if(tensors.position_is_inward_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -212,8 +210,6 @@ void class_fdmrg::check_convergence() {
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
     }
-
-    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 bool   class_fdmrg::cfg_algorithm_is_on() { return settings::fdmrg::on; }

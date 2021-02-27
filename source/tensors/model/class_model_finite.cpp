@@ -271,7 +271,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     else
         tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody);
 
-    tools::common::profile::get_default_prof()["t_mpo"]->tic();
+    auto t_mpo = tools::common::profile::get_default_prof()["t_mpo"]->tic_token();
     Eigen::Tensor<Scalar, 4> multisite_mpo;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = Textra::idx({1}, {0});
@@ -300,7 +300,6 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
             temp.device(Textra::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo = temp;
     }
-    tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo;
 }
 
@@ -335,7 +334,7 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo squared tensor");
     if(sites == active_sites and cache.multisite_mpo_squared) return cache.multisite_mpo_squared.value();
     tools::log->trace("Contracting multisite mpo squared tensor with {} sites", sites.size());
-    tools::common::profile::get_default_prof()["t_mpo"]->tic();
+    auto t_mpo = tools::common::profile::get_default_prof()["t_mpo"]->tic_token();
     Eigen::Tensor<Scalar, 4> multisite_mpo_squared;
     constexpr auto           shuffle_idx  = Textra::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = Textra::idx({1}, {0});
@@ -365,7 +364,6 @@ Eigen::Tensor<class_model_finite::Scalar, 4> class_model_finite::get_multisite_m
             temp.device(Textra::omp::getDevice()) = multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo_squared                 = temp;
     }
-    tools::common::profile::get_default_prof()["t_mpo"]->toc();
     return multisite_mpo_squared;
 }
 

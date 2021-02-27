@@ -22,7 +22,7 @@ using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 std::vector<opt_mps> internal::subspace::find_candidates(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
-                                                           OptSpace optSpace) {
+                                                         OptSpace optSpace) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
@@ -90,23 +90,22 @@ std::vector<opt_mps> internal::subspace::find_candidates(const class_tensors_fin
 }
 
 template std::vector<opt_mps> internal::subspace::find_candidates<cplx>(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
-                                                                          OptSpace optSpace);
+                                                                        OptSpace optSpace);
 
 template std::vector<opt_mps> internal::subspace::find_candidates<real>(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
-                                                                          OptSpace optSpace);
+                                                                        OptSpace optSpace);
 
 opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensors_finite &tensors, const opt_mps &initial_mps,
-                                                                const std::vector<opt_mps> &candidate_list, const Eigen::MatrixXcd &H2_subspace,
-                                                                const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic();
-
+                                                              const std::vector<opt_mps> &candidate_list, const Eigen::MatrixXcd &H2_subspace,
+                                                              const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
+    auto t_opt_sub = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic_token();
 
     // Handy references
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
 
-    opt_mps   optimized_mps;
-    auto      candidate_best_idx =
+    opt_mps optimized_mps;
+    auto    candidate_best_idx =
         internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
     if(candidate_best_idx)
         optimized_mps = *std::next(candidate_list.begin(), static_cast<long>(candidate_best_idx.value()));
@@ -120,7 +119,6 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
     // We need the eigenvalues in a convenient format as well
     auto eigvals = internal::subspace::get_eigvals(candidate_list);
 
-
     /*
      *
      *  Sanity checks
@@ -129,8 +127,8 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
     if(tools::log->level() <= spdlog::level::debug) {
         if constexpr(settings::debug) {
             if(tools::log->level() == spdlog::level::trace) {
+                auto t_dbg = tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic_token();
                 // Check using explicit matrix
-                tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
                 Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_mps.get_vector());
                 double           overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
                 Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
@@ -142,31 +140,27 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
                 Scalar           var                 = vH2v / vv - ene * ene;
                 double           ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
                 double           var_init_san        = std::real(var) / static_cast<double>(state.get_length());
-                tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
-                std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", optimized_mps.get_name(), "matrix check");
-                internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_vector.size(), ene_init_san, var_init_san,
-                overlap_sbsp,
+                std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", optimized_mps.get_name(), "matrix check");
+                t_dbg.toc();
+                internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_vector.size(), ene_init_san, var_init_san, overlap_sbsp,
                                                   subspace_vector.norm(), 1, 1,
                                                   tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
             }
             if(tools::log->level() == spdlog::level::trace) {
+                auto t_dbg = tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic_token();
                 // Check current tensor
-                tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
                 Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
                 auto             theta_0_tensor = Textra::TensorMap(theta_0, state.active_dimensions());
                 double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                 double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                 double           overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
-                tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
-                std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", initial_mps.get_name(), "fullspace check");
-                internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_vector.size(), energy_0, variance_0, overlap_0,
-                theta_0.norm(), 1, 1,
+                std::string      description    = fmt::format("{:<8} {:<16} {}", "Subspace", initial_mps.get_name(), "fullspace check");
+                t_dbg.toc();
+                internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_vector.size(), energy_0, variance_0, overlap_0, theta_0.norm(), 1, 1,
                                                   tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
             }
         }
     }
-
-
 
     /*
      *
@@ -176,9 +170,9 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
 
     auto options = internal::ceres_default_options;
     auto summary = ceres::GradientProblemSolver::Summary();
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic();
     switch(optType) {
         case OptType::CPLX: {
+            auto t_opt_sub_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic_token();
             Eigen::VectorXd subspace_vector_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
             auto *          functor              = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
             CustomLogCallback ceres_logger(*functor);
@@ -199,6 +193,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
             break;
         }
         case OptType::REAL: {
+            auto t_opt_sub_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic_token();
             Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
             Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
             auto *            functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
@@ -227,6 +222,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
     optimized_mps.set_time(summary.total_time_in_seconds);
 
     if constexpr(settings::debug) {
+        auto t_dbg = tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic_token();
         // Check that Ceres results are correct
         double energy_check   = tools::finite::measure::energy(optimized_mps.get_tensor(), tensors);
         double variance_check = tools::finite::measure::energy_variance(optimized_mps.get_tensor(), tensors);
@@ -236,7 +232,6 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
             tools::log->warn("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", std::log10(optimized_mps.get_variance()), std::log10(variance_check));
     }
 
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->toc();
     reports::time_add_sub_entry();
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
     int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
@@ -248,94 +243,33 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
 
     if(optSpace == OptSpace::SUBSPACE_AND_DIRECT) {
         tools::log->trace("SUBSPACE optimization done. Starting fine tuning with DIRECT optimization");
-        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc(); // Suspend subspace timer
+        t_opt_sub.toc();// Suspend subspace timer
         optimized_mps = ceres_direct_optimization(tensors, optimized_mps, status, optType, optMode, optSpace);
-        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic(); // Resume subspace timer
+        t_opt_sub.tic(); // Resume subspace timer
     }
-
     // Return the optimized result
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
     return optimized_mps;
 
-    //    std::vector<opt_state> optimized_results;
-    //    size_t                 candidate_count = 0;
-    //    for(const auto &idx : candidate_list_top_idx) {
-    //        const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
-    //        tools::log->trace("Starting LBFGS with candidate {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>20.16f} | eigvec {}",
-    //        idx,
-    //                          candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()), candidate.is_basis_vector);
-    //        Eigen::VectorXcd        subspace_vector = internal::subspace::get_vector_in_subspace(candidate_list, idx);
-    //        [[maybe_unused]] double norm;
-    //        internal::reports::bfgs_add_entry("Subspace", "init", candidate, subspace_vector.size());
-    //        if(tools::log->level() <= spdlog::level::debug) {
-    //            if constexpr(settings::debug) {
-    //                if(tools::log->level() == spdlog::level::trace) {
-    //                    // Check using explicit matrix
-    //                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
-    //                    Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_mps.get_vector());
-    //                    double           overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
-    //                    Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
-    //                    Eigen::VectorXcd H2v                 = H2_subspace.template selfadjointView<Eigen::Upper>() * subspace_vector;
-    //                    Scalar           vHv                 = subspace_vector.dot(Hv);
-    //                    Scalar           vH2v                = subspace_vector.dot(H2v);
-    //                    double           vv                  = subspace_vector.squaredNorm();
-    //                    Scalar           ene                 = vHv / vv;
-    //                    Scalar           var                 = vH2v / vv - ene * ene;
-    //                    double           ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
-    //                    double           var_init_san        = std::real(var) / static_cast<double>(state.get_length());
-    //                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
-    //                    std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "matrix check");
-    //                    internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_vector.size(), ene_init_san, var_init_san,
-    //                    overlap_sbsp,
-    //                                                      subspace_vector.norm(), 1, 1,
-    //                                                      tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
-    //                }
-    //                if(tools::log->level() == spdlog::level::trace) {
-    //                    // Check current tensor
-    //                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
-    //                    Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
-    //                    auto             theta_0_tensor = Textra::TensorMap(theta_0, state.active_dimensions());
-    //                    double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
-    //                    double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
-    //                    double           overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
-    //                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
-    //                    std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");
-    //                    internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_vector.size(), energy_0, variance_0, overlap_0,
-    //                    theta_0.norm(), 1, 1,
-    //                                                      tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
-    //                }
-    //            }
-    //        }
-    //
-    //        candidate_count++;
-    //    }
-    //
-    //    // Sort thetas in ascending order in variance
-    //    std::sort(optimized_results.begin(), optimized_results.end(),
-    //              [](const opt_state &lhs, const opt_state &rhs) { return lhs.get_variance() < rhs.get_variance(); });
-
-    //    // Return the best theta
-    //    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
-    //    return optimized_results.front();
 }
 
 opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status, OptType optType,
-                                                                    OptMode optMode, OptSpace optSpace) {
+                                                                  OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_mps("current state", tensors.get_multisite_mps(), sites,
-                             tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                             tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
-                             tools::finite::measure::energy_variance(tensors),
-                             1.0, // Overlap
-                             tensors.get_length());
+                        tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
+                        tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                        tools::finite::measure::energy_variance(tensors),
+                        1.0, // Overlap
+                        tensors.get_length());
     initial_mps.validate_candidate();
     return ceres_subspace_optimization(tensors, initial_mps, status, optType, optMode, optSpace);
 }
 
 opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
-                                                                    const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
+                                                                  const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
     tools::log->trace("Optimizing in SUBSPACE mode");
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic();
+    auto t_opt_sub = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic_token();
+
 
     /*
      * Subspace optimization
@@ -487,14 +421,12 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                                   max_overlap_idx.value(), candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(),
                                   std::log10(candidate_max_overlap.get_variance()));
             }
-            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             if(candidate_max_overlap.get_overlap() < 0.1)
                 tools::log->debug("ceres_subspace_optimization: Overlap fell below < 0.1: {:20.16f}", candidate_max_overlap.get_overlap());
             return candidate_max_overlap;
         } else {
             // (OB)
             tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
-            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
             return initial_mps;
         }
     }
@@ -535,7 +467,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
 
     tools::log->debug("Optimizing with {} initial guesses", candidate_list_top_idx.size());
     std::vector<opt_mps> optimized_results;
-    size_t                 candidate_count = 0;
+    size_t               candidate_count = 0;
     for(auto &idx : candidate_list_top_idx) {
         const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
         tools::log->trace("Starting LBFGS with candidate {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>20.16f} | eigvec {}", idx,
@@ -546,9 +478,9 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
         internal::reports::bfgs_add_entry("Subspace", "init", candidate, subspace_size);
         if(tools::log->level() <= spdlog::level::debug) {
             if constexpr(settings::debug) {
+                auto t_dbg = tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic_token();
                 if(tools::log->level() == spdlog::level::trace) {
                     // Check using explicit matrix
-                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
                     Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_mps.get_vector());
                     double           overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
                     Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
@@ -560,7 +492,6 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                     Scalar           var                 = vH2v / vv - ene * ene;
                     double           ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
                     double           var_init_san        = std::real(var) / static_cast<double>(state.get_length());
-                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "matrix check");
                     internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_size, ene_init_san, var_init_san, overlap_sbsp,
                                                       subspace_vector.norm(), 1, 1,
@@ -568,13 +499,11 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                 }
                 if(tools::log->level() == spdlog::level::trace) {
                     // Check current tensor
-                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic();
                     Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
                     auto             theta_0_tensor = Textra::TensorMap(theta_0, state.active_dimensions());
                     double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                     double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                     double           overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
-                    tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->toc();
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");
                     internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_size, energy_0, variance_0, overlap_0, theta_0.norm(), 1, 1,
                                                       tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
@@ -596,9 +525,9 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
         optimized_mps.set_sites(candidate.get_sites());
         optimized_mps.set_length(candidate.get_length());
         optimized_mps.set_energy_reduced(candidate.get_energy_reduced());
-        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic();
         switch(optType) {
             case OptType::CPLX: {
+                auto t_opt_sub_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic_token();
                 Eigen::VectorXd subspace_vector_cast =
                     Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
                 auto *            functor = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
@@ -620,6 +549,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                 break;
             }
             case OptType::REAL: {
+                auto t_opt_sub_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->tic_token();
                 Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
                 Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
                 auto *            functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
@@ -649,6 +579,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
         optimized_mps.set_overlap(std::abs(initial_mps.get_vector().dot(optimized_mps.get_vector())));
 
         if constexpr(settings::debug) {
+            auto t_dbg = tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->tic_token();
             // Check that Ceres results are correct
             double energy_check   = tools::finite::measure::energy(optimized_mps.get_tensor(), tensors);
             double variance_check = tools::finite::measure::energy_variance(optimized_mps.get_tensor(), tensors);
@@ -658,7 +589,6 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                 tools::log->warn("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", std::log10(optimized_mps.get_variance()), std::log10(variance_check));
         }
 
-        tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_bfgs"]->toc();
         reports::time_add_sub_entry();
         int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
         int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
@@ -670,9 +600,9 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
 
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT) {
             tools::log->trace("SUBSPACE optimization done. Starting fine tuning with DIRECT optimization");
-            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc(); // Suspend subspace timer
+            t_opt_sub.toc(); // Suspend subspace timer
             optimized_mps = ceres_direct_optimization(tensors, optimized_mps, status, optType, optMode, optSpace);
-            tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->tic(); // Resume subspace timer
+            t_opt_sub.tic(); // Resume subspace timer
         }
         candidate_count++;
     }
@@ -682,6 +612,5 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
               [](const opt_mps &lhs, const opt_mps &rhs) { return lhs.get_variance() < rhs.get_variance(); });
 
     // Return the best theta
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub"]->toc();
     return optimized_results.front();
 }

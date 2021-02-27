@@ -33,7 +33,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                                                                       const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                       OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic();
+    auto t_opt_dir = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic_token();
 
 
     reports::bfgs_add_entry("Direct", "init", initial_mps);
@@ -47,10 +47,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     optimized_mps.set_sites(initial_mps.get_sites());
     optimized_mps.set_length(initial_mps.get_length());
     optimized_mps.set_energy_reduced(initial_mps.get_energy_reduced());
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic();
 
     switch(optType) {
         case OptType::CPLX: {
+            auto t_opt_dir_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic_token();
             // Copy the initial guess and operate directly on it
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *            functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
@@ -69,6 +69,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             break;
         }
         case OptType::REAL: {
+            auto t_opt_dir_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic_token();
             // Here we make a temporary
             auto              initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *            functor            = new ceres_direct_functor<double>(tensors, status);
@@ -96,7 +97,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     optimized_mps.set_iter(summary.iterations.size());
     optimized_mps.set_time(summary.total_time_in_seconds);
 
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->toc();
     reports::time_add_dir_entry();
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
     int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
@@ -106,6 +106,5 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     reports::bfgs_add_entry("Direct", "opt", optimized_mps);
 
     tools::log->trace("Returning theta from optimization mode {} space {}", optMode, optSpace);
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->toc();
     return optimized_mps;
 }

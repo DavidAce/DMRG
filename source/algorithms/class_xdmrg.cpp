@@ -18,7 +18,6 @@
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <tools/finite/debug.h>
 #include <tools/finite/io.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mps.h>
@@ -195,7 +194,7 @@ void class_xdmrg::init_energy_limits(std::optional<double> energy_density_target
 
 void class_xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    tools::common::profile::prof[algo_type]["t_pre"]->tic();
+    auto t_pre = tools::common::profile::prof[algo_type]["t_pre"]->tic_token();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
@@ -206,14 +205,13 @@ void class_xdmrg::run_preprocessing() {
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     write_to_file(StorageReason::MODEL);
-    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
 void class_xdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    tools::common::profile::prof[algo_type]["t_sim"]->tic();
+    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     stop_reason = StopReason::NONE;
 
     while(true) {
@@ -269,7 +267,6 @@ void class_xdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
-    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
@@ -573,8 +570,6 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         tools::log->info("Variance delta due to SVD: {:.16f}", 100 * variance_after_svd / variance_before_svd);
 
 
-        debug::check_integrity(*tensors.state);
-
         // Update current energy density ε
         status.energy_dens =
             (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
@@ -593,7 +588,8 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 }
 
 void class_xdmrg::check_convergence() {
-    tools::common::profile::prof[algo_type]["t_con"]->tic();
+    auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
+
     if(tensors.position_is_inward_edge()) {
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -644,7 +640,6 @@ void class_xdmrg::check_convergence() {
             stop_reason = StopReason::RANDOMIZE;
     }
 
-    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector) {

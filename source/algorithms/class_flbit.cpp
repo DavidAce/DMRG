@@ -126,7 +126,7 @@ void class_flbit::run_default_task_list() {
 
 void class_flbit::run_preprocessing() {
     tools::log->info("Running {} preprocessing", algo_name);
-    tools::common::profile::prof[algo_type]["t_pre"]->tic();
+    auto t_pre = tools::common::profile::prof[algo_type]["t_pre"]->tic_token();
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
@@ -156,7 +156,6 @@ void class_flbit::run_preprocessing() {
     transform_to_lbit_basis();
 
     write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
-    tools::common::profile::prof[algo_type]["t_pre"]->toc();
     tools::log->info("Finished {} preprocessing", algo_name);
 }
 
@@ -166,7 +165,7 @@ void class_flbit::run_algorithm() {
     if(time_points.empty()) create_time_points();
     if(std::abs(status.delta_t) == 0) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    tools::common::profile::prof[algo_type]["t_sim"]->tic();
+    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
@@ -185,7 +184,6 @@ void class_flbit::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
-    tools::common::profile::prof[algo_type]["t_sim"]->toc();
 }
 
 void class_flbit::single_flbit_step() {
@@ -196,11 +194,10 @@ void class_flbit::single_flbit_step() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
 
     // Time evolve here
-    tools::common::profile::prof[algo_type]["t_evo"]->tic();
+    auto t_evo = tools::common::profile::prof[algo_type]["t_evo"]->tic_token();
     tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
-    tools::common::profile::prof[algo_type]["t_evo"]->toc();
 
     transform_to_real_basis();
 
@@ -250,7 +247,7 @@ void class_flbit::update_time_step() {
 }
 
 void class_flbit::check_convergence() {
-    tools::common::profile::prof[algo_type]["t_con"]->tic();
+    auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
     if(tensors.position_is_inward_edge()) { check_convergence_entg_entropy(); }
 
     status.algorithm_has_saturated = status.entanglement_saturated_for >= min_saturation_iters;
@@ -274,8 +271,6 @@ void class_flbit::check_convergence() {
             stop_reason = StopReason::SUCCEEDED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
     }
-
-    tools::common::profile::prof[algo_type]["t_con"]->toc();
 }
 
 void class_flbit::create_time_points() {
@@ -365,7 +360,7 @@ void class_flbit::create_lbit_transform_gates() {
 
 void class_flbit::transform_to_real_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
-    tools::common::profile::prof[algo_type]["t_map"]->tic();
+    auto t_map = tools::common::profile::prof[algo_type]["t_map"]->tic_token();
     tensors.state = std::make_unique<class_state_finite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
@@ -377,7 +372,7 @@ void class_flbit::transform_to_real_basis() {
     auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     if constexpr(settings::debug)
         if(has_normalized and tools::log->level() == spdlog::level::trace) {
-            tools::common::profile::prof[algo_type]["t_dbg"]->tic();
+            auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
             //            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
             //            tools::log->trace("After normalization");
             //            for(const auto &mps : tensors.state->mps_sites)
@@ -385,7 +380,6 @@ void class_flbit::transform_to_real_basis() {
             //                "]:\n"
             //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
             //                          std::endl;
-            tools::common::profile::prof[algo_type]["t_dbg"]->toc();
         }
 
     status.position  = tensors.get_position<long>();
@@ -400,8 +394,6 @@ void class_flbit::transform_to_real_basis() {
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
     }
-
-    tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
 void class_flbit::transform_to_lbit_basis() {
@@ -415,21 +407,11 @@ void class_flbit::transform_to_lbit_basis() {
     state_lbit->clear_measurements();
     for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
 
-    tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic();
+    auto t_map_norm = tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic_token();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->toc();
-    if constexpr(settings::debug)
-        if(has_normalized and tools::log->level() == spdlog::level::trace) {
-            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-            //            tools::log->trace("After normalization");
-            //            for(const auto &mps : state_lbit->mps_sites)
-            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() <<
-            //                "]:\n"
-            //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
-            //                          std::endl;
-        }
-
+    t_map_norm.toc();
     if constexpr(settings::debug) {
+        auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
@@ -438,13 +420,11 @@ void class_flbit::transform_to_lbit_basis() {
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap));
     }
-    tools::common::profile::prof[algo_type]["t_map"]->toc();
 }
 
 void class_flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
-    tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic();
+    auto t_write_h5pp = tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic_token();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
-    tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->toc();
     if(storage_reason == StorageReason::MODEL) {
         if(h5pp_file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
@@ -490,7 +470,7 @@ bool   class_flbit::cfg_store_wave_function() { return settings::flbit::store_wa
 void class_flbit::print_status_update() {
     if(num::mod(status.iter, cfg_print_freq()) != 0) return;
     if(cfg_print_freq() == 0) return;
-    tools::common::profile::prof[algo_type]["t_out"]->tic();
+    auto t_out = tools::common::profile::prof[algo_type]["t_out"]->tic_token();
     std::string report;
     report += fmt::format("{:<} ", tensors.state->get_name());
     report += fmt::format("iter:{:<4} ", status.iter);
@@ -514,5 +494,4 @@ void class_flbit::print_status_update() {
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
-    tools::common::profile::prof[algo_type]["t_out"]->toc();
 }

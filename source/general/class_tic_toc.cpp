@@ -33,6 +33,9 @@ void class_tic_toc::toc() {
     }
 }
 
+class_tic_toc::token class_tic_toc::tic_token() {return class_tic_toc::token(*this);}
+
+
 void class_tic_toc::set_properties(bool on_off, int prec, std::string output_text) { *this = class_tic_toc(on_off, prec, std::move(output_text)); }
 
 void class_tic_toc::set_label(std::string output_text) { *this = class_tic_toc(enable, print_precision, std::move(output_text)); }
@@ -130,3 +133,20 @@ class_tic_toc &class_tic_toc::operator-=(const class_tic_toc &rhs) {
     }
     return *this;
 }
+
+
+
+class_tic_toc::token::token(class_tic_toc &t_) :t(t_){
+    t.tic();
+}
+
+class_tic_toc::token::~token() noexcept {
+    try{
+        if(t.is_measuring) t.toc();
+    }catch(const std::exception & ex){
+        fprintf(stderr,"Exception in token destructor: %s", ex.what());
+    }
+}
+
+void class_tic_toc::token::tic() {t.tic();}
+void class_tic_toc::token::toc() {t.toc();}

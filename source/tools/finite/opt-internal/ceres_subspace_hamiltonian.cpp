@@ -25,7 +25,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     const auto &mpo = model.get_multisite_mpo();
     const auto &env = edges.get_multisite_ene_blk();
     tools::log->trace("Contracting multisite hamiltonian");
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic();
+    auto t_opt_sub_ham = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic_token();
 
     long dim0 = mpo.dimension(2);
     long dim1 = env.L.dimension(0);
@@ -49,7 +49,6 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
     tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->toc();
     if constexpr(std::is_same_v<T, double>) {
         return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
     } else {
@@ -65,7 +64,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_ma
     const auto &mpo2 = model.get_multisite_mpo_squared();
     const auto &env2 = edges.get_multisite_var_blk();
     tools::log->trace("Contracting multisite hamiltonian");
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic();
+    auto t_opt_sub_ham = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->tic_token();
 
     long dim0 = mpo2.dimension(2);
     long dim1 = env2.L.dimension(0);
@@ -89,7 +88,6 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_ma
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(ham2_map.hasNaN()) throw std::runtime_error("multisite hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->toc();
     if constexpr(std::is_same_v<T, double>) {
         return Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
     } else {
@@ -112,7 +110,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 
     const auto &mpo2 = model.get_multisite_mpo_squared();
     const auto &env2 = edges.get_multisite_var_blk();
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->tic();
+    auto t_opt_sub_hsq = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->tic_token();
     tools::log->trace("Contracting subspace hamiltonian squared new");
     long dim0   = mpo2.dimension(2);
     long dim1   = env2.L.dimension(0);
@@ -132,7 +130,6 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
             H2_sub.selfadjointView<Eigen::Lower>().coeff(row, col) = H2_ij(0);
         }
     }
-    tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_hsq"]->toc();
     if constexpr(std::is_same_v<T, double>)
         return H2_sub.real().template selfadjointView<Eigen::Lower>();
     else

@@ -50,7 +50,6 @@ source/tools/common/log.cpp
 source/tools/common/prof.cpp
 source/tools/common/views.cpp
 source/tools/common/split.cpp
-source/tools/finite/debug.cpp
 source/tools/finite/env.cpp
 source/tools/finite/io/h5dset.cpp
 source/tools/finite/io/h5resume.cpp
@@ -63,7 +62,6 @@ source/tools/finite/mps.cpp
 source/tools/finite/multisite.cpp
 source/tools/finite/ops.cpp
 source/tools/finite/print.cpp
-source/tools/infinite/debug.cpp
 source/tools/infinite/env.cpp
 source/tools/infinite/io/h5dset.cpp
 source/tools/infinite/io/h5table.cpp
