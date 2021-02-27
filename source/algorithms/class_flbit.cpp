@@ -368,24 +368,15 @@ void class_flbit::transform_to_real_basis() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-
+    t_map.toc();
+    auto t_map_norm = tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic_token();
     auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
-    if constexpr(settings::debug)
-        if(has_normalized and tools::log->level() == spdlog::level::trace) {
-            auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
-            //            Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
-            //            tools::log->trace("After normalization");
-            //            for(const auto &mps : tensors.state->mps_sites)
-            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," << mps->get_chiR() <<
-            //                "]:\n"
-            //                          << Textra::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
-            //                          std::endl;
-        }
-
+    t_map_norm.toc();
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
     if constexpr(settings::debug) {
+        auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
@@ -398,7 +389,7 @@ void class_flbit::transform_to_real_basis() {
 
 void class_flbit::transform_to_lbit_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
-    tools::common::profile::prof[algo_type]["t_map"]->tic();
+    auto t_map = tools::common::profile::prof[algo_type]["t_map"]->tic_token();
     state_lbit = std::make_unique<class_state_finite>(*tensors.state);
     state_lbit->set_name("state_lbit");
 
@@ -406,7 +397,7 @@ void class_flbit::transform_to_lbit_basis() {
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
-
+    t_map.toc();
     auto t_map_norm = tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic_token();
     auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     t_map_norm.toc();
