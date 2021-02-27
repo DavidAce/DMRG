@@ -62,5 +62,5 @@ for val_L,val_J,val_w, val_b, val_f,val_u, init, in  product(sites,J,w, b,f, u, 
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1
-    print(input_filename, "L:", str_L,str_J, str_w, "b:",str_b "f:", str_f,"u:", str_u)
+    print(input_filename, "L:", str_L,str_J, str_w, "b:", str_b, "f:", str_f,"u:", str_u)
     generate_input_file(settings, input_filename, template_filename)
