@@ -11,11 +11,12 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [12]
+sites               = [6,8,10,12,14,16,18]
 J                   = [[0.000, 0.000, 0.000]]
-w                   = [[1.000, 1.000, 0.100]]
-f                   = [0.01, 0.10, 0.25, 0.4, 0.6]
-u                   = [1,2,4]
+w                   = [[1.000, 2.000, 0.100],[1.000, 1.000, 0.100],[1.000, 0.500, 0.100]]
+f                   = [0.05, 0.10,0.15, 0.20,0.25,0.30,0.35, 0.40,0.45,0.50,0.55, 0.60]
+u                   = [1,2,3,4,5,6]
+b                   = [2,5,10]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 
@@ -25,19 +26,20 @@ input_filenames = []
 
 print("Generating", len(sites) * len(J) * len(w) * len(f) * len(initial_state), "input files")
 
-for val_L,val_J,val_w, val_f,val_u, init, in  product(sites,J,w, f, u, initial_state):
+for val_L,val_J,val_w, val_b, val_f,val_u, init, in  product(sites,J,w, b,f, u, initial_state):
     str_L = str(val_L)
     str_J = "J[{:+.2f}_{:+.2f}_{:+.2f}]".format(val_J[0], val_J[1], val_J[2])
     str_w = "w[{:.2f}_{:.2f}_{:.2f}]".format(val_w[0], val_w[1], val_w[2])
+    str_b = "{:.2f}".format(val_b)
     str_f = "{:.2f}".format(val_f)
     str_u = "{}".format(val_u)
     str_J1,str_J2, str_J3 = "{:+.2f}".format(val_J[0]),"{:+.2f}".format(val_J[1]),"{:+.2f}".format(val_J[2])
     str_w1,str_w2, str_w3 = "{:+.2f}".format(val_w[0]),"{:+.2f}".format(val_w[1]),"{:+.2f}".format(val_w[2])
 
-    input_filename = "{}/{}_L{}_{}_{}_f{}_u{}.cfg".format(location,basename,str_L,str_J,str_w, str_f, str_u)
+    input_filename = "{}/{}_L{}_{}_{}_b{}_f{}_u{}.cfg".format(location,basename,str_L,str_J,str_w, str_b,str_f, str_u)
 
     settings = {
-        "output::output_filepath"            : "{}/L_{}/{}/{}/f_{}/u_{}/{}.h5".format(output_prefix,str_L,str_J,str_w, str_f, str_u, basename),
+        "output::output_filepath"            : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u, basename),
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
@@ -48,17 +50,17 @@ for val_L,val_J,val_w, val_f,val_u, init, in  product(sites,J,w, f, u, initial_s
         "model::lbit::J2_wdth"               : str_w2,
         "model::lbit::J3_wdth"               : str_w3,
         "model::lbit::J3_wdth"               : str_w3,
-        "model::lbit::J2_base"               : "5",
+        "model::lbit::J2_base"               : str_b,
         "model::lbit::f_mixer"               : str_f,
         "model::lbit::u_layer"               : str_u,
-        "flbit::chi_lim_max"                 : "512",
+        "flbit::chi_lim_max"                 : "1024",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e6",
+        "flbit::time_final_real"             : "1e8",
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "100",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1
-    print(input_filename, "L:", str_L,str_J, str_w, "f:", str_f)
+    print(input_filename, "L:", str_L,str_J, str_w, "b:",str_b "f:", str_f,"u:", str_u)
     generate_input_file(settings, input_filename, template_filename)
