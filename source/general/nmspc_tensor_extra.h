@@ -143,15 +143,27 @@ namespace Textra {
     }
 
     template<typename Scalar,auto rank>
-    auto TensorConstant(Scalar constant, const std::array<long, rank> &dims){
+    auto TensorConstant(Scalar constant, const std::array<Eigen::Index, rank> &dims){
         Eigen::Tensor<Scalar,rank> tensor(dims);
         tensor.setConstant(constant);
         return tensor;
     }
 
     template<typename Scalar, typename... Dims>
-    auto TensorConstant(Scalar constant, const Dims... dims){
-        return TensorConstant(constant, array<sizeof...(Dims)>{dims...});
+    auto TensorConstant(Scalar constant, const Dims ... dims){
+        return TensorConstant(constant, std::array<Eigen::Index,sizeof...(Dims)>{dims...});
+    }
+
+    template<typename Scalar, auto rank>
+    auto TensorRandom(const std::array<Eigen::Index, rank> &dims){
+        Eigen::Tensor<Scalar,rank> tensor(dims);
+        tensor.setRandom();
+        return tensor;
+    }
+
+    template<typename Scalar, typename... Dims>
+    auto TensorRandom(const Dims ... dims){
+        return TensorRandom<Scalar>(std::array<Eigen::Index, sizeof...(Dims)>{dims...});
     }
 
     template<typename Scalar>
