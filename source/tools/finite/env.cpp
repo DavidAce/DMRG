@@ -84,7 +84,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
 //                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
 //                Eigen::Tensor<Scalar, 3> PL = varL.get_expansion_term(mpsL, mpoL, alpha.value());
                 Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
-                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+//                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorRandom<double>(mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR()).cast<Scalar>();
+                P0 = P0 * P0.constant(1e-10);
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
@@ -162,7 +164,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
 //                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
 //                Eigen::Tensor<Scalar, 3> PR = varR.get_expansion_term(mpsR, mpoR, alpha.value());
                 Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
-                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+//                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+                Eigen::Tensor<Scalar, 3> P0 = Textra::TensorRandom<double>(mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1)).cast<Scalar>();
+                P0 = P0 * P0.constant(1e-10);
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
