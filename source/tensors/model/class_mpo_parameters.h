@@ -81,7 +81,7 @@ class h5tb_ising_sdual {
     }
     void print_parameter_values() const {
         tools::log->info(
-            "{:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+12} {:<8}",
+            "{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8}",
             param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg, param.h_pert,
             param.lambda, param.delta, param.spin_dim, param.distribution);
     }
@@ -136,7 +136,7 @@ class h5tb_ising_tf_rf {
                          name[7], name[8]);
     }
     void print_parameter_values() const {
-        tools::log->info("{:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+12} {:<8}", param.J1, param.J2, param.h_tran,
+        tools::log->info("{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+12} {:<8}", param.J1, param.J2, param.h_tran,
                          param.h_mean, param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
     }
 };
@@ -202,7 +202,7 @@ class h5tb_lbit {
     }
 
     [[nodiscard]] std::string J2_str() const {
-        return fmt::format("[{:<+8.5f}]", fmt::join(param.J2_rand, " "));
+        return fmt::format("[{:<+8.4f}]", fmt::join(param.J2_rand, " "));
     }
 
     static std::vector<std::string> get_parameter_names() {
@@ -218,8 +218,8 @@ class h5tb_lbit {
     }
 
     void print_parameter_values() const {
-        tools::log->info("{:<+8.5f} {:<} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} "
-                         "{:<+8.5f} {:<+8.5f} {:<+8.5f} {:<+8.5f} {:<8} {:<8} {:<8}",
+        tools::log->info("{:<+8.4f} {:<} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} "
+                         "{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8} {:<8}",
                          param.J1_rand, J2_str(), param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth,
                          param.J2_base, param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim, param.distribution);
     }
