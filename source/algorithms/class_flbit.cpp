@@ -420,16 +420,17 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
         if(h5pp_file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;
+        size_t sample = 1;
         if(settings::flbit::compute_lbit_length) {
             urange = {settings::model::lbit::u_layer};
             frange = {settings::model::lbit::f_mixer};
         }
         else if(settings::flbit::compute_lbit_stats) {
+            sample                             = 50;
             urange                             = num::range<size_t>(1, 4);
             frange                             = num::range<double>(0, 0.8, 0.05);
         }
         if(not urange.empty() and not frange.empty()){
-            size_t sample = 50;
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
             h5pp_file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
             h5pp_file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
