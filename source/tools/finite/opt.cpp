@@ -84,24 +84,24 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9; // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*20;//60*2;
-    ceres_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-4; // Not tested yet
-    ceres_default_options.parameter_tolerance                        = 1e-12;
+    ceres_default_options.function_tolerance                         = 1e-4; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance                         = 1e-2; // Not tested yet
+    ceres_default_options.parameter_tolerance                        = 1e-10;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::SILENT;
     if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations                        = 4000;
         ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-        ceres_default_options.function_tolerance                        = 1e-8;
-        ceres_default_options.gradient_tolerance                        = 1e-6;
-        ceres_default_options.parameter_tolerance                       = 5e-16;
+        ceres_default_options.function_tolerance                        = 1e-6;
+        ceres_default_options.gradient_tolerance                        = 1e-4;
+        ceres_default_options.parameter_tolerance                       = 5e-12;
         ceres_default_options.max_solver_time_in_seconds                = 60*30;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling   = true;  // True makes a huge difference, takes longer steps at each iteration!!
     }
     if(status.algorithm_has_stuck_for > 1){
         ceres_default_options.max_num_iterations                        = 6000;
         ceres_default_options.max_lbfgs_rank                            = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-        ceres_default_options.function_tolerance                        = 1e-12;
+        ceres_default_options.function_tolerance                        = 1e-10;
         ceres_default_options.gradient_tolerance                        = 1e-6;
         ceres_default_options.parameter_tolerance                       = 5e-16;
         ceres_default_options.max_solver_time_in_seconds                = 60*30;//60*2;
