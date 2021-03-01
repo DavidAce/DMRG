@@ -288,8 +288,12 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_got_stuck)
+    if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_got_stuck){
         c1.alpha_expansion = std::min(0.1,status.energy_variance_lowest);// Usually a good value to start with
+        if(status.algorithm_has_stuck_for == 2) c1.alpha_expansion = c1.alpha_expansion.value() * 1e3;
+        if(status.algorithm_has_stuck_for == 3) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
+        if(status.algorithm_has_stuck_for == 4) c1.alpha_expansion = c1.alpha_expansion.value() * 1e9;
+    }
 
     if(status.algorithm_has_got_stuck) c1.second_chance = true;
 
@@ -401,17 +405,26 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         configs.emplace_back(c2);
     } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites != settings::strategy::multisite_max_sites) {
         // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
+        c2.optInit  = c1.alpha_expansion ? OptInit::CURRENT_STATE : OptInit::LAST_RESULT; // Use the result from c1
         c2.max_sites    = settings::strategy::multisite_max_sites;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
         if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
-    }else if (status.algorithm_has_got_stuck){
-        c2.optInit  = OptInit::CURRENT_STATE;
-        c2.optSpace = OptSpace::POWER_VARIANCE;
-        c2.optMode  = OptMode::VARIANCE;
-        configs.emplace_back(c2);
     }
+//    else if (status.algorithm_has_got_stuck){
+//        c2.optInit  = OptInit::CURRENT_STATE;
+//        c2.optSpace = OptSpace::POWER_VARIANCE;
+//        c2.optMode  = OptMode::VARIANCE;
+//        configs.emplace_back(c2);
+//    }
+//    else if (status.algorithm_has_got_stuck){
+//        c2.alpha_expansion = 1e2 * (c1.alpha_expansion ? c1.alpha_expansion.value() : status.energy_variance_lowest);
+//        c2.optInit  = OptInit::CURRENT_STATE; // Use the result from c1
+//        c2.optSpace = OptSpace::DIRECT;
+//        c2.optMode  = OptMode::VARIANCE;
+//        configs.emplace_back(c2);
+//    }
 
 
 
@@ -559,16 +572,10 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         if constexpr(settings::debug) {
             auto variance_before_svd = winner.get_variance();
             auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-            tools::log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-            tools::log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
-            tools::log->debug("Variance loss due to  SVD: {:.16f}", (variance_after_svd - variance_before_svd) / variance_after_svd);
+            tools::log->info("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
+            tools::log->info("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+            tools::log->info("Variance delta due to SVD: {:.16f}", 100 * variance_after_svd / variance_before_svd);
         }
-        auto variance_before_svd = winner.get_variance();
-        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-        tools::log->info("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-        tools::log->info("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
-        tools::log->info("Variance delta due to SVD: {:.16f}", 100 * variance_after_svd / variance_before_svd);
-
 
         // Update current energy density ε
         status.energy_dens =
