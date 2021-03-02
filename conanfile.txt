@@ -3,7 +3,7 @@
 
 
 [requires]
-ceres-solver/2.0.0
+ceres-solver/2.0.0@
 h5pp/1.8.5@davidace/dev
 eigen/3.3.8@davidace/patched
 arpack++/2.3.0@davidace/stable

@@ -361,6 +361,7 @@ void class_lbit::save_hamiltonian(h5pp::File &file, const std::string &table_pat
     file.writeAttribute(h5tb.param.J1_wdth, "J1_wdth", table_path);
     file.writeAttribute(h5tb.param.J2_wdth, "J2_wdth", table_path);
     file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
+    file.writeAttribute(h5tb.param.J2_base, "J2_base", table_path);
     file.writeAttribute(h5tb.param.f_mixer, "f_mixer", table_path);
     file.writeAttribute(h5tb.param.u_layer, "u_layer", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
