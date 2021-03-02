@@ -11,11 +11,11 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([16])
-lambdas             = [0.100]
+sites               = np.array([12,16])
+lambdas             = [0.000, 0.100]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [2]
+multisite_max_sites = [2,4]
 output_prefix       = "output"
 
 
@@ -56,9 +56,9 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
     if len(multisite_max_sites) > 1:
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
-    input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location,basename,str_L,str_l,str_d)
+    input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_l,str_d)
     settings = {
-        "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix,str_L,str_l,str_d, basename),
+        "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
         "threading::stl_threads"             : "2",
         "threading::omp_threads"             : "1",
         "console::verbosity"                 : "2",
