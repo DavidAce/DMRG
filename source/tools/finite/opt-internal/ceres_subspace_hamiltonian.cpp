@@ -127,13 +127,14 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
         for(auto row = col; row < eignum; row++) {
             const auto &mps_i                    = std::next(candidate_list.begin(), row)->get_tensor();
             H2_ij.device(Textra::omp::getDevice()) = mps_i.conjugate().contract(H2_mps, Textra::idx({0, 1, 2}, {0, 1, 2}));
-            H2_sub.selfadjointView<Eigen::Lower>().coeff(row, col) = H2_ij(0);
+            H2_sub(row, col) = H2_ij(0);
+            H2_sub(col, row) = std::conj(H2_ij(0));
         }
     }
     if constexpr(std::is_same_v<T, double>)
-        return H2_sub.real().template selfadjointView<Eigen::Lower>();
+        return H2_sub.real();
     else
-        return H2_sub.selfadjointView<Eigen::Lower>();
+        return H2_sub;
 }
 
 // Explicit instantiations

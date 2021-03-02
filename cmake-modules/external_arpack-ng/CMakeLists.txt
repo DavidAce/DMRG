@@ -4,8 +4,8 @@ project(external-arpack-ng)
 
 include(ExternalProject)
 ExternalProject_Add(external_ARPACK-NG
-        URL https://github.com/opencollab/arpack-ng/archive/3.7.0.tar.gz
-        URL_MD5 "6fc6c6bf78dbd4f144595ef0675c8430"
+        URL https://github.com/opencollab/arpack-ng/archive/3.8.0.tar.gz
+        URL_MD5 bb4cf448f2480a0ffe5517d579f980c3
         BUILD_ALWAYS TRUE
         PREFIX           ${CMAKE_BINARY_DIR}
         INSTALL_DIR      ${CMAKE_INSTALL_PREFIX}
