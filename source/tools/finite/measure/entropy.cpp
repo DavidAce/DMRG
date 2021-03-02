@@ -285,13 +285,18 @@ std::vector<double> tools::finite::measure::number_entropies(const class_state_f
 
 double tools::finite::measure::number_entropy_current(const class_state_finite &state) {
     if(state.measurements.number_entropy_current) return state.measurements.number_entropy_current.value();
-    auto pos = state.get_position<long>();
-    if(state.measurements.number_entropies) return state.measurements.number_entropies->at(static_cast<size_t>(pos + 1));
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
         // Only fLBIT has particle-number conservation
         state.measurements.number_entropy_current = 0;
         return 0;
     }
+    auto pos = state.get_position<long>();
+    if(state.measurements.number_entropies){
+        if(state.measurements.number_entropies->size() != state.get_length<size_t>()+1)
+            throw std::runtime_error(fmt::format("expected number_entropies.size() == lenght+1. Got: ({})", state.measurements.number_entropies->size()));
+        return state.measurements.number_entropies->at(static_cast<size_t>(pos + 1));
+    }
+
 
     auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy, state.find_largest_chi());
