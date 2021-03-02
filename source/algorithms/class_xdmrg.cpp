@@ -290,9 +290,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // If we are doing 1-site dmrg, then we better use subspace expansion
     if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_got_stuck){
         c1.alpha_expansion = std::min(0.1,status.energy_variance_lowest);// Usually a good value to start with
-        if(status.algorithm_has_stuck_for == 2) c1.alpha_expansion = c1.alpha_expansion.value() * 1e3;
-        if(status.algorithm_has_stuck_for == 3) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
-        if(status.algorithm_has_stuck_for == 4) c1.alpha_expansion = c1.alpha_expansion.value() * 1e9;
+        if(status.algorithm_has_stuck_for == 2) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
     }
 
     if(status.algorithm_has_got_stuck) c1.second_chance = true;
