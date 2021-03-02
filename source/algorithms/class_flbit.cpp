@@ -370,7 +370,7 @@ void class_flbit::transform_to_real_basis() {
     tensors.clear_cache();
     t_map.toc();
     auto t_map_norm = tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic_token();
-    auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
+    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     t_map_norm.toc();
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
@@ -399,7 +399,7 @@ void class_flbit::transform_to_lbit_basis() {
     for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
     t_map.toc();
     auto t_map_norm = tools::common::profile::prof[AlgorithmType::ANY]["t_map_norm"]->tic_token();
-    auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
+    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     t_map_norm.toc();
     if constexpr(settings::debug) {
         auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();

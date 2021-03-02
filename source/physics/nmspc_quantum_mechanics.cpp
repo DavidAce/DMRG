@@ -408,7 +408,6 @@ qm::Scalar qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>>
     std::vector<std::string> log; // Great for debugging
     std::string              empty_layer;
     size_t                   uw = 7; // Width of a unitary 2-site gate box
-    size_t                   hw = 3; // Half-width of a unitary 2-site gate box
     size_t                   op = 3; // Overlap of a unitary 2-site gate box
     size_t                   tw = 6; // Tag width
     for(const auto &[idx_layer, layer] : iter::enumerate(unitary_layers)) {
