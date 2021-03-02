@@ -239,9 +239,8 @@ fi
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     if [ -z "$no_module" ]; then
-        module load CMake/3.16.5
-        module load buildenv-gcc/2018a-eb
-        module load foss/2019a
+        module load buildenv-gcc/.9.3.0-bare
+        module load CMake/3.19.2
         if [ "$enable_mkl" = "ON" ] ; then
             export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
             export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
