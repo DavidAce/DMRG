@@ -15,7 +15,7 @@ sites               = np.array([12,16])
 lambdas             = [0.000, 0.100]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [2,4]
+multisite_max_sites = [1,2,4]
 output_prefix       = "output"
 
 
@@ -59,7 +59,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
     input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_l,str_d)
     settings = {
         "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
-        "threading::stl_threads"             : "2",
+        "threading::stl_threads"             : "1",
         "threading::omp_threads"             : "1",
         "console::verbosity"                 : "2",
         "model::model_size"                  : str_L,
