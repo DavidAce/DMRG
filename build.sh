@@ -240,6 +240,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     if [ -z "$no_module" ]; then
         module load foss/2020b
+        module load CMake
 #        module load CMake/3.19.2
         if [ "$enable_mkl" = "ON" ] ; then
             export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
