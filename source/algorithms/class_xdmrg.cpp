@@ -291,6 +291,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_got_stuck){
         c1.alpha_expansion = std::min(0.1,status.energy_variance_lowest);// Usually a good value to start with
         if(status.algorithm_has_stuck_for == 2) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
+//        if(status.algorithm_has_stuck_for == 3) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
+//        if(status.algorithm_has_stuck_for == 4) c1.alpha_expansion = c1.alpha_expansion.value() * 1e8;
     }
 
     if(status.algorithm_has_got_stuck) c1.second_chance = true;
@@ -367,7 +369,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
     if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(status.iter == 0) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.iter <= 1) c1.max_sites = settings::strategy::multisite_max_sites;
     if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
