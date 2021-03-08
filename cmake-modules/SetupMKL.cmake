@@ -95,10 +95,10 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
         endif()
 
         # Make the rest of the build structure aware of blas and lapack included in MKL.
-        add_library(blas::blas          INTERFACE IMPORTED)
-        add_library(lapack::lapack      INTERFACE IMPORTED)
-        target_link_libraries(blas::blas        INTERFACE mkl::mkl)
-        target_link_libraries(lapack::lapack    INTERFACE mkl::mkl)
+        add_library(BLAS::BLAS          INTERFACE IMPORTED)
+        add_library(LAPACK::LAPACK      INTERFACE IMPORTED)
+        target_link_libraries(BLAS::BLAS        INTERFACE mkl::mkl)
+        target_link_libraries(LAPACK::LAPACK    INTERFACE mkl::mkl)
 
         #   Test MKL
         function(check_mkl_compiles TARGETS)
