@@ -299,12 +299,10 @@ fi
 export MAKEFLAGS=-j$make_threads
 export CMAKE_BUILD_PARALLEL_LEVEL=$make_threads
 
-
-
 echo " * Compiler                 :   $compiler"
 echo " * MAKE threads (ext builds):   $make_threads"
-echo " * CC                       :   $CC"
-echo " * CXX                      :   $CXX"
+echo " * CC                       :   $CC $($CC -dumpversion) at $(which $CC)"
+echo " * CXX                      :   $CXX $($CXX -dumpversion) at $(which $CXX)"
 echo " * CMake version            :   $(cmake --version) at $(which cmake)"
 
 if [ -n "$dry_run" ]; then
