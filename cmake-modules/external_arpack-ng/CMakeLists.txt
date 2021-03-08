@@ -4,8 +4,8 @@ project(external-arpack-ng)
 
 include(ExternalProject)
 ExternalProject_Add(external_ARPACK-NG
-        URL https://github.com/opencollab/arpack-ng/archive/3.8.0.tar.gz
-        URL_MD5 bb4cf448f2480a0ffe5517d579f980c3
+        URL https://github.com/davidace/arpack-ng/archive/master.tar.gz
+        #URL_MD5 bb4cf448f2480a0ffe5517d579f980c3
         BUILD_ALWAYS TRUE
         PREFIX           ${CMAKE_BINARY_DIR}
         INSTALL_DIR      ${CMAKE_INSTALL_PREFIX}
@@ -35,8 +35,9 @@ ExternalProject_Add(external_ARPACK-NG
         -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
         -DCMAKE_Fortran_FLAGS=${ARPACK_FLAGS}
         -DEXAMPLES=OFF
+        -DTESTS=OFF
         -DMPI=OFF
         -DINTERFACE64=OFF
-        -DBLAS_LIBRARIES=${BLAS_LIBRARIES}
-        -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES}
+#        -DBLAS_LIBRARIES=${BLAS_LIBRARIES}
+#        -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES}
         )
