@@ -96,11 +96,10 @@ if(TARGET openblas::openblas)
         target_link_libraries(openblas::openblas INTERFACE openmp::openmp)
     endif()
     #For convenience, define these targes
-    add_library(blas::blas                  INTERFACE IMPORTED)
-    add_library(lapack::lapack              INTERFACE IMPORTED)
-    target_link_libraries(blas::blas        INTERFACE openblas::openblas)
-    target_link_libraries(lapack::lapack    INTERFACE openblas::openblas)
-
+    add_library(BLAS::BLAS                  INTERFACE IMPORTED)
+    add_library(LAPACK::LAPACK              INTERFACE IMPORTED)
+    target_link_libraries(BLAS::BLAS        INTERFACE openblas::openblas)
+    target_link_libraries(LAPACK::LAPACK    INTERFACE openblas::openblas)
 endif()
 
 
