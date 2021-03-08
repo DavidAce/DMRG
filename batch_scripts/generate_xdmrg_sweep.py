@@ -15,7 +15,7 @@ sites               = np.array([12,16])
 lambdas             = [0.000]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [1,2,4]
+multisite_max_sites = [1,2,4,6]
 output_prefix       = "output"
 
 
