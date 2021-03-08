@@ -77,7 +77,7 @@ for id in $(seq $start_id $end_id); do
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
+        $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
         exit_code=$?
         if [ "$exit_code" == "0" ]; then
           echo "SUCCESS                  : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
@@ -90,15 +90,15 @@ for id in $(seq $start_id $end_id); do
       fi
   elif [ "$num_cols" -eq 3 ]; then
       bit_field=$(echo $arg_line | cut -d " " -f3)
-      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
+        $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
         exit_code=$?
         if [ "$exit_code" == "0" ]; then
-          echo "SUCCESS           : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+          echo "SUCCESS           : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
         else
           echo "EXIT CODE         : $exit_code"
-          echo "FAILED            : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+          echo "FAILED            : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
           exit_code_save=$exit_code
           continue
         fi
