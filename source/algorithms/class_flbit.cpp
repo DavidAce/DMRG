@@ -402,7 +402,7 @@ void class_flbit::transform_to_lbit_basis() {
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, settings::precision::svd_threshold, NormPolicy::IFNEEDED);
     t_map_norm.toc();
     if constexpr(settings::debug) {
-        auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
+//        auto t_dbg = tools::common::profile::prof[algo_type]["t_dbg"]->tic_token();
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
