@@ -188,8 +188,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
         else()
             message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
-            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
-            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
+#            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
+#            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
         endif()
     else()
         message(FATAL_ERROR "Undefined target: CONAN_PKG::eigen")
@@ -204,11 +204,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::spdlog)
         target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::spdlog)
     endif()
-    if(TARGET CONAN_PKG::Eigen3)
-        target_link_libraries(dmrg-main PUBLIC CONAN_PKG::Eigen3)
-        target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::Eigen3)
-        target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::Eigen3)
-    elseif(TARGET CONAN_PKG::eigen)
+    if(TARGET CONAN_PKG::eigen)
         target_link_libraries(dmrg-main PUBLIC CONAN_PKG::eigen)
         target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::eigen)
         target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::eigen)
