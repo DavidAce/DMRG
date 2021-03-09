@@ -23,6 +23,7 @@ namespace num {
      */
     template<typename T>
     inline T mod(const T x, const T y) {
+        if(y == 0) throw std::runtime_error("num::mod(x,y): divisor y == 0");
         if constexpr(std::is_integral_v<T>)
             return (x % y + y) % y;
         else
