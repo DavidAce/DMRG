@@ -183,11 +183,11 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             # make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
             # lets Eigen do its thing in the same way everywhere.
 
-            message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
+#            message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfault?
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
         else()
-            message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
+#            message(STATUS "Applying special Eigen compile definitions for general machines: EIGEN_MAX_ALIGN_BYTES=16")
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=0) # May work to fix CERES segfaults!!!
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
         endif()
