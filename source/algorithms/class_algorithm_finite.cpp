@@ -303,9 +303,8 @@ void class_algorithm_finite::try_projection() {
 
             auto paulimatrix  = tools::finite::mps::internal::get_pauli(settings::strategy::target_sector);
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, paulimatrix);
-            auto alignment = sector_sign * spin_component_along_requested_axis;
 
-            if(std::abs(alignment) < 0.5){
+            if(std::abs(spin_component_along_requested_axis) < 0.5){
                 // Here we deem the spin component undecided enough to warrant a safe projection
                 auto tensors_neg = tensors;
                 auto tensors_pos = tensors;
