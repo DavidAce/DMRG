@@ -278,17 +278,70 @@ void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_inward_edge()) return;
     if(has_projected) return;
     if(settings::strategy::project_on_every_iter or
-       (status.algorithm_has_got_stuck and num::mod(status.iter, settings::strategy::project_when_stuck_freq)==0)) {
+       (status.algorithm_has_got_stuck
+        and settings::strategy::project_when_stuck_freq > 0
+        and num::mod(status.iter, settings::strategy::project_when_stuck_freq)==0)) {
         tools::log->info("Trying projection to {} | pos {}", settings::strategy::target_sector, tensors.get_position<long>());
+        auto sector_sign  = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
-        tensors.project_to_nearest_sector(settings::strategy::target_sector);
+
+
+
+        if(sector_sign != 0){
+            tensors.project_to_nearest_sector(settings::strategy::target_sector);
+        }else{
+            // We have a choice here.
+            // If no sector sign has been given, and the spin component along the requested axis is near zero,
+            // then we may inadvertently project to a sector opposite to the target state.
+            // If that happened, we would get stuck in a local minima.
+            // One reasonable thing to do here is to compare the variance of both projections,
+            // and keep the one with lowest variance.
+            // Of course, one problem is that if the spin component is already in one sector,
+            // projecting to the other sector will zero the norm. So we can only make this
+            // decision if the the |spin component| << 1. Maybe < 0.5 is enough?
+
+            auto paulimatrix  = tools::finite::mps::internal::get_pauli(settings::strategy::target_sector);
+            auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, paulimatrix);
+            auto alignment = sector_sign * spin_component_along_requested_axis;
+
+            if(std::abs(alignment) < 0.5){
+                // Here we deem the spin component undecided enough to warrant a safe projection
+                auto tensors_neg = tensors;
+                auto tensors_pos = tensors;
+                try{
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}",settings::strategy::target_sector));
+                }catch (const std::exception & ex){
+                    tools::log->warn("Projection to -x failed: ", ex.what());
+                }
+
+                try{
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}",settings::strategy::target_sector));
+                }catch (const std::exception & ex){
+                    tools::log->warn("Projection to -x failed: ", ex.what());
+                }
+
+                auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
+                auto variance_pos = tools::finite::measure::energy_variance(tensors_neg);
+                if(variance_neg < variance_pos)
+                    tensors = tensors_neg;
+                else
+                    tensors = tensors_pos;
+            }else{
+                // Here the spin component is close to one sector. We just project to the nearest sector
+                tensors.project_to_nearest_sector(settings::strategy::target_sector);
+            }
+
+
+        }
+
         auto variance_new = tools::finite::measure::energy_variance(tensors);
         auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
         tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}",
                          std::log10(variance_old), std::log10(variance_new),fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, *tensors.state, CopyPolicy::OFF);
+
     }
 }
 
