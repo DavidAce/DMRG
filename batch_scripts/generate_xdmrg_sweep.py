@@ -11,7 +11,7 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([12,16])
+sites               = np.array([12,16,20])
 lambdas             = [0.000]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
