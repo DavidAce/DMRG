@@ -73,7 +73,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
     if(solver_part.result.meta.eigvals_found){
         auto eigvecs = eig::view::get_eigvecs<Scalar>(solver_part.result);
         auto eigvals = eig::view::get_eigvals<double>(solver_part.result);
-        eigvecs_mps.reserve(static_cast<size_t>(eigvecs_mps.size() + eigvals.size()));
+        eigvecs_mps.reserve(eigvecs_mps.size() + static_cast<size_t>(eigvals.size()));
         for(long idx = 0; idx < eigvals.size(); idx++) {
             auto eigvec_i = Textra::TensorCast(eigvecs.col(idx), dims_mps);
             auto overlap  = std::abs(initial_mps.get_vector().dot(eigvecs.col(idx)));
@@ -99,7 +99,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
     if(solver_full.result.meta.eigvals_found){
         auto eigvecs = eig::view::get_eigvecs<Scalar>(solver_full.result);
         auto eigvals = eig::view::get_eigvals<double>(solver_full.result);
-        eigvecs_mps.reserve(static_cast<size_t>(eigvecs_mps.size() + eigvals.size()));
+        eigvecs_mps.reserve(eigvecs_mps.size() + static_cast<size_t>(eigvals.size()));
         for(long idx = 0; idx < std::min(8l,eigvals.size()); idx++) {
             auto eigvec_i = Textra::TensorCast(eigvecs.col(idx), dims_mps);
             auto overlap  = std::abs(initial_mps.get_vector().dot(eigvecs.col(idx)));

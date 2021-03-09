@@ -50,7 +50,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
         double          subspace_error = 1.0 - sq_sum_overlap;
         reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error),
                                 tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_eig"]->get_last_interval(), time_ham, time_lu,
-                                solver.result.meta.counter);
+                                static_cast<size_t>(solver.result.meta.counter));
         time_lu  = 0;
         time_ham = 0;
         if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
