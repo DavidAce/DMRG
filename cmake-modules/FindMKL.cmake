@@ -420,7 +420,7 @@ function(find_mkl_libraries)
                     endif()
                     add_library(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE IMPORTED)
                     target_link_libraries(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE
-#                            -Wl,--no-as-needed
+                            -Wl,--no-as-needed
                             mkl::mkl_blas_${MODEVAR}
                             mkl::mkl_lapack_${MODEVAR}
                             -Wl,--start-group
@@ -428,7 +428,7 @@ function(find_mkl_libraries)
                             mkl::mkl_${THREADVAR}
                             mkl::mkl_core
                             -Wl,--end-group
-#                            -Wl,--as-needed
+                            -Wl,--as-needed
                             m
                             dl
                             )
