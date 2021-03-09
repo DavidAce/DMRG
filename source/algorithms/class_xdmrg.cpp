@@ -606,19 +606,19 @@ void class_xdmrg::check_convergence() {
     }
 
     // TODO: Move this reset block away from here
-    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
-    if(status.iter > 2 and tensors.position_is_inward_edge()) {
-        if(outside_of_window and
-           (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
-            double      old_energy_dens_window = status.energy_dens_window;
-            double      new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
-            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}", tools::finite::measure::energy_per_site(tensors),
-                                             status.energy_dens_target, status.energy_dens_window);
-            tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
-            status.energy_dens_window = new_energy_dens_window;
-            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
-        }
-    }
+//    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
+//    if(status.iter > 2 and tensors.position_is_inward_edge()) {
+//        if(outside_of_window and
+//           (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
+//            double      old_energy_dens_window = status.energy_dens_window;
+//            double      new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
+//            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}", tools::finite::measure::energy_per_site(tensors),
+//                                             status.energy_dens_target, status.energy_dens_window);
+//            tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
+//            status.energy_dens_window = new_energy_dens_window;
+//            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
+//        }
+//    }
 
     status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
     //        or
