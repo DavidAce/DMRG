@@ -772,10 +772,10 @@ void class_algorithm_finite::print_status_update() {
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
     report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance, std::log10(status.energy_variance_lowest));
     report += fmt::format("χ:{:<3}|{:<3}|", cfg_chi_lim_max(), status.chi_lim);
-    size_t      comma_width         = settings::strategy::multisite_max_sites <= 2 ? 0 : 2; // ", "
+    size_t      comma_width         = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
     size_t      bond_single_width   = static_cast<size_t>(std::log10(cfg_chi_lim_max())) + 1;
     size_t      bond_string_width   = 2 + (bond_single_width + comma_width)
-                                        * (settings::strategy::multisite_max_sites == 1 ? 1 : settings::strategy::multisite_max_sites -1);
+                                        * (settings::strategy::multisite_mps_size_max == 1 ? 1 : settings::strategy::multisite_mps_size_max -1);
     std::string bond_string = fmt::format("{}", tools::finite::measure::bond_dimensions_merged(*tensors.state));
     report += fmt::format("{0:<{1}} ", bond_string, bond_string_width);
 
