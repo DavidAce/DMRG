@@ -30,10 +30,14 @@ namespace num {
             return std::fmod((std::fmod(x, y) + y), y);
     }
 
+    template <typename T>
+    bool between(const T& value, const T& low, const T& high) {
+        return value >= low and value <= high;
+    }
+
     /*! \brief Python-style range generator, i.e. not-including "last"
      *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6] </code>
      */
-
     namespace internal{
         template<typename TA,typename TB>
         using int_or_dbl =
