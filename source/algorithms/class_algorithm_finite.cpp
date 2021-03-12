@@ -107,11 +107,11 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
                 // In this case we have just updated from here to the edge. No point in updating
                 // closer and closer to the edge. Just move until reaching the edge without flip
                 num_moves = std::max<long>(1, num_sites - 1); // to the edge without flipping
-            } else if(settings::strategy::multisite_move == MultisiteMove::ONE)
+            } else if(settings::strategy::multisite_mps_step == MultisiteMove::ONE)
                 num_moves = 1ul;
-            else if(settings::strategy::multisite_move == MultisiteMove::MID) {
+            else if(settings::strategy::multisite_mps_step == MultisiteMove::MID) {
                 num_moves = std::max<long>(1, num_sites / 2);
-            } else if(settings::strategy::multisite_move == MultisiteMove::MAX) {
+            } else if(settings::strategy::multisite_mps_step == MultisiteMove::MAX) {
                 num_moves = std::max<long>(1, num_sites - 1); // Move so that the center point moves out of the active region
             } else
                 throw std::logic_error("Could not determine how many sites to move");

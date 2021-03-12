@@ -87,8 +87,10 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
     dmrg_config.load_parameter("strategy::max_resets"                         , strategy::max_resets);
-    dmrg_config.load_parameter("strategy::multisite_max_sites"                , strategy::multisite_max_sites);
-    dmrg_config.load_parameter("strategy::multisite_move"                     , strategy::multisite_move);
+    dmrg_config.load_parameter("strategy::multisite_mps_size_def"             , strategy::multisite_mps_size_def);
+    dmrg_config.load_parameter("strategy::multisite_mps_size_max"             , strategy::multisite_mps_size_max);
+    dmrg_config.load_parameter("strategy::multisite_mps_size_init"            , strategy::multisite_mps_size_init);
+    dmrg_config.load_parameter("strategy::multisite_mps_step"                 , strategy::multisite_mps_step);
     dmrg_config.load_parameter("strategy::target_sector"                      , strategy::target_sector);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
