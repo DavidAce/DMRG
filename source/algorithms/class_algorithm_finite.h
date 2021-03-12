@@ -23,7 +23,7 @@ class class_algorithm_finite : public class_algorithm_base {
                                       * Therefore, this number is only incremented when randomizing the current state*/
 
     // Control behavior when stuck
-    size_t max_stuck_iters      = 10;  //  5;  /*!< If stuck for this many sweeps -> stop. */
+    size_t max_stuck_iters      = 20;  //  5;  /*!< If stuck for this many sweeps -> stop. */
     size_t min_saturation_iters = 2;   // 1;  /*!< If both var and ent saturated  this long -> got_stuck: true */
     size_t max_saturation_iters = 20;  // 10; /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
 
@@ -42,7 +42,7 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t                  max_dampings         = 2;            /*!< Maximum number of damping trials allowed */
     size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
     size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
-    size_t                  max_discards         = 3;            /*!< Maximum number of times to discard the smallest schmidt values */
+    size_t                  max_discards         = 2;            /*!< Maximum number of times to discard the smallest schmidt values */
     std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
