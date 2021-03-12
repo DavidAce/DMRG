@@ -65,22 +65,26 @@ namespace eig {
                 std::copy(solver.RawEigenvaluesReal(), solver.RawEigenvaluesReal() + eigvalsize, result.eigvals_real.begin());
             }
             if constexpr(eigval_is_real) {
+                if(not solver.EigenvaluesFound()) throw std::runtime_error("Eigenvalues were not found");
                 eig::log->trace("Copying real eigenvalues");
                 result.eigvals_real.resize(eigvalsize_t);
                 std::copy(solver.RawEigenvalues(), solver.RawEigenvalues() + eigvalsize, result.eigvals_real.begin());
             }
             if constexpr(eigval_is_cplx) {
+                if(not solver.EigenvaluesFound()) throw std::runtime_error("Eigenvalues were not found");
                 eig::log->trace("Copying complex eigenvalues");
                 result.eigvals_cplx.resize(eigvalsize_t);
                 std::copy(solver.RawEigenvalues(), solver.RawEigenvalues() + eigvalsize, result.eigvals_cplx.begin());
             }
             if constexpr(eigvec_is_real) {
+                if(not solver.EigenvectorsFound()) throw std::runtime_error("Eigenvectors were not found");
                 eig::log->trace("Copying real eigenvectors");
                 result.eigvecsR_real.resize(eigvecsize_t);
                 std::copy(solver.RawEigenvectors(), solver.RawEigenvectors() + eigvecsize, result.eigvecsR_real.begin());
             }
 
             if constexpr(eigvec_is_cplx) {
+                if(not solver.EigenvectorsFound()) throw std::runtime_error("Eigenvectors were not found");
                 eig::log->trace("Copying complex eigenvectors");
                 if(config.side == Side::L) {
                     result.eigvecsL_cplx.resize(eigvecsize_t);

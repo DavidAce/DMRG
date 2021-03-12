@@ -37,6 +37,12 @@ Eigen::Tensor<class_tensors_finite::Scalar, 3> tools::finite::opt::internal::gro
     // would otherwise cause trouble for Arpack. This equates to subtracting sigma * identity from the bottom corner of the mpo.
     // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
     tools::log->trace("Finding ground state");
-    solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
-    return eig::view::get_eigvec<Scalar>(solver.result, shape_mps, 0);
+    try{
+        solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
+        return eig::view::get_eigvec<Scalar>(solver.result, shape_mps, 0);
+    }catch(const std::exception & ex){
+        tools::log->warn("Arpack failed. shape_mps {} | shape_mpo {} | sites {}", shape_mps, shape_mpo, tensors.active_sites);
+        return tensors.get_multisite_mps();
+    }
+
 }
