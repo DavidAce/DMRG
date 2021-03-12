@@ -342,17 +342,17 @@ void class_algorithm_finite::try_projection() {
 }
 
 void class_algorithm_finite::try_discard_small_schmidt() {
-    if(not settings::strategy::discard_schmidt_when_stuck) return;
+    if(settings::strategy::discard_schmidt_when_stuck == 0) return;
     if(not tensors.position_is_inward_edge()) return;
     if(num_discards >= max_discards) return;
-    if(status.algorithm_has_stuck_for <= 2) return;
+    if(status.algorithm_has_stuck_for < 2) return;
+    if(settings::strategy::discard_schmidt_when_stuck < 0)
+        throw std::runtime_error(fmt::format("Expected positive discard threshold. Got: {:.16f}",
+                                 settings::strategy::discard_schmidt_when_stuck));
     tools::log->info("Trying discard of smallest schmidt values: trials {}", num_discards);
-    tensors.normalize_state(status.chi_lim, 1e-4, NormPolicy::ALWAYS);
+    tensors.normalize_state(status.chi_lim, settings::strategy::discard_schmidt_when_stuck, NormPolicy::ALWAYS);
     clear_convergence_status();
-    settings::strategy::multisite_move      = MultisiteMove::ONE;
-    settings::strategy::multisite_max_sites = 2;
     iter_discard                            = status.iter;
-    //    tensors.reduce_mpo_energy(0.0);
     num_discards++;
 }
 
