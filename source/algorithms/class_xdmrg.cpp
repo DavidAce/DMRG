@@ -285,7 +285,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     if(tensors.is_real()) c1.optType = OptType::REAL;
 
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    c1.max_sites = std::min(2ul,settings::strategy::multisite_max_sites);
+    c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
     if(status.algorithm_has_got_stuck) c1.second_chance = true;
 
@@ -299,16 +299,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_1site() <= settings::precision::max_size_part_diag) {
         // If early in the simulation, and the bond dimension is small enough we use subspace optimization
-        c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
-        c1.second_chance = false;
-        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
-    }
-
-    if(num_discards > 0 and status.iter < iter_discard + 2) {
-        // When discarded the bond dimensions are highly truncated. We can then afford subspace optimization
-        c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.optMode   = OptMode::VARIANCE;
+        c1.optSpace  = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.max_sites = settings::strategy::multisite_mps_size_init;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
@@ -317,8 +310,17 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
         c1.optMode       = OptMode::OVERLAP;
         c1.optSpace      = OptSpace::SUBSPACE_ONLY;
+        c1.max_sites     = settings::strategy::multisite_mps_size_init;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_olap > 0) status.chi_lim = settings::xdmrg::chi_lim_olap;
+    }
+    if(num_discards > 0 and status.iter < iter_discard + 2) {
+        // When discarded the bond dimensions are highly truncated. We can then afford subspace optimization
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.max_sites     = settings::strategy::multisite_mps_size_max;
+        c1.second_chance = false;
+//        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
 
 //    if(status.algorithm_has_stuck_for >= 2 and tensors.state->size_1site() <= settings::precision::max_size_part_diag) {
@@ -349,14 +351,15 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_max_sites == 1
-       or status.algorithm_has_got_stuck
-       or c1.optSpace == OptSpace::SUBSPACE_ONLY
-       or c1.optSpace == OptSpace::SUBSPACE_AND_DIRECT){
-        c1.alpha_expansion = std::min(0.1,status.energy_variance_lowest);// Usually a good value to start with
-        if(status.algorithm_has_stuck_for == 2) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
-        if(status.algorithm_has_stuck_for == 3) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
-//        if(status.algorithm_has_stuck_for == 4) c1.alpha_expansion = c1.alpha_expansion.value() * 1e8;
+    if(settings::strategy::multisite_mps_size_def == 1) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
+
+    if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_got_stuck) {
+        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
+        if(num::between(status.algorithm_has_stuck_for,2ul,3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e2;
+        //        if(num::between(status.algorithm_has_stuck_for,2ul,3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
+        //        if(num::between(status.algorithm_has_stuck_for,4ul,5ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
+        //        if(num::between(status.algorithm_has_stuck_for,6ul,7ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e8;
+        //        if(num::between(status.algorithm_has_stuck_for,8ul,9ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e10;
     }
 
 
@@ -371,9 +374,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(status.iter <= 1) c1.max_sites = settings::strategy::multisite_max_sites;
-    if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.max_sites = settings::strategy::multisite_max_sites;
+    if(status.algorithm_has_stuck_for > max_stuck_iters/2) c1.max_sites = settings::strategy::multisite_mps_size_max;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -393,9 +394,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // 1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
     // 2)
     //
-    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE and c1.max_sites != settings::strategy::multisite_max_sites) {
+    if(c2.optSpace == OptSpace::SUBSPACE_ONLY and c2.optMode == OptMode::VARIANCE and c1.max_sites < settings::strategy::multisite_mps_size_max) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try a few more sites
-        c2.max_sites    = settings::strategy::multisite_max_sites;
+        c2.max_sites    = settings::strategy::multisite_mps_size_max;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
@@ -406,10 +407,10 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites != settings::strategy::multisite_max_sites) {
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites < settings::strategy::multisite_mps_size_max) {
         // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
-        c2.optInit  = c1.alpha_expansion ? OptInit::CURRENT_STATE : OptInit::LAST_RESULT; // Use the result from c1
-        c2.max_sites    = settings::strategy::multisite_max_sites;
+        c2.optInit      = c1.alpha_expansion ? OptInit::CURRENT_STATE : OptInit::LAST_RESULT; // Use the result from c1
+        c2.max_sites    = settings::strategy::multisite_mps_size_max;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
