@@ -149,7 +149,7 @@ void class_fdmrg::single_fdmrg_step() {
      * \fn void single_DMRG_step(std::string ritz)
      */
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
-    tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
+    tensors.activate_sites(settings::precision::max_size_part_diag, 2);
     std::optional<double> alpha_expansion;
     if(tensors.active_sites.size() == 1 or status.algorithm_has_stuck_for == 1) alpha_expansion = std::min(0.1,status.energy_variance_lowest);
 
