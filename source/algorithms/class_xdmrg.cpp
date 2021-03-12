@@ -60,11 +60,8 @@ void class_xdmrg::resume() {
     if(status.algorithm_has_succeeded)
         task_list = {xdmrg_task::POST_PRINT_RESULT};
     else
-        task_list = {xdmrg_task::INIT_CLEAR_CONVERGENCE,
-                     xdmrg_task::FIND_EXCITED_STATE,
+        task_list = {xdmrg_task::INIT_CLEAR_CONVERGENCE, xdmrg_task::FIND_EXCITED_STATE,
                      xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
-
-
 
     // If we reached this point the current state has finished for one reason or another.
     // We may still have some more things to do, e.g. the config may be asking for more states
@@ -211,20 +208,20 @@ void class_xdmrg::run_preprocessing() {
 void class_xdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
+    auto t_sim  = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     stop_reason = StopReason::NONE;
 
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-//        if(tensors.position_is_inward_edge()){
-//            Eigen::Tensor<double,4> mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
-//            tools::log->info("mpo2 before reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,4));
-//            tensors.reduce_mpo_energy(1111.0);
-//            mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
-//            tools::log->info("mpo2 after  reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,8));
-//            exit(0);
-//        }
-//        find_best_alpha();
+        //        if(tensors.position_is_inward_edge()){
+        //            Eigen::Tensor<double,4> mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
+        //            tools::log->info("mpo2 before reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,4));
+        //            tensors.reduce_mpo_energy(1111.0);
+        //            mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
+        //            tools::log->info("mpo2 after  reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,8));
+        //            exit(0);
+        //        }
+        //        find_best_alpha();
         single_xDMRG_step();
         check_convergence();
         write_to_file();
@@ -241,29 +238,27 @@ void class_xdmrg::run_algorithm() {
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
-        try_projection();
         try_discard_small_schmidt();
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
+        try_projection();
         reduce_mpo_energy();
         move_center_point();
 
-//        if(num::mod(status.iter,2ul) == 0 and tensors.position_is_inward_edge_left()){
-//            create_hamiltonian_gates();
-//            create_time_evolution_gates();
-//            auto pos_old  = tensors.state->get_position<long>();
-//            auto dir_old  = tensors.state->get_direction();
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.first, false, status.chi_lim);
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.second, false, status.chi_lim);
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.first, false, status.chi_lim);
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.second, false, status.chi_lim);
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.first, false, status.chi_lim);
-//            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.second, false, status.chi_lim);
-//            while(not tensors.position_is_at(pos_old,dir_old)) tensors.move_center_point(status.chi_lim);
-//        }
-
-
+        //        if(num::mod(status.iter,2ul) == 0 and tensors.position_is_inward_edge_left()){
+        //            create_hamiltonian_gates();
+        //            create_time_evolution_gates();
+        //            auto pos_old  = tensors.state->get_position<long>();
+        //            auto dir_old  = tensors.state->get_direction();
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.first, false, status.chi_lim);
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.second, false, status.chi_lim);
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.first, false, status.chi_lim);
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.second, false, status.chi_lim);
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.first, false, status.chi_lim);
+        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.second, false, status.chi_lim);
+        //            while(not tensors.position_is_at(pos_old,dir_old)) tensors.move_center_point(status.chi_lim);
+        //        }
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;
@@ -292,16 +287,16 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    if(status.iter == 0) {
+    if(status.iter <= 1) {
         // On the zeroth iteration, the rest of the chain is probably just randomized, so don't focus on growing the bond dimension yet.
         status.chi_lim = std::max<long>(tensors.state->find_largest_chi(), cfg_chi_lim_init());
     }
 
-    if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters and tensors.state->size_1site() <= settings::precision::max_size_part_diag) {
+    if(status.iter < settings::xdmrg::olap_iters + settings::xdmrg::vsub_iters) {
         // If early in the simulation, and the bond dimension is small enough we use subspace optimization
-        c1.optMode   = OptMode::VARIANCE;
-        c1.optSpace  = OptSpace::SUBSPACE_AND_DIRECT;
-        c1.max_sites = settings::strategy::multisite_mps_size_init;
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
+        c1.max_sites     = settings::strategy::multisite_mps_size_init;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
@@ -320,15 +315,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
         c1.max_sites     = settings::strategy::multisite_mps_size_max;
         c1.second_chance = false;
-//        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
+        //        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
-
-//    if(status.algorithm_has_stuck_for >= 2 and tensors.state->size_1site() <= settings::precision::max_size_part_diag) {
-//         If or stuck, and the bond dimension is small enough we should give subspace optimization a shot
-//        c1.optMode       = OptMode::VARIANCE;
-//        c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
-//        c1.second_chance = status.algorithm_has_stuck_for >= 3;
-//    }
 
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
@@ -345,9 +333,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         // Make sure not to use SUBSPACE if the 1-site problem size is huge
         // When this happens, we can't use SUBSPACE even with two sites,
         // so we might as well give it to DIRECT, which handles larger problems.
-        c1.optMode       = OptMode::VARIANCE;
-        c1.optSpace      = OptSpace::DIRECT;
-//        c1.second_chance = true;
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::DIRECT;
     }
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -355,13 +342,12 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_got_stuck) {
         c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-        if(num::between(status.algorithm_has_stuck_for,2ul,3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e2;
+        if(num::between(status.algorithm_has_stuck_for, 2ul, 3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e2;
         //        if(num::between(status.algorithm_has_stuck_for,2ul,3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
         //        if(num::between(status.algorithm_has_stuck_for,4ul,5ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
         //        if(num::between(status.algorithm_has_stuck_for,6ul,7ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e8;
         //        if(num::between(status.algorithm_has_stuck_for,8ul,9ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e10;
     }
-
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
@@ -374,7 +360,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > max_stuck_iters/2) c1.max_sites = settings::strategy::multisite_mps_size_max;
+    if(status.algorithm_has_stuck_for > max_stuck_iters / 2) c1.max_sites = settings::strategy::multisite_mps_size_max;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -389,7 +375,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
      *
      */
     OptConf c2 = c1; // Start with c1 as a baseline
-    c2.label = "c2";
+    c2.label   = "c2";
     // NOTES
     // 1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
     // 2)
@@ -416,21 +402,19 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
         if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
     }
-//    else if (status.algorithm_has_got_stuck){
-//        c2.optInit  = OptInit::CURRENT_STATE;
-//        c2.optSpace = OptSpace::POWER_VARIANCE;
-//        c2.optMode  = OptMode::VARIANCE;
-//        configs.emplace_back(c2);
-//    }
-//    else if (status.algorithm_has_got_stuck){
-//        c2.alpha_expansion = 1e2 * (c1.alpha_expansion ? c1.alpha_expansion.value() : status.energy_variance_lowest);
-//        c2.optInit  = OptInit::CURRENT_STATE; // Use the result from c1
-//        c2.optSpace = OptSpace::DIRECT;
-//        c2.optMode  = OptMode::VARIANCE;
-//        configs.emplace_back(c2);
-//    }
-
-
+    //    else if (status.algorithm_has_got_stuck){
+    //        c2.optInit  = OptInit::CURRENT_STATE;
+    //        c2.optSpace = OptSpace::POWER_VARIANCE;
+    //        c2.optMode  = OptMode::VARIANCE;
+    //        configs.emplace_back(c2);
+    //    }
+    //    else if (status.algorithm_has_got_stuck){
+    //        c2.alpha_expansion = 1e2 * (c1.alpha_expansion ? c1.alpha_expansion.value() : status.energy_variance_lowest);
+    //        c2.optInit  = OptInit::CURRENT_STATE; // Use the result from c1
+    //        c2.optSpace = OptSpace::DIRECT;
+    //        c2.optMode  = OptMode::VARIANCE;
+    //        configs.emplace_back(c2);
+    //    }
 
     if(not c2.second_chance) return configs;
     /*
@@ -439,12 +423,12 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
      *
      */
 
-//    OptConf c3 = c2; // Start with c2 as a baseline
-//    c3.label = "c3";
-//    c3.optInit = OptInit::CURRENT_STATE;
-//    if(c2.alpha_expansion) c3.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
-//    else c3.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
-//    configs.emplace_back(c3);
+    //    OptConf c3 = c2; // Start with c2 as a baseline
+    //    c3.label = "c3";
+    //    c3.optInit = OptInit::CURRENT_STATE;
+    //    if(c2.alpha_expansion) c3.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
+    //    else c3.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
+    //    configs.emplace_back(c3);
 
     /*
      *
@@ -452,55 +436,55 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
      *
      */
 
-//    OptConf c4 = c3; // Start with c2 as a baseline
-//    c4.label = "c4";
-//    c4.optInit = OptInit::CURRENT_STATE;
-//    if(not c2.alpha_expansion){
-//        c4.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
-//        configs.emplace_back(c4);
-//    }
-//
-//    OptConf c5 = c4; // Start with c2 as a baseline
-//    c5.label = "c5";
-//    c5.optInit = OptInit::CURRENT_STATE;
-//    if(c4.alpha_expansion){
-//        c5.alpha_expansion = 1e2 * c4.alpha_expansion.value();
-//        configs.emplace_back(c5);
-//    }
-//
-//    OptConf c6 = c5; // Start with c2 as a baseline
-//    c6.label = "c6";
-//    c6.optInit = OptInit::CURRENT_STATE;
-//    if(c5.alpha_expansion){
-//        c6.alpha_expansion = 1e2 * c5.alpha_expansion.value();
-//        configs.emplace_back(c6);
-//    }
+    //    OptConf c4 = c3; // Start with c2 as a baseline
+    //    c4.label = "c4";
+    //    c4.optInit = OptInit::CURRENT_STATE;
+    //    if(not c2.alpha_expansion){
+    //        c4.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
+    //        configs.emplace_back(c4);
+    //    }
+    //
+    //    OptConf c5 = c4; // Start with c2 as a baseline
+    //    c5.label = "c5";
+    //    c5.optInit = OptInit::CURRENT_STATE;
+    //    if(c4.alpha_expansion){
+    //        c5.alpha_expansion = 1e2 * c4.alpha_expansion.value();
+    //        configs.emplace_back(c5);
+    //    }
+    //
+    //    OptConf c6 = c5; // Start with c2 as a baseline
+    //    c6.label = "c6";
+    //    c6.optInit = OptInit::CURRENT_STATE;
+    //    if(c5.alpha_expansion){
+    //        c6.alpha_expansion = 1e2 * c5.alpha_expansion.value();
+    //        configs.emplace_back(c6);
+    //    }
 
     return configs;
 }
-
 
 void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     using namespace tools::finite;
     using namespace tools::finite::opt;
 
-    if (optConf.empty()) optConf = get_opt_conf_list();
+    if(optConf.empty()) optConf = get_opt_conf_list();
     std::vector<opt_mps> results;
     variance_before_step = std::nullopt;
-    variance_after_step = std::nullopt;
+    variance_after_step  = std::nullopt;
     double percent       = 0;
-    tools::log->info("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction, optConf.size());
+    tools::log->info("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
+                     optConf.size());
     for(const auto &[idx_conf, conf] : iter::enumerate(optConf)) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
 
         tensors.activate_sites(conf.chosen_sites);
         if(tensors.active_sites.empty()) continue;
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
-//        if(conf.optSpace == OptSpace::POWER_ENERGY or conf.optSpace == OptSpace::POWER_VARIANCE) tensors.reduce_mpo_energy();
+        //        if(conf.optSpace == OptSpace::POWER_ENERGY or conf.optSpace == OptSpace::POWER_VARIANCE) tensors.reduce_mpo_energy();
 
         // Use subspace expansion if alpha_expansion is set
-        if(conf.alpha_expansion){
-            if(not results.empty()){
+        if(conf.alpha_expansion) {
+            if(not results.empty()) {
                 // We better store the mps sites that the previous result is compatible with
                 auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim, settings::precision::svd_threshold); // nullopt implies a pos query
                 results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the compatible mps sites
@@ -538,20 +522,18 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     }
 
     if(not results.empty()) {
-
         if(tools::log->level() <= spdlog::level::info and results.size() > 0ul)
             for(auto &candidate : results)
-                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} | [{}][{}] | time {:.4f} ms",
-                                  candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(),
-                                  std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
-                                  enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
+                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
+                                 "| [{}][{}] | time {:.4f} ms",
+                                 candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(),
+                                 std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
+                                 enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
 
         // Sort the results in order of increasing variance
-        std::sort(results.begin(), results.end(), [](const opt_mps &lhs, const opt_mps &rhs)
-                  { return lhs.get_variance() < rhs.get_variance()
-                           or lhs.get_optspace() == OptSpace::POWER_ENERGY
-                           or lhs.get_optspace() == OptSpace::POWER_VARIANCE; });
-
+        std::sort(results.begin(), results.end(), [](const opt_mps &lhs, const opt_mps &rhs) {
+            return lhs.get_variance() < rhs.get_variance() or lhs.get_optspace() == OptSpace::POWER_ENERGY or lhs.get_optspace() == OptSpace::POWER_VARIANCE;
+        });
 
         // Take the best result
         const auto &winner = results.front();
@@ -559,7 +541,7 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         last_optmode       = winner.get_optmode();
         tensors.activate_sites(winner.get_sites());
         tensors.state->tag_active_sites_normalized(false);
-        if(not winner.mps_backup.empty()){
+        if(not winner.mps_backup.empty()) {
             // Restore the neighboring mps that are compatible with this winner
             tensors.state->set_mps_sites(winner.mps_backup);
             tensors.rebuild_edges();
@@ -591,7 +573,6 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
             variance_after_step = tools::finite::measure::energy_variance(tensors);
         }
-
     }
 
     status.wall_time = tools::common::profile::t_tot->get_measured_time();
@@ -607,19 +588,20 @@ void class_xdmrg::check_convergence() {
     }
 
     // TODO: Move this reset block away from here
-//    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
-//    if(status.iter > 2 and tensors.position_is_inward_edge()) {
-//        if(outside_of_window and
-//           (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
-//            double      old_energy_dens_window = status.energy_dens_window;
-//            double      new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
-//            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}", tools::finite::measure::energy_per_site(tensors),
-//                                             status.energy_dens_target, status.energy_dens_window);
-//            tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
-//            status.energy_dens_window = new_energy_dens_window;
-//            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
-//        }
-//    }
+    //    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
+    //    if(status.iter > 2 and tensors.position_is_inward_edge()) {
+    //        if(outside_of_window and
+    //           (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
+    //            double      old_energy_dens_window = status.energy_dens_window;
+    //            double      new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
+    //            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}",
+    //            tools::finite::measure::energy_per_site(tensors),
+    //                                             status.energy_dens_target, status.energy_dens_window);
+    //            tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
+    //            status.energy_dens_window = new_energy_dens_window;
+    //            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
+    //        }
+    //    }
 
     status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
     //        or
@@ -650,7 +632,6 @@ void class_xdmrg::check_convergence() {
            tools::finite::measure::energy_variance(tensors) < 1e-4)
             stop_reason = StopReason::RANDOMIZE;
     }
-
 }
 
 void class_xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector) {
@@ -729,9 +710,8 @@ void class_xdmrg::find_energy_range() {
 
 void class_xdmrg::update_time_step() {
     tools::log->trace("Updating time step");
-    status.delta_t = std::complex<double>(1e-6,0 );
+    status.delta_t = std::complex<double>(1e-6, 0);
 }
-
 
 void class_xdmrg::create_hamiltonian_gates() {
     tools::log->info("Creating Hamiltonian gates");
@@ -742,17 +722,20 @@ void class_xdmrg::create_hamiltonian_gates() {
     auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
     auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
-//    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}, tensors.state->get_spin_dims({pos})));
-//    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1})));
-//    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}, tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
-//
+    //    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos},
+    //    tensors.state->get_spin_dims({pos}))); for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos +
+    //    1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1}))); for(auto pos : list_3site)
+    //    ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2},
+    //    tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
+    //
     for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}, tensors.state->get_spin_dims({pos})));
-    for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1})));
-    for(auto pos : list_3site) ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2}, tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
-
-
+    for(auto pos : list_2site)
+        ham_gates_2body.emplace_back(
+            qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1}, tensors.state->get_spin_dims({pos, pos + 1})));
+    for(auto pos : list_3site)
+        ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2},
+                                              tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
 }
-
 
 void class_xdmrg::create_time_evolution_gates() {
     // Create the time evolution operators
@@ -762,8 +745,6 @@ void class_xdmrg::create_time_evolution_gates() {
     time_gates_2site = qm::timeEvolution::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::timeEvolution::get_time_evolution_gates(status.delta_t, ham_gates_3body);
 }
-
-
 
 bool   class_xdmrg::cfg_algorithm_is_on() { return settings::xdmrg::on; }
 long   class_xdmrg::cfg_chi_lim_max() { return settings::xdmrg::chi_lim_max; }
