@@ -140,8 +140,8 @@ namespace settings {
         inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool          discard_schmidt_when_stuck = true;                                   /*!< Try discarding smallest schmidt values when stuck */
-        inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima */
+        inline double        discard_schmidt_when_stuck = 1e-6;                                   /*!< Try discarding smallest schmidt values when stuck (0 = turn off) */
+        inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_when_stuck_freq    = 4;                                      /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
