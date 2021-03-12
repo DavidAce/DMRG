@@ -469,7 +469,7 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         std::vector<double> V_mpo_vec_log10;
         for(const auto &v : V_mpo_vec) V_mpo_vec_log10.emplace_back(std::log10(v));
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Energy variance convergence:  rel. slope {:.3f} | slope tolerance {:.2f}", report.slope, slope_threshold.value());
+            tools::log->info("Energy variance convergence:  rel. slope {:.3f} | slope tolerance {:.2f} | since {}", report.slope, slope_threshold.value(),report.check_from);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Energy variance slope details:");
             tools::log->trace(" -- relative slope     = {:.3f} %", report.slope);
@@ -514,11 +514,13 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         status.entanglement_saturated_for = saturated_count;
         std::vector<double> all_avergs;
         std::vector<double> all_slopes;
+        all_avergs.reserve(reports.size());
+        all_slopes.reserve(reports.size());
         for(auto &r : reports) all_avergs.push_back(r.avgY);
         for(auto &r : reports) all_slopes.push_back(r.slope);
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f}", idx_max_slope,
-                              reports[idx_max_slope].slope, slope_threshold.value());
+            tools::log->info("Entanglement ent. convergence at site {}: rel. slope {:.8f} | slope tolerance {:.2f} | since {}", idx_max_slope,
+                              reports[idx_max_slope].slope, slope_threshold.value(), reports[idx_max_slope].check_from);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Entanglement slope details:");
             tools::log->trace(" -- site              = {}", idx_max_slope);
