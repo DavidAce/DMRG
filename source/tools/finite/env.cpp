@@ -3,6 +3,7 @@
 //
 #include "env.h"
 #include <config/debug.h>
+#include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/linalg/tensor.h>
 #include <math/num.h>
@@ -19,7 +20,7 @@
 #include <tools/finite/mps.h>
 
 std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &state, const class_model_finite &model, class_edges_finite &edges, std::optional<double> alpha,
-                                                        long chi_lim, std::optional<double> svd_threshold) {
+                                                        long chi_lim, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw std::runtime_error(
             fmt::format("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
@@ -54,11 +55,15 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
         return pos_expanded;
     }
     using Scalar = class_state_finite::Scalar;
+
     // Set up the SVD
-    svd::solver svd;
-    svd.setThreshold(1e-12, svd_threshold);
-    svd.use_lapacke = true;
-    svd.use_bdc     = false;
+    if(not svd_settings) svd_settings = svd::settings();
+    svd_settings->threshold = 1e-14;
+    svd_settings->switchsize = 512;
+    svd_settings->use_lapacke = true;
+    svd_settings->use_bdc = false;
+    svd::solver svd(svd_settings);
+
     state.clear_cache();
 
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
@@ -96,11 +101,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 mpsR.set_M(MR_P0);
                 if(mpsL.isCenter()) {
                     // Here we expect mpsL to be "AC" and mpsR to be a "B"
-                    mpsL.set_LC(S, svd.get_truncation_error());
+                    mpsL.set_LC(S, svd.truncation_error);
                     mpsL.stash_V(V, mpsR.get_position());
                 } else {
                     // Here we expect mpsL to be "A" and mpsR to be an "A" or "AC"
-                    mpsL.stash_S(S, svd.get_truncation_error(), mpsR.get_position());
+                    mpsL.stash_S(S, svd.truncation_error, mpsR.get_position());
                     mpsL.stash_V(V, mpsR.get_position());
                 }
                 mpsR.merge_stash(mpsL);
@@ -175,11 +180,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 if(mpsL.isCenter()) {
-                    mpsR.stash_C(S, svd.get_truncation_error(), mpsL.get_position());
+                    mpsR.stash_C(S, svd.truncation_error, mpsL.get_position());
                     mpsR.stash_U(U, mpsL.get_position());
                 } else {
                     // Here we expect mpsL to be a "B" as well
-                    mpsR.stash_S(S, svd.get_truncation_error(), mpsL.get_position());
+                    mpsR.stash_S(S, svd.truncation_error, mpsL.get_position());
                     mpsR.stash_U(U, mpsL.get_position());
                 }
                 mpsL.merge_stash(mpsR);

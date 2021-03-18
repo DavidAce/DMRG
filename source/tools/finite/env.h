@@ -1,13 +1,14 @@
 #pragma once
 #include <optional>
 #include <vector>
+#include <math/svd/settings.h>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
 
 namespace tools::finite::env {
     extern std::vector<size_t> expand_subspace(class_state_finite &state, const class_model_finite &model, class_edges_finite &edges,
-                                               std::optional<double> alpha, long chi_lim,std::optional<double> svd_threshold = std::nullopt);
+                                               std::optional<double> alpha, long chi_lim,std::optional<svd::settings> svd_settings = std::nullopt);
 
     extern void assert_edges(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges);
     extern void assert_edges_var(const class_state_finite &state, const class_model_finite &model, const class_edges_finite &edges);

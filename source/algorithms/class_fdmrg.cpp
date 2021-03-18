@@ -151,14 +151,14 @@ void class_fdmrg::single_fdmrg_step() {
     tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
     std::optional<double> alpha_expansion;
-    if(settings::strategy::multisite_max_sites == 1 or status.algorithm_has_stuck_for == 1) alpha_expansion = std::min(0.1,status.energy_variance_lowest);
+    if(tensors.active_sites.size() == 1 or status.algorithm_has_stuck_for == 1) alpha_expansion = std::min(0.1,status.energy_variance_lowest);
 
     if(tensors.active_sites.empty())
         tensors.activate_sites({0}); // Activate a site so that edge checks can happen
     else {
         // Use subspace expansion if alpha_expansion is set
         if(alpha_expansion)
-            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim, settings::precision::svd_threshold);
+            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim);
 
         Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
         if constexpr(settings::debug)

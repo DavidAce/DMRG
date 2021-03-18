@@ -11,12 +11,12 @@
 using Scalar = std::complex<double>;
 
 void tools::infinite::mps::merge_twosite_tensor(class_state_infinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim,
-                                                std::optional<double> svd_threshold) {
+                                                std::optional<svd::settings> svd_settings) {
     long   dA       = state.get_spin_dimA();
     long   dB       = state.get_spin_dimB();
     size_t posA     = state.get_positionA();
     size_t posB     = state.get_positionB();
-    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi_lim, svd_threshold);
+    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi_lim, svd_settings);
     if(mps_list.size() != 2) throw std::logic_error(fmt::format("Got {} MPS sites from two-site tensor.", mps_list.size()));
     state.get_mps_siteA().merge_mps(mps_list.front());
     state.get_mps_siteB().merge_mps(mps_list.back());

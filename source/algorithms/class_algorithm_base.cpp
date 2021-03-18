@@ -5,6 +5,7 @@
 #include "class_algorithm_base.h"
 #include <complex>
 #include <config/nmspc_settings.h>
+#include <general/nmspc_iter.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
 #include <math/stat.h>
@@ -67,60 +68,44 @@ void class_algorithm_base::init_bond_dimension_limits() {
     if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
 }
 
-/*! \brief Checks convergence based on slope.
- * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
- * If the measurement happened less than rate iterations ago, return.
- * Otherwise, compute the slope of the last 25% of the measurements that have been made.
- * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
- */
-class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope(std::vector<double> &Y_vec, std::vector<size_t> &X_vec,
-                                                                                          double new_data, size_t iter, size_t rate, double tolerance) {
+class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(const std::vector<double> &Y_vec, double sensitivity) {
     SaturationReport report;
-    size_t           last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if(iter < rate + last_measurement) { return report; }
-
-    // It's time to check. Insert current numbers
-    if(not X_vec.empty() and iter == X_vec.back()){
-        // Replace latest data
-        Y_vec.back() = new_data;
-        X_vec.back() = iter;
-    }else{
-        // Append latest data
-        Y_vec.push_back(new_data);
-        X_vec.push_back(iter);
-    }
-
-    size_t min_data_points = 2;
+    constexpr size_t min_data_points = 2;
     if(Y_vec.size() < min_data_points) { return report; }
-    size_t start_point = 0;
-    double band_size   = 2.0 + 2.0 * tolerance; // Between 2 and  4 standard deviations away
 
-    // Consider Y_vec vs X_vec: a noisy signal decaying in the shape of a hockey-club, say.
-    // We want to identify the point at which the signal stabilizes. We use the fact that the
-    // standard deviation is high if it includes parts of the non-stable signal, and low if
-    // it includes only the stable part.
-    // Here we monitor the standard deviation of the signal between [some_point, X_vec.end()],
-    // and move "some_point" towards the end. If the standard deviation goes below a certain
-    // threshold, we've found the stabilization point.
-    auto recent_point       = static_cast<size_t>(std::floor(0.75 * static_cast<double>(Y_vec.size())));
-    recent_point            = std::min(Y_vec.size() - min_data_points, recent_point);
-    double recent_point_std = stat::stdev(Y_vec, recent_point); // Computes the standard dev of Y_vec from recent_point to end
-    for(size_t some_point = 0; some_point < Y_vec.size(); some_point++) {
-        double some_point_std = stat::stdev(Y_vec, some_point); // Computes the standard dev of Y_vec from some_point to end
-        if(some_point_std < band_size * recent_point_std and start_point == 0) {
-            start_point = some_point;
-            break;
-        }
+    std::vector<double> Y_log;
+    Y_log.reserve(Y_vec.size());
+    for(auto &y : Y_vec) Y_log.push_back(-std::log10(std::abs(y)));
+
+    // Normalize so the last element is 1
+    double yback = Y_log.back();
+    for(auto &y : Y_log) y /= yback;
+
+    // Get the standard deviations from i to end
+    // Just make sure to always include more than w elements
+    std::vector<double> Y_std;
+    Y_std.reserve(Y_log.size());
+    long w = 2;
+    for(size_t i = 0; i < Y_log.size(); i++) {
+        size_t min_idx = std::min(i, Y_log.size() - w);
+        min_idx        = std::max(min_idx, 0ul);
+        Y_std.push_back(stat::stdev(Y_log, min_idx));
     }
-    // Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    double avgY  = stat::mean(Y_vec, start_point);
-    auto [slope,res] = stat::slope(X_vec, Y_vec, start_point);
-    slope = std::abs(slope) / avgY * 100 / std::sqrt(Y_vec.size() - start_point); // TODO: Is dividing by sqrt(elems) reasonable?
-    slope        = std::isnan(slope) ? 0.0 : slope;
-    report.slope = slope;
-    report.check_from   = start_point;
-    report.avgY         = avgY;
-    report.has_computed = true;
+
+    size_t idx = 0;
+    for(auto &&[i, s] : iter::enumerate(Y_std)) {
+        idx = i;
+        if(s < sensitivity) break;
+    }
+
+    report.has_computed    = true;
+    report.saturated_point = idx;
+    report.saturated_count = Y_vec.size() - idx - 1;
+    report.has_saturated   = report.saturated_count > 0;
+    report.Y_avg           = stat::mean(Y_vec, idx);
+    report.Y_vec           = Y_vec;
+    report.Y_log           = Y_log;
+    report.Y_std           = Y_std;
     return report;
 }
 
