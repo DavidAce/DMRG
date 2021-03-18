@@ -302,8 +302,8 @@ void class_state_infinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<double> svd_threshold) {
-    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, chi_lim, svd_threshold);
+void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<svd::settings> svd_settings) {
+    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, chi_lim, svd_settings);
 }
 
 void class_state_infinite::set_mps(const std::vector<class_mps_site> &mps_list) {

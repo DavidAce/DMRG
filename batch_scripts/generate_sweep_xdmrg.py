@@ -6,7 +6,7 @@ from itertools import product
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
 
-template_filename = 'input_xdmrg_template.cfg'
+template_filename = 'input_template_xdmrg.cfg'
 basename    = 'mbl'
 location    = "input"
 
@@ -15,7 +15,9 @@ sites               = np.array([12,16,20])
 lambdas             = [0.000]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
-multisite_max_sites = [1,2,4,6]
+multisite_mps_size_def  = [1,2,4]
+multisite_mps_size_max  = [4]
+multisite_mps_size_init = [6]
 output_prefix       = "output"
 
 
@@ -36,9 +38,9 @@ def undelta(delta):
     else:
         return np.exp(delta),1.0
 
-print("Generating", len(sites) * len(lambdas) * len(deltas) * len(multisite_max_sites) * len(initial_state), "input files")
+print("Generating", len(sites) * len(lambdas) * len(deltas) * len(multisite_mps_size_def) * len(initial_state), "input files")
 
-for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_state,multisite_max_sites):
+for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_state,multisite_mps_size_def):
     val_j,val_h = undelta(val_d)
     str_L = str(val_L)
     str_d = "{:+.4f}".format(val_d)
@@ -53,7 +55,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         else:
             extra_prefix = extra_prefix + "_res"
 
-    if len(multisite_max_sites) > 1:
+    if len(multisite_mps_size_def) > 1:
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
     input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_l,str_d)
@@ -69,7 +71,9 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::ising_sdual::h_stdv"         : "1.0",
         "xdmrg::chi_lim_max"                 : "768",
         "xdmrg::max_states"                  : "2",
-        "strategy::multisite_max_sites"      : str(multi),
+        "strategy::multisite_mps_size_def"   : str(multi),
+        "strategy::multisite_mps_size_max"   : str(multisite_mps_size_max[0]),
+        "strategy::multisite_mps_size_init"  : str(multisite_mps_size_init[0]),
         "strategy::initial_state"            : str(init),
     }
     os.makedirs(location + extra_prefix, exist_ok=True)

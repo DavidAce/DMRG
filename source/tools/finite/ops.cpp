@@ -180,24 +180,25 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
     tools::log->info("Projecting state to axis nearest sector {}", sector);
     std::vector<std::string> valid_sectors            = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                     sector_is_valid          = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
-    auto                     spin_component_threshold = 1e-3;
+    auto                     spin_alignment_threshold = 1e-3;
     if(sector_is_valid) {
         auto sector_sign                         = mps::internal::get_sign(sector);
         auto paulimatrix                         = mps::internal::get_pauli(sector);
         auto spin_component_along_requested_axis = tools::finite::measure::spin_component(state, paulimatrix);
-        // Now we have to check that the projection intended projection is safe
-        auto alignment = sector_sign * spin_component_along_requested_axis;
-        if(alignment > 0)
+        // Now we have to check that the intended projection is safe
+        auto spin_alignment = sector_sign * spin_component_along_requested_axis;
+        tools::log->info("Spin component along requested axis : {:.16f}", spin_component_along_requested_axis);
+        if(spin_alignment > 0)
             // In this case the state has an aligned component along the requested axis --> safe
             project_to_sector(state, paulimatrix, sector_sign);
-        else if(alignment < 0) {
+        else if(spin_alignment < 0) {
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
-            if(spin_component_along_requested_axis < 1.0 - spin_component_threshold)
+            if(std::abs(spin_alignment) < 1.0 - spin_alignment_threshold)
                 project_to_sector(state, paulimatrix, sector_sign);
             else
                 return tools::log->warn("Skipping projection to [{}]: State spin component is opposite to the requested projection axis: {:.16f}", sector,
                                         spin_component_along_requested_axis);
-        } else if(alignment == 0) {
+        } else if(spin_alignment == 0) {
             // No sector sign was specified, so we select the one along which there is a component
             if(spin_component_along_requested_axis >= 0)
                 sector_sign = 1;

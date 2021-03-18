@@ -140,8 +140,8 @@ namespace settings {
         inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool          discard_schmidt_when_stuck = true;                                   /*!< Try discarding smallest schmidt values when stuck */
-        inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima */
+        inline double        discard_schmidt_when_stuck = 1e-6;                                   /*!< Try discarding smallest schmidt values when stuck (0 = turn off) */
+        inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_when_stuck_freq    = 4;                                      /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
@@ -150,8 +150,10 @@ namespace settings {
         inline bool          randomize_early            = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors           = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
         inline size_t        max_resets                 = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
-        inline size_t        multisite_max_sites        = 8;                                      /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
-        inline MultisiteMove multisite_move             = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline size_t        multisite_mps_size_def     = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
+        inline size_t        multisite_mps_size_max     = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
+        inline size_t        multisite_mps_size_init    = 6;                                      /*!< Maximum number of sites in multisite mps (or "theta") during initialization (olap/vsub iterations). */
+        inline MultisiteMove multisite_mps_step         = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
         inline StateInitType initial_type               = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state              = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states           = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
@@ -163,12 +165,12 @@ namespace settings {
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
-        inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
+        inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
-        inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
-        inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
+        inline double   variance_saturation_sensitivity = 1e-2  ;   /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
+        inline double   entropy_saturation_sensitivity  = 1e-6  ;   /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
         inline double   subspace_error_factor           = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
         inline double   max_subspace_error              = 1e-8  ;   /*!< The maximum subspace error. Never do subspace variance optimization with subspace error greater than this. */
         inline double   min_subspace_error              = 1e-12 ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
@@ -248,7 +250,7 @@ namespace settings {
         inline size_t   vsub_iters                      = 2;                /*!< Number of iterations using the subspace optimization for variance, after overlap iterations */
         inline long     chi_lim_max                     = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_lim_grow                    = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init                    = 16;               /*!< Initial chi limit. Only used when chi_grow == true, or starting from an entangled state. */
+        inline long     chi_lim_init                    = 16;               /*!< Initial chi limit. Used during iter <= 1 or when chi_grow == true, or starting from an entangled state */
         inline long     chi_lim_olap                    = 16;               /*!< Chi limit during initial OVERLAP|SUBSPACE mode. set to <= 0 for unlimited */
         inline long     chi_lim_vsub                    = 32;               /*!< Chi limit during initial VARIANCE|SUBSPACE mode. set to <= 0 for unlimited */
         inline size_t   print_freq                      = 1;                /*!< Print frequency for console output. In units of iterations. (0 = off). */

@@ -3,6 +3,7 @@
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <measure/tensors_measure_infinite.h>
+#include <math/svd/settings.h>
 #include <memory>
 
 class class_state_infinite;
@@ -47,7 +48,7 @@ class class_tensors_infinite {
     void reset_edges();
     void eject_edges();
 
-    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void enlarge();
     void do_all_measurements() const;
     void clear_measurements() const;

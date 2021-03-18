@@ -5,6 +5,7 @@
 #include <optional>
 #include <tuple>
 #include <vector>
+#include <math/svd/settings.h>
 class class_mps_site;
 namespace tools::common::split {
     using Scalar = std::complex<double>;
@@ -14,7 +15,7 @@ namespace tools::common::split {
                                                   const std::vector<size_t>       & positions,
                                                   long                            center_position,
                                                   long                            chi_limit,
-                                                  std::optional<double>           svd_threshold = std::nullopt);
+                                                  std::optional<svd::settings>    svd_settings = std::nullopt);
 
 
     namespace internal{
@@ -24,14 +25,14 @@ namespace tools::common::split {
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
                                       long                            chi_limit,
-                                      std::optional<double>           svd_threshold = std::nullopt);
+                                      std::optional<svd::settings>    svd_settings = std::nullopt);
 
         extern std::deque<class_mps_site>
                     split_mps_into_Bs(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
                                       long                            chi_limit,
-                                      std::optional<double>           svd_threshold = std::nullopt);
+                                      std::optional<svd::settings>    svd_settings = std::nullopt);
     }
 
     /* clang-format on */

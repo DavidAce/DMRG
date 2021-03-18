@@ -8,8 +8,8 @@
 #include <complex>
 #include <config/enums.h>
 #include <memory>
-#include <vector>
 #include <optional>
+#include <vector>
 
 namespace h5pp {
     class File;
@@ -53,12 +53,15 @@ class class_algorithm_base {
     protected:
     //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
     struct SaturationReport {
-        bool   has_computed = false;
-        size_t check_from   = 0;
-        double slope;
-        double avgY;
+        bool                has_computed = false;
+        bool                has_saturated = false;
+        size_t              saturated_count = 0;
+        size_t              saturated_point = 0;
+        double              Y_avg; // Average from the saturation point onward
+        std::vector<double> Y_vec; // The values used to gauge saturation
+        std::vector<double> Y_log; // Normalized values to check saturation. Let y = -log10(Y_vec). Then Y_log = y/y.back()
+        std::vector<double> Y_std; // The "moving" standard deviation of Y_log. (std from x -> end, moving x towards end)
     };
 
-    SaturationReport check_saturation_using_slope(std::vector<double> &Y_vec, std::vector<size_t> &X_vec, double new_data, size_t iter, size_t rate,
-                                                  double tolerance);
+    SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity);
 };
