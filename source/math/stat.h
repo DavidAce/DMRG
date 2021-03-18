@@ -70,6 +70,13 @@ namespace stat{
     }
 
     template<typename ContainerType>
+    double typical(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        ContainerType Xlog = X;
+        for(auto &x : Xlog) x = std::log(std::abs(x));
+        return std::exp(mean(Xlog,start_point,end_point));
+    }
+
+    template<typename ContainerType>
     double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         try {
             check_bounds(X, start_point, end_point);
@@ -133,6 +140,35 @@ namespace stat{
         double residual = syy * (1 - sxy*sxy / sxx / syy);
         return std::make_pair(slope,residual);
     }
+
+    template<typename ContainerType>
+    std::pair<double,double> slope(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        ContainerType X(Y.size());
+        for(size_t i = 0; i < Y.size(); i++) X[i] = i;
+        return slope(Y,X,start_point,end_point);
+    }
+
+    template<typename ContainerType1, typename ContainerType2>
+    double slope_at(const ContainerType1 &X, const ContainerType2 &Y, size_t at, size_t width = 1){
+        auto min_idx = static_cast<size_t>(std::max(static_cast<long>(at)-static_cast<long>(width),0l));
+        auto max_idx = static_cast<size_t>(std::min(at+width,Y.size()));
+        return slope(X,Y,min_idx,max_idx).first;
+    }
+
+    template<typename ContainerType>
+    ContainerType smooth(const ContainerType &X, long width = 2) {
+        if(X.size() <= 2) return X;
+        ContainerType S;
+        S.reserve(X.size());
+        for (auto && [i,x] : iter::enumerate(X)){
+            long min_idx = std::max<long>(i-width, 0);
+            long max_idx = std::min<long>(i+width, X.size()-1);
+            S.push_back(stat::mean(X,min_idx,max_idx));
+        }
+        return S;
+    }
+
+
     template<typename ContainerType>
     size_t find_last_valid_point(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         try {

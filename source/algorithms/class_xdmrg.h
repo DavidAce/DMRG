@@ -16,8 +16,8 @@ class class_state_finite;
 class class_xdmrg : public class_algorithm_finite {
     private:
     double energy_window_growth_factor = 1.0;
-    std::optional<double> variance_before_step;
-    std::optional<double> variance_after_step;
+    std::optional<double> variance_before_step = std::nullopt;
+    std::optional<double> alpha_expansion_prev = std::nullopt; // Remember this value;
     std::vector<qm::Gate> ham_gates_1body;
     std::vector<qm::Gate> ham_gates_2body;
     std::vector<qm::Gate> ham_gates_3body;

@@ -88,8 +88,8 @@ std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite
     //  - Force the use of JacobiSVD by setting the switchsize to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
     svd::solver svd;
-    svd.setThreshold(1e-12);
-    svd.setSwitchSize(50000);
+    svd.threshold = 1e-12;
+    svd.switchsize = 50000;
     svd.use_lapacke = true;
     if(svdMode == SVDMode::EIGEN) svd.use_lapacke = false;
 

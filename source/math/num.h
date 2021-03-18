@@ -99,6 +99,7 @@ namespace num {
         return xs;
     }
 
+
     /*! \brief Product operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
      *   \param from first element to multiply

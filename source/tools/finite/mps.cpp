@@ -26,7 +26,7 @@ bool tools::finite::mps::internal::bitfield_is_valid(std::optional<long> bitfiel
     return bitfield.has_value() and bitfield.value() > 0 and internal::used_bitfields.count(bitfield.value()) == 0;
 }
 
-size_t tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point_single_site(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     if(state.position_is_outward_edge()) {
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1)
             throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
@@ -57,13 +57,13 @@ size_t tools::finite::mps::move_center_point_single_site(class_state_finite &sta
             Eigen::Tensor<Scalar, 3> onesite_tensor(mpsC.dimensions());    // Allocate for contraction
             onesite_tensor.device(Textra::omp::getDevice()) =
                 Textra::asDiagonal(LC).contract(mpsC.get_M(), Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_threshold, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         } else if(state.get_direction() == -1) {
             auto pos_ul   = static_cast<size_t>(pos); // Cast to unsigned
             auto &mps     = state.get_mps_site(pos); // This becomes the new B
             long  chi_new = std::min(chi_lim,mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Bond dimensions growth limit
             auto onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (MC is unset later)
-            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {pos_ul}, posC, chi_new, svd_threshold, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {pos_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         }
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
@@ -71,7 +71,7 @@ size_t tools::finite::mps::move_center_point_single_site(class_state_finite &sta
     }
 }
 
-size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     if(state.position_is_outward_edge(2)) {
         state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
         return 0;               // No moves this time, return 0
@@ -112,7 +112,7 @@ size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi
                 mpsL.get_M().contract(mpsR.get_M(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dL * dR, chiL, chiR});
         }
         tools::finite::mps::merge_multisite_tensor(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, static_cast<long>(posL),
-                                                   chi_lim, svd_threshold, LogPolicy::QUIET);
+                                                   chi_lim, svd_settings, LogPolicy::QUIET);
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
 
@@ -126,39 +126,39 @@ size_t tools::finite::mps::move_center_point(class_state_finite &state, long chi
     }
 }
 
-size_t tools::finite::mps::move_center_point_to_pos(class_state_finite &state, long pos, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point_to_pos(class_state_finite &state, long pos, long chi_lim, std::optional<svd::settings> svd_settings) {
     if((state.get_direction() < 0 and pos > state.get_position<long>()) or //
        (state.get_direction() > 0 and pos < state.get_position<long>()))   //
         state.flip_direction(); // Turn direction towards new position
 
     size_t moves = 0;
-    while(not state.position_is_at(pos)) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(not state.position_is_at(pos)) moves += move_center_point_single_site(state, chi_lim, svd_settings);
     return moves;
 }
 
-size_t tools::finite::mps::move_center_point_to_pos_dir(class_state_finite &state, long pos, int dir, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point_to_pos_dir(class_state_finite &state, long pos, int dir, long chi_lim, std::optional<svd::settings> svd_settings) {
     if((state.get_direction() < 0 and pos > state.get_position<long>()) or //
        (state.get_direction() > 0 and pos < state.get_position<long>()))   //
         state.flip_direction(); // Turn direction towards new position
     size_t moves = 0;
-    while(not state.position_is_at(pos,dir)) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(not state.position_is_at(pos,dir)) moves += move_center_point_single_site(state, chi_lim, svd_settings);
     return moves;
 }
 
-size_t tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point_to_edge(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     size_t moves = 0;
-    while(not state.position_is_inward_edge()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(not state.position_is_inward_edge()) moves += move_center_point_single_site(state, chi_lim, svd_settings);
     return moves;
 }
 
-size_t tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+size_t tools::finite::mps::move_center_point_to_middle(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     size_t moves = 0;
-    while(not state.position_is_the_middle_any_direction()) moves += move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(not state.position_is_the_middle_any_direction()) moves += move_center_point_single_site(state, chi_lim, svd_settings);
     return moves;
 }
 
 size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<size_t> &positions,
-                                                long center_position, long chi_lim, std::optional<double> svd_threshold, std::optional<LogPolicy> logPolicy) {
+                                                long center_position, long chi_lim, std::optional<svd::settings> svd_settings, std::optional<LogPolicy> logPolicy) {
     auto current_position = state.get_position<long>();
     size_t moves = static_cast<size_t>(std::abs(center_position - current_position));
     if constexpr(settings::debug)
@@ -222,9 +222,11 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
     }
 
 
+
+
     // Split the multisite mps into single-site mps objects
     auto t_merge_split = tools::common::profile::prof[AlgorithmType::ANY]["t_merge_split"]->tic_token();
-    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim, svd_threshold);
+    auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, positions, center_position, chi_lim, svd_settings);
     t_merge_split.toc();
 
     // Sanity checks
@@ -266,7 +268,7 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
     return moves;
 }
 
-bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
+bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings, NormPolicy norm_policy) {
     // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
     // Each move performs an SVD decomposition which leaves unitaries behind, effectively normalizing the state.
     // NOTE! It IS important to start with the current position.
@@ -285,9 +287,8 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
     auto cnt   = pos >= 0;
     auto steps = 0;
     if(tools::log->level() == spdlog::level::trace)
-        tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {} | chi_lim {} | svd thresh {:.1e} | bond dims {}",
+        tools::log->trace("Normalizing state | Old norm = {:.16f} | pos {} | dir {} | chi_lim {} | bond dims {}",
                          tools::finite::measure::norm(state), pos, dir, chi_lim,
-                         svd_threshold ? svd_threshold.value() : std::numeric_limits<double>::quiet_NaN(),
                          tools::finite::measure::bond_dimensions(state));
 
     // Start with SVD at the current center position
@@ -298,18 +299,17 @@ bool tools::finite::mps::normalize_state(class_state_finite &state, long chi_lim
         auto & mps = state.get_mps_site(pos);
         // Make sure that the bond dimension does not increase faster than spin_dim per site
         long chi_new = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR()));
-        tools::finite::mps::merge_multisite_tensor(state, mps.get_M() , {static_cast<size_t>(pos)}, pos, chi_new, svd_threshold, LogPolicy::QUIET);
+        tools::finite::mps::merge_multisite_tensor(state, mps.get_M() , {static_cast<size_t>(pos)}, pos, chi_new, svd_settings, LogPolicy::QUIET);
         if constexpr(settings::debug) mps.assert_identity();
     }
     // Now we can move around the chain until we return to the original status
-    while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, chi_lim, svd_threshold);
+    while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, chi_lim, svd_settings);
     state.clear_measurements();
     state.clear_cache();
     auto norm = tools::finite::measure::norm(state);
     if(tools::log->level() == spdlog::level::trace)
-        tools::log->trace("Normalized  state | New norm = {:.16f} | pos {} | dir {} | chi_lim {} | svd thresh {:.1e} | bond dims {}",
-                         norm, pos, dir, chi_lim, svd_threshold ? svd_threshold.value() : std::numeric_limits<double>::quiet_NaN(),
-                         tools::finite::measure::bond_dimensions(state));
+        tools::log->trace("Normalized  state | New norm = {:.16f} | pos {} | dir {} | chi_lim {} | bond dims {}",
+                         norm, pos, dir, chi_lim, tools::finite::measure::bond_dimensions(state));
     if(std::abs(norm - 1) > settings::precision::max_norm_error) {
         for(const auto &mps : state.mps_sites) {
             tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), Textra::VectorMap(mps->get_L()).norm(), mps->get_L());
@@ -345,14 +345,14 @@ void tools::finite::mps::apply_random_paulis(class_state_finite &state, const st
     apply_random_paulis(state, paulimatrices);
 }
 
-void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_lim, std::optional<double> svd_threshold) {
+void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     tools::log->trace("Truncating all sites to bond dimension {}", chi_lim);
 
     auto original_position  = state.get_position();
     auto original_direction = state.get_direction();
     // Start by truncating at the current position.
     while(true) {
-        move_center_point(state, chi_lim, svd_threshold);
+        move_center_point(state, chi_lim, svd_settings);
         if(state.get_position() == original_position and state.get_direction() == original_direction) {
             // Check if all bond dimensions less than or equal to below chi_lim
             auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
@@ -366,19 +366,19 @@ void tools::finite::mps::truncate_all_sites(class_state_finite &state, long chi_
 }
 
 void tools::finite::mps::truncate_active_sites([[maybe_unused]] class_state_finite &state, [[maybe_unused]] long chi_lim,
-                                               [[maybe_unused]] std::optional<double> svd_threshold) {
+                                               [[maybe_unused]] std::optional<svd::settings> svd_settings) {
     tools::log->warn("Truncate active sites needs an implementation");
     throw std::runtime_error("Truncate active sites needs an implementation");
 }
 
 void tools::finite::mps::truncate_next_sites([[maybe_unused]] class_state_finite &state, [[maybe_unused]] long chi_lim, [[maybe_unused]] size_t num_sites,
-                                             [[maybe_unused]] std::optional<double> svd_threshold) {
+                                             [[maybe_unused]] std::optional<svd::settings> svd_settings) {
     tools::log->warn("Truncate next sites needs an implementation");
     throw std::runtime_error("Truncate next sites needs an implementation");
 }
 
 void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &nsite_tensors, size_t gate_size, bool reverse,
-                                     long chi_lim, std::optional<double> svd_threshold) {
+                                     long chi_lim, std::optional<svd::settings> svd_settings) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
@@ -387,7 +387,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         auto dim = std::vector<long>(pos.size(),2);
         gates.emplace_back(qm::Gate(nsite_tensors[idx], pos, dim));
     }
-    apply_gates(state, gates, reverse, chi_lim, svd_threshold);
+    apply_gates(state, gates, reverse, chi_lim, svd_settings);
 }
 
 std::vector<size_t> generate_pos_sequence(const class_state_finite &state, const std::vector<qm::Gate> &gates, bool reverse){
@@ -450,7 +450,7 @@ std::vector<size_t> generate_pos_sequence(const class_state_finite &state, const
 
 
 void tools::finite::mps::apply_gates(class_state_finite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
-                                     std::optional<double> svd_threshold) {
+                                     std::optional<svd::settings> svd_settings) {
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
@@ -473,7 +473,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
 
         auto t_gate_move = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_move"]->tic_token();
-        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_threshold);
+        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
         t_gate_move.toc();
 
         auto t_gate_apply = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_apply"]->tic_token();
@@ -492,7 +492,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         for(auto pos : gate.pos) tools::log->trace("Pos {} dims {}",pos, state.get_mps_site(pos).dimensions());
         if constexpr (settings::debug_gates)
             tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(), new_position, state.get_labels());
-        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_threshold, LogPolicy::NORMAL);
+        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
     }
 
     if constexpr(settings::debug_gates) {
@@ -506,10 +506,10 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
     }
 
     auto t_gate_return = tools::common::profile::prof[AlgorithmType::ANY]["t_gate_return"]->tic_token();
-    move_center_point_to_edge(state, chi_lim, svd_threshold);
+    move_center_point_to_edge(state, chi_lim, svd_settings);
     t_gate_return.toc();
 
-    auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_threshold, NormPolicy::IFNEEDED);
+    auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
     if constexpr(settings::debug_gates)
         if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
             auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();

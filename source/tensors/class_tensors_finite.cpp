@@ -63,7 +63,7 @@ void class_tensors_finite::randomize_model() {
 }
 
 void class_tensors_finite::randomize_state(StateInit state_init, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
-                                           std::optional<StateInitType> state_type, std::optional<double> svd_threshold) {
+                                           std::optional<StateInitType> state_type, std::optional<svd::settings> svd_settings) {
     state->clear_measurements();
     if(not state_type) state_type = state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     tools::log->info("Randomizing state | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state),
@@ -72,13 +72,13 @@ void class_tensors_finite::randomize_state(StateInit state_init, const std::stri
     if(settings::strategy::project_initial_state) {
         tools::log->info("Projecting state  | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state),
                          fmt::join(tools::finite::measure::spin_components(*state), ", "));
-        project_to_nearest_sector(sector, chi_lim, svd_threshold); // Normalization happens after projection
+        project_to_nearest_sector(sector, chi_lim, svd_settings); // Normalization happens after projection
     }
 }
 
-void class_tensors_finite::normalize_state(long chi_lim, std::optional<double> svd_threshold, NormPolicy norm_policy) {
+void class_tensors_finite::normalize_state(long chi_lim, std::optional<svd::settings> svd_settings, NormPolicy norm_policy) {
     // Normalize if unity was lost for some reason (numerical error buildup)
-    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_threshold, norm_policy);
+    auto has_normalized = tools::finite::mps::normalize_state(*state, chi_lim, svd_settings, norm_policy);
     if(has_normalized) {
         state->clear_cache();
         clear_measurements();
@@ -101,23 +101,23 @@ env_pair<const Eigen::Tensor<class_tensors_finite::Scalar, 3>> class_tensors_fin
 }
 
 class_state_finite class_tensors_finite::get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim,
-                                                                               std::optional<double> svd_threshold) {
+                                                                               std::optional<svd::settings> svd_settings) {
     auto state_projected = *state;
     state_projected.clear_measurements();
     state_projected.clear_cache();
     if(not chi_lim) chi_lim = state_projected.find_largest_chi();
-    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
     tools::finite::ops::project_to_nearest_sector(state_projected, sector);
-    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_threshold, NormPolicy::ALWAYS);
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::ALWAYS);
     return state_projected;
 }
 
-void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<double> svd_threshold) {
+void class_tensors_finite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
     clear_measurements();
     if(not chi_lim) chi_lim = state->find_largest_chi();
-    tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_threshold, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
     tools::finite::ops::project_to_nearest_sector(*state, sector);
-    normalize_state(chi_lim.value(), svd_threshold, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
+    normalize_state(chi_lim.value(), svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
 }
 
 void class_tensors_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
@@ -326,31 +326,31 @@ bool   class_tensors_finite::position_is_inward_edge(size_t nsite) const { retur
 bool   class_tensors_finite::position_is_at(long pos) const { return state->position_is_at(pos); }
 bool   class_tensors_finite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool   class_tensors_finite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
-size_t class_tensors_finite::move_center_point(long chi_lim, std::optional<double> svd_threshold) {
-    return tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point(long chi_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_single_site(*state, chi_lim, svd_settings);
 }
-size_t class_tensors_finite::move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold) {
-    return tools::finite::mps::move_center_point_to_edge(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point_to_edge(long chi_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_to_edge(*state, chi_lim, svd_settings);
 }
-size_t class_tensors_finite::move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold) {
-    return tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_threshold);
+size_t class_tensors_finite::move_center_point_to_middle(long chi_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_settings);
 }
 
-void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold,
+void class_tensors_finite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings,
                                                   LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_threshold, log_policy);
-    normalize_state(chi_lim, svd_threshold, NormPolicy::IFNEEDED);
+    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_settings, log_policy);
+    normalize_state(chi_lim, svd_settings, NormPolicy::IFNEEDED);
     rebuild_edges();
 }
 
-std::vector<size_t> class_tensors_finite::expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<double> svd_threshold) {
+std::vector<size_t> class_tensors_finite::expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings) {
     if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    auto pos_expanded = tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_threshold);
+    auto pos_expanded = tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_settings);
     if(alpha) clear_measurements(); // No change if alpha == std::nullopt
     return pos_expanded;
 }

@@ -141,10 +141,11 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_tensor
                                                              (transfer_matrix_evn - fixpoint_evn).reshape(Textra::array2{sizeLB * sizeLB, sizeLA * sizeLA});
     Eigen::Tensor<Scalar, 2> one_minus_transfer_matrix_odd = Textra::TensorCast(Textra::MatrixType<Scalar>::Identity(sizeLA * sizeLA, sizeLB * sizeLB).eval()) -
                                                              (transfer_matrix_odd - fixpoint_odd).reshape(Textra::array2{sizeLA * sizeLA, sizeLB * sizeLB});
+
     svd::solver svd;
     svd.use_lapacke = true;
-    svd.setThreshold(settings::precision::svd_threshold);
-    svd.setSwitchSize(settings::precision::svd_switchsize);
+    svd.threshold = settings::precision::svd_threshold;
+    svd.switchsize = settings::precision::svd_switchsize;
 
     Eigen::Tensor<Scalar, 4> E_evn_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(Textra::array4{sizeLB, sizeLB, sizeLA, sizeLA});
     Eigen::Tensor<Scalar, 4> E_odd_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(Textra::array4{sizeLA, sizeLA, sizeLB, sizeLB});

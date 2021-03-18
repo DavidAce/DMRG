@@ -7,33 +7,46 @@
 
 #include <Eigen/QR>
 #include <Eigen/SVD>
-#include <math/svd.h>
 #include <general/class_tic_toc.h>
-
 #include <iostream>
+#include <math/svd.h>
 
 std::optional<long long> svd::solver::count = 0;
 
-svd::solver::solver(size_t logLevel, bool profile) {
-    setLogLevel(logLevel);
-    t_wrk = std::make_unique<class_tic_toc>(profile,5, "work");
-    t_adj = std::make_unique<class_tic_toc>(profile,5, "adjoint");
-    t_jac = std::make_unique<class_tic_toc>(profile,5, "jacobi");
-    t_svd = std::make_unique<class_tic_toc>(profile,5, "bdcsvd");
+svd::solver::solver() {
+    setLogLevel(2);
+    t_wrk = std::make_unique<class_tic_toc>();
+    t_adj = std::make_unique<class_tic_toc>();
+    t_jac = std::make_unique<class_tic_toc>();
+    t_svd = std::make_unique<class_tic_toc>();
     if(not count) count = 0;
 }
-
-void   svd::solver::enableProfiling(){
-    t_wrk->set_properties(true, 5,"work");
-    t_adj->set_properties(true, 5,"adjoint");
-    t_jac->set_properties(true, 5,"jacobi");
-    t_svd->set_properties(true, 5,"bdcsvd");
+void svd::solver::copy_settings(const svd::settings &svd_settings) {
+    if(svd_settings.threshold) threshold = svd_settings.threshold.value();
+    if(svd_settings.switchsize) switchsize = svd_settings.switchsize.value();
+    if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
+    if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
+    if(svd_settings.use_lapacke) use_lapacke = svd_settings.use_lapacke.value();
+    if(svd_settings.profile and svd_settings.profile.value()) enableProfiling();
 }
-void   svd::solver::disableProfiling(){
-    t_wrk->set_properties(false, 0,"");
-    t_adj->set_properties(false, 0,"");
-    t_jac->set_properties(false, 0,"");
-    t_svd->set_properties(false, 0,"");
+
+svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
+
+svd::solver::solver(std::optional<svd::settings> svd_settings) : solver() {
+    if(svd_settings) copy_settings(svd_settings.value());
+}
+
+void svd::solver::enableProfiling() {
+    t_wrk->set_properties(true, 5, "work");
+    t_adj->set_properties(true, 5, "adjoint");
+    t_jac->set_properties(true, 5, "jacobi");
+    t_svd->set_properties(true, 5, "bdcsvd");
+}
+void svd::solver::disableProfiling() {
+    t_wrk->set_properties(false, 0, "");
+    t_adj->set_properties(false, 0, "");
+    t_jac->set_properties(false, 0, "");
+    t_svd->set_properties(false, 0, "");
 }
 
 void svd::solver::setLogLevel(size_t logLevel) {
@@ -42,17 +55,6 @@ void svd::solver::setLogLevel(size_t logLevel) {
     else
         tools::Logger::setLogLevel(svd::log, logLevel);
     svd::log->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n]%^[%=8l]%$ %v");
-}
-
-double svd::solver::get_truncation_error() { return truncation_error; }
-
-void svd::solver::setThreshold(double newThreshold, std::optional<double> overrideThreshold) {
-    threshold = newThreshold;
-    if(overrideThreshold) threshold = overrideThreshold.value();
-}
-void svd::solver::setSwitchSize(size_t newSwitchSize, std::optional<size_t> overrideSwitchSize) {
-    switchsize = newSwitchSize;
-    if(overrideSwitchSize) switchsize = overrideSwitchSize.value();
 }
 
 /*! \brief Performs SVD on a matrix
@@ -88,36 +90,27 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
     // Setup the SVD solver
-    if(switchsize)
-        SVD.setSwitchSize(static_cast<int>(switchsize.value()));
-    else {
-        switchsize = 16;
-        SVD.setSwitchSize(static_cast<int>(switchsize.value()));
-    }
-    if(threshold)
-        SVD.setThreshold(threshold.value());
-    else
-        throw std::runtime_error("svd threshold has not been set");
-
-    bool         use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize.value());
-    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold.value(), switchsize.value(), rank_max.value());
+    SVD.setSwitchSize(static_cast<int>(switchsize));
+    SVD.setThreshold(threshold);
+    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize);
+    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, rank_max.value());
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->trace("Using JacobiSVD with flags Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner");
+        svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
         // Run the svd
         t_jac->tic();
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
         t_jac->toc();
     } else {
-        svd::log->trace("Using BDCSVD with flags Eigen::ComputeThinU | Eigen::ComputeThinV");
+        svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
         // Run the svd
         t_svd->tic();
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
         t_svd->toc();
     }
-    if (count) count.value()++;
+    if(count) count.value()++;
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());
-    long rank     = (SVD.singularValues().head(max_size).array() >= threshold.value()).count();
+    long rank     = (SVD.singularValues().head(max_size).array() >= threshold).count();
     svd::log->trace("Truncation singular values");
     if(rank == SVD.singularValues().size()) {
         truncation_error = 0;
@@ -135,7 +128,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                        "  S all finite     : {}\n"
                        "  V all finite     : {}\n"
                        "Trying SVD with LAPACKE instead \n",
-                       threshold.value(), truncation_error, rank, SVD.matrixU().leftCols(rank).allFinite(), SVD.singularValues().head(rank).allFinite(),
+                       threshold, truncation_error, rank, SVD.matrixU().leftCols(rank).allFinite(), SVD.singularValues().head(rank).allFinite(),
                        SVD.matrixV().leftCols(rank).allFinite());
         return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
     }

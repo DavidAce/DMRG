@@ -85,7 +85,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9; // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*20;//60*2;
     ceres_default_options.function_tolerance                         = 1e-5; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-6; // Not tested yet
+    ceres_default_options.gradient_tolerance                         = 1e-6;
     ceres_default_options.parameter_tolerance                        = 1e-8;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::SILENT;

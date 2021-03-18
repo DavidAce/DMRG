@@ -7,6 +7,7 @@
 #include <measure/tensors_measure_finite.h>
 #include <memory>
 #include <tensors/edges/class_env_pair.h>
+#include <math/svd/settings.h>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
@@ -38,8 +39,8 @@ class class_tensors_finite {
     void initialize(ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
     void randomize_state(StateInit state_init, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
-                         std::optional<StateInitType> state_type = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
-    void normalize_state(long chi_lim, std::optional<double> svd_threshold = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
+                         std::optional<StateInitType> state_type = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    void normalize_state(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &         get_multisite_mps() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &         get_multisite_mpo() const;
@@ -48,8 +49,8 @@ class class_tensors_finite {
     [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk() const;
 
     [[nodiscard]] class_state_finite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt,
-                                                                           std::optional<double> svd_threshold = std::nullopt);
-    void project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+                                                                           std::optional<svd::settings> svd_settings = std::nullopt);
+    void project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void damp_model_disorder(double coupling_damp, double field_damp);
     void reduce_mpo_energy(std::optional<double> site_energy = std::nullopt);
@@ -84,13 +85,13 @@ class class_tensors_finite {
     std::array<long, 3> active_problem_dims() const;
     long                active_problem_size() const;
     void                do_all_measurements() const;
-    size_t              move_center_point(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    size_t              move_center_point_to_edge(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    size_t              move_center_point_to_middle(long chi_lim, std::optional<double> svd_threshold = std::nullopt);
-    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<double> svd_threshold = std::nullopt,
+    size_t              move_center_point(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_edge(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_middle(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    void merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt,
                                 LogPolicy log_policy = LogPolicy::QUIET);
 
-    std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<double> svd_threshold = std::nullopt);
+    std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
 
     void assert_edges() const;
     void assert_edges_ene() const;

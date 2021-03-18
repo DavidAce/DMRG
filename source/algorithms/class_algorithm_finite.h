@@ -24,7 +24,7 @@ class class_algorithm_finite : public class_algorithm_base {
 
     // Control behavior when stuck
     size_t max_stuck_iters      = 20;  //  5;  /*!< If stuck for this many sweeps -> stop. */
-    size_t min_saturation_iters = 2;   // 1;  /*!< If both var and ent saturated  this long -> got_stuck: true */
+    size_t min_saturation_iters = 1;   // 1;  /*!< If both var and ent saturated  this long -> got_stuck: true */
     size_t max_saturation_iters = 20;  // 10; /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
 
     bool                    has_projected        = false;        /*!< True if projection has already been tried */
@@ -73,18 +73,15 @@ class class_algorithm_finite : public class_algorithm_base {
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) override;
     void print_status_update() override;
     void print_status_full() final;
-    void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> slope_threshold = std::nullopt);
-    void check_convergence_entg_entropy(std::optional<double> slope_threshold = std::nullopt);
+    void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
+    void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
     void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string &state_name, std::string &state_prefix,
                       std::string &model_prefix, std::vector<std::string> &table_prefxs);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt);
     template<typename T>
     void write_to_file(StorageReason storage_reason, const T &data, const std::string &name, std::optional<CopyPolicy> copy_policy = std::nullopt);
-    std::vector<double> V_mpo_vec;    // History of variances
-    std::vector<size_t> X_mpo_vec;    // History of moves numbers
-    std::vector<double> V_mpo_slopes; // History of variance slopes
+    std::vector<double> var_mpo_step;               // History of energy variances (from mpo) at each step
+    std::vector<double> var_mpo_iter;               // History of energy variances (from mpo) at each iteration
+    std::vector<std::vector<double>> entropy_iter;  // History of entanglement entropies at each iteration
 
-    std::vector<std::vector<double>> S_mat;
-    std::vector<std::vector<size_t>> X_mat;
-    std::vector<double>              S_slopes; // History of variance slopes
 };
