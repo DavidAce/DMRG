@@ -158,7 +158,7 @@ void class_fdmrg::single_fdmrg_step() {
     else {
         // Use subspace expansion if alpha_expansion is set
         if(alpha_expansion)
-            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim, settings::precision::svd_threshold);
+            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim);
 
         Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
         if constexpr(settings::debug)

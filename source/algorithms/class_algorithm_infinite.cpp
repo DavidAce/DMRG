@@ -177,28 +177,14 @@ void class_algorithm_infinite::randomize_state(ResetReason reason, std::optional
     clear_convergence_status();
 }
 
-// void class_algorithm_infinite::randomize_from_current_state(std::optional<std::vector<std::string>> pauli_strings, std::optional<std::string> sector,
-//                                                       std::optional<long> chi_lim, std::optional<double> svd_threshold) {
-//    tools::log->critical("Resetting state based on current is not currently implemented for infinite MPS algorithms");
-//    throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
-//}
 
 void class_algorithm_infinite::clear_convergence_status() {
     tools::log->trace("Clearing saturation status");
 
-    BS_vec.clear();
-    S_vec.clear();
-    XS_vec.clear();
-
-    B_mpo_vec.clear();
-    V_mpo_vec.clear();
-    X_mpo_vec.clear();
-    B_ham_vec.clear();
-    V_ham_vec.clear();
-    X_ham_vec.clear();
-    B_mom_vec.clear();
-    V_mom_vec.clear();
-    X_mom_vec.clear();
+    var_mpo_iter.clear();
+    var_ham_iter.clear();
+    var_mom_iter.clear();
+    entropy_iter.clear();
 
     status.entanglement_has_saturated = false;
     status.variance_mpo_has_saturated = false;
@@ -228,72 +214,54 @@ void class_algorithm_infinite::clear_convergence_status() {
 //    tensors.state->enlarge();
 //}
 
-void class_algorithm_infinite::check_convergence_variance_mpo(double threshold, double slope_threshold) {
-    // Based on the the slope of the variance
-    // We want to check every time we can because the variance is expensive to compute.
+void class_algorithm_infinite::check_convergence_variance_mpo(std::optional<double> threshold, std::optional<double> sensitivity) {
     tools::log->debug("Checking convergence of variance mpo");
-    threshold       = std::isnan(threshold) ? settings::precision::variance_convergence_threshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::variance_slope_threshold : slope_threshold;
-    //    compute_observables();
-
+    if (not threshold) threshold = settings::precision::variance_convergence_threshold;
+    if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
+    var_mpo_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mpo(tensors));
     auto report =
-        check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::infinite::measure::energy_variance_per_site_mpo(tensors), status.iter, 1, slope_threshold);
-    //    if(report.has_computed) V_mpo_slope  = report.slopes.back(); //TODO: Fix this, changed slope calculation, back is not relevant
+        check_saturation(var_mpo_iter, sensitivity.value());
     if(report.has_computed) {
-        V_mpo_slope                       = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
-        status.variance_mpo_has_saturated = V_mpo_slope < slope_threshold;
-        status.variance_mpo_saturated_for = (size_t) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
-        status.variance_mpo_has_converged = tools::infinite::measure::energy_variance_per_site_mpo(tensors) < threshold;
+        status.variance_mpo_has_saturated = report.has_saturated;
+        status.variance_mpo_saturated_for = report.saturated_count;
+        status.variance_mpo_has_converged = var_mpo_iter.back() < threshold;
     }
 }
 
-void class_algorithm_infinite::check_convergence_variance_ham(double threshold, double slope_threshold) {
-    // Based on the the slope of the variance
-    // We want to check every time we can because the variance is expensive to compute.
+void class_algorithm_infinite::check_convergence_variance_ham(std::optional<double> threshold, std::optional<double> sensitivity) {
     tools::log->trace("Checking convergence of variance ham");
-
-    threshold       = std::isnan(threshold) ? settings::precision::variance_convergence_threshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::variance_slope_threshold : slope_threshold;
-    auto report     = check_saturation_using_slope(
-        //            B_ham_vec,
-        V_ham_vec, X_ham_vec, tools::infinite::measure::energy_variance_per_site_ham(tensors), status.iter, 1, slope_threshold);
-    //    if(report.has_computed) V_ham_slope  = report.slopes.back();//TODO: Fix this, changed slope calculation, back is not relevant
+    if (not threshold) threshold = settings::precision::variance_convergence_threshold;
+    if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
+    var_ham_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_ham(tensors));
+    auto report     = check_saturation(var_ham_iter, sensitivity.value());
     if(report.has_computed) {
-        V_ham_slope                       = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
-        status.variance_ham_has_saturated = V_ham_slope < slope_threshold;
-        status.variance_ham_has_converged = tools::infinite::measure::energy_variance_per_site_ham(tensors) < threshold;
+        status.variance_ham_has_saturated = report.has_saturated;
+        status.variance_ham_saturated_for = report.saturated_count;
+        status.variance_ham_has_converged = var_ham_iter.back() < threshold;
     }
 }
 
-void class_algorithm_infinite::check_convergence_variance_mom(double threshold, double slope_threshold) {
-    // Based on the the slope of the variance
-    // We want to check every time we can because the variance is expensive to compute.
+void class_algorithm_infinite::check_convergence_variance_mom(std::optional<double> threshold, std::optional<double> sensitivity) {
     tools::log->trace("Checking convergence of variance mom");
-
-    threshold       = std::isnan(threshold) ? settings::precision::variance_convergence_threshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::variance_slope_threshold : slope_threshold;
-    auto report     = check_saturation_using_slope(
-        //            B_mom_vec,
-        V_mom_vec, X_mom_vec, tools::infinite::measure::energy_variance_per_site_mom(tensors), status.iter, 1, slope_threshold);
+    if (not threshold) threshold = settings::precision::variance_convergence_threshold;
+    if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
+    var_mom_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mom(tensors));
+    auto report     = check_saturation(var_mom_iter, sensitivity.value());
     if(report.has_computed) {
-        V_mom_slope                       = report.slope; // TODO: Fix this, slopes.back() not relevant anymore
-        status.variance_mom_has_saturated = V_mom_slope < slope_threshold;
-        status.variance_mom_has_converged = tools::infinite::measure::energy_variance_per_site_mom(tensors) < threshold;
+        status.variance_mom_has_saturated = report.has_saturated;
+        status.variance_mom_saturated_for = report.saturated_count;
+        status.variance_mom_has_converged = var_mom_iter.back() < threshold;
     }
 }
 
-void class_algorithm_infinite::check_convergence_entg_entropy(double slope_threshold) {
-    // Based on the the slope of entanglement entanglement_entropy_midchain
-    // This one is cheap to compute.
+void class_algorithm_infinite::check_convergence_entg_entropy(std::optional<double> sensitivity) {
     tools::log->debug("Checking convergence of entanglement");
-
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::entropy_slope_threshold : slope_threshold;
-    auto report     = check_saturation_using_slope(
-        //            BS_vec,
-        S_vec, XS_vec, tools::infinite::measure::entanglement_entropy(*tensors.state), status.iter, 1, slope_threshold);
+    if (not sensitivity) sensitivity = settings::precision::entropy_saturation_sensitivity;
+    entropy_iter.emplace_back(tools::infinite::measure::entanglement_entropy(*tensors.state));
+    auto report     = check_saturation(entropy_iter, sensitivity.value());
     if(report.has_computed) {
-        S_slope                           = report.slope; // TODO: Fix this, changed slope calculation, back is not relevant
-        status.entanglement_has_saturated = S_slope < slope_threshold;
+        status.entanglement_has_saturated = report.has_saturated;
+        status.entanglement_saturated_for = report.saturated_count;
         status.entanglement_has_converged = status.entanglement_has_saturated;
     }
 }
@@ -499,29 +467,10 @@ void class_algorithm_infinite::print_status_full() {
     tools::log->info("Simulation converged  = {:<}", status.algorithm_has_converged);
     tools::log->info("Simulation succeeded  = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Simulation got stuck  = {:<}", status.algorithm_has_got_stuck);
-    switch(algo_type) {
-        case AlgorithmType::iDMRG:
-            tools::log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}", S_slope, status.entanglement_has_converged,
-                             status.entanglement_has_saturated);
-            tools::log->info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}", V_mpo_slope, status.variance_mpo_has_converged,
-                             status.variance_mpo_has_saturated);
-            tools::log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}", V_ham_slope, status.variance_ham_has_converged,
-                             status.variance_ham_has_saturated);
-            tools::log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}", V_mom_slope, status.variance_mom_has_converged,
-                             status.variance_mom_has_saturated);
-            break;
-        case AlgorithmType::iTEBD:
-            tools::log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}", S_slope, status.entanglement_has_converged,
-                             status.entanglement_has_saturated);
-            tools::log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}", V_ham_slope, status.variance_ham_has_converged,
-                             status.variance_ham_has_saturated);
-            tools::log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}", V_mom_slope, status.variance_mom_has_converged,
-                             status.variance_mom_has_saturated);
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-    }
-    tools::log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}", S_slope, status.entanglement_has_converged,
-                     status.entanglement_has_saturated);
+    tools::log->info("σ² MPO                = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged, status.variance_mpo_has_saturated);
+    tools::log->info("σ² HAM                = Converged : {:<8}  Saturated: {:<8}", status.variance_ham_has_converged, status.variance_ham_has_saturated);
+    tools::log->info("σ² MOM                = Converged : {:<8}  Saturated: {:<8}", status.variance_mom_has_converged, status.variance_mom_has_saturated);
+    tools::log->info("Sₑ                    = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged, status.entanglement_has_saturated);
     tools::log->info("Time                  = {:<16.16f}", tools::common::profile::t_tot->get_age());
 
     tools::log->info("Peak memory           = {:<6.1f} MB", tools::common::profile::mem_hwm_in_mb());

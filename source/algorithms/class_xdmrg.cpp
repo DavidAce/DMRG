@@ -339,15 +339,19 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
     if(settings::strategy::multisite_mps_size_def == 1) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-
     if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_got_stuck) {
         c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-        if(num::between(status.algorithm_has_stuck_for, 2ul, 3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e2;
-        //        if(num::between(status.algorithm_has_stuck_for,2ul,3ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e4;
-        //        if(num::between(status.algorithm_has_stuck_for,4ul,5ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e6;
-        //        if(num::between(status.algorithm_has_stuck_for,6ul,7ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e8;
-        //        if(num::between(status.algorithm_has_stuck_for,8ul,9ul)) c1.alpha_expansion = c1.alpha_expansion.value() * 1e10;
+        if(alpha_expansion_prev) c1.alpha_expansion = alpha_expansion_prev;
+        auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity/10);
+        tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed,report.has_saturated);
+        if(report.has_computed){
+            double factor_up = std::pow(5,1.0/static_cast<double>(tensors.get_length()));
+            double factor_dn = std::pow(0.5,1.0/static_cast<double>(tensors.get_length()));
+            if(report.has_saturated) c1.alpha_expansion = c1.alpha_expansion.value() * factor_up;
+            else  c1.alpha_expansion = std::max(status.energy_variance_lowest, c1.alpha_expansion.value() * factor_dn);
+        }
     }
+    alpha_expansion_prev = c1.alpha_expansion;
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
@@ -470,7 +474,6 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     if(optConf.empty()) optConf = get_opt_conf_list();
     std::vector<opt_mps> results;
     variance_before_step = std::nullopt;
-    variance_after_step  = std::nullopt;
     double percent       = 0;
     tools::log->info("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
                      optConf.size());
@@ -486,10 +489,10 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         if(conf.alpha_expansion) {
             if(not results.empty()) {
                 // We better store the mps sites that the previous result is compatible with
-                auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim, settings::precision::svd_threshold); // nullopt implies a pos query
+                auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
                 results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the compatible mps sites
             }
-            tensors.expand_subspace(conf.alpha_expansion, status.chi_lim, settings::precision::svd_threshold);
+            tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
         }
         tools::log->info("Running conf {}", conf.label);
         switch(conf.optInit) {
@@ -548,7 +551,14 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         }
 
         // Do the truncation with SVD
-        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
+        auto svd_settings = svd::settings();
+        if(status.algorithm_has_got_stuck){
+            svd_settings.use_lapacke = true;
+            svd_settings.threshold = 1e-14;
+            svd_settings.switchsize = 512;
+            svd_settings.use_bdc = false;
+        }
+        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim,svd_settings);
         if(tools::log->level() <= spdlog::level::debug) {
             auto truncation_errors = tensors.state->get_truncation_errors_active();
             for(auto &t : truncation_errors) t = std::log10(t);
@@ -571,7 +581,7 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
             tools::log->trace("Updating variance record holder");
             auto var = tools::finite::measure::energy_variance(tensors);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-            variance_after_step = tools::finite::measure::energy_variance(tensors);
+            var_mpo_step.emplace_back(var);
         }
     }
 

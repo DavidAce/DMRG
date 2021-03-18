@@ -4,13 +4,11 @@
 
 #pragma once
 
-#include "general/nmspc_tensor_extra.h"
+#include "svd/settings.h"
+#include <general/nmspc_tensor_extra.h>
 #include <math/num.h>
 #include <optional>
 #include <tools/common/log.h>
-#ifndef DMRG_EXTERN
-    #define DMRG_EXTERN extern
-#endif
 
 class class_tic_toc;
 
@@ -18,9 +16,9 @@ namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
     class solver {
         private:
-        std::optional<double> threshold        = std::nullopt;
-        std::optional<size_t> switchsize       = std::nullopt;
-        double                truncation_error = 0;
+
+        void copy_settings(const svd::settings &svd_settings);
+
         template<typename Scalar>
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         template<typename Scalar>
@@ -36,25 +34,28 @@ namespace svd {
 
         template<typename Derived>
         std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>, long>
-            do_svd(const Eigen::DenseBase<Derived> &mat, std::optional<long> rank_max = std::nullopt) {
-            if(not rank_max.has_value()) rank_max = std::min(mat.rows(), mat.cols());
-            return do_svd(mat.derived().data(), mat.rows(), mat.cols(), rank_max);
+            do_svd(const Eigen::DenseBase<Derived> &mat) {
+            return do_svd(mat.derived().data(), mat.rows(), mat.cols());
         }
 
         public:
-        solver(size_t logLevel = 2, bool profile = false);
-        bool   use_lapacke = false;
+        solver();
+        solver(const svd::settings & svd_settings);
+        solver(std::optional<svd::settings> svd_settings);
+        double threshold    = 1e-12;
+        size_t switchsize   = 16;
+        bool   use_lapacke = true;
         bool   use_bdc = true;
+
         static std::optional<long long> count;
+        double truncation_error = 0;
+
         std::shared_ptr<class_tic_toc> t_wrk;
         std::shared_ptr<class_tic_toc> t_adj;
         std::shared_ptr<class_tic_toc> t_jac;
         std::shared_ptr<class_tic_toc> t_svd;
 
         void   setLogLevel(size_t logLevel);
-        double get_truncation_error();
-        void   setThreshold(double newThreshold, std::optional<double> overrideThreshold = std::nullopt);
-        void   setSwitchSize(size_t newSwitchSize, std::optional<size_t> overrideSwitchSize = std::nullopt);
         void   enableProfiling();
         void   disableProfiling();
 
@@ -240,8 +241,7 @@ namespace svd {
         }
 
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
-                                                                                                               std::optional<long> rank_max = std::nullopt) {
+        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo) {
             /*
              * Compress an MPO left to right using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
              *
@@ -283,9 +283,8 @@ namespace svd {
             auto dim2    = mpo.dimension(0);
             auto dim3    = mpo.dimension(1);
             auto dim_ddm = dim0 * dim1 * dim2;
-
             Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{2, 3, 0, 1}).reshape(Textra::array2{dim_ddm, dim3}).real();
-            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), rank_max);
+            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             U *= avgS;
             S /= avgS;
@@ -297,8 +296,7 @@ namespace svd {
             /* clang-format off */
         }
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
-                                                                                                               std::optional<long> rank_max = std::nullopt) {
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo) {
             /*
              * Splits an MPO right to left using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
              *
@@ -342,7 +340,7 @@ namespace svd {
             auto dim_ddm = dim1 * dim2 * dim3;
 
             Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{0, 2, 3, 1}).reshape(Textra::array2{dim0, dim_ddm}).real();
-            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), rank_max);
+            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             V *= avgS;                                            // Rescaled singular values
             S /= avgS;                                            // Rescaled singular values

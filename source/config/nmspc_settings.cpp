@@ -102,8 +102,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
-    dmrg_config.load_parameter("precision::variance_slope_threshold"          , precision::variance_slope_threshold);
-    dmrg_config.load_parameter("precision::entropy_slope_threshold"           , precision::entropy_slope_threshold);
+    dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
+    dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
     dmrg_config.load_parameter("precision::subspace_error_factor"             , precision::subspace_error_factor);
     dmrg_config.load_parameter("precision::max_subspace_error"                , precision::max_subspace_error);
     dmrg_config.load_parameter("precision::min_subspace_error"                , precision::min_subspace_error);
