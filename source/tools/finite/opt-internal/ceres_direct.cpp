@@ -34,8 +34,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                                                                       OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
     auto t_opt_dir = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir"]->tic_token();
-
-
+    if constexpr(settings::debug)
+        if(initial_mps.has_nan()) throw std::runtime_error("initial_mps has nan's");
     reports::bfgs_add_entry("Direct", "init", initial_mps);
     const auto &current_mps = tensors.state->get_multisite_mps();
     const auto  current_map = Eigen::Map<const Eigen::VectorXcd>(current_mps.data(), current_mps.size());
@@ -77,6 +77,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct real");
+            if constexpr(settings::debug) if(initial_state_real.hasNaN()) throw std::runtime_error("initial_state_real has nan's");
             ceres::Solve(options, problem, initial_state_real.data(), &summary);
             // Copy the results from the functor
             optimized_mps.set_counter(functor->get_count());

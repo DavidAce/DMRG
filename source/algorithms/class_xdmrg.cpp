@@ -399,7 +399,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         configs.emplace_back(c2);
     } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites < settings::strategy::multisite_mps_size_max) {
         // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
-        c2.optInit      = c1.alpha_expansion ? OptInit::CURRENT_STATE : OptInit::LAST_RESULT; // Use the result from c1
+        c2.optInit      = OptInit::CURRENT_STATE; // Can't use the result from c1
         c2.max_sites    = settings::strategy::multisite_mps_size_max;
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
@@ -494,7 +494,7 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
             }
             tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
         }
-        tools::log->info("Running conf {}", conf.label);
+        tools::log->info("Running conf {} | {} | dims {} | sites {}", conf.label, enum2str(conf.optInit), conf.problem_dims, conf.chosen_sites);
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
