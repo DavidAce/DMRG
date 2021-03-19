@@ -542,8 +542,8 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
             for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size()-1 ? ", " : ""));
             tools::log->info(" -- ent[{:3}]           = {}", iter, vals);
         }
-        for(auto &&[i, r] : iter::enumerate(reports))
-            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
+//        for(auto &&[i, r] : iter::enumerate(reports))
+//            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
     }
     status.entanglement_has_converged = status.entanglement_has_saturated;
 }
