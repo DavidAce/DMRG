@@ -88,5 +88,6 @@ namespace tools::finite::opt {
         void                                             validate_result() const;
         bool                                             operator<(const opt_mps &rhs) const;
         bool                                             operator>(const opt_mps &rhs) const;
+        bool                                             has_nan() const;
     };
 }
