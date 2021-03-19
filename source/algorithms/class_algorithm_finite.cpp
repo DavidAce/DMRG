@@ -27,8 +27,10 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tensors.initialize(settings::model::model_type, settings::model::model_size, 0);
     tensors.state->set_algorithm(algo_type);
     entropy_iter.resize(tensors.get_length() + 1);
-    //    tools::finite::print::dimensions(*tensors.model);
-    //    tools::finite::print::dimensions(tensors);
+
+    max_stuck_iters      = settings::precision::max_stuck_iters;
+    min_saturation_iters = settings::precision::min_saturation_iters;
+    max_saturation_iters = settings::precision::max_saturation_iters;
 }
 
 // We need to make a destructor manually for the enclosing class "class_model_finite"

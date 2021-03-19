@@ -182,7 +182,10 @@ namespace settings {
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from each mpo to avoid catastrophic cancellation when computing the variance */
         inline double   overlap_high                    = 0.99;
         inline double   overlap_cat                     = 0.70710678;
-    }
+        inline size_t   max_stuck_iters                 = 20;       /*!< If stuck for this many sweeps -> stop. */
+        inline size_t   min_saturation_iters            = 1;        /*!< If both var and ent saturated this long -> got_stuck: true */
+        inline size_t   max_saturation_iters            = 20;       /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
+}
 
 
     //Parameters controlling iDMRG
