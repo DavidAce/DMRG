@@ -247,6 +247,7 @@ void class_flbit::update_time_step() {
 }
 
 void class_flbit::check_convergence() {
+    if (not tensors.position_is_inward_edge()) return;
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
     check_convergence_entg_entropy();
     if(status.entanglement_saturated_for > 0) status.algorithm_saturated_for++;
