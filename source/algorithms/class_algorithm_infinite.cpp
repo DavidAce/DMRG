@@ -75,7 +75,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
         if(cfg_chi_lim_grow()) {
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
-            if(status.algorithm_has_got_stuck) {
+            if(status.algorithm_has_stuck_for > 0) {
                 tools::log->debug("Truncation error : {}", tensors.state->get_truncation_error());
                 tools::log->debug("Bond dimensions  : {}", tensors.state->chiC());
                 if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and tensors.state->chiC() >= status.chi_lim) {
@@ -185,23 +185,21 @@ void class_algorithm_infinite::clear_convergence_status() {
     var_ham_iter.clear();
     var_mom_iter.clear();
     entropy_iter.clear();
-
-    status.entanglement_has_saturated = false;
-    status.variance_mpo_has_saturated = false;
-    status.variance_ham_has_saturated = false;
-    status.variance_mom_has_saturated = false;
-
-    status.variance_mpo_saturated_for = 0;
-    status.variance_ham_saturated_for = 0;
-    status.variance_mom_saturated_for = 0;
-
-    status.entanglement_has_converged = false;
-    status.variance_mpo_has_converged = false;
-    status.variance_ham_has_converged = false;
-    status.variance_mom_has_converged = false;
-
-    status.chi_lim_has_reached_chi_max = false;
+    status.algorithm_has_finished      = false;
+    status.algorithm_has_succeeded     = false;
     status.algorithm_has_to_stop       = false;
+    status.algorithm_has_stuck_for     = 0;
+    status.algorithm_saturated_for     = 0;
+    status.algorithm_converged_for     = 0;
+    status.entanglement_converged_for  = 0;
+    status.entanglement_saturated_for  = 0;
+    status.variance_mpo_converged_for  = 0;
+    status.variance_mpo_saturated_for  = 0;
+    status.variance_ham_converged_for  = 0;
+    status.variance_ham_saturated_for  = 0;
+    status.variance_mom_converged_for  = 0;
+    status.variance_mom_saturated_for  = 0;
+    status.chi_lim_has_reached_chi_max = false;
 }
 
 // void class_algorithm_infinite::enlarge_environment() {
