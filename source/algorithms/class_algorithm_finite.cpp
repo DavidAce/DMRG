@@ -177,8 +177,8 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
         tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
         return;
     }
-    if(not status.algorithm_has_got_stuck and status.chi_lim >= 16) {
-        tools::log->info("State is not stuck yet. Kept current limit {}", status.chi_lim);
+    if(status.algorithm_has_stuck_for == 0 and status.chi_lim >= 16) {
+        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.chi_lim);
         return;
     }
 
@@ -400,8 +400,8 @@ void class_algorithm_finite::try_bond_dimension_quench() {
 void class_algorithm_finite::try_hamiltonian_perturbation() {
     if(not settings::strategy::perturb_when_stuck) return;
     if(perturbation_steps-- > 0) return;
-    if(not status.algorithm_has_got_stuck) {
-        tools::log->info("Perturbation skipped: simulation not stuck");
+    if(status.algorithm_has_stuck_for == 0) {
+        tools::log->info("Perturbation skipped: algorithm not stuck");
         return;
     }
     if(num_perturbations >= max_perturbations) {
@@ -427,8 +427,8 @@ void class_algorithm_finite::try_disorder_damping() {
     }
     if(not settings::strategy::damping_when_stuck) return;
     if(tensors.model->is_damped()) return;
-    if(not status.algorithm_has_got_stuck) {
-        tools::log->info("Damping skipped: simulation not stuck");
+    if(status.algorithm_has_stuck_for == 0) {
+        tools::log->info("Damping skipped: algorithm not stuck");
         return;
     }
     if(num_dampings >= max_dampings) {
@@ -550,23 +550,22 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
 
 void class_algorithm_finite::clear_convergence_status() {
     tools::log->trace("Clearing convergence status");
-    for(auto &mat : entropy_iter) { mat.clear(); }
-
+    for(auto &e : entropy_iter) { e.clear(); }
     var_mpo_iter.clear();
+    var_mpo_step.clear();
 
-    status.entanglement_has_converged  = false;
-    status.entanglement_has_saturated  = false;
+    status.algorithm_has_finished      = false;
+    status.algorithm_has_succeeded     = false;
+    status.algorithm_has_to_stop       = false;
+    status.algorithm_has_stuck_for     = 0;
+    status.algorithm_saturated_for     = 0;
+    status.algorithm_converged_for     = 0;
+    status.entanglement_converged_for  = 0;
     status.entanglement_saturated_for  = 0;
-    status.variance_mpo_has_converged  = false;
-    status.variance_mpo_has_saturated  = false;
+    status.variance_mpo_converged_for  = 0;
     status.variance_mpo_saturated_for  = 0;
     status.chi_lim_has_reached_chi_max = false;
-    status.algorithm_has_to_stop       = false;
-    status.algorithm_has_got_stuck     = false;
-    status.algorithm_has_converged     = false;
-    status.algorithm_has_saturated     = false;
-    status.algorithm_has_succeeded     = false;
-    status.algorithm_has_stuck_for     = 0;
+    status.spin_parity_has_converged   = false;
     has_projected                      = false;
     has_damped                         = false;
 }
@@ -821,15 +820,16 @@ void class_algorithm_finite::print_status_full() {
         tools::log->info("Number entropies Sₙ                = {:.5f}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
         tools::log->info("Number entropy   Sₙ (mid)          = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
+    tools::log->info("Spin components                    = {:.5f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("Truncation Errors                  = {:.3e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
-    tools::log->info("Algorithm has saturated            = {:<}", status.algorithm_has_saturated);
-    tools::log->info("Algorithm has got stuck            = {:<}", status.algorithm_has_got_stuck);
-    tools::log->info("Algorithm has converged            = {:<}", status.algorithm_has_converged);
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
+    tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
+    tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);
+    tools::log->info("Algorithm has converged for        = {:<}", status.algorithm_converged_for);
 
-    tools::log->info("σ²                                 = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged,
-                     status.variance_mpo_has_saturated);
-    tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
-                     status.entanglement_has_saturated);
+    tools::log->info("σ²                                 = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for,
+                     status.variance_mpo_saturated_for);
+    tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
+                     status.entanglement_saturated_for);
     tools::log->info("{:=^60}", "");
 }

@@ -248,25 +248,25 @@ void class_flbit::update_time_step() {
 
 void class_flbit::check_convergence() {
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
-    if(tensors.position_is_inward_edge()) { check_convergence_entg_entropy(); }
+    check_convergence_entg_entropy();
+    if(status.entanglement_saturated_for > 0) status.algorithm_saturated_for++;
+    else status.algorithm_saturated_for = 0;
 
-    status.algorithm_has_saturated = status.entanglement_saturated_for >= min_saturation_iters;
-    status.algorithm_has_converged = status.entanglement_has_converged or status.iter >= settings::flbit::time_num_steps;
-    status.algorithm_has_succeeded = status.algorithm_has_converged;
-    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
+    status.algorithm_converged_for = status.iter + 1 - std::min(settings::flbit::time_num_steps, status.iter+1);
+    status.algorithm_has_succeeded = status.algorithm_converged_for > 0;
+    if(status.algorithm_saturated_for > min_saturation_iters and status.algorithm_converged_for == 0) status.algorithm_has_stuck_for ++;
+    else status.algorithm_has_stuck_for = 0;
 
-    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    if(tensors.position_is_inward_edge()) {
-        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
-                          status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
-                          status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
-    }
+    tools::log->debug("Simulation report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}",
+                      status.algorithm_converged_for, status.algorithm_saturated_for,  status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
+                      status.algorithm_has_to_stop);
     stop_reason = StopReason::NONE;
-    if(tensors.position_is_inward_edge() and status.iter >= settings::flbit::min_iters) {
+    if(status.iter >= settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) stop_reason = StopReason::SUCCEEDED;
+        if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
         if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag)))
             stop_reason = StopReason::SUCCEEDED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;

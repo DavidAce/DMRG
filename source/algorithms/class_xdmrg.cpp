@@ -282,7 +282,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
-    if(status.algorithm_has_got_stuck) c1.second_chance = true;
+    if(status.algorithm_has_stuck_for > 0) c1.second_chance = true;
 
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
@@ -322,7 +322,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
 
-    if(status.variance_mpo_has_converged) {
+    if(status.variance_mpo_converged_for > 0) {
         // No need to do expensive operations -- just finish
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::DIRECT;
@@ -397,7 +397,7 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_got_stuck and c2.max_sites < settings::strategy::multisite_mps_size_max) {
+    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 0 and c2.max_sites < settings::strategy::multisite_mps_size_max) {
         // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
         c2.optInit      = OptInit::CURRENT_STATE; // Can't use the result from c1
         c2.max_sites    = settings::strategy::multisite_mps_size_max;
@@ -552,7 +552,7 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 
         // Do the truncation with SVD
         auto svd_settings = svd::settings();
-        if(status.algorithm_has_got_stuck){
+        if(status.algorithm_has_stuck_for > 0){
             svd_settings.use_lapacke = true;
             svd_settings.threshold = 1e-14;
             svd_settings.switchsize = 512;
@@ -613,31 +613,36 @@ void class_xdmrg::check_convergence() {
     //        }
     //    }
 
-    status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
-    //        or
-    //        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
-    status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-    status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
-    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
+    check_convergence_variance();
+    check_convergence_entg_entropy();
+    check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
-    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)) status.algorithm_saturated_for++;
+    else status.algorithm_saturated_for = 0;
+
+    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged) status.algorithm_converged_for++;
+    else status.algorithm_converged_for = 0;
+
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0) status.algorithm_has_stuck_for++;
+    else status.algorithm_has_stuck_for = 0;
+
+    status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
-
     if(tensors.position_is_inward_edge()) {
-        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
-                          status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
-                          status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
+        tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}",
+                          status.algorithm_converged_for, status.algorithm_saturated_for,  status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
+                          status.algorithm_has_to_stop);
     }
 
     stop_reason = StopReason::NONE;
-    if(status.iter >= settings::xdmrg::min_iters and tensors.position_is_inward_edge() and not tensors.model->is_perturbed() and
-       not tensors.model->is_damped()) {
+    if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
         if(status.iter >= settings::xdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) stop_reason = StopReason::MAX_RESET;
-        if(status.entanglement_has_saturated and settings::xdmrg::finish_if_entanglm_saturated) stop_reason = StopReason::SATURATED;
-        if(status.variance_mpo_has_saturated and settings::xdmrg::finish_if_variance_saturated) stop_reason = StopReason::SATURATED;
+        if(status.entanglement_saturated_for > 0 and settings::xdmrg::finish_if_entanglm_saturated) stop_reason = StopReason::SATURATED;
+        if(status.variance_mpo_saturated_for > 0 and settings::xdmrg::finish_if_variance_saturated) stop_reason = StopReason::SATURATED;
         if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_chi() >= 32 and
            tools::finite::measure::energy_variance(tensors) < 1e-4)
             stop_reason = StopReason::RANDOMIZE;

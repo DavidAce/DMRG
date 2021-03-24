@@ -112,8 +112,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
     dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
-
     dmrg_config.load_parameter("precision::max_stuck_iters"                   , precision::max_stuck_iters);
+    dmrg_config.load_parameter("precision::min_converged_iters"               , precision::min_converged_iters);
     dmrg_config.load_parameter("precision::min_saturation_iters"              , precision::min_saturation_iters);
     dmrg_config.load_parameter("precision::max_saturation_iters"              , precision::max_saturation_iters);
 

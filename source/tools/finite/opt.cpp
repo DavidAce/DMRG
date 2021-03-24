@@ -87,7 +87,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.parameter_tolerance                        = 1e-8;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::SILENT;
-    if(status.algorithm_has_got_stuck){
+    if(status.algorithm_has_stuck_for > 0){
         ceres_default_options.max_num_iterations                        = 4000;
         ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         ceres_default_options.function_tolerance                        = 1e-6;

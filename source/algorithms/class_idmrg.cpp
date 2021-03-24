@@ -93,10 +93,13 @@ void class_idmrg::check_convergence() {
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
-    if(status.entanglement_has_converged and status.variance_mpo_has_converged and status.variance_ham_has_converged and status.variance_mom_has_converged and
+    if(status.entanglement_converged_for > 0 and
+       status.variance_mpo_converged_for > 0 and
+       status.variance_ham_converged_for > 0 and
+       status.variance_mom_converged_for > 0 and
        status.chi_lim_has_reached_chi_max) {
-        status.algorithm_has_converged = true;
-    }
+        status.algorithm_converged_for++;
+    }else status.algorithm_converged_for = 0;
 }
 
 bool   class_idmrg::cfg_algorithm_is_on() { return settings::idmrg::on; }

@@ -36,7 +36,7 @@ void class_itebd::run_preprocessing() {
 void class_itebd::run_simulation() {
     tools::log->info("Starting {} simulation", algo_name);
     auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
-    while(status.iter < settings::itebd::max_iters and not status.algorithm_has_converged) {
+    while(status.iter < settings::itebd::max_iters and status.algorithm_converged_for == 0) {
         single_TEBD_step();
         write_to_file();
         copy_from_tmp();
