@@ -213,21 +213,11 @@ void class_xdmrg::run_algorithm() {
 
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-        //        if(tensors.position_is_inward_edge()){
-        //            Eigen::Tensor<double,4> mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
-        //            tools::log->info("mpo2 before reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,4));
-        //            tensors.reduce_mpo_energy(1111.0);
-        //            mpo2 = tensors.model->get_multisite_mpo_squared({4}).real().shuffle(std::array<long,4>{2,0,3,1});
-        //            tools::log->info("mpo2 after  reduce {}:\n{}\n", mpo2.dimensions(), linalg::tensor::to_string(mpo2,6,8));
-        //            exit(0);
-        //        }
-        //        find_best_alpha();
         single_xDMRG_step();
         check_convergence();
         write_to_file();
         print_status_update();
-        //        print_profiling_lap();
-        //        if(tensors.position_is_inward_edge()) print_status_full();
+        print_profiling_lap();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -245,20 +235,6 @@ void class_xdmrg::run_algorithm() {
         try_projection();
         reduce_mpo_energy();
         move_center_point();
-
-        //        if(num::mod(status.iter,2ul) == 0 and tensors.position_is_inward_edge_left()){
-        //            create_hamiltonian_gates();
-        //            create_time_evolution_gates();
-        //            auto pos_old  = tensors.state->get_position<long>();
-        //            auto dir_old  = tensors.state->get_direction();
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.first, false, status.chi_lim);
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_1site.second, false, status.chi_lim);
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.first, false, status.chi_lim);
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_2site.second, false, status.chi_lim);
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.first, false, status.chi_lim);
-        //            tools::finite::mps::apply_gates(*tensors.state, time_gates_3site.second, false, status.chi_lim);
-        //            while(not tensors.position_is_at(pos_old,dir_old)) tensors.move_center_point(status.chi_lim);
-        //        }
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
     status.algorithm_has_finished = true;

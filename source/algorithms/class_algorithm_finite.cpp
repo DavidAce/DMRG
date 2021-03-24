@@ -328,13 +328,6 @@ void class_algorithm_finite::try_projection() {
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
             tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
                              std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
-
-#pragma message "What to do about this projection redundancy check?"
-//            if((std::abs(std::abs(spin_component_along_requested_axis) - 1)) >= 1e-14) {
-//
-//            } else {
-//                tools::log->info("Projection redundant: variance {:.6f}  | spin components {:.16f}", std::log10(variance_old), fmt::join(spincomp_old, ", "));
-//            }
         }
 
         has_projected = true;
