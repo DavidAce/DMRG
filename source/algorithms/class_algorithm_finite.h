@@ -75,6 +75,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
+    void check_convergence_spin_parity_sector(const std::string & target_sector, double threshold = 1e-12);
     void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string &state_name, std::string &state_prefix,
                       std::string &model_prefix, std::vector<std::string> &table_prefxs);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt);

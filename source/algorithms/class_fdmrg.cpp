@@ -181,10 +181,10 @@ void class_fdmrg::single_fdmrg_step() {
 
 void class_fdmrg::check_convergence() {
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
-    if(tensors.position_is_inward_edge()) {
-        check_convergence_variance();
-        check_convergence_entg_entropy();
-    }
+
+    check_convergence_variance();
+    check_convergence_entg_entropy();
+    check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)) status.algorithm_saturated_for++;
