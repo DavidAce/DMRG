@@ -61,7 +61,8 @@ class class_algorithm_base {
         std::vector<double> Y_vec; // The values used to gauge saturation
         std::vector<double> Y_log; // Normalized values to check saturation. Let y = -log10(Y_vec). Then Y_log = y/y.back()
         std::vector<double> Y_std; // The "moving" standard deviation of Y_log. (std from x -> end, moving x towards end)
+        std::vector<double> Y_ste; // The "moving" standard error of Y_log. (std from x -> end, moving x towards end)
     };
-
+    size_t count_convergence(const std::vector<double> & Y_vec, double threshold);
     SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity);
 };

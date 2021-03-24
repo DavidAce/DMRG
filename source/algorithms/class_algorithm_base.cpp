@@ -90,17 +90,18 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
 
     // Get the standard deviations from i to end
     // Just make sure to always include more than w elements
-    std::vector<double> Y_std;
+    std::vector<double> Y_std, Y_ste;
     Y_std.reserve(Y_log.size());
     long w = 2;
     for(size_t i = 0; i < Y_log.size(); i++) {
         size_t min_idx = std::min(i, Y_log.size() - w);
         min_idx        = std::max(min_idx, 0ul);
         Y_std.push_back(stat::stdev(Y_log, min_idx));
+        Y_ste.push_back(stat::sterr(Y_log, min_idx));
     }
 
     size_t idx = 0;
-    for(auto &&[i, s] : iter::enumerate(Y_std)) {
+    for(auto &&[i, s] : iter::enumerate(Y_ste)) {
         idx = i;
         if(s < sensitivity) break;
     }
@@ -113,6 +114,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     report.Y_vec           = Y_vec;
     report.Y_log           = Y_log;
     report.Y_std           = Y_std;
+    report.Y_ste           = Y_ste;
     return report;
 }
 
