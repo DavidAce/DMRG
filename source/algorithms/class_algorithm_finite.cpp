@@ -206,7 +206,6 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
 
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
     status.chi_lim *= 2;
-    clear_convergence_status();
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
 
     // Last sanity check before leaving here
