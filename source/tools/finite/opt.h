@@ -20,7 +20,7 @@ namespace tools::finite::opt {
     class opt_mps;
 
     using Scalar = std::complex<double>;
-    extern opt_mps find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_tensor, const class_algorithm_status &status,
+    extern opt_mps find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_mps, const class_algorithm_status &status,
                                         OptMode optMode, OptSpace optSpace, OptType optType);
     extern opt_mps find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
                                         OptType optType);

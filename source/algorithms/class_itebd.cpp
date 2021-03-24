@@ -36,7 +36,7 @@ void class_itebd::run_preprocessing() {
 void class_itebd::run_simulation() {
     tools::log->info("Starting {} simulation", algo_name);
     auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
-    while(status.iter < settings::itebd::max_iters and not status.algorithm_has_converged) {
+    while(status.iter < settings::itebd::max_iters and status.algorithm_converged_for == 0) {
         single_TEBD_step();
         write_to_file();
         copy_from_tmp();
@@ -75,16 +75,19 @@ void class_itebd::check_convergence() {
     check_convergence_variance_mom();
     update_bond_dimension_limit();
     check_convergence_time_step();
-    if(status.entanglement_has_converged and status.variance_ham_has_converged and status.variance_mom_has_converged and status.chi_lim_has_reached_chi_max and
+    if(status.entanglement_converged_for > 0 and
+       status.variance_ham_converged_for > 0 and
+       status.variance_mom_converged_for > 0 and
+       status.chi_lim_has_reached_chi_max and
        status.time_step_has_converged) {
-        status.algorithm_has_converged = true;
-    }
+        status.algorithm_converged_for++;
+    }else  status.algorithm_converged_for = 0;
 }
 
 void class_itebd::check_convergence_time_step() {
     if(std::abs(status.delta_t) <= settings::itebd::time_step_min) {
         status.time_step_has_converged = true;
-    } else if(status.chi_lim_has_reached_chi_max and status.entanglement_has_converged) {
+    } else if(status.chi_lim_has_reached_chi_max and status.entanglement_converged_for > 0) {
         status.delta_t                  = std::max(settings::itebd::time_step_min, std::abs(status.delta_t) * 0.5);
         unitary_time_evolving_operators = qm::timeEvolution::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);

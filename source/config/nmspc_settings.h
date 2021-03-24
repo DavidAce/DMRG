@@ -142,7 +142,7 @@ namespace settings {
         inline bool          damping_when_stuck         = false;                                  /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
         inline double        discard_schmidt_when_stuck = 1e-6;                                   /*!< Try discarding smallest schmidt values when stuck (0 = turn off) */
         inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
-        inline size_t        project_when_stuck_freq    = 4;                                      /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
+        inline size_t        project_on_saturation      = 10;                                     /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
         inline bool          project_on_every_iter      = true;                                   /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
         inline bool          project_initial_state      = false;                                  /*!< Project to target parity sector when initializing a state. */
@@ -182,7 +182,11 @@ namespace settings {
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from each mpo to avoid catastrophic cancellation when computing the variance */
         inline double   overlap_high                    = 0.99;
         inline double   overlap_cat                     = 0.70710678;
-    }
+        inline size_t   max_stuck_iters                 = 20;       /*!< If stuck for this many sweeps -> stop. */
+        inline size_t   min_converged_iters             = 2;        /*!< Converged at least this many iters before success */
+        inline size_t   min_saturation_iters            = 1;        /*!< Saturated at least this many iters before stopping */
+        inline size_t   max_saturation_iters            = 20;       /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
+}
 
 
     //Parameters controlling iDMRG

@@ -24,8 +24,9 @@ class class_algorithm_finite : public class_algorithm_base {
 
     // Control behavior when stuck
     size_t max_stuck_iters      = 20;  //  5;  /*!< If stuck for this many sweeps -> stop. */
-    size_t min_saturation_iters = 1;   // 1;  /*!< If both var and ent saturated  this long -> got_stuck: true */
-    size_t max_saturation_iters = 20;  // 10; /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
+    size_t max_saturation_iters = 20;  // 10;  /*!< If either var or ent saturated this long -> algorithm saturated: true */
+    size_t min_saturation_iters = 1;   // 1;   /*!< Saturated at least this many iters before stopping */
+    size_t min_converged_iters  = 2;           /*!< Converged at least this many iters before success */
 
     bool                    has_projected        = false;        /*!< True if projection has already been tried */
     bool                    has_damped           = false;        /*!< True if damping of hamiltonian parameters is ongoing */
@@ -43,6 +44,10 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
     size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
     size_t                  max_discards         = 2;            /*!< Maximum number of times to discard the smallest schmidt values */
+    size_t                  num_expansion_iters  = 0;            /*!< Counter for number of iterations of subspace expansion */
+    size_t                  max_expansion_iters  = 8;            /*!< Maximum number of iterations doing subspace expansion */
+    double                  max_expansion_alpha  = 0.2;          /*!< Maximum value of subspace expansion factor */
+    std::optional<double>   sub_expansion_alpha = std::nullopt;  /*!< The current value of the subspace expansion factor */
     std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
@@ -75,6 +80,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
+    void check_convergence_spin_parity_sector(const std::string & target_sector, double threshold = 1e-12);
     void setup_prefix(const StorageReason &storage_reason, StorageLevel &storage_level, const std::string &state_name, std::string &state_prefix,
                       std::string &model_prefix, std::vector<std::string> &table_prefxs);
     void write_to_file(StorageReason storage_reason, const class_state_finite &state, std::optional<CopyPolicy> copy_policy = std::nullopt);

@@ -27,8 +27,10 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tensors.initialize(settings::model::model_type, settings::model::model_size, 0);
     tensors.state->set_algorithm(algo_type);
     entropy_iter.resize(tensors.get_length() + 1);
-    //    tools::finite::print::dimensions(*tensors.model);
-    //    tools::finite::print::dimensions(tensors);
+
+    max_stuck_iters      = settings::precision::max_stuck_iters;
+    min_saturation_iters = settings::precision::min_saturation_iters;
+    max_saturation_iters = settings::precision::max_saturation_iters;
 }
 
 // We need to make a destructor manually for the enclosing class "class_model_finite"
@@ -175,8 +177,8 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
         tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
         return;
     }
-    if(not status.algorithm_has_got_stuck and status.chi_lim >= 16) {
-        tools::log->info("State is not stuck yet. Kept current limit {}", status.chi_lim);
+    if(status.algorithm_has_stuck_for == 0 and status.chi_lim >= 16) {
+        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.chi_lim);
         return;
     }
 
@@ -204,7 +206,6 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
 
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
     status.chi_lim *= 2;
-    clear_convergence_status();
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
 
     // Last sanity check before leaving here
@@ -278,8 +279,11 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_inward_edge()) return;
     if(has_projected) return;
-    if(settings::strategy::project_on_every_iter or (status.algorithm_has_got_stuck and settings::strategy::project_when_stuck_freq > 0 and
-                                                     num::mod(status.iter, settings::strategy::project_when_stuck_freq) == 0)) {
+    bool project_on_saturation = settings::strategy::project_on_saturation > 0 and
+                                 status.algorithm_saturated_for > 0 and
+                                 num::mod(status.algorithm_saturated_for-1, settings::strategy::project_on_saturation) == 0;
+
+    if(settings::strategy::project_on_every_iter or project_on_saturation) {
         tools::log->info("Trying projection to {} | pos {}", settings::strategy::target_sector, tensors.get_position<long>());
         auto sector_sign  = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
         auto variance_old = tools::finite::measure::energy_variance(tensors);
@@ -298,38 +302,34 @@ void class_algorithm_finite::try_projection() {
             // decision if the the |spin component| << 1. Maybe < 0.5 is enough?
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
             tools::log->info("Spin component along {} = {:.16f}", settings::strategy::target_sector, spin_component_along_requested_axis);
-            if((std::abs(std::abs(spin_component_along_requested_axis) - 1)) >= 1e-14) {
-                if(std::abs(spin_component_along_requested_axis) < 0.5) {
-                    // Here we deem the spin component undecided enough to warrant a safe projection
-                    auto tensors_neg = tensors;
-                    auto tensors_pos = tensors;
-                    try {
-                        tensors_neg.project_to_nearest_sector(fmt::format("-{}", settings::strategy::target_sector));
-                    } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
+            if(std::abs(spin_component_along_requested_axis) < 0.5) {
+                // Here we deem the spin component undecided enough to warrant a safe projection
+                auto tensors_neg = tensors;
+                auto tensors_pos = tensors;
+                try {
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", settings::strategy::target_sector));
+                } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
 
-                    try {
-                        tensors_pos.project_to_nearest_sector(fmt::format("+{}", settings::strategy::target_sector));
-                    } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
+                try {
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", settings::strategy::target_sector));
+                } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
 
-                    auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
-                    auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                    tools::log->info("Variance after projection to -{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_neg));
-                    tools::log->info("Variance after projection to +{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_pos));
-                    if(variance_neg < variance_pos)
-                        tensors = tensors_neg;
-                    else
-                        tensors = tensors_pos;
-                } else {
-                    // Here the spin component is close to one sector. We just project to the nearest sector
-                    tensors.project_to_nearest_sector(settings::strategy::target_sector);
-                }
-                auto variance_new = tools::finite::measure::energy_variance(tensors);
-                auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
-                tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
-                                 std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+                auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
+                auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
+                tools::log->info("Variance after projection to -{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_neg));
+                tools::log->info("Variance after projection to +{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_pos));
+                if(variance_neg < variance_pos)
+                    tensors = tensors_neg;
+                else
+                    tensors = tensors_pos;
             } else {
-                tools::log->info("Projection redundant: variance {:.6f}  | spin components {:.16f}", std::log10(variance_old), fmt::join(spincomp_old, ", "));
+                // Here the spin component is close to one sector. We just project to the nearest sector
+                tensors.project_to_nearest_sector(settings::strategy::target_sector);
             }
+            auto variance_new = tools::finite::measure::energy_variance(tensors);
+            auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
+            tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
+                             std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
 
         has_projected = true;
@@ -395,8 +395,8 @@ void class_algorithm_finite::try_bond_dimension_quench() {
 void class_algorithm_finite::try_hamiltonian_perturbation() {
     if(not settings::strategy::perturb_when_stuck) return;
     if(perturbation_steps-- > 0) return;
-    if(not status.algorithm_has_got_stuck) {
-        tools::log->info("Perturbation skipped: simulation not stuck");
+    if(status.algorithm_has_stuck_for == 0) {
+        tools::log->info("Perturbation skipped: algorithm not stuck");
         return;
     }
     if(num_perturbations >= max_perturbations) {
@@ -422,8 +422,8 @@ void class_algorithm_finite::try_disorder_damping() {
     }
     if(not settings::strategy::damping_when_stuck) return;
     if(tensors.model->is_damped()) return;
-    if(not status.algorithm_has_got_stuck) {
-        tools::log->info("Damping skipped: simulation not stuck");
+    if(status.algorithm_has_stuck_for == 0) {
+        tools::log->info("Damping skipped: algorithm not stuck");
         return;
     }
     if(num_dampings >= max_dampings) {
@@ -448,15 +448,12 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
     if(not threshold) threshold = settings::precision::variance_convergence_threshold;
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
-    auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value());
-    status.variance_mpo_has_converged = tools::finite::measure::energy_variance(tensors) < threshold;
+    auto report                       = check_saturation(var_mpo_iter, saturation_sensitivity.value());
+    status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value());
     if(report.has_computed) {
-        status.variance_mpo_has_saturated = report.has_saturated;
         status.variance_mpo_saturated_for = report.saturated_count;
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Energy variance convergence: last std {:7.4e} | saturated {} iters (since {})",
-                             report.Y_std.back(),
-                             report.saturated_count,
+            tools::log->info("Energy variance convergence: last std {:7.4e} | saturated {} iters (since {})", report.Y_std.back(), report.saturated_count,
                              report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->info("Energy variance slope details:");
@@ -474,6 +471,9 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->info(" -- saturated count    = {} ", report.saturated_count);
         tools::log->info(" -- var saturated avg  = {:7.4e}", report.Y_avg);
         tools::log->info(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+        tools::log->info(" -- log history        = {:7.4e}", fmt::join(report.Y_log, ", "));
+        tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+        tools::log->info(" -- ste history        = {:7.4e}", fmt::join(report.Y_ste, ", "));
     }
 }
 
@@ -484,35 +484,33 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
     auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
     std::vector<SaturationReport> reports(entropies.size());
 
-    for(size_t site = 0; site < entropies.size(); site++){
+    for(size_t site = 0; site < entropies.size(); site++) {
         entropy_iter[site].emplace_back(entropies[site]);
         reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());
     }
 
-    bool all_computed                 = std::all_of(reports.begin(), reports.end(), [](const SaturationReport &r) { return r.has_computed; });
-    status.entanglement_has_saturated = false;
+    bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport &r) { return r.has_computed; });
     if(all_computed) {
         // Find the report which has the greatest change recently
-        size_t idx_max_std   = 0;
-        double val_max_std   = reports.front().Y_std.back();
-        for(const auto & [i,r] : iter::enumerate(reports)){
+        size_t idx_max_std = 0;
+        double val_max_std = reports.front().Y_std.back();
+        for(const auto &[i, r] : iter::enumerate(reports)) {
             auto &val = r.Y_std.back();
-            if (std::isnan(val) or std::isinf(val)) continue;
-            if (std::isnan(val_max_std) or std::isinf(val_max_std)) val_max_std = val;
-            if (val >= val_max_std){
-                val_max_std   = val;
-                idx_max_std   = i;
+            if(std::isnan(val) or std::isinf(val)) continue;
+            if(std::isnan(val_max_std) or std::isinf(val_max_std)) val_max_std = val;
+            if(val >= val_max_std) {
+                val_max_std = val;
+                idx_max_std = i;
             }
         }
-        auto & report = reports[idx_max_std];
-        status.entanglement_has_saturated = report.has_saturated;
+        auto &report                      = reports[idx_max_std];
         status.entanglement_saturated_for = report.saturated_count;
         std::vector<double> all_avergs;
         all_avergs.reserve(reports.size());
         for(auto &r : reports) all_avergs.push_back(r.Y_avg);
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Entanglement ent. convergence at site {}: last std {:7.4e} | saturated {} iters (since {})",
-                             idx_max_std, report.Y_std.back(), report.saturated_count, report.saturated_point);
+            tools::log->info("Entanglement ent. convergence at site {}: last std {:7.4e} | saturated {} iters (since {})", idx_max_std, report.Y_std.back(),
+                             report.saturated_count, report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->info("Entanglement slope details:");
             tools::log->info(" -- site               = {}", idx_max_std);
@@ -530,38 +528,52 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         tools::log->info(" -- saturated count    = {} ", report.saturated_count);
         tools::log->info(" -- all averages       = {:.6f} ", fmt::join(all_avergs, ", "));
         std::string sites;
-        for(const auto & [site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}",site);
+        for(const auto &[site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}", site);
         tools::log->info(" -- sites              = {}", sites);
-        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++){
+        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++) {
             std::string vals;
-            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size()-1 ? ", " : ""));
+            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size() - 1 ? ", " : ""));
             tools::log->info(" -- ent[{:3}]           = {}", iter, vals);
         }
-        for(auto &&[i, r] : iter::enumerate(reports))
-            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
+        //        for(auto &&[i, r] : iter::enumerate(reports))
+        //            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
     }
-    status.entanglement_has_converged = status.entanglement_has_saturated;
+    status.entanglement_converged_for = status.entanglement_saturated_for;
+}
+
+void class_algorithm_finite::check_convergence_spin_parity_sector(const std::string &target_sector, double threshold) {
+    const std::array<std::string, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+    bool                             sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
+    if(sector_is_valid) {
+        auto axis                         = tools::finite::mps::internal::get_axis(settings::strategy::target_sector);
+        auto sign                         = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
+        auto spin_component_along_axis    = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
+        status.spin_parity_has_converged  = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold ;
+        if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
+            tools::log->warn("Spin parity has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
+        tools::log->info("Spin component convergence: {} = {:.16f}", target_sector, spin_component_along_axis);
+    } else
+        status.spin_parity_has_converged = true; // Probably no sector was specified
 }
 
 void class_algorithm_finite::clear_convergence_status() {
     tools::log->trace("Clearing convergence status");
-    for(auto &mat : entropy_iter) { mat.clear(); }
-
+    for(auto &e : entropy_iter) { e.clear(); }
     var_mpo_iter.clear();
+    var_mpo_step.clear();
 
-    status.entanglement_has_converged  = false;
-    status.entanglement_has_saturated  = false;
+    status.algorithm_has_finished      = false;
+    status.algorithm_has_succeeded     = false;
+    status.algorithm_has_to_stop       = false;
+    status.algorithm_has_stuck_for     = 0;
+    status.algorithm_saturated_for     = 0;
+    status.algorithm_converged_for     = 0;
+    status.entanglement_converged_for  = 0;
     status.entanglement_saturated_for  = 0;
-    status.variance_mpo_has_converged  = false;
-    status.variance_mpo_has_saturated  = false;
+    status.variance_mpo_converged_for  = 0;
     status.variance_mpo_saturated_for  = 0;
     status.chi_lim_has_reached_chi_max = false;
-    status.algorithm_has_to_stop       = false;
-    status.algorithm_has_got_stuck     = false;
-    status.algorithm_has_converged     = false;
-    status.algorithm_has_saturated     = false;
-    status.algorithm_has_succeeded     = false;
-    status.algorithm_has_stuck_for     = 0;
+    status.spin_parity_has_converged   = false;
     has_projected                      = false;
     has_damped                         = false;
 }
@@ -816,15 +828,16 @@ void class_algorithm_finite::print_status_full() {
         tools::log->info("Number entropies Sₙ                = {:.5f}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
         tools::log->info("Number entropy   Sₙ (mid)          = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
+    tools::log->info("Spin components                    = {:.5f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("Truncation Errors                  = {:.3e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
-    tools::log->info("Algorithm has saturated            = {:<}", status.algorithm_has_saturated);
-    tools::log->info("Algorithm has got stuck            = {:<}", status.algorithm_has_got_stuck);
-    tools::log->info("Algorithm has converged            = {:<}", status.algorithm_has_converged);
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
+    tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
+    tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);
+    tools::log->info("Algorithm has converged for        = {:<}", status.algorithm_converged_for);
 
-    tools::log->info("σ²                                 = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged,
-                     status.variance_mpo_has_saturated);
-    tools::log->info("Sₑ                                 = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged,
-                     status.entanglement_has_saturated);
+    tools::log->info("σ²                                 = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for,
+                     status.variance_mpo_saturated_for);
+    tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
+                     status.entanglement_saturated_for);
     tools::log->info("{:=^60}", "");
 }
