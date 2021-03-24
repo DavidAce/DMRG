@@ -219,8 +219,8 @@ void class_algorithm_infinite::check_convergence_variance_mpo(std::optional<doub
     if (not threshold) threshold = settings::precision::variance_convergence_threshold;
     if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mpo(tensors));
-    auto report =
-        check_saturation(var_mpo_iter, sensitivity.value());
+    status.variance_mpo_converged_for = count_convergence(var_mpo_iter,threshold.value());
+    auto report = check_saturation(var_mpo_iter, sensitivity.value());
     if(report.has_computed) {
         status.variance_mpo_has_saturated = report.has_saturated;
         status.variance_mpo_saturated_for = report.saturated_count;
@@ -233,6 +233,7 @@ void class_algorithm_infinite::check_convergence_variance_ham(std::optional<doub
     if (not threshold) threshold = settings::precision::variance_convergence_threshold;
     if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_ham_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_ham(tensors));
+    status.variance_ham_converged_for = count_convergence(var_ham_iter,threshold.value());
     auto report     = check_saturation(var_ham_iter, sensitivity.value());
     if(report.has_computed) {
         status.variance_ham_has_saturated = report.has_saturated;
@@ -246,6 +247,7 @@ void class_algorithm_infinite::check_convergence_variance_mom(std::optional<doub
     if (not threshold) threshold = settings::precision::variance_convergence_threshold;
     if (not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mom_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mom(tensors));
+    status.variance_mom_converged_for = count_convergence(var_mom_iter,threshold.value());
     auto report     = check_saturation(var_mom_iter, sensitivity.value());
     if(report.has_computed) {
         status.variance_mom_has_saturated = report.has_saturated;

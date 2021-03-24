@@ -68,6 +68,13 @@ void class_algorithm_base::init_bond_dimension_limits() {
     if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
 }
 
+
+size_t class_algorithm_base::count_convergence(const std::vector<double> & Y_vec, double threshold){
+    auto last_nonconverged_ptr = std::find_if(Y_vec.rbegin(), Y_vec.rend(), [threshold](auto const &val) { return val > threshold; });
+    return static_cast<size_t>(std::distance(Y_vec.rbegin(), last_nonconverged_ptr));
+}
+
+
 class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(const std::vector<double> &Y_vec, double sensitivity) {
     SaturationReport report;
     constexpr size_t min_data_points = 2;

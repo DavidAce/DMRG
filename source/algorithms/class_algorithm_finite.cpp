@@ -453,8 +453,8 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
     if(not threshold) threshold = settings::precision::variance_convergence_threshold;
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
-    auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value());
-    status.variance_mpo_has_converged = tools::finite::measure::energy_variance(tensors) < threshold;
+    auto report                       = check_saturation(var_mpo_iter, saturation_sensitivity.value());
+    status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value());
     if(report.has_computed) {
         status.variance_mpo_has_saturated = report.has_saturated;
         status.variance_mpo_saturated_for = report.saturated_count;
