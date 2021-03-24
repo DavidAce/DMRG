@@ -543,7 +543,22 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         //        for(auto &&[i, r] : iter::enumerate(reports))
         //            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
     }
-    status.entanglement_has_converged = status.entanglement_has_saturated;
+    status.entanglement_converged_for = status.entanglement_saturated_for;
+}
+
+void class_algorithm_finite::check_convergence_spin_parity_sector(const std::string &target_sector, double threshold) {
+    const std::array<std::string, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+    bool                             sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
+    if(sector_is_valid) {
+        auto axis                         = tools::finite::mps::internal::get_axis(settings::strategy::target_sector);
+        auto sign                         = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
+        auto spin_component_along_axis    = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
+        status.spin_parity_has_converged  = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold ;
+        if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
+            tools::log->warn("Spin parity has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
+        tools::log->info("Spin component convergence: {} = {:.16f}", target_sector, spin_component_along_axis);
+    } else
+        status.spin_parity_has_converged = true; // Probably no sector was specified
 }
 
 void class_algorithm_finite::clear_convergence_status() {
