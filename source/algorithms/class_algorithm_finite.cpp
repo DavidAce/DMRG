@@ -456,12 +456,9 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
     auto report                       = check_saturation(var_mpo_iter, saturation_sensitivity.value());
     status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value());
     if(report.has_computed) {
-        status.variance_mpo_has_saturated = report.has_saturated;
         status.variance_mpo_saturated_for = report.saturated_count;
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Energy variance convergence: last std {:7.4e} | saturated {} iters (since {})",
-                             report.Y_std.back(),
-                             report.saturated_count,
+            tools::log->info("Energy variance convergence: last std {:7.4e} | saturated {} iters (since {})", report.Y_std.back(), report.saturated_count,
                              report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->info("Energy variance slope details:");
@@ -479,6 +476,9 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->info(" -- saturated count    = {} ", report.saturated_count);
         tools::log->info(" -- var saturated avg  = {:7.4e}", report.Y_avg);
         tools::log->info(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+        tools::log->info(" -- log history        = {:7.4e}", fmt::join(report.Y_log, ", "));
+        tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+        tools::log->info(" -- ste history        = {:7.4e}", fmt::join(report.Y_ste, ", "));
     }
 }
 
@@ -489,35 +489,33 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
     auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
     std::vector<SaturationReport> reports(entropies.size());
 
-    for(size_t site = 0; site < entropies.size(); site++){
+    for(size_t site = 0; site < entropies.size(); site++) {
         entropy_iter[site].emplace_back(entropies[site]);
         reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());
     }
 
-    bool all_computed                 = std::all_of(reports.begin(), reports.end(), [](const SaturationReport &r) { return r.has_computed; });
-    status.entanglement_has_saturated = false;
+    bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport &r) { return r.has_computed; });
     if(all_computed) {
         // Find the report which has the greatest change recently
-        size_t idx_max_std   = 0;
-        double val_max_std   = reports.front().Y_std.back();
-        for(const auto & [i,r] : iter::enumerate(reports)){
+        size_t idx_max_std = 0;
+        double val_max_std = reports.front().Y_std.back();
+        for(const auto &[i, r] : iter::enumerate(reports)) {
             auto &val = r.Y_std.back();
-            if (std::isnan(val) or std::isinf(val)) continue;
-            if (std::isnan(val_max_std) or std::isinf(val_max_std)) val_max_std = val;
-            if (val >= val_max_std){
-                val_max_std   = val;
-                idx_max_std   = i;
+            if(std::isnan(val) or std::isinf(val)) continue;
+            if(std::isnan(val_max_std) or std::isinf(val_max_std)) val_max_std = val;
+            if(val >= val_max_std) {
+                val_max_std = val;
+                idx_max_std = i;
             }
         }
-        auto & report = reports[idx_max_std];
-        status.entanglement_has_saturated = report.has_saturated;
+        auto &report                      = reports[idx_max_std];
         status.entanglement_saturated_for = report.saturated_count;
         std::vector<double> all_avergs;
         all_avergs.reserve(reports.size());
         for(auto &r : reports) all_avergs.push_back(r.Y_avg);
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Entanglement ent. convergence at site {}: last std {:7.4e} | saturated {} iters (since {})",
-                             idx_max_std, report.Y_std.back(), report.saturated_count, report.saturated_point);
+            tools::log->info("Entanglement ent. convergence at site {}: last std {:7.4e} | saturated {} iters (since {})", idx_max_std, report.Y_std.back(),
+                             report.saturated_count, report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->info("Entanglement slope details:");
             tools::log->info(" -- site               = {}", idx_max_std);
@@ -535,15 +533,15 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         tools::log->info(" -- saturated count    = {} ", report.saturated_count);
         tools::log->info(" -- all averages       = {:.6f} ", fmt::join(all_avergs, ", "));
         std::string sites;
-        for(const auto & [site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}",site);
+        for(const auto &[site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}", site);
         tools::log->info(" -- sites              = {}", sites);
-        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++){
+        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++) {
             std::string vals;
-            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size()-1 ? ", " : ""));
+            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size() - 1 ? ", " : ""));
             tools::log->info(" -- ent[{:3}]           = {}", iter, vals);
         }
-//        for(auto &&[i, r] : iter::enumerate(reports))
-//            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
+        //        for(auto &&[i, r] : iter::enumerate(reports))
+        //            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
     }
     status.entanglement_has_converged = status.entanglement_has_saturated;
 }
