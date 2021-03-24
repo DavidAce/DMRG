@@ -279,8 +279,11 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
 void class_algorithm_finite::try_projection() {
     if(not tensors.position_is_inward_edge()) return;
     if(has_projected) return;
-    if(settings::strategy::project_on_every_iter or (status.algorithm_has_got_stuck and settings::strategy::project_when_stuck_freq > 0 and
-                                                     num::mod(status.iter, settings::strategy::project_when_stuck_freq) == 0)) {
+    bool project_on_saturation = settings::strategy::project_on_saturation > 0 and
+                                 status.algorithm_saturated_for > 0 and
+                                 num::mod(status.algorithm_saturated_for-1, settings::strategy::project_on_saturation) == 0;
+
+    if(settings::strategy::project_on_every_iter or project_on_saturation) {
         tools::log->info("Trying projection to {} | pos {}", settings::strategy::target_sector, tensors.get_position<long>());
         auto sector_sign  = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
         auto variance_old = tools::finite::measure::energy_variance(tensors);
