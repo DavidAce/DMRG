@@ -220,9 +220,7 @@ void class_algorithm_infinite::check_convergence_variance_mpo(std::optional<doub
     status.variance_mpo_converged_for = count_convergence(var_mpo_iter,threshold.value());
     auto report = check_saturation(var_mpo_iter, sensitivity.value());
     if(report.has_computed) {
-        status.variance_mpo_has_saturated = report.has_saturated;
         status.variance_mpo_saturated_for = report.saturated_count;
-        status.variance_mpo_has_converged = var_mpo_iter.back() < threshold;
     }
 }
 
@@ -234,9 +232,7 @@ void class_algorithm_infinite::check_convergence_variance_ham(std::optional<doub
     status.variance_ham_converged_for = count_convergence(var_ham_iter,threshold.value());
     auto report     = check_saturation(var_ham_iter, sensitivity.value());
     if(report.has_computed) {
-        status.variance_ham_has_saturated = report.has_saturated;
         status.variance_ham_saturated_for = report.saturated_count;
-        status.variance_ham_has_converged = var_ham_iter.back() < threshold;
     }
 }
 
@@ -248,9 +244,7 @@ void class_algorithm_infinite::check_convergence_variance_mom(std::optional<doub
     status.variance_mom_converged_for = count_convergence(var_mom_iter,threshold.value());
     auto report     = check_saturation(var_mom_iter, sensitivity.value());
     if(report.has_computed) {
-        status.variance_mom_has_saturated = report.has_saturated;
         status.variance_mom_saturated_for = report.saturated_count;
-        status.variance_mom_has_converged = var_mom_iter.back() < threshold;
     }
 }
 
@@ -260,9 +254,8 @@ void class_algorithm_infinite::check_convergence_entg_entropy(std::optional<doub
     entropy_iter.emplace_back(tools::infinite::measure::entanglement_entropy(*tensors.state));
     auto report     = check_saturation(entropy_iter, sensitivity.value());
     if(report.has_computed) {
-        status.entanglement_has_saturated = report.has_saturated;
         status.entanglement_saturated_for = report.saturated_count;
-        status.entanglement_has_converged = status.entanglement_has_saturated;
+        status.entanglement_converged_for = report.saturated_count;
     }
 }
 
@@ -412,7 +405,7 @@ void class_algorithm_infinite::print_status_update() {
         case AlgorithmType::iTEBD: report += fmt::format("sat: [Sₑ {:<1}] ", status.entanglement_saturated_for); break;
         default: throw std::runtime_error("Wrong simulation type");
     }
-    report += fmt::format("con: {:<5} ", status.algorithm_has_converged);
+    report += fmt::format("con: {:<4} ", status.algorithm_converged_for);
     report += fmt::format("time:{:>8.2f}s ", tools::common::profile::t_tot->get_measured_time());
     report += fmt::format("mem: [rss {:<.1f} peak {:<.1f} vm {:<.1f}] MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
@@ -463,15 +456,15 @@ void class_algorithm_infinite::print_status_full() {
         default: throw std::runtime_error("Wrong simulation type");
     }
 
-    tools::log->info("Simulation saturated  = {:<}", status.algorithm_has_saturated);
-    tools::log->info("Simulation converged  = {:<}", status.algorithm_has_converged);
-    tools::log->info("Simulation succeeded  = {:<}", status.algorithm_has_succeeded);
-    tools::log->info("Simulation got stuck  = {:<}", status.algorithm_has_got_stuck);
-    tools::log->info("σ² MPO                = Converged : {:<8}  Saturated: {:<8}", status.variance_mpo_has_converged, status.variance_mpo_has_saturated);
-    tools::log->info("σ² HAM                = Converged : {:<8}  Saturated: {:<8}", status.variance_ham_has_converged, status.variance_ham_has_saturated);
-    tools::log->info("σ² MOM                = Converged : {:<8}  Saturated: {:<8}", status.variance_mom_has_converged, status.variance_mom_has_saturated);
-    tools::log->info("Sₑ                    = Converged : {:<8}  Saturated: {:<8}", status.entanglement_has_converged, status.entanglement_has_saturated);
-    tools::log->info("Time                  = {:<16.16f}", tools::common::profile::t_tot->get_age());
+    tools::log->info("Algorithm succeeded      = {:<}", status.algorithm_has_succeeded);
+    tools::log->info("Algorithm saturated for  = {:<}", status.algorithm_saturated_for);
+    tools::log->info("Algorithm converged for  = {:<}", status.algorithm_converged_for);
+    tools::log->info("Algorithm has stuck for  = {:<}", status.algorithm_has_stuck_for);
+    tools::log->info("σ² MPO                   = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for, status.variance_mpo_saturated_for);
+    tools::log->info("σ² HAM                   = Converged : {:<4}  Saturated: {:<4}", status.variance_ham_converged_for, status.variance_ham_saturated_for);
+    tools::log->info("σ² MOM                   = Converged : {:<4}  Saturated: {:<4}", status.variance_mom_converged_for, status.variance_mom_saturated_for);
+    tools::log->info("Sₑ                       = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for, status.entanglement_saturated_for);
+    tools::log->info("Time                     = {:<16.16f}", tools::common::profile::t_tot->get_age());
 
     tools::log->info("Peak memory           = {:<6.1f} MB", tools::common::profile::mem_hwm_in_mb());
 }
