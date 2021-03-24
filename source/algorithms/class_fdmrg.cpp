@@ -180,31 +180,32 @@ void class_fdmrg::single_fdmrg_step() {
 }
 
 void class_fdmrg::check_convergence() {
+    if(not tensors.position_is_inward_edge()) return;
+
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
-    if(tensors.position_is_inward_edge()) {
-        check_convergence_variance();
-        check_convergence_entg_entropy();
-    }
 
-    status.algorithm_has_saturated = (status.variance_mpo_saturated_for >= min_saturation_iters and status.entanglement_saturated_for >= min_saturation_iters);
-    //        or
-    //        (status.variance_mpo_saturated_for >= max_saturation_iters or status.entanglement_saturated_for >= max_saturation_iters);
+    check_convergence_variance();
+    check_convergence_entg_entropy();
+    check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
-    status.algorithm_has_converged = status.variance_mpo_has_converged and status.entanglement_has_converged;
-    status.algorithm_has_succeeded = status.algorithm_has_saturated and status.algorithm_has_converged;
-    status.algorithm_has_got_stuck = status.algorithm_has_saturated and not status.algorithm_has_converged;
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)) status.algorithm_saturated_for++;
+    else status.algorithm_saturated_for = 0;
 
-    if(tensors.position_is_inward_edge()) status.algorithm_has_stuck_for = status.algorithm_has_got_stuck ? status.algorithm_has_stuck_for + 1 : 0;
+    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged) status.algorithm_converged_for++;
+    else status.algorithm_converged_for = 0;
+
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0) status.algorithm_has_stuck_for++;
+    else status.algorithm_has_stuck_for = 0;
+
+    status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    if(tensors.position_is_inward_edge()) {
-        tools::log->debug("Simulation report: converged {} | saturated {} | succeeded {} | stuck {} for {} iters | has to stop {}",
-                          status.algorithm_has_converged, status.algorithm_has_saturated, status.algorithm_has_succeeded, status.algorithm_has_got_stuck,
-                          status.algorithm_has_stuck_for, status.algorithm_has_to_stop);
-    }
-
-    if(tensors.position_is_inward_edge()) {
-        stop_reason = StopReason::NONE;
+    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}",
+                      status.algorithm_converged_for, status.algorithm_saturated_for,  status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
+                      status.algorithm_has_to_stop);
+    stop_reason = StopReason::NONE;
+    if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;
         if(status.algorithm_has_succeeded) stop_reason = StopReason::SUCCEEDED;
         if(status.algorithm_has_to_stop) stop_reason = StopReason::SATURATED;

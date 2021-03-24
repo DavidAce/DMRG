@@ -79,7 +79,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
     dmrg_config.load_parameter("strategy::discard_schmidt_when_stuck"         , strategy::discard_schmidt_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
-    dmrg_config.load_parameter("strategy::project_when_stuck_freq"            , strategy::project_when_stuck_freq);
+    dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);
     dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
@@ -112,6 +112,12 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
     dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
+    dmrg_config.load_parameter("precision::max_stuck_iters"                   , precision::max_stuck_iters);
+    dmrg_config.load_parameter("precision::min_converged_iters"               , precision::min_converged_iters);
+    dmrg_config.load_parameter("precision::min_saturation_iters"              , precision::min_saturation_iters);
+    dmrg_config.load_parameter("precision::max_saturation_iters"              , precision::max_saturation_iters);
+
+
     dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
     dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
 

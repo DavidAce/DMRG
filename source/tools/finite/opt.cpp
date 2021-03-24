@@ -17,22 +17,20 @@
 #include <tools/finite/opt_mps.h>
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
-                                                                     OptSpace optSpace, OptType optType) {
-    std::vector<size_t> sites          = tensors.active_sites;
-    double              energy_reduced = tools::finite::measure::energy_reduced(tensors);
-    opt_mps             initial_tensor("current state", tensors.get_multisite_mps(), sites,
-                             tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
-                             energy_reduced,                                           // Energy reduced for full system
-                             tools::finite::measure::energy_variance(tensors),
-                             1.0, // Overlap
-                             tensors.get_length());
+                                                                   OptSpace optSpace, OptType optType) {
+    double  energy_reduced = tools::finite::measure::energy_reduced(tensors);
+    opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
+                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
+                        energy_reduced,                                           // Energy reduced for full system
+                        tools::finite::measure::energy_variance(tensors),
+                        1.0, // Overlap
+                        tensors.get_length());
 
-    return find_excited_state(tensors, initial_tensor, status, optMode, optSpace, optType);
+    return find_excited_state(tensors, initial_mps, status, optMode, optSpace, optType);
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_tensor,
-                                                                     const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
-                                                                     OptType optType) {
+tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_mps,
+                                                                   const class_algorithm_status &status, OptMode optMode, OptSpace optSpace, OptType optType) {
     auto t_opt = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt"]->tic_token();
     tools::log->debug("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2str(optMode),
                       enum2str(optSpace), enum2str(optType), status.position, tensors.active_sites, tensors.active_problem_dims(),
@@ -89,7 +87,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.parameter_tolerance                        = 1e-8;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::SILENT;
-    if(status.algorithm_has_got_stuck){
+    if(status.algorithm_has_stuck_for > 0){
         ceres_default_options.max_num_iterations                        = 4000;
         ceres_default_options.max_lbfgs_rank                            = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         ceres_default_options.function_tolerance                        = 1e-6;
@@ -120,16 +118,18 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     //    tt is the total time taken by the minimizer.
 
     /* clang-format on */
+    if(initial_mps.get_sites() != tensors.active_sites)
+        throw std::runtime_error(fmt::format("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites));
 
-    initial_tensor.validate_candidate();
+    initial_mps.validate_candidate();
     opt_mps result;
     switch(optSpace) {
         /* clang-format off */
-        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
-        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_tensor,status, optType, optMode,optSpace); break;
-        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
-        case OptSpace::POWER_ENERGY:        result = internal::arpack_energy_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
-        case OptSpace::POWER_VARIANCE:      result = internal::arpack_variance_optimization(tensors,initial_tensor,status, optType,optMode,optSpace); break;
+        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
+        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
+        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
+        case OptSpace::POWER_ENERGY:        result = internal::arpack_energy_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
+        case OptSpace::POWER_VARIANCE:      result = internal::arpack_variance_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
     // Finish up and print reports
@@ -144,7 +144,6 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
 Eigen::Tensor<std::complex<double>, 3> tools::finite::opt::find_ground_state(const class_tensors_finite &tensors, StateRitz ritz) {
     return internal::ground_state_optimization(tensors, ritz);
 }
-
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
     if(std::abs(x) >= window)

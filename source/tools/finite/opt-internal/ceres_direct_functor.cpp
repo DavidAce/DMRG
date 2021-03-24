@@ -3,11 +3,26 @@
 //
 
 #include "ceres_direct_functor.h"
+#include <config/debug.h>
 #include <tensors/class_tensors_finite.h>
 #include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/opt-internal.h>
+
+namespace debug{
+    template<typename Derived>
+    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] const std::string &name = "") {
+        return obj.derived().hasNaN();
+    }
+
+    template<typename Scalar, auto rank>
+    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, const std::string &name = "") {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
+        return hasNaN(vector, name);
+    }
+}
+
 
 using namespace tools::finite::opt::internal;
 
@@ -39,6 +54,17 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
         env2L               = env_var.L;
         env2R               = env_var.R;
     }
+    if constexpr (settings::debug){
+        std::string msg;
+        if(debug::hasNaN(mpo)) msg.append("\t mpo\n");
+        if(debug::hasNaN(mpo2))   msg.append("\t mpo2\n");
+        if(debug::hasNaN(envL  )) msg.append("\t envL\n");
+        if(debug::hasNaN(envR  )) msg.append("\t envR\n");
+        if(debug::hasNaN(env2L )) msg.append("\t env2L\n");
+        if(debug::hasNaN(env2R )) msg.append("\t env2R\n");
+        if(not msg.empty()) throw std::runtime_error(fmt::format("The following objects have nan's:\n{}",msg));
+    }
+
     tools::log->trace("- Allocating memory for matrix-vector products");
     dims = tensors.active_problem_dims();
     Hv_tensor.resize(dims);
@@ -58,6 +84,10 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
     vv   = v.squaredNorm();
     norm = std::sqrt(vv);
+
+    if constexpr (settings::debug){
+        if(v.hasNaN()) throw std::runtime_error(fmt::format("ceres_direct_functor::Evaluate: v has nan's at counter {}\n{}",counter,v));
+    }
 
     get_H2v(v);
     get_Hv(v);
@@ -106,13 +136,17 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("log₁₀ variance is invalid");
+        tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
+        tools::log->warn("counter         = {}", counter);
+        tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("vH2v            = {:.16f} + i{:.16f}", std::real(vH2v), std::imag(vH2v));
         tools::log->warn("vHv             = {:.16f} + i{:.16f}", std::real(vHv), std::imag(vHv));
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}", std::real(ene), std::imag(ene));
-        tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
         tools::log->warn("energy offset   = {:.16f}", energy_offset);
+        tools::log->warn("energy reduced  = {:.16f}", energy_reduced);
+        tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
     }
