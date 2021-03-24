@@ -456,13 +456,13 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
             tools::log->info("Energy variance convergence: last std {:7.4e} | saturated {} iters (since {})", report.Y_std.back(), report.saturated_count,
                              report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
-            tools::log->info("Energy variance slope details:");
-            tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->info(" -- latest std         = {:7.4e}", report.Y_std.back());
-            tools::log->info(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->info(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->info(" -- var saturated avg  = {:7.4e}", report.Y_avg);
-            tools::log->info(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace("Energy variance slope details:");
+            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->trace(" -- latest std         = {:7.4e}", report.Y_std.back());
+            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->trace(" -- var saturated avg  = {:7.4e}", report.Y_avg);
+            tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
         }
         tools::log->info("Energy variance slope details:");
         tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
@@ -509,7 +509,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         all_avergs.reserve(reports.size());
         for(auto &r : reports) all_avergs.push_back(r.Y_avg);
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Entanglement ent. convergence at site {}: last std {:7.4e} | saturated {} iters (since {})", idx_max_std, report.Y_std.back(),
+            tools::log->info("Entanglement ent. convergence at site {}: last ste {:7.4e} | saturated {} iters (since {})", idx_max_std, report.Y_ste.back(),
                              report.saturated_count, report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->info("Entanglement slope details:");
@@ -520,21 +520,21 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
             tools::log->info(" -- saturated count    = {} ", report.saturated_count);
             tools::log->info(" -- all averages       = {:.6f} ", fmt::join(all_avergs, ", "));
         }
-        tools::log->info("Entanglement slope details:");
-        tools::log->info(" -- site               = {}", idx_max_std);
-        tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-        tools::log->info(" -- latest std         = {:7.4e}", reports[idx_max_std].Y_std.back());
-        tools::log->info(" -- saturated point    = {} ", report.saturated_point);
-        tools::log->info(" -- saturated count    = {} ", report.saturated_count);
-        tools::log->info(" -- all averages       = {:.6f} ", fmt::join(all_avergs, ", "));
-        std::string sites;
-        for(const auto &[site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}", site);
-        tools::log->info(" -- sites              = {}", sites);
-        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++) {
-            std::string vals;
-            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size() - 1 ? ", " : ""));
-            tools::log->info(" -- ent[{:3}]           = {}", iter, vals);
-        }
+//        tools::log->info("Entanglement slope details:");
+//        tools::log->info(" -- site               = {}", idx_max_std);
+//        tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+//        tools::log->info(" -- latest std         = {:7.4e}", reports[idx_max_std].Y_std.back());
+//        tools::log->info(" -- saturated point    = {} ", report.saturated_point);
+//        tools::log->info(" -- saturated count    = {} ", report.saturated_count);
+//        tools::log->info(" -- all averages       = {:.6f} ", fmt::join(all_avergs, ", "));
+//        std::string sites;
+//        for(const auto &[site, s] : iter::enumerate(entropy_iter)) sites += fmt::format("{:^14}", site);
+//        tools::log->info(" -- sites              = {}", sites);
+//        for(size_t iter = 0; iter < entropy_iter.front().size(); iter++) {
+//            std::string vals;
+//            for(auto &&[site, s] : iter::enumerate(entropy_iter)) vals += fmt::format("{:12.10f}{}", s.at(iter), (site < entropy_iter.size() - 1 ? ", " : ""));
+//            tools::log->info(" -- ent[{:3}]           = {}", iter, vals);
+//        }
         //        for(auto &&[i, r] : iter::enumerate(reports))
         //            tools::log->info(" -- Ystd[{:2}]:{:3}   = {:8.2e} ",i,r.saturated_point, fmt::join(r.Y_std, ", "));
     }

@@ -319,28 +319,47 @@ void class_flbit::create_hamiltonian_gates() {
         auto sites = num::range<size_t>(pos, pos + range); // A list of site indices
         auto nbody = std::vector<size_t>{1};               // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
         auto spins = tensors.state->get_spin_dims(sites);  // A list of spin dimensions for each site (should all be 2 for two-level systems)
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody,sites);
         ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
     }
     for(auto pos : list_2site) {
-        auto range = std::min<size_t>(6, settings::model::model_size - pos);
-        auto sites = num::range<size_t>(pos, pos + range);
+        auto range = settings::model::lbit::J2_span; // Max distance |i-j| to the furthest interacting site
+        auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, settings::model::model_size)); // +1 to include last site
         auto nbody = std::vector<size_t>{2};
         auto spins = tensors.state->get_spin_dims(sites);
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody,sites);
         ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(auto pos : list_3site) {
-        auto range = std::min<size_t>(3, settings::model::model_size - pos);
-        auto sites = num::range<size_t>(pos, pos + range);
+        auto range = 2; // Distance to next-nearest neighbor when 3 sites interact
+        auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, settings::model::model_size)); // +1 to include last site
         auto nbody = std::vector<size_t>{3};
         auto spins = tensors.state->get_spin_dims(sites);
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody,sites);
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
-    for(const auto &ham : ham_gates_1body)
-        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham1 is all zeros");
-    for(const auto &ham : ham_gates_2body)
-        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
-    for(const auto &ham : ham_gates_3body)
-        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
+    for(const auto &[idx,ham] : iter::enumerate(ham_gates_1body)){
+        if(Textra::MatrixMap(ham.op).isZero()) {
+            throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx));
+            tools::log->warn("Ham1 is all zeros");
+        }
+    }
+    for(const auto &[idx,ham] : iter::enumerate(ham_gates_2body)){
+        if(Textra::MatrixMap(ham.op).isZero()) {
+            throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx));
+            tools::log->warn("Ham2 is all zeros");
+        }
+    }
+    for(const auto &[idx,ham] : iter::enumerate(ham_gates_3body)){
+        if(Textra::MatrixMap(ham.op).isZero()) {
+            throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx));
+            tools::log->warn("Ham3 is all zeros");
+        }
+    }
+//    for(const auto &ham : ham_gates_2body)
+//        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
+//    for(const auto &ham : ham_gates_3body)
+//        if(Textra::MatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
 }
 void class_flbit::create_time_evolution_gates() {
     // Create the time evolution operators
@@ -422,14 +441,14 @@ void class_flbit::write_to_file(StorageReason storage_reason, std::optional<Copy
         std::vector<size_t> urange;
         std::vector<double> frange;
         size_t sample = 1;
-        if(settings::flbit::compute_lbit_length) {
-            urange = {settings::model::lbit::u_layer};
-            frange = {settings::model::lbit::f_mixer};
-        }
-        else if(settings::flbit::compute_lbit_stats) {
+        if(settings::flbit::compute_lbit_stats) {
             sample                             = 50;
             urange                             = num::range<size_t>(1, 4);
             frange                             = num::range<double>(0, 0.8, 0.05);
+        }
+        else if(settings::flbit::compute_lbit_length) {
+            urange = {settings::model::lbit::u_layer};
+            frange = {settings::model::lbit::f_mixer};
         }
         if(not urange.empty() and not frange.empty()){
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
