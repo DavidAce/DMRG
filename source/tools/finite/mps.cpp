@@ -244,7 +244,6 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
 
         // inject lc_hold if there is any waiting
         if(lc_hold and pos == lc_hold->pos_dst){
-            tools::log->trace("Injecting lc hold pos {} dims {}", pos, lc_hold->data.dimensions());
             mps_src.set_L(lc_hold->data, lc_hold->error);
         }
 
@@ -489,7 +488,7 @@ void tools::finite::mps::apply_gates(class_state_finite &state, const std::vecto
         long max_position = static_cast<long>(gate.pos.back());
         long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
         long new_position = std::clamp<long>(tgt_position, min_position, max_position);
-        for(auto pos : gate.pos) tools::log->trace("Pos {} dims {}",pos, state.get_mps_site(pos).dimensions());
+        tools::log->trace("Merging gate sites {} dims {}",gate.pos, multisite_mps.dimensions());
         if constexpr (settings::debug_gates)
             tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(), new_position, state.get_labels());
         tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);

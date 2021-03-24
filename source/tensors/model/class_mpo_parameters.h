@@ -149,23 +149,24 @@ class h5tb_lbit {
     using J2Type = std::array<double, J2_size>;
 
     struct table {
-        double                      J1_rand  = 0;         /*!< On-site interaction */
-        J2Type                      J2_rand  = {};        /*!< Two-body interaction */
-        double                      J3_rand  = 0;         /*!< Three-body interaction */
-        double                      J1_mean  = 0;         /*!< Constant offset for on-site */
-        double                      J2_mean  = 0;         /*!< Constant offset for two-body interaction */
-        double                      J3_mean  = 0;         /*!< Constant offset for three-body interaction */
-        double                      J1_wdth  = 0;         /*!< Width of the uniform box distribution U(-w1,w1) */
-        double                      J2_wdth  = 0;         /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) */
-        double                      J3_wdth  = 0;         /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) */
-        double                      J2_base  = 0;         /*!< Base for power-decay of two-body interactions: J2_rand*J2_base^-|i-j| */
-        double                      J1_pert  = 0;         /*!< On-site perturbation */
-        double                      J2_pert  = 0;         /*!< Two-body perturbation */
-        double                      J3_pert  = 0;         /*!< Three-body perturbation */
-        double                      f_mixer  = 0;         /*!< Mixing factor for unitary transformation to real-space */
-        uint64_t                    u_layer  = 0;         /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
-        long                        spin_dim = 2;         /*!< Spin dimension */
-        char distribution[16]                = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double   J1_rand          = 0;         /*!< On-site interaction */
+        J2Type   J2_rand          = {};        /*!< Two-body interaction */
+        double   J3_rand          = 0;         /*!< Three-body interaction */
+        double   J1_mean          = 0;         /*!< Constant offset for on-site */
+        double   J2_mean          = 0;         /*!< Constant offset for two-body interaction */
+        double   J3_mean          = 0;         /*!< Constant offset for three-body interaction */
+        double   J1_wdth          = 0;         /*!< Width of the uniform box distribution U(-w1,w1) */
+        double   J2_wdth          = 0;         /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) */
+        double   J3_wdth          = 0;         /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) */
+        double   J2_base          = 0;         /*!< Base for power-decay of two-body interactions: J2_rand*J2_base^-|i-j| */
+        double   J2_span          = 0;         /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Note that J2_span + 1 MPOs are used */
+        double   J1_pert          = 0;         /*!< On-site perturbation */
+        double   J2_pert          = 0;         /*!< Two-body perturbation */
+        double   J3_pert          = 0;         /*!< Three-body perturbation */
+        double   f_mixer          = 0;         /*!< Mixing factor for unitary transformation to real-space */
+        uint64_t u_layer          = 0;         /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        long     spin_dim         = 2;         /*!< Spin dimension */
+        char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
 
     static inline h5pp::hid::h5t h5_type;
@@ -195,6 +196,7 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "J2_wdth", HOFFSET(table, J2_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_wdth", HOFFSET(table, J3_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_base", HOFFSET(table, J2_base), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);
@@ -207,20 +209,22 @@ class h5tb_lbit {
     [[nodiscard]] std::string J2_str() const { return fmt::format("[{:<+8.4f}]", fmt::join(param.J2_rand, " ")); }
 
     static std::vector<std::string> get_parameter_names() {
-        return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth",  "J2_wdth",     "J3_wdth",
-                "J2_base", "J1_pert", "J2_pert", "J3_pert", "f_mixer", "u_layer", "spin_dim", "distribution"};
+        return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth",  "J3_wdth",
+                "J2_base", "J2_span", "J1_pert", "J2_pert", "J3_pert", "f_mixer", "u_layer", "spin_dim", "distribution"};
     }
 
     static void print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{:<8} {:<88} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}", name[0], name[1], name[2],
-                         name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13], name[14], name[15], name[16]);
+        tools::log->info("{:<8} {:<82} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}", name[0], name[1],
+                         name[2], name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13], name[14], name[15],
+                         name[16], name[17]);
     }
 
     void print_parameter_values() const {
-        tools::log->info("{:<+8.4f} {:<} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} "
+        tools::log->info("{:<+8.4f} {:<} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} "
                          "{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8} {:<8}",
                          param.J1_rand, J2_str(), param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth,
-                         param.J2_base, param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim, param.distribution);
+                         param.J2_base, param.J2_span, param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim,
+                         param.distribution);
     }
 };
