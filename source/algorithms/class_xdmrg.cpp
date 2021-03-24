@@ -316,16 +316,12 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     // If we are doing 1-site dmrg, then we better use subspace expansion
     if(settings::strategy::multisite_mps_size_def == 1)
         c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-    else if(settings::strategy::expand_subspace_when_stuck and
-        status.algorithm_has_stuck_for > 0 and
-        num_expansion_iters < max_expansion_iters and
-        not sub_expansion_alpha){
-        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
-    }else if(settings::strategy::expand_subspace_when_stuck and
+    if(settings::strategy::expand_subspace_when_stuck and
              status.algorithm_has_stuck_for > 0 and
              num_expansion_iters < max_expansion_iters and
              sub_expansion_alpha){
-        c1.alpha_expansion = sub_expansion_alpha;
+        if(sub_expansion_alpha)    c1.alpha_expansion = sub_expansion_alpha;
+        if(not c1.alpha_expansion) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
         // Update alpha
         auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity/10);
         tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed,report.has_saturated);
