@@ -338,20 +338,46 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_mps_size_def == 1) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-    if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_got_stuck) {
+    if(settings::strategy::multisite_mps_size_def == 1)
         c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-        if(alpha_expansion_prev) c1.alpha_expansion = alpha_expansion_prev;
+    else if(settings::strategy::expand_subspace_when_stuck and
+        status.algorithm_has_stuck_for > 0 and
+        num_expansion_iters < max_expansion_iters and
+        not sub_expansion_alpha){
+        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
+    }else if(settings::strategy::expand_subspace_when_stuck and
+             status.algorithm_has_stuck_for > 0 and
+             num_expansion_iters < max_expansion_iters and
+             sub_expansion_alpha){
+        c1.alpha_expansion = sub_expansion_alpha;
+        // Update alpha
         auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity/10);
         tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed,report.has_saturated);
         if(report.has_computed){
             double factor_up = std::pow(5,1.0/static_cast<double>(tensors.get_length()));
             double factor_dn = std::pow(0.5,1.0/static_cast<double>(tensors.get_length()));
-            if(report.has_saturated) c1.alpha_expansion = c1.alpha_expansion.value() * factor_up;
-            else  c1.alpha_expansion = std::max(status.energy_variance_lowest, c1.alpha_expansion.value() * factor_dn);
+            if(report.has_saturated){
+                c1.alpha_expansion = c1.alpha_expansion.value() * factor_up;
+                c1.alpha_expansion = std::min(max_expansion_alpha, c1.alpha_expansion.value());
+            }
+            else {
+                auto alpha_dn = c1.alpha_expansion.value() * factor_dn;
+                if(alpha_dn > status.energy_variance_lowest)
+                    c1.alpha_expansion = alpha_dn;
+                else
+                    c1.alpha_expansion = std::nullopt; // Back to normal
+            }
         }
+        sub_expansion_alpha = c1.alpha_expansion;
+        if(tensors.position_is_inward_edge()) num_expansion_iters++;
+    }else if (num_expansion_iters >= max_expansion_iters) {
+        c1.alpha_expansion  = std::nullopt; // Back to normal
     }
-    alpha_expansion_prev = c1.alpha_expansion;
+    sub_expansion_alpha = c1.alpha_expansion;
+
+
+
+
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
@@ -527,9 +553,9 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::info and results.size() > 0ul)
             for(auto &candidate : results)
-                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
+                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} ({} iters) | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
                                  "| [{}][{}] | time {:.4f} ms",
-                                 candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(),
+                                 candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(), num_expansion_iters,
                                  std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
                                  enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
 
