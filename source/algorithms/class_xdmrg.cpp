@@ -592,12 +592,9 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 }
 
 void class_xdmrg::check_convergence() {
+    if (not tensors.position_is_inward_edge()) return;
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
 
-    if(tensors.position_is_inward_edge()) {
-        check_convergence_variance();
-        check_convergence_entg_entropy();
-    }
 
     // TODO: Move this reset block away from here
     //    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
