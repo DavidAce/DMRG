@@ -183,7 +183,7 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
     }
 
     if(tools::log->level() < spdlog::level::info) {
-        double truncation_threshold = 2 * settings::precision::svd_threshold;
+        double truncation_threshold = 2*settings::precision::svd_threshold;
         size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
         size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
         tools::log->info("Truncation threshold  : {:<.8e}", truncation_threshold);
