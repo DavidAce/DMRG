@@ -204,40 +204,41 @@ void class_lbit::randomize_hamiltonian() {
     h5tb.param.J2_rand[6] = std::pow(settings::model::lbit::J2_base, -6);
     h5tb.param.J2_rand[7] = std::pow(settings::model::lbit::J2_base, -7);
     h5tb.param.J2_rand[8] = std::pow(settings::model::lbit::J2_base, -8);
+    double J2_wdth_box = rnd::uniform_double_box(0, 2*settings::model::lbit::J2_wdth);
 
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
         h5tb.param.J3_rand = rnd::normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[2] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[3] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[4] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[5] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[6] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[7] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[8] *= rnd::normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
+        h5tb.param.J2_rand[1] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[2] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[3] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[4] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[5] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[6] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[7] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[8] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
         h5tb.param.J1_rand = rnd::log_normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
         h5tb.param.J3_rand = rnd::log_normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[2] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[3] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[4] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[5] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[6] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[7] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
-        h5tb.param.J2_rand[8] *= rnd::log_normal(settings::model::lbit::J2_mean, settings::model::lbit::J2_wdth);
+        h5tb.param.J2_rand[1] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[2] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[3] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[4] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[5] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[6] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[7] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J2_rand[8] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean + rnd::uniform_double_box(settings::model::lbit::J1_wdth);
         h5tb.param.J3_rand = settings::model::lbit::J3_mean + rnd::uniform_double_box(settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[2] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[3] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[4] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[5] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[6] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[7] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
-        h5tb.param.J2_rand[8] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(settings::model::lbit::J2_wdth));
+        h5tb.param.J2_rand[1] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[2] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[3] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[4] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[5] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[6] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[7] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J2_rand[8] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
     } else if(std::string(h5tb.param.distribution) == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
