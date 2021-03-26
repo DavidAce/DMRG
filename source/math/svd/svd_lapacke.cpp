@@ -29,7 +29,7 @@ namespace svd {
     template<typename Scalar>
     void print_matrix_lapacke(const Scalar *mat_ptr, long rows, long cols, long dec = 8) {
         auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
-        svd::log->warn("Error printing matrix of dimensions {}x{}\n", rows, cols);
+        svd::log->warn("Error. Printing matrix of dimensions {}x{}\n", rows, cols);
         for(long r = 0; r < A.rows(); r++) {
             if constexpr(std::is_same_v<Scalar, std::complex<double>>)
                 for(long c = 0; c < A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ", dec, std::real(A(r, c)), std::imag(A(r, c)));

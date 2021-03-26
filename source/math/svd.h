@@ -29,6 +29,10 @@ namespace svd {
                                                                                                     std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
+        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_eigen(const Scalar *mat_ptr, long rows, long cols,
+                                                                                            std::optional<long> rank_max = std::nullopt);
+
+        template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd(const Scalar *mat_ptr, long rows, long cols,
                                                                                             std::optional<long> rank_max = std::nullopt);
 
@@ -37,6 +41,8 @@ namespace svd {
             do_svd(const Eigen::DenseBase<Derived> &mat) {
             return do_svd(mat.derived().data(), mat.rows(), mat.cols());
         }
+
+
 
         public:
         solver();
