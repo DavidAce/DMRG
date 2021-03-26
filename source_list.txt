@@ -12,6 +12,7 @@ source/config/class_dmrg_config.cpp
 source/config/nmspc_settings.cpp
 source/math/rnd/rnd.cpp
 source/math/svd/svd.cpp
+source/math/svd/svd_eigen.cpp
 source/math/svd/svd_lapacke.cpp
 source/math/hash/hash.cpp
 source/math/linalg/matrix.cpp

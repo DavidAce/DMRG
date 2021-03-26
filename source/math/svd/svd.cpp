@@ -2,11 +2,7 @@
 // Created by david on 2019-05-27.
 //
 
-#include <complex.h>
-#undef I
-
 #include <Eigen/QR>
-#include <Eigen/SVD>
 #include <general/class_tic_toc.h>
 #include <iostream>
 #include <math/svd.h>
@@ -71,70 +67,21 @@ void svd::solver::setLogLevel(size_t logLevel) {
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
-    if(use_lapacke) return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
-    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
-
-    svd::log->trace("Starting SVD with Eigen");
-    Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
-
-    if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}", rows));
-    if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}", cols));
-
-#ifndef NDEBUG
-    // These are more expensive debugging operations
-    if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
-    if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
-#endif
-
-    Eigen::BDCSVD<MatrixType<Scalar>> SVD;
-
-    // Setup the SVD solver
-    SVD.setSwitchSize(static_cast<int>(switchsize));
-    SVD.setThreshold(threshold);
-    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize);
-    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, rank_max.value());
-    if(use_jacobi) {
-        // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
-        // Run the svd
-        t_jac->tic();
-        SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
-        t_jac->toc();
-    } else {
-        svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
-        // Run the svd
-        t_svd->tic();
-        SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-        t_svd->toc();
+    if(use_lapacke) {
+        try {
+            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+        } catch(const std::exception &ex) {
+            tools::log->warn("Lapacke failed to perform SVD: {} \nTrying Eigen", ex.what());
+            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+        }
+    }else {
+        try {
+            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+        } catch(const std::exception &ex) {
+            tools::log->warn("Eigen failed to perform SVD: {} \nTrying Lapacke", ex.what());
+            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+        }
     }
-    if(count) count.value()++;
-    long max_size = std::min(SVD.singularValues().size(), rank_max.value());
-    long rank     = (SVD.singularValues().head(max_size).array() >= threshold).count();
-    svd::log->trace("Truncation singular values");
-    if(rank == SVD.singularValues().size()) {
-        truncation_error = 0;
-    } else {
-        truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
-    }
-
-    if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
-       not SVD.matrixV().leftCols(rank).allFinite()) {
-        svd::log->warn("Eigen SVD error \n"
-                       "  svd_threshold    = {:.4e}\n"
-                       "  Truncation Error = {:.4e}\n"
-                       "  Rank             = {}\n"
-                       "  U all finite     : {}\n"
-                       "  S all finite     : {}\n"
-                       "  V all finite     : {}\n"
-                       "Trying SVD with LAPACKE instead \n",
-                       threshold, truncation_error, rank, SVD.matrixU().leftCols(rank).allFinite(), SVD.singularValues().head(rank).allFinite(),
-                       SVD.matrixV().leftCols(rank).allFinite());
-        return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
-    }
-    svd::log->trace("SVD with Eigen finished successfully");
-
-    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 }
 
 //! \relates svd::class_SVD
