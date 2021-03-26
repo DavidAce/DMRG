@@ -444,7 +444,7 @@ size_t class_state_finite::num_bonds_reached_chi(long chi_level) const {
 }
 
 bool class_state_finite::is_bond_limited(long chi_lim, double truncation_threshold) const {
-    return num_sites_truncated(truncation_threshold) > 0 and num_bonds_reached_chi(chi_lim) > 0;
+    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_reached_chi(chi_lim) > 0;
 }
 
 void class_state_finite::clear_measurements(LogPolicy logPolicy) const {
