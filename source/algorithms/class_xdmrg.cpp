@@ -314,42 +314,37 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_mps_size_def == 1)
-        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-    if(settings::strategy::expand_subspace_when_stuck and
-             status.algorithm_has_stuck_for > 0 and
-             num_expansion_iters < max_expansion_iters and
-             sub_expansion_alpha){
-        if(sub_expansion_alpha)    c1.alpha_expansion = sub_expansion_alpha;
+    if(settings::strategy::multisite_mps_size_def == 1) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
+    if(settings::strategy::expand_subspace_when_stuck and (status.algorithm_has_stuck_for > 0 or sub_expansion_alpha.has_value()) and
+       num_expansion_iters < max_expansion_iters) {
+        if(sub_expansion_alpha) c1.alpha_expansion = sub_expansion_alpha;
         if(not c1.alpha_expansion) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
         // Update alpha
-        auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity/10);
-        tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed,report.has_saturated);
-        if(report.has_computed){
-            double factor_up = std::pow(5,1.0/static_cast<double>(tensors.get_length()));
-            double factor_dn = std::pow(0.5,1.0/static_cast<double>(tensors.get_length()));
-            if(report.has_saturated){
+        auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity / 10);
+        tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed, report.has_saturated);
+        if(report.has_computed) {
+            double factor_up = std::pow(5.0, 1.0 / static_cast<double>(tensors.get_length()));
+            double factor_dn = std::pow(0.1, 1.0 / static_cast<double>(tensors.get_length()));
+            if(report.has_saturated) {
                 c1.alpha_expansion = c1.alpha_expansion.value() * factor_up;
                 c1.alpha_expansion = std::min(max_expansion_alpha, c1.alpha_expansion.value());
-            }
-            else {
+            } else {
                 auto alpha_dn = c1.alpha_expansion.value() * factor_dn;
                 if(alpha_dn > status.energy_variance_lowest)
                     c1.alpha_expansion = alpha_dn;
                 else
                     c1.alpha_expansion = std::nullopt; // Back to normal
             }
+        } else {
+            tools::log->info("Could not enable alpha: Report wasn't computed");
         }
         sub_expansion_alpha = c1.alpha_expansion;
         if(tensors.position_is_inward_edge()) num_expansion_iters++;
-    }else if (num_expansion_iters >= max_expansion_iters) {
-        c1.alpha_expansion  = std::nullopt; // Back to normal
+    } else if(num_expansion_iters >= max_expansion_iters) {
+        tools::log->info("Could not enable alpha: More than num_expansion iters ({}) >=  max_expansion_iters ({})", num_expansion_iters, max_expansion_iters);
+        c1.alpha_expansion = std::nullopt; // Back to normal
     }
     sub_expansion_alpha = c1.alpha_expansion;
-
-
-
-
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
@@ -487,8 +482,8 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         if(conf.alpha_expansion) {
             if(not results.empty()) {
                 // We better store the mps sites that the previous result is compatible with
-                auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
-                results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the compatible mps sites
+                auto pos_expanded         = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
+                results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);            // Backup the compatible mps sites
             }
             tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
         }
@@ -525,11 +520,12 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::info and results.size() > 0ul)
             for(auto &candidate : results)
-                tools::log->info("Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} ({} iters) | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
-                                 "| [{}][{}] | time {:.4f} ms",
-                                 candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(), num_expansion_iters,
-                                 std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
-                                 enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
+                tools::log->info(
+                    "Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} ({} iters) | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
+                    "| [{}][{}] | time {:.4f} ms",
+                    candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(), num_expansion_iters,
+                    std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
+                    enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
 
         // Sort the results in order of increasing variance
         std::sort(results.begin(), results.end(), [](const opt_mps &lhs, const opt_mps &rhs) {
@@ -550,13 +546,13 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 
         // Do the truncation with SVD
         auto svd_settings = svd::settings();
-        if(status.algorithm_has_stuck_for > 0){
+        if(status.algorithm_has_stuck_for > 0) {
             svd_settings.use_lapacke = true;
-            svd_settings.threshold = 1e-14;
-            svd_settings.switchsize = 512;
-            svd_settings.use_bdc = false;
+            svd_settings.threshold   = 1e-14;
+            svd_settings.switchsize  = 512;
+            svd_settings.use_bdc     = false;
         }
-        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim,svd_settings);
+        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim, svd_settings);
         if(tools::log->level() <= spdlog::level::debug) {
             auto truncation_errors = tensors.state->get_truncation_errors_active();
             for(auto &t : truncation_errors) t = std::log10(t);
@@ -588,9 +584,8 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 }
 
 void class_xdmrg::check_convergence() {
-    if (not tensors.position_is_inward_edge()) return;
+    if(not tensors.position_is_inward_edge()) return;
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
-
 
     // TODO: Move this reset block away from here
     //    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
@@ -613,21 +608,26 @@ void class_xdmrg::check_convergence() {
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
-       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)) status.algorithm_saturated_for++;
-    else status.algorithm_saturated_for = 0;
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
+        status.algorithm_saturated_for++;
+    else
+        status.algorithm_saturated_for = 0;
 
-    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged) status.algorithm_converged_for++;
-    else status.algorithm_converged_for = 0;
+    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged)
+        status.algorithm_converged_for++;
+    else
+        status.algorithm_converged_for = 0;
 
-    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0) status.algorithm_has_stuck_for++;
-    else status.algorithm_has_stuck_for = 0;
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
+        status.algorithm_has_stuck_for++;
+    else
+        status.algorithm_has_stuck_for = 0;
 
     status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
-    status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
+    status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
     if(tensors.position_is_inward_edge()) {
-        tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}",
-                          status.algorithm_converged_for, status.algorithm_saturated_for,  status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
-                          status.algorithm_has_to_stop);
+        tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}", status.algorithm_converged_for,
+                         status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop);
     }
 
     stop_reason = StopReason::NONE;
