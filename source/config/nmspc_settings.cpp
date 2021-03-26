@@ -118,6 +118,7 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::min_converged_iters"               , precision::min_converged_iters);
     dmrg_config.load_parameter("precision::min_saturation_iters"              , precision::min_saturation_iters);
     dmrg_config.load_parameter("precision::max_saturation_iters"              , precision::max_saturation_iters);
+    dmrg_config.load_parameter("precision::max_expansion_iters"              , precision::max_expansion_iters);
 
 
     dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);

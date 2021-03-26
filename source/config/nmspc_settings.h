@@ -186,7 +186,9 @@ namespace settings {
         inline size_t   min_converged_iters             = 2;        /*!< Converged at least this many iters before success */
         inline size_t   min_saturation_iters            = 1;        /*!< Saturated at least this many iters before stopping */
         inline size_t   max_saturation_iters            = 20;       /*!< If either var or ent saturated this long -> got_stuck: true Requires var and ent stuck for > 0 */
-}
+        inline size_t   max_expansion_iters             = 32;       /*!< Maximum number of iterations with subspace expansion enabled */
+
+    }
 
 
     //Parameters controlling iDMRG

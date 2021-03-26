@@ -45,7 +45,7 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
     size_t                  max_discards         = 2;            /*!< Maximum number of times to discard the smallest schmidt values */
     size_t                  num_expansion_iters  = 0;            /*!< Counter for number of iterations of subspace expansion */
-    size_t                  max_expansion_iters  = 8;            /*!< Maximum number of iterations doing subspace expansion */
+    size_t                  max_expansion_iters  = 16;           /*!< Maximum number of iterations doing subspace expansion */
     double                  max_expansion_alpha  = 0.2;          /*!< Maximum value of subspace expansion factor */
     std::optional<double>   sub_expansion_alpha = std::nullopt;  /*!< The current value of the subspace expansion factor */
     std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */

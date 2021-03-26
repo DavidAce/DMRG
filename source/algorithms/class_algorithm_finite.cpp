@@ -31,6 +31,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     max_stuck_iters      = settings::precision::max_stuck_iters;
     min_saturation_iters = settings::precision::min_saturation_iters;
     max_saturation_iters = settings::precision::max_saturation_iters;
+    max_expansion_iters  = settings::precision::max_expansion_iters;
 }
 
 // We need to make a destructor manually for the enclosing class "class_model_finite"
@@ -204,13 +205,14 @@ void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::o
     if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
         randomize_state(ResetReason::CHI_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.chi_lim);
 
-    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, status.chi_lim * 2);
-    status.chi_lim *= 2;
+    long chi_new = std::min(status.chi_lim * 2, status.chi_lim_max);
+    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
+    status.chi_lim = chi_new;
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
 
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
-        throw std::runtime_error(fmt::format("chi_lim is larger than cfg_chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
+        throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
 }
 
 void class_algorithm_finite::randomize_model() {
