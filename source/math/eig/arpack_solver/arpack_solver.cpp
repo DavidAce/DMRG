@@ -191,8 +191,14 @@ void eig::arpack_solver<MatrixType>::eigs_comp() {
     }
 }
 
-//
-//
+template<typename T, typename = std::void_t<>>
+struct has_t_multAx : public std::false_type {};
+template<typename T>
+struct has_t_multAx<T, std::void_t<decltype(std::declval<T>().t_multAx)>> : public std::true_type {};
+template<typename T>
+inline constexpr bool has_t_multAx_v = has_t_multAx<T>::value;
+
+
 template<typename MatrixType>
 template<typename Derived>
 void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_type nev) {
@@ -200,73 +206,53 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
     if(config.compute_eigvecs) {
         eig::log->trace("Finding eigenvectors");
         solver.FindEigenvectors();
-        if(config.side == eig::Side::L)
-            result.meta.eigvecsL_found = solver.EigenvectorsFound();
-        else
-            result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
-
-        result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
-        result.meta.iter          = solver.GetIter();
-        result.meta.n             = solver.GetN();
-        result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
-        result.meta.nev_converged = solver.ConvergedEigenvalues();
-        result.meta.ncv_used      = solver.GetNcv();
-        result.meta.rows          = solver.GetN();
-        result.meta.cols          = result.meta.nev;
-        result.meta.counter       = matrix.counter;
-        result.meta.form          = config.form.value();
-        result.meta.type          = config.type.value();
-        /* clang-format off */
-        eig::log->trace("- {:<30} = {}" ,"eigvals_found",  result.meta.eigvals_found);
-        eig::log->trace("- {:<30} = {}" ,"eigvecsR_found", result.meta.eigvecsR_found);
-        eig::log->trace("- {:<30} = {}" ,"eigvecsL_found", result.meta.eigvecsL_found);
-        eig::log->trace("- {:<30} = {}" ,"iter",           result.meta.iter);
-        eig::log->trace("- {:<30} = {}" ,"n",              result.meta.n);
-        eig::log->trace("- {:<30} = {}" ,"nev",            result.meta.nev);
-        eig::log->trace("- {:<30} = {}" ,"nev_converged",  result.meta.nev_converged);
-        eig::log->trace("- {:<30} = {}" ,"ncv_used",       result.meta.ncv_used);
-        eig::log->trace("- {:<30} = {}" ,"rows",           result.meta.rows);
-        eig::log->trace("- {:<30} = {}" ,"cols",           result.meta.cols);
-        eig::log->trace("- {:<30} = {}" ,"counter",        result.meta.counter);
-        /* clang-format on */
-//        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
-//        assert(result.meta.eigvals_found and "Eigenvalues were not found");
-        if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
-        if(not result.meta.eigvals_found) eig::log->warn("Eigenvalues were not found");
+        if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
         if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
     } else {
         eig::log->trace("Finding eigenvalues");
         solver.FindEigenvalues();
-        result.meta.eigvals_found = solver.EigenvaluesFound();
-        result.meta.iter          = solver.GetIter();
-        result.meta.n             = solver.GetN();
-        result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
-        result.meta.nev_converged = solver.ConvergedEigenvalues();
-        result.meta.ncv_used      = solver.GetNcv();
-        result.meta.rows          = solver.GetN();
-        result.meta.cols          = result.meta.nev;
-        result.meta.counter       = matrix.counter;
-        result.meta.form          = config.form.value();
-        result.meta.type          = config.type.value();
-        /* clang-format off */
-        eig::log->trace("- {:<30} = {}" ,"eigvals_found",  result.meta.eigvals_found);
-        eig::log->trace("- {:<30} = {}" ,"eigvecsR_found", result.meta.eigvecsR_found);
-        eig::log->trace("- {:<30} = {}" ,"eigvecsL_found", result.meta.eigvecsL_found);
-        eig::log->trace("- {:<30} = {}" ,"iter",           result.meta.iter);
-        eig::log->trace("- {:<30} = {}" ,"n",              result.meta.n);
-        eig::log->trace("- {:<30} = {}" ,"nev",            result.meta.nev);
-        eig::log->trace("- {:<30} = {}" ,"nev_converged",  result.meta.nev_converged);
-        eig::log->trace("- {:<30} = {}" ,"ncv_used",       result.meta.ncv_used);
-        eig::log->trace("- {:<30} = {}" ,"rows",           result.meta.rows);
-        eig::log->trace("- {:<30} = {}" ,"cols",           result.meta.cols);
-        eig::log->trace("- {:<30} = {}" ,"counter",        result.meta.counter);
-        /* clang-format on */
-
-//        assert(result.meta.nev_converged >= result.meta.nev and "Not enough eigenvalues converged");
-//        assert(result.meta.eigvals_found and "Eigenvalues were not found");
-        if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
-        if(not result.meta.eigvals_found) eig::log->warn("Eigenvalues were not found");
+        if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
     }
+    t_sol_token.toc();
+
+    if(config.side == eig::Side::L)
+        result.meta.eigvecsL_found = solver.EigenvectorsFound();
+    else
+        result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
+
+    result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
+    result.meta.iter          = solver.GetIter();
+    result.meta.n             = solver.GetN();
+    result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
+    result.meta.nev_converged = solver.ConvergedEigenvalues();
+    result.meta.ncv_used      = solver.GetNcv();
+    result.meta.rows          = solver.GetN();
+    result.meta.cols          = result.meta.nev;
+    result.meta.counter       = matrix.counter;
+    result.meta.form          = config.form.value();
+    result.meta.type          = config.type.value();
+    result.meta.time_total    = t_sol->get_last_interval();
+    if constexpr(has_t_multAx_v<MatrixType>)
+        result.meta.time_matprod  = matrix.t_multAx->get_measured_time();
+
+    /* clang-format off */
+    eig::log->trace("- {:<30} = {}"     ,"eigvals_found",  result.meta.eigvals_found);
+    eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
+    eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
+    eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
+    eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
+    eig::log->trace("- {:<30} = {}"     ,"nev",            result.meta.nev);
+    eig::log->trace("- {:<30} = {}"     ,"nev_converged",  result.meta.nev_converged);
+    eig::log->trace("- {:<30} = {}"     ,"ncv_used",       result.meta.ncv_used);
+    eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
+    eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
+    eig::log->trace("- {:<30} = {}"     ,"counter",        result.meta.counter);
+    eig::log->trace("- {:<30} = {:.3f}s","time_total",     result.meta.time_total);
+    if constexpr(has_t_multAx_v<MatrixType>)
+        eig::log->trace("- {:<30} = {:.3f}s","time_matprod",           result.meta.time_matprod);
+    /* clang-format on */
+
+    if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
 }
 
 template class eig::arpack_solver<MatrixProductDense<real>>;
