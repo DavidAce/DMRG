@@ -90,31 +90,38 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
 
     // Get the standard deviations from i to end
     // Just make sure to always include more than w elements
-    std::vector<double> Y_std, Y_ste;
+    std::vector<double> Y_std, Y_ste, Y_slp;
     Y_std.reserve(Y_log.size());
+    Y_ste.reserve(Y_log.size());
+    Y_slp.reserve(Y_log.size());
     long w = 2;
     for(size_t i = 0; i < Y_log.size(); i++) {
         size_t min_idx = std::min(i, Y_log.size() - w);
         min_idx        = std::max(min_idx, 0ul);
         Y_std.push_back(stat::stdev(Y_log, min_idx));
         Y_ste.push_back(stat::sterr(Y_log, min_idx));
+        auto [slp,res] = stat::slope(Y_log, min_idx);
+        Y_slp.push_back(std::abs(slp)*100);
     }
 
-    size_t idx = 0;
+    size_t saturated_from_idx = 0;
     for(auto &&[i, s] : iter::enumerate(Y_ste)) {
-        idx = i;
-        if(s < sensitivity) break;
+        saturated_from_idx = i;
+        if(s < sensitivity and Y_slp[i] < 1e-2) break;
     }
+
+
 
     report.has_computed    = true;
-    report.saturated_point = idx;
-    report.saturated_count = Y_vec.size() - idx - 1;
+    report.saturated_point = saturated_from_idx;
+    report.saturated_count = Y_vec.size() - saturated_from_idx - 1;
     report.has_saturated   = report.saturated_count > 0;
-    report.Y_avg           = stat::mean(Y_vec, idx);
+    report.Y_avg           = stat::mean(Y_vec, saturated_from_idx);
     report.Y_vec           = Y_vec;
     report.Y_log           = Y_log;
     report.Y_std           = Y_std;
     report.Y_ste           = Y_ste;
+    report.Y_slp           = Y_slp;
     return report;
 }
 
