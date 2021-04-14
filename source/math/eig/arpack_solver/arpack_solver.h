@@ -25,10 +25,10 @@ namespace eig {
 
         public:
         using Scalar = typename MatrixType::Scalar;
-        class_tic_toc t_sol;
-        class_tic_toc t_get;
-        class_tic_toc t_sub;
-        class_tic_toc t_all;
+        std::unique_ptr<class_tic_toc> t_sol;
+        std::unique_ptr<class_tic_toc> t_get;
+        std::unique_ptr<class_tic_toc> t_sub;
+        std::unique_ptr<class_tic_toc> t_all;
 
         void eigs();
         template<typename Derived>
