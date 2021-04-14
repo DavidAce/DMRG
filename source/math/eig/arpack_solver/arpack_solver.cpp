@@ -7,6 +7,7 @@
 #include "matrix_product_hamiltonian.h"
 #include "matrix_product_sparse.h"
 #include <general/nmspc_sfinae.h>
+#include <general/class_tic_toc.h>
 
 #if defined(_MKL_LAPACK_H_)
     #error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
@@ -49,10 +50,11 @@ using namespace eig;
 template<typename MatrixType>
 eig::arpack_solver<MatrixType>::arpack_solver(MatrixType &matrix_, eig::settings &config_, eig::solution &result_, Scalar *residual_)
     : matrix(matrix_), config(config_), result(result_), residual(residual_) {
-    t_sol.set_properties(profile_arpack, 10, "Time iterating  ");
-    t_get.set_properties(profile_arpack, 10, "Time getting result");
-    t_sub.set_properties(profile_arpack, 10, "Time subtracting");
-    t_all.set_properties(profile_arpack, 10, "Time doing all  ");
+
+    t_sol = std::make_unique<class_tic_toc>(true, 10, "Time iterating  ");
+    t_get = std::make_unique<class_tic_toc>(true, 10, "Time getting result");
+    t_sub = std::make_unique<class_tic_toc>(true, 10, "Time subtracting");
+    t_all = std::make_unique<class_tic_toc>(true, 10, "Time doing all  ");
     nev_internal = std::min(matrix.rows() / 2, static_cast<int>(config.eigMaxNev.value()));
     ncv_internal = static_cast<int>(std::max(config.eigMaxNcv.value(), 2 + config.eigMaxNev.value()));
     ncv_internal = std::min(ncv_internal, matrix.rows());
@@ -194,6 +196,7 @@ void eig::arpack_solver<MatrixType>::eigs_comp() {
 template<typename MatrixType>
 template<typename Derived>
 void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_type nev) {
+    auto t_sol_token = t_sol->tic_token();
     if(config.compute_eigvecs) {
         eig::log->trace("Finding eigenvectors");
         solver.FindEigenvectors();

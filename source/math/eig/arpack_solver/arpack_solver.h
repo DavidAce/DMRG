@@ -8,10 +8,9 @@
 #include "math/eig/sfinae.h"
 #include "math/eig/solution.h"
 #include <complex>
-#include <general/class_tic_toc.h>
 #include <vector>
 
-#define profile_arpack 0
+class class_tic_toc;
 
 namespace eig {
     template<typename MatrixType>
