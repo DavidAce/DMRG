@@ -61,6 +61,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             ceres::Solve(options, problem, optimized_mps.get_vector_cplx_as_2xreal().data(), &summary);
             // Copy the results from the functor
             optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_delta_f(functor->get_delta_f());
+            optimized_mps.set_grad_norm(functor->get_grad_max_norm());
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
@@ -81,6 +83,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             ceres::Solve(options, problem, initial_state_real.data(), &summary);
             // Copy the results from the functor
             optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_delta_f(functor->get_delta_f());
+            optimized_mps.set_grad_norm(functor->get_grad_max_norm());
             optimized_mps.set_tensor_real(initial_state_real.data(), initial_mps.get_tensor().dimensions());
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
