@@ -5,7 +5,6 @@
 #pragma once
 #include "math/eig/enums.h"
 #include <array>
-#include <general/class_tic_toc.h>
 #include <vector>
 
 class class_tic_toc;
@@ -14,7 +13,7 @@ template<class Scalar_>
 class MatrixProductHamiltonian {
     public:
     using Scalar                                   = Scalar_;
-    constexpr static bool         can_shift_invert = false;
+    constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
     constexpr static eig::Storage storage          = eig::Storage::TENSOR;
 
@@ -34,19 +33,22 @@ class MatrixProductHamiltonian {
     // Shift and shift-invert mode stuff
     std::complex<double> sigma      = 0.0;   // The real part of the shift
     bool                 readyShift = false; // Flag to make sure the shift has occurred
+    bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
 
     public:
     MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
                              const Scalar_ *     envR_,      /*!< The right block tensor.  */
                              const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
-                             std::array<long, 3> shape_mps_, /*!< An array containing the shapes of theta  */
-                             std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
+                             std::array<long, 3> shape_mps_, /*!< An array containing the dimensions of the multisite mps  */
+                             std::array<long, 4> shape_mpo_  /*!< An array containing the dimensions of the multisite mpo  */
     );
 
     // Functions used in in Arpack++ solver
     [[nodiscard]] int rows() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
     [[nodiscard]] int cols() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
+    void FactorOP();                                      //   Would normally factor (A-sigma*I) into PLU --> here it does nothing
+    void MultOPv(Scalar_ *theta_in_, Scalar_ *theta_out); //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultAx(Scalar_ *theta_in_, Scalar_ *theta_out_); //   Computes the matrix-vector multiplication x_out <- A*x_in.
 
     // Various utility functions

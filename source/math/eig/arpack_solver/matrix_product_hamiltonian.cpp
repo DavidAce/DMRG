@@ -21,10 +21,48 @@ MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     
     t_multAx   = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
 }
 
+
+
+template<typename Scalar>
+void MatrixProductHamiltonian<Scalar>::FactorOP()
+/* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
+{
+    if(readyFactorOp) return; // happens only once
+    if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
+    t_factorOP->tic();
+    readyFactorOp = true;
+    t_factorOP->toc();
+}
+
+
 template<typename T>
 void MatrixProductHamiltonian<T>::MultAx(T *mps_in_, T *mps_out_) {
     auto token = t_multAx->tic_token();
     tools::common::contraction::matrix_vector_product(mps_out_, mps_in_, shape_mps, mpo, shape_mpo, envL, shape_envL, envR, shape_envR);
+    counter++;
+}
+
+
+
+
+
+template<typename T>
+void MatrixProductHamiltonian<T>::MultOPv(T *mps_in_, T *mps_out_) {
+    t_multOPv->tic();
+    switch(side) {
+        case eig::Side::R: {
+            tools::common::contraction::matrix_inverse_vector_product(mps_out_, mps_in_, shape_mps, mpo, shape_mpo, envL, shape_envL, envR, shape_envR);
+            break;
+        }
+        case eig::Side::L: {
+            throw std::runtime_error("Left sided matrix-free MultOPv has not been implemented");
+            break;
+        }
+        case eig::Side::LR: {
+            throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+        }
+    }
+    t_multOPv->toc();
     counter++;
 }
 
@@ -85,11 +123,6 @@ const eig::Form &MatrixProductHamiltonian<Scalar>::get_form() const {
 template<typename Scalar>
 const eig::Side &MatrixProductHamiltonian<Scalar>::get_side() const {
     return side;
-}
-
-template<typename Scalar>
-void MatrixProductHamiltonian<Scalar>::init_profiling() {
-    t_multAx = std::make_unique<class_tic_toc>(profile_matrix_product_hamiltonian, 5, "Time MultAx");
 }
 
 // Explicit instantiations
