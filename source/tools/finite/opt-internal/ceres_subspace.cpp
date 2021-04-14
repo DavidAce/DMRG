@@ -143,7 +143,8 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
                 std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", optimized_mps.get_name(), "matrix check");
                 t_dbg.toc();
                 internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_vector.size(), ene_init_san, var_init_san, overlap_sbsp,
-                                                  subspace_vector.norm(), 1, 1,
+                                                  subspace_vector.norm(), std::numeric_limits<double>::quiet_NaN(),
+                                                  std::numeric_limits<double>::quiet_NaN(), 1, 1,
                                                   tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
             }
             if(tools::log->level() == spdlog::level::trace) {
@@ -156,7 +157,10 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
                 double           overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
                 std::string      description    = fmt::format("{:<8} {:<16} {}", "Subspace", initial_mps.get_name(), "fullspace check");
                 t_dbg.toc();
-                internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_vector.size(), energy_0, variance_0, overlap_0, theta_0.norm(), 1, 1,
+                internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_vector.size(), energy_0, variance_0, overlap_0, theta_0.norm(),
+                                                  std::numeric_limits<double>::quiet_NaN(),
+                                                  std::numeric_limits<double>::quiet_NaN(),
+                                                  1, 1,
                                                   tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
             }
         }
@@ -494,6 +498,8 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                     double           var_init_san        = std::real(var) / static_cast<double>(state.get_length());
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "matrix check");
                     internal::reports::bfgs_add_entry(description, subspace_vector.size(), subspace_size, ene_init_san, var_init_san, overlap_sbsp,
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      std::numeric_limits<double>::quiet_NaN(),
                                                       subspace_vector.norm(), 1, 1,
                                                       tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
                 }
@@ -505,7 +511,10 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                     double           variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                     double           overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
                     std::string description = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");
-                    internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_size, energy_0, variance_0, overlap_0, theta_0.norm(), 1, 1,
+                    internal::reports::bfgs_add_entry(description, theta_0.size(), subspace_size, energy_0, variance_0, overlap_0, theta_0.norm(),
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      1, 1,
                                                       tools::common::profile::prof[AlgorithmType::xDMRG]["t_dbg"]->get_last_interval());
                 }
             }

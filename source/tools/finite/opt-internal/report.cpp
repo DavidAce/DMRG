@@ -8,8 +8,8 @@
 void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
-    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
-    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
+    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<8} {:<8} {:<18} {:<18}";
+    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<18.3f} {:<18.3f}";
     tools::log->debug(format_hdr.c_str(),
                       "Optimization report",
                       "size",
@@ -20,13 +20,21 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
                       "norm",
                       "iter",
                       "counter",
+                      "|Δf|",
+                      "|∇f|∞",
                       "Elapsed time [ms]",
                       "Time per count [ms]");
 
     for(auto &entry : bfgs_log){
         tools::log->debug(format_num.c_str(),
-        entry.description,
-        entry.size,entry.space,entry.energy,std::log10(entry.variance),entry.overlap,entry.norm,entry.iter,entry.counter,entry.time*1000,entry.time*1000.0/std::max(1.0,static_cast<double>(entry.counter)));
+        entry.description, entry.size,
+        entry.space, entry.energy,
+        std::log10(entry.variance),
+        entry.overlap,entry.norm,
+        entry.iter, entry.counter,
+        entry.delta_f, entry.grad_max_norm,
+        entry.time*1000,
+        entry.time*1000.0/std::max(1.0,static_cast<double>(entry.counter)));
     }
     bfgs_log.clear();
 }
@@ -70,10 +78,10 @@ void tools::finite::opt::internal::reports::print_time_report(){
     std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
     std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
     tools::log->trace(format_hdr.c_str(),
-                      "vH2v",
-                      "vHv",
-                      "vH2",
-                      "vH",
+                      "<ψ|H²|ψ>",
+                      "<ψ|H|ψ>",
+                      "H²|ψ>",
+                      "H|ψ>",
                       "sum",
                       "step",
                       "l-bfgs");
@@ -97,16 +105,17 @@ void tools::finite::opt::internal::reports::print_time_report(){
 
 
 void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & description, long size,long space, double energy, double variance,
-                    double overlap, double norm, size_t iter, size_t counter, double time){
+                    double overlap, double norm, double delta_f, double grad_norm, size_t iter, size_t counter, double time){
     if (tools::log->level() > spdlog::level::debug) return;
-    bfgs_log.push_back({description, size,space, energy, variance, overlap, norm, iter, counter, time});
+    bfgs_log.push_back({description, size,space, energy, variance, overlap, norm,delta_f, grad_norm, iter, counter, time});
 }
-void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_mps & tensor, std::optional<long> space){
+void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string & mode,const std::string & tag, const opt_mps & mps, std::optional<long> space){
     if (tools::log->level() > spdlog::level::debug) return;
-    if(not space) space = tensor.get_tensor().size();
-    std::string description = fmt::format("{:<8} {:<16} {}",mode,tensor.get_name(),tag);
-    bfgs_log.push_back({description, tensor.get_tensor().size(),space.value(),tensor.get_energy_per_site(), tensor.get_variance(), tensor.get_overlap(), tensor.get_norm(),
-                        tensor.get_iter(), tensor.get_counter(), tensor.get_time()});
+    if(not space) space = mps.get_tensor().size();
+    std::string description = fmt::format("{:<8} {:<16} {}",mode,mps.get_name(),tag);
+    bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(),space.value(),mps.get_energy_per_site(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
+                        mps.get_delta_f(), mps.get_grad_norm(),
+                        mps.get_iter(), mps.get_counter(), mps.get_time()});
 }
 
 void tools::finite::opt::internal::reports::time_add_dir_entry(){
