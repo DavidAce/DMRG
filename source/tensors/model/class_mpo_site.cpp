@@ -14,7 +14,7 @@ using Scalar = std::complex<double>;
 
 class_mpo_site::class_mpo_site(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
-Eigen::Tensor<Scalar, 4> class_mpo_site::get_uncompressed_mpo_squared() const {
+Eigen::Tensor<Scalar, 4> class_mpo_site::get_non_compressed_mpo_squared() const {
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
@@ -24,7 +24,7 @@ Eigen::Tensor<Scalar, 4> class_mpo_site::get_uncompressed_mpo_squared() const {
 }
 
 void class_mpo_site::build_mpo_squared() {
-    mpo_squared  = get_uncompressed_mpo_squared();
+    mpo_squared  = get_non_compressed_mpo_squared();
     unique_id_sq = std::nullopt;
     if(Textra::hasNaN(mpo_squared.value())) {
         print_parameter_names();
@@ -67,14 +67,12 @@ Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO2() {
 Eigen::Tensor<Scalar, 4> class_mpo_site::MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const {
     if(nbody_terms.empty()) return MPO2();
     auto mpo1 = MPO_nbody_view(nbody_terms);
-    auto dim0 = mpo1.dimension(0)*mpo1.dimension(0);
-    auto dim1 = mpo1.dimension(1)*mpo1.dimension(1);
+    auto dim0 = mpo1.dimension(0) * mpo1.dimension(0);
+    auto dim1 = mpo1.dimension(1) * mpo1.dimension(1);
     auto dim2 = mpo1.dimension(2);
     auto dim3 = mpo1.dimension(3);
-    return mpo1.contract(mpo1, Textra::idx({3},{2})).shuffle(Textra::array6{0,3,1,4,2,5}).reshape(Textra::array4{dim0,dim1,dim2,dim3});
+    return mpo1.contract(mpo1, Textra::idx({3}, {2})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
 }
-
-
 
 bool class_mpo_site::is_real() const { return Textra::isReal(MPO(), "MPO"); }
 
@@ -126,6 +124,23 @@ size_t class_mpo_site::get_position() const {
 bool class_mpo_site::is_damped() const { return alpha != 0.0 or beta != 0.0; }
 
 bool class_mpo_site::is_reduced() const { return e_reduced != 0.0; }
+
+bool class_mpo_site::is_compressed_mpo_squared() const {
+    // When H² = mpo*mpo is compressed, we typically find that the virtual bonds
+    // have become smaller than they would otherwise. We can simply check that if they are smaller.
+    /*           2
+     *           |
+     *      0---H²---1
+     *           |
+     *           3
+     */
+
+    const auto &mpo         = MPO();
+    const auto &mpo_sq      = MPO2();
+    const auto  bond_mpo    = std::min(mpo.dimension(0), mpo.dimension(1));
+    const auto  bond_mpo_sq = std::min(mpo_sq.dimension(0), mpo_sq.dimension(1));
+    return bond_mpo_sq < bond_mpo * bond_mpo;
+}
 
 double class_mpo_site::get_reduced_energy() const { return e_reduced; }
 
