@@ -40,5 +40,10 @@ double ceres_base_functor::get_variance_per_site() const { return variance_per_s
 size_t ceres_base_functor::get_count() const { return counter; }
 double ceres_base_functor::get_norm() const { return norm; }
 double ceres_base_functor::get_norm_offset() const { return norm_offset; }
+double ceres_base_functor::get_delta_f() const { return delta_f; }
+double ceres_base_functor::get_grad_max_norm() const { return grad_max_norm; }
 long   ceres_base_functor::get_ops() const { return ops; }
 int    ceres_base_functor::NumParameters() const { return num_parameters; }
+
+void ceres_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_;}
+void ceres_base_functor::set_grad_max_norm(double grad_max_norm_) const { grad_max_norm = grad_max_norm_;}

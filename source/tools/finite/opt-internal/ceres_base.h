@@ -31,6 +31,8 @@ namespace tools::finite::opt::internal {
         mutable double energy_dens_target;
         mutable double energy_dens_window;
         mutable double energy_offset;
+        mutable double delta_f;
+        mutable double grad_max_norm;
         mutable double norm_offset;
         mutable double norm;
         mutable size_t counter = 0;
@@ -50,8 +52,13 @@ namespace tools::finite::opt::internal {
         size_t get_count() const;
         double get_norm() const;
         double get_norm_offset() const;
+        double get_delta_f() const;
+        double get_grad_max_norm() const;
         long   get_ops() const;
         int    NumParameters() const final;
+
+        void set_delta_f(double delta_f_) const;
+        void set_grad_max_norm(double grad_max_norm_) const;
 
         std::unique_ptr<class_tic_toc> t_step;
         std::unique_ptr<class_tic_toc> t_vH2;
