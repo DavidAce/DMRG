@@ -48,7 +48,7 @@ class class_mpo_site {
     void                                          build_mpo_squared();
     void                                          set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq);
     [[nodiscard]] bool                            has_mpo_squared() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4>        get_uncompressed_mpo_squared() const;
+    [[nodiscard]] Eigen::Tensor<Scalar, 4>        get_non_compressed_mpo_squared() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO2() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 4> &      MPO2();
@@ -60,6 +60,7 @@ class class_mpo_site {
     [[nodiscard]] bool                            has_nan() const;
     [[nodiscard]] bool                            is_damped() const;
     [[nodiscard]] bool                            is_reduced() const;
+    [[nodiscard]] bool                            is_compressed_mpo_squared() const;
     [[nodiscard]] double                          get_reduced_energy() const;
 
     [[nodiscard]] virtual std::unique_ptr<class_mpo_site> clone() const                                                = 0;
