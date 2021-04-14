@@ -90,8 +90,8 @@ void eig::arpack_solver<MatrixType>::eigs() {
 template<typename MatrixType>
 void eig::arpack_solver<MatrixType>::eigs_sym() {
     if constexpr(std::is_same<Scalar, double>::value) {
-        assert(config.form == Form::SYMM and "ERROR: config not SYMMETRIC");
-        assert(matrix.get_form() == Form::SYMM and "ERROR: matrix not SYMMETRIC");
+        if(config.form != Form::SYMM) throw std::runtime_error("ERROR: config not SYMMETRIC");
+        if(matrix.get_form() != Form::SYMM) throw std::runtime_error("ERROR: matrix not SYMMETRIC");
         ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
                                                config.eigThreshold.value(), static_cast<int>(config.eigMaxIter.value()), residual);
 
@@ -126,8 +126,8 @@ void eig::arpack_solver<MatrixType>::eigs_sym() {
 template<typename MatrixType>
 void eig::arpack_solver<MatrixType>::eigs_nsym() {
     if constexpr(std::is_same<Scalar, double>::value) {
-        assert(config.form == Form::NSYM and "ERROR: config not NSYM");
-        assert(matrix.get_form() == Form::NSYM and "ERROR: matrix not NSYM");
+        if(config.form != Form::NSYM) throw std::runtime_error("ERROR: config not NSYM");
+        if(matrix.get_form() != Form::NSYM) throw std::runtime_error("ERROR: matrix not NSYM");
         if(nev_internal == 1) { nev_internal++; }
 
         ARNonSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
