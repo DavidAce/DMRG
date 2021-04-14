@@ -76,47 +76,54 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 template<typename Scalar>
 bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     t_step->tic();
-    Scalar ene, ene2, var;
-    Scalar vHv, vH2v;
+    Scalar var;
+    Scalar nHn, nH2n;
     double vv, log10var;
     int    vecSize = NumParameters();
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { vecSize = NumParameters() / 2; }
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
-    vv   = v.squaredNorm();
-    norm = std::sqrt(vv);
 
     if constexpr (settings::debug){
         if(v.hasNaN()) throw std::runtime_error(fmt::format("ceres_direct_functor::Evaluate: v has nan's at counter {}\n{}",counter,v));
     }
 
-    get_H2v(v);
-    get_Hv(v);
+    VectorType n = v.normalized();
+    vv   = v.squaredNorm();
+    norm = std::sqrt(vv);
 
-    auto Hv  = Eigen::Map<VectorType>(Hv_tensor.data(), Hv_tensor.size());
-    auto H2v = Eigen::Map<VectorType>(H2v_tensor.data(), H2v_tensor.size());
+    get_H2n(n);
+    get_Hn(n);
+
+    auto Hn  = Eigen::Map<VectorType>(Hv_tensor.data(), Hv_tensor.size());
+    auto H2n = Eigen::Map<VectorType>(H2v_tensor.data(), H2v_tensor.size());
 
     print_path = false;
 
     t_vHv->tic();
-    vHv = v.dot(Hv);
+    nHn = n.dot(Hn);
     t_vHv->toc();
     t_vH2v->tic();
-    vH2v = v.dot(H2v);
+    nH2n = n.dot(H2n);
     t_vH2v->toc();
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
-    ene  = vHv / vv;
-    ene2 = vH2v / vv;
-    if(std::real(ene2) < 0.0) tools::log->debug("Counter = {}. ene2 is negative:  {:.16f} + i {:.16f}", counter, std::real(ene2), std::imag(ene2));
-    ene2 = std::real(ene2) < 0.0 ? std::abs(ene2) : std::real(ene2);
-    ene2 = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
+    if(std::real(nH2n) < 0.0) tools::log->debug("Counter = {}. nH2n is negative:  {:.16f} + i {:.16f}", counter, std::real(nH2n), std::imag(nH2n));
+    nH2n = std::real(nH2n) < 0.0 ? std::abs(nH2n) : std::real(nH2n);
+    nH2n = std::real(nH2n) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(nH2n);
 
-    var = ene2 - ene * ene;
+    var = nH2n - nHn * nHn;
     if(std::real(var) < 0.0) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}", counter, std::real(var), std::imag(var));
+    if(std::real(var) < 0.0) throw std::runtime_error(fmt::format("Counter = {}. var  is negative:  {:.16f} + i {:.16f} | nH2n {:.16f} + i {:.16f} | nHn {:.16f} + i {:.16f} ",
+                                                                  counter,
+                                                                  std::real(var), std::imag(var),
+                                                                  std::real(nH2n), std::imag(nH2n),
+                                                                  std::real(nHn), std::imag(nHn)
+
+        ));
     var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
-    energy            = std::real(ene + energy_reduced);
+    energy            = std::real(nHn + energy_reduced);
     energy_per_site   = energy / static_cast<double>(length);
     variance          = std::abs(var);
     variance_per_site = variance / static_cast<double>(length);
@@ -128,9 +135,9 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
-        auto vv_1  = std::pow(vv, -1);
+        auto one_over_norm  = 1.0/norm;
         auto var_1 = (1.0 / (epsilon + var) / std::log(10));
-        grad       = var_1 * vv_1 * (H2v - 2.0 * ene * Hv - (ene2 - 2.0 * ene * ene) * v);
+        grad       = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
     }
 
@@ -140,10 +147,9 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         tools::log->warn("counter         = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
-        tools::log->warn("vH2v            = {:.16f} + i{:.16f}", std::real(vH2v), std::imag(vH2v));
-        tools::log->warn("vHv             = {:.16f} + i{:.16f}", std::real(vHv), std::imag(vHv));
+        tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
+        tools::log->warn("nHn             = {:.16f} + i{:.16f}", std::real(nHn), std::imag(nHn));
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
-        tools::log->warn("ene             = {:.16f} + i{:.16f}", std::real(ene), std::imag(ene));
         tools::log->warn("energy offset   = {:.16f}", energy_offset);
         tools::log->warn("energy reduced  = {:.16f}", energy_reduced);
         tools::log->warn("norm            = {:.16f}", norm);
@@ -157,7 +163,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 }
 
 template<typename Scalar>
-void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
+void ceres_direct_functor<Scalar>::get_H2n(const VectorType &v) const {
     t_vH2->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2v_tensor, v_tensor, mpo2, env2L, env2R);
@@ -216,7 +222,7 @@ void ceres_direct_functor<Scalar>::get_H2v(const VectorType &v) const {
 }
 
 template<typename Scalar>
-void ceres_direct_functor<Scalar>::get_Hv(const VectorType &v) const {
+void ceres_direct_functor<Scalar>::get_Hn(const VectorType &v) const {
     t_vH->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);

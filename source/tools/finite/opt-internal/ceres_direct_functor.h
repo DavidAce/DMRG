@@ -19,8 +19,8 @@ namespace tools::finite::opt::internal {
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
         Eigen::Tensor<Scalar, 4>         mpo, mpo2;
         mutable bool                     print_path = true;
-        void                             get_Hv(const VectorType &v) const;
-        void                             get_H2v(const VectorType &v) const;
+        void                             get_Hn(const VectorType &v) const;
+        void                             get_H2n(const VectorType &v) const;
 
         public:
         explicit ceres_direct_functor(const class_tensors_finite &tensors, const class_algorithm_status &status);
