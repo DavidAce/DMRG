@@ -11,6 +11,7 @@ namespace tools::finite::opt::internal::reports {
         std::string description;
         long        size, space;
         double      energy, variance, overlap, norm;
+        double      delta_f,grad_max_norm;
         size_t      iter, counter;
         double      time;
     };
@@ -30,9 +31,9 @@ namespace tools::finite::opt::internal::reports {
     extern void print_bfgs_report();
     extern void print_time_report();
     extern void print_eigs_report();
-    extern void bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap, double norm, size_t iter,
-                               size_t counter, double time);
-    extern void bfgs_add_entry(const std::string &mode, const std::string &tag, const opt_mps &tensor, std::optional<long> space = std::nullopt);
+    extern void bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap, double norm,
+                               double delta_f, double grad_norm, size_t iter, size_t counter, double time);
+    extern void bfgs_add_entry(const std::string &mode, const std::string &tag, const opt_mps &mps, std::optional<long> space = std::nullopt);
     extern void time_add_dir_entry();
     extern void time_add_sub_entry();
     extern void eigs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, size_t steps);
