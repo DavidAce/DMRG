@@ -27,8 +27,12 @@
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Test all svd decompositions") {
         using reciter = h5pp::fs::recursive_directory_iterator;
-        svd::solver svd(0);
-        svd.setThreshold(1e-8);
+        svd::settings svd_settings;
+        svd_settings.threshold = 1e-8;
+        svd_settings.loglevel  = 0;
+        svd_settings.use_lapacke = false;
+        svd::solver svd(svd_settings);
+
         [[maybe_unused]] Eigen::MatrixXcd U1,V1,U2,V2;
         Eigen::VectorXcd S1,S2;
         for(auto &item : reciter(std::string(TEST_MATRIX_DIR))) {
