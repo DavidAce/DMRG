@@ -43,11 +43,13 @@ class class_algorithm_base {
     virtual void   print_status_update()                                                                                                         = 0;
     virtual void   print_status_full()                                                                                                           = 0;
     virtual void   clear_convergence_status()                                                                                                    = 0;
+    virtual void   update_variance_max_digits(std::optional<double> energy = std::nullopt)                                                       = 0;
     virtual void   update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                                                  = 0;
 
     // common functions
     void copy_from_tmp(StorageReason storage_reason = StorageReason::SAVEPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
     void init_bond_dimension_limits();
+    void update_variance_convergence_threshold();
     void print_profiling_lap();
 
     protected:
