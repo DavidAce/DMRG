@@ -8,7 +8,7 @@
 #include <general/class_tic_toc.h>
 #include <vector>
 
-#define profile_matrix_product_hamiltonian 0
+class class_tic_toc;
 
 template<class Scalar_>
 class MatrixProductHamiltonian {
@@ -58,6 +58,7 @@ class MatrixProductHamiltonian {
     [[nodiscard]] const eig::Form &get_form() const;
     [[nodiscard]] const eig::Side &get_side() const;
     // Profiling
-    void                           init_profiling();
+    std::unique_ptr<class_tic_toc> t_factorOP;
+    std::unique_ptr<class_tic_toc> t_multOPv;
     std::unique_ptr<class_tic_toc> t_multAx;
 };

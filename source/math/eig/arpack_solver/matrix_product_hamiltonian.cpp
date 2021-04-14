@@ -1,6 +1,7 @@
 #include "matrix_product_hamiltonian.h"
 #include <tools/common/contraction.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <general/class_tic_toc.h>
 
 template<typename Scalar_>
 MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
@@ -15,15 +16,16 @@ MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     
     if(envR == nullptr) throw std::runtime_error("Rblock is a nullptr!");
     if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
     mps_size = shape_mps[0] * shape_mps[1] * shape_mps[2];
-    init_profiling();
+    t_factorOP = std::make_unique<class_tic_toc>(true, 5, "Time FactorOp");
+    t_multOPv  = std::make_unique<class_tic_toc>(true, 5, "Time MultOpv");
+    t_multAx   = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
 }
 
 template<typename T>
 void MatrixProductHamiltonian<T>::MultAx(T *mps_in_, T *mps_out_) {
-    t_multAx->tic();
+    auto token = t_multAx->tic_token();
     tools::common::contraction::matrix_vector_product(mps_out_, mps_in_, shape_mps, mpo, shape_mpo, envL, shape_envL, envR, shape_envR);
     counter++;
-    t_multAx->toc();
 }
 
 template<typename Scalar>
@@ -33,6 +35,9 @@ template<typename T>
 void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     if(readyShift) return; // This only happens once!!
     sigma = sigma_;
+#pragma message "perhaps the mpo can be compressed after setting the shift here: simply do the svd and push the remainder into the environment, once right and once left"
+#pragma message "perhaps the one can use conjugate gradient (matrix free iterative solver in eigen) to apply M^-1 x on each arpack iteration"
+
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
     // determined by the last 2 indices kl.
