@@ -20,7 +20,7 @@ enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
-enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT, POWER_ENERGY, POWER_VARIANCE };
+enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT, KRYLOV_ENERGY, KRYLOV_VARIANCE };
 enum class OptWhen {
     ALWAYS,
     NEVER,
@@ -294,8 +294,8 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == OptSpace::SUBSPACE_ONLY)                            return "SUBSPACE_ONLY";
         if(item == OptSpace::SUBSPACE_AND_DIRECT)                      return "SUBSPACE_AND_DIRECT";
         if(item == OptSpace::DIRECT)                                   return "DIRECT";
-        if(item == OptSpace::POWER_ENERGY)                             return "POWER_ENERGY";
-        if(item == OptSpace::POWER_VARIANCE)                           return "POWER_VARIANCE";
+        if(item == OptSpace::KRYLOV_ENERGY)                            return "KRYLOV_ENERGY";
+        if(item == OptSpace::KRYLOV_VARIANCE)                          return "KRYLOV_VARIANCE";
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
@@ -310,8 +310,30 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == OptInit::CURRENT_STATE)                             return "CURRENT_STATE";
         if(item == OptInit::LAST_RESULT)                               return "LAST_RESULT";
     }
+    if constexpr(std::is_same_v<T,OptExit>){
+        if(item == OptExit::SUCCESS)                                   return "SUCCESS";
+        if(item == OptExit::FAIL_GRADIENT)                             return "FAIL_GRADIENT";
+        if(item == OptExit::FAIL_NOCHANGE)                             return "FAIL_NOCHANGE";
+        if(item == OptExit::FAIL_WORSENED)                             return "FAIL_WORSENED";
+    }
     throw std::runtime_error("Given invalid enum item");
 }
+
+template<typename T>
+std::string flag2str(const T &item) {
+    if constexpr(std::is_same_v<T,OptExit>){
+        std::vector<std::string> v;
+        if(has_flag(item,OptExit::FAIL_GRADIENT)) v.emplace_back("FAIL_GRADIENT");
+        if(has_flag(item,OptExit::FAIL_NOCHANGE)) v.emplace_back("FAIL_NOCHANGE");
+        if(has_flag(item,OptExit::FAIL_WORSENED)) v.emplace_back("FAIL_WORSENED");
+        if(v.empty()) return "SUCCESS";
+        else return  std::accumulate(std::begin(v), std::end(v), std::string(),
+                                   [](const std::string &ss, const std::string &s)
+                                   {return ss.empty() ? s : ss + "|" + s;});
+    }
+    throw std::runtime_error("Given invalid enum item");
+}
+
 
 template<typename T>
 constexpr auto str2enum(std::string_view item) {
@@ -494,8 +516,8 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "SUBSPACE_ONLY")                         return OptSpace::SUBSPACE_ONLY;
         if(item == "SUBSPACE_AND_DIRECT")                   return OptSpace::SUBSPACE_AND_DIRECT;
         if(item == "DIRECT")                                return OptSpace::DIRECT;
-        if(item == "POWER_ENERGY")                          return OptSpace::POWER_ENERGY;
-        if(item == "POWER_VARIANCE")                        return OptSpace::POWER_VARIANCE;
+        if(item == "KRYLOV_ENERGY")                         return OptSpace::KRYLOV_ENERGY;
+        if(item == "KRYLOV_VARIANCE")                       return OptSpace::KRYLOV_VARIANCE;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "ALWAYS")                                return OptWhen::ALWAYS;
@@ -509,6 +531,12 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T,OptInit>){
         if(item == "CURRENT_STATE")                         return OptInit::CURRENT_STATE;
         if(item == "LAST_RESULT")                           return OptInit::LAST_RESULT;
+    }
+    if constexpr(std::is_same_v<T,OptExit>){
+        if(item == "SUCCESS")                               return OptExit::SUCCESS;
+        if(item == "FAIL_GRADIENT")                         return OptExit::FAIL_GRADIENT;
+        if(item == "FAIL_NOCHANGE")                         return OptExit::FAIL_NOCHANGE;
+        if(item == "FAIL_WORSENED")                         return OptExit::FAIL_WORSENED;
     }
     throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
 }
