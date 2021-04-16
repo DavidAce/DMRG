@@ -6,8 +6,8 @@
 #include "matrix_product_dense.h"
 #include "matrix_product_hamiltonian.h"
 #include "matrix_product_sparse.h"
-#include <general/nmspc_sfinae.h>
 #include <general/class_tic_toc.h>
+#include <general/nmspc_sfinae.h>
 
 #if defined(_MKL_LAPACK_H_)
     #error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
@@ -114,6 +114,10 @@ void eig::arpack_solver<MatrixType>::eigs_sym() {
                     throw std::runtime_error("Tried to apply shift on an incompatible matrix");
             }
         }
+        if constexpr(MatrixType::can_compress){
+            if(config.compress and config.compress.value()) matrix.compress();
+        }
+
         find_solution(solver, config.eigMaxNev.value());
         copy_solution(solver);
 
@@ -151,6 +155,9 @@ void eig::arpack_solver<MatrixType>::eigs_nsym() {
                 } else
                     throw std::runtime_error("Tried to apply shift on an incompatible matrix");
             }
+        }
+        if constexpr(MatrixType::can_compress){
+            if(config.compress and config.compress.value()) matrix.compress();
         }
 
         find_solution(solver, config.eigMaxNev.value());
@@ -232,6 +239,11 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
     result.meta.time_total    = t_sol->get_last_interval();
+    if(config.ritz)
+        result.meta.ritz      = config.ritz.value();
+    if(config.sigma)
+        result.meta.sigma  = config.sigma.value();
+
     if constexpr(has_t_multAx_v<MatrixType>)
         result.meta.time_matprod  = matrix.t_multAx->get_measured_time();
 
@@ -240,13 +252,15 @@ void eig::arpack_solver<MatrixType>::find_solution(Derived &solver, eig::size_ty
     eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
     eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
     eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
+    eig::log->trace("- {:<30} = {}"     ,"counter",        result.meta.counter);
+    eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
+    eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
     eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
     eig::log->trace("- {:<30} = {}"     ,"nev",            result.meta.nev);
     eig::log->trace("- {:<30} = {}"     ,"nev_converged",  result.meta.nev_converged);
     eig::log->trace("- {:<30} = {}"     ,"ncv_used",       result.meta.ncv_used);
-    eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
-    eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
-    eig::log->trace("- {:<30} = {}"     ,"counter",        result.meta.counter);
+    eig::log->trace("- {:<30} = {}"     ,"ritz",           eig::RitzToString(result.meta.ritz));
+    eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
     eig::log->trace("- {:<30} = {:.3f}s","time_total",     result.meta.time_total);
     if constexpr(has_t_multAx_v<MatrixType>)
         eig::log->trace("- {:<30} = {:.3f}s","time_matprod",           result.meta.time_matprod);
