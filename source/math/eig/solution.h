@@ -34,18 +34,23 @@ namespace eig {
             eig::size_type rows           = 0;
             eig::size_type cols           = 0;
             eig::size_type iter           = 0;
-            eig::size_type nev            = 0; // Found eigenvectors. aka cols
-            eig::size_type nev_converged  = 0;
+            eig::size_type nev            = 0; // Requested eigenvectors. aka cols
+            eig::size_type nev_converged  = 0; // Converged eigenvectors
             eig::size_type n              = 0; // Linear dimension of the input matrix to diagonalize, aka rows.
-            eig::size_type ncv_used       = 0;
+            eig::size_type ncv            = 0;
+            double         tol            = 0;
             int            counter        = 0;
+            double         time_total     = 0;
+            double         time_matprod   = 0;
+            double         time_prep      = 0;
             bool           eigvals_found  = false;
             bool           eigvecsR_found = false;
             bool           eigvecsL_found = false;
             Form           form;
             Type           type;
             //            Side  side;
-            Ritz ritz;
+            std::string    ritz;
+            std::complex<double> sigma = std::complex<double>(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
         };
 
         public:
