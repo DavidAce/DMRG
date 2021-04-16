@@ -75,7 +75,7 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
-    tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})...", side, get_position());
+    if constexpr (settings::debug) tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})...", side, get_position());
     unique_id     = std::nullopt;
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
@@ -146,7 +146,7 @@ void class_env_base::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eig
                                                       .contract(mps.conjugate(), Textra::idx({0, 3}, {2, 0}))
                                                       .shuffle(Textra::array3{0, 2, 1});
     }
-    tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})... OK", side, get_position());
+    if constexpr (settings::debug) tools::log->trace("class_env_base::build_block(otherblock,mps,mpo): side({}), pos({})... OK", side, get_position());
 }
 
 void class_env_base::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
