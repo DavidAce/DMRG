@@ -121,6 +121,14 @@ namespace sfinae {
     template<typename T>
     inline constexpr bool is_std_array_v = is_std_array<T>::value;
 
+    template<typename T, typename = std::void_t<>>
+    struct is_iterable : public std::false_type {};
+    template<typename T>
+    struct is_iterable<T, std::void_t<decltype(std::begin(std::declval<T>())), decltype(std::end(std::declval<T>()))>>
+        : public std::true_type {};
+    template<typename T>
+    inline constexpr bool is_iterable_v = is_iterable<T>::value;
+
     template<typename T>
     struct is_text {
         private:
