@@ -108,6 +108,63 @@ double opt_mps::get_time() const {
         return 0.0;
 }
 
+double opt_mps::get_delta_f() const {
+    if(delta_f)
+        return delta_f.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+double opt_mps::get_grad_norm() const {
+    if(grad_norm)
+        return grad_norm.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+double opt_mps::get_relchange() const {
+    if(relchange)
+        return relchange.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+long opt_mps::get_krylov_nev() const {
+    if(krylov_nev)
+        return krylov_nev.value();
+    else
+        return -1;
+}
+
+long opt_mps::get_krylov_ncv() const {
+    if(krylov_ncv)
+        return krylov_ncv.value();
+    else
+        return -1;
+}
+
+double opt_mps::get_krylov_tol() const {
+    if(krylov_tol)
+        return krylov_tol.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+double opt_mps::get_krylov_eigval() const {
+    if(krylov_eigval)
+        return krylov_eigval.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+std::string opt_mps::get_krylov_ritz() const {
+    if(krylov_ritz)
+        return krylov_ritz.value();
+    else
+        return "NO";
+}
+
+
 double opt_mps::get_overlap() const {
     if(overlap)
         return overlap.value();
@@ -145,6 +202,13 @@ OptSpace opt_mps::get_optspace() const {
 OptMode opt_mps::get_optmode() const {
     if(optMode)
         return optMode.value();
+    else
+        throw std::runtime_error("opt_mps: optMode not set");
+}
+
+OptExit opt_mps::get_optexit() const {
+    if(optExit)
+        return optExit.value();
     else
         throw std::runtime_error("opt_mps: optMode not set");
 }
@@ -192,6 +256,17 @@ void opt_mps::set_length(size_t length_) { length = length_; }
 void opt_mps::set_iter(size_t iter_) { iter = iter_; }
 void opt_mps::set_counter(size_t counter_) { counter = counter_; }
 void opt_mps::set_time(double time_) { time = time_; }
+void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
+void opt_mps::set_grad_norm(double grad_norm_) { grad_norm = grad_norm_; }
+void opt_mps::set_relchange(double relative_change_) { relchange = relative_change_; }
+void opt_mps::set_krylov_nev(long nev_) { krylov_nev = nev_; }
+void opt_mps::set_krylov_ncv(long ncv_) { krylov_ncv = ncv_; }
+void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
+void opt_mps::set_krylov_eigval(double krylov_eigval_) { krylov_eigval = krylov_eigval_; }
+void opt_mps::set_krylov_ritz(const std::string & krylov_ritz_) { krylov_ritz = krylov_ritz_; }
+
+
+
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data.
@@ -210,6 +285,7 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
 
 void opt_mps::set_optspace(OptSpace optSpace_) { optSpace = optSpace_; }
 void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
+void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 
 void opt_mps::validate_candidate() const {
     std::string error_msg;
