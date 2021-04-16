@@ -1,9 +1,9 @@
 #pragma once
 #include <complex>
-#include <optional>
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <config/enums.h>
+#include <optional>
 #include <tensors/state/class_mps_site.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt {
     class opt_mps {
@@ -12,34 +12,43 @@ namespace tools::finite::opt {
 
         private:
         // All of these values are supposed to be for the full system size
-        std::optional<std::string>            name      = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 3>> tensor    = std::nullopt;
-        std::optional<std::vector<size_t>>    sites     = std::nullopt;
-        std::optional<double>                 eigval    = std::nullopt;
-        std::optional<double>                 energy_r  = std::nullopt;
-        std::optional<double>                 energy    = std::nullopt;
-        std::optional<double>                 variance  = std::nullopt;
-        std::optional<double>                 overlap   = std::nullopt;
-        std::optional<double>                 alpha     = std::nullopt;
-        std::optional<double>                 norm      = std::nullopt;
-        std::optional<size_t>                 length    = std::nullopt;
-        std::optional<size_t>                 iter      = std::nullopt;
-        std::optional<size_t>                 counter   = std::nullopt;
-        std::optional<double>                 time      = std::nullopt;
-        std::optional<OptMode>                optMode   = std::nullopt;
-        std::optional<OptSpace>               optSpace  = std::nullopt;
+        std::optional<std::string>            name          = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 3>> tensor        = std::nullopt;
+        std::optional<std::vector<size_t>>    sites         = std::nullopt;
+        std::optional<double>                 eigval        = std::nullopt;
+        std::optional<double>                 energy_r      = std::nullopt;
+        std::optional<double>                 energy        = std::nullopt;
+        std::optional<double>                 variance      = std::nullopt;
+        std::optional<double>                 overlap       = std::nullopt;
+        std::optional<double>                 alpha         = std::nullopt;
+        std::optional<double>                 norm          = std::nullopt;
+        std::optional<size_t>                 length        = std::nullopt;
+        std::optional<size_t>                 iter          = std::nullopt;
+        std::optional<size_t>                 counter       = std::nullopt;
+        std::optional<double>                 time          = std::nullopt;
+        std::optional<double>                 delta_f       = std::nullopt;
+        std::optional<double>                 grad_norm     = std::nullopt;
+        std::optional<double>                 relchange     = std::nullopt;
+        std::optional<long>                   krylov_nev    = std::nullopt;
+        std::optional<long>                   krylov_ncv    = std::nullopt;
+        std::optional<double>                 krylov_tol    = std::nullopt;
+        std::optional<double>                 krylov_eigval = std::nullopt;
+        std::optional<std::string>            krylov_ritz   = std::nullopt;
+        std::optional<OptMode>                optMode       = std::nullopt;
+        std::optional<OptSpace>               optSpace      = std::nullopt;
+        std::optional<OptExit>                optExit       = std::nullopt;
 
         public:
-        bool is_basis_vector = false;
+        bool                        is_basis_vector = false;
         std::vector<class_mps_site> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
 
         opt_mps() = default;
         // Constructor used for candidates
         opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
-                  std::optional<double> variance_, double overlap_, size_t length);
+                std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
         opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
-                  double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
+                double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
         [[nodiscard]] const std::string &                get_name() const;
         [[nodiscard]] const Eigen::Tensor<cplx, 3> &     get_tensor() const;
@@ -60,8 +69,17 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                             get_iter() const;
         [[nodiscard]] size_t                             get_counter() const;
         [[nodiscard]] double                             get_time() const;
+        [[nodiscard]] double                             get_delta_f() const;
+        [[nodiscard]] double                             get_grad_norm() const;
+        [[nodiscard]] double                             get_relchange() const;
+        [[nodiscard]] long                               get_krylov_nev() const;
+        [[nodiscard]] long                               get_krylov_ncv() const;
+        [[nodiscard]] double                             get_krylov_tol() const;
+        [[nodiscard]] double                             get_krylov_eigval() const;
+        [[nodiscard]] std::string                        get_krylov_ritz() const;
         [[nodiscard]] OptSpace                           get_optspace() const;
         [[nodiscard]] OptMode                            get_optmode() const;
+        [[nodiscard]] OptExit                            get_optexit() const;
         void                                             clear();
         void                                             normalize();
         void                                             set_name(const std::string &name_);
@@ -80,10 +98,19 @@ namespace tools::finite::opt {
         void                                             set_iter(size_t iter_);
         void                                             set_counter(size_t counter_);
         void                                             set_time(double time_);
+        void                                             set_delta_f(double delta_f_);
+        void                                             set_grad_norm(double grad_norm_);
+        void                                             set_relchange(double relative_change_);
+        void                                             set_krylov_nev(long nev_);
+        void                                             set_krylov_ncv(long ncv_);
+        void                                             set_krylov_tol(double tol_);
+        void                                             set_krylov_eigval(double krylov_eigval_);
+        void                                             set_krylov_ritz(const std::string &ritz_);
         void                                             set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void                                             set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
         void                                             set_optspace(OptSpace optspace_);
         void                                             set_optmode(OptMode optmode_);
+        void                                             set_optexit(OptExit optexit_);
         void                                             validate_candidate() const;
         void                                             validate_result() const;
         bool                                             operator<(const opt_mps &rhs) const;
