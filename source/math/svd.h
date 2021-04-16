@@ -16,7 +16,6 @@ namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
     class solver {
         private:
-
         void copy_settings(const svd::settings &svd_settings);
 
         template<typename Scalar>
@@ -30,7 +29,7 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_eigen(const Scalar *mat_ptr, long rows, long cols,
-                                                                                            std::optional<long> rank_max = std::nullopt);
+                                                                                                  std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd(const Scalar *mat_ptr, long rows, long cols,
@@ -42,28 +41,26 @@ namespace svd {
             return do_svd(mat.derived().data(), mat.rows(), mat.cols());
         }
 
-
-
         public:
         solver();
-        solver(const svd::settings & svd_settings);
+        solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
-        double threshold    = 1e-12;
-        size_t switchsize   = 16;
+        double threshold   = 1e-12;
+        size_t switchsize  = 16;
         bool   use_lapacke = true;
-        bool   use_bdc = true;
+        bool   use_bdc     = true;
 
         static std::optional<long long> count;
-        double truncation_error = 0;
+        double                          truncation_error = 0;
 
         std::shared_ptr<class_tic_toc> t_wrk;
         std::shared_ptr<class_tic_toc> t_adj;
         std::shared_ptr<class_tic_toc> t_jac;
         std::shared_ptr<class_tic_toc> t_svd;
 
-        void   setLogLevel(size_t logLevel);
-        void   enableProfiling();
-        void   disableProfiling();
+        void setLogLevel(size_t logLevel);
+        void enableProfiling();
+        void disableProfiling();
 
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
@@ -284,11 +281,11 @@ namespace svd {
              *
              */
 
-            auto dim0    = mpo.dimension(2);
-            auto dim1    = mpo.dimension(3);
-            auto dim2    = mpo.dimension(0);
-            auto dim3    = mpo.dimension(1);
-            auto dim_ddm = dim0 * dim1 * dim2;
+            auto                     dim0      = mpo.dimension(2);
+            auto                     dim1      = mpo.dimension(3);
+            auto                     dim2      = mpo.dimension(0);
+            auto                     dim3      = mpo.dimension(1);
+            auto                     dim_ddm   = dim0 * dim1 * dim2;
             Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{2, 3, 0, 1}).reshape(Textra::array2{dim_ddm, dim3}).real();
             auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
