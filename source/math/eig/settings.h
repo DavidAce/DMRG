@@ -19,6 +19,7 @@ namespace eig {
         std::optional<Shinv>   shift_invert    = std::nullopt; // To find interior solutions. https://docs.scipy.org/doc/scipy/reference/tutorial/arpack.html
         std::optional<Vecs>    compute_eigvecs = std::nullopt;
         std::optional<Dephase> remove_phase    = std::nullopt;
+        std::optional<bool>    compress        = std::nullopt;
 
         void clear();
         // Sanity checks
