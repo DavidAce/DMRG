@@ -130,6 +130,7 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(chi_quench_steps > 0) chi_quench_steps--;
             if(tensors.position_is_outward_edge()) status.iter++;
+            tools::log->trace("Moving center position step {}", status.step);
             status.step += tensors.move_center_point(status.chi_lim);
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge so we can do convergence checks and so on
@@ -351,6 +352,22 @@ void class_algorithm_finite::try_projection() {
 
         has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, *tensors.state, CopyPolicy::OFF);
+    }
+}
+
+void class_algorithm_finite::try_full_expansion() {
+    if(not tensors.position_is_inward_edge()) return;
+    if(has_expanded) return;
+    bool expand_on_saturation = settings::strategy::expand_on_saturation > 0 and
+                                 status.algorithm_saturated_for > 0 and
+                                 num::mod(status.algorithm_saturated_for-1, settings::strategy::expand_on_saturation) == 0;
+    if(expand_on_saturation) {
+        auto variance_old = tools::finite::measure::energy_variance(tensors);
+        tools::log->info("Trying expansion to H|psi> | pos {}", tensors.get_position());
+        tensors.apply_hamiltonian_on_state(status.chi_lim);
+        auto variance_new = tools::finite::measure::energy_variance(tensors);
+        has_expanded = true;
+        tools::log->info("Expansion change: variance {:.6f} -> {:.6f}", std::log10(variance_old), std::log10(variance_new));
     }
 }
 
