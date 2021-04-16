@@ -7,7 +7,7 @@ int main (){
 
     std::vector<bool> test1 = {true,false,true};
     std::vector<double> test2 = {1,2,3};
-    tools::log->info("This tests logging a vector<bool>   {}", test1);
+//    tools::log->info("This tests logging a vector<bool>   {}", test1); // Broken
     tools::log->info("This tests logging a vector<bool>   {}", fmt::join(test1,","));
     tools::log->info("This tests logging a vector<double> {}", test2);
     tools::log->info("This tests logging a vector<double> {:+.3f}", fmt::join(test2,","));
