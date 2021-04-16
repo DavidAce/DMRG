@@ -23,77 +23,33 @@ namespace eig {
         void eigs_nsym();
         void eigs_comp();
 
+        void eigs_sym_rc();
+        void eigs_nsym_rc();
+        void eigs_comp_rc();
+
+
         public:
         using Scalar = typename MatrixType::Scalar;
         std::unique_ptr<class_tic_toc> t_sol;
-        std::unique_ptr<class_tic_toc> t_get;
-        std::unique_ptr<class_tic_toc> t_sub;
-        std::unique_ptr<class_tic_toc> t_all;
+
+        std::unique_ptr<class_tic_toc> t_tot;
+        std::unique_ptr<class_tic_toc> t_pre;
+        std::unique_ptr<class_tic_toc> t_mul;
+        std::unique_ptr<class_tic_toc> t_fnd;
 
         void eigs();
         template<typename Derived>
         void find_solution(Derived &solver, eig::size_type nev);
+        template<typename Derived>
+        void find_solution_rc(Derived &solver);
+        template<typename Derived>
+        void copy_solution(Derived &solver);
 
         MatrixType &   matrix;
         eig::settings &config;
         eig::solution &result;
-        Scalar *       residual;
+        Scalar *       residual = nullptr;
         arpack_solver(MatrixType &matrix_, eig::settings &config_, eig::solution &result_, Scalar *residual_);
-
-        template<typename Derived>
-        void copy_solution(Derived &solver) {
-            // In this function we copy the solution "naively"
-            eig::log->trace("Copying solution");
-            using eigval_type                         = std::remove_pointer_t<decltype(solver.RawEigenvalues())>;
-            using eigvec_type                         = std::remove_pointer_t<decltype(solver.RawEigenvectors())>;
-            auto           eigvecsize                 = result.meta.rows * result.meta.cols;
-            auto           eigvalsize                 = result.meta.cols;
-            auto           eigvalsize_t               = static_cast<size_t>(eigvalsize);
-            auto           eigvecsize_t               = static_cast<size_t>(eigvecsize);
-            constexpr auto eigval_has_imag_separately = eig::sfinae::has_RawEigenvaluesImag_v<Derived>;
-            constexpr auto eigval_is_cplx             = std::is_same_v<cplx, eigval_type>;
-            constexpr auto eigval_is_real             = std::is_same_v<real, eigval_type>;
-            constexpr auto eigvec_is_cplx             = std::is_same_v<cplx, eigvec_type>;
-            constexpr auto eigvec_is_real             = std::is_same_v<real, eigvec_type>;
-
-            if constexpr(eigval_has_imag_separately) {
-                eig::log->trace("Copying eigenvalues from separate real and imaginary buffers");
-                result.eigvals_imag.resize(eigvalsize_t);
-                result.eigvals_real.resize(eigvalsize_t);
-                std::copy(solver.RawEigenvaluesImag(), solver.RawEigenvaluesImag() + eigvalsize, result.eigvals_imag.begin());
-                std::copy(solver.RawEigenvaluesReal(), solver.RawEigenvaluesReal() + eigvalsize, result.eigvals_real.begin());
-            }
-            if constexpr(eigval_is_real) {
-                if(not solver.EigenvaluesFound()) throw std::runtime_error("Eigenvalues were not found");
-                eig::log->trace("Copying real eigenvalues");
-                result.eigvals_real.resize(eigvalsize_t);
-                std::copy(solver.RawEigenvalues(), solver.RawEigenvalues() + eigvalsize, result.eigvals_real.begin());
-            }
-            if constexpr(eigval_is_cplx) {
-                if(not solver.EigenvaluesFound()) throw std::runtime_error("Eigenvalues were not found");
-                eig::log->trace("Copying complex eigenvalues");
-                result.eigvals_cplx.resize(eigvalsize_t);
-                std::copy(solver.RawEigenvalues(), solver.RawEigenvalues() + eigvalsize, result.eigvals_cplx.begin());
-            }
-            if constexpr(eigvec_is_real) {
-                if(not solver.EigenvectorsFound()) throw std::runtime_error("Eigenvectors were not found");
-                eig::log->trace("Copying real eigenvectors");
-                result.eigvecsR_real.resize(eigvecsize_t);
-                std::copy(solver.RawEigenvectors(), solver.RawEigenvectors() + eigvecsize, result.eigvecsR_real.begin());
-            }
-
-            if constexpr(eigvec_is_cplx) {
-                if(not solver.EigenvectorsFound()) throw std::runtime_error("Eigenvectors were not found");
-                eig::log->trace("Copying complex eigenvectors");
-                if(config.side == Side::L) {
-                    result.eigvecsL_cplx.resize(eigvecsize_t);
-                    std::copy(solver.RawEigenvectors(), solver.RawEigenvectors() + eigvecsize, result.eigvecsL_cplx.begin());
-                } else {
-                    result.eigvecsR_cplx.resize(eigvecsize_t);
-                    std::copy(solver.RawEigenvectors(), solver.RawEigenvectors() + eigvecsize, result.eigvecsR_cplx.begin());
-                }
-            }
-        }
     };
 
 }
