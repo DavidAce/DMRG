@@ -151,9 +151,22 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
         // Where A^-1 * b is obtained by solving
         //       A*x = b
         // using an iterative matrix-free solver.
+        {
+            auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
+            auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(mpo_ptr,mpo_dims);
+            auto envL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envL_ptr,envL_dims);
+            auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envR_ptr,envR_dims);
 
-
-        tools::log->trace("Testing matrix-free solver");
+            if(mps.dimension(1) != envL.dimension(0))
+                throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
+            if(mps.dimension(2) != envR.dimension(0))
+                throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
+            if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+            if(envL.dimension(2) != mpo.dimension(0))
+                throw std::runtime_error(fmt::format("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions()));
+            if(envR.dimension(2) != mpo.dimension(1))
+                throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
+        }
 
         // Define the "matrix-free" matrix replacement.
         MatrixReplacement<Scalar> matRepl;
@@ -170,10 +183,10 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             bicg.setMaxIterations(MaxIters);
             bicg.setTolerance(tolerance);
             res = bicg.solve(mps);
-            std::cout << "BiCGSTAB: #iterations: " << bicg.iterations()
-                << ", #count: " << matRepl.counter
-                << ", estimated error: " << bicg.error()
-                << std::endl;
+//            std::cout << "BiCGSTAB: #iterations: " << bicg.iterations()
+//                << ", #count: " << matRepl.counter
+//                << ", estimated error: " << bicg.error()
+//                << std::endl;
 
         }
 //        {
