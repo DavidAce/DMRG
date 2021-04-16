@@ -29,7 +29,7 @@ namespace svd {
     template<typename Scalar>
     void print_matrix_lapacke(const Scalar *mat_ptr, long rows, long cols, long dec = 8) {
         auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
-        svd::log->warn("Error. Printing matrix of dimensions {}x{}\n", rows, cols);
+        svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
         for(long r = 0; r < A.rows(); r++) {
             if constexpr(std::is_same_v<Scalar, std::complex<double>>)
                 for(long c = 0; c < A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ", dec, std::real(A(r, c)), std::imag(A(r, c)));
@@ -113,7 +113,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     if constexpr(std::is_same<Scalar, double>::value) {
         if(use_jacobi) {
-            svd::log->debug("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
             // For this routine we need rows > cols
             t_wrk->tic();
@@ -135,7 +135,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             U             = A.leftCols(rank);
             VT            = V.adjoint().topRows(rank);
         } else if(use_bdc) {
-            svd::log->debug("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             t_wrk->tic();
             int                 liwork = std::max(1, 8 * std::min(rowsA, colsA));
             std::vector<Scalar> work(1);
@@ -161,7 +161,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_svd->toc();
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
         } else {
-            svd::log->debug("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             std::vector<Scalar> work(1);
 
             U.resize(rowsU, colsU);
@@ -184,41 +184,46 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     }
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         if(use_jacobi) {
-            svd::log->debug("Running Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke Jacobi SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             t_wrk->tic();
-            std::vector<Scalar> work(1);
+            std::vector<Scalar> cwork(1);
             std::vector<double> rwork(1);
+            std::vector<int> iwork(1);
 
             S.resize(sizeS);
+            U.resize(rowsU, colsU); // Local matrix gets transposed after computation
             MatrixType<Scalar> V(rowsV, colsV); // Local matrix gets transposed after computation
 
             auto Ap = reinterpret_cast<lapack_complex_double *>(A.data());
             auto Vp = reinterpret_cast<lapack_complex_double *>(V.data());
-            auto Wp = reinterpret_cast<lapack_complex_double *>(work.data());
-
+            auto pcwork = reinterpret_cast<lapack_complex_double *>(cwork.data());
+            rwork = {1.0};
             svd::log->trace("Querying zgesvj");
-            info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, Wp, -1, rwork.data(), -1);
+            info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, pcwork, -1, rwork.data(), -1);
+
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
 
-            int lwork  = static_cast<int>(std::real(work[0]));
-            int lrwork = static_cast<int>(rwork[0]);
-            work.resize(static_cast<size_t>(lwork));
+            int lcwork  = static_cast<int>(std::real(cwork[0]));
+            int lrwork  = static_cast<int>(rwork[0]);
+            cwork.resize(static_cast<size_t>(lcwork));
             rwork.resize(static_cast<size_t>(lrwork));
-            Wp = reinterpret_cast<lapack_complex_double *>(work.data());
+            pcwork = reinterpret_cast<lapack_complex_double *>(cwork.data());
             t_wrk->toc();
 
-            svd::log->trace("Running zgesvj");
+            svd::log->trace("Running zgesvj | cwork {} | rwork {}", lcwork, lrwork);
             t_jac->tic();
-            info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, Wp, lwork, rwork.data(), lrwork);
+            info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, pcwork, lcwork, rwork.data(), lrwork);
             t_jac->toc();
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
             long max_size = std::min(S.size(), rank_max.value());
             long rank     = (S.head(max_size).array() >= threshold).count();
             U             = A.leftCols(rank);
             VT            = V.adjoint().topRows(rank);
+            svd::log->trace("info {} | rwork {} {} {} {} | rank {}", info, rwork[0], rwork[1], rwork[2], rwork[3], rank );
+
 
         } else if(use_bdc) {
-            svd::log->debug("Running BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke BDC SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             t_wrk->tic();
             int                 mx     = std::max(rowsA, colsA);
             int                 mn     = std::min(rowsA, colsA);
@@ -251,7 +256,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             t_svd->toc();
             if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
         } else {
-            svd::log->debug("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            svd::log->debug("Running Lapacke SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             t_wrk->tic();
             int                 lrwork = 5 * std::min(rowsA, colsA);
             std::vector<Scalar> work(1);
