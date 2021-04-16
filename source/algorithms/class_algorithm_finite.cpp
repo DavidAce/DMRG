@@ -152,7 +152,22 @@ void class_algorithm_finite::reduce_mpo_energy() {
     // Reduce mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle
-    if(settings::precision::use_reduced_energy and tensors.position_is_inward_edge()) tensors.reduce_mpo_energy();
+    bool compress = settings::strategy::compress_mpo_squared;
+    if(status.algorithm_has_stuck_for > 0) compress = false;
+    if(settings::precision::use_reduced_energy and tensors.position_is_inward_edge()) tensors.reduce_mpo_energy(std::nullopt, compress);
+}
+
+void class_algorithm_finite::update_variance_max_digits(std::optional<double> energy) {
+    if(not tensors.position_is_inward_edge()) return;
+    if(tensors.active_sites.empty()) return;
+    if(not energy) energy = tools::finite::measure::energy(tensors);
+    if(settings::precision::use_reduced_energy)
+        status.energy_variance_max_digits = std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value()))));
+    else
+        status.energy_variance_max_digits = std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2))));
+
+    status.energy_variance_prec_limit = std::pow(10.0,-static_cast<double>(status.energy_variance_max_digits));
+    tools::log->info("Energy variance precision limit: {:.16f}", status.energy_variance_prec_limit);
 }
 
 void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
