@@ -12,6 +12,7 @@ class class_edges_finite;
 class class_tensors_finite;
 class class_algorithm_status;
 class class_tic_toc;
+namespace eig {class solver;}
 enum class OptSpace;
 enum class OptType;
 enum class OptMode;
@@ -20,6 +21,9 @@ namespace tools::finite::opt {
     class opt_mps;
 
     using Scalar = std::complex<double>;
+    using real = double;
+    using cplx = std::complex<double>;
+    extern void                     extract_solutions(const opt_mps &initial_mps,const class_tensors_finite &tensors, eig::solver &solver, std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, const std::string & tag = "");
     extern opt_mps find_excited_state(const class_tensors_finite &tensors, const opt_mps &initial_mps, const class_algorithm_status &status,
                                         OptMode optMode, OptSpace optSpace, OptType optType);
     extern opt_mps find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace,
