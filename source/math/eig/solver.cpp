@@ -7,6 +7,7 @@
 #include "arpack_solver/matrix_product_dense.h"
 #include "arpack_solver/matrix_product_hamiltonian.h"
 #include "arpack_solver/matrix_product_sparse.h"
+#include <general/class_tic_toc.h>
 
 eig::solver::solver() {
     if(not eig::log) eig::log = tools::Logger::setLogger("eig", 2, true);
@@ -119,18 +120,11 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(not config.ritz)            config.ritz            = ritz;
     if(not config.side)            config.side            = side;
     if(not config.storage)         config.storage         = storage;
+    if(not config.compress)        config.compress        = false;
     /* clang-format on */
 
     if(config.eigMaxNev.value() < 1) config.eigMaxNev = 1;
-    if(config.eigMaxNcv.value() <= 1) config.eigMaxNcv = 16;
-
-    if(config.eigMaxNcv.value() < config.eigMaxNev.value()) {
-        if(config.eigMaxNev.value() >= 1 and config.eigMaxNev.value() <= 16) {
-            config.eigMaxNcv = 8 + static_cast<int>(std::ceil(1.5 * static_cast<double>(nev)));
-        } else if(nev > 16 and nev <= L) {
-            config.eigMaxNcv = 2 * nev;
-        }
-    }
+    if(config.eigMaxNcv.value() <= config.eigMaxNev.value()) config.eigMaxNcv = std::min(L, std::max(2l*nev + 1l, 32l));;
 
     if(config.form == Form::NSYM) {
         if(config.eigMaxNev.value() == 1) { config.eigMaxNev = 2; }
