@@ -19,12 +19,14 @@ namespace tools::finite::opt::internal {
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
         Eigen::Tensor<Scalar, 4>         mpo, mpo2;
         mutable bool                     print_path = true;
+        mutable bool                     readyCompress = false;
         void                             get_Hn(const VectorType &v) const;
         void                             get_H2n(const VectorType &v) const;
 
         public:
         explicit ceres_direct_functor(const class_tensors_finite &tensors, const class_algorithm_status &status);
         bool Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const final;
+        void compress();
     };
 
 }

@@ -9,6 +9,7 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/opt-internal.h>
+#include <math/svd.h>
 
 namespace debug{
     template<typename Derived>
@@ -71,6 +72,9 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     H2v_tensor.resize(dims);
     num_parameters = static_cast<int>(dims[0] * dims[1] * dims[2]);
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
+
+    tools::log->trace("- Compressing mpo² and corresponding environments");
+    compress();
 }
 
 template<typename Scalar>
@@ -228,6 +232,39 @@ void ceres_direct_functor<Scalar>::get_Hn(const VectorType &v) const {
     tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
     t_vH->toc();
 }
+
+
+
+template<typename Scalar>
+void ceres_direct_functor<Scalar>::compress(){
+    if(readyCompress) return;
+
+    svd::settings svd_settings;
+    svd_settings.use_lapacke = true;
+    svd_settings.use_bdc = false;
+    svd_settings.threshold = 1e-16;
+    svd_settings.switchsize = 4096;
+    svd::solver svd(svd_settings);
+
+//    Eigen::Tensor<Scalar, 4> mpo2_l2r;
+    {
+        // Compress left to right
+        auto [U,S,V] = svd.split_mpo_l2r(mpo2);
+        Eigen::Tensor<Scalar,3> env2R_tmp = env2R.contract(V, Textra::idx({2},{1}));
+        env2R = env2R_tmp;
+        mpo2 = U.contract(Textra::asDiagonal(S), Textra::idx({1},{0})).shuffle(std::array<long,4>{0,3,1,2});
+    }
+    {
+        // Compress right to left
+        auto [U,S,V] = svd.split_mpo_r2l(mpo2);
+        Eigen::Tensor<Scalar,3> env2L_tmp = env2L.contract(U, Textra::idx({2},{0}));
+        env2L = env2L_tmp;
+        mpo2 = Textra::asDiagonal(S).contract(V, Textra::idx({1},{0}));
+    }
+    readyCompress = true;
+    tools::log->trace("Compressed mpo² dimensions {}", mpo2.dimensions());
+}
+
 
 template class tools::finite::opt::internal::ceres_direct_functor<double>;
 template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>;
