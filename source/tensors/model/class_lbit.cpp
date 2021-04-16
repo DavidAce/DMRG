@@ -4,6 +4,7 @@
 
 #include "class_lbit.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
@@ -57,15 +58,15 @@ void class_lbit::set_parameters(TableMap &parameters) {
 class_lbit::TableMap class_lbit::get_parameters() const {
     /* clang-format off */
     TableMap parameters;
-    parameters["J1_rand"]            = h5tb.param.J1_rand;
-    parameters["J2_rand"]            = h5tb.param.J2_rand;
-    parameters["J3_rand"]            = h5tb.param.J3_rand;
-    parameters["J1_wdth"]            = h5tb.param.J1_wdth;
-    parameters["J2_wdth"]            = h5tb.param.J2_wdth;
-    parameters["J3_wdth"]            = h5tb.param.J3_wdth;
-    parameters["J2_base"]            = h5tb.param.J2_base;
-    parameters["f_mixer"]            = h5tb.param.f_mixer;
-    parameters["u_layer"]            = h5tb.param.u_layer;
+    parameters["J1_rand"]       = h5tb.param.J1_rand;
+    parameters["J2_rand"]       = h5tb.param.J2_rand;
+    parameters["J3_rand"]       = h5tb.param.J3_rand;
+    parameters["J1_wdth"]       = h5tb.param.J1_wdth;
+    parameters["J2_wdth"]       = h5tb.param.J2_wdth;
+    parameters["J3_wdth"]       = h5tb.param.J3_wdth;
+    parameters["J2_base"]       = h5tb.param.J2_base;
+    parameters["f_mixer"]       = h5tb.param.f_mixer;
+    parameters["u_layer"]       = h5tb.param.u_layer;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = std::string(h5tb.param.distribution);
     return parameters;
@@ -136,26 +137,26 @@ void class_lbit::build_mpo()
     Eigen::Tensor<Scalar, 2> i = Textra::TensorMap(id);
     mpo_internal.resize(11, 11, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    mpo_internal.slice(Textra::array4{0,  0, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{1,  0, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(Textra::array4{2,  1, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{3,  2, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{4,  3, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{5,  4, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{6,  5, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{7,  6, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{8,  7, 0, 0}, extent4).reshape(extent2) = i;
-    mpo_internal.slice(Textra::array4{9,  1, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
-    mpo_internal.slice(Textra::array4{10, 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[1] * n;
-    mpo_internal.slice(Textra::array4{10, 2, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[2] * n;
-    mpo_internal.slice(Textra::array4{10, 3, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[3] * n;
-    mpo_internal.slice(Textra::array4{10, 4, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[4] * n;
-    mpo_internal.slice(Textra::array4{10, 5, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[5] * n;
-    mpo_internal.slice(Textra::array4{10, 6, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[6] * n;
-    mpo_internal.slice(Textra::array4{10, 7, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[7] * n;
-    mpo_internal.slice(Textra::array4{10, 8, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[8] * n;
-    mpo_internal.slice(Textra::array4{10, 9, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * n;
+    mpo_internal.slice(Textra::array4{0, 0, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{1, 0, 0, 0}, extent4).reshape(extent2)   = n;
+    mpo_internal.slice(Textra::array4{2, 1, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{3, 2, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{4, 3, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{5, 4, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{6, 5, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{7, 6, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{8, 7, 0, 0}, extent4).reshape(extent2)   = i;
+    mpo_internal.slice(Textra::array4{9, 1, 0, 0}, extent4).reshape(extent2)   = n;
+    mpo_internal.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J1_rand * n - e_reduced * i;
+    mpo_internal.slice(Textra::array4{10, 1, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[1] * n;
+    mpo_internal.slice(Textra::array4{10, 2, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[2] * n;
+    mpo_internal.slice(Textra::array4{10, 3, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[3] * n;
+    mpo_internal.slice(Textra::array4{10, 4, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[4] * n;
+    mpo_internal.slice(Textra::array4{10, 5, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[5] * n;
+    mpo_internal.slice(Textra::array4{10, 6, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[6] * n;
+    mpo_internal.slice(Textra::array4{10, 7, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[7] * n;
+    mpo_internal.slice(Textra::array4{10, 8, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[8] * n;
+    mpo_internal.slice(Textra::array4{10, 9, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J3_rand * n;
     mpo_internal.slice(Textra::array4{10, 10, 0, 0}, extent4).reshape(extent2) = i;
     if(Textra::hasNaN(mpo_internal)) {
         print_parameter_names();
@@ -195,61 +196,28 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 }
 
 void class_lbit::randomize_hamiltonian() {
-    h5tb.param.J2_rand[0] = settings::model::lbit::J2_mean;
-    h5tb.param.J2_rand[1] = std::pow(settings::model::lbit::J2_base, -1);
-    h5tb.param.J2_rand[2] = std::pow(settings::model::lbit::J2_base, -2);
-    h5tb.param.J2_rand[3] = std::pow(settings::model::lbit::J2_base, -3);
-    h5tb.param.J2_rand[4] = std::pow(settings::model::lbit::J2_base, -4);
-    h5tb.param.J2_rand[5] = std::pow(settings::model::lbit::J2_base, -5);
-    h5tb.param.J2_rand[6] = std::pow(settings::model::lbit::J2_base, -6);
-    h5tb.param.J2_rand[7] = std::pow(settings::model::lbit::J2_base, -7);
-    h5tb.param.J2_rand[8] = std::pow(settings::model::lbit::J2_base, -8);
-    double J2_wdth_box = rnd::uniform_double_box(0, 2*settings::model::lbit::J2_wdth);
+    // J2(i,j) = J2_base^-|i-j| * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
+    using namespace settings::model::lbit;
+    for(auto &&[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -j); // J2_base^-|i-j|
+
+    double J2_wdth_i = rnd::uniform_double_box(0, 2 * J2_wdth);
 
     if(std::string(h5tb.param.distribution) == "normal") {
-        h5tb.param.J1_rand = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
-        h5tb.param.J3_rand = rnd::normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[2] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[3] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[4] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[5] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[6] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[7] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[8] *= rnd::normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
+        h5tb.param.J3_rand = rnd::normal(J3_mean, J3_wdth);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::normal(J2_mean, J2_wdth_i);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
-        h5tb.param.J1_rand = rnd::log_normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
-        h5tb.param.J3_rand = rnd::log_normal(settings::model::lbit::J3_mean, settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[2] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[3] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[4] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[5] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[6] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[7] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
-        h5tb.param.J2_rand[8] *= rnd::log_normal(settings::model::lbit::J2_mean, J2_wdth_box);
+        h5tb.param.J1_rand = rnd::log_normal(J1_mean, J1_wdth);
+        h5tb.param.J3_rand = rnd::log_normal(J3_mean, J3_wdth);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::log_normal(J2_mean, J2_wdth_i);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
-        h5tb.param.J1_rand = settings::model::lbit::J1_mean + rnd::uniform_double_box(settings::model::lbit::J1_wdth);
-        h5tb.param.J3_rand = settings::model::lbit::J3_mean + rnd::uniform_double_box(settings::model::lbit::J3_wdth);
-        h5tb.param.J2_rand[1] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[2] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[3] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[4] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[5] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[6] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[7] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
-        h5tb.param.J2_rand[8] *= (settings::model::lbit::J2_mean + rnd::uniform_double_box(J2_wdth_box));
+        h5tb.param.J1_rand = rnd::uniform_double_box(J1_mean - J1_wdth / 2.0, J1_mean + J1_wdth / 2.0);
+        h5tb.param.J3_rand = rnd::uniform_double_box(J3_mean - J3_wdth / 2.0, J3_mean + J3_wdth / 2.0);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::uniform_double_box(J2_mean - J2_wdth_i / 2.0, J2_mean + J2_wdth_i / 2.0);
     } else if(std::string(h5tb.param.distribution) == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
-        h5tb.param.J2_rand[1] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[2] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[3] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[4] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[5] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[6] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[7] *= settings::model::lbit::J2_mean;
-        h5tb.param.J2_rand[8] *= settings::model::lbit::J2_mean;
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= settings::model::lbit::J2_mean;
     } else {
         throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform> or <constant>");
     }
@@ -326,9 +294,9 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
         if(n == 2) J2 = 1;
         if(n == 3) J3 = 1;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                    = MPO();
-    Eigen::Tensor<Scalar, 2> n                                            = Textra::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                            = Textra::TensorMap(id);
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                     = MPO();
+    Eigen::Tensor<Scalar, 2> n                                             = Textra::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<Scalar, 2> i                                             = Textra::TensorMap(id);
     MPO_nbody.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1_rand * n - J1 * e_reduced * i;
     MPO_nbody.slice(Textra::array4{10, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[1] * n;
     MPO_nbody.slice(Textra::array4{10, 2, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[2] * n;
@@ -379,7 +347,7 @@ void class_lbit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_par
         auto J3_ = std::any_cast<double>(site_params["J3_rand"]);
         auto J2_ = std::any_cast<h5tb_lbit::J2Type>(site_params["J2_rand"]);
         J_sum += J1_ + J3_;
-        for(const auto & j2 : J2_) J_sum += j2;
+        for(const auto &j2 : J2_) J_sum += j2;
     }
     if(parity_sep) psfactor = J_sum;
     set_parameters(lattice_parameters[get_position()]);
