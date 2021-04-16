@@ -15,17 +15,19 @@ class_env_var::class_env_var(std::string side_, const class_mps_site &mps, const
 
 class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_site &mpo) const {
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
-    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})...",tag,side,get_position());
-    if constexpr(settings::debug)
+    if constexpr(settings::debug){
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})...",tag,side,get_position());
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}): All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
+    }
+
     class_env_var env = *this;
 
     if(env.sites == 0 and not env.edge_has_been_set) {
         env.set_edge_dims(mps, mpo);
         env.position = mps.get_position();
-        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
+        if constexpr(settings::debug) tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
         return env;
     }
 
@@ -44,18 +46,20 @@ class_env_var class_env_var::enlarge(const class_mps_site &mps, const class_mpo_
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
     env.unique_id_mpo = mpo.get_unique_id_sq();
-    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
+    if constexpr(settings::debug) tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})... OK",tag,side,get_position());
     return env;
 }
 
 void class_env_var::refresh(const class_env_var &env, const class_mps_site &mps, const class_mpo_site &mpo) {
-    tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})...",tag,side,get_position());
     // If side == L, env,mps and mpo are all corresponding to the neighbor on the left
     // If side == R, env,mps and mpo are all corresponding to the neighbor on the right
-    if constexpr(settings::debug)
+    if constexpr(settings::debug){
+        tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})...",tag,side,get_position());
         if(not num::all_equal(env.get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
+    }
+
 
     if(side == "L" and get_position() != mps.get_position() + 1)
         throw std::logic_error(
@@ -73,7 +77,7 @@ void class_env_var::refresh(const class_env_var &env, const class_mps_site &mps,
     if(not has_block()) {
         if constexpr(settings::debug) tools::log->trace("Refreshing {} env{}({}): missing block", tag, side, get_position());
         *this = env.enlarge(mps, mpo);
-        tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})... OK",tag,side,get_position());
+        if constexpr(settings::debug) tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})... OK",tag,side,get_position());
         return;
     }
     bool        refresh = false;
@@ -118,12 +122,12 @@ void class_env_var::refresh(const class_env_var &env, const class_mps_site &mps,
 //                throw std::logic_error(fmt::format("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(), unique_id_bef));
         }
     }
-    tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})... OK",tag,side,get_position());
+    if constexpr(settings::debug) tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})... OK",tag,side,get_position());
 }
 
 void class_env_var::set_edge_dims(const class_mps_site &MPS, const class_mpo_site &MPO) {
     if(edge_has_been_set) return;
-    tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
+    if constexpr(settings::debug) tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
     if(side == "L")
         set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());
     else if(side == "R")
