@@ -26,6 +26,13 @@ enum class OptWhen {
     NEVER,
     PREV_FAIL,
 };
+
+enum class OptExit : int {
+    SUCCESS       = 0,
+    FAIL_GRADIENT = 1,
+    FAIL_NOCHANGE = 2,
+    FAIL_WORSENED = 4,
+};
 enum class OptMark {
     PASS,
     FAIL,
@@ -111,6 +118,55 @@ enum class xdmrg_task {
     POST_DEFAULT,
     PROF_RESET,
 };
+
+namespace enums{
+
+}
+template <typename T, bool B = std::is_enum<T>::value>
+struct is_scoped_enum : std::false_type {};
+template <typename T>
+struct is_scoped_enum<T, true> : std::integral_constant<bool, !std::is_convertible<T, typename std::underlying_type<T>::type>::value> {};
+template<typename T>
+constexpr bool is_scoped_enum_v = is_scoped_enum<T>();
+
+
+template<typename E,
+         typename = std::enable_if<is_scoped_enum_v<E>>,
+         typename = std::enable_if<std::is_same_v<E,OptExit>>>
+constexpr typename std::underlying_type<E>::type enum2int(E e) noexcept {
+    return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
+template<typename E,
+    typename = std::enable_if<is_scoped_enum_v<E>>,
+    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+constexpr inline E operator|(E lhs, E rhs) {
+    using T = std::underlying_type_t<E>;
+    return static_cast<E>(static_cast<T>(lhs) | static_cast<T>(rhs));
+}
+
+template<typename E,
+    typename = std::enable_if<is_scoped_enum_v<E>>,
+    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+constexpr inline E operator&(E lhs, E rhs) {
+    using T = std::underlying_type_t<E>;
+    return static_cast<E>(static_cast<T>(lhs) & static_cast<T>(rhs));
+}
+
+template<typename E,
+    typename = std::enable_if<is_scoped_enum_v<E>>,
+    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+constexpr inline E &operator|=(E &lhs, E rhs) {
+    lhs = lhs | rhs;
+    return lhs;
+}
+
+template<typename E,
+    typename = std::enable_if<is_scoped_enum_v<E>>,
+    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+inline bool has_flag(E target, E check) {
+    return (target & check) == check;
+}
 
 /* clang-format off */
 template<typename T>
