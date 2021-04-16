@@ -15,6 +15,14 @@
 
 
 namespace stat{
+    template<typename T, typename = std::void_t<>>
+    struct is_iterable : public std::false_type {};
+    template<typename T>
+    struct is_iterable<T, std::void_t<decltype(std::begin(std::declval<T>())), decltype(std::end(std::declval<T>()))>>
+        : public std::true_type {};
+    template<typename T>
+    inline constexpr bool is_iterable_v = is_iterable<T>::value;
+
 
     template<typename ContainerType>
     void check_bounds(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
@@ -104,7 +112,8 @@ namespace stat{
         return stdev(X, start_point, end_point) / std::sqrt(X.size());
     }
 
-    template<typename ContainerType1, typename ContainerType2>
+    template<typename ContainerType1, typename ContainerType2,
+             typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
     std::pair<double,double> slope(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         if(X.size() != Y.size()) throw std::range_error("slope: size mismatch in arrays: X.size() == " + std::to_string(X.size()) + " | Y.size() == "  + std::to_string(Y.size()));
         try {
@@ -145,7 +154,7 @@ namespace stat{
     std::pair<double,double> slope(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         ContainerType X(Y.size());
         for(size_t i = 0; i < Y.size(); i++) X[i] = i;
-        return slope(Y,X,start_point,end_point);
+        return slope(X,Y,start_point,end_point);
     }
 
     template<typename ContainerType1, typename ContainerType2>
