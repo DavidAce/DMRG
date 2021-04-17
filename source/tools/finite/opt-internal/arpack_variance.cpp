@@ -242,7 +242,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
 //                residual  = initial_mps.get_tensor().real();
 //                solver_shft10.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
 //                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-#pragma message "print also the actual H² eigval"
             } else {
                 tools::log->warn("Finding excited state using H² with ritz SM");
                 solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
