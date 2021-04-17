@@ -30,6 +30,7 @@ class class_xdmrg : public class_algorithm_finite {
         OptSpace              optSpace          = OptSpace::DIRECT;
         OptType               optType           = OptType::CPLX;
         OptInit               optInit           = OptInit::CURRENT_STATE;
+        OptExit               optExit           = OptExit::SUCCESS;
         size_t                max_sites         = 2;
         size_t                min_sites         = 1;
         long                  max_problem_size  = 0;
