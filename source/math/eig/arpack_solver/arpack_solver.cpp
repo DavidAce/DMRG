@@ -310,8 +310,8 @@ void eig::arpack_solver<MatrixType>::find_solution_rc(Derived &solver) {
             t_mul->toc();
         }
 
-        if(solver.GetIter() > config.eigMaxIter.value()) // Sanity check
-            throw std::runtime_error(fmt::format("Maximum iterations exceeded: {} > max {}", solver.GetIter(), config.eigMaxIter.value()));
+        if(solver.GetIter() > config.eigMaxIter.value()+1) // Sanity check
+            eig::log->warn("Maximum iterations exceeded: {} > max {}", solver.GetIter(), config.eigMaxIter.value());
     }
 
     // Find the eigenvectors/eigenvalues
