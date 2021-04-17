@@ -210,7 +210,6 @@ void class_xdmrg::run_algorithm() {
     tools::log->info("Starting {} simulation of model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
     auto t_sim  = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     stop_reason = StopReason::NONE;
-
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
@@ -228,12 +227,13 @@ void class_xdmrg::run_algorithm() {
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        reduce_mpo_energy();
         try_discard_small_schmidt();
         try_bond_dimension_quench();
         try_disorder_damping();
         try_hamiltonian_perturbation();
         try_projection();
-        reduce_mpo_energy();
+        try_full_expansion();
         move_center_point();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
@@ -257,8 +257,6 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
-
-    if(status.algorithm_has_stuck_for > 0) c1.second_chance = true;
 
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
@@ -309,19 +307,23 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         // Make sure not to use SUBSPACE if the 1-site problem size is huge
         // When this happens, we can't use SUBSPACE even with two sites,
         // so we might as well give it to DIRECT, which handles larger problems.
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::DIRECT;
+        c1.optMode = OptMode::VARIANCE;
+        if(c1.optSpace == OptSpace::SUBSPACE_AND_DIRECT) c1.optSpace = OptSpace::DIRECT;
+        if(c1.optSpace == OptSpace::SUBSPACE_ONLY) c1.optSpace = OptSpace::DIRECT;
     }
 
     // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(settings::strategy::multisite_mps_size_def == 1) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
+    if(c1.max_sites == 1 or settings::strategy::multisite_mps_size_def == 1)
+        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
+
     if(settings::strategy::expand_subspace_when_stuck and (status.algorithm_has_stuck_for > 0 or sub_expansion_alpha.has_value()) and
        num_expansion_iters < max_expansion_iters) {
         if(sub_expansion_alpha) c1.alpha_expansion = sub_expansion_alpha;
         if(not c1.alpha_expansion) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
         // Update alpha
         auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity / 10);
-        tools::log->info("Determining alpha: report computed {} | saturated {}", report.has_computed, report.has_saturated);
+        tools::log->info("Determining alpha: report computed {} | saturated {} | expansion iters {} ({})", report.has_computed, report.has_saturated,
+                         num_expansion_iters, max_expansion_iters);
         if(report.has_computed) {
             double factor_up = std::pow(5.0, 1.0 / static_cast<double>(tensors.get_length()));
             double factor_dn = std::pow(0.1, 1.0 / static_cast<double>(tensors.get_length()));
@@ -348,8 +350,8 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
 
     // Setup the maximum problem size here
     switch(c1.optSpace) {
-        case OptSpace::POWER_ENERGY:
-        case OptSpace::POWER_VARIANCE:
+        case OptSpace::KRYLOV_ENERGY:
+        case OptSpace::KRYLOV_VARIANCE:
         case OptSpace::DIRECT: c1.max_problem_size = settings::precision::max_size_direct; break;
         case OptSpace::SUBSPACE_ONLY:
         case OptSpace::SUBSPACE_AND_DIRECT: c1.max_problem_size = settings::precision::max_size_part_diag; break;
@@ -390,72 +392,28 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.optMode  = OptMode::VARIANCE;
         configs.emplace_back(c2);
-    } else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 0 and c2.max_sites < settings::strategy::multisite_mps_size_max) {
-        // I.e. if we did a DIRECT VARIANCE run that failed, and we haven't used all available sites switch to DIRECT VARIANCE with more sites
-        c2.optInit      = OptInit::CURRENT_STATE; // Can't use the result from c1
-        c2.max_sites    = settings::strategy::multisite_mps_size_max;
+    }
+    else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 0 and settings::strategy::krylov_opt_when_stuck) {
+        c2.optSpace      = OptSpace::KRYLOV_VARIANCE;
+        c2.optMode       = OptMode::VARIANCE;
+        c2.max_sites     = 1;// std::min(2ul, settings::strategy::multisite_mps_size_def);
+        c2.second_chance = false;
+        c2.alpha_expansion = std::nullopt;
+        // Use the same number of sites if stuck and not more than two, so that we can reuse the lbfgs progress as a good starting point for arpack.
+        if(status.algorithm_has_stuck_for >= 2) c2.max_sites = std::min(2ul, c1.max_sites);
+//
+        if (c1.max_sites == c2.max_sites and not c1.alpha_expansion) c2.optInit = OptInit::LAST_RESULT;
+        else  c2.optInit = OptInit::CURRENT_STATE;
+
         c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
         c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
         c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
-        if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
+        configs.emplace_back(c2);
     }
-    //    else if (status.algorithm_has_got_stuck){
-    //        c2.optInit  = OptInit::CURRENT_STATE;
-    //        c2.optSpace = OptSpace::POWER_VARIANCE;
-    //        c2.optMode  = OptMode::VARIANCE;
-    //        configs.emplace_back(c2);
-    //    }
-    //    else if (status.algorithm_has_got_stuck){
-    //        c2.alpha_expansion = 1e2 * (c1.alpha_expansion ? c1.alpha_expansion.value() : status.energy_variance_lowest);
-    //        c2.optInit  = OptInit::CURRENT_STATE; // Use the result from c1
-    //        c2.optSpace = OptSpace::DIRECT;
-    //        c2.optMode  = OptMode::VARIANCE;
-    //        configs.emplace_back(c2);
-    //    }
+
 
     if(not c2.second_chance) return configs;
-    /*
-     *
-     *  Third trial. Here we mainly try other subspace expansion factors "alpha"
-     *
-     */
 
-    //    OptConf c3 = c2; // Start with c2 as a baseline
-    //    c3.label = "c3";
-    //    c3.optInit = OptInit::CURRENT_STATE;
-    //    if(c2.alpha_expansion) c3.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
-    //    else c3.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
-    //    configs.emplace_back(c3);
-
-    /*
-     *
-     *  Fourth trial. Here we mainly try other subspace expansion factors "alpha"
-     *
-     */
-
-    //    OptConf c4 = c3; // Start with c2 as a baseline
-    //    c4.label = "c4";
-    //    c4.optInit = OptInit::CURRENT_STATE;
-    //    if(not c2.alpha_expansion){
-    //        c4.alpha_expansion = std::max(1e-4, status.energy_variance_lowest);
-    //        configs.emplace_back(c4);
-    //    }
-    //
-    //    OptConf c5 = c4; // Start with c2 as a baseline
-    //    c5.label = "c5";
-    //    c5.optInit = OptInit::CURRENT_STATE;
-    //    if(c4.alpha_expansion){
-    //        c5.alpha_expansion = 1e2 * c4.alpha_expansion.value();
-    //        configs.emplace_back(c5);
-    //    }
-    //
-    //    OptConf c6 = c5; // Start with c2 as a baseline
-    //    c6.label = "c6";
-    //    c6.optInit = OptInit::CURRENT_STATE;
-    //    if(c5.alpha_expansion){
-    //        c6.alpha_expansion = 1e2 * c5.alpha_expansion.value();
-    //        configs.emplace_back(c6);
-    //    }
 
     return configs;
 }
@@ -466,61 +424,78 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
 
     if(optConf.empty()) optConf = get_opt_conf_list();
     std::vector<opt_mps> results;
+    std::optional<std::vector<class_mps_site>> mps_original = std::nullopt;
     variance_before_step = std::nullopt;
-    double percent       = 0;
-    tools::log->info("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
-                     optConf.size());
+    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction, optConf.size());
     for(const auto &[idx_conf, conf] : iter::enumerate(optConf)) {
         if(conf.optMode == OptMode::OVERLAP and conf.optSpace == OptSpace::DIRECT) throw std::logic_error("[OVERLAP] mode and [DIRECT] space are incompatible");
-
         tensors.activate_sites(conf.chosen_sites);
         if(tensors.active_sites.empty()) continue;
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
-        //        if(conf.optSpace == OptSpace::POWER_ENERGY or conf.optSpace == OptSpace::POWER_VARIANCE) tensors.reduce_mpo_energy();
+
 
         // Use subspace expansion if alpha_expansion is set
+        // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(conf.alpha_expansion) {
-            if(not results.empty()) {
-                // We better store the mps sites that the previous result is compatible with
-                auto pos_expanded         = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
-                results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);            // Backup the compatible mps sites
-            }
+            auto pos_expanded   = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
+            if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
             tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
         }
-        tools::log->info("Running conf {} | {} | dims {} | sites {}", conf.label, enum2str(conf.optInit), conf.problem_dims, conf.chosen_sites);
+
+
+        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} |  dims {} | sites {} | alpha {:.3e}",idx_conf+1,optConf.size(),
+                         conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace), conf.problem_dims, conf.chosen_sites,
+                         (conf.alpha_expansion  ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
                 results.back().validate_result();
-                results.back().set_alpha(conf.alpha_expansion);
                 break;
             }
             case OptInit::LAST_RESULT: {
                 if(results.empty()) throw std::logic_error("There are no previous results to select an initial state");
                 results.emplace_back(opt::find_excited_state(tensors, results.back(), status, conf.optMode, conf.optSpace, conf.optType));
                 results.back().validate_result();
-                results.back().set_alpha(conf.alpha_expansion);
                 break;
             }
         }
 
-        // We can now decide if we are happy with the result or not.
-        percent = 100 * results.back().get_variance() / variance_before_step.value();
-        if(percent < 99) {
-            tools::log->debug("State improved during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_before_step.value()), percent);
-            break;
-        } else {
-            tools::log->debug("State did not improve enough during {}|{} optimization. Variance new {:.4f} / old {:.4f} = {:.3f} %", enum2str(conf.optMode),
-                              enum2str(conf.optSpace), std::log10(results.back().get_variance()), std::log10(variance_before_step.value()), percent);
-            continue;
+        if(conf.alpha_expansion){
+            results.back().set_alpha(conf.alpha_expansion);
+            auto pos_expanded   = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the mps sites that this run was compatible with
         }
+        // Reset the mps to the original if they were backed up earlier
+        // This is so that the next conf starts with unchanged mps as neighbors
+        if (mps_original) {
+            tensors.state->set_mps_sites(mps_original.value());
+            tensors.rebuild_edges(); // Make sure the edges are up to date
+        }
+
+
+
+        // We can now decide if we are happy with the result or not.
+        results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
+
+        /* clang-format off */
+        if(results.back().get_relchange() > 1 )     conf.optExit |= OptExit::FAIL_WORSENED;
+        if(results.back().get_relchange() > 0.999 ) conf.optExit |= OptExit::FAIL_NOCHANGE;
+        if(results.back().get_grad_norm() > 0.100 ) conf.optExit |= OptExit::FAIL_GRADIENT;
+        results.back().set_optexit(conf.optExit);
+
+        tools::log->debug("Optimization [{}|{}]: {}. Variance change {:.4f} --> {:.4f} ({:.3f} %)",
+                          enum2str(conf.optMode), enum2str(conf.optSpace), flag2str(conf.optExit),
+                          std::log10(variance_before_step.value()),std::log10(results.back().get_variance()), results.back().get_relchange()*100);
+
+        if(conf.optExit == OptExit::SUCCESS) break;
+        if(not has_flag(conf.optExit, OptExit::FAIL_NOCHANGE)) break; // Good enough
+        /* clang-format on */
     }
 
     if(not results.empty()) {
-        if(tools::log->level() <= spdlog::level::info and results.size() > 0ul)
+        if(tools::log->level() <= spdlog::level::debug)
             for(auto &candidate : results)
-                tools::log->info(
+                tools::log->debug(
                     "Candidate: {} | sites [{:>2}-{:<2}] | alpha {:8.2e} ({} iters) | variance {:<12.6f} | energy {:<12.6f} | overlap {:.16f} | norm {:.16f} "
                     "| [{}][{}] | time {:.4f} ms",
                     candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(), num_expansion_iters,
@@ -528,9 +503,10 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
                     enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
 
         // Sort the results in order of increasing variance
-        std::sort(results.begin(), results.end(), [](const opt_mps &lhs, const opt_mps &rhs) {
-            return lhs.get_variance() < rhs.get_variance() or lhs.get_optspace() == OptSpace::POWER_ENERGY or lhs.get_optspace() == OptSpace::POWER_VARIANCE;
-        });
+        auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
+            return lhs.get_variance() < rhs.get_variance() or lhs.get_optspace() == OptSpace::KRYLOV_ENERGY or lhs.get_optspace() == OptSpace::KRYLOV_VARIANCE;
+        };
+        std::sort(results.begin(), results.end(), comp_variance);
 
         // Take the best result
         const auto &winner = results.front();
@@ -544,15 +520,8 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
             tensors.rebuild_edges();
         }
 
-        // Do the truncation with SVD
-        auto svd_settings = svd::settings();
-        if(status.algorithm_has_stuck_for > 0) {
-            svd_settings.use_lapacke = true;
-            svd_settings.threshold   = 1e-14;
-            svd_settings.switchsize  = 512;
-            svd_settings.use_bdc     = false;
-        }
-        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim, svd_settings);
+    // Do the truncation with SVD
+        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
         if(tools::log->level() <= spdlog::level::debug) {
             auto truncation_errors = tensors.state->get_truncation_errors_active();
             for(auto &t : truncation_errors) t = std::log10(t);
@@ -602,13 +571,12 @@ void class_xdmrg::check_convergence() {
     //            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
     //        }
     //    }
-
+    update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
-
-    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
-       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
+//    std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
+    if(status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)
         status.algorithm_saturated_for++;
     else
         status.algorithm_saturated_for = 0;
@@ -623,12 +591,15 @@ void class_xdmrg::check_convergence() {
     else
         status.algorithm_has_stuck_for = 0;
 
+    if(status.variance_mpo_saturated_for == 0 and status.algorithm_has_stuck_for != 0) throw std::logic_error("Should have zeroed");
+    if(status.entanglement_saturated_for == 0 and status.algorithm_has_stuck_for != 0) throw std::logic_error("Should have zeroed");
+
     status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
     status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
-    if(tensors.position_is_inward_edge()) {
-        tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}", status.algorithm_converged_for,
-                         status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop);
-    }
+
+    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
+                     status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
+                     status.algorithm_has_to_stop, std::log10(status.energy_variance_prec_limit));
 
     stop_reason = StopReason::NONE;
     if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {

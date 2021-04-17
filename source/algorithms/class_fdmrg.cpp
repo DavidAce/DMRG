@@ -4,6 +4,7 @@
 
 #include "class_fdmrg.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_tensor_extra.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/fmt.h>
 #include <tools/common/io.h>
@@ -42,7 +43,7 @@ void class_fdmrg::resume() {
 
     if(status.algorithm_has_succeeded)
         task_list = {fdmrg_task::POST_PRINT_RESULT};
-    else{
+    else {
         task_list.emplace_back(fdmrg_task::INIT_CLEAR_CONVERGENCE);
         // This could be a savepoint state
         // Simply "continue" the algorithm until convergence
@@ -121,7 +122,7 @@ void class_fdmrg::run_algorithm() {
             tensors.state->set_name("state_emax");
     }
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", algo_name, enum2str(settings::model::model_type), tensors.state->get_name());
-    auto t_sim = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
+    auto t_sim  = tools::common::profile::prof[algo_type]["t_sim"]->tic_token();
     stop_reason = StopReason::NONE;
     while(true) {
         single_fdmrg_step();
@@ -134,10 +135,15 @@ void class_fdmrg::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(stop_reason != StopReason::NONE) break;
-
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         try_projection();
         reduce_mpo_energy();
+        if(not tensors.active_sites.empty()) {
+            tensors.clear_measurements();
+            tensors.clear_cache();
+            tools::log->trace("before move   : energy {:.16f} | variance {:.8f}| norm {:.16f}", tools::finite::measure::energy_per_site(tensors),
+                              std::log10(tools::finite::measure::energy_variance(tensors)), tools::finite::measure::norm(*tensors.state));
+        }
         move_center_point();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", algo_name, tensors.state->get_name(), enum2str(stop_reason));
@@ -148,21 +154,27 @@ void class_fdmrg::single_fdmrg_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->trace("Starting single fdmrg step with ritz [{}]", enum2str(ritz));
+    tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {}", status.iter, status.step, status.position, status.direction,
+                      enum2str(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
-    std::optional<double> alpha_expansion;
-    if(tensors.active_sites.size() == 1 or status.algorithm_has_stuck_for == 1) alpha_expansion = std::min(0.1,status.energy_variance_lowest);
 
     if(tensors.active_sites.empty())
         tensors.activate_sites({0}); // Activate a site so that edge checks can happen
     else {
-        // Use subspace expansion if alpha_expansion is set
-        if(alpha_expansion)
-            tensors.expand_subspace(alpha_expansion.value(), status.chi_lim);
+        // Decide to use subspace expansion
+        if(tensors.active_sites.size() == 1 or
+           (status.algorithm_has_stuck_for > 0 and tools::finite::measure::energy_variance(tensors) > settings::precision::variance_convergence_threshold))
+            sub_expansion_alpha = std::min(0.1, status.energy_variance_lowest);
+        else
+            sub_expansion_alpha = std::nullopt;
+
+        // Use subspace expansion if alpha_expansion was set
+        if(sub_expansion_alpha) tensors.expand_subspace(sub_expansion_alpha.value(), status.chi_lim);
 
         Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
         if constexpr(settings::debug)
-            tools::log->debug("Variance after opt: {:.8f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)));
+            tools::log->debug("Variance after opt: {:.8f} | norm {:.16f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)),
+                              Textra::norm(multisite_tensor));
 
         tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
         if constexpr(settings::debug)
@@ -170,8 +182,8 @@ void class_fdmrg::single_fdmrg_step() {
                               tools::finite::measure::truncation_errors_active(*tensors.state));
         // Update record holder
         if(not tensors.active_sites.empty()) {
-            tools::log->trace("Updating variance record holder");
             auto var = tools::finite::measure::energy_variance(tensors);
+            tools::log->trace("Updating variance record holder: var {} | record {}", std::log10(var), std::log10(status.energy_variance_lowest));
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
     }
@@ -183,27 +195,33 @@ void class_fdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
 
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
-
+    update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
-       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)) status.algorithm_saturated_for++;
-    else status.algorithm_saturated_for = 0;
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
+        status.algorithm_saturated_for++;
+    else
+        status.algorithm_saturated_for = 0;
 
-    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged) status.algorithm_converged_for++;
-    else status.algorithm_converged_for = 0;
+    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged)
+        status.algorithm_converged_for++;
+    else
+        status.algorithm_converged_for = 0;
 
-    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0) status.algorithm_has_stuck_for++;
-    else status.algorithm_has_stuck_for = 0;
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
+        status.algorithm_has_stuck_for++;
+    else
+        status.algorithm_has_stuck_for = 0;
 
     status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
-    status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= max_stuck_iters;
+    status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
 
-    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}",
-                      status.algorithm_converged_for, status.algorithm_saturated_for,  status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
-                      status.algorithm_has_to_stop);
+    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
+                     status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
+                     status.algorithm_has_to_stop, std::log10(status.energy_variance_prec_limit));
     stop_reason = StopReason::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) stop_reason = StopReason::MAX_ITERS;

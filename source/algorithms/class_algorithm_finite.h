@@ -24,11 +24,12 @@ class class_algorithm_finite : public class_algorithm_base {
 
     // Control behavior when stuck
     size_t max_stuck_iters      = 20;  //  5;  /*!< If stuck for this many sweeps -> stop. */
-    size_t max_saturation_iters = 20;  // 10;  /*!< If either var or ent saturated this long -> algorithm saturated: true */
+    size_t max_saturation_iters = 100;  // 10;  /*!< If either var or ent saturated this long -> algorithm saturated: true */
     size_t min_saturation_iters = 1;   // 1;   /*!< Saturated at least this many iters before stopping */
     size_t min_converged_iters  = 2;           /*!< Converged at least this many iters before success */
 
     bool                    has_projected        = false;        /*!< True if projection has already been tried */
+    bool                    has_expanded         = false;        /*!< True if full expansion has already been tried */
     bool                    has_damped           = false;        /*!< True if damping of hamiltonian parameters is ongoing */
     size_t                  chi_quench_steps     = 0;            /*!< Number of steps left doing chi-quenching */
     size_t                  num_chi_quenches     = 0;            /*!< Number of bond dimension quench trials that have occurred */
@@ -59,7 +60,8 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual bool cfg_store_wave_function() = 0;
     virtual void resume()                  = 0;
     virtual void run_default_task_list()   = 0;
-    void         try_projection();
+    void         try_projection(std::optional<std::string> target_sector = std::nullopt);
+    void         try_full_expansion();
     void         try_discard_small_schmidt();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();

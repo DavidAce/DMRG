@@ -50,6 +50,17 @@ void class_algorithm_infinite::randomize_model() {
     clear_convergence_status();
 }
 
+void class_algorithm_infinite::update_variance_max_digits(std::optional<double> energy) {
+    if(not energy) energy = tools::infinite::measure::energy_per_site_mpo(tensors)*static_cast<double>(status.iter);
+    if(settings::precision::use_reduced_energy)
+        status.energy_variance_max_digits = std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value()))));
+    else
+        status.energy_variance_max_digits = std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2))));
+
+    status.energy_variance_prec_limit = std::pow(10,-status.energy_variance_max_digits);
+}
+
+
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {
         status.chi_lim = tmp_bond_limit.value();

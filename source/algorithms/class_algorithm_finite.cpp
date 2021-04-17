@@ -178,7 +178,7 @@ void class_algorithm_finite::update_variance_max_digits(std::optional<double> en
         status.energy_variance_max_digits = std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2))));
 
     status.energy_variance_prec_limit = std::pow(10.0,-static_cast<double>(status.energy_variance_max_digits));
-    tools::log->info("Energy variance precision limit: {:.16f}", status.energy_variance_prec_limit);
+    tools::log->info("Energy variance precision limit: {:.4e}", status.energy_variance_prec_limit);
 }
 
 void class_algorithm_finite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
@@ -304,20 +304,24 @@ void class_algorithm_finite::randomize_state(ResetReason reason, StateInit state
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
 }
 
-void class_algorithm_finite::try_projection() {
+void class_algorithm_finite::try_projection(std::optional<std::string> target_sector) {
     if(not tensors.position_is_inward_edge()) return;
-    if(has_projected) return;
+    if(not target_sector and has_projected) return;
     bool project_on_saturation = settings::strategy::project_on_saturation > 0 and
                                  status.algorithm_saturated_for > 0 and
                                  num::mod(status.algorithm_saturated_for-1, settings::strategy::project_on_saturation) == 0;
+    bool project_on_every_iter = settings::strategy::project_on_every_iter > 0 and
+                                 num::mod(status.iter, settings::strategy::project_on_every_iter) == 0;
+    bool project_to_given_sector = target_sector.has_value();
 
-    if(settings::strategy::project_on_every_iter or project_on_saturation) {
-        tools::log->info("Trying projection to {} | pos {}", settings::strategy::target_sector, tensors.get_position<long>());
-        auto sector_sign  = tools::finite::mps::internal::get_sign(settings::strategy::target_sector);
+    if(project_on_every_iter or project_on_saturation or project_to_given_sector) {
+        if(not target_sector) target_sector = settings::strategy::target_sector;
+        tools::log->info("Trying projection to {} | pos {}", target_sector.value(), tensors.get_position<long>());
+        auto sector_sign  = tools::finite::mps::internal::get_sign(target_sector.value());
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(settings::strategy::target_sector);
+            tensors.project_to_nearest_sector(target_sector.value());
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -328,39 +332,38 @@ void class_algorithm_finite::try_projection() {
             // Of course, one problem is that if the spin component is already in one sector,
             // projecting to the other sector will zero the norm. So we can only make this
             // decision if the the |spin component| << 1. Maybe < 0.5 is enough?
-            auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
-            tools::log->info("Spin component along {} = {:.16f}", settings::strategy::target_sector, spin_component_along_requested_axis);
+            auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
+            tools::log->info("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.5) {
                 // Here we deem the spin component undecided enough to warrant a safe projection
                 auto tensors_neg = tensors;
                 auto tensors_pos = tensors;
                 try {
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", settings::strategy::target_sector));
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()),std::nullopt);
                 } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
 
                 try {
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", settings::strategy::target_sector));
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()),std::nullopt);
                 } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
 
                 auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                tools::log->info("Variance after projection to -{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_neg));
-                tools::log->info("Variance after projection to +{} = {:.6f}", settings::strategy::target_sector, std::log10(variance_pos));
+                tools::log->info("Variance after projection to -{} = {:.6f}", target_sector.value(), std::log10(variance_neg));
+                tools::log->info("Variance after projection to +{} = {:.6f}", target_sector.value(), std::log10(variance_pos));
                 if(variance_neg < variance_pos)
                     tensors = tensors_neg;
                 else
                     tensors = tensors_pos;
             } else {
                 // Here the spin component is close to one sector. We just project to the nearest sector
-                tensors.project_to_nearest_sector(settings::strategy::target_sector);
+                tensors.project_to_nearest_sector(target_sector.value(),std::nullopt);
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
             tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
                              std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
-
-        has_projected = true;
+        if(target_sector.value() == settings::strategy::target_sector) has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, *tensors.state, CopyPolicy::OFF);
     }
 }
@@ -412,7 +415,7 @@ void class_algorithm_finite::try_bond_dimension_quench() {
         tools::log->trace("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
         return;
     }
-    if(tools::finite::measure::energy_variance(tensors) < 10 * settings::precision::variance_convergence_threshold) return;
+    if(tools::finite::measure::energy_variance(tensors) < 10 * std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold)) return;
     double truncation_threshold = 5 * settings::precision::svd_threshold;
     size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
     size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
@@ -489,7 +492,7 @@ void class_algorithm_finite::try_disorder_damping() {
 void class_algorithm_finite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of variance mpo");
-    if(not threshold) threshold = settings::precision::variance_convergence_threshold;
+    if(not threshold) threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
     auto report                       = check_saturation(var_mpo_iter, saturation_sensitivity.value());
@@ -518,6 +521,7 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->info(" -- log history        = {:7.4e}", fmt::join(report.Y_log, ", "));
         tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
         tools::log->info(" -- ste history        = {:7.4e}", fmt::join(report.Y_ste, ", "));
+        tools::log->info(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
     }
 }
 
@@ -828,8 +832,14 @@ void class_algorithm_finite::print_status_update() {
     size_t bond_single_width = static_cast<size_t>(std::log10(cfg_chi_lim_max())) + 1;
     size_t bond_string_width =
         2 + (bond_single_width + comma_width) * (settings::strategy::multisite_mps_size_max == 1 ? 1 : settings::strategy::multisite_mps_size_max - 1);
-    std::string bond_string = fmt::format("{}", tools::finite::measure::bond_dimensions_merged(*tensors.state));
-    report += fmt::format("{0:<{1}} ", bond_string, bond_string_width);
+    std::vector<long> bonds_merged = tools::finite::measure::bond_dimensions_merged(*tensors.state);
+    if(bonds_merged.empty())
+        report += fmt::format("{0:<{1}} ", " ", bond_string_width);
+    else{
+        std::string bonds_string = fmt::format("{}", bonds_merged);
+        report += fmt::format("{0:<{1}} ", bonds_string, bond_string_width);
+    }
+
 
     if(last_optmode and last_optspace)
         report += fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0, 3), enum2str(last_optspace.value()).substr(0, 3));
