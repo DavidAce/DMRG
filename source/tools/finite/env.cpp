@@ -57,11 +57,6 @@ std::vector<size_t> tools::finite::env::expand_subspace(class_state_finite &stat
     using Scalar = class_state_finite::Scalar;
 
     // Set up the SVD
-    if(not svd_settings) svd_settings = svd::settings();
-    svd_settings->threshold = 1e-14;
-    svd_settings->switchsize = 512;
-    svd_settings->use_lapacke = true;
-    svd_settings->use_bdc = false;
     svd::solver svd(svd_settings);
 
     state.clear_cache();
