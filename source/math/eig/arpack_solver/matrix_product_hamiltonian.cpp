@@ -2,6 +2,7 @@
 #include <tools/common/contraction.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <general/class_tic_toc.h>
+#include <math/svd.h>
 
 template<typename Scalar_>
 MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
@@ -72,9 +73,8 @@ void MatrixProductHamiltonian<Scalar>::print() const {}
 template<typename T>
 void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     if(readyShift) return; // This only happens once!!
+    if(readyCompress) throw std::runtime_error("Cannot shift the matrix: it is already compressed!");
     sigma = sigma_;
-#pragma message "perhaps the mpo can be compressed after setting the shift here: simply do the svd and push the remainder into the environment, once right and once left"
-#pragma message "perhaps the one can use conjugate gradient (matrix free iterative solver in eigen) to apply M^-1 x on each arpack iteration"
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
@@ -83,9 +83,9 @@ void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     // the botton left corner of the ij-matrix.
     auto mpo_size = shape_mpo[0] * shape_mpo[1] * shape_mpo[2] * shape_mpo[3];
     // Setup the start and shifted mpo tensors
-    shift_mpo.resize(static_cast<size_t>(mpo_size));
+    mpo_internal.resize(static_cast<size_t>(mpo_size));
     Eigen::TensorMap<Eigen::Tensor<const T, 4>> start_mpo_map(mpo, shape_mpo);
-    Eigen::TensorMap<Eigen::Tensor<T, 4>>       shift_mpo_map(shift_mpo.data(), shape_mpo);
+    Eigen::TensorMap<Eigen::Tensor<T, 4>>       shift_mpo_map(mpo_internal.data(), shape_mpo);
 
     // Copy the previous mpo into the new one
     shift_mpo_map = start_mpo_map;
@@ -104,9 +104,84 @@ void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     shift_mpo_map.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
 
     // Reseat the mpo pointer
-    mpo        = shift_mpo.data();
+    mpo        = mpo_internal.data();
     readyShift = true;
 }
+
+//template<typename T>
+//void MatrixProductHamiltonian<T>::set_shifted_mpo(const T* mpo_, std::array<long, 4> shape_mpo_){
+//    if(readyShift) return;
+//    mpo = mpo_;
+//    shape_mpo = shape_mpo_;
+//    readyShift = true;
+//}
+
+
+template<typename T>
+void MatrixProductHamiltonian<T>::compress(){
+    if(readyCompress) return;
+
+    svd::settings svd_settings;
+    svd_settings.use_lapacke = true;
+    svd_settings.use_bdc = false;
+    svd_settings.threshold = 1e-16;
+    svd_settings.switchsize = 4096;
+    svd::solver svd(svd_settings);
+
+    Eigen::Tensor<T, 4> mpo_tmp  = Eigen::TensorMap<Eigen::Tensor<const T, 4>> (mpo, shape_mpo);
+    Eigen::Tensor<T, 4> mpo_l2r, mpo_r2l;
+    {
+        // Compress left to right
+        auto [U_l2r,S,V_l2r] = svd.split_mpo_l2r(mpo_tmp);
+        mpo_l2r = U_l2r.contract(Textra::asDiagonal(S), Textra::idx({1},{0})).shuffle(std::array<long,4>{0,3,1,2});
+        // Resize the new buffer for the compressed version of envR
+        std::array<long,3> shape_newR = {shape_envR[0], shape_envR[1], S.size()};
+        size_t newR_size = shape_newR[0]* shape_newR[1]* shape_newR[2];
+        envR_internal.resize(newR_size);
+
+        // Define maps to work with the pointers
+        Eigen::TensorMap<Eigen::Tensor<const T, 3>> envR_map(envR, shape_envR);
+        Eigen::TensorMap<Eigen::Tensor<T,3>> envR_internal_map (envR_internal.data(), shape_newR);
+        envR_internal_map  = envR_map.contract(V_l2r, Textra::idx({2},{1}));
+
+        // Reseat the pointer and update the size
+        envR = envR_internal.data();
+        shape_envR = shape_newR;
+    }
+    {
+        // Compress right to left
+        auto [U_r2l,S ,V_r2l] = svd.split_mpo_r2l(mpo_l2r);
+        mpo_r2l = Textra::asDiagonal(S).contract(V_r2l, Textra::idx({1},{0}));
+
+        // Resize the new buffer for the compressed version of envR
+        std::array<long,3> shape_newL = {shape_envL[0], shape_envL[1], S.size()};
+        size_t newL_size = shape_newL[0] * shape_newL[1]* shape_newL[2];
+        envL_internal.resize(newL_size);
+
+        // Define maps to work with the pointers
+        Eigen::TensorMap<Eigen::Tensor<const T, 3>> envL_map(envL, shape_envL);
+        Eigen::TensorMap<Eigen::Tensor<T,3>> envL_internal_map (envL_internal.data(), shape_newL);
+        envL_internal_map  = envL_map.contract(U_r2l, Textra::idx({2},{0}));
+
+        // Reseat the pointer and update the size
+        envL = envL_internal.data();
+        shape_envL = shape_newL;
+    }
+    {
+
+        // Copy the new mpo
+        shape_mpo = mpo_r2l.dimensions();
+        mpo_internal.resize(mpo_r2l.size());
+        Eigen::TensorMap<Eigen::Tensor<T,4>> mpo_internal_map (mpo_internal.data(), shape_mpo);
+        mpo_internal_map = mpo_r2l;
+
+        // Reseat the pointer
+        mpo = mpo_internal.data();
+    }
+    readyCompress = true;
+    eig::log->trace("Compressed mpo² dimensions {}", shape_mpo);
+}
+
 
 template<typename Scalar>
 void MatrixProductHamiltonian<Scalar>::set_mode(const eig::Form form_) {
