@@ -72,7 +72,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_variance_optimi
     solver_max.config.compress     = true;
     solver_max.setLogLevel(2);
 
-    solver_shft.config.eigThreshold = std::clamp(0.1 * initial_mps.get_variance(), settings::precision::eig_threshold, 1e-10,);
+    solver_shft.config.eigThreshold = std::clamp(0.1 * initial_mps.get_variance(), settings::precision::eig_threshold, 1e-10);
     solver_shft.config.eigMaxIter   = 1000;
     solver_shft.config.eigMaxNev    = 1;
     solver_shft.config.eigMaxNcv    = 128;
