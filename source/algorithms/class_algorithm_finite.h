@@ -66,6 +66,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_disorder_damping();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
+    void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         randomize_model();

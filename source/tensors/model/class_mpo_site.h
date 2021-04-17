@@ -47,6 +47,7 @@ class class_mpo_site {
     void                                          set_reduced_energy(double site_energy);
     void                                          build_mpo_squared();
     void                                          set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq);
+    void                                          clear_mpo_squared();
     [[nodiscard]] bool                            has_mpo_squared() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 4>        get_non_compressed_mpo_squared() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
