@@ -62,7 +62,14 @@ double class_tic_toc::get_measured_time() const {
         return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count();
 }
 
-double class_tic_toc::get_last_interval() const { return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count(); }
+double class_tic_toc::get_last_interval() const {
+
+    if(is_measuring){
+        auto delta_temp  = std::chrono::high_resolution_clock::now() - tic_timepoint;
+        return std::chrono::duration_cast<std::chrono::duration<double>>(delta_temp).count();
+    }else
+        return std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count();
+}
 
 double class_tic_toc::get_lap() const {
     if(is_measuring) {
