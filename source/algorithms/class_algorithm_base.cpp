@@ -107,7 +107,15 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     size_t saturated_from_idx = 0;
     for(auto &&[i, s] : iter::enumerate(Y_ste)) {
         saturated_from_idx = i;
-        if(s < sensitivity and Y_slp[i] < 1e-2) break;
+        // If both the standard error and slope are below their sensitivity thresholds, then break
+        if(s < sensitivity and Y_slp[i] < sensitivity) break;
+        // The slope can fluctuate a lot when variance is very low: this next
+        // condition breaks if the sensitivity test is **really** met
+        if(s < sensitivity * 0.01) break;
+        // The standard error can also fluctuate.
+        // This next condition breaks if the slope has truly not changed at all since i
+        if(Y_slp[i] < sensitivity * 0.01) break;
+
     }
 
 
