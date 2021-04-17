@@ -280,7 +280,6 @@ Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view() const {
 }
 
 Eigen::Tensor<Scalar, 4> class_ising_sdual::MPO_reduced_view(double site_energy) const {
-    if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<Scalar, 4> temp                                             = MPO();
     long                     row                                              = temp.dimension(0) - 1;
     long                     col                                              = 0;
