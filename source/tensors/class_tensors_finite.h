@@ -51,10 +51,15 @@ class class_tensors_finite {
     [[nodiscard]] class_state_finite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt,
                                                                            std::optional<svd::settings> svd_settings = std::nullopt);
     void project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    [[nodiscard]] class_state_finite get_state_with_hamiltonian_applied(std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    void apply_hamiltonian_on_state(std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+
+
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void damp_model_disorder(double coupling_damp, double field_damp);
-    void reduce_mpo_energy(std::optional<double> site_energy = std::nullopt);
-    void rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void reduce_mpo_energy(std::optional<double> energy_reduce_per_site = std::nullopt);
+    void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    void compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
 
     void assert_validity() const;
 
@@ -92,7 +97,6 @@ class class_tensors_finite {
                                 LogPolicy log_policy = LogPolicy::QUIET);
 
     std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-
     void assert_edges() const;
     void assert_edges_ene() const;
     void assert_edges_var() const;

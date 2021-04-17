@@ -79,8 +79,8 @@ void class_model_infinite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
 std::vector<Eigen::Tensor<class_model_infinite::Scalar, 4>> class_model_infinite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
-    mpos_sq.emplace_back(HA->get_uncompressed_mpo_squared());
-    mpos_sq.emplace_back(HB->get_uncompressed_mpo_squared());
+    mpos_sq.emplace_back(HA->get_non_compressed_mpo_squared());
+    mpos_sq.emplace_back(HB->get_non_compressed_mpo_squared());
 
     // Setup SVD
     // Here we need a lot of precision:

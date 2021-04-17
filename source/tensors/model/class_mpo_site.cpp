@@ -38,6 +38,11 @@ void class_mpo_site::set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq) {
     unique_id_sq = std::nullopt;
 }
 
+void class_mpo_site::clear_mpo_squared() {
+    mpo_squared  = std::nullopt;
+    unique_id_sq = std::nullopt;
+}
+
 bool class_mpo_site::has_mpo_squared() const { return mpo_squared.has_value(); }
 
 const Eigen::Tensor<Scalar, 4> &class_mpo_site::MPO() const {

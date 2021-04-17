@@ -2,6 +2,7 @@
 #include <array>
 #include <complex>
 #include <config/enums.h>
+#include <math/svd/settings.h>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 class class_mpo_site;
@@ -21,11 +22,12 @@ class class_model_finite {
         std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham_squared = std::nullopt;
     };
     mutable Cache                         cache;
-    std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
     void                                  randomize();
     bool                                  has_mpo_squared() const;
     void                                  reset_mpo_squared();
-    void                                  rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void                                  clear_mpo_squared();
+    void                                  compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
     void                                  set_reduced_energy(double total_energy);
     void                                  set_reduced_energy_per_site(double site_energy);
     void                                  perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
@@ -56,6 +58,7 @@ class class_model_finite {
     [[nodiscard]] bool   is_reduced() const;
     [[nodiscard]] bool   is_perturbed() const;
     [[nodiscard]] bool   is_damped() const;
+    [[nodiscard]] bool   is_compressed_mpo_squared() const;
     [[nodiscard]] double get_energy_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
 
@@ -65,6 +68,9 @@ class class_model_finite {
     Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
+
+    Eigen::Tensor<Scalar, 4> get_multisite_mpo_reduced_view(double energy_per_site) const;
+    Eigen::Tensor<Scalar, 4> get_multisite_mpo_squared_reduced_view(double energy_per_site) const;
 
     std::array<long, 4>             active_dimensions_squared() const;
     Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;

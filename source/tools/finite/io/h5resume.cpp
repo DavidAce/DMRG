@@ -139,6 +139,7 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
 
     if(settings::precision::use_reduced_energy){
         tensors.reduce_mpo_energy();
+        tensors.rebuild_mpo_squared();
         tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
         tools::log->debug("State labels: {}", tensors.state->get_labels());
         tensors.clear_measurements();

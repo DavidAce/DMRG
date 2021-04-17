@@ -150,13 +150,23 @@ void class_algorithm_finite::move_center_point(std::optional<long> num_moves) {
 }
 
 void class_algorithm_finite::reduce_mpo_energy() {
+    if(not tensors.position_is_inward_edge()) return;
+    if(not settings::precision::use_reduced_energy) return;
     // Reduce mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle
-    bool compress = settings::strategy::compress_mpo_squared;
-    if(status.algorithm_has_stuck_for > 0) compress = false;
-    if(settings::precision::use_reduced_energy and tensors.position_is_inward_edge()) tensors.reduce_mpo_energy(std::nullopt, compress);
+    tensors.reduce_mpo_energy(std::nullopt);
+    // The reduction clears our squared mpo's. So we have to rebuild.
+    rebuild_mpo_squared();
+
 }
+
+void class_algorithm_finite::rebuild_mpo_squared() {
+    if(not tensors.position_is_inward_edge()) return;
+    bool compress =  settings::strategy::compress_mpo_squared and status.algorithm_has_stuck_for == 0;
+    tensors.rebuild_mpo_squared(compress);
+}
+
 
 void class_algorithm_finite::update_variance_max_digits(std::optional<double> energy) {
     if(not tensors.position_is_inward_edge()) return;

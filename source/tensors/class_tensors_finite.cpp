@@ -6,6 +6,7 @@
 #include <tensors/edges/class_edges_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_mps_site.h>
+#include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/env.h>
@@ -58,7 +59,7 @@ void class_tensors_finite::initialize(ModelType model_type, size_t model_size, s
 
 void class_tensors_finite::randomize_model() {
     model->randomize();
-    model->rebuild_mpo_squared();
+    model->reset_mpo_squared();
     rebuild_edges();
 }
 
@@ -120,119 +121,150 @@ void class_tensors_finite::project_to_nearest_sector(const std::string &sector, 
     normalize_state(chi_lim.value(), svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
 }
 
+class_state_finite class_tensors_finite::get_state_with_hamiltonian_applied(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+    auto state_projected = *state;
+    state_projected.clear_measurements();
+    state_projected.clear_cache();
+    if(not chi_lim) chi_lim = state_projected.find_largest_chi();
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
+    std::vector<Eigen::Tensor<Scalar,4>> mpos;
+    for (const auto & mpo : model->MPO ) mpos.emplace_back(mpo->MPO());
+    auto Ledge = model->MPO.front()->get_MPO_edge_left();
+    auto Redge = model->MPO.back()->get_MPO_edge_right();
+    tools::finite::ops::apply_mpos(state_projected,mpos, Ledge,Redge);
+    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::ALWAYS);
+    return state_projected;
+}
+
+void class_tensors_finite::apply_hamiltonian_on_state(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+    clear_measurements();
+    if(not chi_lim) chi_lim = state->find_largest_chi();
+    tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
+    std::vector<Eigen::Tensor<Scalar,4>> mpos;
+    for (const auto & mpo : model->MPO ) mpos.emplace_back(mpo->MPO_reduced_view(0.0));
+    auto chiL = state->mps_sites.front()->get_chiL();
+    auto chiR = state->mps_sites.back()->get_chiR();
+    auto mpoL = model->MPO.front()->MPO().dimension(0);
+    auto mpoR = model->MPO.front()->MPO().dimension(1);
+    Eigen::Tensor<Scalar,3> Ledge = model->MPO.front()->get_MPO_edge_left().reshape(std::array<long,3>{chiL,chiL,mpoL});
+    Eigen::Tensor<Scalar,3> Redge = model->MPO.back()->get_MPO_edge_right().reshape(std::array<long,3>{chiR,chiR,mpoR});
+    tools::finite::ops::apply_mpos(*state,mpos, Ledge,Redge);
+    normalize_state(chi_lim.value(), svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, applying H|psi> ruins normalization!
+}
+
 void class_tensors_finite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
     measurements = tensors_measure_finite(); // State measurements can remain
     model->clear_cache();
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
-    model->rebuild_mpo_squared();
+    model->reset_mpo_squared();
     model->assert_validity();
     rebuild_edges();
 }
 
-void class_tensors_finite::reduce_mpo_energy(std::optional<double> site_energy) {
-    [[maybe_unused]] double var_bef_reduce = 1.0;
-    [[maybe_unused]] double var_aft_reduce = 1.0;
-    [[maybe_unused]] double var_aft_compr  = 1.0;
-    [[maybe_unused]] double ene_bef_reduce = 1.0;
-    [[maybe_unused]] double ene_aft_reduce = 1.0;
-    [[maybe_unused]] double ene_aft_compr  = 1.0;
+struct DebugStatus {
+    double ene = std::numeric_limits<double>::quiet_NaN();
+    double red = std::numeric_limits<double>::quiet_NaN();
+    double var = std::numeric_limits<double>::quiet_NaN();
+    std::string tag;
+    std::pair<std::vector<size_t>, std::vector<size_t>> env_ids;
+    std::vector<size_t> mpo_ids;
 
-    if constexpr(settings::debug) {
-        model->reset_mpo_squared();
-        rebuild_edges();
-        clear_cache();
-        clear_measurements();
-        tools::log->info("Measuring ene bef reduce using sites {} with ids: mps {} mpo {} env {}", active_sites, state->get_active_ids(),
-                         model->get_active_ids(), edges->get_active_ids());
-        ene_bef_reduce = tools::finite::measure::energy(*this);
-        var_bef_reduce = tools::finite::measure::energy_variance(*this);
+    [[nodiscard]] std::string msg()const{
+        std::string msg;
+        msg.append(fmt::format("Energy   [{:<20}] = {:>20.16f}\n",tag, ene));
+        msg.append(fmt::format("Reduce   [{:<20}] = {:>20.16f}\n",tag, red));
+        msg.append(fmt::format("log₁₀Var [{:<20}] = {:>20.16f}\n",tag,  std::log10(var)));
+        return msg;
     }
-    if(not site_energy) site_energy = tools::finite::measure::energy_per_site(*this);
-    if(site_energy.value() == model->get_energy_per_site_reduced()) return;
+    void print()const{
+        tools::log->debug("{}",msg());
+    }
+};
 
+std::optional<DebugStatus> get_status(class_tensors_finite & tensors, const std::string & tag){
+    if constexpr (not settings::debug) return std::nullopt;
+    tensors.clear_cache();
+    tensors.clear_measurements();
+    DebugStatus deb;
+    deb.ene = tools::finite::measure::energy(tensors);
+    deb.red = tools::finite::measure::energy_minus_energy_reduced(tensors);
+    deb.var = tools::finite::measure::energy_variance(tensors);
+    deb.tag = tag;
+    deb.env_ids = tensors.edges->get_active_ids();
+    deb.mpo_ids = tensors.model->get_active_ids();
+    return deb;
+}
+
+
+void class_tensors_finite::reduce_mpo_energy(std::optional<double> energy_reduce_per_site) {
+    std::vector<std::optional<DebugStatus>> debs;
+    debs.emplace_back(get_status(*this, "Before reduce"));
+
+    if(not energy_reduce_per_site) energy_reduce_per_site = tools::finite::measure::energy_per_site(*this);
     measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
-    if(not model->has_mpo_squared()) model->reset_mpo_squared();
-    auto mpo_ids_bef = model->get_active_ids();
-    auto env_ids_bef = edges->get_active_ids();
+
     tools::log->trace("Reducing MPO energy (all edges should be rebuilt after this)");
-    model->set_reduced_energy_per_site(site_energy.value());
-    if(not model->has_mpo_squared()) model->reset_mpo_squared();
-    rebuild_edges();
-    auto mpo_ids_aft = model->get_active_ids();
-    auto env_ids_aft = edges->get_active_ids();
-    if(site_energy.value() != 0 and mpo_ids_bef == mpo_ids_aft)
-        throw std::runtime_error(fmt::format("MPO id's at sites {} are unchanged after energy reduction", active_sites));
-    if(site_energy.value() != 0 and env_ids_bef == env_ids_aft)
-        throw std::runtime_error(fmt::format("ENV id's at sites {} are unchanged after energy reduction", active_sites));
-
-    if constexpr(settings::debug) {
-        tools::log->trace("Resetting MPO energy (var edges should be rebuilt after this)");
-        if(not model->has_mpo_squared()) model->reset_mpo_squared();
-        rebuild_edges();
-        clear_cache();
-        clear_measurements();
-        tools::log->info("Measuring ene aft reduce using sites {} with ids: mps {} mpo {} env {}", active_sites, state->get_active_ids(),
-                         model->get_active_ids(), edges->get_active_ids());
-
-        ene_aft_reduce = tools::finite::measure::energy(*this);
-        var_aft_reduce = tools::finite::measure::energy_variance(*this);
-    }
-
-    model->rebuild_mpo_squared();
+    model->set_reduced_energy_per_site(energy_reduce_per_site.value());
+    model->clear_mpo_squared();
     model->assert_validity();
-    rebuild_edges();
+    rebuild_edges_ene();
 
-    if constexpr(settings::debug) {
-        clear_cache();
-        clear_measurements();
-        tools::log->info("Measuring ene aft compr using sites {} with ids: mps {} mpo {} env {}", active_sites, state->get_active_ids(),
-                         model->get_active_ids(), edges->get_active_ids());
-        ene_aft_compr = tools::finite::measure::energy(*this);
-        var_aft_compr = tools::finite::measure::energy_variance(*this);
+    debs.emplace_back(get_status(*this,"After reduce"));
+
+    if(energy_reduce_per_site.value() != 0){
+        auto & bef = debs.front();
+        auto & aft = debs.back();
+        if(bef and aft and bef->mpo_ids == aft->mpo_ids)
+            throw std::runtime_error(fmt::format("ENV id's at sites {} are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
+        if(bef and aft and bef->env_ids == aft->env_ids)
+            throw std::runtime_error(fmt::format("ENV id's at sites {} are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
     }
 
+    for(const auto &deb: debs)
+        if(deb) deb->print();
+
     if constexpr(settings::debug) {
-        double energy_change                      = std::abs(ene_bef_reduce - ene_aft_compr);
-        double energy_change_percent              = energy_change / std::abs(ene_bef_reduce) * 100;
-        double critical_cancellation_max_decimals = 15 - std::max(0.0, std::log10(std::pow(site_energy.value() * static_cast<double>(get_length()), 2)));
-        double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
-        double variance_change                    = std::abs(var_bef_reduce - var_aft_compr);
-        double variance_change_percent            = variance_change / std::abs(var_bef_reduce) * 100;
-        tools::log->debug("Energy          before mpo reduce       {:>20.16f}", ene_bef_reduce);
-        tools::log->debug("Energy          after  mpo reduce       {:>20.16f}", ene_aft_reduce);
-        tools::log->debug("Energy          after  mpo compression  {:>20.16f}", ene_aft_compr);
-        tools::log->debug("Variance        before mpo reduce       {:>20.16f} | log10: {:>20.16f}", var_bef_reduce, std::log10(var_bef_reduce));
-        tools::log->debug("Variance        after  mpo reduce       {:>20.16f} | log10: {:>20.16f}", var_aft_reduce, std::log10(var_aft_reduce));
-        tools::log->debug("Variance        after  mpo compression  {:>20.16f} | log10: {:>20.16f}", var_aft_compr, std::log10(var_aft_compr));
-        tools::log->debug("Variance        change                  {:>20.16f}", variance_change);
-        tools::log->debug("Variance        change percent          {:>20.16f}", variance_change_percent);
-        tools::log->debug("Critical        cancellation decimals   {:>20.16f}", critical_cancellation_max_decimals);
-        tools::log->debug("Critical        cancellation error      {:>20.16f}", critical_cancellation_error);
-        if(variance_change > 1e3 * critical_cancellation_error) {
-            tools::log->warn("Variance changed significantly after energy reduction+compression");
-            if(variance_change > 1e6 * critical_cancellation_error) throw std::runtime_error("Energy reduction destroyed variance precision");
-        }
-        if(energy_change_percent > 1e-8) {
-            tools::log->warn("Energy changed significantly after energy reduction+compression");
-            if(energy_change_percent > 1e-6) throw std::runtime_error("Energy reduction changed energy level");
+        auto & bef = debs.front();
+        auto & aft = debs.back();
+        if(bef and aft){
+            double delta_ene                          = std::abs(bef->ene - aft->ene);
+            double delta_var                          = std::abs(bef->var - aft->var);
+            double delta_ene_rel                      = delta_ene / std::abs(aft->ene) * 100;
+            double delta_var_rel                      = delta_var / std::abs(aft->var) * 100;
+            double critical_cancellation_max_decimals = std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_reduce_per_site.value(), 2)));
+            double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
+            tools::log->debug("Variance change              {:>20.16f}", delta_var);
+            tools::log->debug("Variance change percent      {:>20.16f}", delta_var_rel);
+            tools::log->debug("Critical cancellation decs   {:>20.16f}", critical_cancellation_max_decimals);
+            tools::log->debug("Critical cancellation error  {:>20.16f}", critical_cancellation_error);
+            if(delta_var > 1e3 * critical_cancellation_error) {
+                tools::log->warn("Variance changed significantly after energy reduction+compression");
+                if(delta_var > 1e6 * critical_cancellation_error) throw std::runtime_error("Energy reduction destroyed variance precision");
+            }
+            if(delta_ene_rel > 1e-8) {
+                tools::log->warn("Energy changed significantly after energy reduction+compression");
+                if(delta_ene_rel > 1e-6) throw std::runtime_error("Energy reduction changed energy level");
+            }
         }
     }
 }
 
-void class_tensors_finite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
+void class_tensors_finite::rebuild_mpo_squared(std::optional<bool> compress, std::optional<svd::settings> svd_settings) {
     measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
-    model->rebuild_mpo_squared(svdMode);
+    if(not compress) compress = settings::strategy::compress_mpo_squared;
+    if(compress.value()) model->compress_mpo_squared(svd_settings);
+    else model->reset_mpo_squared();
     model->assert_validity();
-    rebuild_edges();
+    rebuild_edges_var();
 }
 
 void class_tensors_finite::damp_model_disorder(double coupling_damp, double field_damp) {
     measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
     model->damp_model_disorder(coupling_damp, field_damp);
-    model->rebuild_mpo_squared();
+    model->reset_mpo_squared();
     model->assert_validity();
     rebuild_edges();
 }
@@ -304,6 +336,7 @@ T class_tensors_finite::get_length() const {
     return state->get_length<T>();
 }
 
+template double class_tensors_finite::get_length<double>() const;
 template size_t class_tensors_finite::get_length<size_t>() const;
 template long   class_tensors_finite::get_length<long>() const;
 template int    class_tensors_finite::get_length<int>() const;
