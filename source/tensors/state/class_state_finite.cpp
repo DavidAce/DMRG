@@ -115,6 +115,7 @@ template<typename T>
 T class_state_finite::get_length() const {
     return static_cast<T>(mps_sites.size());
 }
+template double class_state_finite::get_length<double>() const;
 template size_t class_state_finite::get_length<size_t>() const;
 template long   class_state_finite::get_length<long>() const;
 template int    class_state_finite::get_length<int>() const;
@@ -311,8 +312,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
     if constexpr(settings::debug) tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
-    auto t_mps = tools::common::profile::get_default_prof()["t_mps"]->tic_token();
-    Eigen::Tensor<Scalar, 3> multisite_tensor;
+    auto                     t_mps = tools::common::profile::get_default_prof()["t_mps"]->tic_token();
+    Eigen::Tensor<Scalar, 3> multisite_mps;
     constexpr auto           shuffle_idx  = Textra::array4{0, 2, 1, 3};
     constexpr auto           contract_idx = Textra::idx({2}, {1});
     Textra::array3           new_dims;
@@ -320,45 +321,44 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
     bool                     first = true;
     for(auto &site : sites) {
         if(first) {
-            multisite_tensor = get_mps_site(site).get_M();
-            first            = false;
+            multisite_mps = get_mps_site(site).get_M();
+            first         = false;
             continue;
         }
         const auto &M    = get_mps_site(site).get_M();
-        long        dim0 = multisite_tensor.dimension(0) * M.dimension(0);
-        long        dim1 = multisite_tensor.dimension(1);
+        long        dim0 = multisite_mps.dimension(0) * M.dimension(0);
+        long        dim1 = multisite_mps.dimension(1);
         long        dim2 = M.dimension(2);
         new_dims         = {dim0, dim1, dim2};
         temp.resize(new_dims);
-        temp.device(Textra::omp::getDevice()) = multisite_tensor.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_tensor                      = temp;
+        temp.device(Textra::omp::getDevice()) = multisite_mps.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        multisite_mps                         = temp;
     }
     if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
-        // In this case all sites are "B" and we need to prepend the the "L" from the site on the left to make a normalized multisite tensor
+        // In this case all sites are "B" and we need to prepend the the "L" from the site on the left to make a normalized multisite mps
         auto &mps_left = get_mps_site(sites.front() - 1);
         auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-        if(L_left.dimension(0) != multisite_tensor.dimension(1))
-            throw std::logic_error(fmt::format("Mismatching dimensions: L_left {} | multisite_tensor {}", L_left.dimensions(), multisite_tensor.dimensions()));
-        temp.resize(multisite_tensor.dimension(0), L_left.dimension(0), multisite_tensor.dimension(2));
-        temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(L_left).contract(multisite_tensor, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
-        multisite_tensor                      = temp;
+        if(L_left.dimension(0) != multisite_mps.dimension(1))
+            throw std::logic_error(fmt::format("Mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
+        temp.resize(multisite_mps.dimension(0), L_left.dimension(0), multisite_mps.dimension(2));
+        temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(L_left).contract(multisite_mps, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+        multisite_mps                         = temp;
     } else if(sites.back() < get_length() - 1 and get_mps_site(sites.back()).get_label() == "A") {
-        // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite tensor
+        // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite mps
         auto &mps_right = get_mps_site(sites.back() + 1);
         auto &L_right   = mps_right.get_L();
-        if(L_right.dimension(0) != multisite_tensor.dimension(2))
-            throw std::logic_error(
-                fmt::format("Mismatching dimensions: L_right {} | multisite_tensor {}", L_right.dimensions(), multisite_tensor.dimensions()));
-        temp.resize(multisite_tensor.dimension(0), multisite_tensor.dimension(1), L_right.dimension(0));
-        temp.device(Textra::omp::getDevice()) = multisite_tensor.contract(Textra::asDiagonal(L_right), Textra::idx({2}, {1}));
-        multisite_tensor                      = temp;
+        if(L_right.dimension(0) != multisite_mps.dimension(2))
+            throw std::logic_error(fmt::format("Mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
+        temp.resize(multisite_mps.dimension(0), multisite_mps.dimension(1), L_right.dimension(0));
+        temp.device(Textra::omp::getDevice()) = multisite_mps.contract(Textra::asDiagonal(L_right), Textra::idx({2}, {1}));
+        multisite_mps                         = temp;
     }
 
     t_mps.toc();
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
-        auto t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
-        double norm = Textra::norm(multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+        auto   t_dbg = tools::common::profile::get_default_prof()["t_dbg"]->tic_token();
+        double norm  = Textra::norm(multisite_mps.contract(multisite_mps.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             for(const auto &site : sites) {
                 auto &mps = get_mps_site(site);
@@ -367,18 +367,18 @@ Eigen::Tensor<class_state_finite::Scalar, 3> class_state_finite::get_multisite_m
             }
             if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
                 // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
-                auto &mps_left   = get_mps_site(sites.front() - 1);
-                auto &L_left     = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-                temp             = Textra::asDiagonal(L_left).contract(multisite_tensor, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
-                multisite_tensor = temp;
-                norm             = Textra::norm(multisite_tensor.contract(multisite_tensor.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
+                auto &mps_left = get_mps_site(sites.front() - 1);
+                auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+                temp           = Textra::asDiagonal(L_left).contract(multisite_mps, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+                multisite_mps  = temp;
+                norm           = Textra::norm(multisite_mps.contract(multisite_mps.conjugate(), Textra::idx({0, 1, 2}, {0, 1, 2})));
                 tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
             }
 
-            throw std::runtime_error(fmt::format("Multisite tensor for sites {} is not normalized. Norm = {:.16f}", sites, norm));
+            throw std::runtime_error(fmt::format("Multisite mps for sites {} is not normalized. Norm = {:.16f}", sites, norm));
         }
     }
-    return multisite_tensor;
+    return multisite_mps;
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_mps() const {
