@@ -2,6 +2,7 @@
 // Created by david on 2019-06-24.
 //
 
+#include <math/num.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/model/class_mpo_site.h>
 #include <tensors/state/class_mps_site.h>
@@ -73,21 +74,39 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
 
     const auto                          initial_position = state.get_position<long>();
     auto                                direction        = state.get_direction();
-    long                                position         = initial_position;
+//    long                                position         = initial_position;
     long                                length           = state.get_length<long>();
-    bool                                at_edge          = position <= -1 or position >= length;
-    std::vector<long>                   sizes;
+    bool                                at_edge          = initial_position <= -1 or initial_position >= length;
     std::vector<size_t>                 sites;
+    std::vector<long>                   sizes;
     std::vector<std::array<long, 3>> shape;
-    while(true) {
-        if(position >= 0) {
-            sites.emplace_back(position);
+
+//    long max_pos = std::clamp(initial_position , initial_position, std::min<long>(length-1, static_cast<const long>(max_sites - 1)));
+//    long min_pos = std::clamp(initial_position, initial_position, std::min<long>(length-1, static_cast<const long>(max_sites - 1)));
+
+    if(not at_edge){
+        long max_pos = initial_position;
+        long min_pos = initial_position;
+        if(direction > 0){
+            max_pos = std::clamp<long>(initial_position + static_cast<long>(max_sites), initial_position, length-1);
+            min_pos = initial_position;
+        }else{
+            max_pos = std::clamp<long>(initial_position + 1, initial_position, length-1);
+            min_pos = std::clamp<long>(max_pos - static_cast<long>(max_sites) + 1, 0, initial_position );
+        }
+
+        auto range = num::range<size_t>(min_pos,max_pos+1); // +1 to include last position
+        if(direction < 0) std::reverse(range.begin(),range.end());
+
+        sites.emplace_back(initial_position); // Current position is always included
+        sizes.emplace_back(get_problem_size(state, sites));
+        shape.emplace_back(get_dimensions(state, sites));
+        for(auto & pos : range){
+            if(std::find(sites.begin(),sites.end(), pos) != sites.end()) continue; // Skip the first site
+            sites.emplace_back(pos);
             sizes.emplace_back(get_problem_size(state, sites));
             shape.emplace_back(get_dimensions(state, sites));
-            if(sites.size() >= max_sites) break;
         }
-        position += direction;
-        if(position <= -1 or position >= length) break;
     }
     tools::log->trace("Candidate sites {}", sites);
     tools::log->trace("Candidate sizes {}", sizes);
@@ -133,8 +152,8 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(class_state_fin
         tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, reason);
     else
-        tools::log->debug(
-            "Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | shape {} = {} | reason {}",
+        tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | "
+                          "shape {} = {} | reason {}",
             initial_position, direction, min_sites, max_sites, threshold, sites, shape.back(), sizes.back(), reason);
 
     if(not at_edge and sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})", sites.size(), min_sites));
