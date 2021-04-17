@@ -29,12 +29,14 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
     auto        shape_mpo = tensors.model->dimensions();
     const auto &mpo       = tensors.model->get_2site_mpo_AB();
     const auto &env       = tensors.edges->get_ene_blk();
-    auto        nev       = static_cast<eig::size_type>(1);
-    auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
 
     MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     eig::solver                      solver;
-    solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::ON);
+    solver.config.eigMaxNev = 1;
+    solver.config.eigMaxNcv =  static_cast<eig::size_type>(settings::precision::eig_max_ncv);
+    solver.config.eigThreshold = settings::precision::eig_threshold;
+    solver.config.eigMaxIter = 10000;
+    solver.eigs(matrix, -1, -1, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
     return eig::view::get_eigvec<Scalar>(solver.result, shape_mps);
 }
 
