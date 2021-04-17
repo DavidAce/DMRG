@@ -14,6 +14,7 @@ class MatrixProductDense {
     using Scalar                                   = Scalar_;
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
+    constexpr static bool         can_compress     = false;
     constexpr static eig::Storage storage          = eig::Storage::DENSE;
 
     private:
@@ -49,6 +50,11 @@ class MatrixProductDense {
     void             set_side(const eig::Side side_);
     const eig::Form &get_form() const;
     const eig::Side &get_side() const;
+
+
+    [[nodiscard]] bool isReadyFactorOp() const { return readyFactorOp; }
+    [[nodiscard]] bool isReadyShift() const { return readyShift; }
+
     // Profiling
     void                           init_profiling();
     std::unique_ptr<class_tic_toc> t_factorOP;
