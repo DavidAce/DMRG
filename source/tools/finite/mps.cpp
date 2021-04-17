@@ -221,7 +221,8 @@ size_t tools::finite::mps::merge_multisite_tensor(class_state_finite &state, con
         mps.unset_LC();
     }
 
-
+    if(svd_settings)
+        tools::log->trace("Splitting multisite_mps sites {} | {}",positions, svd_settings->to_string());
 
 
     // Split the multisite mps into single-site mps objects
