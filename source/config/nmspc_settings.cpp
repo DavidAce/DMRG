@@ -76,11 +76,13 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
     dmrg_config.load_parameter("strategy::compress_mpo_squared"               , strategy::compress_mpo_squared);
+    dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
     dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
     dmrg_config.load_parameter("strategy::discard_schmidt_when_stuck"         , strategy::discard_schmidt_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
+    dmrg_config.load_parameter("strategy::expand_on_saturation"               , strategy::expand_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);
