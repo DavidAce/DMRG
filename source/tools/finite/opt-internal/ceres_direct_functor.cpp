@@ -132,7 +132,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     variance          = std::abs(var);
     variance_per_site = variance / static_cast<double>(length);
     norm_offset       = std::abs(vv) - 1.0;
-    double epsilon    = 1e-15;
+    double epsilon    = std::numeric_limits<double>::epsilon();
     log10var          = std::log10(epsilon + variance);
 
     if(fx != nullptr) { fx[0] = log10var; }
