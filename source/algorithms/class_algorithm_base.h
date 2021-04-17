@@ -49,7 +49,6 @@ class class_algorithm_base {
     // common functions
     void copy_from_tmp(StorageReason storage_reason = StorageReason::SAVEPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
     void init_bond_dimension_limits();
-    void update_variance_convergence_threshold();
     void print_profiling_lap();
 
     protected:
