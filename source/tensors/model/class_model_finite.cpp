@@ -165,7 +165,7 @@ std::vector<Eigen::Tensor<class_model_finite::Scalar, 4>> class_model_finite::ge
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
     for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->get_non_compressed_mpo_squared());
-    tools::log->debug("Compressing squared MPO");
+    tools::log->trace("Compressing MPO²");
 
     // Setup SVD
     // Here we need a lot of precision:

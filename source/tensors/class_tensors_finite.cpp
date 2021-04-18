@@ -177,17 +177,19 @@ struct DebugStatus {
         return msg;
     }
     void print()const{
-        tools::log->debug("{}",msg());
+        tools::log->debug("Energy   [{:<20}] = {:>20.16f}",tag, ene);
+        tools::log->debug("Reduce   [{:<20}] = {:>20.16f}",tag, red);
+        tools::log->debug("log₁₀Var [{:<20}] = {:>20.16f}",tag,  std::log10(var));
     }
 };
 
 std::optional<DebugStatus> get_status(class_tensors_finite & tensors, const std::string & tag){
     if constexpr (not settings::debug) return std::nullopt;
-    tensors.clear_cache();
-    tensors.clear_measurements();
+    tensors.model->clear_cache();
+    tensors.measurements = tensors_measure_finite();
     DebugStatus deb;
     deb.ene = tools::finite::measure::energy(tensors);
-    deb.red = tools::finite::measure::energy_minus_energy_reduced(tensors);
+    deb.red = tools::finite::measure::energy_reduced(tensors);
     deb.var = tools::finite::measure::energy_variance(tensors);
     deb.tag = tag;
     deb.env_ids = tensors.edges->get_active_ids();
@@ -206,19 +208,25 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> energy_reduce
 
     tools::log->trace("Reducing MPO energy (all edges should be rebuilt after this)");
     model->set_reduced_energy_per_site(energy_reduce_per_site.value());
-    model->clear_mpo_squared();
+    model->reset_mpo_squared();
     model->assert_validity();
-    rebuild_edges_ene();
+    rebuild_edges();
 
     debs.emplace_back(get_status(*this,"After reduce"));
 
     if(energy_reduce_per_site.value() != 0){
         auto & bef = debs.front();
         auto & aft = debs.back();
-        if(bef and aft and bef->mpo_ids == aft->mpo_ids)
-            throw std::runtime_error(fmt::format("ENV id's at sites {} are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
-        if(bef and aft and bef->env_ids == aft->env_ids)
-            throw std::runtime_error(fmt::format("ENV id's at sites {} are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
+        if(bef and aft){
+            if(bef->red != aft->red){
+                if(bef->mpo_ids == aft->mpo_ids)
+                    throw std::runtime_error(fmt::format("MPO id's are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
+                if(bef->env_ids == aft->env_ids)
+                    throw std::runtime_error(fmt::format("ENV id's are unchanged after energy reduction\n{}\n{}", bef->msg(),aft->msg()));
+            }
+        }
+
+
     }
 
     for(const auto &deb: debs)
