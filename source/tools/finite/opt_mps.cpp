@@ -164,6 +164,12 @@ std::string opt_mps::get_krylov_ritz() const {
         return "NO";
 }
 
+opt_mps::cplx opt_mps::get_krylov_shift() const {
+    if(krylov_shift)
+        return krylov_shift.value();
+    else
+        return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::quiet_NaN());
+}
 
 double opt_mps::get_overlap() const {
     if(overlap)
@@ -264,6 +270,7 @@ void opt_mps::set_krylov_ncv(long ncv_) { krylov_ncv = ncv_; }
 void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
 void opt_mps::set_krylov_eigval(double krylov_eigval_) { krylov_eigval = krylov_eigval_; }
 void opt_mps::set_krylov_ritz(const std::string & krylov_ritz_) { krylov_ritz = krylov_ritz_; }
+void opt_mps::set_krylov_shift(const cplx & krylov_shift_) { krylov_shift = krylov_shift_; }
 
 
 
