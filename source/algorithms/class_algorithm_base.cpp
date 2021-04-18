@@ -100,6 +100,17 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     for(const auto &[i,y]: iter::enumerate(Y_avg))
         Y_std.push_back(stat::stdev(Y_avg,i));
 
+    // "Normalize" the standard deviations so that this becomes scale invariant w.r.t Y_vec
+    std::vector<double> Y_stn;
+    Y_stn.reserve(Y_std.size());
+    for(const auto &[i,y]: iter::enumerate(Y_std)){
+        double divisor = Y_avg[i] == 0.0 ? 1.0 : Y_avg[i];
+        Y_stn.push_back(Y_std[i] / divisor);
+    }
+
+
+
+
 
     size_t saturated_from_idx = 0;
     for(const auto &[i, a] : iter::enumerate(Y_avg)) {
@@ -107,7 +118,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
         auto median = stat::median(Y_avg,i);
         auto bwidth  = 10 * Y_std[i]; // Band width
 //        tools::log->info("Y_vec[{:3}] = {:7.4e} | band = {:7.4e} +- {:7.4e}",i, Y_vec[i], median,bwidth);
-        if(Y_std[i] < 1e-10 and Y_vec[i] == std::clamp(Y_vec[i], median-bwidth, median+bwidth))
+        if(Y_stn[i] < sensitivity and Y_vec[i] == std::clamp(Y_vec[i], median-bwidth, median+bwidth))
             break;
     }
 
@@ -118,6 +129,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     report.Y_avg           = Y_avg;
     report.Y_vec           = Y_vec;
     report.Y_std           = Y_std;
+    report.Y_stn           = Y_stn;
     return report;
 }
 

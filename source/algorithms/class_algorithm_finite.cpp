@@ -519,6 +519,7 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->info(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
         tools::log->info(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
         tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+        tools::log->info(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
     }
 }
 
@@ -565,6 +566,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         tools::log->info(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
         tools::log->info(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
         tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+        tools::log->info(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
 }
