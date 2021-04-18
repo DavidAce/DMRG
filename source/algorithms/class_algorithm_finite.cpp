@@ -520,6 +520,7 @@ void class_algorithm_finite::check_convergence_variance(std::optional<double> th
         tools::log->info(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
         tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
         tools::log->info(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+        tools::log->info(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
     }
 }
 
@@ -541,7 +542,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(std::optional<double
         size_t last_saturated_site = 0;
         size_t last_saturated_idx  = 0;
         for(const auto &[site, r] : iter::enumerate(reports)) {
-            if( r.saturated_point > last_saturated_idx){
+            if( r.saturated_point >= last_saturated_idx){
                 last_saturated_site = site;
                 last_saturated_idx =  r.saturated_point;
             }
