@@ -124,12 +124,11 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     /* clang-format on */
 
     if(config.eigMaxNev.value() < 1) config.eigMaxNev = 1;
-    if(config.eigMaxNcv.value() <= config.eigMaxNev.value()) config.eigMaxNcv = std::min(L, std::max(2l*nev + 1l, 32l));;
-
+    if(config.eigMaxNcv.value() <= config.eigMaxNev.value()) config.eigMaxNcv = std::min(L, std::max(2l*config.eigMaxNev.value() + 1l, 32l));;
+    config.eigMaxNcv.value() = std::clamp(config.eigMaxNcv.value(),  config.eigMaxNev.value(), L );
     if(config.form == Form::NSYM) {
         if(config.eigMaxNev.value() == 1) { config.eigMaxNev = 2; }
     }
-    if(config.eigMaxNcv.value() >= L) { config.eigMaxNcv = (L + config.eigMaxNev.value()) / 2; }
 
     assert(config.eigMaxNcv.value() <= L and "Ncv > L");
     assert(config.eigMaxNcv.value() >= config.eigMaxNev.value() and "Ncv < Nev");
