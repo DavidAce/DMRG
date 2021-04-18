@@ -66,7 +66,7 @@ void class_model_infinite::reset_mpo_squared() {
 
 void class_model_infinite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
     if(settings::strategy::compress_mpo_squared) {
-        tools::log->debug("Compressing squared MPO");
+        tools::log->trace("Compressing MPO²");
         throw std::runtime_error("Compressing the squared MPO is currently unsupported on infinite systems.\n"
                                  "Set settings::strategy::compress_mpo_squared = false");
         auto mpo_compressed = get_compressed_mpo_squared(svdMode);
