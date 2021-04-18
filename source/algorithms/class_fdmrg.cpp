@@ -14,6 +14,7 @@
 #include <tools/finite/measure.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
+#include <tools/finite/opt_mps.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 class_fdmrg::class_fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : class_algorithm_finite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
@@ -171,12 +172,11 @@ void class_fdmrg::single_fdmrg_step() {
         // Use subspace expansion if alpha_expansion was set
         if(sub_expansion_alpha) tensors.expand_subspace(sub_expansion_alpha.value(), status.chi_lim);
 
-        Eigen::Tensor<Scalar, 3> multisite_tensor = tools::finite::opt::find_ground_state(tensors, ritz);
+        auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, ritz);
         if constexpr(settings::debug)
-            tools::log->debug("Variance after opt: {:.8f} | norm {:.16f}", std::log10(tools::finite::measure::energy_variance(multisite_tensor, tensors)),
-                              Textra::norm(multisite_tensor));
+            tools::log->debug("Variance after opt: {:.8f} | norm {:.16f}", std::log10(multisite_mps.get_variance()), multisite_mps.get_norm());
 
-        tensors.merge_multisite_tensor(multisite_tensor, status.chi_lim);
+        tensors.merge_multisite_tensor(multisite_mps.get_tensor(), status.chi_lim);
         if constexpr(settings::debug)
             tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance(tensors)),
                               tools::finite::measure::truncation_errors_active(*tensors.state));
@@ -193,15 +193,13 @@ void class_fdmrg::single_fdmrg_step() {
 
 void class_fdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
-
     auto t_con = tools::common::profile::prof[algo_type]["t_con"]->tic_token();
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
-    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
-       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
+    if(status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)
         status.algorithm_saturated_for++;
     else
         status.algorithm_saturated_for = 0;
@@ -218,6 +216,12 @@ void class_fdmrg::check_convergence() {
 
     status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
     status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
+
+    if(status.algorithm_converged_for == 0 and status.variance_mpo_saturated_for * status.entanglement_saturated_for == 0 and status.algorithm_has_stuck_for != 0)
+        throw std::logic_error("Should have zeroed");
+    if(status.algorithm_converged_for == 0 and status.variance_mpo_saturated_for * status.entanglement_saturated_for > 0 and status.algorithm_has_stuck_for == 0)
+        throw std::logic_error("Should not have zeroed");
+
 
     tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
                      status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
