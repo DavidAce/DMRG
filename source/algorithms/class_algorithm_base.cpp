@@ -69,9 +69,16 @@ void class_algorithm_base::init_bond_dimension_limits() {
 }
 
 
-size_t class_algorithm_base::count_convergence(const std::vector<double> & Y_vec, double threshold){
-    auto last_nonconverged_ptr = std::find_if(Y_vec.rbegin(), Y_vec.rend(), [threshold](auto const &val) { return val > threshold; });
-    return static_cast<size_t>(std::distance(Y_vec.rbegin(), last_nonconverged_ptr));
+size_t class_algorithm_base::count_convergence(const std::vector<double> & Y_vec, double threshold, size_t start_idx){
+    size_t count = 0;
+    for(const auto & [i,y] : iter::enumerate(Y_vec)){
+        if (i < start_idx) continue;
+        if (y <= threshold) count++;
+    }
+    return count;
+//
+//    auto last_nonconverged_ptr = std::find_if(Y_vec.rbegin(), Y_vec.rend(), [threshold](auto const &val) { return val > threshold; });
+//    return static_cast<size_t>(std::distance(Y_vec.rbegin(), last_nonconverged_ptr));
 }
 
 
@@ -80,56 +87,37 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     constexpr size_t min_data_points = 2;
     if(Y_vec.size() < min_data_points) { return report; }
 
-    std::vector<double> Y_log;
-    Y_log.reserve(Y_vec.size());
-    for(auto &y : Y_vec) Y_log.push_back(-std::log10(std::abs(y)));
+    // Running average [i:end]
+    std::vector<double> Y_avg;
+    Y_avg.reserve(Y_vec.size());
+    for(const auto &[i,y] : iter::enumerate(Y_vec))
+        Y_avg.push_back(stat::mean(Y_vec,i));
 
-    // Normalize so the last element is 1
-    double yback = Y_log.back();
-    for(auto &y : Y_log) y /= yback;
 
     // Get the standard deviations from i to end
-    // Just make sure to always include more than w elements
-    std::vector<double> Y_std, Y_ste, Y_slp;
-    Y_std.reserve(Y_log.size());
-    Y_ste.reserve(Y_log.size());
-    Y_slp.reserve(Y_log.size());
-    long w = 2;
-    for(size_t i = 0; i < Y_log.size(); i++) {
-        size_t min_idx = std::min(i, Y_log.size() - w);
-        min_idx        = std::max(min_idx, 0ul);
-        Y_std.push_back(stat::stdev(Y_log, min_idx));
-        Y_ste.push_back(stat::sterr(Y_log, min_idx));
-        auto [slp,res] = stat::slope(Y_log, min_idx);
-        Y_slp.push_back(std::abs(slp)*100);
-    }
+    std::vector<double> Y_std;
+    Y_std.reserve(Y_avg.size());
+    for(const auto &[i,y]: iter::enumerate(Y_avg))
+        Y_std.push_back(stat::stdev(Y_avg,i));
+
 
     size_t saturated_from_idx = 0;
-    for(auto &&[i, s] : iter::enumerate(Y_ste)) {
+    for(const auto &[i, a] : iter::enumerate(Y_avg)) {
         saturated_from_idx = i;
-        // If both the standard error and slope are below their sensitivity thresholds, then break
-        if(s < sensitivity and Y_slp[i] < sensitivity) break;
-        // The slope can fluctuate a lot when variance is very low: this next
-        // condition breaks if the sensitivity test is **really** met
-        if(s < sensitivity * 0.01) break;
-        // The standard error can also fluctuate.
-        // This next condition breaks if the slope has truly not changed at all since i
-        if(Y_slp[i] < sensitivity * 0.01) break;
-
+        auto median = stat::median(Y_avg,i);
+        auto bwidth  = 10 * Y_std[i]; // Band width
+//        tools::log->info("Y_vec[{:3}] = {:7.4e} | band = {:7.4e} +- {:7.4e}",i, Y_vec[i], median,bwidth);
+        if(Y_std[i] < 1e-10 and Y_vec[i] == std::clamp(Y_vec[i], median-bwidth, median+bwidth))
+            break;
     }
-
-
 
     report.has_computed    = true;
     report.saturated_point = saturated_from_idx;
     report.saturated_count = Y_vec.size() - saturated_from_idx - 1;
     report.has_saturated   = report.saturated_count > 0;
-    report.Y_avg           = stat::mean(Y_vec, saturated_from_idx);
+    report.Y_avg           = Y_avg;
     report.Y_vec           = Y_vec;
-    report.Y_log           = Y_log;
     report.Y_std           = Y_std;
-    report.Y_ste           = Y_ste;
-    report.Y_slp           = Y_slp;
     return report;
 }
 

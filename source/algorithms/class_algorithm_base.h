@@ -58,13 +58,13 @@ class class_algorithm_base {
         bool                has_saturated = false;
         size_t              saturated_count = 0;
         size_t              saturated_point = 0;
-        double              Y_avg; // Average from the saturation point onward
         std::vector<double> Y_vec; // The values used to gauge saturation
-        std::vector<double> Y_log; // Normalized values to check saturation. Let y = -log10(Y_vec). Then Y_log = y/y.back()
-        std::vector<double> Y_std; // The "moving" standard deviation of Y_log. (std from x -> end, moving x towards end)
-        std::vector<double> Y_ste; // The "moving" standard error of Y_log. (std from x -> end, moving x towards end)
-        std::vector<double> Y_slp; // The "moving" slope of Y_log. (slope from x -> end, moving x towards end)
+        std::vector<double> Y_avg; // Running average from [i:end]
+        std::vector<double> Y_std; // The "moving" standard deviation of Y_avg from [i:end]
+        //        std::vector<double> Y_log; // Normalized values to check saturation. Let y = -log10(Y_vec). Then Y_log = y/y.back()
+        //        std::vector<double> Y_ste; // The "moving" standard error of Y_log. (std from x -> end, moving x towards end)
+        //        std::vector<double> Y_slp; // The "moving" slope of Y_log. (slope from x -> end, moving x towards end)
     };
-    size_t count_convergence(const std::vector<double> & Y_vec, double threshold);
+    size_t count_convergence(const std::vector<double> & Y_vec, double threshold, size_t start_idx = 0);
     SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity);
 };
