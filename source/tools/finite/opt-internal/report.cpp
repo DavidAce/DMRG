@@ -110,7 +110,7 @@ void tools::finite::opt::internal::reports::print_krylov_report(std::optional<si
     tools::log->debug(format_hdr.c_str(),
                       "Optimization report",
                       "size",
-                      "ritz"
+                      "ritz",
                       "nev",
                       "ncv",
                       "tol",
