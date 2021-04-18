@@ -105,11 +105,12 @@ void tools::finite::opt::internal::reports::print_time_report(){
 void tools::finite::opt::internal::reports::print_krylov_report(std::optional<size_t> max_entries){
     if (tools::log->level() > spdlog::level::debug) return;
     if (krylov_log.empty()) return;
-    std::string format_hdr = "{:<52} {:<7} {:<4} {:<4} {:<8} {:<22} {:<22} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
-    std::string format_num = "- {:<50} {:<7} {:<4} {:<4} {:<8.2e} {:<22.15f} {:<22.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
+    std::string format_hdr = "{:<52} {:<7} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
+    std::string format_num = "- {:<50} {:<7} {:<4} {:<4} {:<4} {:<8.2e} {:<22.15f} {:<22.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<18.3f} {:<18.3f}";
     tools::log->debug(format_hdr.c_str(),
                       "Optimization report",
                       "size",
+                      "ritz"
                       "nev",
                       "ncv",
                       "tol",
@@ -127,7 +128,7 @@ void tools::finite::opt::internal::reports::print_krylov_report(std::optional<si
         if(max_entries and max_entries.value() <= idx) break;
         tools::log->debug(format_num.c_str(),
                           entry.description,
-                          entry.size, entry.nev, entry.ncv, entry.tol,
+                          entry.size, entry.ritz,entry.nev, entry.ncv, entry.tol,
                           entry.energy,entry.eigval,
                           std::log10(entry.variance),
                           entry.overlap,entry.norm,
