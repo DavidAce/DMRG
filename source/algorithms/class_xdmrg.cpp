@@ -596,7 +596,7 @@ void class_xdmrg::check_convergence() {
     if(status.algorithm_converged_for == 0 and status.variance_mpo_saturated_for * status.entanglement_saturated_for > 0 and status.algorithm_has_stuck_for == 0)
         throw std::logic_error("Should not have zeroed");
 
-    status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
+    status.algorithm_has_succeeded = status.algorithm_converged_for >= min_converged_iters and status.algorithm_saturated_for >= min_saturation_iters;
     status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
 
     tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
