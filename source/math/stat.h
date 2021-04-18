@@ -42,11 +42,13 @@ namespace stat{
         if(end_point.value() == start_point.value()) return 0.0;
         if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
 
+        // Find the starting point
         auto x_it_mid   = X.begin();
-        auto n          = static_cast<double>(end_point.value() - start_point.value());
-        std::advance(x_it_mid, n/2);
+        std::advance(x_it_mid, start_point.value());
+        // ... and then the mid-point between start to end
+        auto n          = static_cast<long>(end_point.value() - start_point.value());
+        std::advance(x_it_mid, static_cast<long>(n/2));
 
-        // Find the middle point between start and end
         if(n > 0 and num::mod<size_t>(static_cast<size_t>(n),2) == 0){
             // Even number of elements, take mean between middle elements
             auto a = *x_it_mid;
@@ -167,11 +169,12 @@ namespace stat{
     template<typename ContainerType>
     ContainerType smooth(const ContainerType &X, long width = 2) {
         if(X.size() <= 2) return X;
+        width = std::min<long>(4, static_cast<long>(X.size())/2);
         ContainerType S;
         S.reserve(X.size());
         for (auto && [i,x] : iter::enumerate(X)){
-            long min_idx = std::max<long>(i-width, 0);
-            long max_idx = std::min<long>(i+width, X.size()-1);
+            long min_idx = std::clamp<long>(i-width, 0, i);
+            long max_idx = std::clamp<long>(i+width, i, X.size()-1);
             S.push_back(stat::mean(X,min_idx,max_idx));
         }
         return S;
