@@ -13,7 +13,7 @@
 #include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_mps.h>
 #include <math/linalg/matrix.h>
-tools::finite::opt::opt_mps tools::finite::opt::internal::arpack_energy_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
+tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_energy_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
                                                                                                const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                                OptSpace optSpace) {
     using namespace internal;
