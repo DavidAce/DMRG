@@ -93,7 +93,6 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     for(const auto &[i,y] : iter::enumerate(Y_vec))
         Y_avg.push_back(stat::mean(Y_vec,i));
 
-
     // Get the standard deviations from i to end
     std::vector<double> Y_std;
     Y_std.reserve(Y_avg.size());
@@ -108,7 +107,19 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
         Y_stn.push_back(Y_std[i] / divisor);
     }
 
-
+    // Get also the slopes of the smoothened data
+    std::vector<double> Y_slp,Y_log;
+    Y_slp.reserve(Y_vec.size());
+    Y_log.reserve(Y_vec.size());
+    auto Y_smt = stat::smooth(Y_vec, 2);
+    for(auto &y : Y_smt) Y_log.push_back(-std::log10(std::abs(y)));
+    // Normalize so the last element is 1
+    double yback = Y_log.back();
+    for(auto &y : Y_log) y /= yback;
+    for(const auto &[i,y]: iter::enumerate(Y_vec)){
+        auto [slp,res] = stat::slope(Y_log, i);
+        Y_slp.push_back(std::abs(slp));
+    }
 
 
 
@@ -118,8 +129,11 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
         auto median = stat::median(Y_avg,i);
         auto bwidth  = 10 * Y_std[i]; // Band width
 //        tools::log->info("Y_vec[{:3}] = {:7.4e} | band = {:7.4e} +- {:7.4e}",i, Y_vec[i], median,bwidth);
-        if(Y_stn[i] < sensitivity and Y_vec[i] == std::clamp(Y_vec[i], median-bwidth, median+bwidth))
-            break;
+        bool rel_cond = Y_stn[i] < sensitivity;
+        bool abs_cond = Y_std[i] < 1e-10;
+        bool win_cond = Y_vec[i] == std::clamp(Y_vec[i], median-bwidth, median+bwidth);
+        bool slp_cond = Y_slp[i] < 0.1*sensitivity;
+        if((rel_cond or abs_cond or slp_cond) and win_cond) break;
     }
 
     report.has_computed    = true;
@@ -130,6 +144,7 @@ class_algorithm_base::SaturationReport class_algorithm_base::check_saturation(co
     report.Y_vec           = Y_vec;
     report.Y_std           = Y_std;
     report.Y_stn           = Y_stn;
+    report.Y_slp           = Y_slp;
     return report;
 }
 
