@@ -125,8 +125,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
         case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
         case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
         case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
-        case OptSpace::KRYLOV_ENERGY:        result = internal::arpack_energy_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
-        case OptSpace::KRYLOV_VARIANCE:      result = internal::arpack_variance_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
+        case OptSpace::KRYLOV_ENERGY:        result = internal::krylov_energy_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
+        case OptSpace::KRYLOV_VARIANCE:      result = internal::krylov_variance_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
             /* clang-format on */
     }
     // Finish up and print reports
@@ -138,8 +138,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     return result;
 }
 
-Eigen::Tensor<std::complex<double>, 3> tools::finite::opt::find_ground_state(const class_tensors_finite &tensors, StateRitz ritz) {
-    return internal::ground_state_optimization(tensors, ritz);
+tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const class_tensors_finite &tensors, const class_algorithm_status & status,  StateRitz ritz) {
+    return internal::ground_state_optimization(tensors,status, ritz);
 }
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
@@ -217,7 +217,6 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     //    if(summary.iteration > 100 and summary.cost_change < 1e-5 and summary.gradient_max_norm < 10.0 and summary.step_norm < 1e-6) return
     //    ceres::SOLVER_ABORT;
     functor.set_delta_f(std::abs(summary.cost_change/summary.cost));
-    functor.set_grad_max_norm(summary.gradient_max_norm);
     if(not log) return ceres::SOLVER_CONTINUE;
     if(log->level() >= spdlog::level::debug) return ceres::SOLVER_CONTINUE;
     if(summary.iteration - last_log_iter < freq_log_iter and summary.iteration > init_log_iter) return ceres::SOLVER_CONTINUE;
