@@ -44,14 +44,16 @@ namespace tools::finite::opt::internal{
 
 
     extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_tensors_finite & tensors, const class_algorithm_status & status);
-    extern Eigen::Tensor<std::complex<double>,3> ground_state_optimization   (const class_tensors_finite & tensors, StateRitz ritz);
-    extern Eigen::Tensor<std::complex<double>,3> ground_state_optimization   (const class_tensors_finite & tensors, std::string_view ritz);
-    extern opt_mps arpack_energy_optimization (const class_tensors_finite &tensors, const opt_mps &initial_mps,
+    extern opt_mps ground_state_optimization  (const class_tensors_finite & tensors, const class_algorithm_status & status, StateRitz ritz);
+    extern opt_mps ground_state_optimization  (const opt_mps & initial_mps,const class_tensors_finite & tensors, const class_algorithm_status & status, std::string_view ritz);
+    extern opt_mps krylov_energy_optimization (const class_tensors_finite & tensors, const opt_mps &initial_mps,
                                                  const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                  OptSpace optSpace);
-    extern opt_mps arpack_variance_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
+    extern opt_mps krylov_variance_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
                                                   const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                   OptSpace optSpace);
+    extern void krylov_extract_solutions(const opt_mps &initial_mps,const class_tensors_finite &tensors, eig::solver &solver, std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, const std::string & tag = "");
+
     extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_tensors_finite & tensors, OptType optType, OptMode optMode, OptSpace optSpace);
     extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
 
