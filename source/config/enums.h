@@ -1,7 +1,9 @@
 #pragma once
+#include <numeric>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
+#include <vector>
 enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
