@@ -16,7 +16,7 @@ lambdas             = [0.000]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [2]
-multisite_mps_size_max  = [2,4]
+multisite_mps_size_max  = [2]
 multisite_mps_size_init = [6]
 output_prefix       = "output"
 
@@ -63,7 +63,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
         "threading::stl_threads"             : "1",
         "threading::omp_threads"             : "1",
-        "console::verbosity"                 : "2",
+        "console::verbosity"                 : "1",
         "model::model_size"                  : str_L,
         "model::ising_sdual::delta"          : str_d,
         "model::ising_sdual::lambda"         : str_l,
