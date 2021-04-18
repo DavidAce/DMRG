@@ -143,6 +143,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         auto var_1 = (1.0 / (epsilon + var) / std::log(10));
         grad       = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
+        grad_max_norm = grad.template lpNorm<Eigen::Infinity>();
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
