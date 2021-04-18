@@ -122,8 +122,9 @@ add_library(dmrg-opt OBJECT
         source/tools/finite/opt-internal/ceres_subspace_functor.cpp
         source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp
         source/tools/finite/opt-internal/ground_state.cpp
-        source/tools/finite/opt-internal/arpack_energy.cpp
-        source/tools/finite/opt-internal/arpack_variance.cpp
+        source/tools/finite/opt-internal/krylov_energy.cpp
+        source/tools/finite/opt-internal/krylov_variance.cpp
+        source/tools/finite/opt-internal/krylov_solution.cpp
         source/tools/finite/opt-internal/report.cpp
         source/tools/finite/opt.cpp
         )
