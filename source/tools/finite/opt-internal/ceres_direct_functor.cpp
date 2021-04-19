@@ -117,15 +117,9 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 
     var = nH2n - nHn * nHn;
     if(std::real(var) < 0.0) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}", counter, std::real(var), std::imag(var));
-    if(std::real(var) < 0.0) throw std::runtime_error(fmt::format("Counter = {}. var  is negative:  {:.16f} + i {:.16f} | nH2n {:.16f} + i {:.16f} | nHn {:.16f} + i {:.16f} ",
-                                                                  counter,
-                                                                  std::real(var), std::imag(var),
-                                                                  std::real(nH2n), std::imag(nH2n),
-                                                                  std::real(nHn), std::imag(nHn)
 
-        ));
-    var = std::real(var) < 0.0 ? std::abs(var) : std::real(var);
-    var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
+    var = std::abs(var);
+    var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : var;
 
     energy            = std::real(nHn + energy_reduced);
     energy_per_site   = energy / static_cast<double>(length);
