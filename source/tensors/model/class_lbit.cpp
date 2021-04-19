@@ -198,7 +198,7 @@ Eigen::Tensor<Scalar, 1> class_lbit::get_MPO2_edge_right() const {
 void class_lbit::randomize_hamiltonian() {
     // J2(i,j) = J2_base^-|i-j| * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
     using namespace settings::model::lbit;
-    for(auto &&[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -j); // J2_base^-|i-j|
+    for(auto &&[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -static_cast<double>(j)); // J2_base^-|i-j|
 
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
