@@ -200,20 +200,18 @@ void class_lbit::randomize_hamiltonian() {
     using namespace settings::model::lbit;
     for(auto &&[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -j); // J2_base^-|i-j|
 
-    double J2_wdth_i = rnd::uniform_double_box(0, 2 * J2_wdth);
-
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::normal(J3_mean, J3_wdth);
-        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::normal(J2_mean, J2_wdth_i);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::normal(J2_mean, J2_wdth);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
         h5tb.param.J1_rand = rnd::log_normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::log_normal(J3_mean, J3_wdth);
-        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::log_normal(J2_mean, J2_wdth_i);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::log_normal(J2_mean, J2_wdth);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
         h5tb.param.J1_rand = rnd::uniform_double_box(J1_mean - J1_wdth / 2.0, J1_mean + J1_wdth / 2.0);
         h5tb.param.J3_rand = rnd::uniform_double_box(J3_mean - J3_wdth / 2.0, J3_mean + J3_wdth / 2.0);
-        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::uniform_double_box(J2_mean - J2_wdth_i / 2.0, J2_mean + J2_wdth_i / 2.0);
+        for(auto &J2 : h5tb.param.J2_rand) J2 *= rnd::uniform_double_box(J2_mean - J2_wdth / 2.0, J2_mean + J2_wdth / 2.0);
     } else if(std::string(h5tb.param.distribution) == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
