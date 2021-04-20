@@ -73,6 +73,7 @@ for id in $(seq $start_id $end_id); do
   echo "JOB FILE LINE(S)         : $arg_line"
   echo "CONFIG FILE              : $config_file"
   echo "SEED                     : $model_seed"
+  echo "ID                       : $id"
   echo "TIME                     : $(/bin/date)"
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
