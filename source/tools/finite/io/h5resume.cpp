@@ -25,7 +25,7 @@ using Scalar = std::complex<double>;
 
 // Load model, state and simulation status from HDF5
 void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors,
-                                                  class_algorithm_status &status) {
+                                                  class_algorithm_status &status, AlgorithmType algo_type) {
     try {
         tensors.clear_measurements();
         tensors.clear_cache();
@@ -35,7 +35,7 @@ void tools::finite::io::h5resume::load_simulation(const h5pp::File &h5ppFile, co
         tools::common::io::h5table::load_profiling(h5ppFile, state_prefix);
         tools::finite::io::h5resume::load_model(h5ppFile, state_prefix, *tensors.model);
         tools::finite::io::h5resume::load_state(h5ppFile, state_prefix, *tensors.state, status);
-        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors);
+        tools::finite::io::h5resume::validate(h5ppFile, state_prefix, tensors, algo_type);
     } catch(const std::exception &ex) { throw except::load_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
 }
 
@@ -58,7 +58,7 @@ void tools::finite::io::h5resume::load_model(const h5pp::File &h5ppFile, const s
             throw std::runtime_error(
                 fmt::format("Mismatch when loading model: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
         for(const auto & mpo : model.MPO) mpo->load_hamiltonian(h5ppFile, model_prefix);
-        for(const auto & mpo : model.MPO)tools::log->trace("Loaded mpo: {}({})", enum2str(mpo->model_type), mpo->get_position());
+        for(const auto & mpo : model.MPO) tools::log->trace("Loaded mpo: {}({})", enum2str(mpo->model_type), mpo->get_position());
     } else {
         throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
     }
@@ -127,24 +127,42 @@ void compare(double val1, double val2, double tol, const std::string &tag) {
         tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2, std::abs(val1 - val2), tol);
 }
 
-void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors) {
-    tensors.activate_sites({tensors.get_position<size_t>()});
-    auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
-    tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
-    tools::log->debug("State labels: {}", tensors.state->get_labels());
-    tensors.clear_measurements();
-    tensors.do_all_measurements();
-    compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
-    compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, class_tensors_finite &tensors, AlgorithmType algo_type) {
+    if(algo_type == AlgorithmType::fLBIT){
+        // In this case we have loaded state_real from file.
+        // However, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian
+        // makes no sense.
+        // Therefore, we have to validate using entropy, or other state-specific measurements that are independent of the hamlitonian.
 
-    if(settings::precision::use_reduced_energy){
-        tensors.reduce_mpo_energy();
-        tensors.rebuild_mpo_squared();
-        tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+        tensors.activate_sites({tensors.get_position<size_t>()});
+        auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+        tools::log->debug("Validating resumed state: [{}]", state_prefix);
+        tools::log->debug("State labels: {}", tensors.state->get_labels());
+        tensors.state->clear_cache();
+        tensors.state->clear_measurements();
+        tensors.state->do_all_measurements();
+        compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy_midchain, 1e-8, "Entanglement entropy");
+    }else{
+        tensors.activate_sites({tensors.get_position<size_t>()});
+        auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+        tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
         tools::log->debug("State labels: {}", tensors.state->get_labels());
         tensors.clear_measurements();
         tensors.do_all_measurements();
         compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
         compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+
+        if(settings::precision::use_reduced_energy){
+            tensors.reduce_mpo_energy();
+            tensors.rebuild_mpo_squared();
+            tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+            tools::log->debug("State labels: {}", tensors.state->get_labels());
+            tensors.clear_measurements();
+            tensors.do_all_measurements();
+            compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
+            compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+        }
     }
+
+
 }

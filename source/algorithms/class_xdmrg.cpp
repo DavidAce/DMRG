@@ -42,7 +42,7 @@ void class_xdmrg::resume() {
     auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type);
     if(state_prefix.empty()) throw except::state_error("no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
+    tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status, algo_type);
 
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to infer it from the state prefix itself

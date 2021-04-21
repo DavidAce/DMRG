@@ -518,6 +518,28 @@ double tools::finite::measure::energy_normalized(const class_tensors_finite &ten
     return tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, emin, emax);
 }
 
+
+double tools::finite::measure::energy_minus_energy_reduced(const class_state_finite & state, const class_tensors_finite &tensors) {
+    return tools::finite::measure::energy_minus_energy_reduced(state, *tensors.model, *tensors.edges);
+}
+double tools::finite::measure::energy(const class_state_finite & state, const class_tensors_finite &tensors) {
+    return tools::finite::measure::energy(state, *tensors.model, *tensors.edges);
+}
+double tools::finite::measure::energy_per_site(const class_state_finite & state, const class_tensors_finite &tensors) {
+    return tools::finite::measure::energy_per_site(state, *tensors.model, *tensors.edges);
+}
+double tools::finite::measure::energy_variance(const class_state_finite & state, const class_tensors_finite &tensors) {
+    return tools::finite::measure::energy_variance(state, *tensors.model, *tensors.edges);
+}
+double tools::finite::measure::energy_variance_per_site(const class_state_finite & state, const class_tensors_finite &tensors) {
+    return tools::finite::measure::energy_variance_per_site(state, *tensors.model, *tensors.edges);
+}
+double tools::finite::measure::energy_normalized(const class_state_finite & state, const class_tensors_finite &tensors, double emin, double emax) {
+    return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax);
+}
+
+
+
 double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<Scalar, 3> &mps, const class_tensors_finite &tensors) {
     return tools::finite::measure::energy_minus_energy_reduced(mps, *tensors.model, *tensors.edges);
 }

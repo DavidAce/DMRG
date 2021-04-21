@@ -43,8 +43,33 @@ void class_flbit::resume() {
     auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_type, "state_real");
     if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
     tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status);
+    tools::finite::io::h5resume::load_simulation(*h5pp_file, state_prefix, tensors, status, algo_type);
+
+    // Load the unitaries
+    unitary_gates_2site_layers.clear();
+    std::string grouppath = "/fLBIT/model/unitary_gates";
+    if(not h5pp_file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
+    auto num_layers = h5pp_file->readAttribute<size_t>("num_layers", grouppath);
+    if(num_layers != settings::model::lbit::u_layer)
+        throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}",
+                                             num_layers != settings::model::lbit::u_layer));
+    unitary_gates_2site_layers.resize(num_layers);
+    for(auto && [idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)){
+        std::string layerpath = fmt::format("{}/layer_{}",grouppath,idx_layer);
+        auto num_gates = h5pp_file->readAttribute<size_t>("num_gates", layerpath);
+        layer.resize(num_gates);
+        for(auto && [idx_gate, u] : iter::enumerate(layer) ){
+            std::string gatepath  = fmt::format("{}/u_{}",layerpath, idx_gate);
+            auto op = h5pp_file->readDataset<Eigen::Tensor<Scalar,2>>(gatepath);
+            auto pos = h5pp_file->readAttribute<std::vector<size_t>>("pos", gatepath);
+            auto dim = h5pp_file->readAttribute<std::vector<long>>("dim", gatepath);
+            u = qm::Gate(op,pos,dim);
+        }
+    }
     clear_convergence_status();
+    tensors.move_center_point_to_edge(status.chi_lim);
+    tensors.rebuild_edges();
+
     // Our first task is to decide on a state name for the newly loaded state
     // The simplest is to inferr it from the state prefix itself
     auto name = tools::common::io::h5resume::extract_state_name(state_prefix);
@@ -364,6 +389,8 @@ void class_flbit::create_hamiltonian_gates() {
 void class_flbit::create_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
+    if(ham_gates_1body.empty() or ham_gates_2body.empty() or ham_gates_3body.empty())
+        create_hamiltonian_gates();
     if(std::abs(status.delta_t) == 0) update_time_step();
     tools::log->info("Creating time evolution gates");
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
@@ -372,6 +399,7 @@ void class_flbit::create_time_evolution_gates() {
 }
 
 void class_flbit::create_lbit_transform_gates() {
+    if(unitary_gates_2site_layers.size() == settings::model::lbit::u_layer) return;
     tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++)
@@ -435,7 +463,29 @@ void class_flbit::transform_to_lbit_basis() {
 
 void class_flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
     auto t_write_h5pp = tools::common::profile::prof[AlgorithmType::ANY]["t_write_h5pp"]->tic_token();
+    tensors.clear_cache();
+    tensors.clear_measurements();
     class_algorithm_finite::write_to_file(storage_reason, *tensors.state, copy_file);
+
+    // Save the unitaries once
+    if(storage_reason == StorageReason::MODEL){
+        std::string grouppath = "/fLBIT/model/unitary_gates";
+        if(h5pp_file->linkExists(grouppath)) return;
+        for(const auto & [idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)){
+            std::string layerpath = fmt::format("{}/layer_{}",grouppath,idx_layer);
+            for(const auto & [idx_gate, u] : iter::enumerate(layer) ){
+                std::string gatepath  = fmt::format("{}/u_{}",layerpath, idx_gate);
+                h5pp_file->writeDataset(u.op, gatepath);
+                h5pp_file->writeAttribute(u.dim, "dim", gatepath );
+                h5pp_file->writeAttribute(u.pos, "pos", gatepath );
+            }
+            h5pp_file->writeAttribute(static_cast<size_t>(idx_layer), "idx_layer", layerpath);
+            h5pp_file->writeAttribute(layer.size(), "num_gates", layerpath);
+        }
+        h5pp_file->writeAttribute(unitary_gates_2site_layers.size(), "num_layers", grouppath);
+    }
+
+    // Save the lbit analysis once
     if(storage_reason == StorageReason::MODEL) {
         if(h5pp_file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
