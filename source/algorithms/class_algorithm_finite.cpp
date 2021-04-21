@@ -753,7 +753,7 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         tools::finite::io::h5table::save_sim_status(*h5pp_file, table_prefix + "/status", storage_level, status);
         tools::finite::io::h5table::save_profiling(*h5pp_file, table_prefix + "/profiling", storage_level, status);
         tools::finite::io::h5table::save_mem_usage(*h5pp_file, table_prefix + "/mem_usage", storage_level, status);
-        tools::finite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, tensors, status, algo_type);
+        tools::finite::io::h5table::save_measurements(*h5pp_file, table_prefix + "/measurements", storage_level, state, tensors, status, algo_type);
     }
     h5pp_file->setKeepFileClosed();
 

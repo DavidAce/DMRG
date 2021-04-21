@@ -42,6 +42,7 @@ namespace qm {
         Eigen::Tensor<Scalar,2> op;
         std::vector<size_t> pos;
         std::vector<long> dim;
+        Gate() = default;
         Gate(const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
         Gate(const Eigen::Tensor<Scalar,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
         Gate(const Eigen::Tensor<Scalar,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, Scalar alpha);

@@ -62,21 +62,29 @@ namespace tools::finite::measure{
     [[nodiscard]] double energy_normalized                       (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges, double energy_minimum, double energy_maximum, tensors_measure_finite * measurements = nullptr);
 
 
-    [[nodiscard]] extern double energy_reduced(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_per_site_reduced(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_minus_energy_reduced(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_per_site(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_variance(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_variance_per_site(const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_normalized(const class_tensors_finite & tensors, double energy_minimum, double energy_maximum);
+    [[nodiscard]] extern double energy_reduced                  (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_per_site_reduced         (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_minus_energy_reduced     (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy                          (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_per_site                 (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance                 (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance_per_site        (const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_normalized               (const class_tensors_finite & tensors, double energy_minimum, double energy_maximum);
 
-    [[nodiscard]] extern double energy_minus_energy_reduced(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_per_site(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_variance(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_variance_per_site(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
-    [[nodiscard]] extern double energy_normalized(const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors, double energy_minimum, double energy_maximum);
+    [[nodiscard]] extern double energy_minus_energy_reduced(const class_state_finite & state, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy                     (const class_state_finite & state, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_per_site            (const class_state_finite & state, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance            (const class_state_finite & state, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance_per_site   (const class_state_finite & state, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_normalized          (const class_state_finite & state, const class_tensors_finite & tensors, double energy_minimum, double energy_maximum);
+
+
+    [[nodiscard]] extern double energy_minus_energy_reduced (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy                      (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_per_site             (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors);
+    [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<Scalar,3> &mps, const class_tensors_finite & tensors, double energy_minimum, double energy_maximum);
 }
 
 /* clang-format on */

@@ -159,7 +159,7 @@ class h5tb_lbit {
         double   J2_wdth          = 0;         /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) */
         double   J3_wdth          = 0;         /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) */
         double   J2_base          = 0;         /*!< Base for power-decay of two-body interactions: J2_rand*J2_base^-|i-j| */
-        double   J2_span          = 0;         /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Note that J2_span + 1 MPOs are used */
+        size_t   J2_span          = 0;         /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Note that J2_span + 1 MPOs are used */
         double   J1_pert          = 0;         /*!< On-site perturbation */
         double   J2_pert          = 0;         /*!< Two-body perturbation */
         double   J3_pert          = 0;         /*!< Three-body perturbation */
@@ -196,7 +196,7 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "J2_wdth", HOFFSET(table, J2_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_wdth", HOFFSET(table, J3_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_base", HOFFSET(table, J2_base), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);

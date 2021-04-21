@@ -25,6 +25,7 @@ namespace tools::finite::io {
 
     namespace h5table{
         extern void save_measurements   (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_tensors_finite & tensors, const class_algorithm_status & status, AlgorithmType algo_type);
+        extern void save_measurements   (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_state_finite & state, const class_tensors_finite & tensors, const class_algorithm_status & status, AlgorithmType algo_type);
         extern void save_model          (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_model_finite & model);
         extern void save_sim_status     (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_algorithm_status & status);
         extern void save_profiling      (h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_algorithm_status & status);
@@ -32,10 +33,10 @@ namespace tools::finite::io {
     }
 
     namespace h5resume{
-        extern void load_simulation (const h5pp::File & h5ppFile, const std::string & state_prefix, class_tensors_finite & tensors, class_algorithm_status & status);
+        extern void load_simulation (const h5pp::File & h5ppFile, const std::string & state_prefix, class_tensors_finite & tensors, class_algorithm_status & status, AlgorithmType algo_type);
         extern void load_state   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_state_finite & state, const class_algorithm_status & status);
         extern void load_model   (const h5pp::File & h5ppFile, const std::string & state_prefix, class_model_finite & model);
-        extern void validate (const h5pp::File & h5ppFile, const std::string & state_prefix, class_tensors_finite & tensors);
+        extern void validate (const h5pp::File & h5ppFile, const std::string & state_prefix, class_tensors_finite & tensors, AlgorithmType algo_type);
 //        extern std::vector<SimulationTask>
 //            getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const class_tensors_finite & tensors, const class_algorithm_status & status);
     }

@@ -23,9 +23,11 @@ class_lbit::class_lbit(ModelType model_type_, size_t position_) : class_mpo_site
     h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
     h5tb.param.J2_base  = settings::model::lbit::J2_base;
+    h5tb.param.J2_span  = settings::model::lbit::J2_span;
     h5tb.param.f_mixer  = settings::model::lbit::f_mixer;
     h5tb.param.u_layer  = settings::model::lbit::u_layer;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
+    if(h5tb.param.J2_span > 8) throw std::runtime_error(fmt::format("Maximum J2_span supported is 8 | Got: {}",h5tb.param.J2_span));
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -148,6 +150,15 @@ void class_lbit::build_mpo()
     mpo_internal.slice(Textra::array4{8, 7, 0, 0}, extent4).reshape(extent2)   = i;
     mpo_internal.slice(Textra::array4{9, 1, 0, 0}, extent4).reshape(extent2)   = n;
     mpo_internal.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J1_rand * n - e_reduced * i;
+    for (auto && [r, J2r] : iter::enumerate(h5tb.param.J2_rand)){
+        if(r == 0) continue;
+        if(r > h5tb.param.J2_span) break;
+        long rl = static_cast<long>(r);
+        mpo_internal.slice(Textra::array4{10, rl, 0, 0}, extent4).reshape(extent2) = J2r * n;
+    }
+
+
+
     mpo_internal.slice(Textra::array4{10, 1, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[1] * n;
     mpo_internal.slice(Textra::array4{10, 2, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[2] * n;
     mpo_internal.slice(Textra::array4{10, 3, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[3] * n;
@@ -295,15 +306,12 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
     Eigen::Tensor<Scalar, 4> MPO_nbody                                     = MPO();
     Eigen::Tensor<Scalar, 2> n                                             = Textra::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<Scalar, 2> i                                             = Textra::TensorMap(id);
-    MPO_nbody.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * h5tb.param.J1_rand * n - J1 * e_reduced * i;
-    MPO_nbody.slice(Textra::array4{10, 1, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[1] * n;
-    MPO_nbody.slice(Textra::array4{10, 2, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[2] * n;
-    MPO_nbody.slice(Textra::array4{10, 3, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[3] * n;
-    MPO_nbody.slice(Textra::array4{10, 4, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[4] * n;
-    MPO_nbody.slice(Textra::array4{10, 5, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[5] * n;
-    MPO_nbody.slice(Textra::array4{10, 6, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[6] * n;
-    MPO_nbody.slice(Textra::array4{10, 7, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[7] * n;
-    MPO_nbody.slice(Textra::array4{10, 8, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.J2_rand[8] * n;
+    for (auto && [r, J2r] : iter::enumerate(h5tb.param.J2_rand)){
+        if(r == 0) continue;
+        if(r > h5tb.param.J2_span) break;
+        long rl = static_cast<long>(r);
+        MPO_nbody.slice(Textra::array4{10, rl, 0, 0}, extent4).reshape(extent2) = J2 * J2r * n;
+    }
     MPO_nbody.slice(Textra::array4{10, 9, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3_rand * n;
     return MPO_nbody;
 }
@@ -364,6 +372,7 @@ void class_lbit::save_hamiltonian(h5pp::File &file, const std::string &table_pat
     file.writeAttribute(h5tb.param.J2_wdth, "J2_wdth", table_path);
     file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
     file.writeAttribute(h5tb.param.J2_base, "J2_base", table_path);
+    file.writeAttribute(h5tb.param.J2_span, "J2_span", table_path);
     file.writeAttribute(h5tb.param.f_mixer, "f_mixer", table_path);
     file.writeAttribute(h5tb.param.u_layer, "u_layer", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
@@ -394,8 +403,13 @@ void class_lbit::load_hamiltonian(const h5pp::File &file, const std::string &mod
         throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6)
         throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
+    if(std::abs(h5tb.param.J2_base - J2_base) > 1e-6)
+        throw std::runtime_error(fmt::format("J2_base {:.16f} != {:.16f} lbit::J2_base", h5tb.param.J2_base, J2_base));
+    if(h5tb.param.J2_span != J2_span )
+        throw std::runtime_error(fmt::format("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span));
     if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6)
         throw std::runtime_error(fmt::format("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer));
+
     if(h5tb.param.u_layer != u_layer) throw std::runtime_error(fmt::format("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer));
 
     // We can use the mpo's on file here to check everything is correct
