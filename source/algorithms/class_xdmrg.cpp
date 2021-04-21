@@ -302,6 +302,14 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
         c1.optSpace      = OptSpace::DIRECT;
         c1.second_chance = false;
     }
+    if(tensors.measurements.energy_variance.has_value() and
+       tensors.measurements.energy_variance.value()< settings::precision::variance_convergence_threshold){
+        // No need to do expensive operations -- just finish
+        c1.optMode       = OptMode::VARIANCE;
+        c1.optSpace      = OptSpace::DIRECT;
+        c1.second_chance = false;
+    }
+
 
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure not to use SUBSPACE if the 1-site problem size is huge
