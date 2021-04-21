@@ -306,6 +306,7 @@ Eigen::Tensor<Scalar, 4> class_lbit::MPO_nbody_view(const std::vector<size_t> &n
     Eigen::Tensor<Scalar, 4> MPO_nbody                                     = MPO();
     Eigen::Tensor<Scalar, 2> n                                             = Textra::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<Scalar, 2> i                                             = Textra::TensorMap(id);
+    MPO_nbody.slice(Textra::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * (h5tb.param.J1_rand * n) - e_reduced * i;
     for (auto && [r, J2r] : iter::enumerate(h5tb.param.J2_rand)){
         if(r == 0) continue;
         if(r > h5tb.param.J2_span) break;
