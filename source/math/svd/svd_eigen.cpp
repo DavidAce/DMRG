@@ -28,7 +28,7 @@
  */
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     svd::log->trace("Starting SVD with Eigen");
@@ -77,17 +77,17 @@ svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::opti
 
     if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
-        svd::log->warn("Eigen SVD error \n"
-                       "  svd_threshold    = {:.4e}\n"
-                       "  Truncation Error = {:.4e}\n"
-                       "  Rank             = {}\n"
-                       "  U all finite     : {}\n"
-                       "  S all finite     : {}\n"
-                       "  V all finite     : {}\n"
-                       "Trying SVD with LAPACKE instead \n",
-                       threshold, truncation_error, rank, SVD.matrixU().leftCols(rank).allFinite(), SVD.singularValues().head(rank).allFinite(),
-                       SVD.matrixV().leftCols(rank).allFinite());
-        return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+        throw std::runtime_error(fmt::format("Eigen SVD error \n"
+                                             "  svd_threshold    = {:.4e}\n"
+                                             "  Truncation Error = {:.4e}\n"
+                                             "  Rank             = {}\n"
+                                             "  Dims             = ({}, {})\n"
+                                             "  A all finite     : {}\n"
+                                             "  U all finite     : {}\n"
+                                             "  S all finite     : {}\n"
+                                             "  V all finite     : {}\n",
+                                             threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
+                                             SVD.singularValues().head(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite()));
     }
     svd::log->trace("SVD with Eigen finished successfully");
 
@@ -97,10 +97,10 @@ svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::opti
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
 template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-svd::solver::do_svd_eigen(const double *, long, long, std::optional<long>);
+    svd::solver::do_svd_eigen(const double *, long, long, std::optional<long>);
 
 using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
 template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-svd::solver::do_svd_eigen(const cplx *, long, long, std::optional<long>);
+    svd::solver::do_svd_eigen(const cplx *, long, long, std::optional<long>);
