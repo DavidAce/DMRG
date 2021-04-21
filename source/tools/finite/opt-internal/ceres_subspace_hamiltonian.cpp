@@ -45,8 +45,8 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham_map.size());
     double sparcity        = static_cast<double>((ham_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham_map.size());
 
-    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}", non_hermiticity));
-    if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
+    if(non_hermiticity > 1e-8) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}", non_hermiticity));
+    if(non_hermiticity > 1e-12) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
     if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
     tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
     if constexpr(std::is_same_v<T, double>) {
