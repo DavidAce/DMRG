@@ -57,19 +57,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         svd::log->trace("Transposing {}x{} into tall matrix {}x{}", rows, cols, cols, rows);
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
         A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
-        svd::log->trace("Sanity checks... ");
         // Sanity checks
         if(A.rows() <= 0) throw std::runtime_error("SVD error: rows() == 0");
         if(A.cols() <= 0) throw std::runtime_error("SVD error: cols() == 0");
-        if(not A.allFinite()) {
-            print_matrix_lapacke(A.data(), A.rows(), A.cols());
-            throw std::runtime_error("SVD error: matrix has inf's or nan's");
-        }
-        if(A.isZero(1e-12)) {
-            print_matrix_lapacke(A.data(), A.rows(), A.cols(), 16);
-            throw std::runtime_error("SVD error: matrix is all zeros");
-        }
-        svd::log->trace("Sanity checks... OK. A: {}x{}", A.rows(), A.cols());
+
         t_adj->toc();
         auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
         long max_size         = std::min(S.size(), rank_max.value());
@@ -298,16 +289,27 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     }
 
     if(rank <= 0 or not U.leftCols(rank).allFinite() or not S.head(rank).allFinite() or not VT.topRows(rank).allFinite()) {
-        svd::log->warn("Lapacke SVD error \n"
-                       "  svd_threshold    = {:.4e}\n"
-                       "  Truncation Error = {:.4e}\n"
-                       "  Rank             = {}\n"
-                       "  U all finite     : {}\n"
-                       "  S all finite     : {}\n"
-                       "  V all finite     : {}\n"
-                       "  Lapacke info     : {}\n",
-                       threshold, truncation_error, rank, U.leftCols(rank).allFinite(), S.head(rank).allFinite(), VT.topRows(rank).allFinite(), info);
-        if(not use_lapacke) throw std::runtime_error("Lapacke SVD error:  Wrong results");
+        if(not A.allFinite()) {
+            print_matrix_lapacke(A.data(), A.rows(), A.cols());
+            svd::log->critical("SVD error: matrix has inf's or nan's");
+        }
+        if(A.isZero(1e-12)) {
+            print_matrix_lapacke(A.data(), A.rows(), A.cols(), 16);
+            svd::log->critical("SVD error: matrix is all zeros");
+        }
+
+        throw std::runtime_error(fmt::format("Lapacke SVD error \n"
+                                             "  svd_threshold    = {:.4e}\n"
+                                             "  Truncation Error = {:.4e}\n"
+                                             "  Rank             = {}\n"
+                                             "  Dims             = ({}, {})\n"
+                                             "  A all finite     : {}\n"
+                                             "  U all finite     : {}\n"
+                                             "  S all finite     : {}\n"
+                                             "  V all finite     : {}\n",
+                                             "  Lapacke info     : {}\n",
+                                             threshold, truncation_error, rank, rows, cols, A.allFinite(), U.leftCols(rank).allFinite(),
+                                             S.head(rank).allFinite(), VT.topRows(rank).allFinite(), info));
     }
     svd::log->trace("SVD with lapacke finished successfully. info = {}", info);
     return std::make_tuple(U.leftCols(rank), S.head(rank), VT.topRows(rank), rank);
