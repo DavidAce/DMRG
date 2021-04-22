@@ -161,7 +161,7 @@ std::string opt_mps::get_krylov_ritz() const {
     if(krylov_ritz)
         return krylov_ritz.value();
     else
-        return "NO";
+        return "--";
 }
 
 opt_mps::cplx opt_mps::get_krylov_shift() const {
