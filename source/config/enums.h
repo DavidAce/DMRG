@@ -121,9 +121,6 @@ enum class xdmrg_task {
     PROF_RESET,
 };
 
-namespace enums{
-
-}
 template <typename T, bool B = std::is_enum<T>::value>
 struct is_scoped_enum : std::false_type {};
 template <typename T>
