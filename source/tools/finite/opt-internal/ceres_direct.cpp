@@ -57,6 +57,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     // Then, technically Var H = <(H-E+|dE|)²>, and if unaccounted for, we may get Var H < 0, which is a real pain since
     // we are optimizing the logarithm of Var H.
     // Here we use functor->set_shift in order to account for the shifted energy and reach better precision.
+    // Note 1: shifting only works if the mpo is not already compressed
+    // Note 2: shifting only makes sense if we are using reduced-energy mpos
 
     switch(optType) {
         case OptType::CPLX: {
@@ -65,7 +67,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *            functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
 
-            if(settings::precision::use_reduced_energy)
+            if(settings::precision::use_reduced_energy and not tensors.model->is_compressed_mpo_squared())
                 functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
             functor->compress(); // Compress the virtual bond between MPO² and the environments
 
@@ -91,7 +93,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             auto              initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *            functor            = new ceres_direct_functor<double>(tensors, status);
 
-            if(settings::precision::use_reduced_energy)
+            if(settings::precision::use_reduced_energy and not tensors.model->is_compressed_mpo_squared())
                 functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
             functor->compress(); // Compress the virtual bond between MPO² and the environments
 

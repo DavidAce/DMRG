@@ -98,11 +98,14 @@ namespace tools::finite::opt::internal{
     }
 
     template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges, double energy_shift = 0);
     template <typename T>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_matrix(const class_model_finite & model, const class_edges_finite & edges);
     template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const std::vector<opt_mps> & candidate_list);
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const class_model_finite & model,
+                                                                                                     const class_edges_finite & edges,
+                                                                                                     const std::vector<opt_mps> & candidate_list,
+                                                                                                     double energy_shift = 0.0);
 
 
     inline ceres::GradientProblemSolver::Options ceres_default_options;
