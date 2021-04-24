@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include <cstddef>
 #include <complex>
+#include <cstddef>
 class class_algorithm_status {
     public:
     // common variables
