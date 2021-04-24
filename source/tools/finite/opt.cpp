@@ -18,10 +18,10 @@
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode,
                                                                    OptSpace optSpace, OptType optType) {
-    double  energy_reduced = tools::finite::measure::energy_reduced(tensors);
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
-                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
-                        energy_reduced,                                           // Energy reduced for full system
+//                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
+                        tools::finite::measure::energy_minus_energy_reduced(tensors), // Eigval
+                        tools::finite::measure::energy_reduced(tensors), // Energy reduced for full system
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());

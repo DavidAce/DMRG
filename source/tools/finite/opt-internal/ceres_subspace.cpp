@@ -27,7 +27,11 @@ std::vector<opt_mps> internal::subspace::find_candidates(const class_tensors_fin
     const auto &model = *tensors.model;
     const auto &edges = *tensors.edges;
     tools::log->trace("Finding subspace");
-    MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges);
+    double energy_shift = 0.0;
+    if(settings::precision::use_reduced_energy)
+        energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
+
+    MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges, energy_shift);
     const auto &       multisite_tensor = state.get_multisite_mps();
     auto               dbl_length       = static_cast<double>(state.get_length());
 
@@ -450,7 +454,10 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
 
     // Construct H² as a matrix (expensive operation!)
     // Also make sure you do this before prepending the current state. All candidates here should be basis vectors
-    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<Scalar>(model, edges, candidate_list);
+    double energy_shift = 0.0;
+    if(settings::precision::use_reduced_energy and not model.is_compressed_mpo_squared())
+        energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
+    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<Scalar>(model, edges, candidate_list, -std::abs(energy_shift));
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
 
     // Find the best candidates and compute their variance
