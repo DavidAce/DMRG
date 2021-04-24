@@ -84,7 +84,7 @@ double class_tic_toc::get_lap() const {
 }
 
 double class_tic_toc::restart_lap() {
-    double lap = std::chrono::duration_cast<std::chrono::duration<double>>(lap_time).count();
+    double lap = get_lap();
     start_lap();
     return lap;
 }
