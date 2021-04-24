@@ -74,7 +74,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 
     tools::log->trace("- Compressing mpo² and corresponding environments");
-    compress();
+//    compress();
 }
 
 template<typename Scalar>
@@ -111,12 +111,26 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     t_vH2v->toc();
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
-    if(std::real(nH2n) < 0.0) tools::log->debug("Counter = {}. nH2n is negative:  {:.16f} + i {:.16f}", counter, std::real(nH2n), std::imag(nH2n));
-    nH2n = std::real(nH2n) < 0.0 ? std::abs(nH2n) : std::real(nH2n);
-    nH2n = std::real(nH2n) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(nH2n);
+    if(std::real(nH2n) < 0.0) tools::log->debug("Counter = {}. "
+                                               "negative nH2n: "
+                                               "nHn  {:6.3e} + {:6.3e}i | "
+                                               "nH2n {:6.3e} + {:6.3e}i"
+                                               , counter,
+                                               std::real(nHn), std::imag(nHn),
+                                               std::real(nH2n), std::imag(nH2n));
+//    nH2n = std::real(nH2n) < 0.0 ? std::abs(nH2n) : std::real(nH2n);
+//    nH2n = std::real(nH2n) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(nH2n);
 
     var = nH2n - nHn * nHn;
-    if(std::real(var) < 0.0) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}", counter, std::real(var), std::imag(var));
+    if(std::real(var) < 0.0) tools::log->debug("Counter = {}. "
+                                               "negative var: "
+                                               "var  {:6.3e} + {:6.3e}i | "
+                                               "nHn  {:6.3e} + {:6.3e}i | "
+                                               "nH2n {:6.3e} + {:6.3e}i"
+                                               , counter,
+                                               std::real(var), std::imag(var),
+                                               std::real(nHn), std::imag(nHn),
+                                               std::real(nH2n), std::imag(nH2n));
 
     var = std::abs(var);
     var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : var;
@@ -259,6 +273,47 @@ void ceres_direct_functor<Scalar>::compress(){
     readyCompress = true;
     tools::log->trace("Compressed mpo² dimensions {}", mpo2.dimensions());
 }
+
+
+template<typename Scalar>
+void ceres_direct_functor<Scalar>::set_shift(double energy_shift_) {
+    if(readyShift) return; // This only happens once!!
+    if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
+    energy_shift = energy_shift_;
+    tools::log->debug("Setting shift: {:.16f}", energy_shift_);
+
+    // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
+    // rank2 matrix, where each element is also a matrix with the size
+    // determined by the last 2 indices kl.
+    // When we shift an MPO, all we do is subtract a diagonal matrix from
+    // the botton left corner of the ij-matrix.
+
+    // Start with mpo (hamiltonian)
+    {
+        // Setup extents and handy objects
+        auto shape = mpo.dimensions();
+        std::array<long, 4> offset4{shape[0] - 1, 0, 0, 0};
+        std::array<long, 4> extent4{1, 1, shape[2], shape[3]};
+        std::array<long, 2> extent2{shape[2], shape[3]};
+        MatrixType sigma_Id = energy_shift * MatrixType::Identity(extent2[0], extent2[1]);
+        Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
+        mpo.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
+    }
+    // Next is with mpo² (hamiltonian squared)
+    {
+        // Setup extents and handy objects
+        auto shape = mpo2.dimensions();
+        std::array<long, 4> offset4{shape[0] - 1, 0, 0, 0};
+        std::array<long, 4> extent4{1, 1, shape[2], shape[3]};
+        std::array<long, 2> extent2{shape[2], shape[3]};
+        MatrixType sigma_Id = energy_shift * MatrixType::Identity(extent2[0], extent2[1]);
+        Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
+        mpo2.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
+    }
+
+    readyShift = true;
+}
+
 
 
 template class tools::finite::opt::internal::ceres_direct_functor<double>;

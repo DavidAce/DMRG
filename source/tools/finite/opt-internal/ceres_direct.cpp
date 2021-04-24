@@ -48,12 +48,27 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     optimized_mps.set_length(initial_mps.get_length());
     optimized_mps.set_energy_reduced(initial_mps.get_energy_reduced());
 
+    // When we use "reduced-energy mpo's", the current energy per site is subtracted from all the MPO's at the beginning of every iteration.
+    // The subtracted number is called "energy_reduced".
+    // Directly after the energy subtraction, the target energy is exactly zero, and Var H = <(H-Er)²>
+    // However, after some steps in the same iteration, the optimizer may have found a state with slightly different energy,
+    // so the target energy is actually 0 + dE.
+    // We can obtain the shift amount dE = <H-Er>, which we call "eigval", i.e. the eigenvalue of the operator <H-Er>
+    // Then, technically Var H = <(H-E+|dE|)²>, and if unaccounted for, we may get Var H < 0, which is a real pain since
+    // we are optimizing the logarithm of Var H.
+    // Here we use functor->set_shift in order to account for the shifted energy and reach better precision.
+
     switch(optType) {
         case OptType::CPLX: {
             auto t_opt_dir_bfgs = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_bfgs"]->tic_token();
             // Copy the initial guess and operate directly on it
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *            functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
+
+            if(settings::precision::use_reduced_energy)
+                functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
+            functor->compress(); // Compress the virtual bond between MPO² and the environments
+
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
@@ -75,6 +90,11 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             // Here we make a temporary
             auto              initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *            functor            = new ceres_direct_functor<double>(tensors, status);
+
+            if(settings::precision::use_reduced_energy)
+                functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
+            functor->compress(); // Compress the virtual bond between MPO² and the environments
+
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);

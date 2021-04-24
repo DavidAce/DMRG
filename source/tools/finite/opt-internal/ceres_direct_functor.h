@@ -18,8 +18,10 @@ namespace tools::finite::opt::internal {
         Eigen::Tensor<Scalar, 3>         envL, envR;
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
         Eigen::Tensor<Scalar, 4>         mpo, mpo2;
-        mutable bool                     print_path = true;
+        mutable Scalar                   energy_shift;
+        mutable bool                     print_path    = true;
         mutable bool                     readyCompress = false;
+        mutable bool                     readyShift    = false;
         void                             get_Hn(const VectorType &v) const;
         void                             get_H2n(const VectorType &v) const;
 
@@ -27,6 +29,7 @@ namespace tools::finite::opt::internal {
         explicit ceres_direct_functor(const class_tensors_finite &tensors, const class_algorithm_status &status);
         bool Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const final;
         void compress();
+        void set_shift(double energy_shift_);
     };
 
 }
