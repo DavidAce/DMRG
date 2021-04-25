@@ -28,7 +28,7 @@ std::vector<opt_mps> internal::subspace::find_candidates(const class_tensors_fin
     const auto &edges = *tensors.edges;
     tools::log->trace("Finding subspace");
     double energy_shift = 0.0;
-    if(settings::precision::use_reduced_energy)
+    if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo)
         energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
 
     MatrixType<Scalar> H_local          = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(model, edges, energy_shift);
@@ -196,10 +196,10 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
             // Copy the results from the functor
             optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(candidate_list, subspace_vector, fullspace_dims));
             optimized_mps.set_counter(functor->get_count());
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_H2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_nH2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_Hn;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_nHn;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
             break;
         }
@@ -216,10 +216,10 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const class_tensor
             subspace_vector = subspace_vector_cast.normalized().cast<Scalar>();
             optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(candidate_list, subspace_vector, fullspace_dims));
             optimized_mps.set_counter(functor->get_count());
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_H2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_nH2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_Hn;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_nHn;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
             break;
         }
@@ -458,9 +458,9 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
     // Construct H² as a matrix (expensive operation!)
     // Also make sure you do this before prepending the current state. All candidates here should be basis vectors
     double energy_shift = 0.0;
-    if(settings::precision::use_reduced_energy and not model.is_compressed_mpo_squared())
+    if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not model.is_compressed_mpo_squared())
         energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
-    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<Scalar>(model, edges, candidate_list, -std::abs(energy_shift));
+    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<Scalar>(model, edges, candidate_list, std::pow(energy_shift,2));
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
 
     // Find the best candidates and compute their variance
@@ -560,10 +560,10 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                 // Copy the results from the functor
                 optimized_mps.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_mps.get_tensor().dimensions());
                 optimized_mps.set_counter(functor->get_count());
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_H2n;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_nH2n;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_Hn;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_nHn;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
                 break;
             }
@@ -580,10 +580,10 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const class_te
                 subspace_vector = subspace_vector_cast.normalized().cast<Scalar>();
                 optimized_mps.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_mps.get_tensor().dimensions());
                 optimized_mps.set_counter(functor->get_count());
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_vH2;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_vH2v;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_vH;
-                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_vHv;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2"] += *functor->t_H2n;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH2v"] += *functor->t_nH2n;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vH"] += *functor->t_Hn;
+                *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_vHv"] += *functor->t_nHn;
                 *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_step"] += *functor->t_step;
                 break;
             }
