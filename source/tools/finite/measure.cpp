@@ -357,7 +357,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const clas
     // If they are reduced, then
     //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
     // Else
-    //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
+    //      "Actual energy" = (E - E_reduced) + E_reduced = E  + 0 = E
     double energy;
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>)
         energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements) + model.get_energy_reduced();
@@ -389,16 +389,18 @@ template double tools::finite::measure::energy_per_site(const Eigen::Tensor<Scal
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_variance(const state_or_mps_type &state, const class_model_finite &model, const class_edges_finite &edges,
                                                tensors_measure_finite *measurements) {
-    // Depending on whether the mpo's are reduced or not we get different formulas.
+    // Here we show that the variance calculated with reduced-energy mpo's is equivalent to the usual way.
     // If mpo's are reduced:
-    //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
-    //                                            = H2    - 2*E*E_red + E_red^2 - E^2 + 2*E*E_red - E_red^2
-    //                                            = H2    - E^2
-    //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
-    //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
-    //      because E_red != E necessarily (though they are supposed to be very close)
+    //      Var H = <(H-E_red)²> - <H-E_red>²     = <H²>  - 2<H>E_red + E_red² - (<H> - E_red)²
+    //                                            = H2    - 2*E*E_red + E_red² - E² + 2*E*E_red - E_red²
+    //                                            = H2    - E²
+    //      Note that in the last line, H2-E² is a subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
+    //      On the other hand Var H = <(H-E_red)²> - energy_minus_energy_reduced² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
+    //      The first term computed from a double-layer of reduced mpo's.
+    //      In the second term dE is usually small, in fact identically zero immediately after an energy-reduction operation,
+    //      but may grow if the optimization steps make significant progress refining E.
     // Else, if E_red = 0 (i.e. not reduced) we get the usual formula:
-    //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
+    //      Var H = <(H - 0)²> - <H - 0>² = H2 - E²
     if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
 
     if constexpr(std::is_same_v<state_or_mps_type, class_state_finite>) {
