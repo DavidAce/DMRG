@@ -58,7 +58,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     var = nH2n - nHn * nHn;
     double eps = std::numeric_limits<double>::epsilon();
     if(std::real(var) < -eps or std::real(nH2n) < -eps)
-        tools::log->debug("Counter = {} | SUBSPACE | "
+        tools::log->trace("Counter = {} | SUBSPACE | "
                           "negative: "
                           "var  {:.16f} + {:.16f}i | "
                           "nHn  {:.16f} + {:.16f}i | "
