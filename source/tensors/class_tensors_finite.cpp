@@ -261,7 +261,7 @@ void class_tensors_finite::reduce_mpo_energy(std::optional<double> energy_reduce
 void class_tensors_finite::rebuild_mpo_squared(std::optional<bool> compress, std::optional<svd::settings> svd_settings) {
     measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
-    if(not compress) compress = settings::strategy::compress_mpo_squared;
+    if(not compress) compress = settings::precision::compress_mpo_squared;
     if(compress.value()) model->compress_mpo_squared(svd_settings);
     else model->reset_mpo_squared();
     model->assert_validity();

@@ -163,7 +163,7 @@ void class_algorithm_finite::reduce_mpo_energy() {
 
 void class_algorithm_finite::rebuild_mpo_squared() {
     if(not tensors.position_is_inward_edge()) return;
-    bool compress =  settings::strategy::compress_mpo_squared and status.algorithm_has_stuck_for == 0;
+    bool compress =  settings::precision::compress_mpo_squared and status.algorithm_has_stuck_for == 0;
     tensors.rebuild_mpo_squared(compress);
 }
 
