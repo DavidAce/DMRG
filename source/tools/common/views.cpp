@@ -38,7 +38,7 @@ template<eig::Side side>
 std::pair<Eigen::VectorXcd, Scalar> dominant_eig(const Eigen::Tensor<Scalar, 2> &transfer_mat, int L, int ncv) {
     eig::solver solver;
     solver.eigs(transfer_mat.data(), L, 1, ncv, eig::Ritz::LM, eig::Form::NSYM, side, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF, eig::Dephase::ON);
-    auto eigvec = eig::view::get_eigvec<Scalar>(solver.result, 0, side);
+    auto eigvec = eig::view::get_eigvec<Scalar>(solver.result, 0, side).normalized();
     auto eigval = eig::view::get_eigval<Scalar>(solver.result, 0);
     return std::make_pair(eigvec, eigval);
 }

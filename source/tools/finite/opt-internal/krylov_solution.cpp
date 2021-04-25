@@ -17,7 +17,8 @@ void tools::finite::opt::internal::krylov_extract_solutions(const opt_mps &initi
         auto eigvals  = eig::view::get_eigvals<double>(solver.result, true);
         eigvecs_mps.reserve(eigvecs_mps.size() + static_cast<size_t>(eigvals.size()));
         for(long idx = 0; idx < eigvals.size(); idx++) {
-            auto eigvec_i = Textra::asNormalized(Textra::TensorCast(eigvecs.col(idx), dims_mps));
+            // It's important to normalize the eigenvectors - they are not always well normalized when we get them from the eig::solver
+            auto eigvec_i = Textra::TensorCast(eigvecs.col(idx).normalized(), dims_mps);
             auto overlap  = std::abs(initial_mps.get_vector().dot(eigvecs.col(idx)));
             auto energy   = tools::finite::measure::energy(eigvec_i, tensors);
             auto eigval   = energy - initial_mps.get_energy_reduced();
