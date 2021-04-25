@@ -81,8 +81,11 @@ std::vector<opt_mps> internal::subspace::find_candidates(const class_tensors_fin
     std::vector<opt_mps> candidate_list;
     candidate_list.reserve(static_cast<size_t>(eigvals.size()));
     for(long idx = 0; idx < eigvals.size(); idx++) {
-        auto eigvec_i = Textra::TensorCast(eigvecs.col(idx), state.active_dimensions());
-        candidate_list.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
+        // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
+        auto eigvec_i = Textra::TensorCast(eigvecs.col(idx).normalized(), state.active_dimensions());
+        candidate_list.emplace_back(fmt::format("eigenvector {}", idx),
+                                    eigvec_i,
+                                    tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
                                     overlaps(idx), tensors.get_length());
         candidate_list.back().set_time(candidate_time);
         candidate_list.back().set_counter(reports::eigs_log.size());
