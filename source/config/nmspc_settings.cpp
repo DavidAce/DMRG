@@ -75,7 +75,6 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
-    dmrg_config.load_parameter("strategy::compress_mpo_squared"               , strategy::compress_mpo_squared);
     dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
@@ -105,6 +104,9 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::eig_max_ncv"                       , precision::eig_max_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
+    dmrg_config.load_parameter("precision::compress_mpo_squared"               , precision::compress_mpo_squared);
+    dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
+    dmrg_config.load_parameter("precision::use_shifted_mpo"                   , precision::use_shifted_mpo);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
@@ -115,7 +117,6 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
-    dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
     dmrg_config.load_parameter("precision::max_stuck_iters"                   , precision::max_stuck_iters);
     dmrg_config.load_parameter("precision::min_converged_iters"               , precision::min_converged_iters);
     dmrg_config.load_parameter("precision::min_saturation_iters"              , precision::min_saturation_iters);
