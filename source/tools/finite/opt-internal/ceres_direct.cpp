@@ -67,7 +67,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *            functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
 
-            if(settings::precision::use_reduced_energy and not tensors.model->is_compressed_mpo_squared())
+            if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not tensors.model->is_compressed_mpo_squared())
                 functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
             functor->compress(); // Compress the virtual bond between MPO² and the environments
 
@@ -80,10 +80,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             optimized_mps.set_counter(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_grad_norm(functor->get_grad_max_norm());
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_H2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_nH2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_Hn;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_nHn;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_step"] += *functor->t_step;
             break;
         }
@@ -93,8 +93,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             auto              initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *            functor            = new ceres_direct_functor<double>(tensors, status);
 
-            if(settings::precision::use_reduced_energy and not tensors.model->is_compressed_mpo_squared())
-                functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the shange in energy since the last energy reduction
+            if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not tensors.model->is_compressed_mpo_squared())
+                functor->set_shift(initial_mps.get_eigval()); // Account for the shange in energy since the last energy reduction
             functor->compress(); // Compress the virtual bond between MPO² and the environments
 
             CustomLogCallback ceres_logger(*functor);
@@ -108,10 +108,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_grad_norm(functor->get_grad_max_norm());
             optimized_mps.set_tensor_real(initial_state_real.data(), initial_mps.get_tensor().dimensions());
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_vH2;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_vH2v;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_vH;
-            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_vHv;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2"] += *functor->t_H2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH2v"] += *functor->t_nH2n;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vH"] += *functor->t_Hn;
+            *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_vHv"] += *functor->t_nHn;
             *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_dir_step"] += *functor->t_step;
             break;
         }

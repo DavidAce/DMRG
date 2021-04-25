@@ -14,10 +14,10 @@ using namespace tools::finite::opt::internal;
 
 ceres_base_functor::ceres_base_functor(const class_tensors_finite &tensors, const class_algorithm_status &status) {
     t_step = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
-    t_vH2  = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
-    t_vH2v = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
-    t_vH   = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
-    t_vHv  = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
+    t_H2n  = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
+    t_nH2n = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
+    t_Hn   = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
+    t_nHn  = std::make_unique<class_tic_toc>(settings::profiling::on, 5, "");
 
     length         = tensors.get_length();
     energy_reduced = tensors.model->get_energy_reduced();

@@ -239,7 +239,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                fmt::format("{:>6.0f} ms",summary.step_solver_time_in_seconds * 1000),
                fmt::format("{:>6.0f} ms",summary.iteration_time_in_seconds * 1000),
                fmt::format("{:>5.3f} s",summary.cumulative_time_in_seconds),
-               static_cast<double>(functor.get_ops()) / functor.t_vH2->get_last_interval()/1e9,
+               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9,
                functor.get_energy_per_site(),
                std::log10(functor.get_variance())
     );

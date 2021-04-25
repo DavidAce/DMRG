@@ -32,7 +32,7 @@ namespace tools::finite::opt::internal {
         mutable double energy_dens_window;
         mutable double energy_offset;
         mutable double delta_f;
-        mutable double grad_max_norm;
+        mutable double grad_max_norm = 0;
         mutable double norm_offset;
         mutable double norm;
         mutable size_t counter = 0;
@@ -61,10 +61,10 @@ namespace tools::finite::opt::internal {
         void set_grad_max_norm(double grad_max_norm_) const;
 
         std::unique_ptr<class_tic_toc> t_step;
-        std::unique_ptr<class_tic_toc> t_vH2;
-        std::unique_ptr<class_tic_toc> t_vH2v;
-        std::unique_ptr<class_tic_toc> t_vH;
-        std::unique_ptr<class_tic_toc> t_vHv;
+        std::unique_ptr<class_tic_toc> t_H2n;
+        std::unique_ptr<class_tic_toc> t_nH2n;
+        std::unique_ptr<class_tic_toc> t_Hn;
+        std::unique_ptr<class_tic_toc> t_nHn;
     };
     /* clang-format on */
 

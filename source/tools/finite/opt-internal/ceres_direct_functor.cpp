@@ -68,8 +68,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const class_tensors_finite &t
 
     tools::log->trace("- Allocating memory for matrix-vector products");
     dims = tensors.active_problem_dims();
-    Hv_tensor.resize(dims);
-    H2v_tensor.resize(dims);
+    Hn_tensor.resize(dims);
+    H2n_tensor.resize(dims);
     num_parameters = static_cast<int>(dims[0] * dims[1] * dims[2]);
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 
@@ -98,57 +98,56 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     get_H2n(n);
     get_Hn(n);
 
-    auto Hn  = Eigen::Map<VectorType>(Hv_tensor.data(), Hv_tensor.size());
-    auto H2n = Eigen::Map<VectorType>(H2v_tensor.data(), H2v_tensor.size());
+    auto Hn  = Eigen::Map<VectorType>(Hn_tensor.data(), Hn_tensor.size());
+    auto H2n = Eigen::Map<VectorType>(H2n_tensor.data(), H2n_tensor.size());
 
     print_path = false;
 
-    t_vHv->tic();
+    t_nHn->tic();
     nHn = n.dot(Hn);
-    t_vHv->toc();
-    t_vH2v->tic();
+    t_nHn->toc();
+    t_nH2n->tic();
     nH2n = n.dot(H2n);
-    t_vH2v->toc();
+    t_nH2n->toc();
+
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
-    if(std::real(nH2n) < 0.0) tools::log->debug("Counter = {}. "
-                                               "negative nH2n: "
-                                               "nHn  {:6.3e} + {:6.3e}i | "
-                                               "nH2n {:6.3e} + {:6.3e}i"
-                                               , counter,
-                                               std::real(nHn), std::imag(nHn),
-                                               std::real(nH2n), std::imag(nH2n));
-//    nH2n = std::real(nH2n) < 0.0 ? std::abs(nH2n) : std::real(nH2n);
-//    nH2n = std::real(nH2n) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(nH2n);
-
     var = nH2n - nHn * nHn;
-    if(std::real(var) < 0.0) tools::log->debug("Counter = {}. "
-                                               "negative var: "
-                                               "var  {:6.3e} + {:6.3e}i | "
-                                               "nHn  {:6.3e} + {:6.3e}i | "
-                                               "nH2n {:6.3e} + {:6.3e}i"
-                                               , counter,
-                                               std::real(var), std::imag(var),
-                                               std::real(nHn), std::imag(nHn),
-                                               std::real(nH2n), std::imag(nH2n));
+    double eps = std::numeric_limits<double>::epsilon();
+    if((std::real(var) < -eps or std::real(nH2n) < -eps))
+        tools::log->debug("Counter = {} | DIRECT | "
+                          "negative: "
+                          "var  {:.16f} + {:.16f}i | "
+                          "nHn  {:.16f} + {:.16f}i | "
+                          "nH2n {:.16f} + {:.16f}i | "
+                          "grad {:8.4e}",
+                          counter,
+                          std::real(var), std::imag(var),
+                          std::real(nHn), std::imag(nHn),
+                          std::real(nH2n), std::imag(nH2n),
+                          grad_max_norm);
 
-    var = std::abs(var);
-    var = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : var;
+//    var = std::abs(var);
+//    var = std::real(var) == 0.0 ? eps : var;
 
     energy            = std::real(nHn + energy_reduced);
     energy_per_site   = energy / static_cast<double>(length);
     variance          = std::abs(var);
     variance_per_site = variance / static_cast<double>(length);
     norm_offset       = std::abs(vv) - 1.0;
-    double epsilon    = std::numeric_limits<double>::epsilon();
-    log10var          = std::log10(epsilon + variance);
+//    log10var          = std::log10(variance);
+    // Here we work with a small offset on the variance:
+    //      When the variance is very low, numerical noise will sometimes cause nH2n < 0 or var < 0.
+    //      I think this is caused by H2 being slightly non-symmetric
+    double var_offset = std::clamp(std::real(var) + 1e-12, eps, std::abs(var) + 1e-12 )  ;
+    log10var          = std::log10(var_offset);
 
     if(fx != nullptr) { fx[0] = log10var; }
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
         auto one_over_norm  = 1.0/norm;
-        auto var_1 = (1.0 / (epsilon + var) / std::log(10));
+        auto var_1 = 1.0 / var_offset / std::log(10);
         grad       = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
         grad_max_norm = grad.template lpNorm<Eigen::Infinity>();
@@ -177,10 +176,10 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2n(const VectorType &v) const {
-    t_vH2->tic();
+    t_H2n->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
-    tools::common::contraction::matrix_vector_product(H2v_tensor, v_tensor, mpo2, env2L, env2R);
-    t_vH2->toc();
+    tools::common::contraction::matrix_vector_product(H2n_tensor, v_tensor, mpo2, env2L, env2R);
+    t_H2n->toc();
 
     ops = tools::finite::opt::internal::get_ops(dims[0], dims[1], dims[2], mpo.dimension(0));
 
@@ -236,10 +235,10 @@ void ceres_direct_functor<Scalar>::get_H2n(const VectorType &v) const {
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hn(const VectorType &v) const {
-    t_vH->tic();
+    t_Hn->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
-    tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
-    t_vH->toc();
+    tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
+    t_Hn->toc();
 }
 
 
@@ -251,7 +250,7 @@ void ceres_direct_functor<Scalar>::compress(){
     svd::settings svd_settings;
     svd_settings.use_lapacke = true;
     svd_settings.use_bdc = false;
-    svd_settings.threshold = 1e-16;
+    svd_settings.threshold = 1e-18;
     svd_settings.switchsize = 4096;
     svd::solver svd(svd_settings);
 
@@ -276,11 +275,11 @@ void ceres_direct_functor<Scalar>::compress(){
 
 
 template<typename Scalar>
-void ceres_direct_functor<Scalar>::set_shift(double energy_shift_) {
+void ceres_direct_functor<Scalar>::set_shift(double shift_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
-    energy_shift = energy_shift_;
-    tools::log->debug("Setting shift: {:.16f}", energy_shift_);
+    shift = shift_;
+    tools::log->debug("Setting shift: {:.16f}", shift_);
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
@@ -295,18 +294,18 @@ void ceres_direct_functor<Scalar>::set_shift(double energy_shift_) {
         std::array<long, 4> offset4{shape[0] - 1, 0, 0, 0};
         std::array<long, 4> extent4{1, 1, shape[2], shape[3]};
         std::array<long, 2> extent2{shape[2], shape[3]};
-        MatrixType sigma_Id = energy_shift * MatrixType::Identity(extent2[0], extent2[1]);
+        MatrixType sigma_Id = shift * MatrixType::Identity(extent2[0], extent2[1]);
         Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
         mpo.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
     }
-    // Next is with mpo² (hamiltonian squared)
+    // Next is with mpo² (hamiltonian squared). Here we must shift²
     {
         // Setup extents and handy objects
         auto shape = mpo2.dimensions();
         std::array<long, 4> offset4{shape[0] - 1, 0, 0, 0};
         std::array<long, 4> extent4{1, 1, shape[2], shape[3]};
         std::array<long, 2> extent2{shape[2], shape[3]};
-        MatrixType sigma_Id = energy_shift * MatrixType::Identity(extent2[0], extent2[1]);
+        MatrixType sigma_Id = shift * shift * MatrixType::Identity(extent2[0], extent2[1]);
         Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
         mpo2.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
     }
