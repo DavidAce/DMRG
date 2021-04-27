@@ -20,6 +20,7 @@
 
 //#include <stdlib.h>
 #include <cstdlib>
+#include <math/rnd.h>
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_) : h5pp_file(std::move(h5ppFile_)) {
     tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
@@ -61,6 +62,7 @@ void class_algorithm_launcher::start_h5pp_file() {
 
     if(h5pp::fs::exists(settings::output::output_filepath)) {
         switch(settings::output::file_collision_policy) {
+            case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
                 // Inspecting the file in READWRITE mode can update the file modification timestamp.
                 // Therefore we must first inspect the file in READONLY mode, then reopen in READWRITE.
@@ -176,8 +178,9 @@ void class_algorithm_launcher::run_flbit() {
             flbit.run();
         } catch(const except::resume_error &ex) {
             tools::log->error("Failed to resume simulation: {}", ex.what());
-            tools::log->info("Truncating file [{}]", settings::output::output_filepath);
+            tools::log->warn("Truncating file [{}]", settings::output::output_filepath);
             h5pp::fs::remove(settings::output::output_filepath);
+            rnd::seed(settings::input::seed); // Restart the rng from the same seed
             start_h5pp_file();
             setup_temp_path();
             flbit.run();
@@ -189,6 +192,19 @@ void class_algorithm_launcher::run_xdmrg() {
     if(settings::xdmrg::on) {
         class_xdmrg xdmrg(h5pp_file);
         xdmrg.run();
+        try {
+            xdmrg.run();
+        } catch(const except::resume_error &ex) {
+            tools::log->error("Failed to resume simulation: {}", ex.what());
+            if (settings::output::file_collision_policy == FileCollisionPolicy::REVIVE){
+                tools::log->warn("Truncating file [{}]", settings::output::output_filepath);
+                h5pp::fs::remove(settings::output::output_filepath);
+                rnd::seed(settings::input::seed); // Restart the rng from the same seed
+                start_h5pp_file();
+                setup_temp_path();
+                xdmrg.run();
+            }
+        }
     }
 }
 

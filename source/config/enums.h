@@ -16,7 +16,13 @@ enum class CopyPolicy { FORCE, TRY, OFF };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
-enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE };
+enum class FileCollisionPolicy {
+    RESUME,  // Resume simulation from the latest "FULL" storage state. Throw if none is found.
+    BACKUP,  // Backup the existing file by appending .bak, then start with a new file.
+    RENAME,  // Rename the current file by appending .# to avoid collision with existing.
+    REVIVE,  // Try RESUME, but do REPLACE on error instead of throwing
+    REPLACE  // Just erase/truncate the existing file and start from the beginning.
+};
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
@@ -261,6 +267,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == FileCollisionPolicy::RESUME)                         return "RESUME";
         if(item == FileCollisionPolicy::RENAME)                         return "RENAME";
         if(item == FileCollisionPolicy::BACKUP)                         return "BACKUP";
+        if(item == FileCollisionPolicy::REVIVE)                         return "REVIVE";
         if(item == FileCollisionPolicy::REPLACE)                        return "REPLACE";
     }
     if constexpr(std::is_same_v<T, FileResumePolicy>) {
@@ -483,6 +490,7 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "RESUME")                                return FileCollisionPolicy::RESUME;
         if(item == "RENAME")                                return FileCollisionPolicy::RENAME;
         if(item == "BACKUP")                                return FileCollisionPolicy::BACKUP;
+        if(item == "REVIVE")                                return FileCollisionPolicy::REVIVE;
         if(item == "REPLACE")                               return FileCollisionPolicy::REPLACE;
     }
     if constexpr(std::is_same_v<T, FileResumePolicy>) {
