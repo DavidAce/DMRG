@@ -73,13 +73,15 @@ void class_algorithm_finite::run()
     auto t_tot = tools::common::profile::t_tot->tic_token();
 
     // We may want to resume this simulation.
-    if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
+    if(h5pp_file->linkExists("common/storage_level") and
+       (settings::output::file_collision_policy == FileCollisionPolicy::RESUME or
+        settings::output::file_collision_policy == FileCollisionPolicy::REVIVE)) {
         try {
             resume();
         } catch(const except::state_error &ex) {
             throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const except::load_error &ex) {
-            throw except::load_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
+            throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         } catch(const std::exception &ex) {
             throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
         }
