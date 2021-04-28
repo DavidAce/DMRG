@@ -37,14 +37,14 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
 
     eig::solver solver_full, solver_shft, solver_max;
     solver_max.config.eigThreshold = settings::precision::eig_threshold;
-    solver_max.config.eigMaxIter   = 1000;
+    solver_max.config.eigMaxIter   = 600;
     solver_max.config.eigMaxNev    = 1;
     solver_max.config.eigMaxNcv    = 16;
     solver_max.config.compress     = true;
     solver_max.setLogLevel(2);
 
     solver_shft.config.eigThreshold = settings::precision::eig_threshold;
-    solver_shft.config.eigMaxIter   = 1000;
+    solver_shft.config.eigMaxIter   = 600;
     solver_shft.config.eigMaxNev    = 1;
     solver_shft.config.eigMaxNcv    = 128;
     solver_shft.config.compress     = true;
@@ -265,7 +265,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
 
     std::vector<opt_mps> eigvecs_mps;
     eigvecs_mps.emplace_back(initial_mps);
-    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft, eigvecs_mps, "shifted");
+    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft, eigvecs_mps, "shifted", false);
 //    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft2, eigvecs_mps, "shifted2");
 //    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft3, eigvecs_mps, "shifted3");
 //    extract_solutions(initial_mps, tensors, solver_shft4, eigvecs_mps, "shifted4");
