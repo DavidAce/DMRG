@@ -191,7 +191,6 @@ void class_algorithm_launcher::run_flbit() {
 void class_algorithm_launcher::run_xdmrg() {
     if(settings::xdmrg::on) {
         class_xdmrg xdmrg(h5pp_file);
-        xdmrg.run();
         try {
             xdmrg.run();
         } catch(const except::resume_error &ex) {
