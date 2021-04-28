@@ -106,7 +106,6 @@ void eig::arpack_solver<MatrixType>::eigs_sym_rc() {
         if(matrix.get_form() != Form::SYMM) throw std::runtime_error("ERROR: matrix not SYMMETRIC");
         ARrcSymStdEig<double> solver(matrix.rows(), nev_internal, config.get_ritz_string().data(), ncv_internal, config.eigThreshold.value(),
                                      static_cast<int>(config.eigMaxIter.value()), residual, true);
-
         find_solution_rc(solver);
         copy_solution(solver);
 
@@ -296,7 +295,25 @@ void eig::arpack_solver<MatrixType>::find_solution_rc(Derived &solver) {
     t_pre_token.toc();
 
     // Generate an Arnoldi basis
+    int step = 0;
+    int nops = 0;
+    int iter = 0;
+    std::vector<int> iter_lims = {500,400,300,200,100};
+    std::vector<double> time_lims = {4*3600,2*3600, 1*3600, 0.5*3600  };
     while(!solver.ArnoldiBasisFound()) {
+        if(iter > solver.GetMaxit() + 2 and step == 0) // Sanity check
+            eig::log->warn("Maximum iterations exceeded: {} > max {}", iter, 2 + config.eigMaxIter.value());
+
+        bool iter_lim = step == 0 and not iter_lims.empty() and iter == iter_lims.back();
+        bool time_lim = step == 0 and not time_lims.empty() and t_tot->get_measured_time() >= time_lims.back();
+        if(iter_lim or time_lim){
+            auto tol  = solver.GetTol();
+            eig::log->debug("iter {:<4} | nops {:<5} | time {:8.3e}: tol {:<.4e} -> {:<.4e}", iter, nops, t_tot->get_measured_time(), tol, 1e1 * tol);
+            solver.ChangeTol(1e1 * tol);
+            if(iter_lim) iter_lims.pop_back();
+            if(time_lim) time_lims.pop_back();
+        }
+
         solver.TakeStep();
         if(std::abs(solver.GetIdo()) == 1) {
             t_mul->tic();
@@ -309,11 +326,13 @@ void eig::arpack_solver<MatrixType>::find_solution_rc(Derived &solver) {
                 matrix.MultAx(solver.GetVector(), solver.PutVector());
             t_mul->toc();
         }
-
-        if(solver.GetIter() > config.eigMaxIter.value()+1) // Sanity check
-            eig::log->warn("Maximum iterations exceeded: {} > max {}", solver.GetIter(), config.eigMaxIter.value());
+        step++;
+        nops++;
+        if((iter == 0 and step > solver.GetNev()) or (step > solver.GetNcv() - solver.GetNev())) {
+            step = 0;
+            iter++;
+        }
     }
-
     // Find the eigenvectors/eigenvalues
     auto t_fnd_token = t_fnd->tic_token();
     if(config.compute_eigvecs) {
