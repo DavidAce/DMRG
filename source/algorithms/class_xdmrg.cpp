@@ -451,9 +451,9 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         }
 
 
-        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} |  dims {} | sites {} | alpha {:.3e}",idx_conf+1,optConf.size(),
-                         conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace), conf.problem_dims, conf.chosen_sites,
-                         (conf.alpha_expansion  ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
+        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} | sites {} | dims {} = {} | alpha {:.3e}",idx_conf+1,optConf.size(),
+                         conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace),conf.chosen_sites, conf.problem_dims,
+                         conf.problem_size, (conf.alpha_expansion  ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));
