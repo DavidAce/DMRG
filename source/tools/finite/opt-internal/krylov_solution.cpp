@@ -10,11 +10,11 @@
 #include <tensors/class_tensors_finite.h>
 
 void tools::finite::opt::internal::krylov_extract_solutions(const opt_mps &initial_mps, const class_tensors_finite &tensors, eig::solver &solver,
-                                           std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, const std::string &tag) {
+                                           std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, const std::string &tag, bool converged_only) {
     if(solver.result.meta.eigvals_found) {
         auto dims_mps = initial_mps.get_tensor().dimensions();
-        auto eigvecs  = eig::view::get_eigvecs<Scalar>(solver.result, eig::Side::R, true);
-        auto eigvals  = eig::view::get_eigvals<double>(solver.result, true);
+        auto eigvecs  = eig::view::get_eigvecs<Scalar>(solver.result, eig::Side::R, converged_only);
+        auto eigvals  = eig::view::get_eigvals<double>(solver.result, converged_only);
         eigvecs_mps.reserve(eigvecs_mps.size() + static_cast<size_t>(eigvals.size()));
         for(long idx = 0; idx < eigvals.size(); idx++) {
             // It's important to normalize the eigenvectors - they are not always well normalized when we get them from the eig::solver
