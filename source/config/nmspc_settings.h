@@ -165,8 +165,8 @@ namespace settings {
     //Parmaters that control precision in MPS, eigensolver and SVD
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
-        inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
-        inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
+        inline double   eig_tolerance                   = 1e-12 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
         inline bool     compress_mpo_squared            = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */

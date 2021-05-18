@@ -403,9 +403,9 @@ std::vector<class_xdmrg::OptConf> class_xdmrg::get_opt_conf_list() {
     }
     else if(c2.optSpace == OptSpace::DIRECT and status.algorithm_has_stuck_for > 0 and settings::strategy::krylov_opt_when_stuck) {
         c2.optSpace      = OptSpace::KRYLOV_VARIANCE;
-        c2.optMode       = OptMode::VARIANCE;
-        c2.max_sites     = 1;// std::min(2ul, settings::strategy::multisite_mps_size_def);
-        c2.second_chance = false;
+        c2.optMode         = OptMode::VARIANCE;
+        c2.max_sites       = std::min(2ul, settings::strategy::multisite_mps_size_def);
+        c2.second_chance   = false;
         c2.alpha_expansion = std::nullopt;
         // Use the same number of sites if stuck and not more than two, so that we can reuse the lbfgs progress as a good starting point for arpack.
         if(status.algorithm_has_stuck_for >= 2) c2.max_sites = std::min(2ul, c1.max_sites);

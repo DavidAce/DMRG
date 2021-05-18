@@ -104,10 +104,11 @@ add_library(dmrg-eig OBJECT
         source/math/eig/solver_dsyevd.cpp
         source/math/eig/solver_zgeev.cpp
         source/math/eig/solver_zheevd.cpp
+        source/math/eig/solver_primme.cpp
         source/math/eig/solution.cpp
-        source/math/eig/arpack_solver/matrix_product_dense.cpp
-        source/math/eig/arpack_solver/matrix_product_sparse.cpp
-        source/math/eig/arpack_solver/matrix_product_hamiltonian.cpp
+        source/math/eig/matvec/matvec_dense.cpp
+        source/math/eig/matvec/matvec_sparse.cpp
+        source/math/eig/matvec/matvec_mpo.cpp
         )
 
 add_library(dmrg-opt OBJECT
@@ -133,7 +134,7 @@ add_library(dmrg-dbg OBJECT
         source/general/stack_trace.cpp
         )
 
-
+add_library(dmrg-primme INTERFACE)
 
 target_include_directories(dmrg-main PRIVATE source)
 target_include_directories(dmrg-eig  PRIVATE source)
@@ -258,7 +259,7 @@ if(NOT TARGET Threads::Threads)
     find_package(Threads)
     target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive)
     target_link_libraries(Threads::Threads INTERFACE rt dl)
-endif()
+endif ()
 
 
 ###########################################
@@ -268,15 +269,21 @@ include(cmake-modules/SetupSearchPaths.cmake)
 include(cmake-modules/SetupDependenciesCMake.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
+include(cmake-modules/Get_primme.cmake)
+if (TARGET primme::primme)
+    target_link_libraries(dmrg-eig PUBLIC primme::primme)
+    list(APPEND DMRG_TARGETS primme::primme)
+endif ()
+
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-if(TARGET openmp::openmp)
+if (TARGET openmp::openmp)
     target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
-endif()
-target_link_libraries(dmrg-arp  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-eig  PUBLIC dmrg-flags)
-target_link_libraries(dmrg-opt  PUBLIC dmrg-flags)
+endif ()
+target_link_libraries(dmrg-arp PUBLIC dmrg-flags)
+target_link_libraries(dmrg-eig PUBLIC dmrg-flags)
+target_link_libraries(dmrg-opt PUBLIC dmrg-flags)
 target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
 target_link_libraries(dmrg-main PUBLIC dmrg-flags)
 target_link_libraries(${PROJECT_NAME} PUBLIC  dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-flags)  # Link everything to main project

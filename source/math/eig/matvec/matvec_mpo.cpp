@@ -1,16 +1,16 @@
-#include "matrix_product_hamiltonian.h"
-#include <tools/common/contraction.h>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include "matvec_mpo.h"
 #include <general/class_tic_toc.h>
 #include <math/svd.h>
+#include <tools/common/contraction.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 template<typename Scalar_>
-MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
-                                                            const Scalar_ *     envR_,      /*!< The right block tensor.  */
-                                                            const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
-                                                            std::array<long, 3> shape_mps_, /*!< An array containing the shapes of theta  */
-                                                            std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
-                                                            )
+MatVecMPO<Scalar_>::MatVecMPO(const Scalar_ *     envL_,      /*!< The left block tensor.  */
+                              const Scalar_ *     envR_,      /*!< The right block tensor.  */
+                              const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
+                              std::array<long, 3> shape_mps_, /*!< An array containing the shapes of theta  */
+                              std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
+                              )
     : envL(envL_), envR(envR_), mpo(mpo_), shape_mps(shape_mps_), shape_mpo(shape_mpo_), shape_envL({shape_mps_[1], shape_mps_[1], shape_mpo_[0]}),
       shape_envR({shape_mps_[2], shape_mps_[2], shape_mpo_[1]}) {
     if(envL == nullptr) throw std::runtime_error("Lblock is a nullptr!");
@@ -22,10 +22,8 @@ MatrixProductHamiltonian<Scalar_>::MatrixProductHamiltonian(const Scalar_ *     
     t_multAx   = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
 }
 
-
-
 template<typename Scalar>
-void MatrixProductHamiltonian<Scalar>::FactorOP()
+void MatVecMPO<Scalar>::FactorOP()
 /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
 {
     if(readyFactorOp) return; // happens only once
@@ -35,20 +33,27 @@ void MatrixProductHamiltonian<Scalar>::FactorOP()
     t_factorOP->toc();
 }
 
-
 template<typename T>
-void MatrixProductHamiltonian<T>::MultAx(T *mps_in_, T *mps_out_) {
+void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
     auto token = t_multAx->tic_token();
     tools::common::contraction::matrix_vector_product(mps_out_, mps_in_, shape_mps, mpo, shape_mpo, envL, shape_envL, envR, shape_envR);
     counter++;
 }
 
-
-
-
+template<typename T>
+void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    auto token = t_multAx->tic_token();
+    for(int i = 0; i < *blockSize; i++) {
+        T *mps_in  = static_cast<T *>(x) + *ldx * i;
+        T *mps_out = static_cast<T *>(y) + *ldy * i;
+        tools::common::contraction::matrix_vector_product(mps_out, mps_in, shape_mps, mpo, shape_mpo, envL, shape_envL, envR, shape_envR);
+        counter++;
+    }
+    *err = 0;
+}
 
 template<typename T>
-void MatrixProductHamiltonian<T>::MultOPv(T *mps_in_, T *mps_out_) {
+void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
     t_multOPv->tic();
     switch(side) {
         case eig::Side::R: {
@@ -68,10 +73,10 @@ void MatrixProductHamiltonian<T>::MultOPv(T *mps_in_, T *mps_out_) {
 }
 
 template<typename Scalar>
-void MatrixProductHamiltonian<Scalar>::print() const {}
+void MatVecMPO<Scalar>::print() const {}
 
 template<typename T>
-void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
+void MatVecMPO<T>::set_shift(std::complex<double> sigma_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the matrix: it is already compressed!");
     sigma = sigma_;
@@ -108,27 +113,26 @@ void MatrixProductHamiltonian<T>::set_shift(std::complex<double> sigma_) {
     readyShift = true;
 }
 
-//template<typename T>
-//void MatrixProductHamiltonian<T>::set_shifted_mpo(const T* mpo_, std::array<long, 4> shape_mpo_){
-//    if(readyShift) return;
+// template<typename T>
+// void MatVecMPO<T>::set_shifted_mpo(const T* mpo_, std::array<long, 4> shape_mpo_){
+//     if(readyShift) return;
 //    mpo = mpo_;
 //    shape_mpo = shape_mpo_;
 //    readyShift = true;
 //}
 
-
 template<typename T>
-void MatrixProductHamiltonian<T>::compress(){
+void MatVecMPO<T>::compress() {
     if(readyCompress) return;
 
     svd::settings svd_settings;
     svd_settings.use_lapacke = true;
-    svd_settings.use_bdc = false;
-    svd_settings.threshold = 1e-16;
-    svd_settings.switchsize = 4096;
+    svd_settings.use_bdc     = false;
+    svd_settings.threshold   = 1e-16;
+    svd_settings.switchsize  = 4096;
     svd::solver svd(svd_settings);
 
-    Eigen::Tensor<T, 4> mpo_tmp  = Eigen::TensorMap<Eigen::Tensor<const T, 4>> (mpo, shape_mpo);
+    Eigen::Tensor<T, 4> mpo_tmp = Eigen::TensorMap<Eigen::Tensor<const T, 4>>(mpo, shape_mpo);
     Eigen::Tensor<T, 4> mpo_l2r, mpo_r2l;
     {
         // Compress left to right
@@ -182,24 +186,23 @@ void MatrixProductHamiltonian<T>::compress(){
     eig::log->trace("Compressed mpo² dimensions {}", shape_mpo);
 }
 
-
 template<typename Scalar>
-void MatrixProductHamiltonian<Scalar>::set_mode(const eig::Form form_) {
+void MatVecMPO<Scalar>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename Scalar>
-void MatrixProductHamiltonian<Scalar>::set_side(const eig::Side side_) {
+void MatVecMPO<Scalar>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar>
-const eig::Form &MatrixProductHamiltonian<Scalar>::get_form() const {
+const eig::Form &MatVecMPO<Scalar>::get_form() const {
     return form;
 }
 template<typename Scalar>
-const eig::Side &MatrixProductHamiltonian<Scalar>::get_side() const {
+const eig::Side &MatVecMPO<Scalar>::get_side() const {
     return side;
 }
 
 // Explicit instantiations
-template class MatrixProductHamiltonian<double>;
-template class MatrixProductHamiltonian<std::complex<double>>;
+template class MatVecMPO<double>;
+template class MatVecMPO<std::complex<double>>;

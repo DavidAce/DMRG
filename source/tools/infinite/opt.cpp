@@ -4,7 +4,7 @@
 
 #include <general/nmspc_tensor_extra.h>
 #include <math/eig.h>
-#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <tensors/class_tensors_infinite.h>
 #include <tensors/edges/class_edges_infinite.h>
 #include <tensors/model/class_model_infinite.h>
@@ -30,12 +30,12 @@ Eigen::Tensor<Scalar, 3> tools::infinite::opt::find_ground_state(const class_ten
     const auto &mpo       = tensors.model->get_2site_mpo_AB();
     const auto &env       = tensors.edges->get_ene_blk();
 
-    MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
-    eig::solver                      solver;
-    solver.config.eigMaxNev = 1;
-    solver.config.eigMaxNcv =  static_cast<eig::size_type>(settings::precision::eig_max_ncv);
-    solver.config.eigThreshold = settings::precision::eig_threshold;
-    solver.config.eigMaxIter = 10000;
+    MatVecMPO<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
+    eig::solver       solver;
+    solver.config.maxNev  = 1;
+    solver.config.maxNcv  = static_cast<eig::size_type>(settings::precision::eig_default_ncv);
+    solver.config.tol     = settings::precision::eig_tolerance;
+    solver.config.maxIter = 10000;
     solver.eigs(matrix, -1, -1, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
     return eig::view::get_eigvec<Scalar>(solver.result, shape_mps);
 }

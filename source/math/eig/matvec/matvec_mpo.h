@@ -8,9 +8,10 @@
 #include <vector>
 
 class class_tic_toc;
+class primme_params;
 
 template<class Scalar_>
-class MatrixProductHamiltonian {
+class MatVecMPO {
     public:
     using Scalar                                   = Scalar_;
     constexpr static bool         can_shift_invert = true;
@@ -41,11 +42,11 @@ class MatrixProductHamiltonian {
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
     public:
-    MatrixProductHamiltonian(const Scalar_ *     envL_,      /*!< The left block tensor.  */
-                             const Scalar_ *     envR_,      /*!< The right block tensor.  */
-                             const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
-                             std::array<long, 3> shape_mps_, /*!< An array containing the dimensions of the multisite mps  */
-                             std::array<long, 4> shape_mpo_  /*!< An array containing the dimensions of the multisite mpo  */
+    MatVecMPO(const Scalar_ *     envL_,      /*!< The left block tensor.  */
+              const Scalar_ *     envR_,      /*!< The right block tensor.  */
+              const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
+              std::array<long, 3> shape_mps_, /*!< An array containing the dimensions of the multisite mps  */
+              std::array<long, 4> shape_mpo_  /*!< An array containing the dimensions of the multisite mpo  */
     );
 
     // Functions used in in Arpack++ solver
@@ -55,7 +56,8 @@ class MatrixProductHamiltonian {
     void FactorOP();                                  //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
     void MultOPv(Scalar_ *mps_in_, Scalar_ *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultAx(Scalar_ *mps_in_, Scalar_ *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
-    void compress();                                  //  Compresses the MPO virtual bond so that x_out <-- A*x_in can happen faster
+    void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
+    void compress(); //  Compresses the MPO virtual bond so that x_out <-- A*x_in can happen faster
 
     // Various utility functions
     int  counter = 0;

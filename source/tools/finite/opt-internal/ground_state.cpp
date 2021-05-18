@@ -6,7 +6,7 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_iter.h>
 #include <math/eig.h>
-#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <tensors/class_tensors_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -43,15 +43,15 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
     auto        shape_mpo = mpo.dimensions();
     //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     auto nev = static_cast<eig::size_type>(1);
-    auto ncv = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
+    auto ncv = static_cast<eig::size_type>(settings::precision::eig_default_ncv);
     tools::log->trace("Defining Hamiltonian matrix-vector product");
-    MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
+    MatVecMPO<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     tools::log->trace("Defining eigenvalue solver");
     eig::solver solver;
 
-//    if(tensors.measurements.energy_variance)
-//        solver.config.eigThreshold = std::clamp( 1e-2 * tensors.measurements.energy_variance.value(), 1e-16 , settings::precision::eig_threshold);
-    solver.config.eigThreshold = settings::precision::eig_threshold;
+    //    if(tensors.measurements.energy_variance)
+    //        solver.config.tol = std::clamp( 1e-2 * tensors.measurements.energy_variance.value(), 1e-16 , settings::precision::eig_tolerance);
+    solver.config.tol = settings::precision::eig_tolerance;
     solver.setLogLevel(2);
 
     // Since we use reduced energy mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
@@ -59,7 +59,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
     // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
     tools::log->trace("Finding ground state");
     solver.eigs(matrix, nev, ncv, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
-
 
     std::vector<opt_mps> eigvecs_mps;
     internal::krylov_extract_solutions(initial_mps, tensors, solver, eigvecs_mps);

@@ -100,8 +100,8 @@ void settings::load_config(class_dmrg_config &dmrg_config) {
     dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);
 
     dmrg_config.load_parameter("precision::eig_max_iter"                      , precision::eig_max_iter);
-    dmrg_config.load_parameter("precision::eig_threshold"                     , precision::eig_threshold);
-    dmrg_config.load_parameter("precision::eig_max_ncv"                       , precision::eig_max_ncv);
+    dmrg_config.load_parameter("precision::eig_tolerance"                     , precision::eig_tolerance);
+    dmrg_config.load_parameter("precision::eig_default_ncv"                   , precision::eig_default_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
     dmrg_config.load_parameter("precision::compress_mpo_squared"              , precision::compress_mpo_squared);

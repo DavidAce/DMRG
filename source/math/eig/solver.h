@@ -31,7 +31,7 @@ namespace eig {
 
         void eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::LM, Form form = Form::SYMM, Type type = Type::REAL, Side side = Side::R,
                        std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Storage storage = Storage::DENSE, Vecs compute_eigvecs_ = Vecs::OFF,
-                       Dephase remove_phase_ = Dephase::OFF);
+                       Dephase remove_phase_ = Dephase::OFF, Lib lib = Lib::ARPACK);
 
         template<typename Scalar, Storage storage = Storage::DENSE>
         void eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
@@ -42,5 +42,8 @@ namespace eig {
         void eigs(MatrixProductType &matrix, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
                   std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   typename MatrixProductType::Scalar *residual = nullptr);
+
+        template<typename MatrixProductType>
+        int eigs_primme(MatrixProductType &matrix);
     };
 }

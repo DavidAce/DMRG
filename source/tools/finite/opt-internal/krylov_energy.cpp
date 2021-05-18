@@ -3,7 +3,8 @@
 #include <config/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/eig.h>
-#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <math/eig/matvec/matvec_mpo.h>
+#include <math/linalg/matrix.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
@@ -12,10 +13,9 @@
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_mps.h>
-#include <math/linalg/matrix.h>
 tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_energy_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
-                                                                                               const class_algorithm_status &status, OptType optType, OptMode optMode,
-                                                                                               OptSpace optSpace) {
+                                                                                     const class_algorithm_status &status, OptType optType, OptMode optMode,
+                                                                                     OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
     auto t_eig = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
@@ -29,16 +29,15 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_energy_optimiza
     auto        shape_mps = tensors.active_problem_dims();
     auto        shape_mpo = mpo.dimensions();
     auto size = shape_mps[0]*shape_mps[1]*shape_mps[2];
-    auto nev = std::clamp<eig::size_type>(size/8,4, 16);
-    auto ncv = static_cast<eig::size_type>(settings::precision::eig_max_ncv);
+    auto        nev       = std::clamp<eig::size_type>(size / 8, 4, 16);
+    auto        ncv       = static_cast<eig::size_type>(settings::precision::eig_default_ncv);
     tools::log->info("Excited state energy optimization with ritz SM | dims {} = {}", shape_mps, size);
 
     tools::log->trace("Defining reduced Hamiltonian matrix-vector product");
-    MatrixProductHamiltonian<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
+    MatVecMPO<Scalar> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
     tools::log->trace("Defining eigenvalue solver");
     eig::solver solver;
-    solver.config.eigThreshold = 1e-12;
-
+    solver.config.tol = 1e-12;
 
     // Since we use reduced energy mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
     // would otherwise cause trouble for Arpack. This equates to subtracting sigma * identity from the bottom corner of the mpo.
