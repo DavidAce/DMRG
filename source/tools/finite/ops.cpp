@@ -26,6 +26,42 @@ void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tenso
     apply_mpos(state, mpos, Ledge, Redge);
 }
 
+void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 1> &Ledge,
+                                    const Eigen::Tensor<Scalar, 1> &Redge) {
+    Eigen::Tensor<Scalar, 3> Ledge3, Redge3;
+    {
+        auto mps_dims = state.mps_sites.front()->dimensions();
+        auto mpo_dims = mpos.front().dimensions();
+
+        long mpsDim = mps_dims[1];
+        long mpoDim = mpo_dims[0];
+        Ledge3.resize(Textra::array3{mpsDim, mpsDim, mpoDim});
+        Ledge3.setZero();
+        for(long i = 0; i < mpsDim; i++) {
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
+            Ledge3.slice(offset3, extent3).reshape(extent1) = Ledge;
+        }
+    }
+    {
+        auto mps_dims = state.mps_sites.back()->dimensions();
+        auto mpo_dims = mpos.back().dimensions();
+
+        long mpsDim = mps_dims[2];
+        long mpoDim = mpo_dims[1];
+        Redge3.resize(Textra::array3{mpsDim, mpsDim, mpoDim});
+        Redge3.setZero();
+        for(long i = 0; i < mpsDim; i++) {
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
+            Redge3.slice(offset3, extent3).reshape(extent1) = Redge;
+        }
+    }
+    apply_mpos(state, mpos, Ledge3, Redge3);
+}
+
 void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
                                     const Eigen::Tensor<Scalar, 3> &Redge) {
     // Apply MPO's on Gamma matrices and
