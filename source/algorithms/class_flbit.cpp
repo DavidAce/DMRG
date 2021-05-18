@@ -340,11 +340,11 @@ void class_flbit::create_hamiltonian_gates() {
     auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
     auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
     for(auto pos : list_1site) {
-        auto range = 1;                                    // Number of site indices
+        auto range = 1ul;                                  // Number of site indices
         auto sites = num::range<size_t>(pos, pos + range); // A list of site indices
         auto nbody = std::vector<size_t>{1};               // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
         auto spins = tensors.state->get_spin_dims(sites);  // A list of spin dimensions for each site (should all be 2 for two-level systems)
-        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody,sites);
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
     }
     for(auto pos : list_2site) {
@@ -356,11 +356,11 @@ void class_flbit::create_hamiltonian_gates() {
         ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(auto pos : list_3site) {
-        auto range = 2; // Distance to next-nearest neighbor when 3 sites interact
+        auto range = 2ul; // Distance to next-nearest neighbor when 3 sites interact
         auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, settings::model::model_size)); // +1 to include last site
         auto nbody = std::vector<size_t>{3};
         auto spins = tensors.state->get_spin_dims(sites);
-        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody,sites);
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(const auto &[idx,ham] : iter::enumerate(ham_gates_1body)){
