@@ -4,7 +4,7 @@
 #include <general/nmspc_iter.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/eig.h>
-#include <math/eig/arpack_solver/matrix_product_hamiltonian.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <tensors/class_tensors_finite.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
@@ -24,7 +24,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     if (not tensors.model->is_reduced()) throw std::runtime_error("krylov_variance_optimization requires energy-reduced MPO²");
     if (tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_variance_optimization requires non-compressed MPO²");
 
-
     auto t_eig    = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
     auto dims_mps = initial_mps.get_tensor().dimensions();
     auto size     = initial_mps.get_tensor().size();
@@ -35,94 +34,33 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     // especially when using MPO compression.
     tools::log->debug("Finding excited state: smallest eigenstate of (H-E)² | dims {} = {}", dims_mps, size);
 
-    eig::solver solver_full, solver_shft, solver_max;
-    solver_max.config.eigThreshold = settings::precision::eig_threshold;
-    solver_max.config.eigMaxIter   = 600;
-    solver_max.config.eigMaxNev    = 1;
-    solver_max.config.eigMaxNcv    = 16;
-    solver_max.config.compress     = true;
+    eig::solver solver_full, solver_shft, solver_max, solver_primme;
+    solver_max.config.tol      = settings::precision::eig_tolerance;
+    solver_max.config.maxIter  = 600;
+    solver_max.config.maxNev   = 1;
+    solver_max.config.maxNcv   = 16;
+    solver_max.config.compress = true;
     solver_max.setLogLevel(2);
 
-    solver_shft.config.eigThreshold = settings::precision::eig_threshold;
-    solver_shft.config.eigMaxIter   = 600;
-    solver_shft.config.eigMaxNev    = 1;
-    solver_shft.config.eigMaxNcv    = 128;
-    solver_shft.config.compress     = true;
+    solver_shft.config.tol      = settings::precision::eig_tolerance;
+    solver_shft.config.maxIter  = 200;
+    solver_shft.config.maxTime  = 30 * 60;
+    solver_shft.config.maxNev   = 1;
+    solver_shft.config.maxNcv   = 128;
+    solver_shft.config.compress = true;
+    //    solver_shft.config.ncv_x_factor = 2;
+    //    solver_shft.config.iter_ncv_x   = {150,50};
+    //    solver_shft.config.time_tol_x10 = {30*60, 10*60};
     solver_shft.setLogLevel(2);
-//
-//    eig::solver solver_shft2;
-//    solver_shft2.config.eigThreshold = 1e-12;
-//    solver_shft2.config.eigMaxIter   = 200;
-//    solver_shft2.config.eigMaxNev    = 1;
-//    solver_shft2.config.eigMaxNcv    = 512;
-//    solver_shft2.config.compress     = true;
-//    solver_shft2.setLogLevel(2);
-////
-//    eig::solver solver_shft3;
-//    solver_shft3.config.eigThreshold = 1e-12;
-//    solver_shft3.config.eigMaxIter   = 100;
-//    solver_shft3.config.eigMaxNev    = 1;
-//    solver_shft3.config.eigMaxNcv    = 1024;
-//    solver_shft3.config.compress     = true;
-//    solver_shft3.setLogLevel(2);
-//
-//    eig::solver solver_shft4;
-//    solver_shft4.config.eigThreshold = 1e-10;
-//    solver_shft4.config.eigMaxIter   = 100000;
-//    solver_shft4.config.eigMaxNev    = 1;
-//    solver_shft4.config.eigMaxNcv    = 512;
-//    solver_shft4.config.compress     = true;
-//    solver_shft4.setLogLevel(2);
-//
-//    eig::solver solver_shft5;
-//    solver_shft5.config.eigThreshold = 1e-12;
-//    solver_shft5.config.eigMaxIter   = 100000;
-//    solver_shft5.config.eigMaxNev    = 1;
-//    solver_shft5.config.eigMaxNcv    = 128;
-//    solver_shft5.config.compress     = true;
-//    solver_shft5.setLogLevel(2);
-//
-//    eig::solver solver_shft6;
-//    solver_shft6.config.eigThreshold = 1e-12;
-//    solver_shft6.config.eigMaxIter   = 100000;
-//    solver_shft6.config.eigMaxNev    = 1;
-//    solver_shft6.config.eigMaxNcv    = 256;
-//    solver_shft6.config.compress     = true;
-//    solver_shft6.setLogLevel(2);
-//
-//    eig::solver solver_shft7;
-//    solver_shft7.config.eigThreshold = 1e-12;
-//    solver_shft7.config.eigMaxIter   = 100000;
-//    solver_shft7.config.eigMaxNev    = 1;
-//    solver_shft7.config.eigMaxNcv    = 512;
-//    solver_shft7.config.compress     = true;
-//    solver_shft7.setLogLevel(2);
 
-//    eig::solver solver_shft8;
-//    solver_shft8.config.eigThreshold = 1e-12;
-//    solver_shft8.config.eigMaxIter   = 100000;
-//    solver_shft8.config.eigMaxNev    = 1;
-//    solver_shft8.config.eigMaxNcv    = 16;
-//    solver_shft8.config.compress     = true;
-//    solver_shft8.setLogLevel(2);
-//
-//
-//    eig::solver solver_shft9;
-//    solver_shft9.config.eigThreshold = 1e-12;
-//    solver_shft9.config.eigMaxIter   = 100000;
-//    solver_shft9.config.eigMaxNev    = 1;
-//    solver_shft9.config.eigMaxNcv    = 32;
-//    solver_shft9.config.compress     = true;
-//    solver_shft9.setLogLevel(2);
-//
-//    eig::solver solver_shft10;
-//    solver_shft10.config.eigThreshold = 1e-12;
-//    solver_shft10.config.eigMaxIter   = 100000;
-//    solver_shft10.config.eigMaxNev    = 1;
-//    solver_shft10.config.eigMaxNcv    = 64;
-//    solver_shft10.config.compress     = true;
-//    solver_shft10.setLogLevel(2);
-
+    solver_primme.config.tol      = settings::precision::eig_tolerance;
+    solver_primme.config.maxIter  = 1000;
+    solver_primme.config.maxTime  = 30 * 60;
+    solver_primme.config.maxNev   = 1;
+    solver_primme.config.maxNcv   = 128;
+    solver_primme.config.compress = true;
+    solver_primme.config.lib      = eig::Lib::PRIMME;
+    solver_primme.setLogLevel(2);
 
     if(optType == OptType::REAL) {
         tools::log->trace("- Generating real-valued multisite components");
@@ -140,79 +78,37 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
             solver_full.eig(matrix.data(), matrix.rows());
         } else {
             tools::log->trace("Defining reduced Hamiltonian-squared matrix-vector product");
-            MatrixProductHamiltonian<double> hamiltonian_squared(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+            MatVecMPO<double> hamiltonian_squared(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
 
             if(not tensors.model->is_compressed_mpo_squared()) {
                 tools::log->trace("Finding largest-magnitude state");
-                solver_max.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
-                                    eig::Vecs::OFF, eig::Dephase::OFF);
+                solver_max.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
+                                eig::Dephase::OFF);
                 auto eigvals_ham_sq = eig::view::get_eigvals<double>(solver_max.result);
                 auto largest_eigval = eigvals_ham_sq.cwiseAbs().maxCoeff() + 1.0; // Add one just to make sure we shift enough
 
                 // Reset the matrix
-                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-                                 eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | arpack | residual on ...", largest_eigval);
+                hamiltonian_squared = MatVecMPO<double>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+                residual            = initial_mps.get_tensor().real();
+                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
+                                 eig::Dephase::OFF, residual.data());
                 tools::log->trace("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ... OK: iters {} | counter {} | "
                                   "time {:.3f} | matprod {:.3f}s",
                                   largest_eigval, solver_shft.result.meta.iter, solver_shft.result.meta.counter, solver_shft.result.meta.time_total,
                                   solver_shft.result.meta.time_matprod);
+                tools::log->info("arnoldi found: {}", solver_shft.result.meta.arnoldi_found);
+                tools::log->info("eigvecs found: {}", solver_shft.result.meta.eigvecsR_found);
+                if(not solver_shft.result.meta.arnoldi_found) {
+                    // Reset the matrix
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | primme | residual on ...",
+                                      largest_eigval);
+                    hamiltonian_squared = MatVecMPO<double>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+                    residual            = initial_mps.get_tensor().real();
+                    solver_primme.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
+                                       eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                }
 
-                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft2.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft3.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft4.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft5.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft6.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft7.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft8.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft9.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
-//                // Reset the matrix
-//                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | residual on ...", largest_eigval);
-//                hamiltonian_squared = MatrixProductHamiltonian<double> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
-//                residual  = initial_mps.get_tensor().real();
-//                solver_shft10.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-//                                  eig::Vecs::ON, eig::Dephase::OFF, residual.data());
             } else {
                 tools::log->warn("Finding excited state using H² with ritz SM");
                 solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
@@ -234,7 +130,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
             solver_full.eig(matrix.data(), matrix.rows());
         } else {
             tools::log->trace("Defining reduced Hamiltonian-squared matrix-vector product");
-            MatrixProductHamiltonian<cplx> hamiltonian_squared(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+            MatVecMPO<cplx> hamiltonian_squared(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
 
             if(not tensors.model->is_compressed_mpo_squared()) {
                 tools::log->trace("Finding largest-magnitude state");
@@ -244,10 +140,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
                 auto largest_eigval = eigvals_ham_sq.cwiseAbs().maxCoeff() + 1.0; // Add one just to make sure we shift enough
 
                 // Reset the matrix
-                hamiltonian_squared = MatrixProductHamiltonian<cplx> (env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+                hamiltonian_squared = MatVecMPO<cplx>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
                 tools::log->debug("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ...", largest_eigval);
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-                                 eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
+                                 eig::Dephase::OFF, residual.data());
                 tools::log->trace("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ... OK: iters {} | counter {} | "
                                   "time {:.3f} | matprod {:.3f}s",
                                   largest_eigval, solver_shft.result.meta.iter, solver_shft.result.meta.counter, solver_shft.result.meta.time_total,
@@ -266,7 +162,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     std::vector<opt_mps> eigvecs_mps;
     eigvecs_mps.emplace_back(initial_mps);
     internal::krylov_extract_solutions(initial_mps, tensors, solver_shft, eigvecs_mps, "shifted", false);
-//    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft2, eigvecs_mps, "shifted2");
+    internal::krylov_extract_solutions(initial_mps, tensors, solver_primme, eigvecs_mps, "primme", false);
+    //    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft2, eigvecs_mps, "shifted2");
 //    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft3, eigvecs_mps, "shifted3");
 //    extract_solutions(initial_mps, tensors, solver_shft4, eigvecs_mps, "shifted4");
 //    extract_solutions(initial_mps, tensors, solver_shft5, eigvecs_mps, "shifted5");

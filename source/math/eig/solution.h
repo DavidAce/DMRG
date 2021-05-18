@@ -46,10 +46,11 @@ namespace eig {
             bool           eigvals_found  = false;
             bool           eigvecsR_found = false;
             bool           eigvecsL_found = false;
+            bool           arnoldi_found  = false;
             Form           form;
             Type           type;
             //            Side  side;
-            std::string    ritz;
+            std::string          ritz;
             std::complex<double> sigma = std::complex<double>(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
         };
 

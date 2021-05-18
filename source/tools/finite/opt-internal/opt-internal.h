@@ -58,7 +58,9 @@ namespace tools::finite::opt::internal{
                                          std::vector<tools::finite::opt::opt_mps> &eigvecs_mps,
                                          const std::string & tag = "",
                                          bool converged_only = true);
-
+    extern opt_mps primme_variance_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
+                                                const class_algorithm_status &status, OptType optType, OptMode optMode,
+                                                OptSpace optSpace);
     extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_tensors_finite & tensors, OptType optType, OptMode optMode, OptSpace optSpace);
     extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
 

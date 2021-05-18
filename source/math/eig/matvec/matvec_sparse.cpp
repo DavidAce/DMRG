@@ -1,5 +1,5 @@
 
-#include "matrix_product_sparse.h"
+#include "matvec_sparse.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <Eigen/SparseLU>
@@ -34,12 +34,12 @@ namespace sparse_lu {
 }
 
 template<typename Scalar, bool sparseLU>
-MatrixProductSparse<Scalar, sparseLU>::~MatrixProductSparse() {
+MatVecSparse<Scalar, sparseLU>::~MatVecSparse() {
     sparse_lu::reset();
 }
 
 template<typename Scalar, bool sparseLU>
-MatrixProductSparse<Scalar, sparseLU>::MatrixProductSparse(const Scalar *A_, long L_, bool copy_data, eig::Form form_, eig::Side side_)
+MatVecSparse<Scalar, sparseLU>::MatVecSparse(const Scalar *A_, long L_, bool copy_data, eig::Form form_, eig::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
     if(copy_data) {
         A_stl.resize(static_cast<size_t>(L * L));
@@ -64,7 +64,7 @@ MatrixProductSparse<Scalar, sparseLU>::MatrixProductSparse(const Scalar *A_, lon
 // Function definitions
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::FactorOP()
+void MatVecSparse<Scalar, sparseLU>::FactorOP()
 
 /*  Sparse decomposition
  *  Factors P(A-sigma*I) = LU
@@ -94,7 +94,7 @@ void MatrixProductSparse<Scalar, sparseLU>::FactorOP()
 }
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
+void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
     assert(readyFactorOp and "FactorOp() has not been run yet.");
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     Eigen::Map<VectorType> x_in(x_in_ptr, L);
@@ -130,7 +130,7 @@ void MatrixProductSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_
 }
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) {
+void MatVecSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
     switch(form) {
         case eig::Form::NSYM:
@@ -179,13 +179,79 @@ void MatrixProductSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) 
     counter++;
 }
 
+template<typename T, bool sparseLU>
+void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme,
+                                       [[maybe_unused]] int *err) {
+    Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
+    switch(form) {
+        case eig::Form::NSYM:
+            switch(side) {
+                case eig::Side::R: {
+                    using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+                    for(int i = 0; i < *blockSize; i++) {
+                        T *                    x_in  = static_cast<T *>(x) + *ldx * i;
+                        T *                    x_out = static_cast<T *>(y) + *ldy * i;
+                        Eigen::Map<VectorType> x_vec_in(x_in, L);
+                        Eigen::Map<VectorType> x_vec_out(x_out, L);
+                        if constexpr(not sparseLU)
+                            x_vec_out.noalias() = A_matrix * x_vec_in;
+                        else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
+                            x_vec_out.noalias() = sparse_lu::A_real_sparse.value() * x_vec_in;
+                        else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
+                            x_vec_out.noalias() = sparse_lu::A_cplx_sparse.value() * x_vec_in;
+                        counter++;
+                    }
+                    break;
+                }
+                case eig::Side::L: {
+                    using VectorTypeT = Eigen::Matrix<T, 1, Eigen::Dynamic>;
+                    for(int i = 0; i < *blockSize; i++) {
+                        T *                     x_in  = static_cast<T *>(x) + *ldx * i;
+                        T *                     x_out = static_cast<T *>(y) + *ldy * i;
+                        Eigen::Map<VectorTypeT> x_vec_in(x_in, L);
+                        Eigen::Map<VectorTypeT> x_vec_out(x_out, L);
+                        if constexpr(not sparseLU)
+                            x_vec_out.noalias() = x_vec_in * A_matrix;
+                        else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
+                            x_vec_out.noalias() = x_vec_in * sparse_lu::A_real_sparse.value();
+                        else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
+                            x_vec_out.noalias() = x_vec_in * sparse_lu::A_cplx_sparse.value();
+                        counter++;
+                    }
+                    break;
+                }
+                case eig::Side::LR: {
+                    throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+                }
+            }
+            break;
+        case eig::Form::SYMM: {
+            using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+            for(int i = 0; i < *blockSize; i++) {
+                T *                    x_in  = static_cast<T *>(x) + *ldx * i;
+                T *                    x_out = static_cast<T *>(y) + *ldy * i;
+                Eigen::Map<VectorType> x_vec_in(x_in, L);
+                Eigen::Map<VectorType> x_vec_out(x_out, L);
+                if constexpr(not sparseLU) x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Upper>() * x_vec_in;
+                if constexpr(std::is_same_v<Scalar, double> and sparseLU)
+                    x_vec_out.noalias() = sparse_lu::A_real_sparse.value().template selfadjointView<Eigen::Upper>() * x_vec_in;
+                if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
+                    x_vec_out.noalias() = sparse_lu::A_cplx_sparse.value().template selfadjointView<Eigen::Upper>() * x_vec_in;
+                counter++;
+            }
+            break;
+        }
+    }
+    *err = 0;
+}
+
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::print() const {
+void MatVecSparse<Scalar, sparseLU>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
 }
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma_) {
+void MatVecSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma_) {
     if(readyShift) { return; }
     sigma = sigma_;
     if(A_stl.empty()) {
@@ -212,31 +278,31 @@ void MatrixProductSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma
 }
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::set_mode(const eig::Form form_) {
+void MatVecSparse<Scalar, sparseLU>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::set_side(const eig::Side side_) {
+void MatVecSparse<Scalar, sparseLU>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar, bool sparseLU>
-const eig::Form &MatrixProductSparse<Scalar, sparseLU>::get_form() const {
+const eig::Form &MatVecSparse<Scalar, sparseLU>::get_form() const {
     return form;
 }
 template<typename Scalar, bool sparseLU>
-const eig::Side &MatrixProductSparse<Scalar, sparseLU>::get_side() const {
+const eig::Side &MatVecSparse<Scalar, sparseLU>::get_side() const {
     return side;
 }
 
 template<typename Scalar, bool sparseLU>
-void MatrixProductSparse<Scalar, sparseLU>::init_profiling() {
+void MatVecSparse<Scalar, sparseLU>::init_profiling() {
     t_factorOP = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time FactorOp");
     t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultOpv");
     t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultAx");
 }
 
 // Explicit instantiations
-template class MatrixProductSparse<double, true>;
-template class MatrixProductSparse<double, false>;
-template class MatrixProductSparse<std::complex<double>, true>;
-template class MatrixProductSparse<std::complex<double>, false>;
+template class MatVecSparse<double, true>;
+template class MatVecSparse<double, false>;
+template class MatVecSparse<std::complex<double>, true>;
+template class MatVecSparse<std::complex<double>, false>;

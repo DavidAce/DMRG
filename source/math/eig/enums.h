@@ -9,6 +9,7 @@ namespace eig {
     inline std::shared_ptr<spdlog::logger> log;
 
     // Enums
+    enum class Lib { ARPACK, PRIMME };                      // Choose the underlying library
     enum class Form { SYMM, NSYM };                         // Symmetric or non-symmetric problems (complex symmetric are assumed Hermitian)
     enum class Type { REAL, CPLX };                         // Real or complex, i.e. double or std::complex<double> matrix
     enum class Side { L, R, LR };                           // Left, right or both eigenvectors (for nsym problems)

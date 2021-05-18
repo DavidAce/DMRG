@@ -2,7 +2,7 @@
 // Created by david on 2018-11-16.
 //
 
-#include "matrix_product_dense.h"
+#include "matvec_dense.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <general/class_tic_toc.h>
@@ -33,13 +33,13 @@ namespace dense_lu {
 }
 
 template<typename Scalar>
-MatrixProductDense<Scalar>::~MatrixProductDense() {
+MatVecDense<Scalar>::~MatVecDense() {
     dense_lu::reset();
 }
 
 // Pointer to data constructor, copies the matrix into an internal Eigen matrix.
 template<typename Scalar>
-MatrixProductDense<Scalar>::MatrixProductDense(const Scalar *const A_, const long L_, const bool copy_data, const eig::Form form_, const eig::Side side_)
+MatVecDense<Scalar>::MatVecDense(const Scalar *const A_, const long L_, const bool copy_data, const eig::Form form_, const eig::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
     if(copy_data) {
         A_stl.resize(static_cast<size_t>(L * L));
@@ -51,7 +51,7 @@ MatrixProductDense<Scalar>::MatrixProductDense(const Scalar *const A_, const lon
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::FactorOP()
+void MatVecDense<Scalar>::FactorOP()
 
 /*  Partial pivot LU decomposition
  *  Factors P(A-sigma*I) = LU
@@ -69,7 +69,7 @@ void MatrixProductDense<Scalar>::FactorOP()
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
+void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
     assert(readyFactorOp and "FactorOp() has not been run yet.");
     t_multOPv->tic();
     switch(side) {
@@ -96,8 +96,8 @@ void MatrixProductDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
-    t_multAx->tic();
+void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
+    auto                                 token = t_multAx->tic_token();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
     switch(form) {
         case eig::Form::NSYM:
@@ -126,17 +126,65 @@ void MatrixProductDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
             break;
         }
     }
-    t_multAx->toc();
     counter++;
 }
 
+template<typename T>
+void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    auto                                 token = t_multAx->tic_token();
+    Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
+    switch(form) {
+        case eig::Form::NSYM:
+            switch(side) {
+                case eig::Side::R: {
+                    for(int i = 0; i < *blockSize; i++) {
+                        T *                            x_in  = static_cast<T *>(x) + *ldx * i;
+                        T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                        Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
+                        Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
+                        x_vec_out.noalias() = A_matrix * x_vec_in;
+                        counter++;
+                    }
+                    break;
+                }
+                case eig::Side::L: {
+                    for(int i = 0; i < *blockSize; i++) {
+                        T *                            x_in  = static_cast<T *>(x) + *ldx * i;
+                        T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                        Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
+                        Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
+                        x_vec_out.noalias() = x_vec_in * A_matrix;
+                        counter++;
+                    }
+                    break;
+                }
+                case eig::Side::LR: {
+                    throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+                }
+            }
+            break;
+        case eig::Form::SYMM: {
+            for(int i = 0; i < *blockSize; i++) {
+                T *                            x_in  = static_cast<T *>(x) + *ldx * i;
+                T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
+                Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
+                x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Lower>() * x_vec_in;
+                counter++;
+            }
+            break;
+        }
+    }
+    *err = 0;
+}
+
 template<typename Scalar>
-void MatrixProductDense<Scalar>::print() const {
+void MatVecDense<Scalar>::print() const {
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::set_shift(std::complex<double> sigma_) {
+void MatVecDense<Scalar>::set_shift(std::complex<double> sigma_) {
     if(readyShift) { return; }
     sigma = sigma_;
     if(A_stl.empty()) {
@@ -151,24 +199,24 @@ void MatrixProductDense<Scalar>::set_shift(std::complex<double> sigma_) {
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::set_mode(const eig::Form form_) {
+void MatVecDense<Scalar>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename Scalar>
-void MatrixProductDense<Scalar>::set_side(const eig::Side side_) {
+void MatVecDense<Scalar>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar>
-const eig::Form &MatrixProductDense<Scalar>::get_form() const {
+const eig::Form &MatVecDense<Scalar>::get_form() const {
     return form;
 }
 template<typename Scalar>
-const eig::Side &MatrixProductDense<Scalar>::get_side() const {
+const eig::Side &MatVecDense<Scalar>::get_side() const {
     return side;
 }
 
 template<typename Scalar>
-void MatrixProductDense<Scalar>::init_profiling() {
+void MatVecDense<Scalar>::init_profiling() {
     t_factorOP = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time FactorOp");
     t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultOpv");
     t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultAx");
@@ -176,5 +224,5 @@ void MatrixProductDense<Scalar>::init_profiling() {
 
 // Explicit instantiations
 
-template class MatrixProductDense<double>;
-template class MatrixProductDense<std::complex<double>>;
+template class MatVecDense<double>;
+template class MatVecDense<std::complex<double>>;

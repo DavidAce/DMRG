@@ -1,6 +1,6 @@
 #include <config/nmspc_settings.h>
 #include <math/eig.h>
-#include <math/eig/arpack_solver/matrix_product_dense.h>
+#include <math/eig/matvec/matvec_dense.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt-internal/opt-internal.h>
@@ -23,7 +23,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
                                                                double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace) {
     tools::log->trace("Finding subspace -- partial");
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
-    MatrixProductDense<Scalar> hamiltonian(H_local.data(), H_local.rows(), false, eig::Form::SYMM, eig::Side::R);
+    MatVecDense<Scalar> hamiltonian(H_local.data(), H_local.rows(), false, eig::Form::SYMM, eig::Side::R);
     hamiltonian.set_shift(energy_target);
     hamiltonian.FactorOP();
     *tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_lu"] += *hamiltonian.t_factorOP;
@@ -31,7 +31,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
     double time_ham = tools::common::profile::prof[AlgorithmType::xDMRG]["t_opt_sub_ham"]->get_last_interval();
 
     eig::solver solver;
-    solver.config.eigThreshold                = settings::precision::eig_threshold;
+    solver.config.tol                         = settings::precision::eig_tolerance;
     std::string                        reason = "exhausted";
     Eigen::VectorXd                    eigvals;
     Eigen::MatrixXcd                   eigvecs;
