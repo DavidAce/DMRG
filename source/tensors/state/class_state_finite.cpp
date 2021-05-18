@@ -8,6 +8,7 @@
 // -- (textra first)
 #include "class_state_finite.h"
 #include <config/nmspc_settings.h>
+#include <general/nmspc_iter.h>
 #include <tensors/state/class_mps_site.h>
 #include <tools/common/fmt.h>
 #include <tools/common/log.h>
@@ -107,8 +108,7 @@ void          class_state_finite::set_algorithm(const AlgorithmType &algo_type) 
 AlgorithmType class_state_finite::get_algorithm() const { return algo; }
 
 void class_state_finite::set_positions() {
-    long pos = 0;
-    for(auto &mps : mps_sites) mps->set_position(pos++);
+    for(auto &&[pos, mps] : iter::enumerate(mps_sites)) mps->set_position(pos);
 }
 
 template<typename T>
