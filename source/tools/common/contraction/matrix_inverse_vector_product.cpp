@@ -109,7 +109,7 @@ namespace Eigen {
                 EIGEN_ONLY_USED_FOR_DEBUG(alpha);
 
 //                auto token = mat.t_multAx->tic_token();
-                mat.tmp.resize(dst.size());
+                mat.tmp.resize(static_cast<size_t>(dst.size()));
                 Eigen::Map<Dest> tmp_map (mat.tmp.data(), dst.size());
 //                std::cout << "dst size " << dst.size() << " | rhs size " << rhs.size() << std::endl;
 //                if(dst.size() != rhs.size())
