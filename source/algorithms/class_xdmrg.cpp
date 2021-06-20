@@ -441,19 +441,18 @@ void class_xdmrg::single_xDMRG_step(std::vector<class_xdmrg::OptConf> optConf) {
         if(tensors.active_sites.empty()) continue;
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
 
-
         // Use subspace expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(conf.alpha_expansion) {
-            auto pos_expanded   = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
             tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
         }
 
-
-        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} | sites {} | dims {} = {} | alpha {:.3e}",idx_conf+1,optConf.size(),
-                         conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace),conf.chosen_sites, conf.problem_dims,
-                         conf.problem_size, (conf.alpha_expansion  ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
+        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
+                          optConf.size(), conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace), enum2str(conf.optType),
+                          conf.chosen_sites, conf.problem_dims, conf.problem_size,
+                          (conf.alpha_expansion ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         switch(conf.optInit) {
             case OptInit::CURRENT_STATE: {
                 results.emplace_back(opt::find_excited_state(tensors, status, conf.optMode, conf.optSpace, conf.optType));

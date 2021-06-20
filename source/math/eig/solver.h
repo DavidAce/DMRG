@@ -44,6 +44,6 @@ namespace eig {
                   typename MatrixProductType::Scalar *residual = nullptr);
 
         template<typename MatrixProductType>
-        int eigs_primme(MatrixProductType &matrix);
+        int eigs_primme(MatrixProductType &matrix, typename MatrixProductType::Scalar *residual = nullptr);
     };
 }

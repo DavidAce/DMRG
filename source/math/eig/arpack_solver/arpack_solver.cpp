@@ -322,8 +322,13 @@ void eig::arpack_solver<MatrixType>::find_solution_rc(Derived &solver) {
                 if(ncv != ncvx) solver.ChangeNcv(ncvx); // This will restart the arnoldi iterations
                 config.iter_ncv_x.pop_back();
             }
-            eig::log->info("iter {:<4} | nops {:<5} | time {:8.2f} s | dt {:8.2f} ms {}", iter, nops, t_tot->get_measured_time(), t_mul->restart_lap() * 1000,
-                           msg);
+            static double last_log_time = 0;
+            if(last_log_time > t_tot->get_measured_time()) last_log_time = 0; // If this function has been run before
+            if(std::abs(t_tot->get_measured_time() - last_log_time) > 5.0) {
+                eig::log->info("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op {}", iter, nops, t_tot->get_measured_time(),
+                               t_mul->get_measured_time() / nops * 1000, msg);
+                last_log_time = t_tot->get_measured_time();
+            }
         }
         if(config.maxTime and config.maxTime.value() <= t_tot->get_measured_time()) break;
 
