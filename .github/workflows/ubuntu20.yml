@@ -78,7 +78,7 @@ jobs:
           -j 2 --verbose --verbose-cmake \
           --package-manager=${{ matrix.manager }} \
           --compiler=${{ matrix.compiler }} \
-          --shared=${{ matrix.linkage == "shared" }}
+          --shared=${{ matrix.linkage == 'shared' }}
 
       - name: Test
         run: |
