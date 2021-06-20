@@ -27,6 +27,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
    | --enable-asan              : Enable runtime sanitizers, i.e. -fsanitize=address
+   | --enable-coverage          : Enable test coverage
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
@@ -66,6 +67,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 enable-mkl\
                 enable-lto\
                 enable-asan\
+                enable-coverage\
                 no-modules\
                 prefer-conda\
                 print-cmake-error
@@ -93,6 +95,7 @@ enable_openmp="OFF"
 enable_mkl="OFF"
 enable_lto="OFF"
 enable_asan="OFF"
+enable_coverage="OFF"
 make_threads=8
 prefer_conda="OFF"
 print_cmake_error="OFF"
@@ -153,6 +156,7 @@ do
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL                : ON"      ; shift   ;;
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization   : ON"      ; shift   ;;
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
+       --enable-coverage)           enable_coverage="ON"            ; echo " * Coverage                 : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs     : ON"      ; shift   ;;
        --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
@@ -315,7 +319,7 @@ cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
-          -DBUILD_SHARED_LIBS=$enable_shared
+          -DBUILD_SHARED_LIBS:BOOL=$enable_shared
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
           -DDMRG_PRINT_INFO=$verbose_cmake
           -DDMRG_PRINT_CHECKS=$verbose_cmake
@@ -327,7 +331,8 @@ cat << EOF >&2
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
           -DDMRG_ENABLE_LTO=$enable_lto
-          -DDMRG_ENABLE_ASAN=$enable_asan \
+          -DDMRG_ENABLE_ASAN=$enable_asan
+          -DDMRG_ENABLE_COVERAGE=$enable_coverage
           $extra_flags
            -G $generator
            ../../
@@ -338,7 +343,7 @@ if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type \
-          -DBUILD_SHARED_LIBS=$enable_shared \
+          -DBUILD_SHARED_LIBS:BOOL=$enable_shared \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
           -DDMRG_PRINT_INFO=$verbose_cmake \
           -DDMRG_PRINT_CHECKS=$verbose_cmake \
@@ -351,6 +356,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_MKL=$enable_mkl \
           -DDMRG_ENABLE_LTO=$enable_lto \
           -DDMRG_ENABLE_ASAN=$enable_asan \
+          -DDMRG_ENABLE_COVERAGE=$enable_coverage \
           $extra_flags \
            -G "$generator" \
            ../../
