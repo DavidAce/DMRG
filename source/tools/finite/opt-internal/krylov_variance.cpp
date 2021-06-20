@@ -15,14 +15,13 @@
 #include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_mps.h>
 
-
 tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimization(const class_tensors_finite &tensors, const opt_mps &initial_mps,
                                                                                        const class_algorithm_status &status, OptType optType, OptMode optMode,
                                                                                        OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
-    if (not tensors.model->is_reduced()) throw std::runtime_error("krylov_variance_optimization requires energy-reduced MPO²");
-    if (tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_variance_optimization requires non-compressed MPO²");
+    if(not tensors.model->is_reduced()) throw std::runtime_error("krylov_variance_optimization requires energy-reduced MPO²");
+    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_variance_optimization requires non-compressed MPO²");
 
     auto t_eig    = tools::common::profile::get_default_prof()["t_eig"]->tic_token();
     auto dims_mps = initial_mps.get_tensor().dimensions();
@@ -34,45 +33,52 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     // especially when using MPO compression.
     tools::log->debug("Finding excited state: smallest eigenstate of (H-E)² | dims {} = {}", dims_mps, size);
 
-    eig::solver solver_full, solver_shft, solver_max, solver_primme;
-    solver_max.config.tol      = settings::precision::eig_tolerance;
-    solver_max.config.maxIter  = 600;
-    solver_max.config.maxNev   = 1;
-    solver_max.config.maxNcv   = 16;
-    solver_max.config.compress = true;
+    eig::solver solver_full, solver_shift, solver_max, solver_primme_sa;
+    solver_max.config.tol             = settings::precision::eig_tolerance;
+    solver_max.config.maxIter         = 200;
+    solver_max.config.maxNev          = 1;
+    solver_max.config.maxNcv          = 16;
+    solver_max.config.compute_eigvecs = eig::Vecs::OFF;
+    solver_max.config.compress        = true;
     solver_max.setLogLevel(2);
 
-    solver_shft.config.tol      = settings::precision::eig_tolerance;
-    solver_shft.config.maxIter  = 200;
-    solver_shft.config.maxTime  = 30 * 60;
-    solver_shft.config.maxNev   = 1;
-    solver_shft.config.maxNcv   = 128;
-    solver_shft.config.compress = true;
-    //    solver_shft.config.ncv_x_factor = 2;
-    //    solver_shft.config.iter_ncv_x   = {150,50};
-    //    solver_shft.config.time_tol_x10 = {30*60, 10*60};
-    solver_shft.setLogLevel(2);
+    solver_shift.config.tol      = settings::precision::eig_tolerance;
+    solver_shift.config.maxIter  = 200;
+    solver_shift.config.maxTime  = 30 * 60;
+    solver_shift.config.maxNev   = 1;
+    solver_shift.config.maxNcv   = 64;
+    solver_shift.config.compress = true;
+    solver_shift.setLogLevel(2);
+    //
+    //    solver_primme_lm.config.tol      = settings::precision::eig_tolerance;
+    //    solver_primme_lm.config.maxIter  = 50000;
+    //    solver_primme_lm.config.maxTime  = 30 * 60;
+    //    solver_primme_lm.config.maxNev   = 1;
+    //    solver_primme_lm.config.maxNcv   = 128;
+    //    solver_primme_lm.config.compress = true;
+    //    solver_primme_lm.config.lib      = eig::Lib::PRIMME;
+    //    solver_primme_lm.setLogLevel(2);
 
-    solver_primme.config.tol      = settings::precision::eig_tolerance;
-    solver_primme.config.maxIter  = 1000;
-    solver_primme.config.maxTime  = 30 * 60;
-    solver_primme.config.maxNev   = 1;
-    solver_primme.config.maxNcv   = 128;
-    solver_primme.config.compress = true;
-    solver_primme.config.lib      = eig::Lib::PRIMME;
-    solver_primme.setLogLevel(2);
+    solver_primme_sa.config.tol      = settings::precision::eig_tolerance;
+    solver_primme_sa.config.maxIter  = 80000;
+    solver_primme_sa.config.maxTime  = 30 * 60;
+    solver_primme_sa.config.maxNev   = 1;
+    solver_primme_sa.config.maxNcv   = 32; // 128
+    solver_primme_sa.config.compress = true;
+    solver_primme_sa.config.lib      = eig::Lib::PRIMME;
+    solver_primme_sa.setLogLevel(2);
 
     if(optType == OptType::REAL) {
         tools::log->trace("- Generating real-valued multisite components");
-        const auto &             env2      = tensors.get_multisite_var_blk();
+        const auto              &env2      = tensors.get_multisite_var_blk();
         Eigen::Tensor<double, 3> env2L     = env2.L.real();
         Eigen::Tensor<double, 3> env2R     = env2.R.real();
         Eigen::Tensor<double, 4> mpo2      = tensors.get_multisite_mpo_squared().real();
         Eigen::Tensor<double, 3> residual  = initial_mps.get_tensor().real();
         auto                     dims_mpo2 = mpo2.dimensions();
 
-        if(size <= 128) {
-//        if(size <= settings::precision::max_size_full_diag) {
+        if(size <= 1024) {
+            //        if(size <= settings::precision::max_size_full_diag) {
             tools::log->trace("Full diagonalization of (H-E)²", dims_mps, size);
             auto matrix = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
             solver_full.eig(matrix.data(), matrix.rows());
@@ -88,31 +94,31 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
                 auto largest_eigval = eigvals_ham_sq.cwiseAbs().maxCoeff() + 1.0; // Add one just to make sure we shift enough
 
                 // Reset the matrix
-                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | arpack | residual on ...", largest_eigval);
+                tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | arpack LM | residual on ...",
+                                  largest_eigval);
                 hamiltonian_squared = MatVecMPO<double>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
                 residual            = initial_mps.get_tensor().real();
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
-                                 eig::Dephase::OFF, residual.data());
+                solver_shift.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
+                                  eig::Dephase::OFF, residual.data());
                 tools::log->trace("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ... OK: iters {} | counter {} | "
                                   "time {:.3f} | matprod {:.3f}s",
-                                  largest_eigval, solver_shft.result.meta.iter, solver_shft.result.meta.counter, solver_shft.result.meta.time_total,
-                                  solver_shft.result.meta.time_matprod);
-                tools::log->info("arnoldi found: {}", solver_shft.result.meta.arnoldi_found);
-                tools::log->info("eigvecs found: {}", solver_shft.result.meta.eigvecsR_found);
-                if(not solver_shft.result.meta.arnoldi_found) {
+                                  largest_eigval, solver_shift.result.meta.iter, solver_shift.result.meta.counter, solver_shift.result.meta.time_total,
+                                  solver_shift.result.meta.time_matprod);
+                tools::log->info("arnoldi found: {}", solver_shift.result.meta.arnoldi_found);
+                tools::log->info("eigvecs found: {}", solver_shift.result.meta.eigvecsR_found);
+                if(not solver_shift.result.meta.arnoldi_found or solver_shift.result.meta.iter > solver_shift.config.maxIter) {
                     // Reset the matrix
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λmax], with λmax = {:.16f} | primme | residual on ...",
-                                      largest_eigval);
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λ], with λ = 1.0 | primme SA | residual on ...");
                     hamiltonian_squared = MatVecMPO<double>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
                     residual            = initial_mps.get_tensor().real();
-                    solver_primme.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF,
-                                       eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                    solver_primme_sa.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON,
+                                          eig::Dephase::OFF, residual.data());
                 }
 
             } else {
                 tools::log->warn("Finding excited state using H² with ritz SM");
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
-                                 eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                solver_shift.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON,
+                                  eig::Dephase::OFF, residual.data());
             }
         }
     } else if(optType == OptType::CPLX) {
@@ -134,25 +140,25 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
 
             if(not tensors.model->is_compressed_mpo_squared()) {
                 tools::log->trace("Finding largest-magnitude state");
-                solver_max.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
-                                    eig::Vecs::OFF, eig::Dephase::OFF);
+                solver_max.eigs(hamiltonian_squared, -1, -1, eig::Ritz::LM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
+                                eig::Dephase::OFF);
                 auto eigvals_ham_sq = eig::view::get_eigvals<double>(solver_max.result);
                 auto largest_eigval = eigvals_ham_sq.cwiseAbs().maxCoeff() + 1.0; // Add one just to make sure we shift enough
 
                 // Reset the matrix
                 hamiltonian_squared = MatVecMPO<cplx>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
                 tools::log->debug("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ...", largest_eigval);
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
-                                 eig::Dephase::OFF, residual.data());
+                solver_shift.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, largest_eigval, eig::Shinv::OFF, eig::Vecs::ON,
+                                  eig::Dephase::OFF, residual.data());
                 tools::log->trace("Finding excited state using shifted operator H²-λmax, with λmax = {:.16f} | residual on ... OK: iters {} | counter {} | "
                                   "time {:.3f} | matprod {:.3f}s",
-                                  largest_eigval, solver_shft.result.meta.iter, solver_shft.result.meta.counter, solver_shft.result.meta.time_total,
-                                  solver_shft.result.meta.time_matprod);
+                                  largest_eigval, solver_shift.result.meta.iter, solver_shift.result.meta.counter, solver_shift.result.meta.time_total,
+                                  solver_shift.result.meta.time_matprod);
 
             } else {
                 tools::log->warn("Finding excited state using H² with ritz SM");
-                solver_shft.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
-                                 eig::Vecs::ON, eig::Dephase::OFF, residual.data());
+                solver_shift.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON,
+                                  eig::Dephase::OFF, residual.data());
             }
         }
     }
@@ -161,17 +167,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
 
     std::vector<opt_mps> eigvecs_mps;
     eigvecs_mps.emplace_back(initial_mps);
-    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft, eigvecs_mps, "shifted", false);
-    internal::krylov_extract_solutions(initial_mps, tensors, solver_primme, eigvecs_mps, "primme", false);
-    //    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft2, eigvecs_mps, "shifted2");
-//    internal::krylov_extract_solutions(initial_mps, tensors, solver_shft3, eigvecs_mps, "shifted3");
-//    extract_solutions(initial_mps, tensors, solver_shft4, eigvecs_mps, "shifted4");
-//    extract_solutions(initial_mps, tensors, solver_shft5, eigvecs_mps, "shifted5");
-//    extract_solutions(initial_mps, tensors, solver_shft6, eigvecs_mps, "shifted6");
-//    extract_solutions(initial_mps, tensors, solver_shft7, eigvecs_mps, "shifted7");
-//    extract_solutions(initial_mps, tensors, solver_shft8, eigvecs_mps, "shifted8");
-//    extract_solutions(initial_mps, tensors, solver_shft9, eigvecs_mps, "shifted9");
-//    extract_solutions(initial_mps, tensors, solver_shft10, eigvecs_mps, "shifted10");
+    internal::krylov_extract_solutions(initial_mps, tensors, solver_shift, eigvecs_mps, "shifted", false);
+    internal::krylov_extract_solutions(initial_mps, tensors, solver_primme_sa, eigvecs_mps, "primme", false);
     internal::krylov_extract_solutions(initial_mps, tensors, solver_full, eigvecs_mps, "full");
 
     if(eigvecs_mps.empty())
@@ -189,7 +186,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
         if(optMode == OptMode::OVERLAP) std::sort(eigvecs_mps.begin(), eigvecs_mps.end(), comp_overlap);
     }
 
-    constexpr size_t max_print = settings::debug ? 32 : 20;
+    constexpr size_t max_print = settings::debug ? 32 : 8;
     for(const auto &[num, mps] : iter::enumerate(eigvecs_mps)) {
         if(num >= max_print) break;
         internal::reports::krylov_add_entry(mps);
@@ -209,15 +206,15 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     }
 
     // Append all the optimized mps's
-    for(const auto & mps: optimized_mps) eigvecs_mps.emplace_back(mps);
+    for(const auto &mps : optimized_mps) eigvecs_mps.emplace_back(mps);
 
     if(eigvecs_mps.size() >= 2) // Sort the results in order of increasing variance (again!)
         std::sort(eigvecs_mps.begin(), eigvecs_mps.end(), comp_variance);
     return eigvecs_mps.front();
-//    if(eigvecs_mps.empty())
-//        return internal::ceres_direct_optimization(tensors, initial_mps, status, optType, OptMode::VARIANCE,
-//                                                   OptSpace::DIRECT); // The optimization strategy failed
-//    else
-//    return eigvecs_mps.front();
-//
+    //    if(eigvecs_mps.empty())
+    //        return internal::ceres_direct_optimization(tensors, initial_mps, status, optType, OptMode::VARIANCE,
+    //                                                   OptSpace::DIRECT); // The optimization strategy failed
+    //    else
+    //    return eigvecs_mps.front();
+    //
 }

@@ -82,7 +82,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.max_num_iterations                         = 20000;
-    ceres_default_options.max_lbfgs_rank                             = 128; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+    ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-20;//std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
@@ -93,14 +93,16 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const class_t
     ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    ceres_default_options.function_tolerance                         = 1e-14; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-14;
+    ceres_default_options.function_tolerance                         = 1e-7; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance                         = 1e-8;
     ceres_default_options.parameter_tolerance                        = 1e-20;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
-        ceres_default_options.max_lbfgs_rank                            = 128; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        ceres_default_options.function_tolerance                     = 1e-14; // Tested, 1e-6 seems to be a sweetspot
+        ceres_default_options.gradient_tolerance                     = 1e-14;
+        ceres_default_options.max_lbfgs_rank                         = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     }
 
 
@@ -218,13 +220,13 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     //    ceres::SOLVER_ABORT;
     functor.set_delta_f(std::abs(summary.cost_change/summary.cost));
     if(not log) return ceres::SOLVER_CONTINUE;
-    if(log->level() >= spdlog::level::debug) return ceres::SOLVER_CONTINUE;
+    if(log->level() >= spdlog::level::info) return ceres::SOLVER_CONTINUE;
     if(summary.iteration - last_log_iter < freq_log_iter and summary.iteration > init_log_iter) return ceres::SOLVER_CONTINUE;
     if(summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time) return ceres::SOLVER_CONTINUE;
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->trace("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
+    log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
                "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
                summary.iteration,
