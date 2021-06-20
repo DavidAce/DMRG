@@ -207,24 +207,22 @@ int main(int argc, char *argv[]) {
 #if defined(_OPENMP)
     if(settings::threading::omp_threads <= 0) { settings::threading::omp_threads = (int) std::thread::hardware_concurrency(); }
     omp_set_num_threads(settings::threading::omp_threads); // Should only need this. Both Eigen (non-Tensor) and MKL listen to this
-//    omp_set_max_active_levels(1);
-    tools::log->info("Using OpenMP with {} threads and {} active levels", omp_get_max_threads(),omp_get_max_active_levels());
+                                                           //    omp_set_max_active_levels(1);
+    tools::log->info("Using OpenMP with {} threads and {} active levels", omp_get_max_threads(), omp_get_max_active_levels());
 #endif
 #if defined(OPENBLAS_AVAILABLE)
-    auto openblas_parallel_mode = openblas_get_parallel();
+    auto        openblas_parallel_mode = openblas_get_parallel();
     std::string openblas_parallel_str;
-    if(openblas_get_parallel() == 0) openblas_parallel_str = "seq";
-    if(openblas_get_parallel() == 1) openblas_parallel_str = "threads";
-    if(openblas_get_parallel() == 2) openblas_parallel_str = "openmp";
-    if(openblas_get_parallel() == 1) openblas_set_num_threads(settings::threading::omp_threads); // Use the omp_threads level for blas-related threading
+    if(openblas_parallel_mode == 0) openblas_parallel_str = "seq";
+    if(openblas_parallel_mode == 1) openblas_parallel_str = "threads";
+    if(openblas_parallel_mode == 2) openblas_parallel_str = "openmp";
+    if(openblas_parallel_mode == 1) openblas_set_num_threads(settings::threading::omp_threads); // Use the omp_threads level for blas-related threading
     tools::log->info("{} compiled with parallel mode [{}] for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,
                      openblas_parallel_str, openblas_get_corename(), openblas_get_config(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, openblas_get_num_threads());
 #endif
 #if defined(MKL_AVAILABLE)
     tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
 #endif
-
-
 
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file
