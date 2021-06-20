@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.18)
 project(DMRG++
         VERSION 2.1.0
         DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
@@ -6,7 +6,7 @@ project(DMRG++
 
 
 # Make sure we use DMRG's own find modules
-list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 # Set options this build
 option(DMRG_ENABLE_OPENMP            "Use OpenMP in Eigen, BLAS and LAPACK"                         OFF)
@@ -17,12 +17,13 @@ option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitiz
 option(DMRG_ENABLE_USAN              "Enable undefined behavior sanitizer -fsanitize=undefined"     OFF)
 option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
 option(DMRG_ENABLE_PCH               "Enable precompiled headers to speed up compilation"           ON)
-option(DMRG_ENABLE_CCACHE            "Enable ccache to speed up compilation"                        ON)
-option(DMRG_BUILD_EXAMPLES           "Build examples"                                               OFF)
+option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" ON)
+option(H5PP_ENABLE_COVERAGE "Enable test coverage" OFF)
+option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
 option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
 option(DMRG_PRINT_CHECKS             "Print more information during cmake configure"                OFF)
 option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
-option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
+option(DMRG_PREFER_CONDA_LIBS "Prefer libraries installed through anaconda" OFF)
 
 # Make an "enum" for valid download methods
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake find-or-cmake conan)
@@ -32,20 +33,17 @@ if (NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
     message(FATAL_ERROR "DMRG_PACKAGE_MANAGER must be one of ${DMRG_PACKAGE_MANAGERS_VALID}")
 endif ()
 
+# Make an "enum" for valid march
+set(DMRG_MICROARCH_VALID haswell zen zenver1 native)
+set(DMRG_MICROARCH native CACHE STRING "Download method for external dependencies")
+set_property(CACHE DMRG_MICROARCH PROPERTY STRINGS ${DMRG_MICROARCH_VALID})
+if (NOT DMRG_MICROARCH IN_LIST DMRG_MICROARCH_VALID)
+    message(FATAL_ERROR "DMRG_MICROARCH must be one of ${DMRG_MICROARCH_VALID}")
+endif ()
 
-
-
-# Set default policies if CMake is new enough
-if (CMAKE_VERSION VERSION_LESS 3.12)
-    message(STATUS "Not setting policies")
-else()
-    cmake_policy(SET CMP0074 NEW) # To let find_package calls use <PackageName>_ROOT variables
-    cmake_policy(SET CMP0075 NEW) # Include file check macros honor CMAKE_REQUIRED_LIBRARIES
-    # Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
-    # See here https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
-    cmake_policy(SET CMP0067 NEW)
-endif()
-
+# Setup paths that find_package should search and
+# let cmake find our Find<package>.cmake modules
+include(cmake/SetupPaths.cmake)
 
 
 ################################################################
@@ -54,34 +52,20 @@ endif()
 ### Include it using #include <gitversion.h>                 ###
 ### Gives a namespace GIT:: with several git version numbers.###
 ################################################################
-include(cmake-modules/gitversion.cmake)
-
-
-##################################################################
-### Setup dependency paths                                     ###
-##################################################################
-include(GNUInstallDirs)
-string(TOLOWER ${CMAKE_BUILD_TYPE} cmake_build_type)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${CMAKE_BINARY_DIR}/dmrg-deps-install")
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dmrg-deps-install" CACHE PATH "..." FORCE)
-endif()
-
+include(cmake/gitversion.cmake)
 
 
 ############################################################
 ### Print extra info during CMake configure              ###
 ############################################################
-include(cmake-modules/PrintHostInfo.cmake)
-include(cmake-modules/PrintOptionInfo.cmake)
+include(cmake/PrintHostInfo.cmake)
+include(cmake/PrintOptionInfo.cmake)
 
-include(cmake-modules/Warnings.cmake)
 
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
-include(cmake-modules/CompilerFlags.cmake)
-
+include(cmake/CompilerFlags.cmake)
 
 
 ################################
@@ -167,7 +151,7 @@ endif()
 ###  Check  #include<optional> or                   ###
 ###  or     #include<experimental/optional>         ###
 #######################################################
-include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/CheckCXXOptional.cmake)
 CheckCXXOptional()
 
 
@@ -265,11 +249,10 @@ endif ()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-include(cmake-modules/SetupSearchPaths.cmake)
-include(cmake-modules/SetupDependenciesCMake.cmake)
-include(cmake-modules/SetupDependenciesConan.cmake)
+include(cmake/SetupDependenciesCMake.cmake)
+include(cmake/SetupDependenciesConan.cmake)
 
-include(cmake-modules/Get_primme.cmake)
+include(cmake/Get_primme.cmake)
 if (TARGET primme::primme)
     target_link_libraries(dmrg-eig PUBLIC primme::primme)
     list(APPEND DMRG_TARGETS primme::primme)
@@ -353,7 +336,7 @@ endif()
 # Uninstall target
 if(NOT TARGET uninstall)
     configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/DMRGUninstall.cmake.in
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DMRGUninstall.cmake.in
             ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake
             IMMEDIATE @ONLY)
 
@@ -365,16 +348,16 @@ endif()
 
 # Print summary of CMake configuration
 if (DMRG_PRINT_INFO)
-    include(cmake-modules/PrintTargetInfo.cmake)
-    include(cmake-modules/getExpandedTarget.cmake)
+    include(cmake/PrintTargetInfo.cmake)
+    include(cmake/getExpandedTarget.cmake)
     message(STATUS "| DMRG TARGET SUMMARY")
     message(STATUS "|--------------------")
     print_compiler_info("| ")
     expand_target_all_targets(${PROJECT_NAME} DMRG_TARGET_EXPANDED)
-    foreach(tgt ${DMRG_TARGET_EXPANDED})
+    foreach (tgt ${DMRG_TARGET_EXPANDED})
         print_target_info(${tgt} "| ")
-    endforeach()
-endif()
+    endforeach ()
+endif ()
 
 
 

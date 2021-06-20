@@ -1,0 +1,167 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "displayName": "Default Config",
+      "description": "Default build using Ninja generator",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": {
+          "type": "STRING",
+          "value": "17"
+        },
+        "CMAKE_CXX_STANDARD_REQUIRED": {
+          "type": "BOOL",
+          "value": "TRUE"
+        },
+        "CMAKE_CXX_EXTENSIONS": {
+          "type": "BOOL",
+          "value": "TRUE"
+        },
+        "CMAKE_POSITION_INDEPENDENT_CODE": {
+          "type": "BOOL",
+          "value": "TRUE"
+        },
+        "CMAKE_CXX_FLAGS_RELEASE_INIT": {
+          "type": "STRING",
+          "value": "-g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic"
+        },
+        "CMAKE_CXX_FLAGS_DEBUG_INIT": {
+          "type": "STRING",
+          "value": "-g -O0 -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer"
+        },
+        "CMAKE_SKIP_BUILD_RPATH": {
+          "type": "BOOL",
+          "value": "FALSE"
+        },
+        "CMAKE_BUILD_WITH_INSTALL_RPATH": {
+          "type": "BOOL",
+          "value": "FALSE"
+        },
+        "CMAKE_INSTALL_RPATH_USE_LINK_PATH": {
+          "type": "BOOL",
+          "value": "TRUE"
+        }
+      },
+      "vendor": {
+        "example.com/ExampleIDE/1.0": {
+          "autoFormat": true
+        }
+      }
+    },
+    {
+      "name": "gcc-default",
+      "hidden": true,
+      "inherits": "default",
+      "displayName": "GCC default",
+      "description": "GCC with default settings",
+      "cacheVariables": {
+        "CMAKE_EXE_LINKER_FLAGS": {
+          "type": "STRING",
+          "value": "-fuse-ld=gold"
+        }
+      },
+      "environment": {
+        "CC": "gcc",
+        "CXX": "g++"
+      }
+    },
+    {
+      "name": "gcc-static",
+      "inherits": "gcc-default",
+      "displayName": "GCC static",
+      "description": "GCC with static linkage",
+      "binaryDir": "${sourceDir}/build/gcc-static",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "FALSE"
+        }
+      }
+    },
+    {
+      "name": "gcc-shared",
+      "inherits": "gcc-default",
+      "displayName": "GCC shared",
+      "description": "GCC with shared linkage",
+      "binaryDir": "${sourceDir}/build/gcc-shared",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "TRUE"
+        }
+      }
+    },
+    {
+      "name": "clang-default",
+      "hidden": true,
+      "inherits": "default",
+      "displayName": "GCC default",
+      "description": "GCC with default settings",
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++"
+      }
+    },
+    {
+      "name": "clang-static",
+      "inherits": "clang-default",
+      "displayName": "clang shared",
+      "description": "clang with shared linkage",
+      "binaryDir": "${sourceDir}/build/clang-static",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "FALSE"
+        }
+      }
+    },
+    {
+      "name": "clang-shared",
+      "inherits": "clang-default",
+      "displayName": "clang shared",
+      "description": "clang with shared linkage",
+      "binaryDir": "${sourceDir}/build/clang-shared",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "TRUE"
+        }
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    }
+  ],
+  "vendor": {
+    "example.com/ExampleIDE/1.0": {
+      "autoFormat": false
+    }
+  }
+}
