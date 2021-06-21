@@ -1,14 +1,13 @@
 function(find_eigen3)
     if(DMRG_PACKAGE_MANAGER STREQUAL "find")
         set(REQUIRED REQUIRED)
-
+    endif()
+    if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
+        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
     endif()
     find_package(Eigen3 3.3.7
-            HINTS ${DMRG_DEPS_INSTALL_DIR}
-            NO_SYSTEM_ENVIRONMENT_PATH
-            NO_CMAKE_SYSTEM_PATH
-            NO_CMAKE_PACKAGE_REGISTRY
-            NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+            HINTS ${Eigen3_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+            ${NO_DEFAULT_PATH}
             ${REQUIRED})
 
     if(NOT Eigen3_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
@@ -16,18 +15,15 @@ function(find_eigen3)
         include(cmake/InstallPackage.cmake)
         install_package(Eigen3 "${DMRG_DEPS_INSTALL_DIR}" "")
         find_package(Eigen3 3.3.7
-                HINTS ${DMRG_DEPS_INSTALL_DIR}
-                NO_SYSTEM_ENVIRONMENT_PATH
-                NO_CMAKE_SYSTEM_PATH
-                NO_CMAKE_PACKAGE_REGISTRY
-                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+                HINTS ${Eigen3_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+                NO_DEFAULT_PATH
                 REQUIRED)
     endif()
     if(Eigen3_FOUND AND TARGET Eigen3::Eigen)
         message(STATUS "Found Eigen3: ${EIGEN3_INCLUDE_DIR}")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
     else()
-        message(FATAL_ERROR "Eigen3 not found")
+        message(FATAL_ERROR "Eigen3 not found: ${Eigen3_FOUND}")
     endif()
 endfunction()
 

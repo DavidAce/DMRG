@@ -48,7 +48,6 @@ function(expand_target_libs target_names expanded_list)
     list(LENGTH target_names_expanded count)
     if(count GREATER 500)
         message(FATAL_ERROR "Length of list exeeds 500")
-        exit(0)
     endif()
 
     # Now we do the recursion.

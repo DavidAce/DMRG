@@ -14,16 +14,15 @@ function(find_ceres)
     if(DMRG_PACKAGE_MANAGER STREQUAL "find")
         set(REQUIRED REQUIRED)
     endif()
+    if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
+        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
+    endif()
 
     find_package(Ceres
-            HINTS ${DMRG_DEPS_INSTALL_DIR}
+            HINTS ${Ceres_ROOT} ${DMRG_DEPS_INSTALL_DIR}
             PATH_SUFFIXES ceres ceres/lib
-            NO_SYSTEM_ENVIRONMENT_PATH
-            NO_CMAKE_SYSTEM_PATH
-            NO_CMAKE_PACKAGE_REGISTRY
-            NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
-            ${REQUIRED}
-            )
+            ${NO_DEFAULT_PATH}
+            ${REQUIRED})
 
     if(NOT Ceres_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
         message(STATUS "Ceres will be installed into ${DMRG_DEPS_INSTALL_DIR} on first build.")
@@ -34,11 +33,8 @@ function(find_ceres)
         include(cmake/InstallPackage.cmake)
         install_package(ceres "${DMRG_DEPS_INSTALL_DIR}" "${CERES_CMAKE_OPTIONS}" )
         find_package(Ceres
-                HINTS ${DMRG_DEPS_INSTALL_DIR}
-                NO_SYSTEM_ENVIRONMENT_PATH
-                NO_CMAKE_SYSTEM_PATH
-                NO_CMAKE_PACKAGE_REGISTRY
-                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+                HINTS ${Ceres_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+                NO_DEFAULT_PATH
                 REQUIRED)
     endif()
     if(Ceres_FOUND AND TARGET Ceres::ceres)

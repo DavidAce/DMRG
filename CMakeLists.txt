@@ -129,6 +129,8 @@ target_include_directories(dmrg-dbg  PRIVATE source)
 add_library(dmrg-flags INTERFACE)
 target_include_directories(dmrg-flags SYSTEM INTERFACE source)
 
+add_library(dmrg-deps INTERFACE)
+
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
@@ -261,15 +263,12 @@ endif ()
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-if (TARGET openmp::openmp)
-    target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
-endif ()
 target_link_libraries(dmrg-arp PUBLIC dmrg-flags)
 target_link_libraries(dmrg-eig PUBLIC dmrg-flags)
 target_link_libraries(dmrg-opt PUBLIC dmrg-flags)
 target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
 target_link_libraries(dmrg-main PUBLIC dmrg-flags)
-target_link_libraries(${PROJECT_NAME} PUBLIC  dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-flags)  # Link everything to main project
+target_link_libraries(${PROJECT_NAME} PUBLIC dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-deps dmrg-flags)  # Link everything to main project
 #if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
 #    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
 #    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
