@@ -8,6 +8,9 @@ function(find_glog)
     if(DMRG_PACKAGE_MANAGER STREQUAL "find")
         set(REQUIRED REQUIRED)
     endif()
+    if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
+        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
+    endif()
     # Glog can be compiled with or without libunwind
     # unwind can sometimes need gcc_eh and lzma as dependencies.
     # Yes, it's a mess. Here we add targets if they are present in the system
@@ -29,11 +32,8 @@ function(find_glog)
     endif()
 
     find_package(glog 0.4
-            HINTS ${DMRG_DEPS_INSTALL_DIR}
-            NO_SYSTEM_ENVIRONMENT_PATH
-            NO_CMAKE_SYSTEM_PATH
-            NO_CMAKE_PACKAGE_REGISTRY
-            NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+            HINTS ${glog_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+            ${NO_DEFAULT_PATH}
             ${REQUIRED})
 
 
@@ -43,11 +43,8 @@ function(find_glog)
         list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
         install_package(glog "${DMRG_DEPS_INSTALL_DIR}" "${GLOG_CMAKE_OPTIONS}")
         find_package(glog 0.4
-                HINTS ${DMRG_DEPS_INSTALL_DIR}
-                NO_SYSTEM_ENVIRONMENT_PATH
-                NO_CMAKE_SYSTEM_PATH
-                NO_CMAKE_PACKAGE_REGISTRY
-                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+                HINTS ${glog_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+                NO_DEFAULT_PATH
                 REQUIRED)
     endif()
 

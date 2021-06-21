@@ -7,13 +7,17 @@ function(find_primme)
             primme
             HINTS ${DMRG_DEPS_INSTALL_DIR}
             PATH_SUFFIXES lib primme/lib
-            NO_SYSTEM_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
             )
     find_path(PRIMME_INCLUDE_DIR
             primme/primme.h
             HINTS ${DMRG_DEPS_INSTALL_DIR}
             PATH_SUFFIXES include primme/include
-            NO_SYSTEM_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
             )
 
     if (PRIMME_LIBRARY AND PRIMME_INCLUDE_DIR)
@@ -31,7 +35,7 @@ endfunction()
 find_primme()
 if(NOT TARGET primme::primme AND DMRG_PACKAGE_MANAGER MATCHES "cmake|conan")
     message(STATUS "primme will be installed into ${CMAKE_BINARY_DIR}/dmrg-deps-install/primme on first build.")
-    include(${PROJECT_SOURCE_DIR}/cmake/InstallPackage.cmake)
+    include(cmake/InstallPackage.cmake)
     install_package(primme "${DMRG_DEPS_INSTALL_DIR}" "")
     find_primme()
     if (TARGET primme::primme)

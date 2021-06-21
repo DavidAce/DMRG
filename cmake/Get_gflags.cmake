@@ -2,6 +2,9 @@ function(find_gflags)
     if(DMRG_PACKAGE_MANAGER STREQUAL "find")
         set(REQUIRED REQUIRED)
     endif()
+    if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
+        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
+    endif()
     if(NOT BUILD_SHARED_LIBS)
         set(COMPONENTS COMPONENTS)
         set(ITEMS nothreads_static)
@@ -9,12 +12,9 @@ function(find_gflags)
 
     # Gflags comes in static flavor in conda also!
     find_package(gflags
-            HINTS ${DMRG_DEPS_INSTALL_DIR}
+            HINTS ${gflags_ROOT} ${DMRG_DEPS_INSTALL_DIR}
             ${COMPONENTS} ${ITEMS}
-            NO_SYSTEM_ENVIRONMENT_PATH
-            NO_CMAKE_SYSTEM_PATH
-            NO_CMAKE_PACKAGE_REGISTRY
-            NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+            ${NO_DEFAULT_PATH}
             ${REQUIRED}
             )
     if(NOT gflags_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake" )
@@ -24,12 +24,8 @@ function(find_gflags)
         find_package(gflags
                 HINTS ${GFLAGS_CONDA_PREFIX}
                 ${COMPONENTS} ${ITEMS}
-                HINTS ${DMRG_DEPS_INSTALL_DIR}
-                NO_CMAKE_PACKAGE_REGISTRY
-                NO_SYSTEM_ENVIRONMENT_PATH
-                NO_CMAKE_SYSTEM_PATH
-                NO_CMAKE_PACKAGE_REGISTRY
-                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+                HINTS ${gflags_ROOT} ${DMRG_DEPS_INSTALL_DIR}
+                NO_DEFAULT_PATH
                 REQUIRED)
     endif()
     if(gflags_FOUND AND TARGET gflags)
