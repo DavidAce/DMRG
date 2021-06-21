@@ -56,6 +56,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 dry-run\
                 default-tetralith\
                 default-kraken\
+                install-prefix:\
                 package-manager:\
                 enable-tests\
                 enable-shared\
@@ -96,6 +97,7 @@ enable_mkl="OFF"
 enable_lto="OFF"
 enable_asan="OFF"
 enable_coverage="OFF"
+install_prefix="dmrg-install"
 make_threads=8
 prefer_conda="OFF"
 print_cmake_error="OFF"
@@ -142,6 +144,7 @@ do
                                     make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
                                     shift ;;
+       --install-prefix)            install_prefix=$2               ; echo " * Install Prefix           : $2"      ; shift 2 ;;
        --package-manager)           package_manager=$2              ; echo " * Package Manager          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
@@ -320,6 +323,7 @@ cat << EOF >&2
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
           -DBUILD_SHARED_LIBS:BOOL=$enable_shared
+          -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
           -DDMRG_PRINT_INFO=$verbose_cmake
           -DDMRG_PRINT_CHECKS=$verbose_cmake
@@ -344,6 +348,7 @@ if [ -z "$dry_run" ] ;then
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type \
           -DBUILD_SHARED_LIBS:BOOL=$enable_shared \
+          -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
           -DDMRG_PRINT_INFO=$verbose_cmake \
           -DDMRG_PRINT_CHECKS=$verbose_cmake \
