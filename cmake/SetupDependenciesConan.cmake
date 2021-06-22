@@ -11,7 +11,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ###  libiomp5 might help for shared linking.                               ###
     ##############################################################################
     if(DMRG_ENABLE_OPENMP)
-        find_package(OpenMP) # Uses DMRG's own find module
+        find_package(OpenMP COMPONENTS CXX REQUIRED) # Uses DMRG's own find module
     endif()
 
     ##############################################################################
@@ -196,8 +196,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     endif()
 
     # Gather the targets
-    if(TARGET openmp::openmp)
-        target_link_libraries(dmrg-flags INTERFACE openmp::openmp)
+    if(TARGET OpenMP::OpenMP_CXX)
+        target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
     else()
         target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
     endif()

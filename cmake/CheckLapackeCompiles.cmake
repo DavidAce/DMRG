@@ -1,7 +1,4 @@
 function(check_lapacke_compiles TARGETS LIBS INCS OPTS DEFS)
-    if(NOT BUILD_SHARED_LIBS)
-        list(APPEND CMAKE_REQUIRED_LIBRARIES -static)
-    endif()
     list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
     list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})

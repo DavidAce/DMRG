@@ -10,19 +10,7 @@ function(find_ceres)
             message(FATAL_ERROR "Ceres: dependencies missing [${CERES_MISSING_TARGET}]")
         endif()
     endif()
-
-    if(DMRG_PACKAGE_MANAGER STREQUAL "find")
-        set(REQUIRED REQUIRED)
-    endif()
-    if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
-        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
-    endif()
-
-    find_package(Ceres
-            HINTS ${Ceres_ROOT} ${DMRG_DEPS_INSTALL_DIR}
-            PATH_SUFFIXES ceres ceres/lib
-            ${NO_DEFAULT_PATH}
-            ${REQUIRED})
+    find_package(Ceres 2.0 PATH_SUFFIXES ceres ceres/lib ${N5} ${N6} ${N7} ${N8} ${REQUIRED}) # Flags ignore system packages. See cmake/SetupPaths.cmake)
 
     if(NOT Ceres_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
         message(STATUS "Ceres will be installed into ${DMRG_DEPS_INSTALL_DIR} on first build.")
@@ -32,10 +20,7 @@ function(find_ceres)
         message(STATUS "ceres options: ${CERES_CMAKE_OPTIONS}")
         include(cmake/InstallPackage.cmake)
         install_package(ceres "${DMRG_DEPS_INSTALL_DIR}" "${CERES_CMAKE_OPTIONS}" )
-        find_package(Ceres
-                HINTS ${Ceres_ROOT} ${DMRG_DEPS_INSTALL_DIR}
-                NO_DEFAULT_PATH
-                REQUIRED)
+        find_package(Ceres HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
     endif()
     if(Ceres_FOUND AND TARGET Ceres::ceres)
         # Use this for the ceres targets defined by CONFIG mode find_package

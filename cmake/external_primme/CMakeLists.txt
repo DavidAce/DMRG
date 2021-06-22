@@ -6,9 +6,10 @@ if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
 endif()
 include(ExternalProject)
-set(cc "$ENV{CXX}")
+#set(cc "$ENV{CXX}")
 #set(cflags "-O3 -DNDEBUG -fPIC")
-set(cflags "-O3 -std=c++17 -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+set(cflags "-O3 -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+set(cxxflags "-O3 -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
 if(BUILD_SHARED_LIBS)
     set(type solib)
 else()
@@ -24,7 +25,7 @@ ExternalProject_Add(external_primme
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            ${CMAKE_MAKE_PROGRAM} ${type} -j${NUM_THREADS} CC=${cc} CFLAGS=${cflags}
+            ${CMAKE_MAKE_PROGRAM} ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
         INSTALL_COMMAND
             cmake -E copy_directory <SOURCE_DIR>/lib <INSTALL_DIR>/lib &&
