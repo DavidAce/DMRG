@@ -52,6 +52,18 @@ function(find_mkl_libraries)
         endif()
     endif()
 
+    if(NOT BUILD_SHARED_LIBS)
+        # Prefer static libraries
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    endif()
+    if(BUILD_SHARED_LIBS)
+        set(LINK_TYPE SHARED)
+        set(MKL_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    else()
+        set(LINK_TYPE STATIC)
+        set(MKL_LIB_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    endif()
+
     # macos
     if(APPLE)
         set(MKL_ARCH_DIR "intel64")
@@ -92,15 +104,6 @@ function(find_mkl_libraries)
             intel
             )
 
-    if(BUILD_SHARED_LIBS)
-        set(LINK_TYPE SHARED)
-        set(MKL_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    else()
-        set(LINK_TYPE STATIC)
-        set(MKL_LIB_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    endif()
-
-
     find_path(MKL_ROOT_DIR
             include/mkl.h
             PATHS ${MKL_ROOT_SEARCH_PATHS}
@@ -121,323 +124,112 @@ function(find_mkl_libraries)
                 NO_DEFAULT_PATH
                 )
 
-        find_library(MKL_CORE_LIBRARY
-                mkl_core
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_core ${LINK_TYPE} IMPORTED)
-        target_include_directories(mkl::mkl_core SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-        set_target_properties(mkl::mkl_core PROPERTIES IMPORTED_LOCATION "${MKL_CORE_LIBRARY}")
-        set_target_properties(mkl::mkl_core PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        # Threading libraries
-        find_library(MKL_SEQUENTIAL_LIBRARY
-                mkl_sequential
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_sequential ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_sequential PROPERTIES IMPORTED_LOCATION "${MKL_SEQUENTIAL_LIBRARY}")
-        set_target_properties(mkl::mkl_sequential PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        find_library(MKL_INTELTHREAD_LIBRARY
-                mkl_intel_thread
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_intel_thread ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_intel_thread PROPERTIES IMPORTED_LOCATION "${MKL_INTELTHREAD_LIBRARY}")
-        set_target_properties(mkl::mkl_intel_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        find_library(MKL_GNUTHREAD_LIBRARY
-                mkl_gnu_thread
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_gnu_thread ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_gnu_thread PROPERTIES IMPORTED_LOCATION "${MKL_GNUTHREAD_LIBRARY}")
-        set_target_properties(mkl::mkl_gnu_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        find_library(MKL_TBBTHREAD_LIBRARY
-                mkl_tbb_thread
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_tbb_thread ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_tbb_thread PROPERTIES IMPORTED_LOCATION "${MKL_TBBTHREAD_LIBRARY}")
-        set_target_properties(mkl::mkl_tbb_thread PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-
-        # Intel Fortran Libraries
+        set(par_libnames tbb tbbmalloc iomp5)
+        set(mkl_libnames rt core sequential intel_thread gnu_thread tbb_thread)
         if(MKL_ARCH_DIR MATCHES "32")
-            find_library(MKL_INTEL_LP_LIBRARY
-                    mkl_intel
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
+            list(APPEND mkl_libnames
+                    intel
+                    gf
+                    blas
+                    lapack)
+            else()
+            list(APPEND mkl_libnames
+                    intel_lp
+                    intel_ilp64
+                    gf_lp64
+                    gf_ilp64
+                    blas95_lp64
+                    blas95_ilp64
+                    lapack95_lp64
+                    lapack95_ilp64
                     )
-
-            # Dummy... it's actually the same library as above
-            find_library(MKL_INTEL_ILP_LIBRARY
-                    mkl_intel${MKL_LIB_SUFFIX}
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-        else()
-            find_library(MKL_INTEL_LP_LIBRARY
-                    mkl_intel_lp64
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-            find_library(MKL_INTEL_ILP_LIBRARY
-                    mkl_intel_ilp64${MKL_LIB_SUFFIX}
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-        endif()
-        add_library(mkl::mkl_intel_lp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_intel_lp PROPERTIES IMPORTED_LOCATION "${MKL_INTEL_LP_LIBRARY}")
-        set_target_properties(mkl::mkl_intel_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        add_library(mkl::mkl_intel_ilp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_intel_ilp PROPERTIES IMPORTED_LOCATION "${MKL_INTEL_ILP_LIBRARY}")
-        set_target_properties(mkl::mkl_intel_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-
-
-        # GNU Fortran Libraries
-        if(MKL_ARCH_DIR MATCHES "32")
-            find_library(MKL_GF_LP_LIBRARY
-                    mkl_gf
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-            find_library(MKL_GF_ILP_LIBRARY
-                    mkl_gf
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-        else()
-            find_library(MKL_GF_LP_LIBRARY
-                mkl_gf_lp64
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-            find_library(MKL_GF_ILP_LIBRARY
-                mkl_gf_ilp64
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        endif()
-        add_library(mkl::mkl_gf_lp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_gf_lp PROPERTIES IMPORTED_LOCATION "${MKL_GF_LP_LIBRARY}")
-        set_target_properties(mkl::mkl_gf_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-        add_library(mkl::mkl_gf_ilp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_gf_ilp PROPERTIES IMPORTED_LOCATION "${MKL_GF_ILP_LIBRARY}")
-        set_target_properties(mkl::mkl_gf_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-        # Blas
-        if("${MKL_ARCH_DIR}" STREQUAL "32")
-            find_library(MKL_BLAS_LP_LIBRARY
-                    mkl_blas
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-            find_library(MKL_BLAS_ILP_LIBRARY
-                    mkl_blas
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-        else()
-            find_library(MKL_BLAS_LP_LIBRARY
-                    mkl_blas95_lp64
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-            find_library(MKL_BLAS_ILP_LIBRARY
-                    mkl_blas95_ilp64
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
         endif()
 
-        add_library(mkl::mkl_blas_lp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_blas_lp PROPERTIES IMPORTED_LOCATION "${MKL_BLAS_LP_LIBRARY}")
-        set_target_properties(mkl::mkl_blas_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        add_library(mkl::mkl_blas_ilp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_blas_ilp PROPERTIES IMPORTED_LOCATION "${MKL_BLAS_ILP_LIBRARY}")
-        set_target_properties(mkl::mkl_blas_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-
-        # Lapack
-        if(MKL_ARCH_DIR MATCHES "32")
-            find_library(MKL_LAPACK_LP_LIBRARY
-                    mkl_lapack
+        foreach(lib ${mkl_libnames})
+            find_library(MKL_${lib}_LIBRARY
+                    mkl_${lib}
                     HINTS ${MKL_ROOT_DIR}
                     PATH_SUFFIXES
                     lib lib/${MKL_ARCH_DIR}
                     )
-            find_library(MKL_LAPACK_ILP_LIBRARY
-                    mkl_lapack
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-        else()
-            find_library(MKL_LAPACK_LP_LIBRARY
-                    mkl_lapack95_lp64
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-            find_library(MKL_LAPACK_ILP_LIBRARY
-                    mkl_lapack95_ilp64
-                    HINTS ${MKL_ROOT_DIR}
-                    PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR}
-                    )
-
-        endif()
-        add_library(mkl::mkl_lapack_lp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_lapack_lp PROPERTIES IMPORTED_LOCATION "${MKL_LAPACK_LP_LIBRARY}")
-        set_target_properties(mkl::mkl_lapack_lp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-        add_library(mkl::mkl_lapack_ilp ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_lapack_ilp PROPERTIES IMPORTED_LOCATION "${MKL_LAPACK_ILP_LIBRARY}")
-        set_target_properties(mkl::mkl_lapack_ilp PROPERTIES LINK_WHAT_YOU_USE TRUE)
-
-
-
-        # Single shared library
-        find_library(MKL_RT_LIBRARY
-                mkl_rt
-                HINTS ${MKL_ROOT_DIR}
-                PATH_SUFFIXES
-                lib lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::mkl_rt ${LINK_TYPE} IMPORTED)
-        set_target_properties(mkl::mkl_rt PROPERTIES IMPORTED_LOCATION "${MKL_RT_LIBRARY}")
-        set_target_properties(mkl::mkl_rt PROPERTIES INTERFACE_LINK_DIRECTORIES  ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
-        set_target_properties(mkl::mkl_rt PROPERTIES LINK_WHAT_YOU_USE TRUE)
-        target_include_directories(mkl::mkl_rt SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-
-
-        # iomp5
-        if(UNIX AND NOT APPLE)
-            find_library(MKL_IOMP5_LIBRARY
-                    iomp5
-                    HINTS
-                    ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
-                    )
-            add_library(mkl::iomp5 ${LINK_TYPE} IMPORTED)
-            set_target_properties(mkl::iomp5 PROPERTIES IMPORTED_LOCATION "${MKL_IOMP5_LIBRARY}")
-        else()
-            SET(MKL_IOMP5_LIBRARY "") # no need for mac
-            add_library(mkl::iomp5 INTERFACE IMPORTED)
+            if(MKL_${lib}_LIBRARY)
+                add_library(mkl::mkl_${lib} UNKNOWN IMPORTED)
+                set_target_properties(mkl::mkl_${lib} PROPERTIES IMPORTED_LOCATION "${MKL_${lib}_LIBRARY}")
+                set_target_properties(mkl::mkl_${lib} PROPERTIES LINK_WHAT_YOU_USE TRUE)
+#                target_include_directories(mkl::mkl_${lib} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+            endif()
+        endforeach()
+        if(TARGET mkl::mkl_rt)
+            set_target_properties(mkl::mkl_rt PROPERTIES INTERFACE_LINK_DIRECTORIES  ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
         endif()
 
-        # TBB
         if("${MKL_ARCH_DIR}" STREQUAL "32")
             set(TBB_SEARCH ia32)
         else()
             set(TBB_SEARCH intel64)
         endif()
-        find_library(MKL_TBB_LIBRARY
-                NAMES
-                tbb libtbb libtbb.so libtbb.so.2
-                HINTS
-                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
-                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
-                ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::tbb SHARED IMPORTED)
-        set_target_properties(mkl::tbb PROPERTIES IMPORTED_LOCATION "${MKL_TBB_LIBRARY}")
-        set_target_properties(mkl::tbb PROPERTIES LINK_WHAT_YOU_USE TRUE)
-        # TBBMALLOC
-        find_library(MKL_TBBMALLOC_LIBRARY
-                NAMES
-                tbbmalloc libtbbmalloc libtbbmalloc.so libtbbmalloc.so.2
-                HINTS
-                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
-                ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
-                ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
-                )
-        add_library(mkl::tbbmalloc SHARED IMPORTED)
-        set_target_properties(mkl::tbbmalloc PROPERTIES IMPORTED_LOCATION "${MKL_TBBMALLOC_LIBRARY}")
-        set_target_properties(mkl::tbbmalloc PROPERTIES LINK_WHAT_YOU_USE TRUE)
-        target_link_libraries(mkl::tbb INTERFACE mkl::tbbmalloc)
+        foreach(lib ${par_libnames})
+            find_library(MKL_${lib}_LIBRARY
+                    ${lib}
+                    HINTS
+                    ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
+                    ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
+                    ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
+                    ${MKL_ROOT_DIR}
+                    PATH_SUFFIXES
+                    lib lib/${MKL_ARCH_DIR} ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
+                    )
+            if(MKL_${lib}_LIBRARY)
+                add_library(mkl::${lib} UNKNOWN IMPORTED)
+                set_target_properties(mkl::${lib} PROPERTIES IMPORTED_LOCATION "${MKL_${lib}_LIBRARY}")
+                set_target_properties(mkl::${lib} PROPERTIES LINK_WHAT_YOU_USE TRUE)
+            endif()
+        endforeach()
 
         # Define usable targets
         set (MKL_FORTRAN_VARIANTS intel gf)
-        set (MKL_MODE_VARIANTS ilp lp)
+        set (MKL_ARCH_VARIANTS)
+        set (MKL_BLAS_SUFFIX)
         set (MKL_THREAD_VARIANTS sequential intel_thread gnu_thread tbb_thread )
+        if(MKL_ARCH_DIR MATCHES "64")
+            list(APPEND MKL_ARCH_VARIANTS _ilp64 _lp64)
+            list(APPEND MKL_BLAS_SUFFIX 95)
+        endif()
 
         foreach (FORTRANVAR ${MKL_FORTRAN_VARIANTS})
-            foreach (MODEVAR ${MKL_MODE_VARIANTS})
+            foreach (ARCHVAR ${MKL_ARCH_VARIANTS})
                 foreach (THREADVAR ${MKL_THREAD_VARIANTS})
-                    if(THREADVAR MATCHES "sequential")
-                        set(threadv seq)
-                    endif()
-                    if(THREADVAR MATCHES "intel_thread")
-                        set(threadv ithread)
-                    endif()
-                    if(THREADVAR MATCHES "gnu_thread")
-                        set(threadv gthread)
-                    endif()
-                    if(THREADVAR MATCHES "tbb_thread")
-                        set(threadv tthread)
-                    endif()
-                    add_library(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE IMPORTED)
-                    target_link_libraries(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE
-                            -Wl,--no-as-needed
-                            mkl::mkl_blas_${MODEVAR}
-                            mkl::mkl_lapack_${MODEVAR}
-                            -Wl,--start-group
-                            mkl::mkl_${FORTRANVAR}_${MODEVAR}
-                            mkl::mkl_${THREADVAR}
-                            mkl::mkl_core
-                            -Wl,--end-group
-                            -Wl,--as-needed
-                            m
-                            dl
-                            )
-                    target_include_directories(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-                    set_target_properties(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} PROPERTIES INTERFACE_LINK_DIRECTORIES  ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
-                    if(MKL_ARCH_DIR MATCHES "intel64")
-                        target_compile_options(mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv} INTERFACE -m64)
-                    endif()
-                    list(APPEND MKL_TARGETS mkl::mkl_${FORTRANVAR}_${MODEVAR}_${threadv})
+                    foreach(SFX ${MKL_BLAS_SUFFIX})
+                        if(THREADVAR MATCHES "sequential")
+                            set(threadv seq)
+                        elseif(THREADVAR MATCHES "intel_thread")
+                            set(threadv ithread)
+                        elseif(THREADVAR MATCHES "gnu_thread")
+                            set(threadv gthread)
+                        elseif(THREADVAR MATCHES "tbb_thread")
+                            set(threadv tthread)
+                        endif()
+                        add_library(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE IMPORTED)
+                        target_link_libraries(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE
+                                -Wl,--no-as-needed
+                                mkl::mkl_blas${SFX}${ARCHVAR}
+                                mkl::mkl_lapack${SFX}${ARCHVAR}
+                                -Wl,--start-group
+                                mkl::mkl_${FORTRANVAR}${ARCHVAR}
+                                mkl::mkl_${THREADVAR}
+                                mkl::mkl_core
+                                -Wl,--end-group
+                                -Wl,--as-needed
+                                m
+                                dl
+                                )
+                        target_include_directories(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+                        set_target_properties(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} PROPERTIES INTERFACE_LINK_DIRECTORIES ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
+                        if(MKL_ARCH_DIR MATCHES "64")
+                            target_compile_options(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE -m64)
+                        endif()
+                        list(APPEND MKL_TARGETS mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR})
+                    endforeach()
                 endforeach()
             endforeach()
         endforeach()

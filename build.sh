@@ -30,7 +30,6 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-coverage          : Enable test coverage
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
-   | --prefer-conda             : Prefer libraries from anaconda
    | --print-cmake-error        : Prints CMakeError.log upon failure
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose CMake and Makefiles
@@ -70,7 +69,6 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 enable-asan\
                 enable-coverage\
                 no-modules\
-                prefer-conda\
                 print-cmake-error
                 verbose\
                 verbose-make\
@@ -99,7 +97,6 @@ enable_asan="OFF"
 enable_coverage="OFF"
 install_prefix="dmrg-install"
 make_threads=8
-prefer_conda="OFF"
 print_cmake_error="OFF"
 verbose="OFF"
 verbose_make="OFF"
@@ -130,6 +127,7 @@ do
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
                                     make_threads=16                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
+                                    verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
                                     shift ;;
        --default-kraken)
                                     march="haswell"                 ; echo " * Architecture             : $march"          ;
@@ -143,6 +141,7 @@ do
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
                                     make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
+                                    verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
                                     shift ;;
        --install-prefix)            install_prefix=$2               ; echo " * Install Prefix           : $2"      ; shift 2 ;;
        --package-manager)           package_manager=$2              ; echo " * Package Manager          : $2"      ; shift 2 ;;
@@ -161,7 +160,6 @@ do
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
        --enable-coverage)           enable_coverage="ON"            ; echo " * Coverage                 : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
-       --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs     : ON"      ; shift   ;;
        --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose cmake & make     : ON"      ; shift   ;;
        --verbose-make)              verbose_make="ON"               ; echo " * Verbose make             : ON"      ; shift   ;;
@@ -205,7 +203,7 @@ if [[ ! "$package_manager" =~ find|cmake|conan ]]; then
 fi
 
 
-if [[ "$prefer_conda" =~ OFF|off|False|false ]] && [ -n "$CONDA_PREFIX" ] ; then
+if [ -n "$CONDA_PREFIX" ] ; then
     if [ -f "$CONDA_PREFIX_1/etc/profile.d/conda.sh" ]; then
         source $CONDA_PREFIX_1/etc/profile.d/conda.sh
     fi
@@ -328,7 +326,6 @@ cat << EOF >&2
           -DDMRG_PRINT_INFO=$verbose_cmake
           -DDMRG_PRINT_CHECKS=$verbose_cmake
           -DDMRG_PACKAGE_MANAGER=$package_manager
-          -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
           -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_THREADS=$enable_threads
@@ -353,7 +350,6 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_PRINT_INFO=$verbose_cmake \
           -DDMRG_PRINT_CHECKS=$verbose_cmake \
           -DDMRG_PACKAGE_MANAGER=$package_manager \
-          -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
           -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_THREADS=$enable_threads \

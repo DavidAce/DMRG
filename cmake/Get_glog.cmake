@@ -31,21 +31,14 @@ function(find_glog)
         target_link_libraries(unwind::full INTERFACE gcc_eh unwind::unwind lzma)
     endif()
 
-    find_package(glog 0.4
-            HINTS ${glog_ROOT} ${DMRG_DEPS_INSTALL_DIR}
-            ${NO_DEFAULT_PATH}
-            ${REQUIRED})
-
+    find_package(glog 0.4 ${N5} ${N6} ${N7} ${N8} ${REQUIRED}) # Flags ignore system packages. See cmake/SetupPaths.cmake
 
     if(NOT glog_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake")
         message(STATUS "glog will be installed into ${DMRG_DEPS_INSTALL_DIR}")
         include(cmake/InstallPackage.cmake)
         list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
         install_package(glog "${DMRG_DEPS_INSTALL_DIR}" "${GLOG_CMAKE_OPTIONS}")
-        find_package(glog 0.4
-                HINTS ${glog_ROOT} ${DMRG_DEPS_INSTALL_DIR}
-                NO_DEFAULT_PATH
-                REQUIRED)
+        find_package(glog 0.4 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
     endif()
 
 

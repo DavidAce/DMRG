@@ -9,21 +9,20 @@ project(DMRG++
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 # Set options this build
-option(DMRG_ENABLE_OPENMP            "Use OpenMP in Eigen, BLAS and LAPACK"                         OFF)
-option(DMRG_ENABLE_THREADS           "Use C++11 stl threads in Eigen::Tensor"                       OFF)
-option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                             OFF)
-option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                               OFF)
-option(DMRG_ENABLE_ASAN              "Enable runtime address sanitizer -fsanitize=address"          OFF)
-option(DMRG_ENABLE_USAN              "Enable undefined behavior sanitizer -fsanitize=undefined"     OFF)
-option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
-option(DMRG_ENABLE_PCH               "Enable precompiled headers to speed up compilation"           ON)
+option(DMRG_ENABLE_OPENMP "Use OpenMP in Eigen, BLAS and LAPACK" OFF)
+option(DMRG_ENABLE_THREADS "Use C++11 stl threads in Eigen::Tensor" OFF)
+option(DMRG_ENABLE_MKL "Enable Intel Math Kernel Library" OFF)
+option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" OFF)
+option(DMRG_ENABLE_ASAN "Enable runtime address sanitizer -fsanitize=address" OFF)
+option(DMRG_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=undefined" OFF)
+option(DMRG_ENABLE_LTO "Enable link time optimization" OFF)
+option(DMRG_ENABLE_PCH "Enable precompiled headers to speed up compilation" ON)
 option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" ON)
-option(H5PP_ENABLE_COVERAGE "Enable test coverage" OFF)
+option(DMRG_ENABLE_COVERAGE "Enable test coverage" OFF)
 option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
-option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
-option(DMRG_PRINT_CHECKS             "Print more information during cmake configure"                OFF)
-option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
-option(DMRG_PREFER_CONDA_LIBS "Prefer libraries installed through anaconda" OFF)
+option(DMRG_PRINT_INFO "Print information during cmake configure" OFF)
+option(DMRG_PRINT_CHECKS "Print more information during cmake configure" OFF)
+option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 
 # Make an "enum" for valid download methods
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake find-or-cmake conan)
@@ -72,8 +71,8 @@ include(cmake/CompilerFlags.cmake)
 ###  Add all source files    ###
 ################################
 include(source_list.txt)
-add_executable(${PROJECT_NAME})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_WHAT_YOU_USE TRUE)
+add_executable(DMRG++)
+set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 add_library(dmrg-main OBJECT ${DMRG_SOURCES})
 
 add_library(dmrg-arp OBJECT
@@ -138,10 +137,13 @@ if(BUILD_SHARED_LIBS)
     set(LINK_TYPE SHARED)
 else()
     set(LINK_TYPE STATIC)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
-    if(NOT DMRG_ENABLE_ASAN)
-        target_link_libraries  (${PROJECT_NAME} PUBLIC -static)   ### Static linkage
-    endif()
+    if (NOT DMRG_ENABLE_ASAN)
+        target_link_options(DMRG++ PUBLIC -static-libgcc -static-libstdc++)   ### Static linkage
+        #        set_target_properties(DMRG++ PROPERTIES LINK_SEARCH_START_STATIC OFF)
+        #        set_target_properties(DMRG++ PROPERTIES LINK_SEARCH_END_STATIC ON)
+        #        set(CMAKE_LINK_SEARCH_START_STATIC TRUE CACHE STRING "")
+        #        set(CMAKE_LINK_SEARCH_END_STATIC TRUE CACHE STRING "")
+    endif ()
 endif()
 
 
@@ -205,30 +207,14 @@ if(DMRG_ENABLE_LTO)
     check_ipo_supported(RESULT supported OUTPUT error)
     if(supported)
         message(STATUS "IPO / LTO supported, enabling")
-        set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+        set_target_properties(DMRG++ PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
     else()
         message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
         set(DMRG_ENABLE_LTO OFF CACHE)
     endif()
 endif()
 
-
-
-
-
 #################################################################
-### Prepend conda dirs for hints when using find_package      ###
-#################################################################
-if(DMRG_PREFER_CONDA_LIBS)
-    list(APPEND CONDA_HINTS
-            $ENV{CONDA_PREFIX}
-            $ENV{HOME}/anaconda3
-            $ENV{HOME}/miniconda
-            )
-endif()
-
-
-##################################################################
 ### Preempt Threads::Threads                                   ###
 ### It's looked for in dependencies, so we make it right       ###
 ### before it's done wrong, i.e. with pthread instead of       ###
@@ -243,8 +229,8 @@ endif()
 if(NOT TARGET Threads::Threads)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
-    target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive)
-    target_link_libraries(Threads::Threads INTERFACE rt dl)
+    #    target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive)
+    #    target_link_libraries(Threads::Threads INTERFACE rt dl)
 endif ()
 
 
@@ -268,13 +254,13 @@ target_link_libraries(dmrg-eig PUBLIC dmrg-flags)
 target_link_libraries(dmrg-opt PUBLIC dmrg-flags)
 target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
 target_link_libraries(dmrg-main PUBLIC dmrg-flags)
-target_link_libraries(${PROJECT_NAME} PUBLIC dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-deps dmrg-flags)  # Link everything to main project
+target_link_libraries(DMRG++ PUBLIC dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-deps dmrg-flags)  # Link everything to main project
 #if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
 #    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
 #    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
 #    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
 #    target_compile_options(dmrg-main PRIVATE -ftime-trace)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -ftime-trace)
+#    target_compile_options(DMRG++ PRIVATE -ftime-trace)
 #endif()
 
 
@@ -313,7 +299,7 @@ if(DMRG_ENABLE_CCACHE)
     if(COMPILER_OK)
         find_program(CCACHE_PROGRAM ccache)
         if(CCACHE_PROGRAM)
-            set_target_properties(${PROJECT_NAME} PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+            set_target_properties(DMRG++ PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
             set_target_properties(dmrg-main PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
             set_target_properties(dmrg-opt PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
             set_target_properties(dmrg-dbg PROPERTIES CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
@@ -352,7 +338,7 @@ if (DMRG_PRINT_INFO)
     message(STATUS "| DMRG TARGET SUMMARY")
     message(STATUS "|--------------------")
     print_compiler_info("| ")
-    expand_target_all_targets(${PROJECT_NAME} DMRG_TARGET_EXPANDED)
+    expand_target_all_targets(DMRG++ DMRG_TARGET_EXPANDED)
     foreach (tgt ${DMRG_TARGET_EXPANDED})
         print_target_info(${tgt} "| ")
     endforeach ()
