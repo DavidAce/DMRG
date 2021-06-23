@@ -230,21 +230,14 @@ if(NOT TARGET Threads::Threads)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
     #    target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive)
-    #    target_link_libraries(Threads::Threads INTERFACE rt dl)
+        target_link_libraries(Threads::Threads INTERFACE rt dl)
 endif ()
 
 
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-include(cmake/SetupDependenciesCMake.cmake)
-include(cmake/SetupDependenciesConan.cmake)
-
-include(cmake/Get_primme.cmake)
-if (TARGET primme::primme)
-    target_link_libraries(dmrg-eig PUBLIC primme::primme)
-    list(APPEND DMRG_TARGETS primme::primme)
-endif ()
+include(cmake/SetupDependencies.cmake)
 
 ##################################################################
 ### Link all the things!                                       ###

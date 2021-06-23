@@ -5,11 +5,11 @@ function(find_gflags)
     endif()
 
     # Gflags comes in static flavor in conda also!
-    find_package(gflags ${COMPONENTS} ${ITEMS} ${N5} ${N6} ${N7} ${N8} ${REQUIRED}) # Flags ignore system packages. See cmake/SetupPaths.cmake
+    find_package(gflags 2.2.2 ${COMPONENTS} ${ITEMS} ${N5} ${N6} ${N7} ${N8} ${REQUIRED}) # Flags ignore system packages. See cmake/SetupPaths.cmake
 
     if(NOT gflags_FOUND AND DMRG_PACKAGE_MANAGER MATCHES "cmake" )
         message(STATUS "gflags will be installed into ${DMRG_DEPS_INSTALL_DIR}")
-        include(${PROJECT_SOURCE_DIR}/cmake/InstallPackage.cmake)
+        include(cmake/InstallPackage.cmake)
         install_package(gflags "${DMRG_DEPS_INSTALL_DIR}" "")
         find_package(gflags
                 ${COMPONENTS} ${ITEMS}

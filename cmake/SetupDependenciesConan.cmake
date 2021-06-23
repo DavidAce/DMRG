@@ -192,32 +192,44 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 #            target_compile_definitions(CONAN_PKG::eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=16)  # May work to fix CERES segfault?
         endif()
     else()
-        message(FATAL_ERROR "Undefined target: CONAN_PKG::eigen")
+        message(FATAL_ERROR "Target not defined: CONAN_PKG::eigen")
+    endif()
+
+
+    # Make aliases
+    add_library(OpenBLAS::OpenBLAS  ALIAS CONAN_PKG::openblas)
+    add_library(Eigen3::Eigen       ALIAS CONAN_PKG::eigen)
+    add_library(h5pp::h5pp          ALIAS CONAN_PKG::h5pp)
+    add_library(spdlog::spdlog      ALIAS CONAN_PKG::spdlog)
+    add_library(arpack::arpack++    ALIAS CONAN_PKG::arpack++)
+    add_library(Ceres::ceres        ALIAS CONAN_PKG::ceres-solver)
+    if(TARGET CONAN_PKG::libunwind)
+        add_library(unwind::unwind      ALIAS CONAN_PKG::libunwind)
     endif()
 
     # Gather the targets
-    if(TARGET OpenMP::OpenMP_CXX)
-        target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
-    else()
-        target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
-    endif()
-    target_link_libraries(dmrg-deps INTERFACE
-            CONAN_PKG::h5pp
-            CONAN_PKG::ceres-solver
-            CONAN_PKG::eigen
-            CONAN_PKG::arpack++)
-    target_link_libraries(dmrg-main PUBLIC CONAN_PKG::h5pp)
-    target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen CONAN_PKG::ceres-solver)
-    target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen)
-    target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::spdlog CONAN_PKG::arpack++)
-    if(TARGET mkl::mkl)
-        target_link_libraries(dmrg-arp PUBLIC mkl::mkl)
-    elseif(TARGET CONAN_PKG::openblas)
-        target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::openblas)
-    endif()
-
-    if(TARGET CONAN_PKG::libunwind)
-        target_link_libraries(dmrg-dbg PRIVATE CONAN_PKG::libunwind)
-        target_compile_definitions(dmrg-dbg PUBLIC DMRG_HAS_UNWIND=1)
-    endif()
+#    if(TARGET OpenMP::OpenMP_CXX)
+#        target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
+#    else()
+#        target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
+#    endif()
+#    target_link_libraries(dmrg-deps INTERFACE
+#            CONAN_PKG::h5pp
+#            CONAN_PKG::ceres-solver
+#            CONAN_PKG::eigen
+#            CONAN_PKG::arpack++)
+#    target_link_libraries(dmrg-main PUBLIC CONAN_PKG::h5pp)
+#    target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen CONAN_PKG::ceres-solver)
+#    target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen)
+#    target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::spdlog CONAN_PKG::arpack++)
+#    if(TARGET mkl::mkl)
+#        target_link_libraries(dmrg-arp PUBLIC mkl::mkl)
+#    elseif(TARGET CONAN_PKG::openblas)
+#        target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::openblas)
+#    endif()
+#
+#    if(TARGET CONAN_PKG::libunwind)
+#        target_link_libraries(dmrg-dbg PRIVATE CONAN_PKG::libunwind)
+#        target_compile_definitions(dmrg-dbg PUBLIC DMRG_HAS_UNWIND=1)
+#    endif()
 endif()

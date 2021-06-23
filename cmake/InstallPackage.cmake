@@ -25,6 +25,10 @@ endfunction()
 # by running cmake in a subprocess. The current CMake configuration is transmitted
 # by setting the flags manually.
 function(install_package package_name install_dir extra_flags)
+    if(${package_name}_FOUND)
+        return()
+    endif()
+    message(STATUS "OpenBLAS will be installed into ${DMRG_DEPS_INSTALL_DIR}/OpenBLAS")
     set(build_dir ${DMRG_DEPS_BUILD_DIR}/${package_name})
     if (DMRG_PREFIX_ADD_PKGNAME)
         set(install_dir ${install_dir}/${package_name})
