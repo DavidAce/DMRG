@@ -1,79 +1,62 @@
+
+# Make sure to include cmake/SetupDependenciesFind.cmake before this
+
+
 if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
+    include(cmake/InstallPackage.cmake)
 
-    ##############################################################################
-    ###  Optional OpenMP support                                               ###
-    ###  Note that Clang has some  trouble with static openmp and that         ###
-    ###  and that static openmp is not recommended. This tries to enable       ###
-    ###  static openmp anyway because I find it useful. Installing             ###
-    ###  libiomp5 might help for shared linking.                               ###
-    ##############################################################################
-    if(DMRG_ENABLE_OPENMP)
-        find_package(OpenMP COMPONENTS CXX REQUIRED) # Uses DMRG's own find module
-    endif()
-    find_package(Fortran REQUIRED)
-    include(cmake/SetupMKL.cmake)                           # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-    include(cmake/Get_OpenBLAS.cmake)                     # If MKL is not on openblas will be used instead. Includes lapack.
-    include(cmake/Get_Eigen3.cmake)                       # Eigen3 numerical library (needed by ceres and h5pp)
-    include(cmake/Get_h5pp.cmake)                         # h5pp for writing to file binary in format
-    include(cmake/Get_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-    include(cmake/Get_arpack++.cmake)                     # C++ frontend for arpack-ng
-    include(cmake/Get_gflags.cmake)                       # Google Flags library needed by ceres-solver
-    include(cmake/Get_glog.cmake)                         # Google logging library needed by ceres-solver
-    include(cmake/Get_ceres-solver.cmake)                 # ceres-solver (for L-BFGS routine)
+    # Set CMake build options
+    list(APPEND OpenBLAS_CMAKE_OPTIONS -DTARGET:STRING=${OPENBLAS_MARCH})
+    list(APPEND OpenBLAS_CMAKE_OPTIONS -DUSE_THREAD:BOOL=1)
+    list(APPEND OpenBLAS_CMAKE_OPTIONS -DBUILD_RELAPACK:BOOL=OFF)
 
+    list(APPEND h5pp_CMAKE_OPTIONS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND h5pp_CMAKE_OPTIONS -DH5PP_PACKAGE_MANAGER:STRING=cmake)
+    list(APPEND h5pp_CMAKE_OPTIONS -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE})
 
-    if(TARGET Eigen3::Eigen AND DMRG_ENABLE_THREADS)
-        target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)
-    endif()
+    list(APPEND glog_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
 
-    if(TARGET Eigen3::Eigen AND TARGET BLAS::BLAS )
-        if(TARGET mkl::mkl)
-            message(STATUS "Eigen3 will use MKL")
-            target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_MKL_ALL)
-            target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
-            target_link_libraries         (Eigen3::Eigen INTERFACE mkl::mkl)
-        else ()
-            message(STATUS "Eigen3 will use OpenBLAS")
-            target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_BLAS)
-            target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
-            target_link_libraries         (Eigen3::Eigen INTERFACE BLAS::BLAS)
-        endif()
+    list(APPEND Ceres_CMAKE_OPTIONS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND Ceres_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND Ceres_CMAKE_OPTIONS -Dglog_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
 
-        # AVX2 aligns 32 bytes (AVX512 aligns 64 bytes).
-        # When running on Tetralith, with march=native, there can be alignment mismatch
-        # in ceres which results in a segfault on free memory.
-        # Something like "double free or corruption ..."
-        #   * EIGEN_MAX_ALIGN_BYTES=16 works on Tetralith
-        cmake_host_system_information(RESULT _host_name  QUERY HOSTNAME)
-        if(_host_name MATCHES "tetralith|triolith")
-            message(STATUS "Applying special Eigen compile definitions for Tetralith: EIGEN_MAX_ALIGN_BYTES=16")
-            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
-            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=32)
-        else()
-            message(STATUS "Applying special Eigen compile definitions for general machines")
-#            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MALLOC_ALREADY_ALIGNED=1) # May work to fix CERES segfaults!!!
-#            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_MAX_ALIGN_BYTES=32)
-        endif()
-
+    if(NOT BUILD_SHARED_LIBS)
+        set(GFLAGS_COMPONENTS COMPONENTS)
+        set(GFLAS_ITEMS nothreads_static)
     endif()
 
 
-    ##################################################################
-    ### Link all the things!                                       ###
-    ##################################################################
-    if(TARGET OpenMP::OpenMP_CXX)
-        target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
-    else()
-        target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
+    # Install missing packages and try finding them again
+    if(NOT MKL_FOUND)
+        install_package(OpenBLAS "${DMRG_DEPS_INSTALL_DIR}" "${OpenBLAS_CMAKE_OPTIONS}")
+        find_package(OpenBLAS 0.3.8 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
     endif()
-    target_link_libraries(dmrg-deps INTERFACE h5pp::h5pp ARPACK::ARPACK++ Ceres::ceres primme::primme)
-    target_link_libraries(dmrg-main PUBLIC h5pp::h5pp)
-    target_link_libraries(dmrg-opt PUBLIC spdlog::spdlog Ceres::ceres)
-    target_link_libraries(dmrg-eig PUBLIC spdlog::spdlog Eigen3::Eigen)
-    target_link_libraries(dmrg-arp PUBLIC spdlog::spdlog ARPACK::ARPACK++ primme::primme)
 
-    if(TARGET unwind::unwind)
-        target_link_libraries(dmrg-dbg PUBLIC unwind::unwind)
-        target_compile_definitions(dmrg-dbg PUBLIC DMRG_HAS_UNWIND=1)
+    install_package(Eigen3 "${DMRG_DEPS_INSTALL_DIR}" "")
+    find_package(Eigen3 3.3.7 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+
+    install_package(h5pp "${DMRG_DEPS_INSTALL_DIR}" "${h5pp_CMAKE_OPTIONS}")
+    find_package(h5pp 1.9.1 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+
+    if(NOT arpack-ng_FOUND)
+        install_package(arpack-ng "${DMRG_DEPS_INSTALL_DIR}" "")
+        find_package(arpack-ng 3.8.0 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+        target_link_libraries(ARPACK::ARPACK INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran)
     endif()
+
+
+
+    install_package(arpack++ "${DMRG_DEPS_INSTALL_DIR}" "")
+    find_package(arpack++ REQUIRED)
+
+    install_package(gflags "${DMRG_DEPS_INSTALL_DIR}" "")
+    find_package(gflags ${GFLAGS_COMPONENTS} ${GFLAGS_ITEMS} HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+
+    install_package(glog "${DMRG_DEPS_INSTALL_DIR}" "${glog_CMAKE_OPTIONS}")
+    find_package(glog 0.4 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+
+    install_package(Ceres "${DMRG_DEPS_INSTALL_DIR}" "${Ceres_CMAKE_OPTIONS}" )
+    find_package(Ceres HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
+
+
 endif()

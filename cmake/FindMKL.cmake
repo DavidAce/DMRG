@@ -1,6 +1,7 @@
-# - Try to find the Intel Math Kernel Library
-#   Forked from:  https://github.com/Eyescale/CMake/blob/master/FindMKL.cmake
-#   which is forked from: https://github.com/openmeeg/openmeeg/blob/master/macros/FindMKL.cmake
+# find_package module for the Intel Math Kernel Library (MKL)
+#
+# COMPONENTS
+# architecture:
 
 # Once done this will define
 #
@@ -56,13 +57,8 @@ function(find_mkl_libraries)
         # Prefer static libraries
         set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_SUFFIX})
     endif()
-    if(BUILD_SHARED_LIBS)
-        set(LINK_TYPE SHARED)
-        set(MKL_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    else()
-        set(LINK_TYPE STATIC)
-        set(MKL_LIB_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    endif()
+    list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES .so.1 .so.2) # For tbb
+
 
     # macos
     if(APPLE)
@@ -80,9 +76,10 @@ function(find_mkl_libraries)
             set(MKL_ARCH_DIR "ia32")
         endif()
     endif()
-
+    set(MKL_ARCH_DIR ${MKL_ARCH_DIR} PARENT_SCOPE)
 
     set(MKL_ROOT_SEARCH_PATHS
+            ${MKL_ROOT_DIR}
             $ENV{MKL_DIR}  ${MKL_DIR}
             $ENV{MKLDIR}   ${MKLDIR}
             $ENV{MKLROOT}  ${MKLROOT}
@@ -117,13 +114,13 @@ function(find_mkl_libraries)
                 HINTS ${MKL_ROOT_DIR}/include
                 )
 
-        find_path(MKL_FFTW_INCLUDE_DIR
-                fftw3.h
-                HINTS ${MKL_ROOT_DIR}/include
-                PATH_SUFFIXES fftw
-                NO_DEFAULT_PATH
-                )
-
+        set(MKL_INCLUDE_DIR ${MKL_INCLUDE_DIR} PARENT_SCOPE)
+        if(NOT MKL_INCLUDE_DIR)
+            message(WARNING "Found MKL_ROOT_DIR but not MKL_INCLUDE_DIR:"
+                    "MKL_ROOT_DIR   : ${MKL_ROOT_DIR})"
+                    "MKL_INCLUDE_DIR: ${MKL_INCLUDE_DIR})")
+                    return()
+        endif()
         set(par_libnames tbb tbbmalloc iomp5)
         set(mkl_libnames rt core sequential intel_thread gnu_thread tbb_thread)
         if(MKL_ARCH_DIR MATCHES "32")
@@ -134,7 +131,7 @@ function(find_mkl_libraries)
                     lapack)
             else()
             list(APPEND mkl_libnames
-                    intel_lp
+                    intel_lp64
                     intel_ilp64
                     gf_lp64
                     gf_ilp64
@@ -157,6 +154,10 @@ function(find_mkl_libraries)
                 set_target_properties(mkl::mkl_${lib} PROPERTIES IMPORTED_LOCATION "${MKL_${lib}_LIBRARY}")
                 set_target_properties(mkl::mkl_${lib} PROPERTIES LINK_WHAT_YOU_USE TRUE)
 #                target_include_directories(mkl::mkl_${lib} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+                message(STATUS "Added library mkl::mkl_${lib}")
+            else()
+                message(STATUS "Failed library mkl::mkl_${lib}")
+
             endif()
         endforeach()
         if(TARGET mkl::mkl_rt)
@@ -172,74 +173,253 @@ function(find_mkl_libraries)
             find_library(MKL_${lib}_LIBRARY
                     ${lib}
                     HINTS
-                    ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
-                    ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.7
-                    ${MKL_ROOT_DIR}/../tbb/lib/${TBB_SEARCH}/gcc4.4
                     ${MKL_ROOT_DIR}
+                    ${MKL_ROOT_DIR}/../tbb
                     PATH_SUFFIXES
-                    lib lib/${MKL_ARCH_DIR} ${MKL_ROOT_DIR}/../lib/${MKL_ARCH_DIR}
+                    lib  ../lib/${MKL_ARCH_DIR}
+                    lib/${MKL_ARCH_DIR}
+                    lib/${MKL_ARCH_DIR}/gcc4.7
+                    lib/${MKL_ARCH_DIR}/gcc4.4
                     )
             if(MKL_${lib}_LIBRARY)
                 add_library(mkl::${lib} UNKNOWN IMPORTED)
                 set_target_properties(mkl::${lib} PROPERTIES IMPORTED_LOCATION "${MKL_${lib}_LIBRARY}")
                 set_target_properties(mkl::${lib} PROPERTIES LINK_WHAT_YOU_USE TRUE)
+                message(STATUS "Added library mkl::${lib}")
+            else()
+                message(FATAL_ERROR "Failed library mkl::${lib}")
             endif()
         endforeach()
-
-        # Define usable targets
-        set (MKL_FORTRAN_VARIANTS intel gf)
-        set (MKL_ARCH_VARIANTS)
-        set (MKL_BLAS_SUFFIX)
-        set (MKL_THREAD_VARIANTS sequential intel_thread gnu_thread tbb_thread )
-        if(MKL_ARCH_DIR MATCHES "64")
-            list(APPEND MKL_ARCH_VARIANTS _ilp64 _lp64)
-            list(APPEND MKL_BLAS_SUFFIX 95)
-        endif()
-
-        foreach (FORTRANVAR ${MKL_FORTRAN_VARIANTS})
-            foreach (ARCHVAR ${MKL_ARCH_VARIANTS})
-                foreach (THREADVAR ${MKL_THREAD_VARIANTS})
-                    foreach(SFX ${MKL_BLAS_SUFFIX})
-                        if(THREADVAR MATCHES "sequential")
-                            set(threadv seq)
-                        elseif(THREADVAR MATCHES "intel_thread")
-                            set(threadv ithread)
-                        elseif(THREADVAR MATCHES "gnu_thread")
-                            set(threadv gthread)
-                        elseif(THREADVAR MATCHES "tbb_thread")
-                            set(threadv tthread)
-                        endif()
-                        add_library(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE IMPORTED)
-                        target_link_libraries(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE
-                                -Wl,--no-as-needed
-                                mkl::mkl_blas${SFX}${ARCHVAR}
-                                mkl::mkl_lapack${SFX}${ARCHVAR}
-                                -Wl,--start-group
-                                mkl::mkl_${FORTRANVAR}${ARCHVAR}
-                                mkl::mkl_${THREADVAR}
-                                mkl::mkl_core
-                                -Wl,--end-group
-                                -Wl,--as-needed
-                                m
-                                dl
-                                )
-                        target_include_directories(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-                        set_target_properties(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} PROPERTIES INTERFACE_LINK_DIRECTORIES ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
-                        if(MKL_ARCH_DIR MATCHES "64")
-                            target_compile_options(mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR} INTERFACE -m64)
-                        endif()
-                        list(APPEND MKL_TARGETS mkl::mkl_${FORTRANVAR}_${threadv}${ARCHVAR})
-                    endforeach()
-                endforeach()
-            endforeach()
-        endforeach()
-        set(MKL_TARGETS ${MKL_TARGETS} PARENT_SCOPE)
-        set(MKL_INCLUDE_DIR ${MKL_INCLUDE_DIR} PARENT_SCOPE)
     endif()
 endfunction()
 
+function(setup_mkl_targets)
+
+    # Setup all the library variants
+    set (MKL_FORTRAN_VARIANTS intel gf)
+    set (MKL_THREAD_VARIANTS sequential intel_thread gnu_thread tbb_thread )
+    set (MKL_ARCH_VARIANTS)
+    set (MKL_MATH_VARIANTS blas lapack)
+    if(MKL_ARCH_DIR MATCHES "64")
+        list(APPEND MKL_ARCH_VARIANTS ilp64 lp64)
+        list(APPEND MKL_95_SUFFIX 95_)
+    else()
+        list(APPEND MKL_ARCH_VARIANTS ia32)
+    endif()
+
+    # Set defaults
+    set(MKL_FORTRAN_DEFAULT gf)
+    set(MKL_THREAD_DEFAULT sequential)
+    set(MKL_ARCH_DEFAULT lp64)
+    set(MKL_MATH_DEFAULT blas lapack)
+
+
+    # Get enabled languages
+    get_property(LANG GLOBAL PROPERTY ENABLED_LANGUAGES)
+    if(C IN_LIST LANG)
+        set(C ${C})
+    endif()
+    if(CXX IN_LIST LANG)
+        set(CXX ${CXX})
+    endif()
+    if(Fortran IN_LIST LANG)
+        set(Fortran ${Fortran})
+    endif()
+
+    # Define required components
+    foreach(fort ${MKL_FORTRAN_VARIANTS})
+        if(${fort} IN_LIST MKL_FIND_COMPONENTS)
+            list(APPEND MKL_FIND_FORTRAN_COMPONENTS ${fort})
+        endif()
+    endforeach()
+
+    foreach(arch ${MKL_ARCH_VARIANTS})
+        if(${arch} IN_LIST MKL_FIND_COMPONENTS)
+            list(APPEND MKL_FIND_ARCH_COMPONENTS ${arch})
+        endif()
+    endforeach()
+
+    foreach(thread ${MKL_THREAD_VARIANTS})
+        if(${thread} IN_LIST MKL_FIND_COMPONENTS)
+            list(APPEND MKL_FIND_THREAD_COMPONENTS ${thread})
+        endif()
+    endforeach()
+    foreach(math ${MKL_MATH_VARIANTS})
+        if(${math} IN_LIST MKL_FIND_COMPONENTS)
+            list(APPEND MKL_FIND_MATH_COMPONENTS ${math})
+        endif()
+    endforeach()
+    #  If no components were asked for, just deliver all of them
+    if(NOT MKL_FIND_FORTRAN_COMPONENTS)
+        set(MKL_FIND_FORTRAN_COMPONENTS ${MKL_FORTRAN_DEFAULT})
+    endif()
+    if(NOT MKL_FIND_THREAD_COMPONENTS)
+        set(MKL_FIND_THREAD_COMPONENTS ${MKL_THREAD_DEFAULT})
+    endif()
+    if(NOT MKL_FIND_ARCH_COMPONENTS)
+        set(MKL_FIND_ARCH_COMPONENTS ${MKL_ARCH_DEFAULT})
+    endif()
+    if(NOT MKL_FIND_MATH_COMPONENTS)
+        set(MKL_FIND_MATH_COMPONENTS ${MKL_MATH_DEFAULT})
+    endif()
+
+    # Define usable targets
+    foreach (fort ${MKL_FIND_FORTRAN_COMPONENTS})
+        foreach (thread ${MKL_FIND_THREAD_COMPONENTS})
+            foreach (arch ${MKL_FIND_ARCH_COMPONENTS})
+                if(arch MATCHES "32" AND NOT TARGET mkl::mkl_${fort}_${arch})
+                    # We make an alias for the mkl::mkl_gf library as mkl::mkl_gf_ia32
+                    add_library(mkl::mkl_${fort}_${arch} ALIAS mkl::mkl_${fort})
+                endif()
+                add_library(mkl::mkl_${fort}_${thread}_${arch} INTERFACE IMPORTED)
+                if(NOT MSVC)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE -Wl,--no-as-needed)
+                endif()
+                if(blas IN_LIST MKL_FIND_MATH_COMPONENTS)
+                    target_link_libraries(mkl::mkl_blas${MKL_95_SUFFIX}${arch} INTERFACE -Wl,--start-group)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE mkl::mkl_blas${MKL_95_SUFFIX}${arch})
+                    set(MKL_blas_FOUND TRUE PARENT_SCOPE)
+                endif()
+
+                if(lapack IN_LIST MKL_FIND_MATH_COMPONENTS)
+                    target_link_libraries(mkl::mkl_lapack${MKL_95_SUFFIX}${arch} INTERFACE -Wl,--start-group)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE mkl::mkl_lapack${MKL_95_SUFFIX}${arch})
+                    set(MKL_lapack_FOUND TRUE PARENT_SCOPE)
+                endif()
+
+                if(MSVC)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
+                            mkl::mkl_${fort}_${arch}
+                            mkl::mkl_${thread}
+                            mkl::mkl_core
+                            )
+                else()
+                    target_link_libraries(mkl::mkl_${fort}_${arch} INTERFACE -Wl,--end-group)
+                    target_link_libraries(mkl::mkl_${thread} INTERFACE -Wl,--end-group)
+                    target_link_libraries(mkl::mkl_core INTERFACE -Wl,--end-group)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
+                            -Wl,--start-group
+                            mkl::mkl_${fort}_${arch}
+                            mkl::mkl_${thread}
+                            mkl::mkl_core
+                            -Wl,--end-group
+                            -Wl,--as-needed
+                            )
+                endif()
+                target_include_directories(mkl::mkl_${fort}_${thread}_${arch} SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+                set_target_properties(mkl::mkl_${fort}_${thread}_${arch} PROPERTIES INTERFACE_LINK_DIRECTORIES ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR})
+                if(arch MATCHES "64")
+                    target_compile_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE -m64)
+                endif()
+                if(thread MATCHES "gnu_thread")
+                    find_package(Threads REQUIRED)
+                    find_package(OpenMP COMPONENTS ${C} ${CXX} ${Fortran} REQUIRED)
+                    foreach(lang ${LANG})
+                        if(TARGET OpenMP::OpenMP_${lang})
+                            target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE OpenMP::OpenMP_${lang})
+                        endif()
+                    endforeach()
+                endif()
+                if(thread MATCHES "intel_thread")
+                    find_package(Threads REQUIRED)
+                    target_link_libraries(mkl::iomp5 INTERFACE Threads::Threads)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE mkl::iomp5)
+                endif()
+                if(thread MATCHES "tbb_thread")
+                    find_package(Threads REQUIRED)
+                    target_link_libraries(mkl::tbb INTERFACE Threads::Threads)
+                    target_link_libraries(mkl::tbbmalloc INTERFACE Threads::Threads)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE mkl::tbb mkl::tbbmalloc)
+                endif()
+                if(thread MATCHES "thread")
+                    find_package(Threads REQUIRED)
+                    target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE Threads::Threads)
+                endif()
+                target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE m dl)
+                list(APPEND MKL_TARGETS mkl::mkl_${fort}_${thread}_${arch})
+                set(MKL_${fort}_FOUND   TRUE PARENT_SCOPE)
+                set(MKL_${thread}_FOUND TRUE PARENT_SCOPE)
+                set(MKL_${arch}_FOUND   TRUE PARENT_SCOPE)
+            endforeach()
+        endforeach()
+    endforeach()
+    set(MKL_TARGETS ${MKL_TARGETS} PARENT_SCOPE)
+endfunction()
+
+# Test MKL
+function(check_mkl_compiles)
+    include(CheckCXXSourceCompiles)
+    foreach(tgt ${MKL_TARGETS})
+        unset(CMAKE_REQUIRED_LIBRARIES)
+        if(NOT BUILD_SHARED_LIBS)
+            set(CMAKE_REQUIRED_LIBRARIES -static-libgcc -static-libstdc++)
+        endif()
+        string(SUBSTRING ${tgt} 5 -1 tgt_name)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES ${tgt})
+        if(TARGET ${tgt} AND ${tgt} MATCHES "sequential")
+            check_cxx_source_compiles("
+                        #include <mkl.h>
+                        int main() {
+                            const MKL_INT nx = 10, incx = 1, incy = 1;
+                            double x[10], y[10];
+                            for(int i = 0; i < 10; i++) x[i] = double(i);
+                            dcopy(&nx, x, &incx, y, &incy);
+                            return 0;
+                        }
+                        " COMPILES_${tgt_name})
+        else()
+            check_cxx_source_compiles("
+                        #include <mkl.h>
+                        int main() {
+                            mkl_set_num_threads(2);
+                            const MKL_INT nx = 10, incx = 1, incy = 1;
+                            double x[10], y[10];
+                            for(int i = 0; i < 10; i++) x[i] = double(i);
+                            dcopy(&nx, x, &incx, y, &incy);
+                            return 0;
+                        }
+                        " COMPILES_${tgt_name})
+        endif()
+        if(NOT COMPILES_${tgt_name})
+            if(DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+                file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+                message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+            endif()
+            message(FATAL_ERROR "Unable to compile a simple MKL program")
+        endif()
+    endforeach()
+endfunction()
+
+
+
 find_mkl_libraries()
+setup_mkl_targets()
+check_mkl_compiles()
+
+list(LENGTH MKL_TARGETS MKL_TARGETS_NUM)
+if(MKL_TARGETS_NUM EQUAL 1)
+    add_library(mkl::mkl INTERFACE IMPORTED)
+    target_link_libraries(mkl::mkl       INTERFACE ${MKL_TARGETS})
+    get_target_property(MKL_LIBRARIES ${MKL_TARGETS} INTERFACE_LINK_LIBRARIES)
+
+    if(blas IN_LIST MKL_LIBRARIES)
+        add_library(BLAS::BLAS INTERFACE IMPORTED)
+        target_link_libraries(BLAS::BLAS     INTERFACE ${MKL_TARGETS})
+    endif()
+    if(lapack IN_LIST MKL_LIBRARIES)
+        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
+        target_link_libraries(LAPACK::LAPACK INTERFACE ${MKL_TARGETS})
+    endif()
+else()
+    message(WARNING "Multiple MKL libraries found: ${MKL_TARGETS}"
+                    "Try specifying unique COMPONENTS"
+            )
+endif()
+
+
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(MKL DEFAULT_MSG MKL_INCLUDE_DIR MKL_TARGETS)
-
+find_package_handle_standard_args(MKL
+        REQUIRED_VARS MKL_INCLUDE_DIR MKL_TARGETS
+        HANDLE_COMPONENTS
+        )
