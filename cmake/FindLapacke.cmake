@@ -1,10 +1,8 @@
 function(lapacke_message TYPE MSG)
-    if(NOT Lapacke_FIND_QUIETLY)
+    if(Lapacke_FIND_VERBOSE)
         message(${TYPE} ${MSG})
     endif()
 endfunction()
-
-
 
 function(find_Lapacke)
     include(cmake/CheckLapackeCompiles.cmake)
@@ -31,7 +29,6 @@ else()
     unset(LAPACKE_COMPILES)
     unset(LAPACKE_COMPILES CACHE)
 endif()
-
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Lapacke
