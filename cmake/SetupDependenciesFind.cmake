@@ -36,7 +36,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     else()
         find_package(OpenBLAS 0.3.8 ${N5} ${N6} ${N7} ${N8} ${REQUIRED}) # If MKL is not on openblas will be used instead. Includes lapack.
     endif()
-    find_package(Lapacke REQUIRED)                                      # Lapacke needed by arpack++, included in MKL or OpenBLAS
+    find_package(Lapacke ${REQUIRED})                                   # Lapacke needed by arpack++, included in MKL or OpenBLAS
 
     find_package(Eigen3 3.3.7 ${N5} ${N6} ${N7} ${N8} ${REQUIRED})      # Eigen3 numerical library (needed by ceres and h5pp)
     find_package(h5pp 1.9.0 ${N5} ${N6} ${N7} ${N8} ${REQUIRED})        # h5pp for writing to file binary in format
