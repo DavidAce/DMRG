@@ -65,6 +65,23 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
         install_package(OpenBLAS "${DMRG_DEPS_INSTALL_DIR}" "${OpenBLAS_CMAKE_OPTIONS}")
         find_package(OpenBLAS 0.3.8 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
     endif()
+    if(TARGET OpenBLAS::OpenBLAS)
+        target_link_libraries(OpenBLAS::OpenBLAS INTERFACE gfortran::gfortran Threads::Threads)
+        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
+        # Fix for OpenBLAS 0.3.9, which otherwise includes <complex> inside of an extern "C" scope.
+        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
+        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_double=std::complex<double>)
+        #For convenience, define these targes
+        if(NOT TARGET BLAS::BLAS)
+            add_library(BLAS::BLAS                  INTERFACE IMPORTED)
+            target_link_libraries(BLAS::BLAS        INTERFACE OpenBLAS::OpenBLAS)
+        endif()
+        if(NOT TARGET LAPACK::LAPACK)
+            add_library(LAPACK::LAPACK              INTERFACE IMPORTED)
+            target_link_libraries(LAPACK::LAPACK    INTERFACE OpenBLAS::OpenBLAS)
+        endif()
+    endif()
+
 
     # Starting from here there should definitely be blas library that includes lapacke
     # Lapacke is needed by arpack++, included in MKL or OpenBLAS
