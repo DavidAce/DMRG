@@ -58,7 +58,7 @@ jobs:
 
       - name: Setup apt packages
         if: contains(matrix.manager,'find')
-        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev -y
+        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr -y
 
       - name: Setup conan
         if: matrix.manager == 'conan'
@@ -91,7 +91,7 @@ jobs:
         run: |
           # Create lcov report
           lcov --capture --directory build/Debug --output-file coverage.info
-          lcov --remove coverage.info '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
+          lcov --remove coverage.info '*/dmrg-install*' '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
           lcov --list coverage.info # debug info
           # Upload report to CodeCov
           bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
