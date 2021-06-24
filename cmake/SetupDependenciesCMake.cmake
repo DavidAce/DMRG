@@ -85,8 +85,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find|cmake")
     if(NOT arpack-ng_FOUND)
         install_package(arpack-ng "${DMRG_DEPS_INSTALL_DIR}" "")
         find_package(arpack-ng 3.8.0 HINTS ${DMRG_DEPS_INSTALL_DIR} NO_DEFAULT_PATH REQUIRED)
-        target_link_libraries(ARPACK::ARPACK INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran)
     endif()
+    target_link_libraries(ARPACK::ARPACK INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran)
 
     # C++ frontend for arpack-ng. Custom find module.
     find_package(arpack++ ${REQUIRED})
