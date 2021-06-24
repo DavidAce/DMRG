@@ -3,23 +3,19 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
     #  Make sure we use DMRG's own find modules
     list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake)
-    ##############################################################################
-    ###  Required OpenMP support                                               ###
-    ###  Note that Clang has some  trouble with static openmp and that         ###
-    ###  and that static openmp is not recommended. This tries to enable       ###
-    ###  static openmp anyway because I find it useful. Installing             ###
-    ###  libiomp5 might help for shared linking.                               ###
-    ##############################################################################
     if(DMRG_ENABLE_OPENMP)
-        find_package(OpenMP COMPONENTS CXX REQUIRED) # Uses DMRG's own find module
+        find_package(OpenMP COMPONENTS CXX REQUIRED)
+        set(mkl_thread gnu_thread)
+    else()
+        set(mkl_thread sequential)
     endif()
 
+    find_package(Fortran REQUIRED)
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
     ##############################################################################
     if(DMRG_ENABLE_MKL)
-        find_package(Fortran REQUIRED)
-        include(cmake/SetupMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+        find_package(MKL COMPONENTS blas lapack gf ${mkl_thread} lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
         if(TARGET mkl::mkl)
             include(cmake/getExpandedTarget.cmake)
             expand_target_libs(mkl::mkl MKL_LIBRARIES)
@@ -32,9 +28,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                     OPTIONS arpack-ng:blas=All
                     OPTIONS arpack-ng:blas_libraries=${MKL_LIBRARIES}
                     OPTIONS arpack-ng:lapack_libraries=${MKL_LIBRARIES}
-                    #OPTIONS ceres-solver:blas=All
-                    #OPTIONS ceres-solver:blas_libraries=${MKL_LIBRARIES}
-                    #OPTIONS ceres-solver:lapack_libraries=${MKL_LIBRARIES}
                     )
         else()
             message(FATAL_ERROR "Undefined target: mkl::mkl")
@@ -96,7 +89,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 CONAN_COMMAND
                 conan
                 HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
-                PATHS $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
+                PATHS $ENV{HOME}/.local $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
                 PATH_SUFFIXES bin envs/dmrg/bin
         )
         if(NOT CONAN_COMMAND)
@@ -197,39 +190,15 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
 
     # Make aliases
-    add_library(OpenBLAS::OpenBLAS  ALIAS CONAN_PKG::openblas)
     add_library(Eigen3::Eigen       ALIAS CONAN_PKG::eigen)
     add_library(h5pp::h5pp          ALIAS CONAN_PKG::h5pp)
     add_library(spdlog::spdlog      ALIAS CONAN_PKG::spdlog)
     add_library(arpack::arpack++    ALIAS CONAN_PKG::arpack++)
     add_library(Ceres::ceres        ALIAS CONAN_PKG::ceres-solver)
+    if(TARGET CONAN_PKG::openblas)
+        add_library(OpenBLAS::OpenBLAS  ALIAS CONAN_PKG::openblas)
+    endif()
     if(TARGET CONAN_PKG::libunwind)
         add_library(unwind::unwind      ALIAS CONAN_PKG::libunwind)
     endif()
-
-    # Gather the targets
-#    if(TARGET OpenMP::OpenMP_CXX)
-#        target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
-#    else()
-#        target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
-#    endif()
-#    target_link_libraries(dmrg-deps INTERFACE
-#            CONAN_PKG::h5pp
-#            CONAN_PKG::ceres-solver
-#            CONAN_PKG::eigen
-#            CONAN_PKG::arpack++)
-#    target_link_libraries(dmrg-main PUBLIC CONAN_PKG::h5pp)
-#    target_link_libraries(dmrg-opt PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen CONAN_PKG::ceres-solver)
-#    target_link_libraries(dmrg-eig PUBLIC CONAN_PKG::spdlog CONAN_PKG::eigen)
-#    target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::spdlog CONAN_PKG::arpack++)
-#    if(TARGET mkl::mkl)
-#        target_link_libraries(dmrg-arp PUBLIC mkl::mkl)
-#    elseif(TARGET CONAN_PKG::openblas)
-#        target_link_libraries(dmrg-arp PUBLIC CONAN_PKG::openblas)
-#    endif()
-#
-#    if(TARGET CONAN_PKG::libunwind)
-#        target_link_libraries(dmrg-dbg PRIVATE CONAN_PKG::libunwind)
-#        target_compile_definitions(dmrg-dbg PUBLIC DMRG_HAS_UNWIND=1)
-#    endif()
 endif()
