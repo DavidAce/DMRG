@@ -2,11 +2,11 @@
 include(cmake/SetupDependenciesCMake.cmake)
 include(cmake/SetupDependenciesConan.cmake)
 
-include(cmake/Get_primme.cmake)
-if (TARGET primme::primme)
-    target_link_libraries(dmrg-eig PUBLIC primme::primme)
-    list(APPEND DMRG_TARGETS primme::primme)
-endif ()
+
+include(cmake/InstallPackage.cmake)
+install_package(primme MODULE)
+
+target_link_libraries(dmrg-eig PUBLIC primme::primme)
 
 ##################################################################
 ### Link all the things!                                       ###

@@ -5,6 +5,11 @@ if(INIT_CACHE_FILE)
 endif()
 include(GNUInstallDirs)
 include(ExternalProject)
+if(NOT TARGET)
+    set(TARGET HASWELL)
+endif()
+
+
 ExternalProject_Add(external_OpenBLAS
         URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.15.tar.gz
         URL_MD5  183dbd71895f2018d297be271cb31128
