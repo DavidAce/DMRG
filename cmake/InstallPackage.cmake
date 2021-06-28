@@ -20,19 +20,100 @@ function(generate_init_cache)
     endforeach()
 endfunction()
 
+function(pkg_check_compile pkg_name target_name)
+    include(cmake/CheckCompile.cmake)
+    check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
+    if(NOT check_compile_${pkg_name} AND DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+        file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+        message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+    endif()
+endfunction()
+
+
 
 # This function will configure, build and install a package at configure-time
 # by running cmake in a subprocess. The current CMake configuration is transmitted
 # by setting the flags manually.
-function(install_package package_name install_dir extra_flags)
-    if(${package_name}_FOUND)
+function(install_package pkg_name)
+    set(options REQUIRED CONFIG MODULE CHECK)
+    set(oneValueArgs VERSION INSTALL_DIR BUILD_DIR TARGET_NAME)
+    set(multiValueArgs HINTS PATHS PATH_SUFFIXES COMPONENTS DEPENDS CMAKE_ARGS)
+    cmake_parse_arguments(PARSE_ARGV 1 PKG "${options}" "${oneValueArgs}" "${multiValueArgs}")
+
+    # Further parsing
+    set(build_dir ${DMRG_DEPS_BUILD_DIR}/${pkg_name})
+    set(install_dir ${DMRG_DEPS_INSTALL_DIR})
+    set(target_name ${pkg_name}::${pkg_name})
+
+    if(PKG_BUILD_DIR)
+        set(build_dir ${PKG_BUILD_DIR})
+    endif()
+
+    if(PKG_INSTALL_DIR)
+        set(install_dir ${PKG_INSTALL_DIR})
+    endif()
+    if (DMRG_PREFIX_ADD_PKGNAME)
+        set(install_dir ${install_dir}/${pkg_name})
+    endif()
+    if(PKG_TARGET_NAME)
+        set(target_name ${PKG_TARGET_NAME})
+    endif()
+
+    if(PKG_REQUIRED)
+        set(REQUIRED REQUIRED)
+    endif()
+    if(PKG_CONFIG)
+        set(CONFIG CONFIG)
+    endif()
+    if(PKG_COMPONENTS)
+        set(COMPONENTS COMPONENTS)
+    endif()
+
+    foreach (tgt ${PKG_DEPENDS})
+        if(NOT TARGET ${tgt})
+            list(APPEND PKG_MISSING_TARGET ${tgt})
+        endif()
+    endforeach()
+    if(PKG_MISSING_TARGET)
+        message(FATAL_ERROR "Could not install ${pkg_name}: dependencies missing [${PKG_MISSING_TARGET}]")
+    endif()
+
+    # We set variables here that allows us to find packages with CMAKE_PREFIX_PATH
+    list(APPEND CMAKE_PREFIX_PATH ${install_dir} $ENV{CMAKE_PREFIX_PATH} ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
+    list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE STRING "" FORCE)
+    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+
+    if(PKG_MODULE)
+        find_package(${pkg_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} REQUIRED)
+    else()
+        find_package(${pkg_name} ${PKG_VERSION}
+                HINTS ${PKG_HINTS}
+                PATHS ${PKG_PATHS}
+                PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
+                ${COMPONENTS} ${PKG_COMPONENTS}
+                ${REQUIRED}
+                ${CONFIG}
+                # These lets us ignore system packages when pkg manager matches "cmake"
+                NO_SYSTEM_ENVIRONMENT_PATH #5
+                NO_CMAKE_PACKAGE_REGISTRY #6
+                NO_CMAKE_SYSTEM_PATH #7
+                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY #8
+                )
+    endif()
+
+
+    if(${pkg_name}_FOUND)
+        if(PKG_DEPENDS)
+            target_link_libraries(${target_name} INTERFACE ${PKG_DEPENDS})
+        endif()
+        if(PKG_CHECK)
+            pkg_check_compile(${pkg_name} ${target_name})
+        endif()
         return()
     endif()
-    message(STATUS "OpenBLAS will be installed into ${DMRG_DEPS_INSTALL_DIR}/OpenBLAS")
-    set(build_dir ${DMRG_DEPS_BUILD_DIR}/${package_name})
-    if (DMRG_PREFIX_ADD_PKGNAME)
-        set(install_dir ${install_dir}/${package_name})
-    endif()
+
+    message(STATUS "${pkg_name} will be installed into ${install_dir}")
 
     set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
     set(CMAKE_CXX_STANDARD_REQUIRED TRUE CACHE BOOL "")
@@ -54,18 +135,18 @@ function(install_package package_name install_dir extra_flags)
             -C ${DMRG_INIT_CACHE_FILE}                # For the subproject in external_<libname>
             -DINIT_CACHE_FILE=${DMRG_INIT_CACHE_FILE} # For externalproject_add inside the subproject
             -DCMAKE_INSTALL_PREFIX:PATH=${install_dir}
-            ${extra_flags}
-            ${PROJECT_SOURCE_DIR}/cmake/external_${package_name}
+            ${PKG_CMAKE_ARGS}
+            ${PROJECT_SOURCE_DIR}/cmake/external_${pkg_name}
             WORKING_DIRECTORY ${build_dir}
             RESULT_VARIABLE config_result
     )
     if(config_result)
-        message(STATUS "Got non-zero exit code while configuring ${package_name}")
+        message(STATUS "Got non-zero exit code while configuring ${pkg_name}")
         message(STATUS  "build_dir         : ${build_dir}")
         message(STATUS  "install_dir       : ${install_dir}")
         message(STATUS  "extra_flags       : ${extra_flags}")
         message(STATUS  "config_result     : ${config_result}")
-        message(FATAL_ERROR "Failed to configure ${package_name}")
+        message(FATAL_ERROR "Failed to configure ${pkg_name}")
     endif()
 
 
@@ -76,19 +157,19 @@ function(install_package package_name install_dir extra_flags)
     # Build the package
     if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
         # This branch is for multi-config generators such as Visual Studio 16 2019
-        foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
-            execute_process(COMMAND  ${CMAKE_COMMAND} --build . --parallel ${num_threads} --config ${CONFIG}
+        foreach(config ${CMAKE_CONFIGURATION_TYPES})
+            execute_process(COMMAND  ${CMAKE_COMMAND} --build . --parallel ${num_threads} --config ${config}
                     WORKING_DIRECTORY "${build_dir}"
                     RESULT_VARIABLE build_result
-            )
+                    )
             if(build_result)
-                message(STATUS "Got non-zero exit code while building package: ${package_name}")
-                message(STATUS  "build_type        : ${CONFIG}")
+                message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
+                message(STATUS  "build_type        : ${config}")
                 message(STATUS  "build_dir         : ${build_dir}")
                 message(STATUS  "install_dir       : ${install_dir}")
-                message(STATUS  "extra_flags       : ${extra_flags}")
+                message(STATUS  "cmake_args        : ${PKG_CMAKE_ARGS}")
                 message(STATUS  "build_result      : ${build_result}")
-                message(FATAL_ERROR "Failed to build package: ${package_name}")
+                message(FATAL_ERROR "Failed to build package: ${pkg_name}")
             endif()
         endforeach()
     else()
@@ -98,12 +179,12 @@ function(install_package package_name install_dir extra_flags)
                 RESULT_VARIABLE build_result
                 )
         if(build_result)
-            message(STATUS "Got non-zero exit code while building package: ${package_name}")
+            message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
             message(STATUS  "build_dir         : ${build_dir}")
             message(STATUS  "install_dir       : ${install_dir}")
-            message(STATUS  "extra_flags       : ${extra_flags}")
+            message(STATUS  "cmake_args        : ${PKG_CMAKE_ARGS}")
             message(STATUS  "build_result      : ${build_result}")
-            message(FATAL_ERROR "Failed to build package: ${package_name}")
+            message(FATAL_ERROR "Failed to build package: ${pkg_name}")
         endif()
     endif()
 
@@ -115,4 +196,26 @@ function(install_package package_name install_dir extra_flags)
         message(STATUS "Copying install manifest: ${manifest}")
         configure_file(${manifest} ${CMAKE_CURRENT_BINARY_DIR}/${manifest_filename}_${dep_name}.txt)
     endforeach()
+
+
+    # Find the package again
+    if(PKG_MODULE)
+        find_package(${pkg_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} REQUIRED)
+    else()
+        find_package(${pkg_name} ${PKG_VERSION}
+                HINTS ${install_dir}
+                PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
+                ${COMPONENTS} ${PKG_COMPONENTS}
+                NO_DEFAULT_PATH REQUIRED)
+    endif()
+
+    if(PKG_DEPENDS)
+        target_link_libraries(${target_name} INTERFACE ${PKG_DEPENDS})
+    endif()
+
+    if(PKG_CHECK)
+        include(cmake/CheckCompile.cmake)
+        check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/external_${pkg_name}/test.cpp)
+    endif()
 endfunction()
+
