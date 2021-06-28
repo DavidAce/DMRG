@@ -3,19 +3,21 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     include(cmake/InstallPackage.cmake)
 
     # Set CMake build options
-    list(APPEND OpenBLAS_CMAKE_OPTIONS -DTARGET:STRING=${OPENBLAS_MARCH})
-    list(APPEND OpenBLAS_CMAKE_OPTIONS -DUSE_THREAD:BOOL=1)
-    list(APPEND OpenBLAS_CMAKE_OPTIONS -DBUILD_RELAPACK:BOOL=OFF)
+    if(OPENBLAS_MARCH)
+        list(APPEND OpenBLAS_ARGS -DTARGET:STRING=${OPENBLAS_MARCH})
+    endif()
+    list(APPEND OpenBLAS_ARGS -DUSE_THREAD:BOOL=ON)
+    list(APPEND OpenBLAS_ARGS -DBUILD_RELAPACK:BOOL=OFF)
 
-    list(APPEND h5pp_CMAKE_OPTIONS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
-    list(APPEND h5pp_CMAKE_OPTIONS -DH5PP_PACKAGE_MANAGER:STRING=cmake)
-    list(APPEND h5pp_CMAKE_OPTIONS -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE})
+    list(APPEND h5pp_ARGS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND h5pp_ARGS -DH5PP_PACKAGE_MANAGER:STRING=cmake)
+    list(APPEND h5pp_ARGS -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE})
 
-    list(APPEND glog_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND glog_ARGS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
 
-    list(APPEND Ceres_CMAKE_OPTIONS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
-    list(APPEND Ceres_CMAKE_OPTIONS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
-    list(APPEND Ceres_CMAKE_OPTIONS -Dglog_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND Ceres_ARGS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND Ceres_ARGS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
+    list(APPEND Ceres_ARGS -Dglog_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
 
     if (NOT BUILD_SHARED_LIBS)
         set(GFLAGS_COMPONENTS COMPONENTS)
@@ -39,7 +41,9 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     if (NOT MKL_FOUND)
         # If MKL is not on openblas will be used instead. Includes blas, lapack and lapacke
-        install_package(OpenBLAS VERSION 0.3.8 DEPENDS gfortran::gfortran Threads::Threads)
+        install_package(OpenBLAS VERSION 0.3.8
+                CMAKE_ARGS ${OpenBLAS_ARGS}
+                DEPENDS gfortran::gfortran Threads::Threads)
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
         # Fix for OpenBLAS 0.3.9, which otherwise includes <complex> inside of an extern "C" scope.
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
@@ -63,7 +67,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     # Eigen3 numerical library (needed by ceres and h5pp)
     install_package(Eigen3 VERSION 3.3)
     # h5pp for writing to file binary in format
-    install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_CMAKE_OPTIONS})
+    install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_ARGS})
     # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
     install_package(arpack-ng VERSION 3.8.0
             TARGET_NAME ARPACK::ARPACK
@@ -79,12 +83,12 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     install_package(gflags VERSION 2.2.2 COMPONENTS ${GFLAGS_COMPONENTS} ${GFLAGS_ITEMS})
 
     # Google logging library needed by ceres-solver
-    install_package(glog VERSION 0.4 CMAKE_ARGS ${glog_CMAKE_OPTIONS} CHECK)
+    install_package(glog VERSION 0.4 CMAKE_ARGS ${glog_ARGS} CHECK)
 
     # ceres-solver (for L-BFGS routine)
     install_package(Ceres VERSION 2.0
             TARGET_NAME Ceres::ceres
             DEPENDS gflags glog::glog
-            CMAKE_ARGS ${Ceres_CMAKE_OPTIONS}
+            CMAKE_ARGS ${Ceres_ARGS}
             CHECK)
 endif ()
