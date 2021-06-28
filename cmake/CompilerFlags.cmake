@@ -6,13 +6,15 @@ message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
 #####################################################
 ### Set  the same microarchitecture for OpenBLAS  ###
 #####################################################
-
-if (${DMRG_MICROARCH} STREQUAL "zenver1")
+if(NOT DMRG_MICROARCH)
+    set(DMRG_MICROARCH "native")
+endif()
+if (DMRG_MICROARCH STREQUAL "zenver1")
     set(OPENBLAS_MARCH ZEN)
-elseif (${DMRG_MICROARCH} STREQUAL "native")
+elseif (DMRG_MICROARCH STREQUAL "native")
     set(OPENBLAS_MARCH HASWELL)
-else()
-    string(TOUPPER ${DMRG_MICROARCH} OPENBLAS_MARCH)
+elseif(DMRG_MICROARCH AND NOT DMRG_MICROARCH STREQUAL "native")
+    string(TOUPPER "${DMRG_MICROARCH}" OPENBLAS_MARCH)
 endif()
 
 
