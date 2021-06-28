@@ -85,7 +85,7 @@ function(install_package pkg_name)
     set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
     if(PKG_MODULE)
-        find_package(${pkg_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} REQUIRED)
+        find_package(${pkg_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS})
     else()
         find_package(${pkg_name} ${PKG_VERSION}
                 HINTS ${PKG_HINTS}
