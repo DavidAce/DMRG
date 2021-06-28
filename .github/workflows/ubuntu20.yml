@@ -5,9 +5,10 @@ on:
   pull_request:
   push:
     branches:
-      #- master
+      - master
       - development
       - multisite_dmrg
+      - fLBIT
 
 jobs:
   ci:
