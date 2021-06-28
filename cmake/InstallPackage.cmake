@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
+include(cmake/CheckCompile.cmake)
 
 # Dumps cached variables to DMRG_INIT_CACHE_FILE so that we can propagate
 # the current build configuration to dependencies
@@ -21,7 +22,6 @@ function(generate_init_cache)
 endfunction()
 
 function(pkg_check_compile pkg_name target_name)
-    include(cmake/CheckCompile.cmake)
     check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
     if(NOT check_compile_${pkg_name} AND DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
         file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
@@ -214,8 +214,7 @@ function(install_package pkg_name)
     endif()
 
     if(PKG_CHECK)
-        include(cmake/CheckCompile.cmake)
-        check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/external_${pkg_name}/test.cpp)
+        pkg_check_compile(${pkg_name} ${target_name})
     endif()
 endfunction()
 
