@@ -25,25 +25,11 @@ if(DMRG_PREFIX_ADD_PKGNAME)
             FORCE)
 endif()
 
+
 # Add search directories and flags for the CMake find_* tools
-if(DMRG_PACKAGE_MANAGER STREQUAL "find")
-    set(REQUIRED REQUIRED)
-endif()
-if(DMRG_PACKAGE_MANAGER STREQUAL "cmake")
-    # We set variables here that allows us to find packages exclusively with CMAKE_PREFIX_PATH
-    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-    # Flags that can be used directly on find_package
-    # Enumerated according to the cmake manual for find_package
-    set(N5 NO_SYSTEM_ENVIRONMENT_PATH) #5
-    set(N6 NO_CMAKE_PACKAGE_REGISTRY) #6
-    set(N7 NO_CMAKE_SYSTEM_PATH) #7
-    set(N8 NO_CMAKE_SYSTEM_PACKAGE_REGISTRY) #8
-endif()
-if(DMRG_PACKAGE_MANAGER MATCHES "cmake")
-    list(APPEND CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH} ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
-    list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE STRING "" FORCE)
-endif()
+list(APPEND CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH} ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
+list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
+set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE STRING "" FORCE)
 
 
 

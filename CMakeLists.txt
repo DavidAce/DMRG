@@ -25,7 +25,7 @@ option(DMRG_PRINT_CHECKS "Print more information during cmake configure" OFF)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 
 # Make an "enum" for valid download methods
-set(DMRG_PACKAGE_MANAGERS_VALID find cmake find-or-cmake conan)
+set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)
 set(DMRG_PACKAGE_MANAGER find CACHE STRING "Download method for external dependencies")
 set_property(CACHE DMRG_PACKAGE_MANAGER PROPERTY STRINGS ${DMRG_PACKAGE_MANAGERS_VALID})
 if (NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
@@ -133,22 +133,9 @@ add_library(dmrg-deps INTERFACE)
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
-if(BUILD_SHARED_LIBS)
-    set(LINK_TYPE SHARED)
-else()
-    set(LINK_TYPE STATIC)
-    if (NOT DMRG_ENABLE_ASAN)
-        target_link_options(DMRG++ PUBLIC -static-libgcc -static-libstdc++)   ### Static linkage
-        #        set_target_properties(DMRG++ PROPERTIES LINK_SEARCH_START_STATIC OFF)
-        #        set_target_properties(DMRG++ PROPERTIES LINK_SEARCH_END_STATIC ON)
-        #        set(CMAKE_LINK_SEARCH_START_STATIC TRUE CACHE STRING "")
-        #        set(CMAKE_LINK_SEARCH_END_STATIC TRUE CACHE STRING "")
-    endif ()
-endif()
-
-
-
-
+if (NOT BUILD_SHARED_LIBS)
+    target_link_options(DMRG++ PUBLIC -static-libgcc -static-libstdc++)   ### Static linkage
+endif ()
 
 
 #######################################################
@@ -229,8 +216,7 @@ endif()
 if(NOT TARGET Threads::Threads)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
-    #    target_link_libraries(Threads::Threads INTERFACE -Wl,--allow-multiple-definition,--whole-archive,-lpthread,--no-whole-archive)
-        target_link_libraries(Threads::Threads INTERFACE rt dl)
+    target_link_libraries(Threads::Threads INTERFACE rt dl)
 endif ()
 
 
@@ -268,8 +254,8 @@ if(DMRG_ENABLE_PCH)
         target_precompile_headers(dmrg-opt PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
         target_precompile_headers(dmrg-main PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor> <chrono> <string_view>)
 
-        target_precompile_headers(dmrg-eig PRIVATE  <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
-        target_precompile_headers(dmrg-opt PRIVATE  <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-eig PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
+        target_precompile_headers(dmrg-opt PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
         target_precompile_headers(dmrg-main PRIVATE <config/enums.h> <tools/common/log.h> <tools/common/fmt.h>)
     endif()
 endif()
@@ -280,9 +266,7 @@ endif()
 if(DMRG_ENABLE_CCACHE)
     set(COMPILER_OK ON)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        #        target_compile_options(dmrg-main PRIVATE -Xclang -fno-pch-timestamp)
-        #        target_compile_options(dmrg-eig PRIVATE -Xclang -fno-pch-timestamp)
-        #        target_compile_options(dmrg-opt PRIVATE -Xclang -fno-pch-timestamp)
+        target_compile_options(dmrg-flags INTERFACE -Xclang -fno-pch-timestamp -fpch-preprocess)
     endif()
 
     mark_as_advanced(COMPILER_OK)
