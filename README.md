@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.org/DavidAce/DMRG.svg?branch=master)](https://travis-ci.org/DavidAce/DMRG)
 [![Build Status](https://github.com/DavidAce/DMRG/workflows/Actions/badge.svg)](https://github.com/DavidAce/DMRG/actions)
-
+[![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
 
 # DMRG++
 
@@ -10,7 +9,10 @@
   - ***i*DMRG:** *infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
   - ***f*DMRG:** *finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
   - ***x*DMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
-  - ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
+  - ***f*LBIT:** *Finite* l-BIT. Time evolution on a finite system in the basis of local integrals of motion (the
+    l-bits) of an MBL phase.
+  - ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally
+    invariant systems using unitary operators that perform imaginary time evolution.
 
 
 ### Documentation (in construction)
@@ -67,43 +69,103 @@ The script `analysis/data_analysis.py` (in progress) shows how to analyze the si
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for C++17 and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+
+- C++ compiler with support for C++17 and libstdc++ standard library implementation  (version >= 7). Tested with two
+  compilers:
     - GNU GCC versions 7 and 8 (these bundle libstdc++)
-    - Clang version >= 6.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
- - CMake version >= 3.10. 
- - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
- 
-**Ubuntu** 17 or higher will have the above versions in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
+    - Clang version >= 6.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for
+      instance from `ppa:ubuntu-toolchain-r/test`)
+- CMake version >= 3.15.
+- *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
 
-**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler is not supported at all. 
+**Ubuntu** 17 or higher will have the above versions in the default repositories. For older distributions, use the
+ppa `ubuntu-toolchain-r/test` to get newer versions.
 
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from
+llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler
+is not supported at all.
 
-### Optional Requirements
-The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
+##### Dependency handling installation with CMake
 
-  1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `libs-release` or `libs-debug`. This is an opt-in behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs-<config>` folders.
-  2. **Manually**: install the libraries yourself with your favorite package manager (e.g. `conda`,`apt` in ubuntu or `brew` in OSX). The build attempts to find libraries in your local system. 
-  3. **Manual with modules from [Easybuild](https://easybuild.readthedocs.io/en/latest/)** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules* or *Lmod*.  CMake will look for environment variables such as `EBROOT<libname>` that are defined when loading Easybuild modules.
- 
- If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from other sources package manager, or select Conan as the preferred download method. This is done
- with the flag `./build.sh --download-method=conan` or directly as a CMake cli parameter `-DDOWNLOAD_METHOD=conan`. This requires Conan to be installed in your system e.g., with apt, pip or conda.
- 
-#### List of libraries
- 
- - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS). If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source. If both MKL and OpenBLAS are found in the system, MKL is preferred.
- - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
- - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
- - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
- - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. 
- - [**spdlog**](https://github.com/gabime/spdlog) A fast logger based on fmt.
- - [**HDF5**](https://support.hdfgroup.org/HDF5/) for output binary output file support (tested with version >= 1.10).
- - [**ceres**](http://ceres-solver.org/) Optimization library. Here we use the L-BFGS routines. 
+The CMake flag `DMRG_PACKAGE_MANAGER` controls the automated behavior for finding or installing dependencies. It can
+take one of these strings:
+
+| Option | Description |
+| ---- | ---- |
+| `find` **(default)**              | Use CMake's `find_package`  to find dependencies  |
+| `cmake` **
+¹**                     | Use isolated CMake instances to download and install dependencies during configure. Disregards pre-installed dependencies on your system |
+| `conan` **
+²**                     | Use the [Conan package manager](https://conan.io/) to download and install dependencies automatically. Disregards libraries elsewhere on your system  |
+
+There are several variables you can pass to CMake to guide `find_package` calls and install location,
+see [CMake options](#cmake-options) below.
+
+**¹** Dependencies are installed into `${DMRG_DEPS_INSTALL_DIR}[/<PackageName>]`, where `DMRG_DEPS_INSTALL_DIR` defaults
+to `CMAKE_INSTALL_PREFIX` and optionally `/<PackageName>` is added if `DMRG_PREFIX_ADD_PKGNAME=TRUE`
+
+**²** Conan is guided by `conanfile.txt` found in this project's root directory. This method requires conan to be
+installed prior (for instance through `pip`, `conda`, `apt`, etc). To let CMake find conan you have three options:
+
+* Add Conan install (or bin) directory to the environment variable `PATH`.
+* Export Conan install (or bin) directory in the environment variable `CONAN_PREFIX`, i.e. from command
+  line: `export CONAN_PREFIX=<path-to-conan>`
+* Give the variable `CONAN_PREFIX` directly to CMake, i.e. from command
+  line: `cmake -DCONAN_PREFIX:PATH=<path-to-conan> ...`
+
+##### CMake options
+
+The `cmake` step above takes several options, `cmake [-DOPTIONS=var] ../ `:
+
+| Var | Default | Description |
+| ---- | ---- | ---- |
+| `DMRG_ENABLE_OPENMP`              | `OFF`                         | Use `OpenMP` in `Eigen`, `BLAS` and `LAPACK` |
+| `DMRG_PACKAGE_MANAGER`            | `find`                        | Handle dependencies, `find`, `cmake`, or `conan` |
+| `DMRG_ENABLE_OPENMP`              | `OFF`                         | Use OpenMP in Eigen, BLAS and LAPACK |
+| `DMRG_ENABLE_THREADS`             | `OFF`                         | Use C++11 stl threads in Eigen::Tensor |
+| `DMRG_ENABLE_MKL`                 | `OFF`                         | Enable Intel Math Kernel Library (else OpenBLAS)  |
+| `DMRG_ENABLE_TESTS`               | `OFF`                         | Enable unit testing with ctest |
+| `DMRG_ENABLE_ASAN`                | `OFF`                         | Enable runtime address sanitizer -fsanitize=address |
+| `DMRG_ENABLE_USAN`                | `OFF`                         | Enable undefined behavior sanitizer -fsanitize=undefined |
+| `DMRG_ENABLE_LTO`                 | `OFF`                         | Enable link time optimization |
+| `DMRG_ENABLE_PCH`                 | `OFF`                         | Enable precompiled headers to speed up compilation |
+| `DMRG_ENABLE_CCACHE`              | `OFF`                         | Enable ccache to speed up compilation |
+| `DMRG_ENABLE_COVERAGE`            | `OFF`                         | Enable test coverage |
+| `DMRG_BUILD_EXAMPLES`             | `OFF`                         | Build examples |
+| `DMRG_PRINT_INFO`                 | `OFF`                         | Print information during cmake configure |
+| `DMRG_PRINT_CHECKS`               | `OFF`                         | Print more information during cmake configure |
+| `DMRG_DEPS_INSTALL_DIR`           | `CMAKE_INSTALL_PREFIX`        | Install directory for dependenciesx |
+| `DMRG_DEPS_BUILD_DIR`             | `CMAKE_BINARY_DIR/dmrg-build` | Build directory for dependencies|
+| `DMRG_PREFIX_ADD_PKGNAME`         | `OFF`                         | Install dependencies into CMAKE_INSTALL_PREFIX/<PackageName> |
+| `BUILD_SHARED_LIBS`               | `OFF`                         | Link dependencies with static or shared libraries    |
+| `CMAKE_INSTALL_PREFIX`            | None                          | Install directory for `h5pp` and dependencies  |
+| `CONAN_PREFIX`                    | None                          | conan install directory  |
+
+In addition, variables such
+as [`<PackageName>_ROOT`](https://cmake.org/cmake/help/latest/variable/PackageName_ROOT.html)
+and [`<PackageName>_DIR`](https://cmake.org/cmake/help/latest/command/find_package.html) can be set to help guide
+CMake's `find_package` calls:
+
+#### List of dependencies
+
+- **BLAS** and **LAPACK**. Choose either [Intel MKL](https://software.intel.com/en-us/mkl)
+  or [OpenBLAS](https://github.com/xianyi/OpenBLAS). OpenBLAS can be installed automatically but to use Intel MKL it
+  must be installed separately. Note that OpenBLAS requires Fortran to compile from source.
+- [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
+- [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn
+  requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
+- [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
+- [**primme**](https://github.com/primme/primme) Eigenvalue solver. Complements Arpack.
+- [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. Includes [spdlog](https://github.com/gabime/spdlog)
+  and [fmt](https://github.com/fmtlib/fmt).
+- [**ceres**](http://ceres-solver.org/) Optimization library with L-BFGS routines for unconstrained minimization.
 
 ---
 
- 
 ## License
+
 Open source under [MPL2](https://www.mozilla.org/MPL/2.0/).
 
 ## Author
+
 David Aceituno
