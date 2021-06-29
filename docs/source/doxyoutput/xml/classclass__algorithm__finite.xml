@@ -1,65 +1,68 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="classclass__algorithm__finite" kind="class" language="C++" prot="public" abstract="yes">
     <compoundname>class_algorithm_finite</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
-    <derivedcompoundref refid="classclass__f_d_m_r_g" prot="public" virt="non-virtual">class_fDMRG</derivedcompoundref>
-    <derivedcompoundref refid="classclass__x_d_m_r_g" prot="public" virt="non-virtual">class_xDMRG</derivedcompoundref>
+    <derivedcompoundref refid="classclass__fdmrg" prot="public" virt="non-virtual">class_fdmrg</derivedcompoundref>
+    <derivedcompoundref refid="classclass__flbit" prot="public" virt="non-virtual">class_flbit</derivedcompoundref>
+    <derivedcompoundref refid="classclass__xdmrg" prot="public" virt="non-virtual">class_xdmrg</derivedcompoundref>
     <includes refid="class__algorithm__finite_8h" local="no">class_algorithm_finite.h</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a09b6d44725ae3d32093c37580b59626d" prot="public" static="no" mutable="no">
-        <type>std::shared_ptr&lt; <ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__measurements__finite" kindref="compound">class_h5table_measurements_finite</ref> &gt; &gt;</type>
-        <definition>std::shared_ptr&lt;class_h5table_buffer&lt;class_h5table_measurements_finite&gt; &gt; class_algorithm_finite::h5tbuf_measurements</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a5dd8e3c8c4c49db67834c08b02dfea77" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref></type>
+        <definition>class_tensors_finite class_algorithm_finite::tensors</definition>
         <argsstring></argsstring>
-        <name>h5tbuf_measurements</name>
+        <name>tensors</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="25" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="19" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="19" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_state_finite&gt; class_algorithm_finite::state</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a8cd8f956556aebf98f6ed5b35ef1df4a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::excited_state_number</definition>
         <argsstring></argsstring>
-        <name>state</name>
+        <name>excited_state_number</name>
+        <initializer>= 0</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
+<para>Keeps track of found excited states. Convention: &quot;0&quot; is the biased seed, and others become unbiased by randomizing from state 0 (or any other). Therefore, this number is only incremented when randomizing the current state </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="29" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="21" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" prot="public" static="no" mutable="no">
         <type>size_t</type>
         <definition>size_t class_algorithm_finite::max_stuck_iters</definition>
         <argsstring></argsstring>
         <name>max_stuck_iters</name>
-        <initializer>= 4</initializer>
+        <initializer>= 20</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="34" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="26" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="26" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1ad171a763b608bcfe1054ce56bf5ea7d2" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" prot="public" static="no" mutable="no">
         <type>size_t</type>
-        <definition>size_t class_algorithm_finite::min_stuck_iters</definition>
+        <definition>size_t class_algorithm_finite::max_saturation_iters</definition>
         <argsstring></argsstring>
-        <name>min_stuck_iters</name>
-        <initializer>= 2</initializer>
+        <name>max_saturation_iters</name>
+        <initializer>= 100</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="35" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="27" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -73,21 +76,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="37" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="28" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="28" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a0dd164b1d3efdeef2be6febc6f92c583" prot="public" static="no" mutable="no">
         <type>size_t</type>
-        <definition>size_t class_algorithm_finite::max_saturation_iters</definition>
+        <definition>size_t class_algorithm_finite::min_converged_iters</definition>
         <argsstring></argsstring>
-        <name>max_saturation_iters</name>
-        <initializer>= 3</initializer>
+        <name>min_converged_iters</name>
+        <initializer>= 2</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
+<para>Converged at least this many iters before success </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="38" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="29" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -98,111 +102,407 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
+<para>True if projection has already been tried </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="39" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="31" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="31" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" prot="public" static="no" mutable="no">
-        <type>std::list&lt; double &gt;</type>
-        <definition>std::list&lt;double&gt; class_algorithm_finite::V_mpo_vec</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a1f1777e94b4f4385bb13f9bef95c61dc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_algorithm_finite::has_expanded</definition>
         <argsstring></argsstring>
-        <name>V_mpo_vec</name>
+        <name>has_expanded</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if full expansion has already been tried </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="32" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1afe739ece30be039df7bb6333da5acf39" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_algorithm_finite::has_damped</definition>
+        <argsstring></argsstring>
+        <name>has_damped</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if damping of hamiltonian parameters is ongoing </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="33" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a1e63eab967c9d9340d9205c3dc7507ce" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::chi_quench_steps</definition>
+        <argsstring></argsstring>
+        <name>chi_quench_steps</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of steps left doing chi-quenching </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="34" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a57bbed424c2236370bd488cc54600f0a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::num_chi_quenches</definition>
+        <argsstring></argsstring>
+        <name>num_chi_quenches</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of bond dimension quench trials that have occurred </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="35" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a7ccd0bb5100ff67ce4df7c4478bcb319" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::max_chi_quenches</definition>
+        <argsstring></argsstring>
+        <name>max_chi_quenches</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of bond dimension quench trials allowed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="36" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a2adefbd0f1620458a28f24ec0044ed7f" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_algorithm_finite::chi_lim_quench_ahead</definition>
+        <argsstring></argsstring>
+        <name>chi_lim_quench_ahead</name>
+        <initializer>= 32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension during a quench </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="37" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1aaf13bc89f3c463a4c9ab5a460f82e874" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_algorithm_finite::chi_lim_quench_trail</definition>
+        <argsstring></argsstring>
+        <name>chi_lim_quench_trail</name>
+        <initializer>= 32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension during a quench </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="38" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a070190f822e54d4aec142238a47d1f09" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::num_perturbations</definition>
+        <argsstring></argsstring>
+        <name>num_perturbations</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of perturbation trials done </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="39" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a8862acc0cbf67cb0ec5329eafbc7a715" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::max_perturbations</definition>
+        <argsstring></argsstring>
+        <name>max_perturbations</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of perturbation trials allowed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="40" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a48c182668fed94c08ce984956b0ec6c1" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::perturbation_steps</definition>
+        <argsstring></argsstring>
+        <name>perturbation_steps</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of steps left doing perturbation of MPOs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="41" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a7810e9c213482dd4863a7d14cb8e0346" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::damping_steps</definition>
+        <argsstring></argsstring>
+        <name>damping_steps</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of steps left doing disorder damping of MPOs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="42" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a291b852dab91aa7f869d9c4250dab429" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::num_dampings</definition>
+        <argsstring></argsstring>
+        <name>num_dampings</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of damping trials done </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="43" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a184e1fc5c38564d1eff775fa9555e562" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::max_dampings</definition>
+        <argsstring></argsstring>
+        <name>max_dampings</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of damping trials allowed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="44" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a59a18d1613c3d26af1d5a8d39f39bf2e" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::iter_discard</definition>
+        <argsstring></argsstring>
+        <name>iter_discard</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Iteration when last discard occurred </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="45" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1ae599a2883b5e576b0b69f03faca28b8c" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::num_discards</definition>
+        <argsstring></argsstring>
+        <name>num_discards</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Counter for number of times discarding the smallest schmidt values </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="46" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1ad5f7168d2eec06732eb74e4b97d8805c" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::max_discards</definition>
+        <argsstring></argsstring>
+        <name>max_discards</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of times to discard the smallest schmidt values </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="47" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1aaea5faef0f1bcc68820e7f86a77ac82d" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::num_expansion_iters</definition>
+        <argsstring></argsstring>
+        <name>num_expansion_iters</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Counter for number of iterations of subspace expansion </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="48" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1ae154da6dd4bb4836a6577505abed6b25" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_algorithm_finite::max_expansion_iters</definition>
+        <argsstring></argsstring>
+        <name>max_expansion_iters</name>
+        <initializer>= 16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of iterations doing subspace expansion </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="49" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a6a1ae08373b06f01d4b746dd0f7c2e90" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_algorithm_finite::max_expansion_alpha</definition>
+        <argsstring></argsstring>
+        <name>max_expansion_alpha</name>
+        <initializer>= 0.2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum value of subspace expansion factor </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="50" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a9cf692068daac2fb334ada83a0603886" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_algorithm_finite::sub_expansion_alpha</definition>
+        <argsstring></argsstring>
+        <name>sub_expansion_alpha</name>
+        <initializer>= std::nullopt</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current value of the subspace expansion factor </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="51" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1af42260924092ccb272c5ca4f700038fe" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt;double&gt; class_algorithm_finite::damping_exponents</definition>
+        <argsstring></argsstring>
+        <name>damping_exponents</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Exponents for for the damping trials </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="52" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a1a2ed7db66089814ced016d0f93ccd7b" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; <ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref> &gt;</type>
+        <definition>std::optional&lt;OptMode&gt; class_algorithm_finite::last_optmode</definition>
+        <argsstring></argsstring>
+        <name>last_optmode</name>
+        <initializer>= std::nullopt</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="67" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="53" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="53" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" prot="public" static="no" mutable="no">
-        <type>std::list&lt; int &gt;</type>
-        <definition>std::list&lt;int&gt; class_algorithm_finite::X_mpo_vec</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a7dce1f378997193fffda76e73314db75" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; <ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref> &gt;</type>
+        <definition>std::optional&lt;OptSpace&gt; class_algorithm_finite::last_optspace</definition>
         <argsstring></argsstring>
-        <name>X_mpo_vec</name>
+        <name>last_optspace</name>
+        <initializer>= std::nullopt</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="68" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="54" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="54" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" prot="public" static="no" mutable="no">
-        <type>std::list&lt; double &gt;</type>
-        <definition>std::list&lt;double&gt; class_algorithm_finite::V_mpo_slopes</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a7f82f92ac61f4efae5486ce310077088" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt;double&gt; class_algorithm_finite::var_mpo_step</definition>
         <argsstring></argsstring>
-        <name>V_mpo_slopes</name>
+        <name>var_mpo_step</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="70" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="93" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="93" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; std::list&lt; double &gt; &gt;</type>
-        <definition>std::vector&lt;std::list&lt;double&gt; &gt; class_algorithm_finite::S_mat</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a15cff998705259e12405380d943d26bb" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt;double&gt; class_algorithm_finite::var_mpo_iter</definition>
         <argsstring></argsstring>
-        <name>S_mat</name>
+        <name>var_mpo_iter</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="73" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="94" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="94" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1a3907217095a878d781f55a6771b9c0ca" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; std::list&lt; int &gt; &gt;</type>
-        <definition>std::vector&lt;std::list&lt;int&gt; &gt; class_algorithm_finite::X_mat</definition>
+      <memberdef kind="variable" id="classclass__algorithm__finite_1a96d01fcfd2c06e9b4ecf2e1da197b2a9" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; double &gt; &gt;</type>
+        <definition>std::vector&lt;std::vector&lt;double&gt; &gt; class_algorithm_finite::entropy_iter</definition>
         <argsstring></argsstring>
-        <name>X_mat</name>
+        <name>entropy_iter</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="74" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" prot="public" static="no" mutable="no">
-        <type>std::list&lt; double &gt;</type>
-        <definition>std::list&lt;double&gt; class_algorithm_finite::S_slopes</definition>
-        <argsstring></argsstring>
-        <name>S_slopes</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="76" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="95" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="95" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classclass__algorithm__finite_1a400c889ba19892c299f1ae049d3a07bb" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a82a008615f845f5ad5a40e25f5abc671" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>class_algorithm_finite::class_algorithm_finite</definition>
-        <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)</argsstring>
+        <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_, AlgorithmType algo_type)</argsstring>
         <name>class_algorithm_finite</name>
         <param>
           <type>std::shared_ptr&lt; h5pp::File &gt;</type>
           <declname>h5ppFile_</declname>
         </param>
         <param>
-          <type>std::string</type>
-          <declname>sim_name</declname>
-        </param>
-        <param>
-          <type><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref></type>
-          <declname>sim_type</declname>
-        </param>
-        <param>
-          <type>size_t</type>
-          <declname>num_sites</declname>
+          <type><ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref></type>
+          <declname>algo_type</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -210,61 +510,39 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="13" bodyend="44"/>
-        <references refid="classclass__algorithm__finite_1a400c889ba19892c299f1ae049d3a07bb" compoundref="class__algorithm__finite_8cpp" startline="13" endline="44">class_algorithm_finite</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1aea38eefb2308d0ee08f9fe98cebe0180" compoundref="class__state__finite_8cpp" startline="108" endline="112">class_state_finite::set_chi_lim</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a70318ecfb101bca752ecc239971237bc" compoundref="finite_2mps_8cpp" startline="15" endline="30">tools::finite::mps::initialize</references>
-        <references refid="namespacetools_1_1finite_1_1mpo_1a03754b0499f9154ebe733ce673291a73" compoundref="finite_2mpo_8cpp" startline="22" endline="48">tools::finite::mpo::randomize</references>
-        <references refid="namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82" compoundref="nmspc__settings_8h" startline="55">settings::model::seed_model</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" compoundref="finite_2mps_8cpp" startline="79" endline="134">tools::finite::mps::rebuild_environments</references>
-        <references refid="namespacetools_1_1finite_1_1debug_1aa2f45bb2e350bec302e3c8f59f1733a0" compoundref="finite_2debug_8cpp" startline="13" endline="28">tools::finite::debug::check_integrity</references>
-        <references refid="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" compoundref="class__algorithm__finite_8h" startline="73">S_mat</references>
-        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
-        <references refid="classclass__algorithm__finite_1a3907217095a878d781f55a6771b9c0ca" compoundref="class__algorithm__finite_8h" startline="74">X_mat</references>
-        <references refid="namespacetools_1_1finite_1_1print_1a8b8e7d219d29756636fc32b0a9667b3a" compoundref="finite_2print_8cpp" startline="100" endline="113">tools::finite::print::print_hamiltonians</references>
-        <references refid="namespacetools_1_1finite_1_1print_1a20584ad39f2fc94cc75451fe2f148fd3" compoundref="finite_2print_8cpp" startline="33" endline="73">tools::finite::print::print_state</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a6dcec457470696e90ecc3f67746a6f81" compoundref="finite_2io_2h5pp_8cpp" startline="109" endline="131">tools::finite::io::h5dset::write_model</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="18" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="24" bodyend="35"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a0ce48333412bf3d6ee639d09c46e8a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a14fc566b3920b5c8541f776a822fe0a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
-        <definition>virtual void class_algorithm_finite::run_simulation</definition>
+        <definition>virtual void class_algorithm_finite::run_algorithm</definition>
         <argsstring>()=0</argsstring>
-        <name>run_simulation</name>
-        <reimplementedby refid="classclass__f_d_m_r_g_1a08fe1cb78f4ba42593dac8d1ca7c73c9">run_simulation</reimplementedby>
-        <reimplementedby refid="classclass__x_d_m_r_g_1a3986f9f47360d4c52cd4b44a9e87fb3e">run_simulation</reimplementedby>
+        <name>run_algorithm</name>
+        <reimplementedby refid="classclass__fdmrg_1ac77e5e28355aa9daad26c36c22ea60ec">run_algorithm</reimplementedby>
+        <reimplementedby refid="classclass__flbit_1aae944505c997a6ab271cffcd7cb17e4b">run_algorithm</reimplementedby>
+        <reimplementedby refid="classclass__xdmrg_1aa0e667b49b59b265db5ca81a14cd4c66">run_algorithm</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="43" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="57" column="18"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1aef508b162680eadb951cf3811642fce9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1ac1b7db3efa95c1240c457eb29825120a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::run_preprocessing</definition>
-        <argsstring>()</argsstring>
+        <definition>virtual void class_algorithm_finite::run_preprocessing</definition>
+        <argsstring>()=0</argsstring>
         <name>run_preprocessing</name>
-        <reimplementedby refid="classclass__x_d_m_r_g_1a30d7f435a132a1b91becb184a17f9aec">run_preprocessing</reimplementedby>
+        <reimplementedby refid="classclass__fdmrg_1aba688522fb56d970f42fbab9e42e1f7e">run_preprocessing</reimplementedby>
+        <reimplementedby refid="classclass__flbit_1a73b462aad62d92e8f70e9e5d304d7b87">run_preprocessing</reimplementedby>
+        <reimplementedby refid="classclass__xdmrg_1aa5ced2cb9baabb219c001af2216b35da">run_preprocessing</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="120" bodyend="128"/>
-        <references refid="namespacetools_1_1common_1_1profile_1aa2fa0044907366bfc5a6e76acfcd5718" compoundref="nmspc__tools_8h" startline="375">tools::common::profile::t_pre</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1af2f7c38b97cfefef4fe396b0b3cd0623" compoundref="class__state__finite_8cpp" startline="118" endline="122">class_state_finite::set_chi_max</references>
-        <references refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b">class_algorithm_base::chi_max</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a394209e7e516250158bc78e854504288" compoundref="class__simulation__status_8h" startline="23">status_data::chi_max</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="58" column="18"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__finite_1a37993b5dd8c0999078d23f699d533efc" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -277,29 +555,65 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="147" bodyend="167"/>
-        <references refid="namespacetools_1_1common_1_1profile_1a5cbadb8724693e3d427289c9ea35e904" compoundref="nmspc__tools_8h" startline="376">tools::common::profile::t_pos</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="namespacetools_1_1finite_1_1debug_1aa2f45bb2e350bec302e3c8f59f1733a0" compoundref="finite_2debug_8cpp" startline="13" endline="28">tools::finite::debug::check_integrity</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
-        <references refid="classclass__algorithm__finite_1ac996a89d34ba9c9323e04c8e1fad54e2" compoundref="class__algorithm__finite_8cpp" startline="595" endline="621">print_status_update</references>
-        <references refid="classclass__algorithm__finite_1a56fa115bbb861cb586ba78ef0624978b" compoundref="class__algorithm__finite_8cpp" startline="431" endline="468">write_state</references>
-        <references refid="classclass__algorithm__finite_1aa96d6f71f47d67fe96153659fc98b677" compoundref="class__algorithm__finite_8cpp" startline="471" endline="520">write_measurements</references>
-        <references refid="classclass__algorithm__finite_1a586a8ac4f8036c870b826485a42bd6d8" compoundref="class__algorithm__finite_8cpp" startline="524" endline="557">write_sim_status</references>
-        <references refid="classclass__algorithm__finite_1ab5734a8b4a609be5f402b87bae2c4f64" compoundref="class__algorithm__finite_8cpp" startline="560" endline="572">write_profiling</references>
-        <references refid="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725" compoundref="class__algorithm__finite_8cpp" startline="625" endline="653">print_status_full</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-        <references refid="namespacetools_1_1common_1_1profile_1ae901a49d98722e40c314bef9a595bdc7" compoundref="prof_8cpp" startline="11" endline="34">tools::common::profile::print_profiling</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="59" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="93" bodyend="102"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a54acaecd0069e1c586e060cdfe41c67a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a93360714317e0a3b24af983b007221b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool</type>
+        <definition>virtual bool class_algorithm_finite::cfg_store_wave_function</definition>
+        <argsstring>()=0</argsstring>
+        <name>cfg_store_wave_function</name>
+        <reimplementedby refid="classclass__fdmrg_1a4521da1a8170f4e6e1abf5926b0c989d">cfg_store_wave_function</reimplementedby>
+        <reimplementedby refid="classclass__flbit_1a9b4bda5bc1d34c12ea2698a570046c49">cfg_store_wave_function</reimplementedby>
+        <reimplementedby refid="classclass__xdmrg_1a52d445beee22b1dd7431f075d2cb7796">cfg_store_wave_function</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="60" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1aa9fc4a0111ae78e0a61e5b97223eda8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::single_DMRG_step</definition>
-        <argsstring>(std::string ritz)</argsstring>
-        <name>single_DMRG_step</name>
+        <definition>virtual void class_algorithm_finite::resume</definition>
+        <argsstring>()=0</argsstring>
+        <name>resume</name>
+        <reimplementedby refid="classclass__fdmrg_1aaa6f2a22ac8bbced6c506d006bad0438">resume</reimplementedby>
+        <reimplementedby refid="classclass__flbit_1a8acf039e80796d7f06d2fee51a6a0693">resume</reimplementedby>
+        <reimplementedby refid="classclass__xdmrg_1a4a1fce229af24e378c4cc23c676d5daa">resume</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="61" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a449bdbc5c87a4f8bb46509278a1e0688" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_finite::run_default_task_list</definition>
+        <argsstring>()=0</argsstring>
+        <name>run_default_task_list</name>
+        <reimplementedby refid="classclass__fdmrg_1aefe41cbe1ed1ed8c776c5ff9dad95c4b">run_default_task_list</reimplementedby>
+        <reimplementedby refid="classclass__flbit_1a530e68305ed3bfeb8a7dada331739b31">run_default_task_list</reimplementedby>
+        <reimplementedby refid="classclass__xdmrg_1a11be71d7d313a8f03afa71691b61413e">run_default_task_list</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="62" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a4f369185f794545116447b1a3a587625" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_projection</definition>
+        <argsstring>(std::optional&lt; std::string &gt; target_sector=std::nullopt)</argsstring>
+        <name>try_projection</name>
         <param>
-          <type>std::string</type>
-          <declname>ritz</declname>
+          <type>std::optional&lt; std::string &gt;</type>
+          <declname>target_sector</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -307,50 +621,137 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="133" bodyend="-1"/>
-        <references refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" compoundref="nmspc__tools_8h" startline="377">tools::common::profile::t_sim</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_tot</references>
-        <references refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" compoundref="class__tic__toc_8cpp" startline="103" endline="105">class_tic_toc::get_age</references>
-        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
-        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="63" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="311" bodyend="373"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1ab10abda24e7005f8b35a2d05e9cc7921" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>bool</type>
-        <definition>virtual bool class_algorithm_finite::store_wave_function</definition>
-        <argsstring>()=0</argsstring>
-        <name>store_wave_function</name>
-        <reimplementedby refid="classclass__f_d_m_r_g_1a1494c07358752254c4dd739c160698f4">store_wave_function</reimplementedby>
-        <reimplementedby refid="classclass__x_d_m_r_g_1aa3e2f1e9f0a0a01471b2f0833acfad3e">store_wave_function</reimplementedby>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a42c3ba8f6917186a93577844aed4392b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_full_expansion</definition>
+        <argsstring>()</argsstring>
+        <name>try_full_expansion</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="47" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="64" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="375" bodyend="389"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a8dcbb27105c5e5623050c545d8b5f3cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a661ad455699f881c2ff834bbc0388f99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_discard_small_schmidt</definition>
+        <argsstring>()</argsstring>
+        <name>try_discard_small_schmidt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="65" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="391" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a31675464960455f0e8fc7294a8f14c47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_bond_dimension_quench</definition>
+        <argsstring>()</argsstring>
+        <name>try_bond_dimension_quench</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="66" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="405" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a92c41533b4b93b564a710bedd3eb98a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_hamiltonian_perturbation</definition>
+        <argsstring>()</argsstring>
+        <name>try_hamiltonian_perturbation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="67" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="446" bodyend="463"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1afb58057c87ac28cb03296240205ab7d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::try_disorder_damping</definition>
+        <argsstring>()</argsstring>
+        <name>try_disorder_damping</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="68" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="465" bodyend="494"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1aa51f43031831b46cef58fabde7410452" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void class_algorithm_finite::move_center_point</definition>
-        <argsstring>()</argsstring>
+        <argsstring>(std::optional&lt; long &gt; num_moves=std::nullopt)</argsstring>
         <name>move_center_point</name>
+        <param>
+          <type>std::optional&lt; long &gt;</type>
+          <declname>num_moves</declname>
+          <defval>std::nullopt</defval>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="170" bodyend="182"/>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a487d8b4e858dfa77a4ba5b7db8486474" compoundref="svd_8cpp" startline="328" endline="420">tools::finite::mps::move_center_point</references>
-        <references refid="namespacetools_1_1finite_1_1print_1a20584ad39f2fc94cc75451fe2f148fd3" compoundref="finite_2print_8cpp" startline="33" endline="73">tools::finite::print::print_state</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="69" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="104" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a18d4f093525edb51068e78656195370c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::reduce_mpo_energy</definition>
+        <argsstring>()</argsstring>
+        <name>reduce_mpo_energy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="70" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="154" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1af9b89cf9cc5921e4fce483944eb0ce15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::rebuild_mpo_squared</definition>
+        <argsstring>()</argsstring>
+        <name>rebuild_mpo_squared</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="71" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="166" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1ad4868cc94f2a7dc1e543fcaf10a79296" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::update_variance_max_digits</definition>
+        <argsstring>(std::optional&lt; double &gt; energy=std::nullopt) final</argsstring>
+        <name>update_variance_max_digits</name>
+        <reimplements refid="classclass__algorithm__base_1a245737c384ff850e145dc0f9f29b70cf">update_variance_max_digits</reimplements>
+        <param>
+          <type>std::optional&lt; double &gt;</type>
+          <declname>energy</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="72" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="173" bodyend="186"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacesettings_1_1precision_1af241365d45c25fd1f464b664f358e982" compoundref="nmspc__settings_8h" startline="173">settings::precision::use_reduced_energy</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__finite_1af95402763a137d45e2b25ceecc9252af" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -369,26 +770,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="189" bodyend="274"/>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1aea38eefb2308d0ee08f9fe98cebe0180" compoundref="class__state__finite_8cpp" startline="108" endline="112">class_state_finite::set_chi_lim</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1ad9cfe0cc4a462c416584066fb9abc28f" compoundref="class__simulation__status_8h" startline="24">status_data::chi_lim</references>
-        <references refid="classclass__state__finite_1a3364452c2cfa578c7de18e28eee2d675" compoundref="class__state__finite_8cpp" startline="104" endline="107">class_state_finite::get_chi_lim</references>
-        <references refid="classclass__algorithm__base_1a43b93d906ce8263b7436c4758231ba5e">class_algorithm_base::chi_init</references>
-        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
-        <references refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b">class_algorithm_base::chi_max</references>
-        <references refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6">class_algorithm_base::chi_grow</references>
-        <references refid="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" compoundref="class__simulation__status_8h" startline="43">status_data::simulation_has_stuck_for</references>
-        <references refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" compoundref="class__algorithm__finite_8h" startline="34">max_stuck_iters</references>
-        <references refid="classclass__algorithm__finite_1a56fa115bbb861cb586ba78ef0624978b" compoundref="class__algorithm__finite_8cpp" startline="431" endline="468">write_state</references>
-        <references refid="classclass__algorithm__finite_1aa96d6f71f47d67fe96153659fc98b677" compoundref="class__algorithm__finite_8cpp" startline="471" endline="520">write_measurements</references>
-        <references refid="classclass__algorithm__finite_1a586a8ac4f8036c870b826485a42bd6d8" compoundref="class__algorithm__finite_8cpp" startline="524" endline="557">write_sim_status</references>
-        <references refid="classclass__algorithm__finite_1ab5734a8b4a609be5f402b87bae2c4f64" compoundref="class__algorithm__finite_8cpp" startline="560" endline="572">write_profiling</references>
-        <references refid="classclass__algorithm__finite_1a453b5c2fb7cbbce1e3572259bc81c7d8" compoundref="class__algorithm__finite_8cpp" startline="401" endline="428">clear_saturation_status</references>
-        <references refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" compoundref="class__algorithm__finite_8h" startline="39">has_projected</references>
-        <references refid="namespacesettings_1_1model_1ae14bbe9ea2acf3d3905f97a21dc9b7d3" compoundref="nmspc__settings_8h" startline="58">settings::model::projection_when_growing_chi</references>
-        <references refid="classclass__algorithm__finite_1a6383a637d4b518f378b1d666d50c6206" compoundref="class__algorithm__finite_8cpp" startline="587" endline="593">copy_from_tmp</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="73" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="188" bodyend="246"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacesettings_1_1precision_1a0cc3a40383a3e2795dd38b77a6790872" compoundref="nmspc__settings_8h" startline="170">settings::precision::svd_threshold</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a3f9c4aa638fb9ca80033657be16903b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::randomize_model</definition>
+        <argsstring>()</argsstring>
+        <name>randomize_model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="74" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="248" bodyend="252"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -397,75 +794,80 @@
         <name>run</name>
         <reimplements refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027">run</reimplements>
         <briefdescription>
-<para>Dispatches finite DMRG stages. This function manages the stages of simulation differently depending on whether the data already existed in hdf5 storage or not. </para>        </briefdescription>
+<para>Dispatches finite DMRG stages. This function manages the stages of simulation differently depending on whether the data already existed in hdf5 storage or not. </para>
+        </briefdescription>
         <detaileddescription>
-<para>There can be two main scenarios that split into cases: 1) The hdf5 file existed already and contains a) nothing recognizeable (previous crash?) <ndash/> run full simulation from scratch. b) a converged simulation but no MPS <ndash/> run full simulation from scratch. c) a not-yet-converged MPS <ndash/> resume simulation, reset the number of sweeps first. d) a converged MPS <ndash/> not much to do... run postprocessing 2) The hdf5 file did not exist <ndash/> run full simulation from scratch. </para>        </detaileddescription>
+<para>We start by searching the HDF5 group tree looking for</para>
+<para>These are the scenarios: 1) The hdf5 file existed already and contains a) nothing recognizable (previous crash?) <ndash/> delete the file -&gt; run full simulation from scratch. b) a converged simulation but no MPS <ndash/> run full simulation from scratch. c) a not-yet-converged MPS <ndash/> resume simulation, reset the number of sweeps first. d) a converged MPS <ndash/> not much to do... run postprocessing 2) The hdf5 file did not exist <ndash/> run full simulation from scratch. <verbatim> D1: output file exists: check option in settings::output::create_mode:
+     - case OPEN:        Load config and simulation state -&gt; continue simulation
+     - case RENAME:      Rename output file -&gt; go to D2
+     - case TRUNCATE:    Delete output file -&gt; go to D2
+
+ D2: output file does not exist: Check if coming from A2
+     - Yes: load simulation state from given hdf5 file -&gt; continue simulation
+     - No: start new simulation
+</verbatim> </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="47" bodyend="117"/>
-        <references refid="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037">class_algorithm_base::sim_on</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_tot</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
-        <references refid="classclass__algorithm__finite_1aef508b162680eadb951cf3811642fce9" compoundref="class__algorithm__finite_8cpp" startline="120" endline="128">run_preprocessing</references>
-        <references refid="classclass__algorithm__finite_1a0ce48333412bf3d6ee639d09c46e8a51">run_simulation</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5restore_1a96a231c92a6e790db619ed69893a627d" compoundref="h5pp__restore_8cpp" startline="11" endline="21">tools::finite::io::h5restore::load_from_hdf5</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="41">class_algorithm_base::sim_name</references>
-        <references refid="namespacesettings_1_1xdmrg_1a583c82585f19f30d183fc7fb8835e7e1" compoundref="nmspc__settings_8h" startline="145">settings::xdmrg::max_sweeps</references>
-        <references refid="classclass__state__finite_1a1b8ce84b4c6ec114918e7fb793f1d91d" compoundref="class__state__finite_8cpp" startline="93" endline="93">class_state_finite::get_sweeps</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-        <references refid="classclass__algorithm__finite_1a37993b5dd8c0999078d23f699d533efc" compoundref="class__algorithm__finite_8cpp" startline="147" endline="167">run_postprocessing</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="75" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="45" bodyend="91"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a453b5c2fb7cbbce1e3572259bc81c7d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a8fa80baac08c61d142ac0114329a1592" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::clear_saturation_status</definition>
+        <definition>void class_algorithm_finite::clear_convergence_status</definition>
         <argsstring>() override</argsstring>
-        <name>clear_saturation_status</name>
-        <reimplements refid="classclass__algorithm__base_1adae1b7c6678d8c52304a3bcf64c1b521">clear_saturation_status</reimplements>
+        <name>clear_convergence_status</name>
+        <reimplements refid="classclass__algorithm__base_1a9209394aae1cb1f7a7ef4fe3c41d30b6">clear_convergence_status</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="401" bodyend="428"/>
-        <references refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" compoundref="class__algorithm__finite_8h" startline="76">S_slopes</references>
-        <references refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" compoundref="class__algorithm__finite_8h" startline="67">V_mpo_vec</references>
-        <references refid="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" compoundref="class__algorithm__finite_8h" startline="68">X_mpo_vec</references>
-        <references refid="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" compoundref="class__algorithm__finite_8h" startline="70">V_mpo_slopes</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
-        <references refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" compoundref="class__simulation__status_8h" startline="47">status_data::entanglement_has_saturated</references>
-        <references refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" compoundref="class__simulation__status_8h" startline="54">status_data::entanglement_saturated_for</references>
-        <references refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" compoundref="class__simulation__status_8h" startline="48">status_data::variance_mpo_has_converged</references>
-        <references refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" compoundref="class__simulation__status_8h" startline="49">status_data::variance_mpo_has_saturated</references>
-        <references refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" compoundref="class__simulation__status_8h" startline="55">status_data::variance_mpo_saturated_for</references>
-        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
-        <references refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" compoundref="class__simulation__status_8h" startline="44">status_data::simulation_has_to_stop</references>
-        <references refid="structstatus__data_1ad1888c88421c43a27431329438801788" compoundref="class__simulation__status_8h" startline="42">status_data::simulation_has_got_stuck</references>
-        <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
-        <references refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" compoundref="class__simulation__status_8h" startline="40">status_data::simulation_has_saturated</references>
-        <references refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" compoundref="class__simulation__status_8h" startline="41">status_data::simulation_has_succeeded</references>
-        <references refid="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" compoundref="class__simulation__status_8h" startline="43">status_data::simulation_has_stuck_for</references>
-        <references refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" compoundref="class__algorithm__finite_8h" startline="39">has_projected</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="76" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="592" bodyend="612"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a52ad711d5cc01fa67e7db4190d748ffb" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a39433db5a7d4de5b17d342f8cd6e9be8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::reset_to_random_state</definition>
-        <argsstring>(const std::string parity_sector=&quot;random&quot;, int seed_state=-1) final</argsstring>
-        <name>reset_to_random_state</name>
-        <reimplements refid="classclass__algorithm__base_1a4db893602692d81b4cce5e197b5a5238">reset_to_random_state</reimplements>
+        <definition>void class_algorithm_finite::randomize_state</definition>
+        <argsstring>(ResetReason reason, StateInit state_init, std::optional&lt; StateInitType &gt; state_type=std::nullopt, std::optional&lt; std::string &gt; sector=std::nullopt, std::optional&lt; long &gt; chi_lim=std::nullopt, std::optional&lt; bool &gt; use_eigenspinors=std::nullopt, std::optional&lt; long &gt; bitfield=std::nullopt, std::optional&lt; double &gt; svd_threshold=std::nullopt)</argsstring>
+        <name>randomize_state</name>
         <param>
-          <type>const std::string</type>
-          <declname>parity_sector</declname>
-          <defval>&quot;random&quot;</defval>
+          <type><ref refid="config_2enums_8h_1a06d9333e5541d14a05e83e78d4a07e11" kindref="member">ResetReason</ref></type>
+          <declname>reason</declname>
         </param>
         <param>
-          <type>int</type>
-          <declname>seed_state</declname>
-          <defval>-1</defval>
+          <type><ref refid="config_2enums_8h_1adbe3cea8d0d506925fa70531119e2976" kindref="member">StateInit</ref></type>
+          <declname>state_init</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1ab9aca94621ab32fee58ebbbd4dbdcc0b" kindref="member">StateInitType</ref> &gt;</type>
+          <declname>state_type</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string &gt;</type>
+          <declname>sector</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; long &gt;</type>
+          <declname>chi_lim</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; bool &gt;</type>
+          <declname>use_eigenspinors</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; long &gt;</type>
+          <declname>bitfield</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; double &gt;</type>
+          <declname>svd_threshold</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -473,29 +875,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="278" bodyend="288"/>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
-        <references refid="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8">class_algorithm_base::num_sites</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a4c2e547e9034696d8fecebc735ac6f19" compoundref="finite_2mps_8cpp" startline="34" endline="76">tools::finite::mps::randomize</references>
-        <references refid="namespacesettings_1_1model_1a2b2ff3a327a7ba07f22ddbd0b5747631" compoundref="nmspc__settings_8h" startline="61">settings::model::use_pauli_eigvecs</references>
-        <references refid="namespacesettings_1_1model_1abf7a65496d4c38b818f6b1e4e3c8a02f" compoundref="nmspc__settings_8h" startline="57">settings::model::use_seed_state_as_enumeration</references>
-        <references refid="classclass__algorithm__finite_1a453b5c2fb7cbbce1e3572259bc81c7d8" compoundref="class__algorithm__finite_8cpp" startline="401" endline="428">clear_saturation_status</references>
-        <references refid="classclass__state__finite_1a2ac4249cf2e85ae5fe84253ca33e2873" compoundref="class__state__finite_8h" startline="168">class_state_finite::lowest_recorded_variance</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="classclass__state__finite_1a3ab202d7ef2f79988335d1208091d730" compoundref="class__state__finite_8cpp" startline="94" endline="94">class_state_finite::reset_sweeps</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="77" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="254" bodyend="309"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a56fa115bbb861cb586ba78ef0624978b" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a24226affd3cb1be61308e79c9d5225b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::write_state</definition>
-        <argsstring>(bool result=false) final</argsstring>
-        <name>write_state</name>
-        <reimplements refid="classclass__algorithm__base_1acd6001b7e51cc59ad9c81309cf6fabf8">write_state</reimplements>
+        <definition>void class_algorithm_finite::write_to_file</definition>
+        <argsstring>(StorageReason storage_reason=StorageReason::CHECKPOINT, std::optional&lt; CopyPolicy &gt; copy_file=std::nullopt) override</argsstring>
+        <name>write_to_file</name>
+        <reimplements refid="classclass__algorithm__base_1a505f7dadceb3bfa9f06ff19a5f1ec158">write_to_file</reimplements>
+        <reimplementedby refid="classclass__flbit_1a56315877a71d047d817d4c56f087bea6">write_to_file</reimplementedby>
         <param>
-          <type>bool</type>
-          <declname>result</declname>
-          <defval>false</defval>
+          <type><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref></type>
+          <declname>storage_reason</declname>
+          <defval><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a0f15e1247e93ddfa95c008106eb0d22f" kindref="member">StorageReason::CHECKPOINT</ref></defval>
+        </param>
+        <param>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref> &gt;</type>
+          <declname>copy_file</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -503,147 +900,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="431" bodyend="468"/>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a5c88ea636777b8051d953b43f951e225" compoundref="finite_2io_2h5pp_8cpp" startline="28" endline="48">tools::finite::io::h5dset::write_all_state</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="41">class_algorithm_base::sim_name</references>
-        <references refid="classclass__algorithm__finite_1ab10abda24e7005f8b35a2d05e9cc7921">store_wave_function</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1">FULL</references>
-        <references refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6">class_algorithm_base::chi_grow</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="82" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="692" bodyend="694"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1aa96d6f71f47d67fe96153659fc98b677" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
-        <type>void</type>
-        <definition>void class_algorithm_finite::write_measurements</definition>
-        <argsstring>(bool result=false) final</argsstring>
-        <name>write_measurements</name>
-        <reimplements refid="classclass__algorithm__base_1a6ad92368ba8eb1bd460926505b09285c">write_measurements</reimplements>
-        <param>
-          <type>bool</type>
-          <declname>result</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="471" bodyend="520"/>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
-        <references refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6">class_algorithm_base::chi_grow</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a97aed3a0c504bb233b617780efb6fe14" compoundref="finite_2io_2h5pp_8cpp" startline="133" endline="155">tools::finite::io::h5dset::write_array_measurements</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5table_1abd3eddbcf05e6a274c6a18fa43d570f8" compoundref="finite_2io_2h5pp__tables_8cpp" startline="10" endline="35">tools::finite::io::h5table::write_measurements</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="classclass__algorithm__finite_1a09b6d44725ae3d32093c37580b59626d" compoundref="class__algorithm__finite_8h" startline="25">h5tbuf_measurements</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1">FULL</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a586a8ac4f8036c870b826485a42bd6d8" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
-        <type>void</type>
-        <definition>void class_algorithm_finite::write_sim_status</definition>
-        <argsstring>(bool result=false) final</argsstring>
-        <name>write_sim_status</name>
-        <reimplements refid="classclass__algorithm__base_1a9efb7f72aae3c265865f61f7bd398517">write_sim_status</reimplements>
-        <param>
-          <type>bool</type>
-          <declname>result</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="524" bodyend="557"/>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5table_1af34d60a4a6f784a148a20597e8b61354" compoundref="finite_2io_2h5pp__tables_8cpp" startline="37" endline="39">tools::finite::io::h5table::write_sim_status</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="classclass__algorithm__base_1a068eedc09bbb4355bb691d2aeb48d48d" compoundref="class__algorithm__base_8h" startline="39">class_algorithm_base::h5tbuf_sim_status</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1ab5734a8b4a609be5f402b87bae2c4f64" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
-        <type>void</type>
-        <definition>void class_algorithm_finite::write_profiling</definition>
-        <argsstring>(bool result=false) final</argsstring>
-        <name>write_profiling</name>
-        <reimplements refid="classclass__algorithm__base_1a7e6cdf8946219f3faba2c2e8791235ca">write_profiling</reimplements>
-        <param>
-          <type>bool</type>
-          <declname>result</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="560" bodyend="572"/>
-        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="175">settings::profiling::on</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5table_1ad7b594dd1c91eafeccb5e9ca34fe0035" compoundref="finite_2io_2h5pp__tables_8cpp" startline="41" endline="43">tools::finite::io::h5table::write_profiling</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="classclass__algorithm__base_1ab0712c1f7e09a4ffcac2d8df99bf4b6b" compoundref="class__algorithm__base_8h" startline="38">class_algorithm_base::h5tbuf_profiling</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a6383a637d4b518f378b1d666d50c6206" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
-        <type>void</type>
-        <definition>void class_algorithm_finite::copy_from_tmp</definition>
-        <argsstring>(bool result=false) final</argsstring>
-        <name>copy_from_tmp</name>
-        <reimplements refid="classclass__algorithm__base_1a12a713db549861c7293191b92bf75c08">copy_from_tmp</reimplements>
-        <param>
-          <type>bool</type>
-          <declname>result</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="587" bodyend="593"/>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" compoundref="h5pp__tmp_8cpp" startline="88" endline="114">tools::common::io::h5tmp::copy_from_tmp</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1ac996a89d34ba9c9323e04c8e1fad54e2" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a36a983fdccbfe7f72e5bdf81fe06c23d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>void class_algorithm_finite::print_status_update</definition>
-        <argsstring>() final</argsstring>
+        <argsstring>() override</argsstring>
         <name>print_status_update</name>
         <reimplements refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738">print_status_update</reimplements>
+        <reimplementedby refid="classclass__flbit_1ab1a6aeb2da67e707e37e2619cab57009">print_status_update</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="595" bodyend="621"/>
-        <references refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb">class_algorithm_base::print_freq</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" compoundref="finite_2measure_8cpp" startline="310" endline="348">tools::finite::measure::mps_wavefn</references>
-        <references refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" compoundref="class__algorithm__base_8h" startline="42">class_algorithm_base::sim_type</references>
-        <references refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="83" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="789" bodyend="838"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacesettings_1_1strategy_1aeb593f360e13adb30f9e1b5a1d4a98d0" compoundref="nmspc__settings_8h" startline="155">settings::strategy::multisite_mps_size_max</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -657,24 +931,62 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="625" bodyend="653"/>
-        <references refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" compoundref="class__algorithm__base_8h" startline="42">class_algorithm_base::sim_type</references>
-        <references refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="84" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="840" bodyend="882"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1adb9ddcca8ca3a07a687c1abd370dec4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a9e5ff92799e6f46ed6e32d544e59d981" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void class_algorithm_finite::check_convergence_variance</definition>
-        <argsstring>(double threshold=quietNaN, double slope_threshold=quietNaN)</argsstring>
+        <argsstring>(std::optional&lt; double &gt; threshold=std::nullopt, std::optional&lt; double &gt; saturation_sensitivity=std::nullopt)</argsstring>
         <name>check_convergence_variance</name>
+        <param>
+          <type>std::optional&lt; double &gt;</type>
+          <declname>threshold</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; double &gt;</type>
+          <declname>saturation_sensitivity</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="85" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="496" bodyend="527"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1aeaabc1b9ca94f6d5bef1462941718687" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::check_convergence_entg_entropy</definition>
+        <argsstring>(std::optional&lt; double &gt; saturation_sensitivity=std::nullopt)</argsstring>
+        <name>check_convergence_entg_entropy</name>
+        <param>
+          <type>std::optional&lt; double &gt;</type>
+          <declname>saturation_sensitivity</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="86" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="529" bodyend="575"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a8afbac16dc34dd49f2ad7decc965b98a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_finite::check_convergence_spin_parity_sector</definition>
+        <argsstring>(const std::string &amp;target_sector, double threshold=1e-12)</argsstring>
+        <name>check_convergence_spin_parity_sector</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>target_sector</declname>
+        </param>
         <param>
           <type>double</type>
           <declname>threshold</declname>
-          <defval><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref></defval>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>slope_threshold</declname>
-          <defval><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref></defval>
+          <defval>1e-12</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -682,33 +994,36 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="293" bodyend="330"/>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-        <references refid="namespacesettings_1_1precision_1ae7fb706e3fd5e6c63bd9ed074313224a" compoundref="nmspc__settings_8h" startline="99">settings::precision::variance_convergence_threshold</references>
-        <references refid="namespacesettings_1_1precision_1a49cdd22328092db2e3177579db139c0a" compoundref="nmspc__settings_8h" startline="100">settings::precision::variance_slope_threshold</references>
-        <references refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" compoundref="class__algorithm__base_8cpp" startline="47" endline="96">class_algorithm_base::check_saturation_using_slope</references>
-        <references refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" compoundref="class__algorithm__finite_8h" startline="67">V_mpo_vec</references>
-        <references refid="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" compoundref="class__algorithm__finite_8h" startline="68">X_mpo_vec</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" compoundref="finite_2measure_8cpp" startline="205" endline="219">tools::finite::measure::energy_variance</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" compoundref="finite_2measure_8cpp" startline="310" endline="348">tools::finite::measure::mps_wavefn</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" compoundref="class__simulation__status_8h" startline="48">status_data::variance_mpo_has_converged</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" compoundref="class__algorithm__base_8h" startline="82">class_algorithm_base::SaturationReport::has_computed</references>
-        <references refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" compoundref="class__simulation__status_8h" startline="49">status_data::variance_mpo_has_saturated</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" compoundref="class__algorithm__base_8h" startline="84">class_algorithm_base::SaturationReport::slope</references>
-        <references refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" compoundref="class__simulation__status_8h" startline="55">status_data::variance_mpo_saturated_for</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="87" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="577" bodyend="590"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a8fe25d66a89a7ca074476f410c62524c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a8acca60239cbdd96b5d36d3d63b0c499" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::check_convergence_entg_entropy</definition>
-        <argsstring>(double slope_threshold=quietNaN)</argsstring>
-        <name>check_convergence_entg_entropy</name>
+        <definition>void class_algorithm_finite::setup_prefix</definition>
+        <argsstring>(const StorageReason &amp;storage_reason, StorageLevel &amp;storage_level, const std::string &amp;state_name, std::string &amp;state_prefix, std::string &amp;model_prefix, std::vector&lt; std::string &gt; &amp;table_prefxs)</argsstring>
+        <name>setup_prefix</name>
         <param>
-          <type>double</type>
-          <declname>slope_threshold</declname>
-          <defval><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref></defval>
+          <type>const <ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref> &amp;</type>
+          <declname>storage_reason</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071" kindref="member">StorageLevel</ref> &amp;</type>
+          <declname>storage_level</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>state_name</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>model_prefix</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::string &gt; &amp;</type>
+          <declname>table_prefxs</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -716,28 +1031,25 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="333" bodyend="398"/>
-        <references refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" compoundref="class__algorithm__finite_8h" startline="29">state</references>
-        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
-        <references refid="namespacesettings_1_1precision_1a12df3196d374b7629dd3e3362b9ab2b8" compoundref="nmspc__settings_8h" startline="101">settings::precision::entropy_slope_threshold</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" compoundref="class__simulation__status_8h" startline="47">status_data::entanglement_has_saturated</references>
-        <references refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" compoundref="class__algorithm__finite_8h" startline="76">S_slopes</references>
-        <references refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" compoundref="class__simulation__status_8h" startline="54">status_data::entanglement_saturated_for</references>
-        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="88" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="614" bodyend="690"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__finite_1a00b510706001a64633d113f6ec212e6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__finite_1a11374bc0a7b530f8dbb6409db71f261e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_finite::write_projection</definition>
-        <argsstring>(const class_state_finite &amp;state_projected, std::string parity_sector)</argsstring>
-        <name>write_projection</name>
+        <definition>void class_algorithm_finite::write_to_file</definition>
+        <argsstring>(StorageReason storage_reason, const class_state_finite &amp;state, std::optional&lt; CopyPolicy &gt; copy_policy=std::nullopt)</argsstring>
+        <name>write_to_file</name>
+        <param>
+          <type><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref></type>
+          <declname>storage_reason</declname>
+        </param>
         <param>
           <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state_projected</declname>
+          <declname>state</declname>
         </param>
         <param>
-          <type>std::string</type>
-          <declname>parity_sector</declname>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref> &gt;</type>
+          <declname>copy_policy</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -745,11 +1057,76 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="574" bodyend="584"/>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a5c88ea636777b8051d953b43f951e225" compoundref="finite_2io_2h5pp_8cpp" startline="28" endline="48">tools::finite::io::h5dset::write_all_state</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="37">class_algorithm_base::h5pp_file</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="90" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="696" bodyend="765"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a174599c66d34bffb32d466f1fc68c2d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_algorithm_finite::write_to_file</definition>
+        <argsstring>(StorageReason storage_reason, const T &amp;data, const std::string &amp;name, std::optional&lt; CopyPolicy &gt; copy_policy=std::nullopt)</argsstring>
+        <name>write_to_file</name>
+        <param>
+          <type><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref></type>
+          <declname>storage_reason</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref> &gt;</type>
+          <declname>copy_policy</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="92" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp" bodystart="768" bodyend="784"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1a35e482872c1dec9372c74c40a82208d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_algorithm_base::class_algorithm_base</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_algorithm_base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="17" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__finite_1ab8dd45b96c3bc6d6dac3164741d9dae0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_algorithm_base::class_algorithm_base</definition>
+        <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_, AlgorithmType algo_type_)</argsstring>
+        <name>class_algorithm_base</name>
+        <param>
+          <type>std::shared_ptr&lt; h5pp::File &gt;</type>
+          <declname>h5ppFile_</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref></type>
+          <declname>algo_type_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="17" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="18" bodyend="26"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -757,276 +1134,390 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="56">
-        <label>class_fDMRG</label>
-        <link refid="classclass__f_d_m_r_g"/>
-        <childnode refid="54" relation="public-inheritance">
+      <node id="3">
+        <label>class_fdmrg</label>
+        <link refid="classclass__fdmrg"/>
+        <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="57">
-        <label>class_xDMRG</label>
-        <link refid="classclass__x_d_m_r_g"/>
-        <childnode refid="54" relation="public-inheritance">
+      <node id="5">
+        <label>class_xdmrg</label>
+        <link refid="classclass__xdmrg"/>
+        <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="54">
+      <node id="1">
         <label>class_algorithm_finite</label>
         <link refid="classclass__algorithm__finite"/>
-        <childnode refid="55" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="55">
+      <node id="2">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
+      </node>
+      <node id="4">
+        <label>class_flbit</label>
+        <link refid="classclass__flbit"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="74">
-        <label>std::unique_ptr&lt; class_model_base &gt;</label>
-        <childnode refid="75" relation="usage">
+      <node id="12">
+        <label>class_model_finite::Cache</label>
+        <link refid="structclass__model__finite_1_1_cache"/>
+      </node>
+      <node id="38">
+        <label>std::vector&lt; double &gt;</label>
+      </node>
+      <node id="24">
+        <label>class_env_base</label>
+        <link refid="classclass__env__base"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>tag</edgelabel>
+          <edgelabel>side</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>block</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>class_tensors_finite</label>
+        <link refid="classclass__tensors__finite"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>measurements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>model</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>edges</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>active_sites</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>state</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::shared_ptr&lt; h5pp::File &gt;</label>
+      </node>
+      <node id="28">
+        <label>class_env_ene</label>
+        <link refid="classclass__env__ene"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>class_mpo_site</label>
+        <link refid="classclass__mpo__site"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>extent2</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>extent4</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::unique_ptr&lt; class_model_finite &gt;</label>
+        <childnode refid="11" relation="usage">
           <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="84">
-        <label>std::vector&lt; std::list&lt; double &gt; &gt;</label>
-        <childnode refid="64" relation="usage">
+      <node id="34">
+        <label>state_measure_finite</label>
+        <link refid="structstate__measure__finite"/>
+      </node>
+      <node id="17">
+        <label>std::array&lt; long, 4 &gt;</label>
+      </node>
+      <node id="31">
+        <label>std::vector&lt; std::unique_ptr&lt; class_mps_site &gt; &gt;</label>
+        <childnode refid="32" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="79">
-        <label>class_environment_base</label>
-        <link refid="classclass__environment__base"/>
-        <childnode refid="60" relation="usage">
-          <edgelabel>side</edgelabel>
+      <node id="11">
+        <label>class_model_finite</label>
+        <link refid="classclass__model__finite"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>cache</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>MPO</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>active_sites</edgelabel>
         </childnode>
       </node>
-      <node id="83">
-        <label>std::vector&lt; double &gt;</label>
-      </node>
-      <node id="64">
-        <label>std::list&lt; double &gt;</label>
-      </node>
-      <node id="75">
-        <label>class_model_base</label>
-        <link refid="classclass__model__base"/>
-      </node>
-      <node id="69">
-        <label>std::list&lt; class_mps_site &gt;</label>
-        <childnode refid="70" relation="usage">
-          <edgelabel>elements</edgelabel>
+      <node id="27">
+        <label>std::unique_ptr&lt; class_env_ene &gt;</label>
+        <childnode refid="28" relation="usage">
+          <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="77">
-        <label>std::list&lt; class_environment_var &gt;</label>
-        <childnode refid="78" relation="usage">
-          <edgelabel>elements</edgelabel>
+      <node id="19">
+        <label>std::unique_ptr&lt; class_edges_finite &gt;</label>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="78">
-        <label>class_environment_var</label>
-        <link refid="classclass__environment__var"/>
-        <childnode refid="79" relation="public-inheritance">
-        </childnode>
+      <node id="9">
+        <label>tensors_measure_finite</label>
+        <link refid="structtensors__measure__finite"/>
       </node>
-      <node id="72">
-        <label>std::list&lt; size_t &gt;</label>
-      </node>
-      <node id="61">
+      <node id="4">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="66">
-        <label>std::list&lt; int &gt;</label>
+      <node id="37">
+        <label>std::vector&lt; std::vector&lt; double &gt; &gt;</label>
+        <childnode refid="38" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
       </node>
-      <node id="71">
+      <node id="6">
+        <label>std::complex&lt; double &gt;</label>
+      </node>
+      <node id="35">
         <label>class_state_finite::Cache</label>
         <link refid="structclass__state__finite_1_1_cache"/>
       </node>
-      <node id="81">
-        <label>std::list&lt; class_environment &gt;</label>
-        <childnode refid="82" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="70">
-        <label>class_mps_site</label>
-        <link refid="classclass__mps__site"/>
-      </node>
-      <node id="82">
-        <label>class_environment</label>
-        <link refid="classclass__environment"/>
-        <childnode refid="79" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="68">
-        <label>class_state_finite</label>
-        <link refid="classclass__state__finite"/>
-        <childnode refid="69" relation="usage">
-          <edgelabel>MPS_L</edgelabel>
-          <edgelabel>MPS_R</edgelabel>
-        </childnode>
-        <childnode refid="71" relation="usage">
-          <edgelabel>cache</edgelabel>
-        </childnode>
-        <childnode refid="72" relation="usage">
-          <edgelabel>active_sites</edgelabel>
-        </childnode>
-        <childnode refid="73" relation="usage">
-          <edgelabel>MPO_L</edgelabel>
-          <edgelabel>MPO_R</edgelabel>
-        </childnode>
-        <childnode refid="76" relation="usage">
-          <edgelabel>measurements</edgelabel>
-        </childnode>
-        <childnode refid="77" relation="usage">
-          <edgelabel>ENV2_L</edgelabel>
-          <edgelabel>ENV2_R</edgelabel>
-        </childnode>
-        <childnode refid="80" relation="usage">
-          <edgelabel>site_update_tags</edgelabel>
-        </childnode>
-        <childnode refid="81" relation="usage">
-          <edgelabel>ENV_L</edgelabel>
-          <edgelabel>ENV_R</edgelabel>
-        </childnode>
-        <childnode refid="83" relation="usage">
-          <edgelabel>truncation_error</edgelabel>
-        </childnode>
-      </node>
-      <node id="63">
-        <label>status_data</label>
-        <link refid="structstatus__data"/>
-      </node>
-      <node id="76">
-        <label>class_state_finite::Measurements</label>
-        <link refid="structclass__state__finite_1_1_measurements"/>
-      </node>
-      <node id="58">
-        <label>class_algorithm_finite</label>
-        <link refid="classclass__algorithm__finite"/>
-        <childnode refid="59" relation="public-inheritance">
-        </childnode>
-        <childnode refid="64" relation="usage">
-          <edgelabel>V_mpo_vec</edgelabel>
-          <edgelabel>S_slopes</edgelabel>
-          <edgelabel>V_mpo_slopes</edgelabel>
-        </childnode>
-        <childnode refid="65" relation="usage">
-          <edgelabel>X_mat</edgelabel>
-        </childnode>
-        <childnode refid="66" relation="usage">
-          <edgelabel>X_mpo_vec</edgelabel>
-        </childnode>
-        <childnode refid="67" relation="usage">
-          <edgelabel>state</edgelabel>
-        </childnode>
-        <childnode refid="84" relation="usage">
-          <edgelabel>S_mat</edgelabel>
-        </childnode>
-      </node>
-      <node id="62">
-        <label>class_simulation_status</label>
-        <link refid="classclass__simulation__status"/>
-        <childnode refid="63" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="59">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-        <childnode refid="60" relation="usage">
-          <edgelabel>sim_name</edgelabel>
-        </childnode>
-        <childnode refid="62" relation="usage">
-          <edgelabel>sim_status</edgelabel>
-        </childnode>
-      </node>
-      <node id="67">
-        <label>std::unique_ptr&lt; class_state_finite &gt;</label>
-        <childnode refid="68" relation="usage">
+      <node id="22">
+        <label>std::unique_ptr&lt; class_env_var &gt;</label>
+        <childnode refid="23" relation="usage">
           <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="80">
+      <node id="33">
+        <label>class_mps_site</label>
+        <link refid="classclass__mps__site"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>label</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; std::unique_ptr&lt; class_mpo_site &gt; &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>std::unique_ptr&lt; class_mps_site &gt;</label>
+        <childnode refid="33" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>class_state_finite</label>
+        <link refid="classclass__state__finite"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mps_sites</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>measurements</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>cache</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>active_sites</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>tag_normalized_sites</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>class_env_var</label>
+        <link refid="classclass__env__var"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>class_edges_finite</label>
+        <link refid="classclass__edges__finite"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>varL</edgelabel>
+          <edgelabel>varR</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>eneL</edgelabel>
+          <edgelabel>eneR</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>active_sites</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>class_algorithm_finite</label>
+        <link refid="classclass__algorithm__finite"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>tensors</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>entropy_iter</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>var_mpo_iter</edgelabel>
+          <edgelabel>damping_exponents</edgelabel>
+          <edgelabel>var_mpo_step</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; std::unique_ptr&lt; class_env_ene &gt; &gt;</label>
+        <childnode refid="27" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>std::vector&lt; std::unique_ptr&lt; class_env_var &gt; &gt;</label>
+        <childnode refid="22" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>algo_name</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>status</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>h5pp_file</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>std::unique_ptr&lt; class_state_finite &gt;</label>
+        <childnode refid="30" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>std::unique_ptr&lt; Eigen::Tensor&lt; Scalar, 3 &gt; &gt;</label>
+      </node>
+      <node id="36">
         <label>std::vector&lt; bool &gt;</label>
       </node>
-      <node id="73">
-        <label>std::list&lt; std::unique_ptr&lt; class_model_base &gt; &gt;</label>
-        <childnode refid="74" relation="usage">
-          <edgelabel>elements</edgelabel>
+      <node id="14">
+        <label>std::unique_ptr&lt; class_mpo_site &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="60">
+      <node id="5">
+        <label>class_algorithm_status</label>
+        <link refid="classclass__algorithm__status"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>delta_t</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; size_t &gt;</label>
+      </node>
+      <node id="16">
+        <label>std::array&lt; long, 2 &gt;</label>
+      </node>
+      <node id="3">
         <label>std::string</label>
-        <childnode refid="61" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="65">
-        <label>std::vector&lt; std::list&lt; int &gt; &gt;</label>
-        <childnode refid="66" relation="usage">
-          <edgelabel>elements</edgelabel>
+        <childnode refid="4" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="13" bodyend="78"/>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" line="14" column="57" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h" bodystart="14" bodyend="97"/>
     <listofallmembers>
+      <member refid="classclass__algorithm__base_1a80c582c2364a996836b5c7fe29076c13" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>algo_name</name></member>
+      <member refid="classclass__algorithm__base_1a4c3f79ef6e69fe89a7e5b6d1f3ad3f34" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>algo_type</name></member>
+      <member refid="classclass__algorithm__base_1ab3e9bfaa0a5cf0810c3c7a074cfa9d69" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_algorithm_is_on</name></member>
+      <member refid="classclass__algorithm__base_1a9e2ef57748396e00830b20111c59bdd9" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_chi_lim_grow</name></member>
+      <member refid="classclass__algorithm__base_1a02248bae999554bcbbc84ba8bbaf6eb0" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_chi_lim_init</name></member>
+      <member refid="classclass__algorithm__base_1a3e25541163969ac43885855e9a701455" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_chi_lim_max</name></member>
+      <member refid="classclass__algorithm__base_1a1ff5ab0d312d132dd30243885d07dbd1" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_print_freq</name></member>
+      <member refid="classclass__algorithm__finite_1a93360714317e0a3b24af983b007221b4" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>cfg_store_wave_function</name></member>
       <member refid="classclass__algorithm__base_1a6d37e1472c3e74f8e50a11c71a8b03ee" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>check_convergence</name></member>
-      <member refid="classclass__algorithm__finite_1a8fe25d66a89a7ca074476f410c62524c" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_convergence_entg_entropy</name></member>
-      <member refid="classclass__algorithm__finite_1adb9ddcca8ca3a07a687c1abd370dec4a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_convergence_variance</name></member>
-      <member refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" prot="protected" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_saturation_using_slope</name></member>
-      <member refid="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" prot="protected" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_saturation_using_slope2</name></member>
-      <member refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>chi_grow</name></member>
-      <member refid="classclass__algorithm__base_1a43b93d906ce8263b7436c4758231ba5e" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>chi_init</name></member>
-      <member refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>chi_max</name></member>
-      <member refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__finite_1a400c889ba19892c299f1ae049d3a07bb" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_finite</name></member>
-      <member refid="classclass__algorithm__finite_1a453b5c2fb7cbbce1e3572259bc81c7d8" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>clear_saturation_status</name></member>
-      <member refid="classclass__algorithm__finite_1a6383a637d4b518f378b1d666d50c6206" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>copy_from_tmp</name></member>
+      <member refid="classclass__algorithm__finite_1aeaabc1b9ca94f6d5bef1462941718687" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_convergence_entg_entropy</name></member>
+      <member refid="classclass__algorithm__finite_1a8afbac16dc34dd49f2ad7decc965b98a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_convergence_spin_parity_sector</name></member>
+      <member refid="classclass__algorithm__finite_1a9e5ff92799e6f46ed6e32d544e59d981" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_convergence_variance</name></member>
+      <member refid="classclass__algorithm__base_1ab832ca5e6b3de23ee408c760c68c843f" prot="protected" virt="non-virtual"><scope>class_algorithm_finite</scope><name>check_saturation</name></member>
+      <member refid="classclass__algorithm__finite_1a2adefbd0f1620458a28f24ec0044ed7f" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>chi_lim_quench_ahead</name></member>
+      <member refid="classclass__algorithm__finite_1aaf13bc89f3c463a4c9ab5a460f82e874" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>chi_lim_quench_trail</name></member>
+      <member refid="classclass__algorithm__finite_1a1e63eab967c9d9340d9205c3dc7507ce" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>chi_quench_steps</name></member>
+      <member refid="classclass__algorithm__finite_1a35e482872c1dec9372c74c40a82208d0" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__finite_1ab8dd45b96c3bc6d6dac3164741d9dae0" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1ab8dd45b96c3bc6d6dac3164741d9dae0" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_algorithm_finite</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__finite_1a82a008615f845f5ad5a40e25f5abc671" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>class_algorithm_finite</name></member>
+      <member refid="classclass__algorithm__finite_1a8fa80baac08c61d142ac0114329a1592" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>clear_convergence_status</name></member>
+      <member refid="classclass__algorithm__base_1a9f9cf23bd9a37bb6bf4ad7da366beda2" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>copy_from_tmp</name></member>
+      <member refid="classclass__algorithm__base_1ab4a97d8b985c6743d829ff5ec668ebe3" prot="protected" virt="non-virtual"><scope>class_algorithm_finite</scope><name>count_convergence</name></member>
+      <member refid="classclass__algorithm__finite_1af42260924092ccb272c5ca4f700038fe" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>damping_exponents</name></member>
+      <member refid="classclass__algorithm__finite_1a7810e9c213482dd4863a7d14cb8e0346" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>damping_steps</name></member>
+      <member refid="classclass__algorithm__finite_1a96d01fcfd2c06e9b4ecf2e1da197b2a9" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>entropy_iter</name></member>
+      <member refid="classclass__algorithm__finite_1a8cd8f956556aebf98f6ed5b35ef1df4a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>excited_state_number</name></member>
       <member refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>h5pp_file</name></member>
-      <member refid="classclass__algorithm__finite_1a09b6d44725ae3d32093c37580b59626d" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>h5tbuf_measurements</name></member>
-      <member refid="classclass__algorithm__base_1ab0712c1f7e09a4ffcac2d8df99bf4b6b" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>h5tbuf_profiling</name></member>
-      <member refid="classclass__algorithm__base_1a068eedc09bbb4355bb691d2aeb48d48d" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>h5tbuf_sim_status</name></member>
+      <member refid="classclass__algorithm__finite_1afe739ece30be039df7bb6333da5acf39" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>has_damped</name></member>
+      <member refid="classclass__algorithm__finite_1a1f1777e94b4f4385bb13f9bef95c61dc" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>has_expanded</name></member>
       <member refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>has_projected</name></member>
-      <member refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" prot="protected" virt="non-virtual"><scope>class_algorithm_finite</scope><name>log</name></member>
+      <member refid="classclass__algorithm__base_1a0a68686f23b45bcdc7c833a7bf348b54" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>init_bond_dimension_limits</name></member>
+      <member refid="classclass__algorithm__finite_1a59a18d1613c3d26af1d5a8d39f39bf2e" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>iter_discard</name></member>
+      <member refid="classclass__algorithm__finite_1a1a2ed7db66089814ced016d0f93ccd7b" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>last_optmode</name></member>
+      <member refid="classclass__algorithm__finite_1a7dce1f378997193fffda76e73314db75" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>last_optspace</name></member>
+      <member refid="classclass__algorithm__finite_1a7ccd0bb5100ff67ce4df7c4478bcb319" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_chi_quenches</name></member>
+      <member refid="classclass__algorithm__finite_1a184e1fc5c38564d1eff775fa9555e562" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_dampings</name></member>
+      <member refid="classclass__algorithm__finite_1ad5f7168d2eec06732eb74e4b97d8805c" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_discards</name></member>
+      <member refid="classclass__algorithm__finite_1a6a1ae08373b06f01d4b746dd0f7c2e90" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_expansion_alpha</name></member>
+      <member refid="classclass__algorithm__finite_1ae154da6dd4bb4836a6577505abed6b25" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_expansion_iters</name></member>
+      <member refid="classclass__algorithm__finite_1a8862acc0cbf67cb0ec5329eafbc7a715" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_perturbations</name></member>
       <member refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_saturation_iters</name></member>
       <member refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>max_stuck_iters</name></member>
+      <member refid="classclass__algorithm__finite_1a0dd164b1d3efdeef2be6febc6f92c583" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>min_converged_iters</name></member>
       <member refid="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>min_saturation_iters</name></member>
-      <member refid="classclass__algorithm__finite_1ad171a763b608bcfe1054ce56bf5ea7d2" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>min_stuck_iters</name></member>
-      <member refid="classclass__algorithm__finite_1a8dcbb27105c5e5623050c545d8b5f3cf" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>move_center_point</name></member>
-      <member refid="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>num_sites</name></member>
-      <member refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>print_freq</name></member>
-      <member refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>print_profiling</name></member>
+      <member refid="classclass__algorithm__finite_1aa51f43031831b46cef58fabde7410452" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>move_center_point</name></member>
+      <member refid="classclass__algorithm__finite_1a57bbed424c2236370bd488cc54600f0a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>num_chi_quenches</name></member>
+      <member refid="classclass__algorithm__finite_1a291b852dab91aa7f869d9c4250dab429" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>num_dampings</name></member>
+      <member refid="classclass__algorithm__finite_1ae599a2883b5e576b0b69f03faca28b8c" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>num_discards</name></member>
+      <member refid="classclass__algorithm__finite_1aaea5faef0f1bcc68820e7f86a77ac82d" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>num_expansion_iters</name></member>
+      <member refid="classclass__algorithm__finite_1a070190f822e54d4aec142238a47d1f09" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>num_perturbations</name></member>
+      <member refid="classclass__algorithm__finite_1a48c182668fed94c08ce984956b0ec6c1" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>perturbation_steps</name></member>
+      <member refid="classclass__algorithm__base_1affa46990d9763a23323280340fb62510" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>print_profiling_lap</name></member>
       <member refid="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>print_status_full</name></member>
-      <member refid="classclass__algorithm__finite_1ac996a89d34ba9c9323e04c8e1fad54e2" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>print_status_update</name></member>
-      <member refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>process_memory_in_mb</name></member>
+      <member refid="classclass__algorithm__finite_1a36a983fdccbfe7f72e5bdf81fe06c23d" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>print_status_update</name></member>
       <member refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>quietNaN</name></member>
-      <member refid="classclass__algorithm__finite_1a52ad711d5cc01fa67e7db4190d748ffb" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>reset_to_random_state</name></member>
+      <member refid="classclass__algorithm__finite_1a3f9c4aa638fb9ca80033657be16903b8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>randomize_model</name></member>
+      <member refid="classclass__algorithm__finite_1a39433db5a7d4de5b17d342f8cd6e9be8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>randomize_state</name></member>
+      <member refid="classclass__algorithm__finite_1af9b89cf9cc5921e4fce483944eb0ce15" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>rebuild_mpo_squared</name></member>
+      <member refid="classclass__algorithm__finite_1a18d4f093525edb51068e78656195370c" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>reduce_mpo_energy</name></member>
+      <member refid="classclass__algorithm__finite_1aa9fc4a0111ae78e0a61e5b97223eda8b" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>resume</name></member>
       <member refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>run</name></member>
+      <member refid="classclass__algorithm__finite_1a14fc566b3920b5c8541f776a822fe0a4" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>run_algorithm</name></member>
+      <member refid="classclass__algorithm__finite_1a449bdbc5c87a4f8bb46509278a1e0688" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>run_default_task_list</name></member>
       <member refid="classclass__algorithm__finite_1a37993b5dd8c0999078d23f699d533efc" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>run_postprocessing</name></member>
-      <member refid="classclass__algorithm__finite_1aef508b162680eadb951cf3811642fce9" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>run_preprocessing</name></member>
-      <member refid="classclass__algorithm__finite_1a0ce48333412bf3d6ee639d09c46e8a51" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>run_simulation</name></member>
-      <member refid="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>S_mat</name></member>
-      <member refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>S_slopes</name></member>
+      <member refid="classclass__algorithm__finite_1ac1b7db3efa95c1240c457eb29825120a" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>run_preprocessing</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>Scalar</name></member>
-      <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>sim_name</name></member>
-      <member refid="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>sim_on</name></member>
-      <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>sim_status</name></member>
-      <member refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>sim_type</name></member>
-      <member refid="classclass__algorithm__finite_1a54acaecd0069e1c586e060cdfe41c67a" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>single_DMRG_step</name></member>
-      <member refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>state</name></member>
-      <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>stop_reason</name></member>
-      <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>StopReason</name></member>
-      <member refid="classclass__algorithm__finite_1ab10abda24e7005f8b35a2d05e9cc7921" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>store_wave_function</name></member>
+      <member refid="classclass__algorithm__finite_1a8acca60239cbdd96b5d36d3d63b0c499" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>setup_prefix</name></member>
+      <member refid="classclass__algorithm__base_1a7eb3f86503fff1d7d00ec3cc61beb60b" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>status</name></member>
+      <member refid="classclass__algorithm__base_1a6d3e78c2e18dc5878763bbd914c0d490" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>stop_reason</name></member>
+      <member refid="classclass__algorithm__finite_1a9cf692068daac2fb334ada83a0603886" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>sub_expansion_alpha</name></member>
+      <member refid="classclass__algorithm__finite_1a5dd8e3c8c4c49db67834c08b02dfea77" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>tensors</name></member>
+      <member refid="classclass__algorithm__finite_1a31675464960455f0e8fc7294a8f14c47" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_bond_dimension_quench</name></member>
+      <member refid="classclass__algorithm__finite_1a661ad455699f881c2ff834bbc0388f99" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_discard_small_schmidt</name></member>
+      <member refid="classclass__algorithm__finite_1afb58057c87ac28cb03296240205ab7d7" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_disorder_damping</name></member>
+      <member refid="classclass__algorithm__finite_1a42c3ba8f6917186a93577844aed4392b" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_full_expansion</name></member>
+      <member refid="classclass__algorithm__finite_1a92c41533b4b93b564a710bedd3eb98a2" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_hamiltonian_perturbation</name></member>
+      <member refid="classclass__algorithm__finite_1a4f369185f794545116447b1a3a587625" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>try_projection</name></member>
       <member refid="classclass__algorithm__finite_1af95402763a137d45e2b25ceecc9252af" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>update_bond_dimension_limit</name></member>
-      <member refid="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>V_mpo_slopes</name></member>
-      <member refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>V_mpo_vec</name></member>
-      <member refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" prot="public" virt="pure-virtual"><scope>class_algorithm_finite</scope><name>write_freq</name></member>
-      <member refid="classclass__algorithm__finite_1aa96d6f71f47d67fe96153659fc98b677" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>write_measurements</name></member>
-      <member refid="classclass__algorithm__finite_1ab5734a8b4a609be5f402b87bae2c4f64" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>write_profiling</name></member>
-      <member refid="classclass__algorithm__finite_1a00b510706001a64633d113f6ec212e6a" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>write_projection</name></member>
-      <member refid="classclass__algorithm__finite_1a586a8ac4f8036c870b826485a42bd6d8" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>write_sim_status</name></member>
-      <member refid="classclass__algorithm__finite_1a56fa115bbb861cb586ba78ef0624978b" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>write_state</name></member>
-      <member refid="classclass__algorithm__finite_1a3907217095a878d781f55a6771b9c0ca" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>X_mat</name></member>
-      <member refid="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>X_mpo_vec</name></member>
+      <member refid="classclass__algorithm__finite_1ad4868cc94f2a7dc1e543fcaf10a79296" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>update_variance_max_digits</name></member>
+      <member refid="classclass__algorithm__finite_1a15cff998705259e12405380d943d26bb" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>var_mpo_iter</name></member>
+      <member refid="classclass__algorithm__finite_1a7f82f92ac61f4efae5486ce310077088" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>var_mpo_step</name></member>
+      <member refid="classclass__algorithm__finite_1a24226affd3cb1be61308e79c9d5225b2" prot="public" virt="virtual"><scope>class_algorithm_finite</scope><name>write_to_file</name></member>
+      <member refid="classclass__algorithm__finite_1a11374bc0a7b530f8dbb6409db71f261e" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>write_to_file</name></member>
+      <member refid="classclass__algorithm__finite_1a174599c66d34bffb32d466f1fc68c2d1" prot="public" virt="non-virtual"><scope>class_algorithm_finite</scope><name>write_to_file</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

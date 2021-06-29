@@ -1,281 +1,400 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="ceres__direct_8cpp" kind="file" language="C++">
     <compoundname>ceres_direct.cpp</compoundname>
     <includes refid="ceres__direct__functor_8h" local="yes">ceres_direct_functor.h</includes>
-    <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
-    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
-    <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
-    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="class__algorithm__status_8h" local="no">algorithms/class_algorithm_status.h</includes>
+    <includes local="no">ceres/gradient_problem.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">config/nmspc_settings.h</includes>
+    <includes refid="class__tensors__finite_8h" local="no">tensors/class_tensors_finite.h</includes>
+    <includes refid="class__model__finite_8h" local="no">tensors/model/class_model_finite.h</includes>
+    <includes refid="class__state__finite_8h" local="no">tensors/state/class_state_finite.h</includes>
+    <includes refid="tools_2common_2fmt_8h" local="no">tools/common/fmt.h</includes>
+    <includes refid="log_8h" local="no">tools/common/log.h</includes>
+    <includes refid="prof_8h" local="no">tools/common/prof.h</includes>
+    <includes refid="finite_2measure_8h" local="no">tools/finite/measure.h</includes>
+    <includes refid="opt-internal_8h" local="no">tools/finite/opt-internal/opt-internal.h</includes>
+    <includes refid="report_8h" local="no">tools/finite/opt-internal/report.h</includes>
+    <includes refid="opt__mps_8h" local="no">tools/finite/opt_mps.h</includes>
     <incdepgraph>
-      <node id="3511">
-        <label>list</label>
+      <node id="5">
+        <label>ceres/iteration_callback.h</label>
       </node>
-      <node id="3531">
-        <label>iomanip</label>
-      </node>
-      <node id="3530">
-        <label>iterator</label>
-      </node>
-      <node id="3524">
-        <label>ceres/ceres.h</label>
-      </node>
-      <node id="3525">
-        <label>state/class_state_finite.h</label>
-        <link refid="class__state__finite_8h"/>
-        <childnode refid="3508" relation="include">
+      <node id="38">
+        <label>measure/state_measure_finite.h</label>
+        <link refid="state__measure__finite_8h"/>
+        <childnode refid="22" relation="include">
         </childnode>
-        <childnode refid="3510" relation="include">
+        <childnode refid="32" relation="include">
         </childnode>
-        <childnode refid="3526" relation="include">
-        </childnode>
-        <childnode refid="3527" relation="include">
-        </childnode>
-        <childnode refid="3535" relation="include">
-        </childnode>
-        <childnode refid="3536" relation="include">
-        </childnode>
-        <childnode refid="3521" relation="include">
-        </childnode>
-        <childnode refid="3522" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="3532">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3533" relation="include">
+      <node id="24">
+        <label>limits</label>
+      </node>
+      <node id="21">
+        <label>tensors/class_tensors_finite.h</label>
+        <link refid="class__tensors__finite_8h"/>
+        <childnode refid="22" relation="include">
         </childnode>
-        <childnode refid="3521" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="3522" relation="include">
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
         </childnode>
       </node>
-      <node id="3521">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="3509">
-        <label>string</label>
-      </node>
-      <node id="3540">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="3516">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="3517" relation="include">
+      <node id="12">
+        <label>config/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="3518" relation="include">
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="3513">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="3514" relation="include">
-        </childnode>
-        <childnode refid="3515" relation="include">
-        </childnode>
-      </node>
-      <node id="3537">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="3508" relation="include">
-        </childnode>
-        <childnode refid="3509" relation="include">
-        </childnode>
-        <childnode refid="3518" relation="include">
-        </childnode>
-        <childnode refid="3512" relation="include">
-        </childnode>
-        <childnode refid="3538" relation="include">
-        </childnode>
-        <childnode refid="3539" relation="include">
-        </childnode>
-        <childnode refid="3540" relation="include">
-        </childnode>
-      </node>
-      <node id="3533">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="3507">
-        <label>tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="3508" relation="include">
-        </childnode>
-        <childnode refid="3509" relation="include">
-        </childnode>
-        <childnode refid="3510" relation="include">
-        </childnode>
-        <childnode refid="3511" relation="include">
-        </childnode>
-        <childnode refid="3512" relation="include">
-        </childnode>
-        <childnode refid="3513" relation="include">
-        </childnode>
-        <childnode refid="3516" relation="include">
-        </childnode>
-        <childnode refid="3519" relation="include">
-        </childnode>
-        <childnode refid="3521" relation="include">
-        </childnode>
-        <childnode refid="3522" relation="include">
-        </childnode>
-      </node>
-      <node id="3522">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="3504">
+      <node id="2">
         <label>ceres_direct_functor.h</label>
         <link refid="ceres__direct__functor_8h"/>
-        <childnode refid="3505" relation="include">
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="3527">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="3508" relation="include">
-        </childnode>
-        <childnode refid="3528" relation="include">
-        </childnode>
-        <childnode refid="3534" relation="include">
+      <node id="39">
+        <label>tools/common/fmt.h</label>
+        <link refid="tools_2common_2fmt_8h"/>
+        <childnode refid="40" relation="include">
         </childnode>
       </node>
-      <node id="3515">
-        <label>spdlog/fmt/bundled/ranges.h</label>
-      </node>
-      <node id="3536">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="3508" relation="include">
-        </childnode>
-        <childnode refid="3522" relation="include">
-        </childnode>
-        <childnode refid="3513" relation="include">
+      <node id="42">
+        <label>io/spdlog.h</label>
+        <link refid="spdlog_8h"/>
+        <childnode refid="40" relation="include">
         </childnode>
       </node>
-      <node id="3529">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="3542">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
-      </node>
-      <node id="3519">
-        <label>tools/finite/opt-internals/enum_classes.h</label>
-        <link refid="enum__classes_8h"/>
-        <childnode refid="3518" relation="include">
+      <node id="46">
+        <label>tools/finite/measure.h</label>
+        <link refid="finite_2measure_8h"/>
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="3520" relation="include">
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="3514">
-        <label>spdlog/logger.h</label>
+      <node id="26">
+        <label>Eigen/src/Core/util/Constants.h</label>
       </node>
-      <node id="3535">
-        <label>state/class_mps_site.h</label>
-        <link refid="class__mps__site_8h"/>
-        <childnode refid="3510" relation="include">
+      <node id="53">
+        <label>class_mps_stash.h</label>
+        <link refid="class__mps__stash_8h"/>
+      </node>
+      <node id="13">
+        <label>debug.h</label>
+        <link refid="debug_8h"/>
+      </node>
+      <node id="41">
+        <label>tools/common/log.h</label>
+        <link refid="log_8h"/>
+        <childnode refid="40" relation="include">
         </childnode>
-        <childnode refid="3526" relation="include">
-        </childnode>
-        <childnode refid="3522" relation="include">
+        <childnode refid="42" relation="include">
         </childnode>
       </node>
-      <node id="3523">
-        <label>general/nmspc_omp.h</label>
-        <link refid="nmspc__omp_8h"/>
-        <childnode refid="3522" relation="include">
+      <node id="16">
+        <label>stdexcept</label>
+      </node>
+      <node id="15">
+        <label>numeric</label>
+      </node>
+      <node id="40">
+        <label>io/fmt.h</label>
+        <link refid="io_2fmt_8h"/>
+      </node>
+      <node id="20">
+        <label>string</label>
+      </node>
+      <node id="36">
+        <label>tensors/model/class_model_finite.h</label>
+        <link refid="class__model__finite_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="3526">
+      <node id="31">
+        <label>measure/tensors_measure_finite.h</label>
+        <link refid="tensors__measure__finite_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp</label>
+        <link refid="ceres__direct_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>tensors/edges/class_env_pair.h</label>
+        <link refid="class__env__pair_8h"/>
+      </node>
+      <node id="29">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h</label>
+      </node>
+      <node id="34">
+        <label>math/svd/settings.h</label>
+        <link refid="svd_2settings_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h</label>
+      </node>
+      <node id="50">
+        <label>tools/finite/opt-internal/report.h</label>
+        <link refid="report_8h"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>fmt/core.h</label>
+      </node>
+      <node id="4">
+        <label>ceres/first_order_function.h</label>
+      </node>
+      <node id="17">
+        <label>string_view</label>
+      </node>
+      <node id="32">
         <label>optional</label>
       </node>
-      <node id="3512">
+      <node id="19">
         <label>vector</label>
       </node>
-      <node id="3534">
-        <label>spdlog/fmt/fmt.h</label>
+      <node id="23">
+        <label>general/eigen_tensor_fwd_decl.h</label>
+        <link refid="eigen__tensor__fwd__decl_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
       </node>
-      <node id="3505">
-        <label>tools/finite/opt.h</label>
-        <link refid="opt_8h"/>
-        <childnode refid="3506" relation="include">
+      <node id="43">
+        <label>tools/common/prof.h</label>
+        <link refid="prof_8h"/>
+        <childnode refid="44" relation="include">
         </childnode>
-        <childnode refid="3507" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="3516" relation="include">
+        <childnode refid="32" relation="include">
         </childnode>
-        <childnode refid="3523" relation="include">
-        </childnode>
-        <childnode refid="3524" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="3506">
-        <label>complex.h</label>
-      </node>
-      <node id="3538">
+      <node id="22">
         <label>array</label>
       </node>
-      <node id="3520">
-        <label>sstream</label>
+      <node id="27">
+        <label>Eigen/src/Core/util/Meta.h</label>
       </node>
-      <node id="3539">
-        <label>hdf5.h</label>
+      <node id="28">
+        <label>Eigen/src/Core/util/ForwardDeclarations.h</label>
       </node>
-      <node id="3503">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
-        <link refid="ceres__direct_8cpp"/>
-        <childnode refid="3504" relation="include">
+      <node id="11">
+        <label>ceres/gradient_problem.h</label>
+      </node>
+      <node id="47">
+        <label>tools/finite/opt-internal/opt-internal.h</label>
+        <link refid="opt-internal_8h"/>
+        <childnode refid="48" relation="include">
         </childnode>
-        <childnode refid="3516" relation="include">
+        <childnode refid="23" relation="include">
         </childnode>
-        <childnode refid="3525" relation="include">
+        <childnode refid="41" relation="include">
         </childnode>
-        <childnode refid="3537" relation="include">
-        </childnode>
-        <childnode refid="3541" relation="include">
+        <childnode refid="49" relation="include">
         </childnode>
       </node>
-      <node id="3518">
-        <label>iostream</label>
+      <node id="51">
+        <label>tools/finite/opt_mps.h</label>
+        <link refid="opt__mps_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
-      <node id="3517">
+      <node id="10">
+        <label>cstddef</label>
+      </node>
+      <node id="45">
         <label>chrono</label>
       </node>
-      <node id="3510">
+      <node id="25">
+        <label>Eigen/src/Core/util/Macros.h</label>
+      </node>
+      <node id="44">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>tools/finite/opt.h</label>
+        <link refid="finite_2opt_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>type_traits</label>
+      </node>
+      <node id="52">
+        <label>tensors/state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>ceres/gradient_problem_solver.h</label>
+      </node>
+      <node id="9">
         <label>complex</label>
       </node>
-      <node id="3541">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="3509" relation="include">
+      <node id="37">
+        <label>tensors/state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="3512" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="3542" relation="include">
+        <childnode refid="38" relation="include">
         </childnode>
-      </node>
-      <node id="3528">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3523" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="3521" relation="include">
+        <childnode refid="32" relation="include">
         </childnode>
-        <childnode refid="3529" relation="include">
-        </childnode>
-        <childnode refid="3522" relation="include">
-        </childnode>
-        <childnode refid="3530" relation="include">
-        </childnode>
-        <childnode refid="3518" relation="include">
-        </childnode>
-        <childnode refid="3531" relation="include">
-        </childnode>
-        <childnode refid="3532" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="3508">
+      <node id="3">
+        <label>tools/finite/opt-internal/ceres_base.h</label>
+        <link refid="ceres__base_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
         <label>memory</label>
+      </node>
+      <node id="14">
+        <label>enums.h</label>
+        <link refid="config_2enums_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>algorithms/class_algorithm_status.h</label>
+        <link refid="class__algorithm__status_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <briefdescription>
@@ -288,147 +407,139 @@
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ceres__direct__functor_8h" kindref="compound">ceres_direct_functor.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal">Eigen::Tensor&lt;class_state_finite::Scalar,3&gt;</highlight></codeline>
-<codeline lineno="13" refid="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" kindref="member">tools::finite::opt::internal::ceres_direct_optimization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref><sp/>optType){</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" kindref="member">ceres_direct_optimization</ref>(state,state.<ref refid="classclass__state__finite_1a75c2e8572efd17c8d4bf2948f4bfebc3" kindref="member">get_multitheta</ref>(),sim_status,optType);</highlight></codeline>
-<codeline lineno="17"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal">Eigen::Tensor&lt;class_state_finite::Scalar,3&gt;</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" kindref="member">tools::finite::opt::internal::ceres_direct_optimization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;class_state_finite::Scalar,3&gt;<sp/>&amp;<sp/>theta_initial,</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref><sp/>optType){</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Optimizing<sp/>in<sp/>DIRECT<sp/>mode&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">tools::common::profile::t_opt</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>theta_old<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a75c2e8572efd17c8d4bf2948f4bfebc3" kindref="member">get_multitheta</ref>();</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/>theta_old_vec<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;&gt;(theta_old.data(),theta_old.size());</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/>theta_initial_vec<sp/><sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;&gt;(theta_initial.data(),<sp/>theta_initial.size());</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;reports::direct_opt_tuple&gt;<sp/>opt_log;</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__status_8h" kindref="compound">algorithms/class_algorithm_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ceres/gradient_problem.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">config/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tensors__finite_8h" kindref="compound">tensors/class_tensors_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__finite_8h" kindref="compound">tensors/model/class_model_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">tensors/state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="tools_2common_2fmt_8h" kindref="compound">tools/common/fmt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="log_8h" kindref="compound">tools/common/log.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prof_8h" kindref="compound">tools/common/prof.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="finite_2measure_8h" kindref="compound">tools/finite/measure.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt-internal_8h" kindref="compound">tools/finite/opt-internal/opt-internal.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="report_8h" kindref="compound">tools/finite/opt-internal/report.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt__mps_8h" kindref="compound">tools/finite/opt_mps.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="namespacetools_1_1finite_1_1opt_1_1internal_1aad84fb8b220c9101812aa07c8ce70544" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">tools::finite::opt::opt_mps</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aad84fb8b220c9101812aa07c8ce70544" kindref="member">tools::finite::opt::internal::ceres_direct_optimization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref><sp/>&amp;tensors,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref><sp/>&amp;status,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref><sp/>optType,<sp/><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref><sp/>optMode,<sp/><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref><sp/>optSpace)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;<sp/>sites(tensors.<ref refid="classclass__tensors__finite_1a44e973267db664b0bc453a3e0323d565" kindref="member">active_sites</ref>.begin(),<sp/>tensors.<ref refid="classclass__tensors__finite_1a44e973267db664b0bc453a3e0323d565" kindref="member">active_sites</ref>.end());</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1strategy_1a44391b94a429abdf92c72d0801b9a8bc" kindref="member">initial_state</ref>(</highlight><highlight class="stringliteral">&quot;current<sp/>state&quot;</highlight><highlight class="normal">,<sp/>tensors.<ref refid="classclass__tensors__finite_1a4679ab6f9da1e325569d20d5503bc0b5" kindref="member">state</ref>-&gt;get_multisite_mps(),<sp/>sites,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" kindref="member">tools::finite::measure::energy</ref>(tensors)<sp/>-<sp/>tensors.<ref refid="classclass__tensors__finite_1ae5292cd1a9588909b060778ef0ec8092" kindref="member">model</ref>-&gt;get_energy_reduced(),<sp/></highlight><highlight class="comment">//<sp/>Eigval</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tensors.<ref refid="classclass__tensors__finite_1ae5292cd1a9588909b060778ef0ec8092" kindref="member">model</ref>-&gt;get_energy_reduced(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Energy<sp/>reduced<sp/>for<sp/>full<sp/>system</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a8a96f8adaa39895086a3feae2a0e5b47" kindref="member">tools::finite::measure::energy_variance</ref>(tensors),</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1.0,<sp/></highlight><highlight class="comment">//<sp/>Overlap</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tensors.<ref refid="classclass__tensors__finite_1a2821ebade96b96a7ac4a8c26d0e64b8e" kindref="member">get_length</ref>());</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aad84fb8b220c9101812aa07c8ce70544" kindref="member">ceres_direct_optimization</ref>(tensors,<sp/><ref refid="namespacesettings_1_1strategy_1a44391b94a429abdf92c72d0801b9a8bc" kindref="member">initial_state</ref>,<sp/>status,<sp/>optType,<sp/>optMode,<sp/>optSpace);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&lt;=<sp/>spdlog::level::debug){</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_old<sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" kindref="member">tools::finite::measure::energy_per_site</ref>(state);</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>variance_old<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37" kindref="member">tools::finite::measure::energy_variance_per_site</ref>(state);</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>opt_log.emplace_back(</highlight><highlight class="stringliteral">&quot;Current<sp/>state&quot;</highlight><highlight class="normal"><sp/>,theta_old.size(),<sp/>energy_old,<sp/>std::log10(variance_old),<sp/>1.0,<sp/>theta_old_vec.norm(),<sp/>0<sp/>,0,<ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>());</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_initial<sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a95b9337d770483a28e7176bfbca93bfc" kindref="member">tools::finite::measure::multisite::energy_per_site</ref>(state,theta_initial);</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>variance_initial<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1multisite_1abf5fda7af4b606d8ea92e49ecf06d0b4" kindref="member">tools::finite::measure::multisite::energy_variance_per_site</ref>(state,theta_initial);</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>opt_log.emplace_back(</highlight><highlight class="stringliteral">&quot;Initial<sp/>guess&quot;</highlight><highlight class="normal"><sp/>,<sp/>theta_initial.size(),<sp/>energy_initial,<sp/>std::log10(variance_initial),<sp/>1.0,<sp/>theta_initial_vec.norm(),<sp/>0<sp/>,<sp/>0,<sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>());</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_new<sp/>=<sp/>0,variance_new<sp/>=<sp/>0,overlap_new<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>options<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1af98ed8738849042e8bd79a77c8a783db" kindref="member">ceres_default_options</ref>;</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>ceres::GradientProblemSolver::Summary<sp/>summary;</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>counter,iter;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::VectorXcd<sp/>theta_new;</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(optType.<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" kindref="member">option</ref>){</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>opt::TYPE::CPLX:{</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::VectorXd<sp/><sp/>theta_start_cast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::VectorXd&gt;(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(theta_initial_vec.data()),<sp/>2<sp/>*<sp/>theta_initial_vec.size());</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>*<sp/>functor<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">ceres_direct_functor&lt;std::complex&lt;double&gt;</ref>&gt;(state,<sp/>sim_status);</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::GradientProblem<sp/>problem(functor);</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Running<sp/>L-BFGS&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::Solve(options,<sp/>problem,<sp/>theta_start_cast.data(),<sp/>&amp;summary);</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(int)summary.iterations.size();</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counter<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>functor-&gt;get_count();</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>energy_new<sp/><sp/><sp/>=<sp/>functor-&gt;get_energy()<sp/>;</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>variance_new<sp/>=<sp/>functor-&gt;get_variance();</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta_new<sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;Eigen::VectorXcd&gt;(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(theta_start_cast.data()),<sp/>theta_start_cast.size()<sp/>/<sp/>2).normalized();</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>opt::TYPE::REAL:{</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::VectorXd<sp/><sp/>theta_start_cast<sp/>=<sp/>theta_initial_vec.real();</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>*<sp/>functor<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">ceres_direct_functor&lt;double&gt;</ref>(state,<sp/>sim_status);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::GradientProblem<sp/>problem(functor);</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Running<sp/>L-BFGS&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::Solve(options,<sp/>problem,<sp/>theta_start_cast.data(),<sp/>&amp;summary);</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(int)summary.iterations.size();</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counter<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>functor-&gt;get_count();</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>energy_new<sp/><sp/><sp/>=<sp/>functor-&gt;get_energy();</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>variance_new<sp/>=<sp/>functor-&gt;get_variance();</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta_new<sp/><sp/><sp/><sp/>=<sp/>theta_start_cast.normalized().cast&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>&gt;();</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&lt;=<sp/>spdlog::level::debug){</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>theta_old<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;&gt;(theta.data(),theta.size());</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>overlap_new<sp/><sp/>=<sp/>std::abs(theta_old_vec.dot(theta_new));</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>opt_log.emplace_back(</highlight><highlight class="stringliteral">&quot;Ceres<sp/>L-BFGS&quot;</highlight><highlight class="normal">,<sp/>theta_new.size(),<sp/>energy_new,<sp/>std::log10(variance_new),<sp/>overlap_new,<sp/>theta_new.norm(),<sp/>iter,<sp/>counter,<sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>());</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sanity<sp/>check</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>theta_san<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(theta_new,<sp/>state.<ref refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" kindref="member">active_dimensions</ref>());</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_san<sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a95b9337d770483a28e7176bfbca93bfc" kindref="member">tools::finite::measure::multisite::energy_per_site</ref>(state,theta_san);</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>variance_san<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1multisite_1abf5fda7af4b606d8ea92e49ecf06d0b4" kindref="member">tools::finite::measure::multisite::energy_variance_per_site</ref>(state,theta_san);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>opt_log.emplace_back(</highlight><highlight class="stringliteral">&quot;Sanity<sp/>check&quot;</highlight><highlight class="normal">,<sp/>theta_san.size(),<sp/>energy_san,<sp/>std::log10(variance_san),<sp/>overlap_new,<sp/>theta_new.norm(),<sp/>0,<sp/>0,<sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>());</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//double<sp/>variance_acc<sp/>=<sp/>tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//opt_log.emplace_back(&quot;Sanity<sp/>check<sp/>(reduced)&quot;,theta_san.size(),<sp/>energy_san,<sp/>std::log10(variance_acc),<sp/>overlap_new,<sp/>theta_initial_vec.norm(),<sp/>0,0,<sp/>t_opt-&gt;get_last_time_interval());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="namespacetools_1_1finite_1_1opt_1_1internal_1a625b66c8bb67701244bfe613c18909cf" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">tools::finite::opt::opt_mps</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aad84fb8b220c9101812aa07c8ce70544" kindref="member">tools::finite::opt::internal::ceres_direct_optimization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref><sp/>&amp;tensors,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref><sp/>&amp;initial_mps,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref><sp/>&amp;status,<sp/><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref><sp/>optType,<sp/><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref><sp/>optMode,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref><sp/>optSpace)<sp/>{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Optimizing<sp/>in<sp/>DIRECT<sp/>mode&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>t_opt_dir<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir&quot;</highlight><highlight class="normal">]-&gt;tic_token();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(<ref refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" kindref="member">settings::debug</ref>)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1ab66f2f4c63e3b9af22f1fefbb80fac84" kindref="member">has_nan</ref>())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;initial_mps<sp/>has<sp/>nan&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a191cf14de2384dccf35578f8fbd73e5f" kindref="member">reports::bfgs_add_entry</ref>(</highlight><highlight class="stringliteral">&quot;Direct&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;init&quot;</highlight><highlight class="normal">,<sp/>initial_mps);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;current_mps<sp/>=<sp/>tensors.<ref refid="classclass__tensors__finite_1a4679ab6f9da1e325569d20d5503bc0b5" kindref="member">state</ref>-&gt;get_multisite_mps();</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/>current_map<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::VectorXcd&gt;(current_mps.data(),<sp/>current_mps.size());</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>options<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1af98ed8738849042e8bd79a77c8a783db" kindref="member">internal::ceres_default_options</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>summary<sp/>=<sp/>ceres::GradientProblemSolver::Summary();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref><sp/><sp/><sp/>optimized_mps;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1af314875c801c8a47212984e3ab12f4e3" kindref="member">set_name</ref>(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a9572f5c01a10ad36bbd1632e2f20670c" kindref="member">get_name</ref>());</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4abfc2a0d4b07af35ffc3cc5195b7a0c" kindref="member">set_sites</ref>(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a9fb1ea4289db75a93504b7724c4dbeff" kindref="member">get_sites</ref>());</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a86fc208e60bb65cfcf2b8f086bd31424" kindref="member">set_length</ref>(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4c4a38ad2b50f410d70e2bbac8aa027c" kindref="member">get_length</ref>());</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a2cc439210ecf73f81b60594b73cf6b9c" kindref="member">set_energy_reduced</ref>(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1ab983ff75ebd4380c6d91a19644094dad" kindref="member">get_energy_reduced</ref>());</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>we<sp/>use<sp/>&quot;reduced-energy<sp/>mpo&apos;s&quot;,<sp/>the<sp/>current<sp/>energy<sp/>per<sp/>site<sp/>is<sp/>subtracted<sp/>from<sp/>all<sp/>the<sp/>MPO&apos;s<sp/>at<sp/>the<sp/>beginning<sp/>of<sp/>every<sp/>iteration.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>subtracted<sp/>number<sp/>is<sp/>called<sp/>&quot;energy_reduced&quot;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Directly<sp/>after<sp/>the<sp/>energy<sp/>subtraction,<sp/>the<sp/>target<sp/>energy<sp/>is<sp/>exactly<sp/>zero,<sp/>and<sp/>Var<sp/>H<sp/>=<sp/>&lt;(H-Er)²&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>However,<sp/>after<sp/>some<sp/>steps<sp/>in<sp/>the<sp/>same<sp/>iteration,<sp/>the<sp/>optimizer<sp/>may<sp/>have<sp/>found<sp/>a<sp/>state<sp/>with<sp/>slightly<sp/>different<sp/>energy,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>so<sp/>the<sp/>target<sp/>energy<sp/>is<sp/>actually<sp/>0<sp/>+<sp/>dE.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>can<sp/>obtain<sp/>the<sp/>shift<sp/>amount<sp/>dE<sp/>=<sp/>&lt;H-Er&gt;,<sp/>which<sp/>we<sp/>call<sp/>&quot;eigval&quot;,<sp/>i.e.<sp/>the<sp/>eigenvalue<sp/>of<sp/>the<sp/>operator<sp/>&lt;H-Er&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Then,<sp/>technically<sp/>Var<sp/>H<sp/>=<sp/>&lt;(H-E+|dE|)²&gt;,<sp/>and<sp/>if<sp/>unaccounted<sp/>for,<sp/>we<sp/>may<sp/>get<sp/>Var<sp/>H<sp/>&lt;<sp/>0,<sp/>which<sp/>is<sp/>a<sp/>real<sp/>pain<sp/>since</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>are<sp/>optimizing<sp/>the<sp/>logarithm<sp/>of<sp/>Var<sp/>H.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Here<sp/>we<sp/>use<sp/>functor-&gt;set_shift<sp/>in<sp/>order<sp/>to<sp/>account<sp/>for<sp/>the<sp/>shifted<sp/>energy<sp/>and<sp/>reach<sp/>better<sp/>precision.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Note<sp/>1:<sp/>shifting<sp/>only<sp/>works<sp/>if<sp/>the<sp/>mpo<sp/>is<sp/>not<sp/>already<sp/>compressed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Note<sp/>2:<sp/>shifting<sp/>only<sp/>makes<sp/>sense<sp/>if<sp/>we<sp/>are<sp/>using<sp/>reduced-energy<sp/>mpos</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(optType)<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1ea958448d4909b92010c81d52d3e6ad8f1" kindref="member">OptType::CPLX</ref>:<sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>t_opt_dir_bfgs<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_bfgs&quot;</highlight><highlight class="normal">]-&gt;tic_token();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>the<sp/>initial<sp/>guess<sp/>and<sp/>operate<sp/>directly<sp/>on<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a76e54c37517b602a992736e509a2b33c" kindref="member">set_tensor</ref>(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b995f1b2e0792ee57348cd3b641b84c" kindref="member">get_tensor</ref>());</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">ceres_direct_functor&lt;std::complex&lt;double&gt;</ref>&gt;(tensors,<sp/>status);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1precision_1af241365d45c25fd1f464b664f358e982" kindref="member">settings::precision::use_reduced_energy</ref><sp/>and<sp/><ref refid="namespacesettings_1_1precision_1aa5ebd91f50eca5c78963dd710966a417" kindref="member">settings::precision::use_shifted_mpo</ref><sp/>and<sp/>not<sp/>tensors.model-&gt;is_compressed_mpo_squared())</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor-&gt;<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23e70464be07a67518509f6d9d5945d1" kindref="member">set_shift</ref>(-std::abs(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a6439507e0e4dd6a19bf797254ce44fd0" kindref="member">get_eigval</ref>()));<sp/></highlight><highlight class="comment">//<sp/>Account<sp/>for<sp/>the<sp/>shange<sp/>in<sp/>energy<sp/>since<sp/>the<sp/>last<sp/>energy<sp/>reduction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor-&gt;compress();<sp/></highlight><highlight class="comment">//<sp/>Compress<sp/>the<sp/>virtual<sp/>bond<sp/>between<sp/>MPO²<sp/>and<sp/>the<sp/>environments</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_custom_log_callback" kindref="compound">CustomLogCallback</ref><sp/>ceres_logger(*functor);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>options.callbacks.emplace_back(&amp;ceres_logger);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::GradientProblem<sp/>problem(functor);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Running<sp/>LBFGS<sp/>direct<sp/>cplx&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::Solve(options,<sp/>problem,<sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1adc4775a47d53e8f3073d1f0842ae3be0" kindref="member">get_vector_cplx_as_2xreal</ref>().data(),<sp/>&amp;summary);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>the<sp/>results<sp/>from<sp/>the<sp/>functor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a983ddbd3925c2774f0452811cbcbdb31" kindref="member">set_counter</ref>(functor-&gt;get_count());</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b45cc963e40a5810894f713d445adc2" kindref="member">set_delta_f</ref>(functor-&gt;get_delta_f());</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1ace6720c9509b0011f8292c4d17d05260" kindref="member">set_grad_norm</ref>(functor-&gt;get_grad_max_norm());</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH2&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_H2n;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH2v&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_nH2n;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_Hn;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vHv&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_nHn;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_step&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_step;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1ea8cf125b0e31559ba75a9d9b4f818a554" kindref="member">OptType::REAL</ref>:<sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>t_opt_dir_bfgs<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_bfgs&quot;</highlight><highlight class="normal">]-&gt;tic_token();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Here<sp/>we<sp/>make<sp/>a<sp/>temporary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>initial_state_real<sp/>=<sp/>initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1afe206121dbc9f5aba57011f4f7812c28" kindref="member">get_vector_cplx_as_1xreal</ref>();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">ceres_direct_functor&lt;double&gt;</ref>(tensors,<sp/>status);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1precision_1af241365d45c25fd1f464b664f358e982" kindref="member">settings::precision::use_reduced_energy</ref><sp/>and<sp/><ref refid="namespacesettings_1_1precision_1aa5ebd91f50eca5c78963dd710966a417" kindref="member">settings::precision::use_shifted_mpo</ref><sp/>and<sp/>not<sp/>tensors.<ref refid="classclass__tensors__finite_1ae5292cd1a9588909b060778ef0ec8092" kindref="member">model</ref>-&gt;is_compressed_mpo_squared())</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor-&gt;set_shift(initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a6439507e0e4dd6a19bf797254ce44fd0" kindref="member">get_eigval</ref>());<sp/></highlight><highlight class="comment">//<sp/>Account<sp/>for<sp/>the<sp/>shange<sp/>in<sp/>energy<sp/>since<sp/>the<sp/>last<sp/>energy<sp/>reduction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>functor-&gt;compress();<sp/></highlight><highlight class="comment">//<sp/>Compress<sp/>the<sp/>virtual<sp/>bond<sp/>between<sp/>MPO²<sp/>and<sp/>the<sp/>environments</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"></highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Finish<sp/>up<sp/>and<sp/>print<sp/>reports</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Finished<sp/>LBFGS<sp/>after<sp/>{}<sp/>seconds<sp/>({}<sp/>iters).<sp/>Exit<sp/>status:<sp/>{}.<sp/>Message:<sp/>{}&quot;</highlight><highlight class="normal">,summary.total_time_in_seconds,<sp/>summary.iterations.size(),<sp/>ceres::TerminationTypeToString(summary.termination_type)<sp/>,<sp/>summary.message.c_str());</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;Finished<sp/>Ceres.<sp/>Exit<sp/>status:<sp/>{}.<sp/>Message:<sp/>{}&quot;,<sp/>ceres::TerminationTypeToString(summary.termination_type)<sp/>,<sp/>summary.message.c_str());</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>summary.FullReport()<sp/>&lt;&lt;<sp/>&quot;\n&quot;;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">reports::print_report</ref>(opt_log);</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">reports::print_report</ref>(std::make_tuple(</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1abe84b23d57f9096bfa7e5b8ae3bedc52" kindref="member">tools::finite::opt::internal::t_vH2v</ref>-&gt;get_measured_time(),</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ab60d12bdf772cfeb4f7914c049921a00" kindref="member">tools::finite::opt::internal::t_vHv</ref>-&gt;get_measured_time(),</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" kindref="member">tools::finite::opt::internal::t_vH2</ref>-&gt;get_measured_time(),</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" kindref="member">tools::finite::opt::internal::t_vH</ref>-&gt;get_measured_time(),</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" kindref="member">tools::finite::opt::internal::t_op</ref>-&gt;get_measured_time()</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>));</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">tools::common::profile::t_opt</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Returning<sp/>new<sp/>theta<sp/>from<sp/>DIRECT<sp/>optimization&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(theta_new,<sp/>state.<ref refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" kindref="member">active_dimensions</ref>());</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(variance_new<sp/>&lt;<sp/>1.0<sp/>*<sp/>tools::finite::measure::energy_variance_per_site(state)){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Only<sp/>an<sp/>improvement<sp/>of<sp/>1%<sp/>is<sp/>considered<sp/>to<sp/>be<sp/>an<sp/>actual<sp/>improvement</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;debug(&quot;Returning<sp/>new<sp/>(better)<sp/>theta&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.tag_active_sites_have_been_updated(true);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/><sp/>Textra::Matrix_to_Tensor(theta_new,<sp/>state.active_dimensions());</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>else<sp/>if<sp/>(variance_new<sp/>&lt;<sp/>100.0<sp/>*<sp/>tools::finite::measure::energy_variance_per_site(state))<sp/>{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Allow<sp/>for<sp/>variance<sp/>to<sp/>increase<sp/>a<sp/>bit<sp/>to<sp/>come<sp/>out<sp/>of<sp/>local<sp/>minima</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;debug(&quot;Returning<sp/>new<sp/>(worse)<sp/>theta&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.tag_active_sites_have_been_updated(false);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/><sp/>Textra::Matrix_to_Tensor(theta_new,<sp/>state.active_dimensions());</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>else{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;debug(&quot;Direct<sp/>optimization<sp/>didn&apos;t<sp/>improve<sp/>variance.&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;debug(&quot;Returning<sp/>old<sp/>theta&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.tag_active_sites_have_been_updated(variance_new<sp/>&lt;=<sp/>settings::precision::variance_convergence_threshold);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/><sp/>theta_old;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight></codeline>
-<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"></highlight></codeline>
-<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_custom_log_callback" kindref="compound">CustomLogCallback</ref><sp/>ceres_logger(*functor);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>options.callbacks.emplace_back(&amp;ceres_logger);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::GradientProblem<sp/>problem(functor);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Running<sp/>LBFGS<sp/>direct<sp/>real&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(<ref refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" kindref="member">settings::debug</ref>)<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(initial_state_real.hasNaN())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;initial_state_real<sp/>has<sp/>nan&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::Solve(options,<sp/>problem,<sp/>initial_state_real.data(),<sp/>&amp;summary);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>the<sp/>results<sp/>from<sp/>the<sp/>functor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a983ddbd3925c2774f0452811cbcbdb31" kindref="member">set_counter</ref>(functor-&gt;get_count());</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b45cc963e40a5810894f713d445adc2" kindref="member">set_delta_f</ref>(functor-&gt;get_delta_f());</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1ace6720c9509b0011f8292c4d17d05260" kindref="member">set_grad_norm</ref>(functor-&gt;get_grad_max_norm());</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a93c4d3df72d745612a2305a3ca0cf248" kindref="member">set_tensor_real</ref>(initial_state_real.data(),<sp/>initial_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b995f1b2e0792ee57348cd3b641b84c" kindref="member">get_tensor</ref>().dimensions());</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH2&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_H2n;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH2v&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_nH2n;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vH&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_Hn;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_vHv&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_nHn;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="namespacetools_1_1common_1_1profile_1afc3a25a71835997f1a9aa7838e4de0aa" kindref="member">tools::common::profile::prof</ref>[<ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9ab5612e395f07bd6a022360eb707e73ae" kindref="member">AlgorithmType::xDMRG</ref>][</highlight><highlight class="stringliteral">&quot;t_opt_dir_step&quot;</highlight><highlight class="normal">]<sp/>+=<sp/>*functor-&gt;t_step;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>and<sp/>set<sp/>the<sp/>rest<sp/>of<sp/>the<sp/>tensor<sp/>metadata</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aca8b22eb23cb0e8244fadbbfd55309c6" kindref="member">normalize</ref>();</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a3b1d1adc0b58e547aca1d11b58fb458a" kindref="member">set_energy</ref>(<ref refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" kindref="member">tools::finite::measure::energy</ref>(optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b995f1b2e0792ee57348cd3b641b84c" kindref="member">get_tensor</ref>(),<sp/>tensors));</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4468144ec58b49357416b95f60ea6845" kindref="member">set_variance</ref>(<ref refid="namespacetools_1_1finite_1_1measure_1a8a96f8adaa39895086a3feae2a0e5b47" kindref="member">tools::finite::measure::energy_variance</ref>(optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a4b995f1b2e0792ee57348cd3b641b84c" kindref="member">get_tensor</ref>(),<sp/>tensors));</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a33efc5b4f6834730589bac118ee6daeb" kindref="member">set_overlap</ref>(std::abs(current_map.dot(optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a54016759c9205e1e0c157fc62ca56399" kindref="member">get_vector</ref>())));</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a67bc2222c30ec822e71a2a6f3f350559" kindref="member">set_iter</ref>(summary.iterations.size());</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>optimized_mps.<ref refid="classtools_1_1finite_1_1opt_1_1opt__mps_1acc447ad547335119e284feb1cea92433" kindref="member">set_time</ref>(summary.total_time_in_seconds);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a57cec7fd0f65b9ece67ebf62c6cabc01" kindref="member">reports::time_add_dir_entry</ref>();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>hrs<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(summary.total_time_in_seconds<sp/>/<sp/>3600);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>min<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(std::fmod(summary.total_time_in_seconds,<sp/>3600)<sp/>/<sp/>60);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sec<sp/>=<sp/>std::fmod(std::fmod(summary.total_time_in_seconds,<sp/>3600),<sp/>60);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Finished<sp/>LBFGS<sp/>in<sp/>{:0&lt;2}:{:0&lt;2}:{:0&lt;.1f}<sp/>seconds<sp/>and<sp/>{}<sp/>iters.<sp/>Exit<sp/>status:<sp/>{}.<sp/>Message:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>hrs,<sp/>min,<sp/>sec,<sp/>summary.iterations.size(),</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ceres::TerminationTypeToString(summary.termination_type),<sp/>summary.message.c_str());</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a191cf14de2384dccf35578f8fbd73e5f" kindref="member">reports::bfgs_add_entry</ref>(</highlight><highlight class="stringliteral">&quot;Direct&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;opt&quot;</highlight><highlight class="normal">,<sp/>optimized_mps);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Returning<sp/>theta<sp/>from<sp/>optimization<sp/>mode<sp/>{}<sp/>space<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>optMode,<sp/>optSpace);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>optimized_mps;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp"/>
   </compounddef>
 </doxygen>

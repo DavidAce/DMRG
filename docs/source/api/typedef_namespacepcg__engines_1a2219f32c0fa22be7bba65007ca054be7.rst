@@ -3,7 +3,7 @@
 Typedef pcg_engines::ext_std32
 ==============================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_random.hpp`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_math_rnd_pcg_random.hpp`
 
 
 Typedef Documentation

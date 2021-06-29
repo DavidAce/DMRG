@@ -3,7 +3,7 @@
 Template Class ceres_subspace_functor
 =====================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_tools_finite_opt-internal_ceres_subspace_functor.h`
 
 
 Inheritance Relationships

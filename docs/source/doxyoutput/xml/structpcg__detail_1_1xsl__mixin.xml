@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="structpcg__detail_1_1xsl__mixin" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::xsl_mixin</compoundname>
     <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1081" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1081" bodyend="1093"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="846" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="846" bodyend="857"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1080" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1080" bodyend="1094"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="845" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="845" bodyend="858"/>
     <listofallmembers>
       <member refid="structpcg__detail_1_1xsl__mixin_1ac992fdba50cfa3dc08f185cb01da7507" prot="public" virt="non-virtual"><scope>pcg_detail::xsl_mixin</scope><name>output</name></member>
     </listofallmembers>

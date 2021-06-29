@@ -1,15 +1,16 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1common_1_1io" kind="namespace" language="C++">
     <compoundname>tools::common::io</compoundname>
-    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5dset">tools::common::io::h5dset</innernamespace>
-    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5restore">tools::common::io::h5restore</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5attr">tools::common::io::h5attr</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5find">tools::common::io::h5find</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5resume">tools::common::io::h5resume</innernamespace>
     <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5table">tools::common::io::h5table</innernamespace>
     <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5tmp">tools::common::io::h5tmp</innernamespace>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="347" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="13" column="27"/>
   </compounddef>
 </doxygen>

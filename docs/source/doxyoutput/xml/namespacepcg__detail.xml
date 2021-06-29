@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacepcg__detail" kind="namespace" language="C++">
     <compoundname>pcg_detail</compoundname>
     <innerclass refid="structpcg__detail_1_1default__increment" prot="public">pcg_detail::default_increment</innerclass>
@@ -20,6 +20,7 @@
     <innerclass refid="structpcg__detail_1_1rxs__m__xs__mixin" prot="public">pcg_detail::rxs_m_xs_mixin</innerclass>
     <innerclass refid="structpcg__detail_1_1rxs__mixin" prot="public">pcg_detail::rxs_mixin</innerclass>
     <innerclass refid="classpcg__detail_1_1specific__stream" prot="public">pcg_detail::specific_stream</innerclass>
+    <innerclass refid="classpcg__detail_1_1unique__stream" prot="public">pcg_detail::unique_stream</innerclass>
     <innerclass refid="structpcg__detail_1_1xsh__mixin" prot="public">pcg_detail::xsh_mixin</innerclass>
     <innerclass refid="structpcg__detail_1_1xsh__rr__mixin" prot="public">pcg_detail::xsh_rr_mixin</innerclass>
     <innerclass refid="structpcg__detail_1_1xsh__rs__mixin" prot="public">pcg_detail::xsh_rs_mixin</innerclass>
@@ -28,6 +29,25 @@
     <innerclass refid="structpcg__detail_1_1xsl__rr__rr__mixin" prot="public">pcg_detail::xsl_rr_rr_mixin</innerclass>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename xtype</type>
+          </param>
+          <param>
+            <type>typename itype</type>
+          </param>
+          <param>
+            <type>template&lt; typename XT, typename IT &gt; class</type>
+            <declname>output_mixin</declname>
+            <defname>output_mixin</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>output_previous</declname>
+            <defname>output_previous</defname>
+            <defval>(sizeof(itype) &lt;= 8)</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1engine" kindref="compound">engine</ref>&lt; xtype, itype, output_mixin&lt; xtype, itype &gt;, output_previous, <ref refid="classpcg__detail_1_1oneseq__stream" kindref="compound">oneseq_stream</ref>&lt; itype &gt; &gt;</type>
         <definition>using pcg_detail::oneseq_base = typedef engine&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, oneseq_stream&lt;itype&gt; &gt;</definition>
         <argsstring></argsstring>
@@ -38,10 +58,29 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="716" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="718" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="532" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="532" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" prot="public" static="no">
-        <type><ref refid="classpcg__detail_1_1engine" kindref="compound">engine</ref>&lt; xtype, itype, output_mixin&lt; xtype, itype &gt;, output_previous, unique_stream&lt; itype &gt; &gt;</type>
+        <templateparamlist>
+          <param>
+            <type>typename xtype</type>
+          </param>
+          <param>
+            <type>typename itype</type>
+          </param>
+          <param>
+            <type>template&lt; typename XT, typename IT &gt; class</type>
+            <declname>output_mixin</declname>
+            <defname>output_mixin</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>output_previous</declname>
+            <defname>output_previous</defname>
+            <defval>(sizeof(itype) &lt;= 8)</defval>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classpcg__detail_1_1engine" kindref="compound">engine</ref>&lt; xtype, itype, output_mixin&lt; xtype, itype &gt;, output_previous, <ref refid="classpcg__detail_1_1unique__stream" kindref="compound">unique_stream</ref>&lt; itype &gt; &gt;</type>
         <definition>using pcg_detail::unique_base = typedef engine&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, unique_stream&lt;itype&gt; &gt;</definition>
         <argsstring></argsstring>
         <name>unique_base</name>
@@ -51,9 +90,28 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="723" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="725" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="535" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="535" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename xtype</type>
+          </param>
+          <param>
+            <type>typename itype</type>
+          </param>
+          <param>
+            <type>template&lt; typename XT, typename IT &gt; class</type>
+            <declname>output_mixin</declname>
+            <defname>output_mixin</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>output_previous</declname>
+            <defname>output_previous</defname>
+            <defval>(sizeof(itype) &lt;= 8)</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1engine" kindref="compound">engine</ref>&lt; xtype, itype, output_mixin&lt; xtype, itype &gt;, output_previous, <ref refid="classpcg__detail_1_1specific__stream" kindref="compound">specific_stream</ref>&lt; itype &gt; &gt;</type>
         <definition>using pcg_detail::setseq_base = typedef engine&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, specific_stream&lt;itype&gt; &gt;</definition>
         <argsstring></argsstring>
@@ -64,9 +122,28 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="730" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="732" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="538" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="538" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename xtype</type>
+          </param>
+          <param>
+            <type>typename itype</type>
+          </param>
+          <param>
+            <type>template&lt; typename XT, typename IT &gt; class</type>
+            <declname>output_mixin</declname>
+            <defname>output_mixin</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>output_previous</declname>
+            <defname>output_previous</defname>
+            <defval>(sizeof(itype) &lt;= 8)</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1engine" kindref="compound">engine</ref>&lt; xtype, itype, output_mixin&lt; xtype, itype &gt;, output_previous, <ref refid="classpcg__detail_1_1no__stream" kindref="compound">no_stream</ref>&lt; itype &gt; &gt;</type>
         <definition>using pcg_detail::mcg_base = typedef engine&lt;xtype, itype, output_mixin&lt;xtype, itype&gt;, output_previous, no_stream&lt;itype&gt; &gt;</definition>
         <argsstring></argsstring>
@@ -77,109 +154,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="737" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="739" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="var">
-      <memberdef kind="variable" id="namespacepcg__detail_1a7cefe974db0a1bb3a1fef33b171dfe60" prot="public" static="no" mutable="no">
-        <type></type>
-        <definition>pcg_detail::default</definition>
-        <argsstring></argsstring>
-        <name>default</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="151" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacepcg__detail_1a247ab2bf10e0640c12437b650ab15848" prot="public" static="no" mutable="no">
-        <type></type>
-        <definition>pcg_detail::increment</definition>
-        <argsstring></argsstring>
-        <name>increment</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="151" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacepcg__detail_1a1338b2f0b0575e795053506ae0579262" prot="public" static="no" mutable="no">
-        <type></type>
-        <definition>pcg_detail::mcg</definition>
-        <argsstring></argsstring>
-        <name>mcg</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="891" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="891" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacepcg__detail_1a260bd33be49f954c81d6905bd68728c8" prot="public" static="no" mutable="no">
-        <type></type>
-        <definition>pcg_detail::unmultiplier</definition>
-        <argsstring></argsstring>
-        <name>unmultiplier</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="891" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="891" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="541" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="541" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacepcg__detail_1a6b95611bc9c355e26db45d06136a32dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>pcg_detail::PCG_DEFINE_CONSTANT</definition>
-        <argsstring>(pcg128_t, default, multiplier, PCG_128BIT_CONSTANT(2549297995355413924ULL, 4865540595714422341ULL)) PCG_DEFINE_CONSTANT(pcg128_t</argsstring>
-        <name>PCG_DEFINE_CONSTANT</name>
-        <param>
-          <type><ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref></type>
-        </param>
-        <param>
-          <type><ref refid="namespacepcg__detail_1a7cefe974db0a1bb3a1fef33b171dfe60" kindref="member">default</ref></type>
-        </param>
-        <param>
-          <type>multiplier</type>
-        </param>
-        <param>
-          <type><ref refid="namespacepcg__detail_1a5076fb5d29a1e7226df47ddba552512b" kindref="member">PCG_128BIT_CONSTANT</ref>(2549297995355413924ULL, 4865540595714422341ULL)</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="149" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1a5076fb5d29a1e7226df47ddba552512b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>pcg_detail::PCG_128BIT_CONSTANT</definition>
-        <argsstring>(6364136223846793005ULL, 1442695040888963407ULL)) template&lt; typename itype &gt; class unique_stream</argsstring>
-        <name>PCG_128BIT_CONSTANT</name>
-        <param>
-          <type>6364136223846793005ULL</type>
-        </param>
-        <param>
-          <type>1442695040888963407ULL</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="152" bodyend="212"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1a0f30773c4f997330cf3b2380a1ebc82d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__detail_1a9bdb968fe93be9771ef57fd68c3171d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -209,7 +188,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_ostream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_ostream&lt;CharT,Traits&gt;&amp; pcg_detail::operator&lt;&lt;</definition>
+        <definition>std::basic_ostream&lt;CharT, Traits&gt;&amp; pcg_detail::operator&lt;&lt;</definition>
         <argsstring>(std::basic_ostream&lt; CharT, Traits &gt; &amp;out, const engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt; &amp;rng)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -226,9 +205,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="555" bodyend="571"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1359" column="46" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="421" bodyend="432"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1a655de592633ab35a7a3566d770121416" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__detail_1a6c87065f72ce4036ef066df998f7a039" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -258,7 +237,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_istream&lt;CharT,Traits&gt;&amp; pcg_detail::operator&gt;&gt;</definition>
+        <definition>std::basic_istream&lt;CharT, Traits&gt;&amp; pcg_detail::operator&gt;&gt;</definition>
         <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt; &amp;rng)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -275,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="579" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="579" bodyend="607"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="436" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="436" bodyend="461"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1a4aae5e3d1c68d31e2608dcd41572869c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -324,7 +303,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="668" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="668" bodyend="679"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="511" column="11" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="511" bodyend="515"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1a533d2dabb5e41bebf5f53025ee45ed6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -373,7 +352,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="686" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="686" bodyend="696"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="519" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="519" bodyend="522"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1ae301c41cc112c18882cd3f69d4a79c00" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -422,51 +401,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="702" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="702" bodyend="710"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1a8eca94340632aea6e654fc12f4f54fb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>pcg_detail::PCG_DEFINE_CONSTANT</definition>
-        <argsstring>(pcg128_t, mcg, multiplier, PCG_128BIT_CONSTANT(17766728186571221404ULL, 12605985483714917081ULL)) PCG_DEFINE_CONSTANT(pcg128_t</argsstring>
-        <name>PCG_DEFINE_CONSTANT</name>
-        <param>
-          <type><ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref></type>
-        </param>
-        <param>
-          <type><ref refid="namespacepcg__detail_1a1338b2f0b0575e795053506ae0579262" kindref="member">mcg</ref></type>
-        </param>
-        <param>
-          <type>multiplier</type>
-        </param>
-        <param>
-          <type><ref refid="namespacepcg__detail_1a5076fb5d29a1e7226df47ddba552512b" kindref="member">PCG_128BIT_CONSTANT</ref>(17766728186571221404ULL, 12605985483714917081ULL)</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="889" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1a7c64172ece8dce70c1e0f9a41e4e4409" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>pcg_detail::PCG_128BIT_CONSTANT</definition>
-        <argsstring>(14422606686972528997ULL, 15009553638781119849ULL)) template&lt; typename xtype</argsstring>
-        <name>PCG_128BIT_CONSTANT</name>
-        <param>
-          <type>14422606686972528997ULL</type>
-        </param>
-        <param>
-          <type>15009553638781119849ULL</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="892" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="526" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="526" bodyend="529"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1af5285db7f4a5ff43c3f68fe9ea87426e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -510,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1355" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1355" bodyend="1364"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1039" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1039" bodyend="1044"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1aa5d4605056ffa53aa9a18c804a75902d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -554,9 +489,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1368" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1368" bodyend="1374"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1047" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1047" bodyend="1050"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1af588d7f518702204287680eb7cc277e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__detail_1a2a685b95ec6acf2c3752f559c19522c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -587,7 +522,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_ostream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_ostream&lt;CharT,Traits&gt;&amp; pcg_detail::operator&lt;&lt;</definition>
+        <definition>std::basic_ostream&lt;CharT, Traits&gt;&amp; pcg_detail::operator&lt;&lt;</definition>
         <argsstring>(std::basic_ostream&lt; CharT, Traits &gt; &amp;out, const extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt; &amp;rng)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -604,9 +539,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1368" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1380" bodyend="1398"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1047" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1053" bodyend="1066"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__detail_1aa57137134c0dde6e0c67e829923e0a49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__detail_1a119a58a33b73016e654a5baea6320a67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -637,7 +572,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_istream&lt;CharT,Traits&gt;&amp; pcg_detail::operator&gt;&gt;</definition>
+        <definition>std::basic_istream&lt;CharT, Traits&gt;&amp; pcg_detail::operator&gt;&gt;</definition>
         <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt; &amp;rng)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -654,13 +589,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1404" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1404" bodyend="1428"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1069" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1069" bodyend="1088"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="104" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="104" column="20"/>
   </compounddef>
 </doxygen>

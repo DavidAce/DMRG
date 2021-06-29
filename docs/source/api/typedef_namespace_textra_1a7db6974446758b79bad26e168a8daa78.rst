@@ -3,7 +3,7 @@
 Typedef Textra::MatrixType
 ==========================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_tensor_extra.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_general_nmspc_tensor_extra.h`
 
 
 Typedef Documentation

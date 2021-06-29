@@ -3,7 +3,7 @@
 Function pcg_extras::operator>>(std::istream&, uint8_t&)
 ========================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_extras.hpp`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_math_rnd_pcg_extras.hpp`
 
 
 Function Documentation

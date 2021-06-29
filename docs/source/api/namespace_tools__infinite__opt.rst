@@ -17,8 +17,15 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1a5a61d826e74a8d7e9eeac0a5c1163177`
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f`
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1a3ae27fa959980e8cdffe49b736f8b9c2`
+
+
+Typedefs
+--------
+
+
+- :ref:`exhale_typedef_namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a`

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1finite_1_1print" kind="namespace" language="C++">
     <compoundname>tools::finite::print</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a33d2a046452bec782217cacc71a51616" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a1e1262915b86672358ac45af9dbb46ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::print::print_full_state</definition>
+        <definition>void tools::finite::print::dimensions</definition>
         <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>print_full_state</name>
+        <name>dimensions</name>
         <param>
           <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
@@ -18,52 +18,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="194" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="16" bodyend="29"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" line="8" column="17" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" declline="8" declcolumn="17"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a20584ad39f2fc94cc75451fe2f148fd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a63cec19fe11d0ad1fc4b1d2ec9e94c74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::print::print_state</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>print_state</name>
+        <definition>void tools::finite::print::dimensions</definition>
+        <argsstring>(const class_edges_finite &amp;edges)</argsstring>
+        <name>dimensions</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="33" bodyend="73"/>
-        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">Textra::operator&lt;&lt;</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a1124dc4dbdadf6923c34fe20fc046d6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void tools::finite::print::print_state_compact</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>print_state_compact</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="196" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="76" bodyend="95"/>
-        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">Textra::operator&lt;&lt;</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a8b8e7d219d29756636fc32b0a9667b3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void tools::finite::print::print_hamiltonians</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>print_hamiltonians</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__edges__finite" kindref="compound">class_edges_finite</ref> &amp;</type>
+          <declname>edges</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -71,13 +35,47 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="197" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="100" bodyend="113"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" line="9" column="17" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" declline="9" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a129005d30fd30ccca8c0403674bf9d34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::print::dimensions</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors)</argsstring>
+        <name>dimensions</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" line="10" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.cpp" bodystart="17" bodyend="32" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" declline="10" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a43650762255b8212f67c4f943a1d4ccf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::print::model</definition>
+        <argsstring>(const class_model_finite &amp;model)</argsstring>
+        <name>model</name>
+        <param>
+          <type>const <ref refid="classclass__model__finite" kindref="compound">class_model_finite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" line="11" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.cpp" bodystart="34" bodyend="37" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" declline="11" declcolumn="17"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="193" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/print.h" line="7" column="30"/>
   </compounddef>
 </doxygen>

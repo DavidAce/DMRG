@@ -1,9 +1,9 @@
 .. _exhale_struct_struct_textra_1_1idx__dim__pair:
 
-Template Struct idx_dim_pair
-============================
+Struct idx_dim_pair
+===================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_tensor_extra.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_general_nmspc_tensor_extra.h`
 
 
 Struct Documentation

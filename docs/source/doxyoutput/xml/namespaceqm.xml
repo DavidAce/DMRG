@@ -1,25 +1,64 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespaceqm" kind="namespace" language="C++">
     <compoundname>qm</compoundname>
+    <innerclass refid="classqm_1_1_gate" prot="public">qm::Gate</innerclass>
+    <innernamespace refid="namespaceqm_1_1lbit">qm::lbit</innernamespace>
     <innernamespace refid="namespaceqm_1_1mpo">qm::mpo</innernamespace>
+    <innernamespace refid="namespaceqm_1_1spin_half">qm::spinHalf</innernamespace>
     <innernamespace refid="namespaceqm_1_1_spin_one">qm::SpinOne</innernamespace>
     <innernamespace refid="namespaceqm_1_1spin_one">qm::spinOne</innernamespace>
-    <innernamespace refid="namespaceqm_1_1spin_one_half">qm::spinOneHalf</innernamespace>
     <innernamespace refid="namespaceqm_1_1time_evolution">qm::timeEvolution</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>typedef std::complex&lt; double &gt; qm::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="17" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>typedef std::complex&lt; double &gt; qm::cplx</definition>
+        <argsstring></argsstring>
+        <name>cplx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="18" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespaceqm_1a784fb3582fb353e3fc9b18dc3acce49c" prot="public" static="no">
+        <type>double</type>
+        <definition>typedef double qm::real</definition>
+        <argsstring></argsstring>
+        <name>real</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="19" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
-        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::gen_manybody_spin</definition>
-        <argsstring>(const Eigen::MatrixXcd &amp;s, int sites)</argsstring>
-        <name>gen_manybody_spin</name>
+      <memberdef kind="function" id="namespaceqm_1a68dcee1c9dc776f82f24084e9767ba73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; std::vector&lt; size_t &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; size_t &gt; &gt; qm::get_gate_sequence</definition>
+        <argsstring>(const std::vector&lt; qm::Gate &gt; &amp;layer)</argsstring>
+        <name>get_gate_sequence</name>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
-          <declname>s</declname>
-        </param>
-        <param>
-          <type>int</type>
-          <declname>sites</declname>
+          <type>const std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt; &amp;</type>
+          <declname>layer</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -27,13 +66,352 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="17" bodyend="29"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="21" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="286" bodyend="297" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="21" declcolumn="18"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1ae2d082053338c6bb0e01aed5f2b67e75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespaceiter_1a1e5cef09853f63219ad5fd9d1c6b3ba9" kindref="member">iter::order</ref></type>
+            <declname>o</declname>
+            <defname>o</defname>
+          </param>
+        </templateparamlist>
+        <type>std::vector&lt; std::vector&lt; size_t &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; size_t &gt; &gt; qm::get_lightcone</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; qm::Gate &gt;&gt; &amp;layers, size_t pos)</argsstring>
+        <name>get_lightcone</name>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt;&gt; &amp;</type>
+          <declname>layers</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="23" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="300" bodyend="326" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="23" declcolumn="18"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1acfc9b545e958f98b3892f004c9a38be5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; std::vector&lt; size_t &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; size_t &gt; &gt; qm::get_lightcone_intersection</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; qm::Gate &gt;&gt; &amp;layers, size_t pos_tau, size_t pos_sig)</argsstring>
+        <name>get_lightcone_intersection</name>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt;&gt; &amp;</type>
+          <declname>layers</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pos_tau</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pos_sig</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="24" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="331" bodyend="358" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="24" declcolumn="18"/>
+        <references refid="namespaceqm_1a1c71ff97346ef5f567643cb73fa5e133" compoundref="class__quantum__gates_8cpp" startline="360" endline="374">get_lightcone_picture</references>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1a1c71ff97346ef5f567643cb73fa5e133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>std::vector&lt; std::string &gt; qm::get_lightcone_picture</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; qm::Gate &gt;&gt; &amp;layers, const std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;cone, std::string_view tag, size_t point_width=3, std::string_view sep=&quot;,&quot;)</argsstring>
+        <name>get_lightcone_picture</name>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt;&gt; &amp;</type>
+          <declname>layers</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;</type>
+          <declname>cone</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>tag</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>point_width</declname>
+          <defval>3</defval>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>sep</declname>
+          <defval>&quot;,&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="25" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="360" bodyend="374" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="25" declcolumn="18"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1aad20272bb677b5d8bc32a374b0a00c23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::insert</definition>
+        <argsstring>(const qm::Gate &amp;middle_gate, const qm::Gate &amp;updown_gate)</argsstring>
+        <name>insert</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>middle_gate</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>updown_gate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="28" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="376" bodyend="698" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="28" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1afd23a90711c4c937b8b09b7cd253e038" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::connect</definition>
+        <argsstring>(const qm::Gate &amp;dn_gate, const qm::Gate &amp;up_gate)</argsstring>
+        <name>connect</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>dn_gate</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>up_gate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="29" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="700" bodyend="866" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="29" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1a9b4849f15c787f4ceb8f852ddd53a8d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::trace_idx</definition>
+        <argsstring>(const qm::Gate &amp;gate, const std::vector&lt; long &gt; &amp;idx)</argsstring>
+        <name>trace_idx</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>gate</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; long &gt; &amp;</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="30" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="868" bodyend="874" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="30" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1a7a3dc1b644fe083079eb4766c0d45885" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::trace_pos</definition>
+        <argsstring>(const qm::Gate &amp;gate, const std::vector&lt; size_t &gt; &amp;pos)</argsstring>
+        <name>trace_pos</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>gate</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; size_t &gt; &amp;</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="31" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="876" bodyend="885" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="31" declcolumn="15"/>
+        <references refid="classqm_1_1_gate_1a83e31f30c53e536a4a05139edc6c86bd" compoundref="class__quantum__gates_8h" startline="40">qm::Gate::adj</references>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1ac5cd8ad7b3f51f4c8d165dbdf3cc2f42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::trace_pos</definition>
+        <argsstring>(const qm::Gate &amp;gate, size_t pos)</argsstring>
+        <name>trace_pos</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>gate</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="32" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="887" bodyend="887" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="32" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1a86e463086dba4c5f37b00fafb61754cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref></type>
+        <definition>qm::Scalar qm::trace</definition>
+        <argsstring>(const qm::Gate &amp;gate)</argsstring>
+        <name>trace</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>gate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="33" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="889" bodyend="895" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="33" declcolumn="15"/>
+        <references refid="classqm_1_1_gate_1a83e31f30c53e536a4a05139edc6c86bd" compoundref="class__quantum__gates_8h" startline="40">qm::Gate::adj</references>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1afcc63c5d32db63a6e7dc9e7403bdd611" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>auto</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
+        <definition>qm::Gate qm::trace</definition>
+        <argsstring>(const qm::Gate &amp;gate, const std::array&lt; Eigen::IndexPair&lt; Eigen::Index &gt;, N &gt; &amp;idxpair)</argsstring>
+        <name>trace</name>
+        <param>
+          <type>const <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &amp;</type>
+          <declname>gate</declname>
+        </param>
+        <param>
+          <type>const std::array&lt; <ref refid="struct_eigen_1_1_index_pair" kindref="compound">Eigen::IndexPair</ref>&lt; Eigen::Index &gt;, N &gt; &amp;</type>
+          <declname>idxpair</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="35" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="898" bodyend="978" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="35" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1a41cbf588a567c9eee91b34e0ecd4e4b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref></type>
+        <definition>Eigen::MatrixXcd qm::gen_embedded_spin_operator</definition>
+        <argsstring>(const Eigen::MatrixXcd &amp;s, size_t at, size_t site, bool reverse=false)</argsstring>
+        <name>gen_embedded_spin_operator</name>
+        <param>
+          <type>const <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>at</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>site</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>reverse</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="20" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="24" bodyend="62" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="20" declcolumn="29"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1ac14000ed85c03f44fee79510a99e1447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
+        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::gen_manybody_spins</definition>
+        <argsstring>(const Eigen::MatrixXcd &amp;s, int sites, bool reverse=false)</argsstring>
+        <name>gen_manybody_spins</name>
+        <param>
+          <type>const <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sites</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>reverse</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="21" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="64" bodyend="68" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="21" declcolumn="24"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1ac4afad00d74a3ee80f897ae46cf89c36" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>constexpr std::complex&lt; double &gt;</type>
+        <definition>constexpr std::complex&lt;double&gt; qm::imp</definition>
+        <argsstring>(0.0, 1.0)</argsstring>
+        <name>imp</name>
+        <param>
+          <type>0.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>1.</type>
+          <declname>0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="23" column="28" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="23" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1ac235075b847ab17a20117f984b28b64d" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>constexpr std::complex&lt; double &gt;</type>
+        <definition>constexpr std::complex&lt;double&gt; qm::imn</definition>
+        <argsstring>(0.0,-1.0)</argsstring>
+        <name>imn</name>
+        <param>
+          <type>0.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>-1.</type>
+          <declname>0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="24" column="28" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="24" declcolumn="28"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="12" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/mps.h" line="12" column="12"/>
   </compounddef>
 </doxygen>

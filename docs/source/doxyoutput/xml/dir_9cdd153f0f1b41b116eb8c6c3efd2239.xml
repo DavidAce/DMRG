@@ -1,18 +1,23 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="dir_9cdd153f0f1b41b116eb8c6c3efd2239" kind="dir">
-    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general</compoundname>
+    <compoundname>/home/david/GitProjects/DMRG++/source/general</compoundname>
     <innerfile refid="class__tic__toc_8cpp">class_tic_toc.cpp</innerfile>
     <innerfile refid="class__tic__toc_8h">class_tic_toc.h</innerfile>
-    <innerfile refid="nmspc__omp_8h">nmspc_omp.h</innerfile>
-    <innerfile refid="nmspc__quantum__mechanics_8cpp">nmspc_quantum_mechanics.cpp</innerfile>
-    <innerfile refid="nmspc__quantum__mechanics_8h">nmspc_quantum_mechanics.h</innerfile>
+    <innerfile refid="eigen__tensor__fwd__decl_8h">eigen_tensor_fwd_decl.h</innerfile>
+    <innerfile refid="nmspc__exceptions_8h">nmspc_exceptions.h</innerfile>
+    <innerfile refid="nmspc__iter_8h">nmspc_iter.h</innerfile>
+    <innerfile refid="nmspc__sfinae_8h">nmspc_sfinae.h</innerfile>
+    <innerfile refid="nmspc__sfinae__eigen_8h">nmspc_sfinae_eigen.h</innerfile>
     <innerfile refid="nmspc__tensor__extra_8h">nmspc_tensor_extra.h</innerfile>
-    <innerfile refid="nmspc__type__check_8h">nmspc_type_check.h</innerfile>
+    <innerfile refid="nmspc__tensor__omp_8cpp">nmspc_tensor_omp.cpp</innerfile>
+    <innerfile refid="nmspc__tensor__omp_8h">nmspc_tensor_omp.h</innerfile>
+    <innerfile refid="stack__trace_8cpp">stack_trace.cpp</innerfile>
+    <innerfile refid="stack__trace_8h">stack_trace.h</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/"/>
+    <location file="/home/david/GitProjects/DMRG++/source/general/"/>
   </compounddef>
 </doxygen>

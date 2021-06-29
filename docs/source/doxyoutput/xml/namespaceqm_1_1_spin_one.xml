@@ -1,42 +1,14 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespaceqm_1_1_spin_one" kind="namespace" language="C++">
     <compoundname>qm::SpinOne</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" prot="public" static="no" mutable="no">
-        <type>auto</type>
-        <definition>auto qm::SpinOne::imp</definition>
-        <argsstring></argsstring>
-        <name>imp</name>
-        <initializer>= std::complex&lt;double&gt;(0.0,1.0)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="66" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" prot="public" static="no" mutable="no">
-        <type>auto</type>
-        <definition>auto qm::SpinOne::imn</definition>
-        <argsstring></argsstring>
-        <name>imn</name>
-        <initializer>= std::complex&lt;double&gt;(0.0,-1.0)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="67" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a86943091b0ad27c0dfee22caf74bb2ab" prot="public" static="no" mutable="no">
-        <type>Matrix3cd</type>
+        <type><ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref></type>
         <definition>Matrix3cd qm::SpinOne::sx</definition>
         <argsstring></argsstring>
         <name>sx</name>
-        <initializer>= (Matrix3cd() &lt;&lt;  0.0, 1.0, 0.0,
+        <initializer>= (<ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref>() &lt;&lt;  0.0, 1.0, 0.0,
                                     1.0, 0.0, 1.0,
                                     0.0, 1.0, 0.0).finished()</initializer>
         <briefdescription>
@@ -45,30 +17,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="68" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="127" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1af28cf0235b73d38aec6b09a8bf313e10" prot="public" static="no" mutable="no">
-        <type>Matrix3cd</type>
+        <type><ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref></type>
         <definition>Matrix3cd qm::SpinOne::sy</definition>
         <argsstring></argsstring>
         <name>sy</name>
-        <initializer>= (Matrix3cd() &lt;&lt;  0.0 , <ref refid="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" kindref="member">imn</ref>, 0.0,
-                                    <ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref>,  0.0 ,<ref refid="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" kindref="member">imn</ref>,
-                                    0.0 ,  <ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref>, 0.0).finished()</initializer>
+        <initializer>= (<ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref>() &lt;&lt;  0.0 , <ref refid="namespaceqm_1ac235075b847ab17a20117f984b28b64d" kindref="member">imn</ref>, 0.0,
+                                    <ref refid="namespaceqm_1ac4afad00d74a3ee80f897ae46cf89c36" kindref="member">imp</ref>,  0.0 ,<ref refid="namespaceqm_1ac235075b847ab17a20117f984b28b64d" kindref="member">imn</ref>,
+                                    0.0 ,  <ref refid="namespaceqm_1ac4afad00d74a3ee80f897ae46cf89c36" kindref="member">imp</ref>, 0.0).finished()</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="71" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="130" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="130" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a0ca088bc79d8ed29c00a7e33d9af1386" prot="public" static="no" mutable="no">
-        <type>Matrix3cd</type>
+        <type><ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref></type>
         <definition>Matrix3cd qm::SpinOne::sz</definition>
         <argsstring></argsstring>
         <name>sz</name>
-        <initializer>= (Matrix3cd() &lt;&lt;  1.0, 0.0, 0.0,
+        <initializer>= (<ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref>() &lt;&lt;  1.0, 0.0, 0.0,
                                     0.0, 0.0, 0.0,
                                     0.0, 0.0,-1.0).finished()</initializer>
         <briefdescription>
@@ -77,14 +49,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="74" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="133" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="133" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a17e0039df14d4cf49c6d7a75d19a5912" prot="public" static="no" mutable="no">
-        <type>Matrix3cd</type>
-        <definition>Matrix3cd qm::SpinOne::Id</definition>
+      <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a16bed2d6c7c94cde96fc428506302313" prot="public" static="no" mutable="no">
+        <type><ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref></type>
+        <definition>Matrix3cd qm::SpinOne::id</definition>
         <argsstring></argsstring>
-        <name>Id</name>
-        <initializer>= (Matrix3cd()  &lt;&lt; 1.0, 0.0, 0.0,
+        <name>id</name>
+        <initializer>= (<ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Matrix3cd</ref>()  &lt;&lt; 1.0, 0.0, 0.0,
                                     0.0, 1.0, 0.0,
                                     0.0, 0.0, 1.0).finished()</initializer>
         <briefdescription>
@@ -93,10 +65,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="77" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="136" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="136" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a0cf3051ee9d58ece101644b557e55c15" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
         <definition>std::vector&lt;Eigen::MatrixXcd&gt; qm::SpinOne::SX</definition>
         <argsstring></argsstring>
         <name>SX</name>
@@ -106,10 +78,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="81" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="140" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="140" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a08baefd079e4334232a1591a0c666e12" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
         <definition>std::vector&lt;Eigen::MatrixXcd&gt; qm::SpinOne::SY</definition>
         <argsstring></argsstring>
         <name>SY</name>
@@ -119,10 +91,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="82" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="141" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="141" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a4b1681da66f3f407284652f0853f2418" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
         <definition>std::vector&lt;Eigen::MatrixXcd&gt; qm::SpinOne::SZ</definition>
         <argsstring></argsstring>
         <name>SZ</name>
@@ -132,10 +104,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="83" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="142" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="142" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1_spin_one_1a208f922ad886e2d517e30fbaeedbb855" prot="public" static="no" mutable="no">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
         <definition>std::vector&lt;Eigen::MatrixXcd&gt; qm::SpinOne::II</definition>
         <argsstring></argsstring>
         <name>II</name>
@@ -145,13 +117,36 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="84" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="143" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceqm_1_1_spin_one_1a470d62a3839be62ae9296f5c92b72f90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
+        <definition>std::vector&lt;Eigen::MatrixXcd&gt; qm::SpinOne::gen_twobody_spins</definition>
+        <argsstring>(const Eigen::Matrix3cd &amp;s, bool swap)</argsstring>
+        <name>gen_twobody_spins</name>
+        <param>
+          <type>const <ref refid="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" kindref="member">Eigen::Matrix3cd</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>swap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="146" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="146" bodyend="153"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="65" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="124" column="21"/>
   </compounddef>
 </doxygen>

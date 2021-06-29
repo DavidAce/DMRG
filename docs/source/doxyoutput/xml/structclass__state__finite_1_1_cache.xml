@@ -1,60 +1,30 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="structclass__state__finite_1_1_cache" kind="struct" language="C++" prot="private">
     <compoundname>class_state_finite::Cache</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="structclass__state__finite_1_1_cache_1af308f1f2e19b59e50fb2e1855c4c7406" prot="public" static="no" mutable="no">
-        <type>std::optional&lt; <ref refid="classclass__state__finite_1ae9a4d393f993d6877ea660064900bdc4" kindref="member">TType</ref>&lt; 4 &gt; &gt;</type>
-        <definition>std::optional&lt;TType&lt;4&gt; &gt; class_state_finite::Cache::theta</definition>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; Eigen::Tensor&lt; <ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
+        <definition>std::optional&lt;Eigen::Tensor&lt;Scalar, 3&gt; &gt; class_state_finite::Cache::multisite_mps</definition>
         <argsstring></argsstring>
-        <name>theta</name>
-        <initializer>= {}</initializer>
+        <name>multisite_mps</name>
+        <initializer>= std::nullopt</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="181" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="181" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="structclass__state__finite_1_1_cache_1ab1b6fdb3f6ea24b4ff6288ab80d67b56" prot="public" static="no" mutable="no">
-        <type>std::optional&lt; <ref refid="classclass__state__finite_1ae9a4d393f993d6877ea660064900bdc4" kindref="member">TType</ref>&lt; 4 &gt; &gt;</type>
-        <definition>std::optional&lt;TType&lt;4&gt; &gt; class_state_finite::Cache::multimpo</definition>
-        <argsstring></argsstring>
-        <name>multimpo</name>
-        <initializer>= {}</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="182" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="182" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="structclass__state__finite_1_1_cache_1ae3ab0c250e137ac3a4533391d7ba4bbe" prot="public" static="no" mutable="no">
-        <type>std::optional&lt; <ref refid="classclass__state__finite_1ae9a4d393f993d6877ea660064900bdc4" kindref="member">TType</ref>&lt; 3 &gt; &gt;</type>
-        <definition>std::optional&lt;TType&lt;3&gt; &gt; class_state_finite::Cache::multitheta</definition>
-        <argsstring></argsstring>
-        <name>multitheta</name>
-        <initializer>= {}</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="183" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="183" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="40" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="40" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="180" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="180" bodyend="184"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="39" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="39" bodyend="41"/>
     <listofallmembers>
-      <member refid="structclass__state__finite_1_1_cache_1ab1b6fdb3f6ea24b4ff6288ab80d67b56" prot="public" virt="non-virtual"><scope>class_state_finite::Cache</scope><name>multimpo</name></member>
-      <member refid="structclass__state__finite_1_1_cache_1ae3ab0c250e137ac3a4533391d7ba4bbe" prot="public" virt="non-virtual"><scope>class_state_finite::Cache</scope><name>multitheta</name></member>
-      <member refid="structclass__state__finite_1_1_cache_1af308f1f2e19b59e50fb2e1855c4c7406" prot="public" virt="non-virtual"><scope>class_state_finite::Cache</scope><name>theta</name></member>
+      <member refid="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" prot="public" virt="non-virtual"><scope>class_state_finite::Cache</scope><name>multisite_mps</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

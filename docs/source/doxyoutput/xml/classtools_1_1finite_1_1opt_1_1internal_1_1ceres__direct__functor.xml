@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kind="class" language="C++" prot="public">
     <compoundname>tools::finite::opt::internal::ceres_direct_functor</compoundname>
     <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_base_functor</basecompoundref>
     <includes refid="ceres__direct__functor_8h" local="no">ceres_direct_functor.h</includes>
     <templateparamlist>
       <param>
-        <type>typename <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref></type>
+        <type>typename <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref></type>
       </param>
     </templateparamlist>
       <sectiondef kind="private-type">
-      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a87b1cb97679b89e48b13c9eb7074755c" prot="private" static="no">
-        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
-        <definition>using tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::MatrixType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ad4eb38945d2e4c896cb79c3e2f636f43" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::MatrixType =  Eigen::Matrix&lt;Scalar, Eigen::Dynamic, Eigen::Dynamic&gt;</definition>
         <argsstring></argsstring>
         <name>MatrixType</name>
         <briefdescription>
@@ -21,11 +21,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="13" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="14" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="14" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" prot="private" static="no">
-        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
-        <definition>using tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::VectorType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;</definition>
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a193c9026300753666cca82313af2047f" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::VectorType =  Eigen::Matrix&lt;Scalar, Eigen::Dynamic, 1&gt;</definition>
         <argsstring></argsstring>
         <name>VectorType</name>
         <briefdescription>
@@ -34,52 +34,52 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="14" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="15" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" prot="private" static="no" mutable="yes">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::Hv_tensor</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af1deec2e11c578d8c7a1de7371f50ca0" prot="private" static="no" mutable="yes">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::Hn_tensor</definition>
         <argsstring></argsstring>
-        <name>Hv_tensor</name>
+        <name>Hn_tensor</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="15" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="16" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="16" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" prot="private" static="no" mutable="yes">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::H2v_tensor</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac5d9c952f319c69b7ab445f308e3cdee" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::H2n_tensor</definition>
         <argsstring></argsstring>
-        <name>H2v_tensor</name>
+        <name>H2n_tensor</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="15" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="16" column="41" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="16" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af628a1cd598b6103b98b30f2279c6802" prot="private" static="no" mutable="no">
         <type>Eigen::DSizes&lt; long, 3 &gt;</type>
-        <definition>Eigen::DSizes&lt;long,3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::dsizes</definition>
+        <definition>Eigen::DSizes&lt;long, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::dims</definition>
         <argsstring></argsstring>
-        <name>dsizes</name>
+        <name>dims</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="16" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="17" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="17" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" prot="private" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envL</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a4b4e3326e33d636f17c59cce065a95d2" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envL</definition>
         <argsstring></argsstring>
         <name>envL</name>
         <briefdescription>
@@ -88,11 +88,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="17" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="18" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="18" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" prot="private" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envR</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a77d6844e2023e884ed51f16aa7ccd7de" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envR</definition>
         <argsstring></argsstring>
         <name>envR</name>
         <briefdescription>
@@ -101,11 +101,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="17" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="18" column="36" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="18" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" prot="private" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2L</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1aff6cb0098987b7474437a0bc5e5e4969" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2L</definition>
         <argsstring></argsstring>
         <name>env2L</name>
         <briefdescription>
@@ -114,11 +114,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="18" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="19" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="19" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" prot="private" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2R</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a7279c342dcaaccae09149992db75afe0" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 3&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2R</definition>
         <argsstring></argsstring>
         <name>env2R</name>
         <briefdescription>
@@ -127,11 +127,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="18" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="19" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="19" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" prot="private" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::mpo</definition>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a550e3150463193c78ec09a739ab692e9" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 4&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::mpo</definition>
         <argsstring></argsstring>
         <name>mpo</name>
         <briefdescription>
@@ -140,7 +140,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="19" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="20" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac6b7935725bbd4c6f573a547d70d05c4" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar, 4&gt; tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::mpo2</definition>
+        <argsstring></argsstring>
+        <name>mpo2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="20" column="35" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1aec790f713f95806c003ded2b79e7f283" prot="private" static="no" mutable="yes">
+        <type><ref refid="namespacetools_1_1finite_1_1opt_1a0ea0d5df283a6c0c2e2bee91ca0f9414" kindref="member">Scalar</ref></type>
+        <definition>Scalar tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::shift</definition>
+        <argsstring></argsstring>
+        <name>shift</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="21" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" prot="private" static="no" mutable="yes">
         <type>bool</type>
@@ -154,17 +180,45 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="22" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5c27663238340fe139c906f4601c4094" prot="private" static="no" mutable="yes">
+        <type>bool</type>
+        <definition>bool tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::readyCompress</definition>
+        <argsstring></argsstring>
+        <name>readyCompress</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="23" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a96693af551e5d73aa4eeb46b6ec31bfe" prot="private" static="no" mutable="yes">
+        <type>bool</type>
+        <definition>bool tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::readyShift</definition>
+        <argsstring></argsstring>
+        <name>readyShift</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="24" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
-      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a211bb3adeaba68f0070ba29bec01e6ba" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void ceres_direct_functor::get_Hv</definition>
+        <definition>void ceres_direct_functor::get_Hn</definition>
         <argsstring>(const VectorType &amp;v) const</argsstring>
-        <name>get_Hv</name>
+        <name>get_Hn</name>
         <param>
-          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref> &amp;</type>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a193c9026300753666cca82313af2047f" kindref="member">VectorType</ref> &amp;</type>
           <declname>v</declname>
         </param>
         <briefdescription>
@@ -173,15 +227,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp" bodystart="213" bodyend="241"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="25" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="237" bodyend="242"/>
       </memberdef>
-      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23784a554b11687593861af05dd09418" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void ceres_direct_functor::get_H2v</definition>
+        <definition>void ceres_direct_functor::get_H2n</definition>
         <argsstring>(const VectorType &amp;v) const</argsstring>
-        <name>get_H2v</name>
+        <name>get_H2n</name>
         <param>
-          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref> &amp;</type>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a193c9026300753666cca82313af2047f" kindref="member">VectorType</ref> &amp;</type>
           <declname>v</declname>
         </param>
         <briefdescription>
@@ -190,22 +244,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp" bodystart="164" bodyend="208"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="26" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="178" bodyend="234"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a2cb9c5ba89f9725b5830361ca74358b2" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>ceres_direct_functor::ceres_direct_functor</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status)</argsstring>
+        <argsstring>(const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status)</argsstring>
         <name>ceres_direct_functor</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -213,10 +267,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp" bodystart="13" bodyend="54"/>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" compoundref="opt_8h" startline="114">tools::finite::opt::internal::ceres_base_functor::energy_reduced</references>
-        <references refid="classclass__state__finite_1af5765949c5a515d45526b4c266a41dd2" compoundref="class__state__finite_8cpp" startline="343" endline="345">class_state_finite::get_energy_reduced</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" compoundref="opt_8h" startline="129">tools::finite::opt::internal::ceres_base_functor::num_parameters</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="29" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="31" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a8253aa3a22ca3487ee441f30a9898870" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
         <type>bool</type>
@@ -241,18 +292,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp" bodystart="66" bodyend="158"/>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" compoundref="ceres__base_8cpp" startline="39" endline="39">tools::finite::opt::internal::ceres_base_functor::NumParameters</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" compoundref="opt_8h" startline="125">tools::finite::opt::internal::ceres_base_functor::norm</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" compoundref="ceres__direct__functor_8h" startline="20">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::print_path</references>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" compoundref="opt_8h" startline="126">tools::finite::opt::internal::ceres_base_functor::counter</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" compoundref="opt_8h" startline="113">tools::finite::opt::internal::ceres_base_functor::energy</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" compoundref="opt_8h" startline="114">tools::finite::opt::internal::ceres_base_functor::energy_reduced</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" compoundref="opt_8h" startline="127">tools::finite::opt::internal::ceres_base_functor::length</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" compoundref="opt_8h" startline="112">tools::finite::opt::internal::ceres_base_functor::variance</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" compoundref="opt_8h" startline="124">tools::finite::opt::internal::ceres_base_functor::norm_offset</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" compoundref="opt_8h" startline="123">tools::finite::opt::internal::ceres_base_functor::energy_offset</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="30" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="81" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab43e51d1875106c434cb750efdeb6430" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ceres_direct_functor::compress</definition>
+        <argsstring>()</argsstring>
+        <name>compress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="31" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="247" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23e70464be07a67518509f6d9d5945d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ceres_direct_functor::set_shift</definition>
+        <argsstring>(double shift_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>double</type>
+          <declname>shift_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="32" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="278" bodyend="314"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -260,89 +330,139 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="24">
+      <node id="1">
         <label>tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor"/>
-        <childnode refid="25" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="25">
+      <node id="2">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
-        <childnode refid="26" relation="public-inheritance">
+        <childnode refid="3" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="26">
-        <label>FirstOrderFunction</label>
+      <node id="3">
+        <label>ceres::FirstOrderFunction</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="27">
+      <node id="1">
         <label>tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor"/>
-        <childnode refid="28" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>shift</edgelabel>
         </childnode>
       </node>
-      <node id="30">
-        <label>OMP</label>
-        <link refid="class_o_m_p"/>
+      <node id="4">
+        <label>std::unique_ptr&lt; class_tic_toc &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
       </node>
-      <node id="28">
+      <node id="7">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="8">
+        <label>std::complex&lt; double &gt;</label>
+      </node>
+      <node id="2">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
-        <childnode refid="29" relation="public-inheritance">
+        <childnode refid="3" relation="public-inheritance">
         </childnode>
-        <childnode refid="30" relation="usage">
-          <edgelabel>omp</edgelabel>
+        <childnode refid="4" relation="usage">
+          <edgelabel>t_Hn</edgelabel>
+          <edgelabel>t_H2n</edgelabel>
+          <edgelabel>t_nH2n</edgelabel>
+          <edgelabel>t_step</edgelabel>
+          <edgelabel>t_nHn</edgelabel>
         </childnode>
       </node>
-      <node id="29">
-        <label>FirstOrderFunction</label>
+      <node id="5">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ceres::FirstOrderFunction</label>
+      </node>
+      <node id="6">
+        <label>std::string</label>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" line="11" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h" bodystart="11" bodyend="28"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="12" column="57" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="12" bodyend="33"/>
     <listofallmembers>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_base_functor</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_direct_functor</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>counter</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>dsizes</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_base_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a2cb9c5ba89f9725b5830361ca74358b2" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_direct_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab43e51d1875106c434cb750efdeb6430" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>compress</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad1a61c70c00b5f4ed703f587a1a2f41f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>counter</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aa50377e1abe8aa677e5440683c151e32" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>delta_f</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af628a1cd598b6103b98b30f2279c6802" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>dims</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad85bda1d5380a029f29d6607102a251a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_dens</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_lower_bound</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_max</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_min</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4cf55cb74d9e1107c11f6ea6d4519096" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_dens_target</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aac95b85ddd16608f4bb82fe8fb9c3ffe" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_dens_window</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aaeacf1bdeb827ca46fb2f623e76dec54" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_llim_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a506407dd3ce5874aad6c43401f0498e0" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_max_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad0e4490dfc4324060c4dfa60ee76315c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_min_per_site</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab730bb8db70334d83578f05d264c9969" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_per_site</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_reduced</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_target</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_target_dens</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_upper_bound</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_window</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>env2L</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>env2R</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>envL</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>envR</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1bef8b7100a6685e17ef51118b57728c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_tgt_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a969920ebc8a54fd4fe1d38ad1f7c66ed" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>energy_ulim_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1aff6cb0098987b7474437a0bc5e5e4969" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>env2L</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a7279c342dcaaccae09149992db75afe0" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>env2R</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a4b4e3326e33d636f17c59cce065a95d2" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>envL</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a77d6844e2023e884ed51f16aa7ccd7de" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>envR</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a8253aa3a22ca3487ee441f30a9898870" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>Evaluate</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_count</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7f682d931dbf4764e9cf8565b40de224" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_delta_f</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_energy</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_H2v</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_Hv</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7584caf4edef5b771b2580d0feae4e47" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_energy_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1abde52ca7df09396f9612d6ded2393bd0" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_grad_max_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23784a554b11687593861af05dd09418" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_H2n</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a211bb3adeaba68f0070ba29bec01e6ba" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_Hn</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5fb2492a8e0dd68b3422292b3f65aae6" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_norm_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae99d522c02f801f795ea15af3da9933c" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_ops</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_variance</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>H2v_tensor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad91c01df377b39204adbb63e891f07c4" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>get_variance_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4bc72a0230a6dd24d545d69a37d88120" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>grad_max_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac5d9c952f319c69b7ab445f308e3cdee" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>H2n_tensor</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a24904fea2d1697f5807f2c4f4709abc3" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>have_bounds_on_energy</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>Hv_tensor</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>iteration</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af1deec2e11c578d8c7a1de7371f50ca0" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>Hn_tensor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a171b74acc255cbd18196fc109c22bb81" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>iteration</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>length</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a87b1cb97679b89e48b13c9eb7074755c" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>MatrixType</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>mpo</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ad4eb38945d2e4c896cb79c3e2f636f43" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>MatrixType</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a550e3150463193c78ec09a739ab692e9" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>mpo</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac6b7935725bbd4c6f573a547d70d05c4" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>mpo2</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>norm</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>norm_offset</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>num_parameters</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>NumParameters</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>omp</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad351011d0e628aa33a2ea586e1e32afb" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ops</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>print_path</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5c27663238340fe139c906f4601c4094" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>readyCompress</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a96693af551e5d73aa4eeb46b6ec31bfe" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>readyShift</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aff5f9cfe37303c055d474ab07e51304b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>set_delta_f</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab2a69e0f5a72c649fc8678fb9a22ed0b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>set_grad_max_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23e70464be07a67518509f6d9d5945d1" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>set_shift</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1aec790f713f95806c003ded2b79e7f283" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>shift</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4231819b5f518d1bbee099137e4ba94c" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>t_H2n</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab7e32e738cfdf2de9bed75b25aae1c71" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>t_Hn</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aca13ca186bb8d7ef3de0876e2936008b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>t_nH2n</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aee536b684beb7ddd1b3cd6473d820f2f" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>t_nHn</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5cc81a0bb9c6d5bf5948dbadf19ac81d" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>t_step</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>variance</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>VectorType</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac86c762fcd816c89388fc6f08af72f13" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>variance_per_site</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a193c9026300753666cca82313af2047f" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>VectorType</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

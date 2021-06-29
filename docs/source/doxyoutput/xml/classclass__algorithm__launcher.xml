@@ -1,60 +1,25 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="classclass__algorithm__launcher" kind="class" language="C++" prot="public">
     <compoundname>class_algorithm_launcher</compoundname>
     <includes refid="class__algorithm__launcher_8h" local="no">class_algorithm_launcher.h</includes>
-      <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" prot="private" static="no" mutable="no">
-        <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
-        <definition>std::shared_ptr&lt;spdlog::logger&gt; class_algorithm_launcher::log</definition>
-        <argsstring></argsstring>
-        <name>log</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="12" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; h5pp::File &gt;</type>
-        <definition>std::shared_ptr&lt;h5pp::File&gt; class_algorithm_launcher::h5ppFile</definition>
+        <definition>std::shared_ptr&lt;h5pp::File&gt; class_algorithm_launcher::h5pp_file</definition>
         <argsstring></argsstring>
-        <name>h5ppFile</name>
+        <name>h5pp_file</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="17" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="private-func">
-      <memberdef kind="function" id="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_algorithm_launcher::setLogger</definition>
-        <argsstring>(std::string name)</argsstring>
-        <name>setLogger</name>
-        <param>
-          <type>std::string</type>
-          <declname>name</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="33" bodyend="42"/>
-        <references refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" compoundref="class__algorithm__launcher_8h" startline="12">log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="13" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="13" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>class_algorithm_launcher::class_algorithm_launcher</definition>
         <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_)</argsstring>
@@ -69,8 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="46" bodyend="53"/>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="15" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="25" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -83,16 +47,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="54" bodyend="89"/>
-        <references refid="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" compoundref="class__algorithm__launcher_8cpp" startline="27" endline="29">remove_temp_file</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" compoundref="nmspc__settings_8h" startline="47">settings::output::use_temp_dir</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" compoundref="h5pp__tmp_8cpp" startline="16" endline="46">tools::common::io::h5tmp::set_tmp_prefix</references>
-        <references refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" compoundref="nmspc__settings_8h" startline="45">settings::output::output_filename</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" compoundref="h5pp__tmp_8cpp" startline="65" endline="85">tools::common::io::h5tmp::create_directory</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" compoundref="h5pp__tmp_8cpp" startline="48" endline="63">tools::common::io::h5tmp::unset_tmp_prefix</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="16" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="34" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_launcher::start_h5pp_file</definition>
+        <argsstring>()</argsstring>
+        <name>start_h5pp_file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="17" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="46" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_launcher::setup_temp_path</definition>
+        <argsstring>()</argsstring>
+        <name>setup_temp_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="18" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="129" bodyend="142"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -105,113 +86,105 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="92" bodyend="107"/>
-        <references refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" compoundref="class__algorithm__launcher_8cpp" startline="110" endline="115">run_iDMRG</references>
-        <references refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" compoundref="class__algorithm__launcher_8cpp" startline="118" endline="123">run_fDMRG</references>
-        <references refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" compoundref="class__algorithm__launcher_8cpp" startline="125" endline="130">run_xDMRG</references>
-        <references refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" compoundref="class__algorithm__launcher_8cpp" startline="132" endline="137">run_iTEBD</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" compoundref="h5pp__tmp_8cpp" startline="88" endline="114">tools::common::io::h5tmp::copy_from_tmp</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" compoundref="h5pp__tmp_8cpp" startline="116" endline="136">tools::common::io::h5tmp::remove_from_temp</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="20" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="144" bodyend="158"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a6e8562746f3a16a58672a236e5d0e54b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_launcher::run_iDMRG</definition>
+        <definition>void class_algorithm_launcher::run_idmrg</definition>
         <argsstring>()</argsstring>
-        <name>run_iDMRG</name>
+        <name>run_idmrg</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="110" bodyend="115"/>
-        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
-        <references refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" compoundref="class__i_d_m_r_g_8cpp" startline="16" endline="20">class_iDMRG::class_iDMRG</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="21" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="160" bodyend="165"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a90bce732eacabf6228ecf88571521c4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_launcher::run_fDMRG</definition>
+        <definition>void class_algorithm_launcher::run_fdmrg</definition>
         <argsstring>()</argsstring>
-        <name>run_fDMRG</name>
+        <name>run_fdmrg</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="118" bodyend="123"/>
-        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="129">settings::fdmrg::on</references>
-        <references refid="classclass__f_d_m_r_g_1a8ad33fc90e97bfd0e1bd81ade8d7ef02" compoundref="class__f_d_m_r_g_8cpp" startline="18" endline="22">class_fDMRG::class_fDMRG</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="22" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="167" bodyend="172"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a8f6d9636fa9f5cb6e1c35a50ac3e6f30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_launcher::run_xDMRG</definition>
+        <definition>void class_algorithm_launcher::run_flbit</definition>
         <argsstring>()</argsstring>
-        <name>run_xDMRG</name>
+        <name>run_flbit</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="125" bodyend="130"/>
-        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="143">settings::xdmrg::on</references>
-        <references refid="classclass__x_d_m_r_g_1a61930e63cbdb8cb330892a9686ae6f9c" compoundref="class__x_d_m_r_g_8cpp" startline="14" endline="18">class_xDMRG::class_xDMRG</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="23" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="174" bodyend="189"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a87fb0ad1c25ce50d99c57edddba48c2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_launcher::run_iTEBD</definition>
+        <definition>void class_algorithm_launcher::run_xdmrg</definition>
         <argsstring>()</argsstring>
-        <name>run_iTEBD</name>
+        <name>run_xdmrg</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="132" bodyend="137"/>
-        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="159">settings::itebd::on</references>
-        <references refid="classclass__i_t_e_b_d_1acdaaf2d282fa4540c38c0f4673de1d5c" compoundref="class__i_t_e_b_d_8cpp" startline="19" endline="27">class_iTEBD::class_iTEBD</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="24" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="191" bodyend="208"/>
+        <references refid="classclass__xdmrg_1a6699e95cd9e6ffdd6ceaf72a760c7d23" compoundref="class__xdmrg_8h" startline="25">class_xdmrg::time_gates_3site</references>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a6eee8e47fb972c99a34da0c03a451105" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_algorithm_launcher::remove_temp_file</definition>
+        <definition>void class_algorithm_launcher::run_itebd</definition>
         <argsstring>()</argsstring>
-        <name>remove_temp_file</name>
+        <name>run_itebd</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="27" bodyend="29"/>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" compoundref="h5pp__tmp_8cpp" startline="116" endline="136">tools::common::io::h5tmp::remove_from_temp</references>
+        <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="25" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="210" bodyend="215"/>
+        <references refid="classclass__itebd_1a5ae018e10fdbd15e59d87a08d779534c" compoundref="class__itebd_8h" startline="15">class_itebd::unitary_time_evolving_operators</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="10" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="10" bodyend="33"/>
+    <collaborationgraph>
+      <node id="1">
+        <label>class_algorithm_launcher</label>
+        <link refid="classclass__algorithm__launcher"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>h5pp_file</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::shared_ptr&lt; h5pp::File &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="11" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="11" bodyend="26"/>
     <listofallmembers>
       <member refid="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>
       <member refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>
-      <member refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>h5ppFile</name></member>
-      <member refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" prot="private" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>log</name></member>
-      <member refid="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>remove_temp_file</name></member>
+      <member refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>h5pp_file</name></member>
       <member refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_algorithms</name></member>
-      <member refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_fDMRG</name></member>
-      <member refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_iDMRG</name></member>
-      <member refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_iTEBD</name></member>
-      <member refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_xDMRG</name></member>
-      <member refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" prot="private" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>setLogger</name></member>
+      <member refid="classclass__algorithm__launcher_1a90bce732eacabf6228ecf88571521c4b" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_fdmrg</name></member>
+      <member refid="classclass__algorithm__launcher_1a8f6d9636fa9f5cb6e1c35a50ac3e6f30" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_flbit</name></member>
+      <member refid="classclass__algorithm__launcher_1a6e8562746f3a16a58672a236e5d0e54b" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_idmrg</name></member>
+      <member refid="classclass__algorithm__launcher_1a6eee8e47fb972c99a34da0c03a451105" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_itebd</name></member>
+      <member refid="classclass__algorithm__launcher_1a87fb0ad1c25ce50d99c57edddba48c2d" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_xdmrg</name></member>
+      <member refid="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>setup_temp_path</name></member>
+      <member refid="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>start_h5pp_file</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

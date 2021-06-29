@@ -3,7 +3,7 @@
 Typedef tools::finite::measure::Scalar
 ======================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_tools_finite_measure.h`
 
 
 Typedef Documentation

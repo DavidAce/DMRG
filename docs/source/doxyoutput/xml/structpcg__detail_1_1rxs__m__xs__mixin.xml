@@ -1,12 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="structpcg__detail_1_1rxs__m__xs__mixin" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::rxs_m_xs_mixin</compoundname>
     <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename xtype</type>
+      </param>
+      <param>
+        <type>typename itype</type>
+      </param>
+    </templateparamlist>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="structpcg__detail_1_1rxs__m__xs__mixin_1a76f1d8fe1cf7e1dfc633e57658f90080" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="structpcg__detail_1_1rxs__m__xs__mixin_1a8c2889fa53f685bbb62f4e2538d7c6a3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>xtype</type>
-        <definition>static xtype pcg_detail::rxs_m_xs_mixin::output</definition>
+        <definition>static xtype pcg_detail::rxs_m_xs_mixin&lt; xtype, itype &gt;::output</definition>
         <argsstring>(itype internal)</argsstring>
         <name>output</name>
         <param>
@@ -19,11 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="897" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="897" bodyend="915"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="683" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="683" bodyend="695"/>
       </memberdef>
-      <memberdef kind="function" id="structpcg__detail_1_1rxs__m__xs__mixin_1a4f6461498fc85c28040d0e1d167d9230" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="structpcg__detail_1_1rxs__m__xs__mixin_1a96de8c9272525b2811951b9905a672d7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>itype</type>
-        <definition>static itype pcg_detail::rxs_m_xs_mixin::unoutput</definition>
+        <definition>static itype pcg_detail::rxs_m_xs_mixin&lt; xtype, itype &gt;::unoutput</definition>
         <argsstring>(itype internal)</argsstring>
         <name>unoutput</name>
         <param>
@@ -36,17 +44,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="917" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="917" bodyend="935"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="697" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="697" bodyend="710"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="896" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="896" bodyend="936"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="682" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="682" bodyend="711"/>
     <listofallmembers>
-      <member refid="structpcg__detail_1_1rxs__m__xs__mixin_1a76f1d8fe1cf7e1dfc633e57658f90080" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_m_xs_mixin</scope><name>output</name></member>
-      <member refid="structpcg__detail_1_1rxs__m__xs__mixin_1a4f6461498fc85c28040d0e1d167d9230" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_m_xs_mixin</scope><name>unoutput</name></member>
+      <member refid="structpcg__detail_1_1rxs__m__xs__mixin_1a8c2889fa53f685bbb62f4e2538d7c6a3" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_m_xs_mixin</scope><name>output</name></member>
+      <member refid="structpcg__detail_1_1rxs__m__xs__mixin_1a96de8c9272525b2811951b9905a672d7" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_m_xs_mixin</scope><name>unoutput</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

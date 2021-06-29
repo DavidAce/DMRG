@@ -3,7 +3,7 @@
 Template Struct halfsize_trait< uint16_t >
 ==========================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_random.hpp`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_math_rnd_pcg_random.hpp`
 
 
 Struct Documentation

@@ -1,16 +1,17 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1common_1_1io_1_1h5tmp" kind="namespace" language="C++">
     <compoundname>tools::common::io::h5tmp</compoundname>
+    <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal">tools::common::io::h5tmp::internal</innernamespace>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::string</type>
-        <definition>std::string tools::common::io::h5tmp::set_tmp_prefix</definition>
-        <argsstring>(const std::string &amp;output_filename)</argsstring>
-        <name>set_tmp_prefix</name>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; tools::common::io::h5tmp::get_temporary_filepath</definition>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
+        <name>get_temporary_filepath</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>output_filename</declname>
+          <declname>filepath</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -18,16 +19,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="361" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="16" bodyend="46"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="51" column="35" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="54" bodyend="54" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="51" declcolumn="35"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a6ef3f8c63ac82f5589ab0d32a907d422" compoundref="h5tmp_8cpp" startline="48" endline="52">tools::common::io::h5tmp::internal::get_paths</references>
+        <references refid="structtools_1_1common_1_1io_1_1h5tmp_1_1internal_1_1pathpair_1ac07f5990ba7ac0ae9c3b383c3c55fe26" compoundref="common_2io_8h" startline="43">tools::common::io::h5tmp::internal::pathpair::temporary_path</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::string</type>
-        <definition>std::string tools::common::io::h5tmp::unset_tmp_prefix</definition>
-        <argsstring>(const std::string &amp;output_filename)</argsstring>
-        <name>unset_tmp_prefix</name>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a1aca97b360077e59190e008d5b1d4f4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; tools::common::io::h5tmp::get_original_filepath</definition>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
+        <name>get_original_filepath</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>output_filename</declname>
+          <declname>filepath</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -35,16 +38,36 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="362" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="48" bodyend="63"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="52" column="35" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="55" bodyend="55" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="52" declcolumn="35"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a6ef3f8c63ac82f5589ab0d32a907d422" compoundref="h5tmp_8cpp" startline="48" endline="52">tools::common::io::h5tmp::internal::get_paths</references>
+        <references refid="structtools_1_1common_1_1io_1_1h5tmp_1_1internal_1_1pathpair_1a29c7fb9b96f988c8d4c0ee90cdaba95d" compoundref="common_2io_8h" startline="42">tools::common::io::h5tmp::internal::pathpair::original_path</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ab752a89da96453ee21f2836bccb70b71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::register_new_file</definition>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
+        <name>register_new_file</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filepath</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="53" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="57" bodyend="57" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="53" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a774f69124cc14efbb5e30cbfb53ccc3f" compoundref="h5tmp_8cpp" startline="38" endline="46">tools::common::io::h5tmp::internal::register_paths</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a75051edf0fda6dfd3f703e3bdf864129" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::common::io::h5tmp::copy_from_tmp</definition>
-        <argsstring>(const std::string &amp;output_filename)</argsstring>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
         <name>copy_from_tmp</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>output_filename</declname>
+          <declname>filepath</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -52,16 +75,60 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="363" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="88" bodyend="114"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="54" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="124" bodyend="132" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="54" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1abedc0dca6f4a94d01bf13c7797680765" compoundref="h5tmp_8cpp" startline="139" endline="164">copy_file</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" compoundref="h5tmp_8cpp" startline="54" endline="54">get_temporary_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a1aca97b360077e59190e008d5b1d4f4b" compoundref="h5tmp_8cpp" startline="55" endline="55">get_original_filepath</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a22330421f30be77cac5ee060bc4d0a8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::copy_into_tmp</definition>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
+        <name>copy_into_tmp</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filepath</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="55" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="134" bodyend="137" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="55" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1abedc0dca6f4a94d01bf13c7797680765" compoundref="h5tmp_8cpp" startline="139" endline="164">copy_file</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a1aca97b360077e59190e008d5b1d4f4b" compoundref="h5tmp_8cpp" startline="55" endline="55">get_original_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" compoundref="h5tmp_8cpp" startline="54" endline="54">get_temporary_filepath</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1abedc0dca6f4a94d01bf13c7797680765" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::copy_file</definition>
+        <argsstring>(const std::string &amp;src, const std::string &amp;tgt)</argsstring>
+        <name>copy_file</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tgt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="56" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="139" bodyend="164" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="56" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a07f3c3387cb15bf80c403384f09b1449" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::common::io::h5tmp::create_directory</definition>
-        <argsstring>(const std::string &amp;dir)</argsstring>
+        <argsstring>(const std::string &amp;path)</argsstring>
         <name>create_directory</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>dir</declname>
+          <declname>path</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -69,17 +136,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="364" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="65" bodyend="85"/>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="57" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="103" bodyend="122" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="57" declcolumn="21"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ab0f2e9dea5b85761dcd16a8b1abe97c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::common::io::h5tmp::remove_from_temp</definition>
-        <argsstring>(const std::string output_filename)</argsstring>
-        <name>remove_from_temp</name>
+        <definition>void tools::common::io::h5tmp::remove_from_tmp</definition>
+        <argsstring>(const std::string &amp;filepath)</argsstring>
+        <name>remove_from_tmp</name>
         <param>
-          <type>const std::string</type>
-          <declname>output_filename</declname>
+          <type>const std::string &amp;</type>
+          <declname>filepath</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -87,13 +153,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="365" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="116" bodyend="136"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="58" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="166" bodyend="186" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="58" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a6ef3f8c63ac82f5589ab0d32a907d422" compoundref="h5tmp_8cpp" startline="48" endline="52">tools::common::io::h5tmp::internal::get_paths</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="360" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="39" column="19"/>
   </compounddef>
 </doxygen>

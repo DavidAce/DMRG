@@ -1,381 +1,461 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="infinite_2opt_8cpp" kind="file" language="C++">
     <compoundname>opt.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
-    <includes refid="class__state__infinite_8h" local="no">state/class_state_infinite.h</includes>
-    <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
-    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
-    <includes refid="class__mps__site_8h" local="no">state/class_mps_site.h</includes>
-    <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
-    <includes refid="class__eigsolver_8h" local="no">math/class_eigsolver.h</includes>
-    <includes refid="class__svd__wrapper_8h" local="no">math/class_svd_wrapper.h</includes>
-    <includes refid="matrix__product__hamiltonian_8h" local="no">math/arpack_extra/matrix_product_hamiltonian.h</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="eig_8h" local="no">math/eig.h</includes>
+    <includes refid="matvec__mpo_8h" local="no">math/eig/matvec/matvec_mpo.h</includes>
+    <includes refid="class__tensors__infinite_8h" local="no">tensors/class_tensors_infinite.h</includes>
+    <includes refid="class__edges__infinite_8h" local="no">tensors/edges/class_edges_infinite.h</includes>
+    <includes refid="class__model__infinite_8h" local="no">tensors/model/class_model_infinite.h</includes>
+    <includes refid="class__mpo__site_8h" local="no">tensors/model/class_mpo_site.h</includes>
+    <includes refid="class__mps__site_8h" local="no">tensors/state/class_mps_site.h</includes>
+    <includes refid="class__state__infinite_8h" local="no">tensors/state/class_state_infinite.h</includes>
+    <includes refid="prof_8h" local="no">tools/common/prof.h</includes>
+    <includes refid="infinite_2opt_8h" local="no">tools/infinite/opt.h</includes>
     <incdepgraph>
-      <node id="4047">
-        <label>Eigen/SparseLU</label>
-      </node>
-      <node id="4007">
-        <label>list</label>
-      </node>
-      <node id="4048">
-        <label>math/class_svd_wrapper.h</label>
-        <link refid="class__svd__wrapper_8h"/>
-        <childnode refid="4021" relation="include">
+      <node id="35">
+        <label>measure/tensors_measure_infinite.h</label>
+        <link refid="tensors__measure__infinite_8h"/>
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="4025" relation="include">
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
-      <node id="4025">
-        <label>iomanip</label>
-      </node>
-      <node id="4045">
-        <label>Eigen/LU</label>
-      </node>
-      <node id="4024">
-        <label>iterator</label>
-      </node>
-      <node id="4026">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="4027" relation="include">
+      <node id="57">
+        <label>tools/infinite/opt.h</label>
+        <link refid="infinite_2opt_8h"/>
+        <childnode refid="23" relation="include">
         </childnode>
-        <childnode refid="4017" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="4018" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="4017">
-        <label>Eigen/Core</label>
+      <node id="53">
+        <label>measure/state_measure_infinite.h</label>
+        <link refid="state__measure__infinite_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
       </node>
-      <node id="4005">
+      <node id="42">
+        <label>class_mpo_parameters.h</label>
+        <link refid="class__mpo__parameters_8h"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>limits</label>
+      </node>
+      <node id="51">
+        <label>config/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>math/eig.h</label>
+        <link refid="eig_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>tensors/model/class_model_infinite.h</label>
+        <link refid="class__model__infinite_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>io/spdlog.h</label>
+        <link refid="spdlog_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>Eigen/src/Core/util/Constants.h</label>
+      </node>
+      <node id="49">
+        <label>class_mps_stash.h</label>
+        <link refid="class__mps__stash_8h"/>
+      </node>
+      <node id="22">
+        <label>tensors/class_tensors_infinite.h</label>
+        <link refid="class__tensors__infinite_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>debug.h</label>
+        <link refid="debug_8h"/>
+      </node>
+      <node id="12">
+        <label>tools/common/log.h</label>
+        <link refid="log_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>stdexcept</label>
+      </node>
+      <node id="24">
+        <label>numeric</label>
+      </node>
+      <node id="13">
+        <label>io/fmt.h</label>
+        <link refid="io_2fmt_8h"/>
+      </node>
+      <node id="27">
         <label>string</label>
       </node>
-      <node id="4012">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="4013" relation="include">
-        </childnode>
-        <childnode refid="4014" relation="include">
-        </childnode>
+      <node id="46">
+        <label>hdf5_hl.h</label>
       </node>
-      <node id="4009">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="4010" relation="include">
-        </childnode>
-        <childnode refid="4011" relation="include">
-        </childnode>
-      </node>
-      <node id="4030">
+      <node id="47">
         <label>map</label>
       </node>
-      <node id="4027">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="4003">
-        <label>tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="4004" relation="include">
-        </childnode>
-        <childnode refid="4005" relation="include">
-        </childnode>
-        <childnode refid="4006" relation="include">
-        </childnode>
-        <childnode refid="4007" relation="include">
-        </childnode>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4009" relation="include">
-        </childnode>
-        <childnode refid="4012" relation="include">
-        </childnode>
-        <childnode refid="4015" relation="include">
-        </childnode>
-        <childnode refid="4017" relation="include">
-        </childnode>
-        <childnode refid="4018" relation="include">
-        </childnode>
-      </node>
-      <node id="4018">
+      <node id="9">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="4041">
-        <label>math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4012" relation="include">
-        </childnode>
-        <childnode refid="4028" relation="include">
-        </childnode>
-        <childnode refid="4006" relation="include">
+      <node id="33">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h</label>
+      </node>
+      <node id="36">
+        <label>math/svd/settings.h</label>
+        <link refid="svd_2settings_8h"/>
+        <childnode refid="37" relation="include">
         </childnode>
       </node>
-      <node id="4043">
-        <label>matrix_product_dense.h</label>
-        <link refid="matrix__product__dense_8h"/>
-        <childnode refid="4028" relation="include">
+      <node id="34">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h</label>
+      </node>
+      <node id="15">
+        <label>eig/solver.h</label>
+        <link refid="solver_8h"/>
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="4012" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="4014" relation="include">
-        </childnode>
-        <childnode refid="4025" relation="include">
-        </childnode>
-        <childnode refid="4017" relation="include">
-        </childnode>
-        <childnode refid="4044" relation="include">
-        </childnode>
-        <childnode refid="4045" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
       </node>
-      <node id="4035">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="4004" relation="include">
+      <node id="37">
+        <label>fmt/core.h</label>
+      </node>
+      <node id="20">
+        <label>eig/view.h</label>
+        <link refid="view_8h"/>
+        <childnode refid="18" relation="include">
         </childnode>
-        <childnode refid="4021" relation="include">
-        </childnode>
-        <childnode refid="4036" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="4011">
-        <label>spdlog/fmt/bundled/ranges.h</label>
+      <node id="43">
+        <label>any</label>
       </node>
-      <node id="4049">
-        <label>math/arpack_extra/matrix_product_hamiltonian.h</label>
-        <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="4012" relation="include">
+      <node id="18">
+        <label>solution.h</label>
+        <link refid="solution_8h"/>
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="4029" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4028" relation="include">
-        </childnode>
-        <childnode refid="4021" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
-      <node id="4039">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="4004" relation="include">
-        </childnode>
-        <childnode refid="4018" relation="include">
-        </childnode>
-        <childnode refid="4009" relation="include">
-        </childnode>
+      <node id="6">
+        <label>string_view</label>
       </node>
-      <node id="4032">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="4023">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="4034">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
-      </node>
-      <node id="4015">
-        <label>tools/finite/opt-internals/enum_classes.h</label>
-        <link refid="enum__classes_8h"/>
-        <childnode refid="4014" relation="include">
-        </childnode>
-        <childnode refid="4016" relation="include">
-        </childnode>
-      </node>
-      <node id="4010">
-        <label>spdlog/logger.h</label>
-      </node>
-      <node id="4038">
-        <label>state/class_mps_site.h</label>
-        <link refid="class__mps__site_8h"/>
-        <childnode refid="4006" relation="include">
-        </childnode>
-        <childnode refid="4020" relation="include">
-        </childnode>
-        <childnode refid="4018" relation="include">
-        </childnode>
-      </node>
-      <node id="4022">
-        <label>general/nmspc_omp.h</label>
-        <link refid="nmspc__omp_8h"/>
-        <childnode refid="4018" relation="include">
-        </childnode>
-      </node>
-      <node id="4019">
-        <label>state/class_state_infinite.h</label>
-        <link refid="class__state__infinite_8h"/>
-        <childnode refid="4004" relation="include">
-        </childnode>
-        <childnode refid="4020" relation="include">
-        </childnode>
-        <childnode refid="4021" relation="include">
-        </childnode>
-        <childnode refid="4012" relation="include">
-        </childnode>
-        <childnode refid="4028" relation="include">
-        </childnode>
-        <childnode refid="4033" relation="include">
-        </childnode>
-        <childnode refid="4009" relation="include">
-        </childnode>
-      </node>
-      <node id="4020">
+      <node id="17">
         <label>optional</label>
       </node>
-      <node id="4008">
+      <node id="21">
+        <label>math/eig/matvec/matvec_mpo.h</label>
+        <link refid="matvec__mpo_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
         <label>vector</label>
       </node>
-      <node id="4036">
-        <label>spdlog/fmt/fmt.h</label>
+      <node id="41">
+        <label>tensors/model/class_mpo_site.h</label>
+        <link refid="class__mpo__site_8h"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
       </node>
-      <node id="4044">
-        <label>complex.h</label>
+      <node id="26">
+        <label>general/eigen_tensor_fwd_decl.h</label>
+        <link refid="eigen__tensor__fwd__decl_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
       </node>
-      <node id="4031">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="54">
+        <label>tools/common/prof.h</label>
+        <link refid="prof_8h"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
       </node>
-      <node id="4029">
+      <node id="4">
         <label>array</label>
       </node>
-      <node id="4016">
-        <label>sstream</label>
-      </node>
-      <node id="4046">
-        <label>matrix_product_sparse.h</label>
-        <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="4028" relation="include">
-        </childnode>
-        <childnode refid="4012" relation="include">
-        </childnode>
-        <childnode refid="4014" relation="include">
-        </childnode>
-        <childnode refid="4025" relation="include">
-        </childnode>
-        <childnode refid="4017" relation="include">
-        </childnode>
-        <childnode refid="4023" relation="include">
-        </childnode>
-        <childnode refid="4047" relation="include">
-        </childnode>
-      </node>
-      <node id="4037">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="4004" relation="include">
-        </childnode>
-        <childnode refid="4021" relation="include">
-        </childnode>
-      </node>
-      <node id="4042">
-        <label>math/arpack_extra/matrix_recast.h</label>
-        <link refid="matrix__recast_8h"/>
-        <childnode refid="4006" relation="include">
-        </childnode>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4028" relation="include">
-        </childnode>
-        <childnode refid="4043" relation="include">
-        </childnode>
-        <childnode refid="4046" relation="include">
-        </childnode>
-      </node>
-      <node id="4014">
-        <label>iostream</label>
-      </node>
-      <node id="4028">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="4014" relation="include">
-        </childnode>
-        <childnode refid="4029" relation="include">
-        </childnode>
-        <childnode refid="4030" relation="include">
-        </childnode>
-        <childnode refid="4006" relation="include">
-        </childnode>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4031" relation="include">
-        </childnode>
-        <childnode refid="4032" relation="include">
-        </childnode>
-      </node>
-      <node id="4013">
-        <label>chrono</label>
-      </node>
-      <node id="4040">
-        <label>math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
-        <childnode refid="4041" relation="include">
-        </childnode>
-        <childnode refid="4042" relation="include">
-        </childnode>
-        <childnode refid="4028" relation="include">
-        </childnode>
-      </node>
-      <node id="4006">
-        <label>complex</label>
-      </node>
-      <node id="4033">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="4005" relation="include">
-        </childnode>
-        <childnode refid="4008" relation="include">
-        </childnode>
-        <childnode refid="4034" relation="include">
-        </childnode>
-      </node>
-      <node id="4021">
+      <node id="2">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="4022" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="4017" relation="include">
-        </childnode>
-        <childnode refid="4023" relation="include">
-        </childnode>
-        <childnode refid="4018" relation="include">
-        </childnode>
-        <childnode refid="4024" relation="include">
-        </childnode>
-        <childnode refid="4014" relation="include">
-        </childnode>
-        <childnode refid="4025" relation="include">
-        </childnode>
-        <childnode refid="4026" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="4004">
+      <node id="31">
+        <label>Eigen/src/Core/util/Meta.h</label>
+      </node>
+      <node id="45">
+        <label>hdf5.h</label>
+      </node>
+      <node id="32">
+        <label>Eigen/src/Core/util/ForwardDeclarations.h</label>
+      </node>
+      <node id="11">
+        <label>eig/enums.h</label>
+        <link refid="math_2eig_2enums_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>chrono</label>
+      </node>
+      <node id="29">
+        <label>Eigen/src/Core/util/Macros.h</label>
+      </node>
+      <node id="3">
+        <label>general/nmspc_sfinae.h</label>
+        <link refid="nmspc__sfinae_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>h5pp/details/h5ppHid.h</label>
+      </node>
+      <node id="16">
+        <label>settings.h</label>
+        <link refid="eig_2settings_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>type_traits</label>
+      </node>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>tensors/state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>complex</label>
+      </node>
+      <node id="38">
         <label>memory</label>
       </node>
-      <node id="4002">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
-        <link refid="infinite_2opt_8cpp"/>
-        <childnode refid="4003" relation="include">
+      <node id="23">
+        <label>config/enums.h</label>
+        <link refid="config_2enums_8h"/>
+        <childnode refid="24" relation="include">
         </childnode>
-        <childnode refid="4019" relation="include">
+        <childnode refid="25" relation="include">
         </childnode>
-        <childnode refid="4035" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="4037" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="4038" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="4039" relation="include">
+      </node>
+      <node id="19">
+        <label>typeindex</label>
+      </node>
+      <node id="39">
+        <label>tensors/edges/class_edges_infinite.h</label>
+        <link refid="class__edges__infinite_8h"/>
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="4040" relation="include">
+        <childnode refid="23" relation="include">
         </childnode>
-        <childnode refid="4048" relation="include">
+        <childnode refid="26" relation="include">
         </childnode>
-        <childnode refid="4049" relation="include">
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>tensors/state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
         </childnode>
       </node>
     </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="infinite_2opt_8cpp_1aef6f3cd9efa41457bfe193372cef0c77" prot="public" static="no">
+        <type><ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">tools::infinite::opt::Scalar</ref></type>
+        <definition>using Scalar =  tools::infinite::opt::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp" line="16" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -385,71 +465,53 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-06.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__base_8h" kindref="compound">model/class_model_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__eigsolver_8h" kindref="compound">math/class_eigsolver.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__svd__wrapper_8h" kindref="compound">math/class_svd_wrapper.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="matrix__product__hamiltonian_8h" kindref="compound">math/arpack_extra/matrix_product_hamiltonian.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal">Eigen::Tensor&lt;tools::infinite::Scalar,4&gt;</highlight></codeline>
-<codeline lineno="17" refid="namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76" kindref="member">tools::infinite::opt::find_ground_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/>std::string<sp/>ritzstring){</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1acf5604b099a6b5fe52c07794543fce25" kindref="member">get_theta</ref>();</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;long,4&gt;<sp/>shape_theta4<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>.dimensions();</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;long,4&gt;<sp/>shape_mpo4<sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a8353252491499180a1da8475263b9988" kindref="member">HA</ref>-&gt;MPO().dimensions();</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="eig_8h" kindref="compound">math/eig.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="matvec__mpo_8h" kindref="compound">math/eig/matvec/matvec_mpo.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tensors__infinite_8h" kindref="compound">tensors/class_tensors_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__edges__infinite_8h" kindref="compound">tensors/edges/class_edges_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__infinite_8h" kindref="compound">tensors/model/class_model_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mpo__site_8h" kindref="compound">tensors/model/class_mpo_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">tensors/state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">tensors/state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prof_8h" kindref="compound">tools/common/prof.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="infinite_2opt_8h" kindref="compound">tools/infinite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="infinite_2opt_8cpp_1aef6f3cd9efa41457bfe193372cef0c77" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">tools::infinite::opt::Scalar</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="namespacetools_1_1infinite_1_1opt_1a5a61d826e74a8d7e9eeac0a5c1163177" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f" kindref="member">tools::infinite::opt::find_ground_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref><sp/>&amp;state,<sp/><ref refid="config_2enums_8h_1a8273b6e17b65f3bf523ec0247a2eecdc" kindref="member">StateRitz</ref><sp/>ritz)<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f" kindref="member">tools::infinite::opt::find_ground_state</ref>(state,<sp/><ref refid="config_2enums_8h_1aa363e0dc56d2bdef0a2c3bf927637a0b" kindref="member">enum2str</ref>(ritz));</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">tools::common::profile::t_eig</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nev<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings_1_1precision" kindref="compound">settings::precision</ref>;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">Ritz</ref><sp/>ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" kindref="member">stringToRitz</ref>(ritzstring);</highlight></codeline>
+<codeline lineno="22" refid="namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f" kindref="member">tools::infinite::opt::find_ground_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref><sp/>&amp;tensors,<sp/>std::string_view<sp/>ritzstring)<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>ground<sp/>state<sp/>optimization&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>t_eig<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1ae302ec3b2665b7eb9f69b892d6b8c08e" kindref="member">tools::common::profile::get_default_prof</ref>()[</highlight><highlight class="stringliteral">&quot;t_eig&quot;</highlight><highlight class="normal">]-&gt;tic_token();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeig_1a823d2359cc1ce2ae82d999311922051c" kindref="member">eig::Ritz</ref><sp/>ritz<sp/>=<sp/><ref refid="namespaceeig_1a82de69d0413b74397cba2a6dba607749" kindref="member">eig::stringToRitz</ref>(ritzstring);</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_hamiltonian_product" kindref="compound">DenseHamiltonianProduct&lt;Scalar&gt;</ref><sp/><sp/>matrix<sp/>(state.<ref refid="classclass__state__infinite_1a077ed4aed07939f87e25afdea2b3fe16" kindref="member">Lblock</ref>-&gt;block.data(),<sp/>state.<ref refid="classclass__state__infinite_1a06e4df359f1a484a0f3a43ae9945dbd7" kindref="member">Rblock</ref>-&gt;block.data(),</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a8353252491499180a1da8475263b9988" kindref="member">HA</ref>-&gt;MPO().data(),<sp/>state.<ref refid="classclass__state__infinite_1a32291bdbb5c48c2010902e017ac2ceed" kindref="member">HB</ref>-&gt;MPO().data(),<sp/>shape_theta4,<sp/>shape_mpo4,</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" kindref="member">settings::threading::num_threads_eigen</ref>);</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver" kindref="compound">class_eigsolver</ref><sp/>solver;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.eigs_dense(matrix,<sp/>nev,<sp/><ref refid="namespacesettings_1_1precision_1aaa603d6ddeb7a4f8042ece0b5470b740" kindref="member">eig_max_ncv</ref>,<sp/>NAN,<sp/>Form::SYMMETRIC,<sp/>ritz,<sp/>Side::R,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>eigvec<sp/><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;Scalar,1&gt;&gt;<sp/><sp/>(solver.solution.get_eigvecs&lt;Type::CPLX,<sp/>Form::SYMMETRIC&gt;().data(),solver.solution.meta.<ref refid="class_dense_hamiltonian_product_1aecec01d77a30db2fd058a8b505ab1d42" kindref="member">rows</ref>);</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">tools::common::profile::t_eig</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvec.reshape(<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>.dimensions());</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Do<sp/>unitary<sp/>evolution<sp/>on<sp/>an<sp/>MPS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>shape_mps<sp/>=<sp/>tensors.<ref refid="classclass__tensors__infinite_1aea3ce807c53d7cb190588bad9df1a00a" kindref="member">state</ref>-&gt;dimensions();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>shape_mpo<sp/>=<sp/>tensors.<ref refid="classclass__tensors__infinite_1a9d1de037ae9f00fa93ccab4703ea0ab4" kindref="member">model</ref>-&gt;dimensions();</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>tensors.<ref refid="classclass__tensors__infinite_1a9d1de037ae9f00fa93ccab4703ea0ab4" kindref="member">model</ref>-&gt;get_2site_mpo_AB();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;env<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>tensors.<ref refid="classclass__tensors__infinite_1a993ea5f77d1fa220ca70c7c6c9508395" kindref="member">edges</ref>-&gt;get_ene_blk();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_mat_vec_m_p_o" kindref="compound">MatVecMPO&lt;Scalar&gt;</ref><sp/>matrix(env.L.data(),<sp/>env.R.data(),<sp/>mpo.data(),<sp/>shape_mps,<sp/>shape_mpo);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classeig_1_1solver" kindref="compound">eig::solver</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.<ref refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kindref="member">config</ref>.<ref refid="classeig_1_1settings_1a7780c51c116eb5d3b8a2615ea26adf27" kindref="member">maxNev</ref><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.<ref refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kindref="member">config</ref>.<ref refid="classeig_1_1settings_1a2844b6b7711df4bda3adbe3fea7b263d" kindref="member">maxNcv</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="namespaceeig_1ad11009d371733b5e0c5fe85e43f04a62" kindref="member">eig::size_type</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1precision_1a9bc90ecd1bc106fc17c13747c782db44" kindref="member">settings::precision::eig_default_ncv</ref>);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.<ref refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kindref="member">config</ref>.<ref refid="classeig_1_1settings_1aef895e67f6a2b7822905c76c4090a610" kindref="member">tol</ref><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacesettings_1_1precision_1ae3ad7a9df10d4bbd251b73e43d6c556f" kindref="member">settings::precision::eig_tolerance</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.<ref refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kindref="member">config</ref>.<ref refid="classeig_1_1settings_1ae8fde338b4e62cb33627e5017e2bf975" kindref="member">maxIter</ref><sp/>=<sp/>10000;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>solver.<ref refid="classeig_1_1solver_1a5ba7331e3b316fff73eeeb0e9eaaf9c1" kindref="member">eigs</ref>(matrix,<sp/>-1,<sp/>-1,<sp/>ritz,<sp/><ref refid="namespaceeig_1a7d7073ae885702b621886a0292962519a1edffe2e4a8039b9f6bf2e95493e6cd6" kindref="member">eig::Form::SYMM</ref>,<sp/><ref refid="namespaceeig_1ac63fbaf41e008da06f0cdf1f5a184f51ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eig::Side::R</ref>,<sp/>1.0,<sp/><ref refid="namespaceeig_1a9ee5a51536cdc5d756ad27cd7344348fa88559a0cfd8250c9d65970cc145c92d4" kindref="member">eig::Shinv::OFF</ref>,<sp/><ref refid="namespaceeig_1af11f26ac48c727387232e96f0659a8e4a90651ebea9a35ec4e018c8157492e17c" kindref="member">eig::Vecs::ON</ref>,<sp/><ref refid="namespaceeig_1af7b52b6fd4ed7da235831a1a6a529042a88559a0cfd8250c9d65970cc145c92d4" kindref="member">eig::Dephase::OFF</ref>);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eig::view::get_eigvec&lt;Scalar&gt;(solver.<ref refid="classeig_1_1solver_1adb6f937de4a4ca5b691c811604d34a51" kindref="member">result</ref>,<sp/>shape_mps);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Do<sp/>unitary<sp/>evolution<sp/>on<sp/>an<sp/>MPS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47" refid="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" refkind="member"><highlight class="normal">Eigen::Tensor&lt;tools::infinite::Scalar,<sp/>4&gt;<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" kindref="member">tools::infinite::opt::time_evolve_theta</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;U)</highlight></codeline>
+<codeline lineno="47" refid="namespacetools_1_1infinite_1_1opt_1a3ae27fa959980e8cdffe49b736f8b9c2" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1a3ae27fa959980e8cdffe49b736f8b9c2" kindref="member">tools::infinite::opt::time_evolve_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&amp;U)</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>U.contract(state.<ref refid="classclass__state__infinite_1acf5604b099a6b5fe52c07794543fce25" kindref="member">get_theta</ref>(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,2}))</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="64"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70" refid="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" kindref="member">tools::infinite::opt::truncate_theta</ref>(Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(<ref refid="namespacesettings_1_1precision_1a0cc3a40383a3e2795dd38b77a6790872" kindref="member">settings::precision::svd_threshold</ref>);</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,<sp/>S,<sp/>V]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref>(theta,state.<ref refid="classclass__state__infinite_1adea8436bbf24a92bc9efe65a80e789dd" kindref="member">get_chi_lim</ref>());</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;truncation_error<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A-&gt;set_LC(S);</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A-&gt;set_M(U);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_B-&gt;set_M(V);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>U.contract(state.<ref refid="classclass__state__infinite_1a1f21f7b40c9e37fe4d66bea5ee57b8f6" kindref="member">get_2site_mps</ref>(),<sp/><ref refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" kindref="member">Textra::idx</ref>({0},<sp/>{0}));</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp"/>
   </compounddef>
 </doxygen>

@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacesettings" kind="namespace" language="C++">
     <compoundname>settings</compoundname>
     <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
     <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1flbit">settings::flbit</innernamespace>
     <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
     <innernamespace refid="namespacesettings_1_1input">settings::input</innernamespace>
     <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
@@ -11,16 +12,89 @@
     <innernamespace refid="namespacesettings_1_1output">settings::output</innernamespace>
     <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
     <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+    <innernamespace refid="namespacesettings_1_1strategy">settings::strategy</innernamespace>
     <innernamespace refid="namespacesettings_1_1threading">settings::threading</innernamespace>
     <innernamespace refid="namespacesettings_1_1xdmrg">settings::xdmrg</innernamespace>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool settings::debug</definition>
+        <argsstring></argsstring>
+        <name>debug</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/debug.h" line="7" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/config/debug.h" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1aa61a59db2dde01e101462dcee5d873f2" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool settings::debug_split</definition>
+        <argsstring></argsstring>
+        <name>debug_split</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/debug.h" line="10" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/config/debug.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1a31b0404902b6f355ed53c06201f79e81" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool settings::debug_merge</definition>
+        <argsstring></argsstring>
+        <name>debug_merge</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/debug.h" line="11" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/config/debug.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1a772752375279d0c6d15336017280dedd" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool settings::debug_gates</definition>
+        <argsstring></argsstring>
+        <name>debug_gates</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/debug.h" line="12" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/config/debug.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1a55cf637927322e433a52a41cf9adc177" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool settings::debug_moves</definition>
+        <argsstring></argsstring>
+        <name>debug_moves</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/debug.h" line="13" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/config/debug.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacesettings_1a3226e7390ab51155684058cf52f17736" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void settings::load_from_file</definition>
-        <argsstring>(class_settings_reader &amp;indata)</argsstring>
-        <name>load_from_file</name>
+        <definition>void settings::load_config</definition>
+        <argsstring>(class_config_reader &amp;indata)</argsstring>
+        <name>load_config</name>
         <param>
-          <type><ref refid="classclass__settings__reader" kindref="compound">class_settings_reader</ref> &amp;</type>
+          <type><ref refid="classclass__config__reader" kindref="compound">class_config_reader</ref> &amp;</type>
           <declname>indata</declname>
         </param>
         <briefdescription>
@@ -29,25 +103,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="16" bodyend="146"/>
-        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="36">settings::input::input_filename</references>
-        <references refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" compoundref="class__settings__reader_8cpp" startline="77" endline="79">class_settings_reader::get_input_filename</references>
-        <references refid="namespacesettings_1_1input_1a6237bd4c8d635524769d9a47084dad5a" compoundref="nmspc__settings_8h" startline="37">settings::input::input_file_raw</references>
-        <references refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" compoundref="class__settings__reader_8cpp" startline="73" endline="75">class_settings_reader::get_input_file_as_string</references>
-        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
-        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="129">settings::fdmrg::on</references>
-        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="143">settings::xdmrg::on</references>
-        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="159">settings::itebd::on</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
+        <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="26" column="17" declfile="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" declline="26" declcolumn="17"/>
       </memberdef>
-      <memberdef kind="function" id="namespacesettings_1ae10b3dbe65fa73db62a97a8c06c153b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacesettings_1a50e25dcd618a2607dfb49f30af5a6a32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void settings::load_from_hdf5</definition>
-        <argsstring>(h5pp::File &amp;h5ppFile)</argsstring>
-        <name>load_from_hdf5</name>
+        <definition>void settings::load_config</definition>
+        <argsstring>(class_dmrg_config &amp;dmrg_config)</argsstring>
+        <name>load_config</name>
         <param>
-          <type>h5pp::File &amp;</type>
-          <declname>h5ppFile</declname>
+          <type><ref refid="classclass__dmrg__config" kindref="compound">class_dmrg_config</ref> &amp;</type>
+          <declname>dmrg_config</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -55,14 +120,36 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="148" bodyend="160"/>
-        <references refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" compoundref="nmspc__settings_8cpp" startline="16" endline="146">load_from_file</references>
+        <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="27" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.cpp" bodystart="16" bodyend="205" declfile="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" declline="27" declcolumn="17"/>
+        <references refid="classclass__dmrg__config_1a9addf16ac4376e11db3906bf49e203d3" compoundref="class__dmrg__config_8cpp" startline="16" endline="41">class_dmrg_config::load</references>
+        <references refid="namespacesettings_1_1input_1a2cec3efecce2fdb179786cc6525372c1" compoundref="nmspc__settings_8h" startline="38">settings::input::config_filename</references>
+        <references refid="classclass__dmrg__config_1a5af680268156bc61dfc2dfe78af44c56" compoundref="class__dmrg__config_8h" startline="11">class_dmrg_config::file_path</references>
+        <references refid="namespacesettings_1_1input_1a253ced2729ed5306b500fe004317f27b" compoundref="nmspc__settings_8h" startline="39">settings::input::config_file_contents</references>
+        <references refid="classclass__dmrg__config_1a9a6958f124fce50ed43530e22a99a2b9" compoundref="class__dmrg__config_8cpp" startline="45" endline="66">class_dmrg_config::get_config_file_as_string</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesettings_1ae057597106993e0b759a2fd0c78d1a99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void settings::load_config</definition>
+        <argsstring>(const std::string &amp;config_filename)</argsstring>
+        <name>load_config</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>config_filename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="28" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.cpp" bodystart="209" bodyend="212" declfile="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" declline="28" declcolumn="17"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>This namespace contains settings such as time-step length, number of iterations and precision parameters for the different algorithms. </para>    </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="11" column="1"/>
+<para>This namespace contains settings such as time-step length, number of iterations and precision parameters for the different algorithms. </para>
+    </detaileddescription>
+    <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="11" column="1"/>
   </compounddef>
 </doxygen>

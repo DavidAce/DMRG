@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="structpcg__detail_1_1inside__out" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::inside_out</compoundname>
     <basecompoundref prot="private" virt="non-virtual">baseclass</basecompoundref>
@@ -21,7 +21,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1103" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="866" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="866" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="structpcg__detail_1_1inside__out_1a382c02aa62650cfaf1a2d2f232e728a8" prot="public" static="no">
         <type>baseclass::state_type</type>
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1104" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="867" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="867" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -49,7 +49,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1101" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="864" column="9"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-func">
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1108" bodyend="1118"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="870" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="870" bodyend="877"/>
       </memberdef>
       <memberdef kind="function" id="structpcg__detail_1_1inside__out_1a1adda3538412bfa2c7202475d7308f81" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1120" bodyend="1137"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="879" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="879" bodyend="890"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -110,28 +110,28 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="393">
+      <node id="2">
         <label>baseclass</label>
       </node>
-      <node id="392">
+      <node id="1">
         <label>pcg_detail::inside_out&lt; baseclass &gt;</label>
         <link refid="structpcg__detail_1_1inside__out"/>
-        <childnode refid="393" relation="private-inheritance">
+        <childnode refid="2" relation="private-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="395">
+      <node id="2">
         <label>baseclass</label>
       </node>
-      <node id="394">
+      <node id="1">
         <label>pcg_detail::inside_out&lt; baseclass &gt;</label>
         <link refid="structpcg__detail_1_1inside__out"/>
-        <childnode refid="395" relation="private-inheritance">
+        <childnode refid="2" relation="private-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1100" bodyend="1138"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="863" column="39" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="863" bodyend="891"/>
     <listofallmembers>
       <member refid="structpcg__detail_1_1inside__out_1a1adda3538412bfa2c7202475d7308f81" prot="public" virt="non-virtual"><scope>pcg_detail::inside_out</scope><name>external_advance</name></member>
       <member refid="structpcg__detail_1_1inside__out_1ae5519094e5b4ac9ca4e60bd7e1ed74fd" prot="public" virt="non-virtual"><scope>pcg_detail::inside_out</scope><name>external_step</name></member>

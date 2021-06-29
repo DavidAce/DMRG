@@ -17,27 +17,37 @@ Variables
 ---------
 
 
+- :ref:`exhale_variable_namespacesettings_1_1precision_1abf0aa221c854f220f8accb1b83baf719`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a9bc90ecd1bc106fc17c13747c782db44`
+
 - :ref:`exhale_variable_namespacesettings_1_1precision_1aa71722ed5e3f817653454c43d4c69d0f`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1aaa603d6ddeb7a4f8042ece0b5470b740`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1ae3ad7a9df10d4bbd251b73e43d6c556f`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a33fddd896c5264ff17a8d973fec4ba1a`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a34f76495a655f0d1f76755b8c5aa3633`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a12df3196d374b7629dd3e3362b9ab2b8`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a92b84ec65f0128f6a826d5a804493a63`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1af5eafba97e3bf482809e5df9ea63f388`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a378586f56d48f833d44265b12da47d83`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a51eea63ecf95cc1c0f7be3c28d8148c5`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a338af764320a5d3fd44f6a4490b3f626`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a349528cd78e4b1efd43923d71cbd3d45`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a256ac8ea16a52b192d8e7078ac3d0e82`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a08350baa897c7ddaa09c478182e0f818`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a73b0dfad8ed491d99ddec60ea23aa0ac`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a42c23fd7b3ec56da172093d3fe3dbdaf`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1abb0be16f39f773d6453e35d151450191`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a93837c581447124b3d28278a44786611`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a72da16b9c3544efbd5c7e4ca392a8beb`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a3ffeaec78f82e4abf6aaae3e9404e7fb`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a2c6742b586617b54d970842244484650`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a9d89b844f40c612f7f37d7f0b873382c`
 
@@ -47,10 +57,14 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1ad074bc89d66adfe8a255421dc981cdd2`
 
+- :ref:`exhale_variable_namespacesettings_1_1precision_1ad560df16bcaed82caaa4208b125ecc6b`
+
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a0cc3a40383a3e2795dd38b77a6790872`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1af241365d45c25fd1f464b664f358e982`
 
+- :ref:`exhale_variable_namespacesettings_1_1precision_1aa5ebd91f50eca5c78963dd710966a417`
+
 - :ref:`exhale_variable_namespacesettings_1_1precision_1ae7fb706e3fd5e6c63bd9ed074313224a`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a49cdd22328092db2e3177579db139c0a`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a715185ed1f1d7ffce7a3f2837aca7223`

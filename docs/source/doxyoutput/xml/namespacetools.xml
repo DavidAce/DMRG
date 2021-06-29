@@ -1,14 +1,15 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools" kind="namespace" language="C++">
     <compoundname>tools</compoundname>
     <innernamespace refid="namespacetools_1_1common">tools::common</innernamespace>
     <innernamespace refid="namespacetools_1_1finite">tools::finite</innernamespace>
     <innernamespace refid="namespacetools_1_1infinite">tools::infinite</innernamespace>
+    <innernamespace refid="namespacetools_1_1_logger">tools::Logger</innernamespace>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="namespacetools_1aac8e89130f43c21749644abcd2807dba" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
-        <definition>std::shared_ptr&lt; spdlog::logger &gt; tools::log</definition>
+        <definition>std::shared_ptr&lt;spdlog::logger&gt; tools::log</definition>
         <argsstring></argsstring>
         <name>log</name>
         <briefdescription>
@@ -17,13 +18,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="36" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/log.h" line="5" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/log.h" bodystart="5" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="35" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="13" column="27"/>
   </compounddef>
 </doxygen>

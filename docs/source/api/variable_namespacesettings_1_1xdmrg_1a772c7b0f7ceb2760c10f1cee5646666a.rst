@@ -3,7 +3,7 @@
 Variable settings::xdmrg::energy_density_window
 ===============================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_config_nmspc_settings.h`
 
 
 Variable Documentation

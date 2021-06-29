@@ -3,7 +3,7 @@
 Function tools::infinite::measure::norm
 =======================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_tools_infinite_measure.h`
 
 
 Function Documentation

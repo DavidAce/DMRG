@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacepcg__extras" kind="namespace" language="C++">
     <compoundname>pcg_extras</compoundname>
     <innerclass refid="structpcg__extras_1_1printable__typename" prot="public">pcg_extras::printable_typename</innerclass>
@@ -7,9 +7,9 @@
     <innerclass refid="structpcg__extras_1_1static__arbitrary__seed" prot="public">pcg_extras::static_arbitrary_seed</innerclass>
     <innerclass refid="classpcg__extras_1_1uint__x4" prot="public">pcg_extras::uint_x4</innerclass>
       <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" prot="public" static="no">
+      <memberdef kind="typedef" id="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" prot="public" static="no">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">pcg_extras::uint_x4</ref>&lt; uint32_t, uint64_t &gt;</type>
-        <definition>typedef pcg_extras::uint_x4&lt;uint32_t,uint64_t&gt; pcg_extras::pcg128_t</definition>
+        <definition>typedef pcg_extras::uint_x4&lt;uint32_t, uint64_t&gt; pcg_extras::pcg128_t</definition>
         <argsstring></argsstring>
         <name>pcg128_t</name>
         <briefdescription>
@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="89" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="87" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="87" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" prot="public" static="no">
         <type>uint8_t</type>
@@ -31,11 +31,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="108" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="104" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="104" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacepcg__extras_1a41f557d4b3de5723fbea74a42375adff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -45,7 +45,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_ostream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_ostream&lt;CharT,Traits&gt;&amp; pcg_extras::operator&lt;&lt;</definition>
+        <definition>std::basic_ostream&lt;CharT, Traits&gt;&amp; pcg_extras::operator&lt;&lt;</definition>
         <argsstring>(std::basic_ostream&lt; CharT, Traits &gt; &amp;out, pcg128_t value)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -53,7 +53,7 @@
           <declname>out</declname>
         </param>
         <param>
-          <type><ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref></type>
+          <type><ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref></type>
           <declname>value</declname>
         </param>
         <briefdescription>
@@ -62,9 +62,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="124" bodyend="164"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="104" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="119" bodyend="153"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a4705963e2fdfc7b83823cf0fad8bfc1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1acb4075fd2b481eeaf4c77ecd36c939ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -74,7 +74,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_istream&lt;CharT,Traits&gt;&amp; pcg_extras::operator&gt;&gt;</definition>
+        <definition>std::basic_istream&lt;CharT, Traits&gt;&amp; pcg_extras::operator&gt;&gt;</definition>
         <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, pcg128_t &amp;value)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -82,7 +82,7 @@
           <declname>in</declname>
         </param>
         <param>
-          <type><ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref> &amp;</type>
+          <type><ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref> &amp;</type>
           <declname>value</declname>
         </param>
         <briefdescription>
@@ -91,9 +91,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="168" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="168" bodyend="205"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="156" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="156" bodyend="189"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1accb964dd39270b688b7c1d16edba7bbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a7a30651a257dba7e5239c2f6b1c30eea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -103,7 +103,7 @@
           </param>
         </templateparamlist>
         <type>std::basic_ostream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_ostream&lt;CharT,Traits&gt;&amp; pcg_extras::operator&lt;&lt;</definition>
+        <definition>std::basic_ostream&lt;CharT, Traits&gt;&amp; pcg_extras::operator&lt;&lt;</definition>
         <argsstring>(std::basic_ostream&lt; CharT, Traits &gt; &amp;out, uint8_t value)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -120,9 +120,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="168" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="216" bodyend="219"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="156" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="199" bodyend="201"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a59f6a342c6ea854807e2ebeb011ce2d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1ad34d58d8966127fcd838757da084f948" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -132,15 +132,16 @@
           </param>
         </templateparamlist>
         <type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_istream&lt;CharT,Traits&gt;&amp; pcg_extras::operator&gt;&gt;</definition>
-        <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, uint8_t target)</argsstring>
+        <definition>std::basic_istream&lt;CharT, Traits&gt;&amp; pcg_extras::operator&gt;&gt;</definition>
+        <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, [[maybe_unused]] uint8_t target)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
           <type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
           <declname>in</declname>
         </param>
         <param>
-          <type>uint8_t</type>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] uint8_t</type>
           <declname>target</declname>
         </param>
         <briefdescription>
@@ -149,7 +150,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="223" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="223" bodyend="235"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="204" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="204" bodyend="214"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a190f7c2ff4231922080d5e7a578341c4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>std::ostream &amp;</type>
@@ -170,7 +171,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="242" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="242" bodyend="245"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="221" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="221" bodyend="221"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1ac80e2fdc2d7998717af4cc18fdfe0a25" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>std::istream &amp;</type>
@@ -191,7 +193,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="247" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="247" bodyend="250"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="223" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="223" bodyend="223"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
+        <references refid="namespacepcg__extras_1ad34d58d8966127fcd838757da084f948" compoundref="pcg__extras_8hpp" startline="204" endline="214">operator&gt;&gt;</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a4f03e67e7e86db7eaeb41c67d0cd2cb5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -221,7 +225,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="265" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="265" bodyend="282"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="236" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="236" bodyend="250"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a7cb58f709cce6e8b5335f104acad8314" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -247,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="294" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="294" bodyend="303"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="262" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="262" bodyend="270"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1afae38bd6d5a7e1d79b8e32fc38dbabe3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -273,7 +277,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="306" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="306" bodyend="315"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="273" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="273" bodyend="281"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1ae1857a2bac68e1df88092dc2d5a136b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -309,7 +313,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="383" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="383" bodyend="407"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="344" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="344" bodyend="365"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a7150076de2f368a305a6123f3004e5a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -345,7 +349,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="412" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="412" bodyend="436"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="370" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="370" bodyend="391"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a7be0229515bb8d26962826f1c484ec9d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -378,7 +382,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="441" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="441" bodyend="451"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="396" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="396" bodyend="403"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a908d65518153efed3219c2bd26d54789" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -415,7 +419,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="458" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="458" bodyend="462"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="410" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="410" bodyend="412"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a61f43320af045b4a81fd1d47ddb0d9af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -452,7 +456,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="465" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="465" bodyend="491"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="415" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="415" bodyend="436"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a41e1950d9f7429f7e9775c3924a861db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -486,7 +490,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="494" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="494" bodyend="501"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="439" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="439" bodyend="444"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1aa725ad9f9f0b511be8646ffff716665d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -503,7 +507,7 @@
             <type>size_t</type>
             <declname>N</declname>
             <defname>N</defname>
-            <defval>i+1UL</defval>
+            <defval>i + 1UL</defval>
           </param>
           <param>
             <type>typename SeedSeq</type>
@@ -523,7 +527,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="509" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="509" bodyend="514"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="452" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="452" bodyend="456"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a09fe30ab14f4bae059b13199966e6562" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -549,7 +553,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="517" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="517" bodyend="528"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="459" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="459" bodyend="466"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -582,7 +586,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="531" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="531" bodyend="542"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="469" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="469" bodyend="479"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1af39b04b807cd9ab964e2d142ae48d90f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -607,7 +611,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="619" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="619" bodyend="633"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="543" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="543" bodyend="554"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a48f08daa7f76c7a404ab430efa96f13d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
@@ -624,7 +628,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="135" bodyend="152"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="126" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="126" bodyend="140"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a730f451530eab4e40c51a9a53ea7e538" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
@@ -641,7 +646,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="154" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="154" bodyend="162"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="142" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="142" bodyend="147"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a0f46236d8b25eaec0c97625df0fdd714" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
@@ -658,7 +664,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="164" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="164" bodyend="170"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="149" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="149" bodyend="154"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
@@ -675,7 +682,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="172" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="172" bodyend="178"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="156" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="156" bodyend="161"/>
+        <references refid="namespacepcg__extras_1a612147a081bfc3abbd1e95c2c3a20658" compoundref="pcg__uint128_8hpp" startline="156" endline="161">trailingzeros</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a9ff8b38f2be4f11921c86a9faaf7de5b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -697,7 +705,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="183" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="183" bodyend="186"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="166" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="166" bodyend="168"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1ac23d032636438f75339b13608b0f7e62" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -731,7 +739,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="189" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="189" bodyend="195"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="171" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="171" bodyend="176"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a4f282097331986f8ba8f6caa617998cc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -765,7 +773,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="198" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="198" bodyend="204"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="179" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="179" bodyend="184"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a298188c19b45ffb0551729405adf6686" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -790,7 +798,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="432" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="432" bodyend="445"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="383" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="383" bodyend="394"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1ac3efd3c0e7e7fbd7f581a57b4066384a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -815,9 +823,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="448" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="448" bodyend="460"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="397" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="397" bodyend="407"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a6202e469700ff28c1d6ac274adae8a5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a00f0a32ec3d6720670d130863cc5a88f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -827,7 +835,7 @@
           </param>
         </templateparamlist>
         <type>std::pair&lt; <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;, <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt; &gt;</type>
-        <definition>std::pair&lt; uint_x4&lt;UInt,UIntX2&gt;, uint_x4&lt;UInt,UIntX2&gt; &gt; pcg_extras::divmod</definition>
+        <definition>std::pair&lt;uint_x4&lt;UInt, UIntX2&gt;, uint_x4&lt;UInt, UIntX2&gt; &gt; pcg_extras::divmod</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;orig_dividend, const uint_x4&lt; UInt, UIntX2 &gt; &amp;divisor)</argsstring>
         <name>divmod</name>
         <param>
@@ -844,9 +852,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="464" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="464" bodyend="505"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="410" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="410" bodyend="447"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1aa29e7e7126f7fe632234969c5c3049b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a7694036d59582748e4678f95b716954a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -856,7 +864,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator/</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator/</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;dividend, const uint_x4&lt; UInt, UIntX2 &gt; &amp;divisor)</argsstring>
         <name>operator/</name>
         <param>
@@ -873,9 +881,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="508" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="508" bodyend="512"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="450" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="450" bodyend="452"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1aba25565d1dc1dc95aadd54e75bf9abf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1ad392ae6240ad09bfe78b3786512972ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -885,7 +893,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator%</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator%</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;dividend, const uint_x4&lt; UInt, UIntX2 &gt; &amp;divisor)</argsstring>
         <name>operator%</name>
         <param>
@@ -902,9 +910,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="515" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="515" bodyend="519"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="455" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="455" bodyend="457"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a62cdac90441fc63dadad2d7b8c0ab4b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a4ef2ddb02f63460d827fd9681f2f9158" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -914,7 +922,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator*</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator*</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
         <name>operator*</name>
         <param>
@@ -931,9 +939,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="523" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="523" bodyend="563"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="460" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="460" bodyend="498"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a3dcd6dc98c1d62f950a1682d999e20d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a18d97c0dd3f3757792abf425e3c8338b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -943,7 +951,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator+</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator+</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
         <name>operator+</name>
         <param>
@@ -960,9 +968,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="567" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="567" bodyend="583"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="501" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="501" bodyend="515"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1abe04911b8fd79979c360a764f09b8ea4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a1f21b6c52d265b60f31a50693b9e982c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -972,7 +980,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator-</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator-</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
         <name>operator-</name>
         <param>
@@ -989,9 +997,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="586" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="586" bodyend="602"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="518" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="518" bodyend="532"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a2922ef03034e2fc40c7097bc97af925b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1afbc5edb5792dcfbea17cccb49c5be01d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1001,9 +1009,9 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator&amp;</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator&amp;</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
-        <name>operator &amp;</name>
+        <name>operator&amp;</name>
         <param>
           <type>const <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt; &amp;</type>
           <declname>a</declname>
@@ -1018,9 +1026,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="606" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="606" bodyend="610"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="535" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="535" bodyend="537"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a45b2f1a9f6d84e3526943ea7681e1709" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a025b9f015e1e8240de30ebf7fdfec3de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1030,7 +1038,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator|</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator|</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
         <name>operator|</name>
         <param>
@@ -1047,9 +1055,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="613" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="613" bodyend="617"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="540" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="540" bodyend="542"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a8f0c6b9fbd2be5ab171239e4edf3bfd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1afd2e49d17708b88b512fdbd2bc7c81c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1059,7 +1067,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator^</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator^</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;a, const uint_x4&lt; UInt, UIntX2 &gt; &amp;b)</argsstring>
         <name>operator^</name>
         <param>
@@ -1076,9 +1084,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="620" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="620" bodyend="624"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="545" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="545" bodyend="547"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1a48014bce19943bf9d10d1217dff1312c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1aa1b3cc575865a19caae10f579676ec14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1088,7 +1096,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator~</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator~</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;v)</argsstring>
         <name>operator~</name>
         <param>
@@ -1101,9 +1109,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="627" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="627" bodyend="630"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="550" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="550" bodyend="552"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1adf483489394b3537c78ce3c1eb412953" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a676931e47d9c700ce43365cd96db2e52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1113,7 +1121,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator-</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator-</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;v)</argsstring>
         <name>operator-</name>
         <param>
@@ -1126,7 +1134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="633" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="633" bodyend="636"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="555" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="555" bodyend="557"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a671cbc499dad803841bf1779873a64d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1155,7 +1163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="639" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="639" bodyend="642"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="560" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="560" bodyend="562"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a1acc4982dbc7603f17425adf4ee26f3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1184,7 +1192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="645" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="645" bodyend="648"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="565" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="565" bodyend="567"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a0bef34c4559e03eb6192ed2d032e00e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1213,7 +1221,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="652" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="652" bodyend="656"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="570" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="570" bodyend="572"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1aa11060b180fb2ab01ae73aaea3ea8775" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1242,7 +1250,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="659" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="659" bodyend="662"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="575" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="575" bodyend="577"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1a9ca9a835ec07854aba640c6e1c325b2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1271,7 +1279,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="665" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="665" bodyend="668"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="580" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="580" bodyend="582"/>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__extras_1ac8b8feef136467e85d33b8c6b7961a06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1300,9 +1308,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="671" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="671" bodyend="674"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="585" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="585" bodyend="587"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1ae1289e65ef378256db2bf13fc1d28d9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1a979cb7a83a6419acc0691b3d33745e2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1312,7 +1320,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator&lt;&lt;</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator&lt;&lt;</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;v, const bitcount_t shift)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -1329,9 +1337,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="671" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="679" bodyend="711"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="585" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="590" bodyend="620"/>
       </memberdef>
-      <memberdef kind="function" id="namespacepcg__extras_1ae8b1aca08af0655210b9b84d335bb65a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacepcg__extras_1ab1e12c4477cc4a79e49c279505933483" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename UInt</type>
@@ -1341,7 +1349,7 @@
           </param>
         </templateparamlist>
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; UInt, UIntX2 &gt;</type>
-        <definition>uint_x4&lt;UInt,UIntX2&gt; pcg_extras::operator&gt;&gt;</definition>
+        <definition>uint_x4&lt;UInt, UIntX2&gt; pcg_extras::operator&gt;&gt;</definition>
         <argsstring>(const uint_x4&lt; UInt, UIntX2 &gt; &amp;v, const bitcount_t shift)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -1358,13 +1366,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="714" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="714" bodyend="746"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="623" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="623" bodyend="653"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="88" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="86" column="20"/>
   </compounddef>
 </doxygen>

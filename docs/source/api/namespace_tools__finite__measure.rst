@@ -13,54 +13,73 @@ Namespace tools::finite::measure
 
 
 
-Namespaces
-----------
-
-
-- :ref:`namespace_tools__finite__measure__multisite`
-
-- :ref:`namespace_tools__finite__measure__twosite`
-
-
 Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1af66720d92c57155c910f42e03186b149`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac53254bd2378dbcbc01ad85fbba9390d`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a67ec4bcbc43bc0856e2d27935d3c11dd`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ae78241c83c7ea8018a9f93026bfd1b2e`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a017b45589c0286dc0f5ccf99d3f669c2`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a9c0dce46c5a4056954221dd72c614f5c`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a23281eafbea3592ae3af7f53dad3c792`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a330b5fd06f76cae1b9cb5835412f343f`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a66d33be4c242e9c4c68fe00468b6a1fd`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a9e866387efbe9f095eb293ddab394fc9`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a4b34b079f086d27e33b97635b469943c`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a9b91ee2a9e967296b7d3295af876c202`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a18782d32e56a337a9f7a8ac4a983942b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a6aa58a9e622f05fa43f2c98ba9a90d99`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a507413053ebde17dea80e3544872237b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac9f8184e2cd1b4063b820bae926a03f5`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aa12da403efefbc15346cf0c88e3aa20b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a06dbb65551a36da9a7904bc11cfde7e4`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a806e88b9b78c8c26de736089f77f82a7`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aec8428e3b9da07d02c741f6c010f3fa5`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a353a7d9a777de998964398a83dbdadf6`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ab3451266459f4bb3728f6e6a8f952a93`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a3eb1010e369f97c5e1cb53c1b04009dc`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aed7b94ef032831d341db12fb1d43bf19`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac1bdfb747a198eb04ca902d7605336e5`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a0f4b4241dc86a64f89fdb71a0f9d7d52`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a1fb7a829d5fd36152b12b34b4f9b433b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a9d05dfc5e775686cbd72e30107ef7b2e`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ad1efa297c4aabbbf1671e503f7f8b010`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a132f292ec9d3f89e658fb77572d12a9f`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ab6ff303549886a76b08acaf8e2be7677`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a5978552f78c00d504c7498daa17506a4`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1adf38ee68af1eb07fce6e12b7311a96e9`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a8145a38b82bae9aa25597372b688670e`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a472a549d171a22839b32cacd34fc3c9f`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1adf8bc0e9cd41a987d462608c75a36b40`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a7f7f226c0320ca739e98340e0e6e8c3a`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ad457da7362e772ed2d4d79f82c991704`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a8a96f8adaa39895086a3feae2a0e5b47`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a94e70e626d6854b91ef3a47cbcb951e4`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1af7d40774d938044a0f7673fb211d8876`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aeb243e9662176ffaed31148acc08f4cd`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a9824a9cde9f82a73cfad2f67c9ca23b5`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aee2b1efe5c266357b6572fbb35808b96`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e`
 
@@ -68,17 +87,35 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac198a39c208e3ccd5af9402510f6243e`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a1d47691c527644e67b5fbb53f46aa7a9`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a7cc83ca516b59c00da5a65fe9ff58132`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ac43824b61846ab708348af54b73efca4`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1afe67d52eeb8b8091d9e22d0c17aa0056`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a`
 
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a7b3cfd48994fe5cb94a3ecd234797b60`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aa29ff51967a40d406924198bd2b33450`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a485ac0c2835bcac4a71f1cb15e5e3254`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a69a8bed8a5349e370730204d7e630d27`
+
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a00cde35ea1d77fa76eee8eb9dd0eff5b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a4ec5e98a46695014aa929e799d047025`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a22e2b3240464cf0e14082b7386acbe3b`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a1aceff8b820375b35c3bf41a0bdfc4fb`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1afbe0edbbd25ac2538b123909edcf4cfa`
 
 
 Typedefs
