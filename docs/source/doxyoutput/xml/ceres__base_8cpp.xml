@@ -1,278 +1,261 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="ceres__base_8cpp" kind="file" language="C++">
     <compoundname>ceres_base.cpp</compoundname>
+    <includes refid="class__algorithm__status_8h" local="no">algorithms/class_algorithm_status.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">config/nmspc_settings.h</includes>
     <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
-    <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
-    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
-    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
-    <includes local="no">ceres/ceres.h</includes>
-    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="class__tensors__finite_8h" local="no">tensors/class_tensors_finite.h</includes>
+    <includes refid="class__model__finite_8h" local="no">tensors/model/class_model_finite.h</includes>
+    <includes refid="class__state__finite_8h" local="no">tensors/state/class_state_finite.h</includes>
+    <includes refid="ceres__base_8h" local="no">tools/finite/opt-internal/ceres_base.h</includes>
     <incdepgraph>
-      <node id="3478">
-        <label>list</label>
+      <node id="38">
+        <label>ceres/iteration_callback.h</label>
       </node>
-      <node id="3494">
-        <label>iomanip</label>
-      </node>
-      <node id="3493">
-        <label>iterator</label>
-      </node>
-      <node id="3487">
-        <label>ceres/ceres.h</label>
-      </node>
-      <node id="3488">
-        <label>state/class_state_finite.h</label>
-        <link refid="class__state__finite_8h"/>
-        <childnode refid="3468" relation="include">
+      <node id="35">
+        <label>measure/state_measure_finite.h</label>
+        <link refid="state__measure__finite_8h"/>
+        <childnode refid="17" relation="include">
         </childnode>
-        <childnode refid="3477" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="3489" relation="include">
-        </childnode>
-        <childnode refid="3490" relation="include">
-        </childnode>
-        <childnode refid="3498" relation="include">
-        </childnode>
-        <childnode refid="3499" relation="include">
-        </childnode>
-        <childnode refid="3484" relation="include">
-        </childnode>
-        <childnode refid="3485" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
       </node>
-      <node id="3463">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
-        <link refid="ceres__base_8cpp"/>
-        <childnode refid="3464" relation="include">
+      <node id="19">
+        <label>limits</label>
+      </node>
+      <node id="16">
+        <label>tensors/class_tensors_finite.h</label>
+        <link refid="class__tensors__finite_8h"/>
+        <childnode refid="17" relation="include">
         </childnode>
-        <childnode refid="3467" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="3474" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="3488" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
-        <childnode refid="3487" relation="include">
+        <childnode refid="26" relation="include">
         </childnode>
-        <childnode refid="3500" relation="include">
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
         </childnode>
       </node>
-      <node id="3495">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3496" relation="include">
+      <node id="5">
+        <label>config/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="3484" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="3485" relation="include">
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
         </childnode>
       </node>
-      <node id="3484">
-        <label>Eigen/Core</label>
+      <node id="21">
+        <label>Eigen/src/Core/util/Constants.h</label>
       </node>
-      <node id="3469">
+      <node id="6">
+        <label>debug.h</label>
+        <link refid="debug_8h"/>
+      </node>
+      <node id="9">
+        <label>stdexcept</label>
+      </node>
+      <node id="8">
+        <label>numeric</label>
+      </node>
+      <node id="13">
         <label>string</label>
       </node>
-      <node id="3473">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="3464">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="3465" relation="include">
+      <node id="32">
+        <label>tensors/model/class_model_finite.h</label>
+        <link refid="class__model__finite_8h"/>
+        <childnode refid="17" relation="include">
         </childnode>
-        <childnode refid="3466" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-      </node>
-      <node id="3479">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="3480" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="3481" relation="include">
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
         </childnode>
       </node>
-      <node id="3467">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="3468" relation="include">
+      <node id="26">
+        <label>measure/tensors_measure_finite.h</label>
+        <link refid="tensors__measure__finite_8h"/>
+        <childnode refid="17" relation="include">
         </childnode>
-        <childnode refid="3469" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="3466" relation="include">
-        </childnode>
-        <childnode refid="3470" relation="include">
-        </childnode>
-        <childnode refid="3471" relation="include">
-        </childnode>
-        <childnode refid="3472" relation="include">
-        </childnode>
-        <childnode refid="3473" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
       </node>
-      <node id="3496">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="3476">
-        <label>tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="3468" relation="include">
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.cpp</label>
+        <link refid="ceres__base_8cpp"/>
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="3469" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="3477" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="3478" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="3470" relation="include">
+        <childnode refid="32" relation="include">
         </childnode>
-        <childnode refid="3479" relation="include">
+        <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="3464" relation="include">
-        </childnode>
-        <childnode refid="3482" relation="include">
-        </childnode>
-        <childnode refid="3484" relation="include">
-        </childnode>
-        <childnode refid="3485" relation="include">
+        <childnode refid="36" relation="include">
         </childnode>
       </node>
-      <node id="3485">
+      <node id="33">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3490">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="3468" relation="include">
-        </childnode>
-        <childnode refid="3491" relation="include">
-        </childnode>
-        <childnode refid="3497" relation="include">
+      <node id="29">
+        <label>tensors/edges/class_env_pair.h</label>
+        <link refid="class__env__pair_8h"/>
+      </node>
+      <node id="24">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h</label>
+      </node>
+      <node id="30">
+        <label>math/svd/settings.h</label>
+        <link refid="svd_2settings_8h"/>
+        <childnode refid="31" relation="include">
         </childnode>
       </node>
-      <node id="3481">
-        <label>spdlog/fmt/bundled/ranges.h</label>
+      <node id="25">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h</label>
       </node>
-      <node id="3499">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="3468" relation="include">
-        </childnode>
-        <childnode refid="3485" relation="include">
-        </childnode>
-        <childnode refid="3479" relation="include">
-        </childnode>
+      <node id="31">
+        <label>fmt/core.h</label>
       </node>
-      <node id="3492">
-        <label>Eigen/Sparse</label>
+      <node id="37">
+        <label>ceres/first_order_function.h</label>
       </node>
-      <node id="3501">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
+      <node id="10">
+        <label>string_view</label>
       </node>
-      <node id="3482">
-        <label>tools/finite/opt-internals/enum_classes.h</label>
-        <link refid="enum__classes_8h"/>
-        <childnode refid="3466" relation="include">
-        </childnode>
-        <childnode refid="3483" relation="include">
-        </childnode>
-      </node>
-      <node id="3480">
-        <label>spdlog/logger.h</label>
-      </node>
-      <node id="3498">
-        <label>state/class_mps_site.h</label>
-        <link refid="class__mps__site_8h"/>
-        <childnode refid="3477" relation="include">
-        </childnode>
-        <childnode refid="3489" relation="include">
-        </childnode>
-        <childnode refid="3485" relation="include">
-        </childnode>
-      </node>
-      <node id="3486">
-        <label>general/nmspc_omp.h</label>
-        <link refid="nmspc__omp_8h"/>
-        <childnode refid="3485" relation="include">
-        </childnode>
-      </node>
-      <node id="3489">
+      <node id="27">
         <label>optional</label>
       </node>
-      <node id="3470">
+      <node id="12">
         <label>vector</label>
       </node>
-      <node id="3497">
-        <label>spdlog/fmt/fmt.h</label>
+      <node id="18">
+        <label>general/eigen_tensor_fwd_decl.h</label>
+        <link refid="eigen__tensor__fwd__decl_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
       </node>
-      <node id="3474">
-        <label>tools/finite/opt.h</label>
-        <link refid="opt_8h"/>
-        <childnode refid="3475" relation="include">
-        </childnode>
-        <childnode refid="3476" relation="include">
-        </childnode>
-        <childnode refid="3464" relation="include">
-        </childnode>
-        <childnode refid="3486" relation="include">
-        </childnode>
-        <childnode refid="3487" relation="include">
-        </childnode>
-      </node>
-      <node id="3475">
-        <label>complex.h</label>
-      </node>
-      <node id="3471">
+      <node id="17">
         <label>array</label>
       </node>
-      <node id="3483">
-        <label>sstream</label>
+      <node id="22">
+        <label>Eigen/src/Core/util/Meta.h</label>
       </node>
-      <node id="3472">
-        <label>hdf5.h</label>
+      <node id="23">
+        <label>Eigen/src/Core/util/ForwardDeclarations.h</label>
       </node>
-      <node id="3466">
-        <label>iostream</label>
+      <node id="4">
+        <label>cstddef</label>
       </node>
-      <node id="3465">
+      <node id="15">
         <label>chrono</label>
       </node>
-      <node id="3477">
+      <node id="20">
+        <label>Eigen/src/Core/util/Macros.h</label>
+      </node>
+      <node id="14">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>type_traits</label>
+      </node>
+      <node id="3">
         <label>complex</label>
       </node>
-      <node id="3500">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="3469" relation="include">
+      <node id="34">
+        <label>tensors/state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="3470" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="3501" relation="include">
+        <childnode refid="35" relation="include">
         </childnode>
-      </node>
-      <node id="3491">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3486" relation="include">
+        <childnode refid="28" relation="include">
         </childnode>
-        <childnode refid="3484" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="3492" relation="include">
-        </childnode>
-        <childnode refid="3485" relation="include">
-        </childnode>
-        <childnode refid="3493" relation="include">
-        </childnode>
-        <childnode refid="3466" relation="include">
-        </childnode>
-        <childnode refid="3494" relation="include">
-        </childnode>
-        <childnode refid="3495" relation="include">
+        <childnode refid="33" relation="include">
         </childnode>
       </node>
-      <node id="3468">
+      <node id="36">
+        <label>tools/finite/opt-internal/ceres_base.h</label>
+        <link refid="ceres__base_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
         <label>memory</label>
+      </node>
+      <node id="7">
+        <label>enums.h</label>
+        <link refid="config_2enums_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>algorithms/class_algorithm_status.h</label>
+        <link refid="class__algorithm__status_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <briefdescription>
@@ -284,48 +267,52 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-09.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ceres/ceres.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref>;</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight></codeline>
-<codeline lineno="14" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" kindref="member">ceres_base_functor::ceres_base_functor</ref>(</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;<sp/>sim_status):</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>omp(<ref refid="namespacesettings" kindref="compound">settings</ref>::threading::<ref refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" kindref="member">num_threads_eigen</ref>)</highlight></codeline>
-<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253" kindref="member">reset_timers</ref>();</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__status_8h" kindref="compound">algorithms/class_algorithm_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">config/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tensors__finite_8h" kindref="compound">tensors/class_tensors_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__finite_8h" kindref="compound">tensors/model/class_model_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">tensors/state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="ceres__base_8h" kindref="compound">tools/finite/opt-internal/ceres_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" kindref="member">ceres_base_functor::ceres_base_functor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref><sp/>&amp;tensors,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref><sp/>&amp;status)<sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5cc81a0bb9c6d5bf5948dbadf19ac81d" kindref="member">t_step</ref><sp/>=<sp/>std::make_unique&lt;class_tic_toc&gt;(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/>5,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4231819b5f518d1bbee099137e4ba94c" kindref="member">t_H2n</ref><sp/><sp/>=<sp/>std::make_unique&lt;class_tic_toc&gt;(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/>5,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aca13ca186bb8d7ef3de0876e2936008b" kindref="member">t_nH2n</ref><sp/>=<sp/>std::make_unique&lt;class_tic_toc&gt;(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/>5,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab7e32e738cfdf2de9bed75b25aae1c71" kindref="member">t_Hn</ref><sp/><sp/><sp/>=<sp/>std::make_unique&lt;class_tic_toc&gt;(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/>5,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aee536b684beb7ddd1b3cd6473d820f2f" kindref="member">t_nHn</ref><sp/><sp/>=<sp/>std::make_unique&lt;class_tic_toc&gt;(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/>5,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//All<sp/>energies<sp/>in<sp/>sim_status<sp/>are<sp/>per<sp/>site!</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref>;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref>;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref>;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" kindref="member">energy_lower_bound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref>;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" kindref="member">energy_upper_bound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref>;</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" kindref="member">energy_target_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref>;</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" kindref="member">energy_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref>;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" kindref="member">ceres_base_functor::get_variance</ref><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>;}</highlight></codeline>
-<codeline lineno="36" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" kindref="member">ceres_base_functor::get_energy</ref><sp/><sp/><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" kindref="member">energy</ref><sp/><sp/>;}</highlight></codeline>
-<codeline lineno="37" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" kindref="member">ceres_base_functor::get_count</ref><sp/><sp/><sp/><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>;}</highlight></codeline>
-<codeline lineno="38" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" kindref="member">ceres_base_functor::get_norm</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" kindref="member">norm</ref>;}</highlight></codeline>
-<codeline lineno="39" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" kindref="member">ceres_base_functor::NumParameters</ref><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref>;}</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>tensors.<ref refid="classclass__tensors__finite_1a2821ebade96b96a7ac4a8c26d0e64b8e" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" kindref="member">energy_reduced</ref><sp/>=<sp/>tensors.<ref refid="classclass__tensors__finite_1ae5292cd1a9588909b060778ef0ec8092" kindref="member">model</ref>-&gt;get_energy_reduced();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>All<sp/>energies<sp/>in<sp/>status<sp/>are<sp/>per<sp/>site!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1bef8b7100a6685e17ef51118b57728c" kindref="member">energy_tgt_per_site</ref><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1af1f50c4e5b65d642478ae6421419228c" kindref="member">energy_tgt_per_site</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a506407dd3ce5874aad6c43401f0498e0" kindref="member">energy_max_per_site</ref><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1a529e687471b62fbd48844bacd824359f" kindref="member">energy_max_per_site</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad0e4490dfc4324060c4dfa60ee76315c" kindref="member">energy_min_per_site</ref><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1a6a4d044f86d512e6c9e43a61f50fc5d2" kindref="member">energy_min_per_site</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aaeacf1bdeb827ca46fb2f623e76dec54" kindref="member">energy_llim_per_site</ref><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1a50ec138a23ad7ecc2d370487f94cad4f" kindref="member">energy_llim_per_site</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a969920ebc8a54fd4fe1d38ad1f7c66ed" kindref="member">energy_ulim_per_site</ref><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1aa35aa4b05938ef80c45509eefde7a37a" kindref="member">energy_ulim_per_site</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4cf55cb74d9e1107c11f6ea6d4519096" kindref="member">energy_dens_target</ref><sp/><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1a5da96b3f2adea8e1e3193a7819522034" kindref="member">energy_dens_target</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aac95b85ddd16608f4bb82fe8fb9c3ffe" kindref="member">energy_dens_window</ref><sp/><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1abf4988dae5406a0c08d6229c9cf3d27c" kindref="member">energy_dens_window</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a171b74acc255cbd18196fc109c22bb81" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>status.<ref refid="classclass__algorithm__status_1a747785006ce496cf72c58be2ad89b79a" kindref="member">iter</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" kindref="member">ceres_base_functor::get_energy</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" kindref="member">energy</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="37" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7584caf4edef5b771b2580d0feae4e47" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7584caf4edef5b771b2580d0feae4e47" kindref="member">ceres_base_functor::get_energy_per_site</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab730bb8db70334d83578f05d264c9969" kindref="member">energy_per_site</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="38" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" kindref="member">ceres_base_functor::get_variance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="39" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad91c01df377b39204adbb63e891f07c4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad91c01df377b39204adbb63e891f07c4" kindref="member">ceres_base_functor::get_variance_per_site</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac86c762fcd816c89388fc6f08af72f13" kindref="member">variance_per_site</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="40" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" kindref="member">ceres_base_functor::get_count</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad1a61c70c00b5f4ed703f587a1a2f41f" kindref="member">counter</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="41" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" kindref="member">ceres_base_functor::get_norm</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" kindref="member">norm</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="42" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5fb2492a8e0dd68b3422292b3f65aae6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5fb2492a8e0dd68b3422292b3f65aae6" kindref="member">ceres_base_functor::get_norm_offset</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="43" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7f682d931dbf4764e9cf8565b40de224" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a7f682d931dbf4764e9cf8565b40de224" kindref="member">ceres_base_functor::get_delta_f</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aa50377e1abe8aa677e5440683c151e32" kindref="member">delta_f</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="44" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1abde52ca7df09396f9612d6ded2393bd0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1abde52ca7df09396f9612d6ded2393bd0" kindref="member">ceres_base_functor::get_grad_max_norm</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4bc72a0230a6dd24d545d69a37d88120" kindref="member">grad_max_norm</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="45" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae99d522c02f801f795ea15af3da9933c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae99d522c02f801f795ea15af3da9933c" kindref="member">ceres_base_functor::get_ops</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad351011d0e628aa33a2ea586e1e32afb" kindref="member">ops</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="46" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" kindref="member">ceres_base_functor::NumParameters</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aff5f9cfe37303c055d474ab07e51304b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aff5f9cfe37303c055d474ab07e51304b" kindref="member">ceres_base_functor::set_delta_f</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delta_f_)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aa50377e1abe8aa677e5440683c151e32" kindref="member">delta_f</ref><sp/>=<sp/>delta_f_;}</highlight></codeline>
+<codeline lineno="49" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab2a69e0f5a72c649fc8678fb9a22ed0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab2a69e0f5a72c649fc8678fb9a22ed0b" kindref="member">ceres_base_functor::set_grad_max_norm</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>grad_max_norm_)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4bc72a0230a6dd24d545d69a37d88120" kindref="member">grad_max_norm</ref><sp/>=<sp/>grad_max_norm_;}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.cpp"/>
   </compounddef>
 </doxygen>
