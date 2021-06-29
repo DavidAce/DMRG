@@ -18,6 +18,8 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
 -h | --help                     : Help. Shows this text.
+-i | --install-prefix   [=path] : Install directory of DMRG (default = CMAKE_INSTALL_PREFIX)
+   | --install-pkg-dir [=path] : Install directory of dependencies (default = CMAKE_INSTALL_PREFIX)
 -j | --make-threads [=num]      : Number of threads used by Make build (default = 8)
 -l | --clear-libs [=args]       : Clear libraries in comma separated list 'lib1,lib2...'. "all" deletes all.
 -s | --enable-shared            : Enable shared library linking (default is static)
@@ -56,6 +58,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 default-tetralith\
                 default-kraken\
                 install-prefix:\
+                install-pkg-dir:\
                 package-manager:\
                 enable-tests\
                 enable-shared\
@@ -96,6 +99,7 @@ enable_lto="OFF"
 enable_asan="OFF"
 enable_coverage="OFF"
 install_prefix="dmrg-install"
+install_pkg_dir="dmrg-install"
 make_threads=8
 print_cmake_error="OFF"
 verbose="OFF"
@@ -143,7 +147,8 @@ do
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
                                     verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
                                     shift ;;
-       --install-prefix)            install_prefix=$2               ; echo " * Install Prefix           : $2"      ; shift 2 ;;
+    -i|--install-prefix)            install_prefix=$2               ; echo " * Install Prefix           : $2"      ; shift 2 ;;
+       --install-pkg-dir)           install_pkg_dir=$2              ; echo " * Install Pkg dir          : $2"      ; shift 2 ;;
        --package-manager)           package_manager=$2              ; echo " * Package Manager          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
@@ -322,6 +327,7 @@ cat << EOF >&2
     cmake -DCMAKE_BUILD_TYPE=$build_type
           -DBUILD_SHARED_LIBS:BOOL=$enable_shared
           -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix
+          -DDMRG_DEPS_INSTALL_DIR:PATH=$install_pkg_dir
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
           -DDMRG_PRINT_INFO=$verbose_cmake
           -DDMRG_PRINT_CHECKS=$verbose_cmake
@@ -346,6 +352,7 @@ if [ -z "$dry_run" ] ;then
     cmake -DCMAKE_BUILD_TYPE=$build_type \
           -DBUILD_SHARED_LIBS:BOOL=$enable_shared \
           -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix \
+          -DDMRG_DEPS_INSTALL_DIR:PATH=$install_pkg_dir \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
           -DDMRG_PRINT_INFO=$verbose_cmake \
           -DDMRG_PRINT_CHECKS=$verbose_cmake \
