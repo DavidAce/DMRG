@@ -40,6 +40,7 @@ jobs:
         with:
           path: |
             ~/.conan/data
+            ~/dmrg-install
           key: ${{ env.cache-name }}
 
       - name: Setup gcc # compilers are already installed on the CI
@@ -84,7 +85,7 @@ jobs:
           --package-manager=${{ matrix.manager }} \
           --compiler=${{ matrix.compiler }} \
           --shared=${{ matrix.linkage == 'shared' }}
-
+          --install-pkg-dir=~/dmrg-install
       - name: Test
         run: |
           cd build/${{ matrix.build_type }}
