@@ -160,10 +160,6 @@ CMake's `find_package` calls:
 
 ---
 
-## License
-
-Open source under [MPL2](https://www.mozilla.org/MPL/2.0/).
-
 ## Author
 
 David Aceituno
