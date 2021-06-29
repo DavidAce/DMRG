@@ -3,19 +3,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
     #  Make sure we use DMRG's own find modules
     list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake)
-    if(DMRG_ENABLE_OPENMP)
-        find_package(OpenMP COMPONENTS CXX REQUIRED)
-        set(mkl_thread gnu_thread)
-    else()
-        set(mkl_thread sequential)
-    endif()
-
+    find_package(OpenMP COMPONENTS CXX REQUIRED)
     find_package(Fortran REQUIRED)
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
     ##############################################################################
     if(DMRG_ENABLE_MKL)
-        find_package(MKL COMPONENTS blas lapack gf ${mkl_thread} lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
         if(TARGET mkl::mkl)
             include(cmake/getExpandedTarget.cmake)
             expand_target_libs(mkl::mkl MKL_LIBRARIES)

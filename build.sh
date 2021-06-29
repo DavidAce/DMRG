@@ -25,7 +25,6 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -s | --enable-shared            : Enable shared library linking (default is static)
      --shared [=ON/OFF]         : Alternative to --enable-shared (default is OFF).
    | --enable-threads           : Enable C++11 threading used in Eigen::Tensor
-   | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
    | --enable-asan              : Enable runtime sanitizers, i.e. -fsanitize=address
@@ -38,7 +37,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --verbose-make             : Verbose Makefiles
    | --verbose-cmake            : Verbose CMake
 EXAMPLE:
-./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --package-manager=find
+./build.sh --arch native -b Release  --make-threads 8   --enable-shared --package-manager=find
 EOF
   exit 1
 }
@@ -66,7 +65,6 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 gcc-toolchain:\
                 make-threads:\
                 enable-threads\
-                enable-openmp\
                 enable-mkl\
                 enable-lto\
                 enable-asan\
@@ -93,13 +91,12 @@ enable_shared="OFF"
 package_manager="find"
 enable_tests="OFF"
 enable_threads="OFF"
-enable_openmp="OFF"
 enable_mkl="OFF"
 enable_lto="OFF"
 enable_asan="OFF"
 enable_coverage="OFF"
-install_prefix="dmrg-install"
-install_pkg_dir="dmrg-install"
+install_prefix="~/dmrg-install"
+install_pkg_dir="~/dmrg-deps-install"
 make_threads=8
 print_cmake_error="OFF"
 verbose="OFF"
@@ -126,7 +123,6 @@ do
                                     package_manager="conan"         ; echo " * Package Manager          : $package_manager";
                                     enable_shared="OFF"             ; echo " * Shared libraries         : $enable_shared"  ;
                                     enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
-                                    enable_openmp="ON"              ; echo " * OpenMP                   : $enable_openmp"  ;
                                     enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
                                     make_threads=16                 ; echo " * MAKE threads             : $make_threads"   ;
@@ -140,7 +136,6 @@ do
                                     package_manager="conan"         ; echo " * Package Manager          : $package_manager";
                                     enable_shared="OFF"             ; echo " * Shared libraries         : $enable_shared"  ;
                                     enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
-                                    enable_openmp="ON"              ; echo " * OpenMP                   : $enable_openmp"  ;
                                     enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
                                     make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
@@ -159,7 +154,6 @@ do
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-threads)            enable_threads="ON"             ; echo " * C++11 Threads            : ON"      ; shift   ;;
-       --enable-openmp)             enable_openmp="ON"              ; echo " * OpenMP                   : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL                : ON"      ; shift   ;;
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization   : ON"      ; shift   ;;
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
@@ -335,7 +329,6 @@ cat << EOF >&2
           -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_THREADS=$enable_threads
-          -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
           -DDMRG_ENABLE_LTO=$enable_lto
           -DDMRG_ENABLE_ASAN=$enable_asan
@@ -360,7 +353,6 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_THREADS=$enable_threads \
-          -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
           -DDMRG_ENABLE_LTO=$enable_lto \
           -DDMRG_ENABLE_ASAN=$enable_asan \

@@ -119,9 +119,7 @@ The `cmake` step above takes several options, `cmake [-DOPTIONS=var] ../ `:
 
 | Var | Default | Description |
 | ---- | ---- | ---- |
-| `DMRG_ENABLE_OPENMP`              | `OFF`                         | Use `OpenMP` in `Eigen`, `BLAS` and `LAPACK` |
 | `DMRG_PACKAGE_MANAGER`            | `find`                        | Handle dependencies, `find`, `cmake`, or `conan` |
-| `DMRG_ENABLE_OPENMP`              | `OFF`                         | Use OpenMP in Eigen, BLAS and LAPACK |
 | `DMRG_ENABLE_THREADS`             | `OFF`                         | Use C++11 stl threads in Eigen::Tensor |
 | `DMRG_ENABLE_MKL`                 | `OFF`                         | Enable Intel Math Kernel Library (else OpenBLAS)  |
 | `DMRG_ENABLE_TESTS`               | `OFF`                         | Enable unit testing with ctest |

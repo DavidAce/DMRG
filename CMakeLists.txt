@@ -9,7 +9,6 @@ project(DMRG++
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 # Set options this build
-option(DMRG_ENABLE_OPENMP "Use OpenMP in Eigen, BLAS and LAPACK" OFF)
 option(DMRG_ENABLE_THREADS "Use C++11 stl threads in Eigen::Tensor" OFF)
 option(DMRG_ENABLE_MKL "Enable Intel Math Kernel Library" OFF)
 option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" OFF)
