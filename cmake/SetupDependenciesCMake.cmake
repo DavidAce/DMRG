@@ -26,17 +26,11 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     # Find packages or install if missing
     find_package(Threads REQUIRED)
-    if (DMRG_ENABLE_OPENMP)
-        find_package(OpenMP COMPONENTS CXX REQUIRED)
-        set(mkl_thread gnu_thread)
-    else ()
-        set(mkl_thread sequential)
-    endif ()
-
+    find_package(OpenMP COMPONENTS CXX REQUIRED)
     find_package(Fortran REQUIRED)
 
     if (DMRG_ENABLE_MKL)
-        find_package(MKL COMPONENTS blas lapack gf ${mkl_thread} lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
     endif ()
 
     if (NOT MKL_FOUND)

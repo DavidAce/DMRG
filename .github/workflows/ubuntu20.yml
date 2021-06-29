@@ -76,16 +76,15 @@ jobs:
       - name: Build
         run: |
           ./build.sh  \
-          --enable-openmp \
           --enable-tests \
           --enable-coverage \
           -a haswell \
           --build-type=${{ matrix.build_type }} \
-          -j 2 --verbose --verbose-cmake \
+          -j 2 --verbose-cmake \
           --package-manager=${{ matrix.manager }} \
           --compiler=${{ matrix.compiler }} \
           --shared=${{ matrix.linkage == 'shared' }}
-          --install-pkg-dir=~/dmrg-install
+
       - name: Test
         run: |
           cd build/${{ matrix.build_type }}

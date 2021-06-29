@@ -5,7 +5,9 @@ list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 
 # Transform CMAKE_INSTALL_PREFIX to full path
-if(DEFINED CMAKE_INSTALL_PREFIX AND NOT IS_ABSOLUTE CMAKE_INSTALL_PREFIX)
+if(DEFINED CMAKE_INSTALL_PREFIX
+    AND NOT IS_ABSOLUTE CMAKE_INSTALL_PREFIX
+    AND NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}
             ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR} CACHE FORCE)
     message(STATUS "Setting absolute path CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
@@ -15,14 +17,15 @@ endif()
 if(NOT DMRG_DEPS_BUILD_DIR)
     set(DMRG_DEPS_BUILD_DIR ${CMAKE_BINARY_DIR}/dmrg-deps-build)
 endif()
+
+# Install dependencies to the same location as the main project by default
 if(NOT DMRG_DEPS_INSTALL_DIR)
-    set(DMRG_DEPS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}) # Install to the same location as h5pp by default
+    set(DMRG_DEPS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 endif()
 
 if(DMRG_PREFIX_ADD_PKGNAME)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/dmrg CACHE STRING
-            "The option DMRG_PREFIX_ADD_PKGNAME=ON sets the install directory: <CMAKE_INSTALL_PREFIX>/dmrg"
-            FORCE)
+            "The option DMRG_PREFIX_ADD_PKGNAME=ON sets the install directory: <CMAKE_INSTALL_PREFIX>/dmrg" FORCE)
 endif()
 
 
