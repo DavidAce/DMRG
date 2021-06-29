@@ -9,7 +9,6 @@
 #include <Eigen/QR>
 #include <Eigen/SVD>
 #include <general/class_tic_toc.h>
-#include <iostream>
 #include <math/svd.h>
 
 //
@@ -68,7 +67,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(count) count.value()++;
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= threshold).count();
-    svd::log->trace("Truncation singular values");
+    svd::log->trace("Truncating singular values");
     if(rank == SVD.singularValues().size()) {
         truncation_error = 0;
     } else {
@@ -77,15 +76,15 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
-        throw std::runtime_error(fmt::format("Eigen SVD error \n"
-                                             "  svd_threshold    = {:.4e}\n"
-                                             "  Truncation Error = {:.4e}\n"
-                                             "  Rank             = {}\n"
-                                             "  Dims             = ({}, {})\n"
-                                             "  A all finite     : {}\n"
-                                             "  U all finite     : {}\n"
-                                             "  S all finite     : {}\n"
-                                             "  V all finite     : {}\n",
+        throw std::runtime_error(fmt::format(FMT_COMPILE("Eigen SVD error \n"
+                                                         "  svd_threshold    = {:.4e}\n"
+                                                         "  Truncation Error = {:.4e}\n"
+                                                         "  Rank             = {}\n"
+                                                         "  Dims             = ({}, {})\n"
+                                                         "  A all finite     : {}\n"
+                                                         "  U all finite     : {}\n"
+                                                         "  S all finite     : {}\n"
+                                                         "  V all finite     : {}\n"),
                                              threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
                                              SVD.singularValues().head(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite()));
     }

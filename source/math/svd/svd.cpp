@@ -4,7 +4,6 @@
 
 #include <Eigen/QR>
 #include <general/class_tic_toc.h>
-#include <iostream>
 #include <math/svd.h>
 
 std::optional<long long> svd::solver::count = 0;
@@ -71,14 +70,14 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         try {
             return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
         } catch(const std::exception &ex) {
-            tools::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", ex.what());
+            svd::log->warn(FMT_COMPILE("Lapacke failed to perform SVD: {} | Trying Eigen"), ex.what());
             return do_svd_eigen(mat_ptr, rows, cols, rank_max);
         }
     }else {
         try {
             return do_svd_eigen(mat_ptr, rows, cols, rank_max);
         } catch(const std::exception &ex) {
-            tools::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
+            svd::log->warn(FMT_COMPILE("Eigen failed to perform SVD: {} | Trying Lapacke"), ex.what());
             return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
         }
     }
