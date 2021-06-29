@@ -25,3 +25,6 @@ docs_rtd/_build
 docs_rtd/doxyoutput
 # wherever you told Exhale containmentFolder is
 docs_rtd/api
+docs/build/doctrees
+docs/source/doxyoutput
+docs/source/api
