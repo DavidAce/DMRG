@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(tests)
 file(GLOB TESTS "*.cpp")
-add_custom_target(dmrg-test-all)
 foreach (test ${TESTS})
     get_filename_component(test_src ${test} NAME)
     get_filename_component(test_nwe ${test} NAME_WE)
@@ -18,29 +17,19 @@ foreach (test ${TESTS})
         target_compile_options(dmrg-${test_nwe} PRIVATE --coverage)
         target_link_options(dmrg-${test_nwe} PRIVATE --coverage)
     endif ()
-    add_dependencies(dmrg-test-all dmrg-${test_nwe})
     list(APPEND test_tgt_list dmrg-${test_nwe})
     target_link_libraries(dmrg-${test_nwe} PRIVATE dmrg-deps dmrg-flags)
 endforeach ()
-add_custom_command(
-        TARGET dmrg-test-all
-        POST_BUILD
-        COMMENT "Running Tests"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        DEPENDS DMRG++
-        COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
-
-
 
 # Speed up compilation with precompiled headers
 if(DMRG_ENABLE_PCH)
     if(COMMAND target_precompile_headers)
         foreach (tgt ${test_tgt_list})
             if(NOT TARGET ${first_tgt})
-                #                target_precompile_headers(${tgt} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
+                target_precompile_headers(${tgt} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
                 set(first_tgt ${tgt})
             else()
-                #                target_precompile_headers(${tgt} REUSE_FROM ${first_tgt})
+                target_precompile_headers(${tgt} REUSE_FROM ${first_tgt})
             endif()
         endforeach()
     endif()
