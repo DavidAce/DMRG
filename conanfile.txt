@@ -4,6 +4,7 @@
 
 [requires]
 ceres-solver/2.0.0@
+glog/0.5.0@
 h5pp/1.9.0@davidace/dev
 eigen/3.3.8@davidace/patched
 # arpack++/2.3.0@davidace/stable
@@ -26,6 +27,8 @@ ceres-solver:use_gflags=True
 # backward-cpp:stack_walking=unwind
 # backward-cpp:stack_details=dwarf
 
+gflags:shared=False
+glog:shared=False
 
 
 ### NOTE October 4 2020 ####
