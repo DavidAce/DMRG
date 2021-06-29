@@ -1,240 +1,258 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="infinite_2mps_8cpp" kind="file" language="C++">
     <compoundname>mps.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
-    <includes refid="class__state__infinite_8h" local="no">state/class_state_infinite.h</includes>
-    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
-    <includes refid="class__mps__site_8h" local="no">state/class_mps_site.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">config/nmspc_settings.h</includes>
+    <includes refid="class__mps__site_8h" local="no">tensors/state/class_mps_site.h</includes>
+    <includes refid="class__state__infinite_8h" local="no">tensors/state/class_state_infinite.h</includes>
+    <includes refid="tools_2common_2fmt_8h" local="no">tools/common/fmt.h</includes>
+    <includes refid="split_8h" local="no">tools/common/split.h</includes>
+    <includes refid="infinite_2mps_8h" local="no">tools/infinite/mps.h</includes>
     <incdepgraph>
-      <node id="3347">
-        <label>list</label>
-      </node>
-      <node id="3365">
-        <label>iomanip</label>
-      </node>
-      <node id="3364">
-        <label>iterator</label>
-      </node>
-      <node id="3366">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3367" relation="include">
+      <node id="17">
+        <label>measure/state_measure_infinite.h</label>
+        <link refid="state__measure__infinite_8h"/>
+        <childnode refid="18" relation="include">
         </childnode>
-        <childnode refid="3357" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="3358" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="3357">
-        <label>Eigen/Core</label>
+      <node id="27">
+        <label>limits</label>
       </node>
-      <node id="3345">
+      <node id="2">
+        <label>config/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>tools/common/fmt.h</label>
+        <link refid="tools_2common_2fmt_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>tools/infinite/mps.h</label>
+        <link refid="infinite_2mps_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Eigen/src/Core/util/Constants.h</label>
+      </node>
+      <node id="15">
+        <label>class_mps_stash.h</label>
+        <link refid="class__mps__stash_8h"/>
+      </node>
+      <node id="3">
+        <label>debug.h</label>
+        <link refid="debug_8h"/>
+      </node>
+      <node id="6">
+        <label>stdexcept</label>
+      </node>
+      <node id="5">
+        <label>numeric</label>
+      </node>
+      <node id="23">
+        <label>io/fmt.h</label>
+        <link refid="io_2fmt_8h"/>
+      </node>
+      <node id="10">
         <label>string</label>
       </node>
-      <node id="3352">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="3353" relation="include">
-        </childnode>
-        <childnode refid="3354" relation="include">
-        </childnode>
-      </node>
-      <node id="3349">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="3350" relation="include">
-        </childnode>
-        <childnode refid="3351" relation="include">
-        </childnode>
-      </node>
-      <node id="3370">
-        <label>map</label>
-      </node>
-      <node id="3367">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="3343">
-        <label>tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="3344" relation="include">
-        </childnode>
-        <childnode refid="3345" relation="include">
-        </childnode>
-        <childnode refid="3346" relation="include">
-        </childnode>
-        <childnode refid="3347" relation="include">
-        </childnode>
-        <childnode refid="3348" relation="include">
-        </childnode>
-        <childnode refid="3349" relation="include">
-        </childnode>
-        <childnode refid="3352" relation="include">
-        </childnode>
-        <childnode refid="3355" relation="include">
-        </childnode>
-        <childnode refid="3357" relation="include">
-        </childnode>
-        <childnode refid="3358" relation="include">
-        </childnode>
-      </node>
-      <node id="3358">
+      <node id="14">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3351">
-        <label>spdlog/fmt/bundled/ranges.h</label>
+      <node id="32">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h</label>
       </node>
-      <node id="3372">
-        <label>spdlog/spdlog.h</label>
+      <node id="33">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h</label>
       </node>
-      <node id="3363">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="3374">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
-      </node>
-      <node id="3355">
-        <label>tools/finite/opt-internals/enum_classes.h</label>
-        <link refid="enum__classes_8h"/>
-        <childnode refid="3354" relation="include">
-        </childnode>
-        <childnode refid="3356" relation="include">
+      <node id="20">
+        <label>math/svd/settings.h</label>
+        <link refid="svd_2settings_8h"/>
+        <childnode refid="21" relation="include">
         </childnode>
       </node>
-      <node id="3350">
-        <label>spdlog/logger.h</label>
+      <node id="21">
+        <label>fmt/core.h</label>
       </node>
-      <node id="3376">
-        <label>state/class_mps_site.h</label>
-        <link refid="class__mps__site_8h"/>
-        <childnode refid="3346" relation="include">
-        </childnode>
-        <childnode refid="3360" relation="include">
-        </childnode>
-        <childnode refid="3358" relation="include">
-        </childnode>
+      <node id="7">
+        <label>string_view</label>
       </node>
-      <node id="3362">
-        <label>general/nmspc_omp.h</label>
-        <link refid="nmspc__omp_8h"/>
-        <childnode refid="3358" relation="include">
-        </childnode>
+      <node id="34">
+        <label>tuple</label>
       </node>
-      <node id="3359">
-        <label>state/class_state_infinite.h</label>
-        <link refid="class__state__infinite_8h"/>
-        <childnode refid="3344" relation="include">
+      <node id="24">
+        <label>tools/common/split.h</label>
+        <link refid="split_8h"/>
+        <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="3360" relation="include">
+        <childnode refid="25" relation="include">
         </childnode>
-        <childnode refid="3361" relation="include">
+        <childnode refid="26" relation="include">
         </childnode>
-        <childnode refid="3352" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="3368" relation="include">
+        <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="3373" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="3349" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
-      <node id="3360">
+      <node id="13">
         <label>optional</label>
       </node>
-      <node id="3348">
+      <node id="9">
         <label>vector</label>
       </node>
-      <node id="3371">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="26">
+        <label>general/eigen_tensor_fwd_decl.h</label>
+        <link refid="eigen__tensor__fwd__decl_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
       </node>
-      <node id="3369">
+      <node id="18">
         <label>array</label>
       </node>
-      <node id="3356">
-        <label>sstream</label>
+      <node id="30">
+        <label>Eigen/src/Core/util/Meta.h</label>
       </node>
-      <node id="3375">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="3344" relation="include">
-        </childnode>
-        <childnode refid="3361" relation="include">
-        </childnode>
+      <node id="31">
+        <label>Eigen/src/Core/util/ForwardDeclarations.h</label>
       </node>
-      <node id="3342">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
-        <link refid="infinite_2mps_8cpp"/>
-        <childnode refid="3343" relation="include">
-        </childnode>
-        <childnode refid="3359" relation="include">
-        </childnode>
-        <childnode refid="3375" relation="include">
-        </childnode>
-        <childnode refid="3376" relation="include">
-        </childnode>
+      <node id="25">
+        <label>deque</label>
       </node>
-      <node id="3354">
-        <label>iostream</label>
+      <node id="28">
+        <label>Eigen/src/Core/util/Macros.h</label>
       </node>
-      <node id="3368">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="3354" relation="include">
+      <node id="8">
+        <label>type_traits</label>
+      </node>
+      <node id="36">
+        <label>set</label>
+      </node>
+      <node id="11">
+        <label>tensors/state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="3369" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="3370" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="3346" relation="include">
-        </childnode>
-        <childnode refid="3348" relation="include">
-        </childnode>
-        <childnode refid="3371" relation="include">
-        </childnode>
-        <childnode refid="3372" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
       </node>
-      <node id="3353">
-        <label>chrono</label>
-      </node>
-      <node id="3346">
+      <node id="12">
         <label>complex</label>
       </node>
-      <node id="3373">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="3345" relation="include">
-        </childnode>
-        <childnode refid="3348" relation="include">
-        </childnode>
-        <childnode refid="3374" relation="include">
-        </childnode>
-      </node>
-      <node id="3361">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3362" relation="include">
-        </childnode>
-        <childnode refid="3357" relation="include">
-        </childnode>
-        <childnode refid="3363" relation="include">
-        </childnode>
-        <childnode refid="3358" relation="include">
-        </childnode>
-        <childnode refid="3364" relation="include">
-        </childnode>
-        <childnode refid="3354" relation="include">
-        </childnode>
-        <childnode refid="3365" relation="include">
-        </childnode>
-        <childnode refid="3366" relation="include">
-        </childnode>
-      </node>
-      <node id="3344">
+      <node id="19">
         <label>memory</label>
       </node>
+      <node id="4">
+        <label>enums.h</label>
+        <link refid="config_2enums_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>tensors/state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="infinite_2mps_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp" line="11" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -244,43 +262,76 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-25.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11" refid="namespacetools_1_1infinite_1_1mps_1a56776b1e99c7db754004afe45a040e8a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1a56776b1e99c7db754004afe45a040e8a" kindref="member">tools::infinite::mps::initialize</ref><sp/><sp/>(<ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/>std::string<sp/>model_type_str){</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>2site<sp/>MPS&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>spin_dimension<sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(model_type_str<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;tf_ising&quot;</highlight><highlight class="normal">)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>spin_dimension<sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;tf_nn_ising&quot;</highlight><highlight class="normal">)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>spin_dimension<sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;selfdual_tf_rf_ising&quot;</highlight><highlight class="normal">)<sp/>spin_dimension<sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>M(spin_dimension,1,1);</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L(1);</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Default<sp/>is<sp/>a<sp/>product<sp/>state,<sp/>spins<sp/>pointing<sp/>up<sp/>in<sp/>z.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>M.setZero();</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>M(0,0,0)<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>L.setConstant(1.0);</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A<sp/>=<sp/>std::make_unique&lt;class_mps_site&gt;(M,L,0);</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_B<sp/>=<sp/>std::make_unique&lt;class_mps_site&gt;(M,L,1);</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A-&gt;set_LC(L);</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">config/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">tensors/state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">tensors/state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="tools_2common_2fmt_8h" kindref="compound">tools/common/fmt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="split_8h" kindref="compound">tools/common/split.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="infinite_2mps_8h" kindref="compound">tools/infinite/mps.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="infinite_2mps_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="namespacetools_1_1infinite_1_1mps_1af57214b0a7d4746c89d1771dbd1fb966" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1af57214b0a7d4746c89d1771dbd1fb966" kindref="member">tools::infinite::mps::merge_twosite_tensor</ref>(<ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&amp;twosite_tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_lim,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;svd::settings&gt;<sp/>svd_settings)<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/>dA<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" kindref="member">get_spin_dimA</ref>();</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/>dB<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" kindref="member">get_spin_dimB</ref>();</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>posA<sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a671df6470f3780504848ec4562a72aee" kindref="member">get_positionA</ref>();</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>posB<sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a4f5507dae5e9ae1572cbcdb60b3e2338" kindref="member">get_positionB</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><sp/><sp/>mps_list<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1split_1aaeb82c8632b58196774224be23586b76" kindref="member">tools::common::split::split_mps</ref>(twosite_tensor,<sp/>{dA,<sp/>dB},<sp/>{posA,<sp/>posB},<sp/>posA,<sp/>chi_lim,<sp/>svd_settings);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(mps_list.size()<sp/>!=<sp/>2)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::logic_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Got<sp/>{}<sp/>MPS<sp/>sites<sp/>from<sp/>two-site<sp/>tensor.&quot;</highlight><highlight class="normal">,<sp/>mps_list.size()));</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a2b404450f994e880160314fbecadf4d4" kindref="member">get_mps_siteA</ref>().<ref refid="classclass__mps__site_1a479d72f266fe8c7e555093486f0ce3fd" kindref="member">merge_mps</ref>(mps_list.front());</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a30dc3e657d22c9acd651b5ecb56a0026" kindref="member">get_mps_siteB</ref>().<ref refid="classclass__mps__site_1a479d72f266fe8c7e555093486f0ce3fd" kindref="member">merge_mps</ref>(mps_list.back());</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1a7f89e93b5ab289f21292f99b90046ebc" kindref="member">tools::infinite::mps::random_product_state</ref>([[maybe_unused]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>[[maybe_unused]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;sector,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[[maybe_unused]]<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1input_1ac26e006d28280b3712305f9e7c39824d" kindref="member">bitfield</ref>,<sp/>[[maybe_unused]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1strategy_1a59f890d5cd99ba257fac12c9ebe361bb" kindref="member">use_eigenspinors</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;random<sp/>product<sp/>state<sp/>for<sp/>infinite<sp/>state<sp/>not<sp/>implemented<sp/>yet&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="28"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>tools::infinite::mps::rebuild_environments(class_state_infinite<sp/>&amp;<sp/>state){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37" refid="namespacetools_1_1infinite_1_1mps_1a80202ec0d3161bb41d8209c0f717b109" refkind="member"><highlight class="normal"><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1a80202ec0d3161bb41d8209c0f717b109" kindref="member">tools::infinite::mps::set_random_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/>[[maybe_unused]]<sp/>std::string<sp/>parity,<sp/>[[maybe_unused]]<sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref>){</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;You<sp/>need<sp/>to<sp/>implement<sp/>set<sp/>random<sp/>state<sp/>for<sp/>infinite<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>tools::infinite::mps::merge_multisite_mps(class_state_infinite<sp/>&amp;state,<sp/>const<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&amp;multisite_mps,<sp/>std::optional&lt;long&gt;<sp/>chi_lim,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>std::optional&lt;double&gt;<sp/>svd_threshold)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Some<sp/>sanity<sp/>checks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>state.get_mps()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(multisite_mps.dimension(1)<sp/>!=<sp/>state.get_mps(positions.front()).get_chiL())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(fmt::format(&quot;Could<sp/>not<sp/>merge<sp/>multisite<sp/>mps<sp/>into<sp/>state:<sp/>mps<sp/>dim1<sp/>{}<sp/>!=<sp/>chiL<sp/>on<sp/>left-most<sp/>site<sp/>{}&quot;,<sp/>multisite_mps.dimension(1),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.get_mps(positions.front()).get_chiL(),<sp/>positions.front()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(multisite_mps.dimension(2)<sp/>!=<sp/>state.get_mps(positions.back()).get_chiR())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(fmt::format(&quot;Could<sp/>not<sp/>merge<sp/>multisite<sp/>mps<sp/>into<sp/>state:<sp/>mps<sp/>dim2<sp/>{}<sp/>!=<sp/>chiR<sp/>on<sp/>right-most<sp/>site<sp/>{}&quot;,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>multisite_mps.dimension(2),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.get_mps(positions.back()).get_chiR(),<sp/>positions.back()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(not<sp/>chi_lim)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chi_lim<sp/>=<sp/>state.get_chi_lim();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::vector&lt;long&gt;<sp/>spin_dims;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>for(const<sp/>auto<sp/>&amp;site<sp/>:<sp/>positions)<sp/>spin_dims.emplace_back(state.get_mps(site).spin_dim());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Split<sp/>the<sp/>multisite<sp/>mps<sp/>into<sp/>single-site<sp/>mps<sp/>objects</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>mps_list<sp/>=<sp/>tools::common::split::split_mps(multisite_mps,<sp/>spin_dims,<sp/>positions,<sp/>center_position,<sp/>chi_lim.value(),<sp/>svd_threshold);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(positions.size()<sp/>!=<sp/>mps_list.size())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(fmt::format(&quot;Could<sp/>not<sp/>merge<sp/>multisite<sp/>mps<sp/>into<sp/>state:<sp/>number<sp/>of<sp/>sites<sp/>mismatch:<sp/>positions.size()<sp/>{}<sp/>!=<sp/>mps_list.size()<sp/>{}&quot;,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>positions.size(),<sp/>mps_list.size()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Note<sp/>that<sp/>one<sp/>of<sp/>the<sp/>positions<sp/>on<sp/>the<sp/>split<sp/>will<sp/>be<sp/>a<sp/>center,<sp/>so<sp/>we<sp/>need<sp/>to<sp/>unset</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>the<sp/>center<sp/>in<sp/>our<sp/>current<sp/>state<sp/>so<sp/>we<sp/>don&apos;t<sp/>get<sp/>duplicate<sp/>centers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>state.get_mps().unset_LC();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Copy<sp/>the<sp/>split<sp/>up<sp/>mps<sp/>components<sp/>into<sp/>the<sp/>current<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>mps_tgt<sp/>=<sp/>std::next(state.MPS.begin(),<sp/>static_cast&lt;long&gt;(positions.front()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>for(const<sp/>auto<sp/>&amp;mps_src<sp/>:<sp/>mps_list)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_tgt-&gt;get_position()<sp/>!=<sp/>mps_src.get_position())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(fmt::format(&quot;Could<sp/>not<sp/>merge<sp/>multisite<sp/>mps<sp/>into<sp/>state:<sp/>Position<sp/>mismatch:<sp/>mps_tgt<sp/>pos<sp/>{}<sp/>!=<sp/>mps_src<sp/>pos<sp/>{}&quot;,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_tgt-&gt;get_position(),<sp/>mps_src.get_position()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_tgt-&gt;set_M(mps_src.get_M());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_src.get_L().size()<sp/>&gt;<sp/>0)<sp/>//<sp/>The<sp/>edges<sp/>have<sp/>empty<sp/>&quot;L&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_tgt-&gt;set_L(mps_src.get_L());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_src.isCenter())<sp/>mps_tgt-&gt;set_LC(mps_src.get_LC());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_tgt++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>state.clear_cache();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>state.clear_measurements();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp"/>
   </compounddef>
 </doxygen>

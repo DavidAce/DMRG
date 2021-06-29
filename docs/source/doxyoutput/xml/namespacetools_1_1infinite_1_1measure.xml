@@ -1,13 +1,45 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1infinite_1_1measure" kind="namespace" language="C++">
     <compoundname>tools::infinite::measure</compoundname>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1infinite_1_1measure_1a6deac2212a6da5e89307edeff8ec71d9" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::infinite::measure::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="11" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a8d8f690e7fcd7c156d05ae34840c6d18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>int</type>
-        <definition>int tools::infinite::measure::length</definition>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a8f2a9f5a8d62b3621fcd83df9b21c5ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::measure::do_all_measurements</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>do_all_measurements</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="13" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="15" bodyend="25" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="13" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a517710e668b0111d86ccab7dea589394" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::measure::do_all_measurements</definition>
         <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>length</name>
+        <name>do_all_measurements</name>
         <param>
           <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
@@ -18,11 +50,45 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="278" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="401" bodyend="403"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="14" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="27" bodyend="32" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="14" declcolumn="19"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ab864d534e6122d384a82baafa734532c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>int</type>
-        <definition>int tools::infinite::measure::bond_dimension</definition>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a69cf11302a3bbbafd2ffef1de31989ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t tools::infinite::measure::length</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>length</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="16" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="34" bodyend="34" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="16" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a5852ce8697aa14bf157e2cbe81a3be7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t tools::infinite::measure::length</definition>
+        <argsstring>(const class_edges_infinite &amp;edges)</argsstring>
+        <name>length</name>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="17" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="35" bodyend="35" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="17" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a64e18edd16eb044bcaf44469bc885ecf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long tools::infinite::measure::bond_dimension</definition>
         <argsstring>(const class_state_infinite &amp;state)</argsstring>
         <name>bond_dimension</name>
         <param>
@@ -35,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="279" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="415" bodyend="418"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="18" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="43" bodyend="47" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="18" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a860d7ed08bbc15df634ab137a7b32eb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -52,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="280" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="420" bodyend="423"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="19" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="49" bodyend="53" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="19" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a2c553c8536fb81c5cf371b12e35c8f5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -69,210 +135,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="281" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="406" bodyend="412"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a1c1006d378e8eaef060bab7d68340e53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="282" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="459" bodyend="465"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a4a0012d7085f261239c956a8be85e813" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta)</argsstring>
-        <name>energy_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
-          <declname>theta</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="283" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="439" bodyend="456"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a92650e1445a298909c2e4180da386e18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_per_site_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_per_site_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="284" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="468" bodyend="473"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a351ced60a7f3651c4d12eabf0eaa1a38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_per_site_ham</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_per_site_ham</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="285" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="476" bodyend="512"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a0d8e4c35febdf6d40c078c982f7ee6c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_per_site_mom</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_per_site_mom</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="286" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="515" bodyend="546"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1af8594974f93ea1285297c0e814ab2dcb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, double &amp;energy_mpo)</argsstring>
-        <name>energy_variance_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
-          <declname>theta</declname>
-        </param>
-        <param>
-          <type>double &amp;</type>
-          <declname>energy_mpo</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="287" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="549" bodyend="567"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a3fff46f0de2edad1caca45dffaab52ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta)</argsstring>
-        <name>energy_variance_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
-          <declname>theta</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="288" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="571" bodyend="577"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1af2bc70d4c689bf480777d784d1e60dce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_variance_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="289" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="579" bodyend="586"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a41d9bfca22a24d8d124ec34c0f631607" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_per_site_mpo</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_variance_per_site_mpo</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="290" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="589" bodyend="594"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a387d1103658134b08a09685d778d2548" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_per_site_ham</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_variance_per_site_ham</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="291" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="599" bodyend="748"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ae39dd84611977e37551bd5587e02fc8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double tools::infinite::measure::energy_variance_per_site_mom</definition>
-        <argsstring>(const class_state_infinite &amp;state)</argsstring>
-        <name>energy_variance_per_site_mom</name>
-        <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="292" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="751" bodyend="757"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="20" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="37" bodyend="41" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="20" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a5f7cd48eec3194c0d02aa53050d28f63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -289,13 +152,385 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="293" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp" bodystart="427" bodyend="436"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="21" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="55" bodyend="63" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="21" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ae1ab58fcaec28b125b22c8ac8b113e6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename state_or_mps_type</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_minus_energy_reduced</definition>
+        <argsstring>(const state_or_mps_type &amp;state, const class_model_infinite &amp;model, const class_edges_infinite &amp;edges)</argsstring>
+        <name>energy_minus_energy_reduced</name>
+        <param>
+          <type>const state_or_mps_type &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="24" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="66" bodyend="78" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="24" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1abc55042f3fe9f3ea3e64d31896600a11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename state_or_mps_type</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_mpo</definition>
+        <argsstring>(const state_or_mps_type &amp;state, const class_model_infinite &amp;model, const class_edges_infinite &amp;edges)</argsstring>
+        <name>energy_mpo</name>
+        <param>
+          <type>const state_or_mps_type &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="26" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="86" bodyend="92" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="26" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a2283571fb9ddaedbc3d50e89d946d522" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename state_or_mps_type</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mpo</definition>
+        <argsstring>(const state_or_mps_type &amp;state, const class_model_infinite &amp;model, const class_edges_infinite &amp;edges)</argsstring>
+        <name>energy_per_site_mpo</name>
+        <param>
+          <type>const state_or_mps_type &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="28" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="98" bodyend="101" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="28" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1aa5e135430c4a3c285f6a4972fe2155d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename state_or_mps_type</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const state_or_mps_type &amp;state, const class_model_infinite &amp;model, const class_edges_infinite &amp;edges)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const state_or_mps_type &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="30" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="109" bodyend="138" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="30" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a5fdaab6447c154cd9720d8b834170a6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename state_or_mps_type</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mpo</definition>
+        <argsstring>(const state_or_mps_type &amp;state, const class_model_infinite &amp;model, const class_edges_infinite &amp;edges)</argsstring>
+        <name>energy_variance_per_site_mpo</name>
+        <param>
+          <type>const state_or_mps_type &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="32" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="146" bodyend="150" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="32" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a9f45be62e977490803ca97abb94b32ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_mpo</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="34" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="157" bodyend="161" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="34" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ab736e5e958daa1b7429728c0ce3254d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mpo</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_per_site_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="35" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="163" bodyend="169" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="35" declcolumn="19"/>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a69cf11302a3bbbafd2ffef1de31989ee" compoundref="infinite_2measure_8cpp" startline="34" endline="34">length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a0ff056dbcf87401557156fdc802be894" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="36" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="171" bodyend="175" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="36" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ad65c173af2297ca2a6a313abb1e88506" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mpo</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_per_site_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="37" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="177" bodyend="182" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="37" declcolumn="19"/>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a69cf11302a3bbbafd2ffef1de31989ee" compoundref="infinite_2measure_8cpp" startline="34" endline="34">length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ac1916cc76d3077f384a9502a5a017964" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;mps, const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1measure_1a6deac2212a6da5e89307edeff8ec71d9" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="39" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="184" bodyend="186" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="39" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a9681d5453ba5aa271a34d31fd297c8a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;mps, const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_per_site_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1measure_1a6deac2212a6da5e89307edeff8ec71d9" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="40" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="187" bodyend="189" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="40" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a025e205b4dab4731a456c5dbc24dd38f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;mps, const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1measure_1a6deac2212a6da5e89307edeff8ec71d9" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="41" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="190" bodyend="192" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="41" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ab1d32cdbdbae2053797e6b3b87d29d96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;mps, const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_per_site_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1measure_1a6deac2212a6da5e89307edeff8ec71d9" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="42" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp" bodystart="193" bodyend="195" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="42" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a5f97c023ac5900d6961a0f23a51123d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_ham</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_per_site_ham</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="44" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure_ham.cpp" bodystart="18" bodyend="45" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="44" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a564124518e60fd2f24f8b50b55ac3b63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mom</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_per_site_mom</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="45" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure_mom.cpp" bodystart="54" bodyend="82" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="45" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ab68500e123314ceee061039c7df370f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_ham</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_per_site_ham</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="46" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure_ham.cpp" bodystart="47" bodyend="174" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="46" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a1d3a4106d2bbb62e9f844966c935bc1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mom</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors)</argsstring>
+        <name>energy_variance_per_site_mom</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="47" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure_mom.cpp" bodystart="84" bodyend="88" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" declline="47" declcolumn="19"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="277" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/measure.h" line="10" column="34"/>
   </compounddef>
 </doxygen>

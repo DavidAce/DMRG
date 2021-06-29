@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1infinite_1_1io" kind="namespace" language="C++">
     <compoundname>tools::infinite::io</compoundname>
     <innernamespace refid="namespacetools_1_1infinite_1_1io_1_1h5dset">tools::infinite::io::h5dset</innernamespace>
-    <innernamespace refid="namespacetools_1_1infinite_1_1io_1_1h5restore">tools::infinite::io::h5restore</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1io_1_1h5resume">tools::infinite::io::h5resume</innernamespace>
     <innernamespace refid="namespacetools_1_1infinite_1_1io_1_1h5table">tools::infinite::io::h5table</innernamespace>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="302" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/io.h" line="14" column="29"/>
   </compounddef>
 </doxygen>

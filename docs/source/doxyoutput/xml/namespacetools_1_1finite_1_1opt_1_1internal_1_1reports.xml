@@ -1,124 +1,114 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports" kind="namespace" language="C++">
     <compoundname>tools::finite::opt::internal::reports</compoundname>
-      <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8c5fe9d3bb7ff94200d294bf72d66674" prot="public" static="no">
-        <type>std::tuple&lt; std::string, int, double, std::complex&lt; double &gt;, double, double, int, int, double &gt;</type>
-        <definition>using tools::finite::opt::internal::reports::direct_opt_tuple = typedef std::tuple&lt;std::string,int,double,std::complex&lt;double&gt;,double,double,int,int,double&gt;</definition>
+    <innerclass refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1bfgs__entry" prot="public">tools::finite::opt::internal::reports::bfgs_entry</innerclass>
+    <innerclass refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1eigs__entry" prot="public">tools::finite::opt::internal::reports::eigs_entry</innerclass>
+    <innerclass refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1krylov__entry" prot="public">tools::finite::opt::internal::reports::krylov_entry</innerclass>
+    <innerclass refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1time__entry" prot="public">tools::finite::opt::internal::reports::time_entry</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1adeba9379b4e60d8c979d8a413e0a0d25" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1bfgs__entry" kindref="compound">bfgs_entry</ref> &gt;</type>
+        <definition>std::vector&lt;bfgs_entry&gt; tools::finite::opt::internal::reports::bfgs_log</definition>
         <argsstring></argsstring>
-        <name>direct_opt_tuple</name>
+        <name>bfgs_log</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="87" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="35" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" bodystart="35" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ab55fa2e5547db1b0676cacd1758b571d" prot="public" static="no">
-        <type>std::tuple&lt; std::string, int, double, double, double, double, int, int, double &gt;</type>
-        <definition>using tools::finite::opt::internal::reports::subspc_opt_tuple = typedef std::tuple&lt;std::string,int,double,double,double,double,int,int,double&gt;</definition>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1afa3a0844fdc3151a9a6fa9b8234b4152" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1time__entry" kindref="compound">time_entry</ref> &gt;</type>
+        <definition>std::vector&lt;time_entry&gt; tools::finite::opt::internal::reports::time_log</definition>
         <argsstring></argsstring>
-        <name>subspc_opt_tuple</name>
+        <name>time_log</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="88" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="36" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" bodystart="36" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca" prot="public" static="no">
-        <type>std::tuple&lt; double, double, double, double, double &gt;</type>
-        <definition>using tools::finite::opt::internal::reports::lbfgs_tuple = typedef std::tuple&lt;double,double,double,double,double&gt;</definition>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ad67da32c05b6f76b32e985e54c5523f6" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1eigs__entry" kindref="compound">eigs_entry</ref> &gt;</type>
+        <definition>std::vector&lt;eigs_entry&gt; tools::finite::opt::internal::reports::eigs_log</definition>
         <argsstring></argsstring>
-        <name>lbfgs_tuple</name>
+        <name>eigs_log</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="89" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="37" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" bodystart="37" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8cc0fb86f571fb919948fcd4741c4c8" prot="public" static="no">
-        <type>std::tuple&lt; int, double, double, double, double, double, double &gt;</type>
-        <definition>using tools::finite::opt::internal::reports::eig_tuple = typedef std::tuple&lt;int,double,double,double,double,double,double&gt;</definition>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1adbb5e78ce61216747b07304ca65e57bb" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1krylov__entry" kindref="compound">krylov_entry</ref> &gt;</type>
+        <definition>std::vector&lt;krylov_entry&gt; tools::finite::opt::internal::reports::krylov_log</definition>
         <argsstring></argsstring>
-        <name>eig_tuple</name>
+        <name>krylov_log</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="90" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="38" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" bodystart="38" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a896ccde50a6c6f1bd4be14b73191a966" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::opt::internal::reports::print_report</definition>
-        <argsstring>(const std::vector&lt; direct_opt_tuple &gt; &amp;opt_log)</argsstring>
-        <name>print_report</name>
-        <param>
-          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8c5fe9d3bb7ff94200d294bf72d66674" kindref="member">direct_opt_tuple</ref> &gt; &amp;</type>
-          <declname>opt_log</declname>
-        </param>
+        <definition>void tools::finite::opt::internal::reports::print_bfgs_report</definition>
+        <argsstring>()</argsstring>
+        <name>print_bfgs_report</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="7" bodyend="38"/>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="40" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="9" bodyend="41" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="40" declcolumn="17"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a314b78b6fda15a9a601878919264ec65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::opt::internal::reports::print_report</definition>
-        <argsstring>(const std::vector&lt; subspc_opt_tuple &gt; &amp;opt_log)</argsstring>
-        <name>print_report</name>
-        <param>
-          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ab55fa2e5547db1b0676cacd1758b571d" kindref="member">subspc_opt_tuple</ref> &gt; &amp;</type>
-          <declname>opt_log</declname>
-        </param>
+        <definition>void tools::finite::opt::internal::reports::print_time_report</definition>
+        <argsstring>()</argsstring>
+        <name>print_time_report</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="41" bodyend="72"/>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="41" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="76" bodyend="103" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="41" declcolumn="17"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8332162315fe72731f0868bde739d89b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::opt::internal::reports::print_report</definition>
-        <argsstring>(const std::vector&lt; eig_tuple &gt; &amp;eig_log)</argsstring>
-        <name>print_report</name>
-        <param>
-          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8cc0fb86f571fb919948fcd4741c4c8" kindref="member">eig_tuple</ref> &gt; &amp;</type>
-          <declname>eig_log</declname>
-        </param>
+        <definition>void tools::finite::opt::internal::reports::print_eigs_report</definition>
+        <argsstring>()</argsstring>
+        <name>print_eigs_report</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="76" bodyend="103"/>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="42" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="43" bodyend="71" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="42" declcolumn="17"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aedea1af3c45b6d29834786065bce18af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::finite::opt::internal::reports::print_report</definition>
-        <argsstring>(const lbfgs_tuple lbfgs_log)</argsstring>
-        <name>print_report</name>
+        <definition>void tools::finite::opt::internal::reports::print_krylov_report</definition>
+        <argsstring>(std::optional&lt; size_t &gt; max_entries=std::nullopt)</argsstring>
+        <name>print_krylov_report</name>
         <param>
-          <type>const <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca" kindref="member">lbfgs_tuple</ref></type>
-          <declname>lbfgs_log</declname>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>max_entries</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -126,14 +116,192 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="108" bodyend="140"/>
-        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="43" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="105" bodyend="140" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="43" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a191cf14de2384dccf35578f8fbd73e5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::bfgs_add_entry</definition>
+        <argsstring>(const std::string &amp;description, long size, long space, double energy, double variance, double overlap, double norm, double delta_f, double grad_norm, size_t iter, size_t counter, double time)</argsstring>
+        <name>bfgs_add_entry</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>description</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>size</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>space</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>energy</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>variance</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>overlap</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>norm</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>delta_f</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>grad_norm</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>iter</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>counter</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="44" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="143" bodyend="148" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="44" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a016b2c2183d31ed6f8fa239f8f7bf64b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::bfgs_add_entry</definition>
+        <argsstring>(const std::string &amp;mode, const std::string &amp;tag, const opt_mps &amp;mps, std::optional&lt; long &gt; space=std::nullopt)</argsstring>
+        <name>bfgs_add_entry</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tag</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; long &gt;</type>
+          <declname>space</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="46" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="149" bodyend="155" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="46" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a57cec7fd0f65b9ece67ebf62c6cabc01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::time_add_dir_entry</definition>
+        <argsstring>()</argsstring>
+        <name>time_add_dir_entry</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="47" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="157" bodyend="165" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="47" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a235e00e178ffd59357cb44bae00dabba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::time_add_sub_entry</definition>
+        <argsstring>()</argsstring>
+        <name>time_add_sub_entry</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="48" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="166" bodyend="174" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="48" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a10c46b8e2463bf720d86f185734db6e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::eigs_add_entry</definition>
+        <argsstring>(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, size_t steps)</argsstring>
+        <name>eigs_add_entry</name>
+        <param>
+          <type>long</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_olap</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>min_olap</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>eps</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>eig_time</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>ham_time</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>lu_time</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>steps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="49" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="175" bodyend="179" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="49" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa88eada00d695106de93d66b1d2ec8e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::krylov_add_entry</definition>
+        <argsstring>(const opt_mps &amp;mps)</argsstring>
+        <name>krylov_add_entry</name>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>mps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="50" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp" bodystart="181" bodyend="186" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" declline="50" declcolumn="17"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="86" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.h" line="9" column="47"/>
   </compounddef>
 </doxygen>

@@ -19,6 +19,6 @@ Namespaces
 
 - :ref:`namespace_tools__infinite__io__h5dset`
 
-- :ref:`namespace_tools__infinite__io__h5restore`
+- :ref:`namespace_tools__infinite__io__h5resume`
 
 - :ref:`namespace_tools__infinite__io__h5table`

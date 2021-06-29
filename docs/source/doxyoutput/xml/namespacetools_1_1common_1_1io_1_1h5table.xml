@@ -1,20 +1,28 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1common_1_1io_1_1h5table" kind="namespace" language="C++">
     <compoundname>tools::common::io::h5table</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a6f7592f678b3f7022bfd237ca0c6ad2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a525a17bb107b2532c7434e15e9d77919" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::common::io::h5table::write_sim_status</definition>
-        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_simulation_status &gt; &amp;h5tbuf)</argsstring>
-        <name>write_sim_status</name>
+        <definition>void tools::common::io::h5table::save_sim_status</definition>
+        <argsstring>(h5pp::File &amp;h5ppFile, const std::string &amp;state_prefix, const StorageLevel &amp;storage_level, const class_algorithm_status &amp;status)</argsstring>
+        <name>save_sim_status</name>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
         </param>
         <param>
-          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__simulation__status" kindref="compound">class_h5table_simulation_status</ref> &gt; &amp;</type>
-          <declname>h5tbuf</declname>
+          <type>const std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type>const <ref refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071" kindref="member">StorageLevel</ref> &amp;</type>
+          <declname>storage_level</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -22,20 +30,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="352" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp" bodystart="8" bodyend="12"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="20" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="26" bodyend="48" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="20" declcolumn="21"/>
+        <references refid="classh5pp__table__algorithm__status_1ac56fd37e1c9f81162ab853a6fd8e484e" compoundref="table__types_8h" startline="472" endline="518">h5pp_table_algorithm_status::register_table_type</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1abba11255902d84ff98de52517e3d35d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::common::io::h5table::write_profiling</definition>
-        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_profiling &gt; &amp;h5tbuf)</argsstring>
-        <name>write_profiling</name>
+        <definition>void tools::common::io::h5table::save_profiling</definition>
+        <argsstring>(h5pp::File &amp;h5ppFile, const std::string &amp;state_prefix, const StorageLevel &amp;storage_level, const class_algorithm_status &amp;status, std::optional&lt; AlgorithmType &gt; algo_type=std::nullopt)</argsstring>
+        <name>save_profiling</name>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
         </param>
         <param>
-          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__profiling" kindref="compound">class_h5table_profiling</ref> &gt; &amp;</type>
-          <declname>h5tbuf</declname>
+          <type>const std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type>const <ref refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071" kindref="member">StorageLevel</ref> &amp;</type>
+          <declname>storage_level</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref> &gt;</type>
+          <declname>algo_type</declname>
+          <defval>std::nullopt</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -43,58 +65,124 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="353" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp" bodystart="15" bodyend="55"/>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a61550460037232f85aea0b5142c8d50e" compoundref="table__types_8h" startline="266">class_h5table_profiling::data_struct::step</references>
-        <references refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" compoundref="class__simulation__status_8h" startline="19">status_data::step</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a9dee89364369e9ac2320452b415f82f0" compoundref="table__types_8h" startline="265">class_h5table_profiling::data_struct::iteration</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ae719f215236153e180f0c3101a5315d6" compoundref="table__types_8h" startline="267">class_h5table_profiling::data_struct::position</references>
-        <references refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" compoundref="class__simulation__status_8h" startline="20">status_data::position</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ae38590e343ae29b7b0d3b802fd59b16c" compoundref="table__types_8h" startline="268">class_h5table_profiling::data_struct::t_tot</references>
-        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a090cde732c2599e7fa3dbcb874a4bfdc" compoundref="table__types_8h" startline="269">class_h5table_profiling::data_struct::t_run</references>
-        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a86da5de35b8f25bdb248dc7408b45223" compoundref="table__types_8h" startline="270">class_h5table_profiling::data_struct::t_eig</references>
-        <references refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" compoundref="nmspc__tools_8h" startline="379">tools::common::profile::t_eig</references>
-        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ace6c6dd4d0601d40e5d577a8bc8c7577" compoundref="table__types_8h" startline="271">class_h5table_profiling::data_struct::t_svd</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="380">tools::common::profile::t_svd</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ad987923c3666f4ae567f64ad2b826282" compoundref="table__types_8h" startline="272">class_h5table_profiling::data_struct::t_ene</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="385">tools::common::profile::t_ene</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a39447ddc47e0911ba7f2c6a73d03a096" compoundref="table__types_8h" startline="273">class_h5table_profiling::data_struct::t_var</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="386">tools::common::profile::t_var</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a820fa70372c7db896e971719088fb290" compoundref="table__types_8h" startline="274">class_h5table_profiling::data_struct::t_ent</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" compoundref="nmspc__tools_8h" startline="384">tools::common::profile::t_ent</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ae6c6515ad685cf3dc7f887fe3a49f0cb" compoundref="table__types_8h" startline="275">class_h5table_profiling::data_struct::t_hdf</references>
-        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="389">tools::common::profile::t_hdf</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a524b74f45f160338d6f55cc05ed4f571" compoundref="table__types_8h" startline="276">class_h5table_profiling::data_struct::t_prj</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" compoundref="nmspc__tools_8h" startline="387">tools::common::profile::t_prj</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a4dc08271ff837d56e0658e5f8185e6e3" compoundref="table__types_8h" startline="277">class_h5table_profiling::data_struct::t_opt</references>
-        <references refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" compoundref="nmspc__tools_8h" startline="381">tools::common::profile::t_opt</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a89846cfcad65bfdc8ac4301342c2798f" compoundref="table__types_8h" startline="278">class_h5table_profiling::data_struct::t_chk</references>
-        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="388">tools::common::profile::t_chk</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1aa1aabda4286a23cc939dbf310c581edf" compoundref="table__types_8h" startline="280">class_h5table_profiling::data_struct::t_ene_ham</references>
-        <references refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" compoundref="nmspc__tools_8h" startline="390">tools::common::profile::t_ene_ham</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a9425db5989d606049a07a73cc9c9f242" compoundref="table__types_8h" startline="281">class_h5table_profiling::data_struct::t_ene_mom</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" compoundref="nmspc__tools_8h" startline="391">tools::common::profile::t_ene_mom</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a9dcaad0c3eca3ae9bea47f51969fc986" compoundref="table__types_8h" startline="283">class_h5table_profiling::data_struct::t_var_ham</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" compoundref="nmspc__tools_8h" startline="392">tools::common::profile::t_var_ham</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a4aa0a258d1b05bb8e63b9d19c05283b0" compoundref="table__types_8h" startline="284">class_h5table_profiling::data_struct::t_var_mom</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" compoundref="nmspc__tools_8h" startline="393">tools::common::profile::t_var_mom</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1ad43a6190e71324d78b0f8679e594c244" compoundref="table__types_8h" startline="285">class_h5table_profiling::data_struct::t_env</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a80ac2e6a6b2cd1d4f65a794b56deba69" compoundref="table__types_8h" startline="286">class_h5table_profiling::data_struct::t_evo</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1abd50caa1be36525900945a302708cbde" compoundref="table__types_8h" startline="287">class_h5table_profiling::data_struct::t_udt</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a0c9397c69d9ab911761e0d4350c67472" compoundref="table__types_8h" startline="288">class_h5table_profiling::data_struct::t_ste</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1afc92c236f236191e1a7666bdf8d62d55" compoundref="table__types_8h" startline="289">class_h5table_profiling::data_struct::t_prt</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a6d27cc9d1066dbdef69b9b9792cac9fa" compoundref="table__types_8h" startline="290">class_h5table_profiling::data_struct::t_obs</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1a5293908cb5c2f252b4e4d497fcccb61a" compoundref="table__types_8h" startline="291">class_h5table_profiling::data_struct::t_mps</references>
-        <references refid="structclass__h5table__profiling_1_1data__struct_1aa81e8cd67183d330d1b746f054e08817" compoundref="table__types_8h" startline="292">class_h5table_profiling::data_struct::t_chi</references>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="21" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="50" bodyend="239" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="21" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a7d793f2e69905e7b9d3bd608ddf37230" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::save_mem_usage</definition>
+        <argsstring>(h5pp::File &amp;h5ppFile, const std::string &amp;state_prefix, const StorageLevel &amp;storage_level, const class_algorithm_status &amp;status)</argsstring>
+        <name>save_mem_usage</name>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type>const <ref refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071" kindref="member">StorageLevel</ref> &amp;</type>
+          <declname>storage_level</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="22" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="241" bodyend="265" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="22" declcolumn="21"/>
+        <references refid="classh5pp__table__memory__usage_1a7261540763d5728aabb5a5f62c36b291" compoundref="table__types_8h" startline="534" endline="542">h5pp_table_memory_usage::register_table_type</references>
+        <references refid="structh5pp__table__memory__usage_1_1table_1a8bcfe453f6625b0cfea22b392bb338da" compoundref="table__types_8h" startline="528">h5pp_table_memory_usage::table::rss</references>
+        <references refid="structh5pp__table__memory__usage_1_1table_1acc63b385abf41540b1d4724ac08930f1" compoundref="table__types_8h" startline="529">h5pp_table_memory_usage::table::hwm</references>
+        <references refid="structh5pp__table__memory__usage_1_1table_1abcc2d66a0273271a313c5f72941d0f00" compoundref="table__types_8h" startline="530">h5pp_table_memory_usage::table::vm</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1ab7dfb42152a58294bf62b42c31d26792" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::load_sim_status</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, const std::string &amp;state_prefix, class_algorithm_status &amp;status)</argsstring>
+        <name>load_sim_status</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="23" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="267" bodyend="277" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="23" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a223253b70c25698ca9bd750a6c2692db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::load_profiling</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, const std::string &amp;state_prefix, std::optional&lt; AlgorithmType &gt; algo_type=std::nullopt)</argsstring>
+        <name>load_profiling</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>state_prefix</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; <ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref> &gt;</type>
+          <declname>algo_type</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="24" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="279" bodyend="296" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="24" declcolumn="21"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="83">settings::profiling::on</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a56f6b3cfa690ec68ef20adc0da3328b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::bootstrap_save_log</definition>
+        <argsstring>(std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;save_log, const h5pp::File &amp;h5ppFile, const std::string &amp;link)</argsstring>
+        <name>bootstrap_save_log</name>
+        <param>
+          <type>std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;</type>
+          <declname>save_log</declname>
+        </param>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>link</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" line="13" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp" bodystart="13" bodyend="23"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="351" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="19" column="21"/>
   </compounddef>
 </doxygen>

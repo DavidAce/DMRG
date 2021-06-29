@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacepcg__engines" kind="namespace" language="C++">
     <compoundname>pcg_engines</compoundname>
       <sectiondef kind="typedef">
@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1518" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1518" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1153" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1153" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a3c0bc4b0231f92f323af3e132f04853c" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1519" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1519" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1154" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a09a743d6bb79006f45099969a6c6f78f" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -40,10 +40,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1520" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1520" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1155" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1155" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a9b75e255a628c32f0b5d658dc131a17b" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
         <definition>typedef oneseq_base&lt;uint64_t, pcg128_t, xsh_rs_mixin&gt; pcg_engines::oneseq_xsh_rs_128_64</definition>
         <argsstring></argsstring>
         <name>oneseq_xsh_rs_128_64</name>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1521" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1521" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1156" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1156" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ac75c61420d84735faa14d70ac7853bb8" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1523" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1523" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1158" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1158" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a47125958d2251eeeff817e217b11a6cb" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1524" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1524" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1159" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1159" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a390e7dee5a12cc4bca15cac173bc8a15" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -92,10 +92,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1525" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1525" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1160" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1160" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aa6a2a24d6481633663738057e80914d9" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
         <definition>typedef unique_base&lt;uint64_t, pcg128_t, xsh_rs_mixin&gt; pcg_engines::unique_xsh_rs_128_64</definition>
         <argsstring></argsstring>
         <name>unique_xsh_rs_128_64</name>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1526" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1526" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1161" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1161" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a61ca5e772d23b082582c3a6f7b415c93" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1528" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1528" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1163" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1163" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a4dfa5958d1854eddbed201f47a857947" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1529" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1529" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1164" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1164" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a59cba7be54222ef58cb40ea98dae50ca" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -144,10 +144,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1530" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1530" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1165" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1165" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a3037c52ea87a63588f6726375c2ca8bd" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
         <definition>typedef setseq_base&lt;uint64_t, pcg128_t, xsh_rs_mixin&gt; pcg_engines::setseq_xsh_rs_128_64</definition>
         <argsstring></argsstring>
         <name>setseq_xsh_rs_128_64</name>
@@ -157,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1531" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1531" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1166" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1166" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a5fa0b04303076ff0385e403b0df33db6" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1533" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1533" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1168" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1168" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ad4fbd50cb3adbdce21ecce0a67bfa388" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -183,7 +183,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1534" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1534" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1169" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1169" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ad8d284413c9a4367ae76731f0faa3941" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
@@ -196,10 +196,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1535" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1535" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1170" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1170" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1af63cadcb58f22122e0f0fdab763c7213" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rs__mixin" kindref="compound">xsh_rs_mixin</ref> &gt;</type>
         <definition>typedef mcg_base&lt;uint64_t, pcg128_t, xsh_rs_mixin&gt; pcg_engines::mcg_xsh_rs_128_64</definition>
         <argsstring></argsstring>
         <name>mcg_xsh_rs_128_64</name>
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1536" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1536" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1171" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1171" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1abb6089834021684a371e8ce63812733e" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -222,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1540" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1540" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1175" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1175" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a1647835c74e40d4c05b7eabd52331739" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -235,7 +235,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1541" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1541" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1176" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1176" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a64d587d9b2beff84dd203f0f1d306a0a" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -248,10 +248,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1542" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1542" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1177" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1177" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a4dde38e57cb3073db5b46fcfae4558d9" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
         <definition>typedef oneseq_base&lt;uint64_t, pcg128_t, xsh_rr_mixin&gt; pcg_engines::oneseq_xsh_rr_128_64</definition>
         <argsstring></argsstring>
         <name>oneseq_xsh_rr_128_64</name>
@@ -261,7 +261,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1543" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1543" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1178" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1178" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a4e95e55d6ad93ed7c4c3836559133f2c" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -274,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1545" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1545" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1180" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1180" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a9df308ff26b74141e554a9487a1fbe05" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -287,7 +287,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1546" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1546" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1181" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1181" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1acdb94044fd8a9d55b0d8ac0f999d9b94" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -300,10 +300,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1547" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1547" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1182" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1182" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aa56e22ecfd1fa71d02490474b576916f" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
         <definition>typedef unique_base&lt;uint64_t, pcg128_t, xsh_rr_mixin&gt; pcg_engines::unique_xsh_rr_128_64</definition>
         <argsstring></argsstring>
         <name>unique_xsh_rr_128_64</name>
@@ -313,7 +313,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1548" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1548" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1183" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1183" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1abb67d31c712b2cf5b7ff1a32bce8a9e0" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -326,7 +326,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1550" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1550" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1185" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1185" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ad79ecd0a1c04860baec4cd7b1fca08e7" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -339,7 +339,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1551" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1551" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1186" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1186" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a1b81637c16604c458db1cd90441f2f7e" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -352,10 +352,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1552" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1552" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1187" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1187" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1adb2759a3516df7541f68d8c16b904045" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
         <definition>typedef setseq_base&lt;uint64_t, pcg128_t, xsh_rr_mixin&gt; pcg_engines::setseq_xsh_rr_128_64</definition>
         <argsstring></argsstring>
         <name>setseq_xsh_rr_128_64</name>
@@ -365,7 +365,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1553" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1553" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1188" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1188" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a1c4d0494d342a8c54b9a28b9a3091f3c" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint8_t, uint16_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -378,7 +378,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1555" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1555" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1190" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1190" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a0a8ed9d47e0fdc19eb3e1161795e8061" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint16_t, uint32_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -391,7 +391,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1556" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1556" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1191" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1191" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a173d1df46cc6a051175733f1891f1de7" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
@@ -404,10 +404,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1557" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1557" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1192" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1192" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a975d19f5968ca767c39905e8523852d0" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsh__rr__mixin" kindref="compound">xsh_rr_mixin</ref> &gt;</type>
         <definition>typedef mcg_base&lt;uint64_t, pcg128_t, xsh_rr_mixin&gt; pcg_engines::mcg_xsh_rr_128_64</definition>
         <argsstring></argsstring>
         <name>mcg_xsh_rr_128_64</name>
@@ -417,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1558" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1558" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1193" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1193" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a7679e351c4e5853908abb4397cc7b3d0" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint8_t, uint8_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -430,7 +430,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1563" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1563" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1197" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1197" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ac9f3e08b44fa3d0469c707762589c7ee" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint16_t, uint16_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -443,7 +443,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1564" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1564" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1198" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1198" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a612800f3e59a264828e082f20a922274" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint32_t, uint32_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -456,7 +456,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1565" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1565" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1199" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1199" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aaccfcb9e3cae52a088e0ad1e1ecc07e4" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -469,10 +469,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1566" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1566" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1200" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a2eff6919fc401834cc0a924ff6f60791" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
         <definition>typedef oneseq_base&lt;pcg128_t, pcg128_t, rxs_m_xs_mixin&gt; pcg_engines::oneseq_rxs_m_xs_128_128</definition>
         <argsstring></argsstring>
         <name>oneseq_rxs_m_xs_128_128</name>
@@ -482,7 +482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1567" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1567" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1201" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1201" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a1ddea3fce6fb64a5c877ceeb5347de7d" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint8_t, uint8_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -495,7 +495,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1569" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1569" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1203" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1203" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aa2684fd88c1c53003962f70a8de52501" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint16_t, uint16_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -508,7 +508,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1570" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1570" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1204" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1204" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ae82c35813833a74ae470d8f454ccd211" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint32_t, uint32_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -521,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1571" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1571" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1205" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1205" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ac97e4deaf0e6d2c2430c8e06b71d7f10" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -534,10 +534,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1572" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1572" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1206" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1206" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a173c0d82e91342b37bae495c2f61a2aa" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
         <definition>typedef unique_base&lt;pcg128_t, pcg128_t, rxs_m_xs_mixin&gt; pcg_engines::unique_rxs_m_xs_128_128</definition>
         <argsstring></argsstring>
         <name>unique_rxs_m_xs_128_128</name>
@@ -547,7 +547,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1573" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1573" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1207" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1207" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a634521f6f7c1b8130604304e8316cb84" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint8_t, uint8_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -560,7 +560,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1575" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1575" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1209" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1209" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a98c6b6e59a60e6359a6c5f53e2645be5" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint16_t, uint16_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -573,7 +573,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1576" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1576" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1210" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1210" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a3288e643795bb29b5cd1c8c5bb71d5f1" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint32_t, uint32_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -586,7 +586,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1577" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1577" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1211" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1211" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1af8c89f7f1be4eaf7aa9fe7ba19982064" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
@@ -599,10 +599,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1578" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1578" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1212" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1212" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a7905d4af5d309f718d8965154a65db10" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1rxs__m__xs__mixin" kindref="compound">rxs_m_xs_mixin</ref> &gt;</type>
         <definition>typedef setseq_base&lt;pcg128_t, pcg128_t, rxs_m_xs_mixin&gt; pcg_engines::setseq_rxs_m_xs_128_128</definition>
         <argsstring></argsstring>
         <name>setseq_rxs_m_xs_128_128</name>
@@ -612,7 +612,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1579" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1579" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1213" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1213" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aed102a8194b54dd17215943c148b155f" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
@@ -625,10 +625,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1585" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1585" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1219" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1219" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a2c3e330c2e4bd768eabbfdb2086738f2" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
         <definition>typedef oneseq_base&lt;uint64_t, pcg128_t, xsl_rr_mixin&gt; pcg_engines::oneseq_xsl_rr_128_64</definition>
         <argsstring></argsstring>
         <name>oneseq_xsl_rr_128_64</name>
@@ -638,7 +638,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1586" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1586" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1220" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1220" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ab8be3c9433c1756bd6919f6a349663ef" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
@@ -651,10 +651,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1588" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1588" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1222" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1222" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ac2e177e00550669d362c17d880c6835b" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
         <definition>typedef unique_base&lt;uint64_t, pcg128_t, xsl_rr_mixin&gt; pcg_engines::unique_xsl_rr_128_64</definition>
         <argsstring></argsstring>
         <name>unique_xsl_rr_128_64</name>
@@ -664,7 +664,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1589" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1589" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1223" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1223" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a69e64c588958284f938e21a8401f93b1" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
@@ -677,10 +677,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1591" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1591" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1225" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1225" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aa4de4acef5cfcdedf4357328f3d596d2" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
         <definition>typedef setseq_base&lt;uint64_t, pcg128_t, xsl_rr_mixin&gt; pcg_engines::setseq_xsl_rr_128_64</definition>
         <argsstring></argsstring>
         <name>setseq_xsl_rr_128_64</name>
@@ -690,7 +690,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1592" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1592" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1226" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1226" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a65afbc62eeb7000b2e0c4257f753fbd5" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint32_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
@@ -703,10 +703,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1594" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1594" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1228" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1228" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aaba7df270a77bc6419f1182758916728" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a65a72fd850d14131a5e67ab95f16c62d" kindref="member">mcg_base</ref>&lt; uint64_t, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__mixin" kindref="compound">xsl_rr_mixin</ref> &gt;</type>
         <definition>typedef mcg_base&lt;uint64_t, pcg128_t, xsl_rr_mixin&gt; pcg_engines::mcg_xsl_rr_128_64</definition>
         <argsstring></argsstring>
         <name>mcg_xsl_rr_128_64</name>
@@ -716,7 +716,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1595" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1595" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1229" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1229" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ac7f4da1c92e9b2d017a6992ac3301fde" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
@@ -729,10 +729,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1601" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1601" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1233" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1233" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a51ab6b25f09be6e6f59ba9ae5416384a" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" kindref="member">oneseq_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
         <definition>typedef oneseq_base&lt;pcg128_t, pcg128_t, xsl_rr_rr_mixin&gt; pcg_engines::oneseq_xsl_rr_rr_128_128</definition>
         <argsstring></argsstring>
         <name>oneseq_xsl_rr_rr_128_128</name>
@@ -742,7 +742,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1603" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1603" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1234" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1234" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a923eef210ffc7202afe9bd810da4d772" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
@@ -755,10 +755,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1606" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1606" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1236" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1236" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a6267906701d4d7e64b3ad2c194574a27" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3" kindref="member">unique_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
         <definition>typedef unique_base&lt;pcg128_t, pcg128_t, xsl_rr_rr_mixin&gt; pcg_engines::unique_xsl_rr_rr_128_128</definition>
         <argsstring></argsstring>
         <name>unique_xsl_rr_rr_128_128</name>
@@ -768,7 +768,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1608" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1608" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1237" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1237" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a6a8726f2799ac7b335251116bd40e308" prot="public" static="no">
         <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; uint64_t, uint64_t, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
@@ -781,10 +781,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1611" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1611" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1239" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1239" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a0ea33d51e0a3fc26797e3a98414bac8a" prot="public" static="no">
-        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1af8b3abc3d67d2b36426c7556dc726307" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
+        <type><ref refid="namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1" kindref="member">setseq_base</ref>&lt; <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="namespacepcg__extras_1a598396e053d112413eaf530d29f18d1d" kindref="member">pcg128_t</ref>, <ref refid="structpcg__detail_1_1xsl__rr__rr__mixin" kindref="compound">xsl_rr_rr_mixin</ref> &gt;</type>
         <definition>typedef setseq_base&lt;pcg128_t, pcg128_t, xsl_rr_rr_mixin&gt; pcg_engines::setseq_xsl_rr_rr_128_128</definition>
         <argsstring></argsstring>
         <name>setseq_xsl_rr_rr_128_128</name>
@@ -794,9 +794,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1613" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1613" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1240" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1240" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a3e03bba4dd0f982e64cb6a05aa292716" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>typename BaseRNG</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&lt; table_pow2, advance_pow2, BaseRNG, <ref refid="namespacepcg__engines_1a7679e351c4e5853908abb4397cc7b3d0" kindref="member">oneseq_rxs_m_xs_8_8</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_std8 = typedef extended&lt;table_pow2, advance_pow2, BaseRNG, oneseq_rxs_m_xs_8_8, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -807,9 +828,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1621" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1622" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1247" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1247" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1ae927fc069cdfd0b8a7253203356a8ddf" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>typename BaseRNG</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&lt; table_pow2, advance_pow2, BaseRNG, <ref refid="namespacepcg__engines_1ac9f3e08b44fa3d0469c707762589c7ee" kindref="member">oneseq_rxs_m_xs_16_16</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_std16 = typedef extended&lt;table_pow2, advance_pow2, BaseRNG, oneseq_rxs_m_xs_16_16, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -820,9 +862,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1626" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1627" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1250" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1250" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>typename BaseRNG</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&lt; table_pow2, advance_pow2, BaseRNG, <ref refid="namespacepcg__engines_1a612800f3e59a264828e082f20a922274" kindref="member">oneseq_rxs_m_xs_32_32</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_std32 = typedef extended&lt;table_pow2, advance_pow2, BaseRNG, oneseq_rxs_m_xs_32_32, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -833,9 +896,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1631" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1632" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1253" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1253" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a20b19f2e93d9efdb0a5bfce397bcc7cd" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>typename BaseRNG</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&lt; table_pow2, advance_pow2, BaseRNG, <ref refid="namespacepcg__engines_1aaccfcb9e3cae52a088e0ad1e1ecc07e4" kindref="member">oneseq_rxs_m_xs_64_64</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_std64 = typedef extended&lt;table_pow2, advance_pow2, BaseRNG, oneseq_rxs_m_xs_64_64, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -846,9 +930,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1636" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1637" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1256" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1256" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a16d00b84d7cafb288e2773a0e4bb6b5c" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" kindref="member">ext_std32</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1a612800f3e59a264828e082f20a922274" kindref="member">oneseq_rxs_m_xs_32_32</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_oneseq_rxs_m_xs_32_32 = typedef ext_std32&lt;table_pow2, advance_pow2, oneseq_rxs_m_xs_32_32, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -859,9 +961,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1641" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1642" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1259" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1259" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1aaece97cbecd7aec8e5d4d94750cf939a" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" kindref="member">ext_std32</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1ad8d284413c9a4367ae76731f0faa3941" kindref="member">mcg_xsh_rs_64_32</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_mcg_xsh_rs_64_32 = typedef ext_std32&lt;table_pow2, advance_pow2, mcg_xsh_rs_64_32, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -872,9 +992,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1645" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1646" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1262" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1262" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1afe38976650c3c06f32cd90dd862b9826" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" kindref="member">ext_std32</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1a09a743d6bb79006f45099969a6c6f78f" kindref="member">oneseq_xsh_rs_64_32</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_oneseq_xsh_rs_64_32 = typedef ext_std32&lt;table_pow2, advance_pow2, oneseq_xsh_rs_64_32, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -885,9 +1023,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1649" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1650" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1265" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1265" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a5843763a3ef99a042f8c4d68009093a0" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" kindref="member">ext_std32</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1a1b81637c16604c458db1cd90441f2f7e" kindref="member">setseq_xsh_rr_64_32</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_setseq_xsh_rr_64_32 = typedef ext_std32&lt;table_pow2, advance_pow2, setseq_xsh_rr_64_32, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -898,9 +1054,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1653" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1654" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1268" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1268" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a7badaf4a86bce28c8e8dcd371d33ec26" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a20b19f2e93d9efdb0a5bfce397bcc7cd" kindref="member">ext_std64</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1aaba7df270a77bc6419f1182758916728" kindref="member">mcg_xsl_rr_128_64</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_mcg_xsl_rr_128_64 = typedef ext_std64&lt;table_pow2, advance_pow2, mcg_xsl_rr_128_64, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -911,9 +1085,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1657" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1658" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1271" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1271" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1abf03d3742277d0d968ca2b6ead616921" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a20b19f2e93d9efdb0a5bfce397bcc7cd" kindref="member">ext_std64</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1a2c3e330c2e4bd768eabbfdb2086738f2" kindref="member">oneseq_xsl_rr_128_64</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_oneseq_xsl_rr_128_64 = typedef ext_std64&lt;table_pow2, advance_pow2, oneseq_xsl_rr_128_64, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -924,9 +1116,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1661" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1662" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1274" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1274" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacepcg__engines_1a3eacde14c2dc0f0e78e63b5c76eb8b3c" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bitcount_t</type>
+            <declname>table_pow2</declname>
+            <defname>table_pow2</defname>
+          </param>
+          <param>
+            <type>bitcount_t</type>
+            <declname>advance_pow2</declname>
+            <defname>advance_pow2</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>kdd</declname>
+            <defname>kdd</defname>
+            <defval>true</defval>
+          </param>
+        </templateparamlist>
         <type><ref refid="namespacepcg__engines_1a20b19f2e93d9efdb0a5bfce397bcc7cd" kindref="member">ext_std64</ref>&lt; table_pow2, advance_pow2, <ref refid="namespacepcg__engines_1aa4de4acef5cfcdedf4357328f3d596d2" kindref="member">setseq_xsl_rr_128_64</ref>, kdd &gt;</type>
         <definition>using pcg_engines::ext_setseq_xsl_rr_128_64 = typedef ext_std64&lt;table_pow2, advance_pow2, setseq_xsl_rr_128_64, kdd&gt;</definition>
         <argsstring></argsstring>
@@ -937,13 +1147,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1665" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1666" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1277" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1277" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1512" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1147" column="21"/>
   </compounddef>
 </doxygen>

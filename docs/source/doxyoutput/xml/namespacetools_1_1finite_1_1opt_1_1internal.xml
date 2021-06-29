@@ -1,86 +1,81 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1finite_1_1opt_1_1internal" kind="namespace" language="C++">
     <compoundname>tools::finite::opt::internal</compoundname>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public">tools::finite::opt::internal::ceres_base_functor</innerclass>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" prot="public">tools::finite::opt::internal::ceres_direct_functor</innerclass>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor" prot="public">tools::finite::opt::internal::ceres_rosenbrock_functor</innerclass>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" prot="public">tools::finite::opt::internal::ceres_subspace_functor</innerclass>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public">tools::finite::opt::internal::EnumBase</innerclass>
-    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians">tools::finite::opt::internal::local_hamiltonians</innernamespace>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1_custom_log_callback" prot="public">tools::finite::opt::internal::CustomLogCallback</innerclass>
     <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports">tools::finite::opt::internal::reports</innernamespace>
-      <sectiondef kind="enum">
-      <memberdef kind="enum" id="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" prot="public" static="no">
-        <name>EnumType</name>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554" prot="public">
-          <name>REAL</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1" prot="public">
-          <name>CPLX</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1subspace">tools::finite::opt::internal::subspace</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1a1568c8e93be267dc9a41afcaf1d5678f" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::finite::opt::internal::cplx = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>cplx</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="10" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="10" bodyend="10"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="19" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="19" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="enum" id="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" prot="public" static="no">
-        <name>EnumMode</name>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661" prot="public">
-          <name>OVERLAP</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde" prot="public">
-          <name>VARIANCE</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1a53408d6e609d4f2caef02590814c91d7" prot="public" static="no">
+        <type>double</type>
+        <definition>using tools::finite::opt::internal::real = typedef double</definition>
+        <argsstring></argsstring>
+        <name>real</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="11" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="11" bodyend="11"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="20" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="20" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="enum" id="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" prot="public" static="no">
-        <name>EnumSpace</name>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda75420cb18c5b572ad779b8c95d797cf6" prot="public">
-          <name>SUBSPACE</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda4c5d06b02c97731aaa976179c62dcf76" prot="public">
-          <name>DIRECT</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1a1667265f25f87a16f31fca8a8a2fba93" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using tools::finite::opt::internal::MatrixType = typedef Eigen::Matrix&lt;T, Eigen::Dynamic, Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="12" bodyend="12"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="23" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5ed7f7b193e60cb8ddbfe1e8aa1f1455" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+            <defval>3</defval>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; T, rank &gt;</type>
+        <definition>using tools::finite::opt::internal::TensorType = typedef Eigen::Tensor&lt;T, rank&gt;</definition>
+        <argsstring></argsstring>
+        <name>TensorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="25" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
@@ -95,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="69" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="118" column="50" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="118" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a419a817e3df33efc2cd5b5db2fd04b43" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -109,195 +104,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="71" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2249f3765bcb5866af4926949fb36273" prot="public" static="no" mutable="no">
-        <type>double</type>
-        <definition>double tools::finite::opt::internal::subspace_error_threshold</definition>
-        <argsstring></argsstring>
-        <name>subspace_error_threshold</name>
-        <initializer>= 1e-8</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="72" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1aed9abe9539378a8b85014a980566781b" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_opt</definition>
-        <argsstring></argsstring>
-        <name>t_opt</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_opt &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="99" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="99" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a35ee857d14946312cdb143d4f94055b4" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_eig</definition>
-        <argsstring></argsstring>
-        <name>t_eig</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_eig &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="100" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a50890ed92dde9137470ada59dc2dfb60" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_ham</definition>
-        <argsstring></argsstring>
-        <name>t_ham</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_ham &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="101" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5466c1b6fb9e1f57c103afa587b42f4b" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_tot</definition>
-        <argsstring></argsstring>
-        <name>t_tot</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_tot &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="102" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1abe84b23d57f9096bfa7e5b8ae3bedc52" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_vH2v</definition>
-        <argsstring></argsstring>
-        <name>t_vH2v</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_vH2v&quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="103" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1ab60d12bdf772cfeb4f7914c049921a00" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_vHv</definition>
-        <argsstring></argsstring>
-        <name>t_vHv</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_vHv &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="104" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_vH2</definition>
-        <argsstring></argsstring>
-        <name>t_vH2</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_vH2 &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="105" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_vH</definition>
-        <argsstring></argsstring>
-        <name>t_vH</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_vH  &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="106" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="106" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
-        <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internal::t_op</definition>
-        <argsstring></argsstring>
-        <name>t_op</name>
-        <initializer>=  std::make_unique&lt;<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref>&gt;(true,5,&quot;t_op  &quot;)</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="107" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="107" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="120" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="120" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a3958eba0f6f9f8e2f7b79b2bd5050750" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::old_subspace_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, OptType optType, OptMode optMode)</argsstring>
-        <name>old_subspace_optimization</name>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aad84fb8b220c9101812aa07c8ce70544" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>ceres_direct_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
         </param>
         <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
           <declname>optType</declname>
         </param>
         <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_mode" kindref="compound">OptMode</ref></type>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
           <declname>optMode</declname>
         </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="26" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a340c941b950ada44c1f420facbb03126" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::old_direct_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
-        <name>old_direct_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
-        </param>
-        <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
-          <declname>optType</declname>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -305,24 +139,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="29" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="28" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp" bodystart="19" bodyend="30" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="28" declcolumn="5"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1a625b66c8bb67701244bfe613c18909cf" compoundref="ceres__direct_8cpp" startline="32" endline="137">ceres_direct_optimization</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; class_state_finite::Scalar, 3 &gt; tools::finite::opt::internal::ceres_direct_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a625b66c8bb67701244bfe613c18909cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
         <name>ceres_direct_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
         </param>
         <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
           <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -330,78 +177,142 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp" bodystart="13" bodyend="17"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="31" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp" bodystart="32" bodyend="137" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="31" declcolumn="5"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a57cec7fd0f65b9ece67ebf62c6cabc01" compoundref="report_8cpp" startline="157" endline="165">tools::finite::opt::internal::reports::time_add_dir_entry</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aeae2ef5c9bb0ae3feff554833673b753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::ceres_direct_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; &amp;theta, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
-        <name>ceres_direct_optimization</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; &amp;</type>
-          <declname>theta</declname>
-        </param>
-        <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
-        </param>
-        <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
-          <declname>optType</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="35" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a3a33e74e9df3aa34c3ceccfa589c1cf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; class_state_finite::Scalar, 3 &gt; tools::finite::opt::internal::ceres_subspace_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, OptType optType, OptMode optMode)</argsstring>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a1930d70a629680d771eab0169e328d7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>opt_mps tools::finite::opt::internal::ceres_subspace_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
         <name>ceres_subspace_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
         </param>
         <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
           <declname>optType</declname>
         </param>
         <param>
-          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_mode" kindref="compound">OptMode</ref></type>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
           <declname>optMode</declname>
         </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="323" bodyend="629"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="35" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace.cpp" bodystart="266" bodyend="277" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="35" declcolumn="5"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aac6aad6ecc0d582e6433348595f145c0" compoundref="opt__mps_8h" startline="17">tools::finite::opt::opt_mps::sites</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aebdd30df0702180cb9430b5993188191" compoundref="opt__mps_8cpp" startline="297" endline="317">tools::finite::opt::opt_mps::validate_candidate</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2a93afd2f5904978f22caab056cded54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a06ef5464dc034b9d2ee48291313efc48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>opt_mps tools::finite::opt::internal::ceres_subspace_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>ceres_subspace_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="38" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace.cpp" bodystart="279" bodyend="635" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="38" declcolumn="5"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a06dbb65551a36da9a7904bc11cfde7e4" compoundref="finite_2measure_8cpp" startline="472" endline="475">tools::finite::measure::energy_minus_energy_reduced</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a75015495e753a8da26599e9c5bfbcdda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>opt_mps tools::finite::opt::internal::ceres_optimize_subspace</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const std::vector&lt; opt_mps &gt; &amp;candidate_list, const Eigen::MatrixXcd &amp;H2_subspace, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>ceres_optimize_subspace</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &gt; &amp;</type>
+          <declname>candidate_list</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &amp;</type>
+          <declname>H2_subspace</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="42" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace.cpp" bodystart="105" bodyend="264" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="42" declcolumn="5"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aac6aad6ecc0d582e6433348595f145c0" compoundref="opt__mps_8h" startline="17">tools::finite::opt::opt_mps::sites</references>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aca8b22eb23cb0e8244fadbbfd55309c6" compoundref="opt__mps_8cpp" startline="223" endline="228">tools::finite::opt::opt_mps::normalize</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aea80068cbfdd2ff2f9f7c9ad07da9bc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
         <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::cppoptlib_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status)</argsstring>
+        <argsstring>(const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status)</argsstring>
         <name>cppoptlib_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -409,21 +320,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="42" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="46" column="26" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="46" declcolumn="26"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aabae584c7a04a4a84e2dfa13a801340a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; class_state_finite::Scalar, 4 &gt; tools::finite::opt::internal::ground_state_optimization</definition>
-        <argsstring>(const class_state_finite &amp;state, std::string ritzstring=&quot;SR&quot;)</argsstring>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a941cb3b68f48239f2380ecf5d65984a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status, StateRitz ritz)</argsstring>
         <name>ground_state_optimization</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>std::string</type>
-          <declname>ritzstring</declname>
-          <defval>&quot;SR&quot;</defval>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a8273b6e17b65f3bf523ec0247a2eecdc" kindref="member">StateRitz</ref></type>
+          <declname>ritz</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -431,11 +345,229 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp" bodystart="11" bodyend="46"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="47" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ground_state.cpp" bodystart="17" bodyend="28" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="47" declcolumn="20"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a42ead97c9c959ca369fcb8193acf8f8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a159eed1ea4f989fbdae3a29cad14d21b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>opt_mps tools::finite::opt::internal::ground_state_optimization</definition>
+        <argsstring>(const opt_mps &amp;initial_mps, const class_tensors_finite &amp;tensors, const class_algorithm_status &amp;status, std::string_view ritz)</argsstring>
+        <name>ground_state_optimization</name>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>ritz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="48" column="20" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="48" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a9049e6109458f08295d68aa2992b9603" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_energy_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>krylov_energy_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="49" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_energy.cpp" bodystart="16" bodyend="90" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="49" declcolumn="20"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacesettings_1_1precision_1a9bc90ecd1bc106fc17c13747c782db44" compoundref="nmspc__settings_8h" startline="169">settings::precision::eig_default_ncv</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a36cc11b4e6e111335804cd3e48e25959" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>krylov_variance_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="52" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_variance.cpp" bodystart="18" bodyend="220" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="52" declcolumn="20"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aac6aad6ecc0d582e6433348595f145c0" compoundref="opt__mps_8h" startline="17">tools::finite::opt::opt_mps::sites</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a492cb8db5db83df11cd8110e9bfaba55" compoundref="opt__mps_8cpp" startline="82" endline="87">tools::finite::opt::opt_mps::get_variance</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a5761f9eb308ee4fb1f9cee666bcd75e6" compoundref="opt__mps_8cpp" startline="174" endline="179">tools::finite::opt::opt_mps::get_overlap</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a90e934192e4b9ff88c880a3f779c5391" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::krylov_extract_solutions</definition>
+        <argsstring>(const opt_mps &amp;initial_mps, const class_tensors_finite &amp;tensors, eig::solver &amp;solver, std::vector&lt; tools::finite::opt::opt_mps &gt; &amp;eigvecs_mps, const std::string &amp;tag=&quot;&quot;, bool converged_only=true)</argsstring>
+        <name>krylov_extract_solutions</name>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type><ref refid="classeig_1_1solver" kindref="compound">eig::solver</ref> &amp;</type>
+          <declname>solver</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">tools::finite::opt::opt_mps</ref> &gt; &amp;</type>
+          <declname>eigvecs_mps</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tag</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>converged_only</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="55" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_solution.cpp" bodystart="12" bodyend="42" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="55" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ab90aa47a13a8c41eaf71cba47c57d729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref></type>
+        <definition>tools::finite::opt::opt_mps tools::finite::opt::internal::primme_variance_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, const opt_mps &amp;initial_mps, const class_algorithm_status &amp;status, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>primme_variance_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &amp;</type>
+          <declname>initial_mps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__algorithm__status" kindref="compound">class_algorithm_status</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="61" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/primme_variance.cpp" bodystart="18" bodyend="327" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="61" declcolumn="20"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1aac6aad6ecc0d582e6433348595f145c0" compoundref="opt__mps_8h" startline="17">tools::finite::opt::opt_mps::sites</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a492cb8db5db83df11cd8110e9bfaba55" compoundref="opt__mps_8cpp" startline="82" endline="87">tools::finite::opt::opt_mps::get_variance</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1opt__mps_1a5761f9eb308ee4fb1f9cee666bcd75e6" compoundref="opt__mps_8cpp" startline="174" endline="179">tools::finite::opt::opt_mps::get_overlap</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ae30bb82d97c23926b35e11e42c7fa660" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; class_state_finite::Scalar, 3 &gt; tools::finite::opt::internal::ceres_rosenbrock_optimization</definition>
+        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::ham_sq_optimization</definition>
+        <argsstring>(const class_tensors_finite &amp;tensors, OptType optType, OptMode optMode, OptSpace optSpace)</argsstring>
+        <name>ham_sq_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a2809124eff04ad302ca62f63f9408f1e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a10bb7f1069ec16368388eec633330948" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1acadb01aad139a240f01ce7faf6d38fab" kindref="member">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="64" column="26" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="64" declcolumn="26"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a4ccaa7c24e9f0c430ff6b9e9913fd5a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internal::ceres_rosenbrock_optimization</definition>
         <argsstring>(const class_state_finite &amp;state)</argsstring>
         <name>ceres_rosenbrock_optimization</name>
         <param>
@@ -448,65 +580,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp" bodystart="9" bodyend="28"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="65" column="26" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="65" declcolumn="26"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aca0917316fdb1c25975f67000eb40f20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>Eigen::Tensor&lt; T, 6 &gt;</type>
-        <definition>template Eigen::Tensor&lt; Scalar, 6 &gt; tools::finite::opt::internal::get_multi_hamiltonian_tensor&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>get_multi_hamiltonian_tensor</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="279" bodyend="283"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ad72bfa3915c398e56d24a3ed7523b47a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>Eigen::Tensor&lt; T, 6 &gt;</type>
-        <definition>template Eigen::Tensor&lt; Scalar, 6 &gt; tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>get_multi_hamiltonian_squared_tensor</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="291" bodyend="295"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5db98a373e6e4490cd8d6188135d668a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a0760f44e7374265bcb7521e6a67a94db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename T</type>
           </param>
         </templateparamlist>
         <type>Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
-        <definition>template MatrixType&lt; Scalar &gt; tools::finite::opt::internal::get_multi_hamiltonian_matrix&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>get_multi_hamiltonian_matrix</name>
+        <definition>template MatrixType&lt; cplx &gt; tools::finite::opt::internal::get_multisite_hamiltonian_matrix</definition>
+        <argsstring>(const class_model_finite &amp;model, const class_edges_finite &amp;edges, double energy_shift=0)</argsstring>
+        <name>get_multisite_hamiltonian_matrix</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__model__finite" kindref="compound">class_model_finite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__finite" kindref="compound">class_edges_finite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>energy_shift</declname>
+          <defval>0</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -514,21 +611,25 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="60" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="108" column="19" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="108" declcolumn="19"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5e5f35b60b5bed6326c0267e707171c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ae6955ca4b018ed330e6f769df01c8742" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename T</type>
           </param>
         </templateparamlist>
         <type>Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
-        <definition>template MatrixType&lt; Scalar &gt; tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state)</argsstring>
-        <name>get_multi_hamiltonian_squared_matrix</name>
+        <definition>template MatrixType&lt; cplx &gt; tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix</definition>
+        <argsstring>(const class_model_finite &amp;model, const class_edges_finite &amp;edges)</argsstring>
+        <name>get_multisite_hamiltonian_squared_matrix</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__model__finite" kindref="compound">class_model_finite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__edges__finite" kindref="compound">class_edges_finite</ref> &amp;</type>
+          <declname>edges</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -536,51 +637,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="62" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="110" column="19" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="110" declcolumn="19"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a021eb543fbbd22a97e6ac3b7576ad424" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5314a0ab05a20ffbe2cb4968791e2bd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename T</type>
           </param>
         </templateparamlist>
         <type>Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
-        <definition>template MatrixType&lt; Scalar &gt; tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;eigvecs)</argsstring>
-        <name>get_multi_hamiltonian_squared_subspace_matrix</name>
+        <definition>template MatrixType&lt; cplx &gt; tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix</definition>
+        <argsstring>(const class_model_finite &amp;model, const class_edges_finite &amp;edges, const std::vector&lt; opt_mps &gt; &amp;candidate_list, double energy_shift=0.0)</argsstring>
+        <name>get_multisite_hamiltonian_squared_subspace_matrix</name>
         <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__model__finite" kindref="compound">class_model_finite</ref> &amp;</type>
+          <declname>model</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
-          <declname>eigvecs</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="64" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ab2be6467cfa50f6980f0ec03c74e822e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
-        <definition>template MatrixType&lt; Scalar &gt; tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new&lt; Scalar &gt;</definition>
-        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;eigvecs)</argsstring>
-        <name>get_multi_hamiltonian_squared_subspace_matrix_new</name>
-        <param>
-          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__edges__finite" kindref="compound">class_edges_finite</ref> &amp;</type>
+          <declname>edges</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
-          <declname>eigvecs</declname>
+          <type>const std::vector&lt; <ref refid="classtools_1_1finite_1_1opt_1_1opt__mps" kindref="compound">opt_mps</ref> &gt; &amp;</type>
+          <declname>candidate_list</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>energy_shift</declname>
+          <defval>0.0</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -588,15 +672,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="66" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="112" column="19" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="112" declcolumn="19"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aea0b5cf7e49905cefb8efed498ace3d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5f180b68a3e0c75f0dc0e45097f0b88f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; int &gt;</type>
         <definition>std::vector&lt; int &gt; tools::finite::opt::internal::generate_size_list</definition>
-        <argsstring>(size_t shape)</argsstring>
+        <argsstring>(int shape)</argsstring>
         <name>generate_size_list</name>
         <param>
-          <type>size_t</type>
+          <type>int</type>
           <declname>shape</declname>
         </param>
         <briefdescription>
@@ -605,7 +689,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="20" bodyend="38"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="122" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_diag_part.cpp" bodystart="10" bodyend="18" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="122" declcolumn="24"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a87b9da9cd1ba3039fcc7259fa221073f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -627,7 +711,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="77" bodyend="77"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="125" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" bodystart="125" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aa034824e2451be23c2e4026e76c07afb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -648,7 +732,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="107" bodyend="113"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="126" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="147" bodyend="152" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="126" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a8d74d849646a7145ba9f431f8848242b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -669,7 +753,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="114" bodyend="120"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="127" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="153" bodyend="158" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="127" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a812ad853671c4241ba557921938665a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -690,7 +774,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="124" bodyend="130"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="128" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="160" bodyend="165" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="128" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a79ce5fcab0cb78cc92f18b0d9a7e4b5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -711,7 +795,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="131" bodyend="137"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="129" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="166" bodyend="171" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="129" declcolumn="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1af916802ba488155e10414012373ad01d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::pair&lt; double, double &gt;</type>
@@ -732,26 +816,71 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="141" bodyend="156"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="130" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="173" bodyend="187" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="130" declcolumn="22"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void tools::finite::opt::internal::reset_timers</definition>
-        <argsstring>()</argsstring>
-        <name>reset_timers</name>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aa2fc1c9fa6b304ab47e3d433380bb7e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long tools::finite::opt::internal::get_ops</definition>
+        <argsstring>(long d, long chiL, long chiR, long m)</argsstring>
+        <name>get_ops</name>
+        <param>
+          <type>long</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiL</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiR</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>m</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="94" bodyend="104"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="131" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp" bodystart="189" bodyend="204" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="131" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a594ee16782b5614cdf65c047f393bac2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long tools::finite::opt::internal::get_ops_R</definition>
+        <argsstring>(long d, long chiL, long chiR, long m)</argsstring>
+        <name>get_ops_R</name>
+        <param>
+          <type>long</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiL</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiR</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" line="132" column="17" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/opt-internal.h" declline="132" declcolumn="17"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="9" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" line="16" column="38"/>
   </compounddef>
 </doxygen>

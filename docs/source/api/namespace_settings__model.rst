@@ -17,33 +17,17 @@ Namespaces
 ----------
 
 
-- :ref:`namespace_settings__model__selfdual_tf_rf_ising`
+- :ref:`namespace_settings__model__ising_sdual`
 
-- :ref:`namespace_settings__model__tf_ising`
+- :ref:`namespace_settings__model__ising_tf_rf`
 
-- :ref:`namespace_settings__model__tf_nn_ising`
+- :ref:`namespace_settings__model__lbit`
 
 
 Variables
 ---------
 
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1a1f37947bd102cc62063b30630d798a42`
+- :ref:`exhale_variable_namespacesettings_1_1model_1aabf0ff2a07a4b8ae7e4141b1bde089cd`
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a2e5a997917989d152d0429c8e430ab63`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a776e129070b70bfcdbff48837833a407`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1ae14bbe9ea2acf3d3905f97a21dc9b7d3`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a8581d610af0717c14566033ed2ab9745`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1a2b2ff3a327a7ba07f22ddbd0b5747631`
-
-- :ref:`exhale_variable_namespacesettings_1_1model_1abf7a65496d4c38b818f6b1e4e3c8a02f`
+- :ref:`exhale_variable_namespacesettings_1_1model_1a3628af587c3663ba75c2a3d6db7e16e6`

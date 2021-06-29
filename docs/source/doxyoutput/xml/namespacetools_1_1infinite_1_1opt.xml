@@ -1,21 +1,35 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1infinite_1_1opt" kind="namespace" language="C++">
     <compoundname>tools::infinite::opt</compoundname>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::infinite::opt::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" line="8" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::find_ground_state</definition>
-        <argsstring>(const class_state_infinite &amp;state, std::string ritz=&quot;SR&quot;)</argsstring>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1a89c6ef3b1a2925dddf7cb118f3ebaa8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::infinite::opt::find_ground_state</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors, std::string_view ritz)</argsstring>
         <name>find_ground_state</name>
         <param>
-          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
         </param>
         <param>
-          <type>std::string</type>
+          <type>std::string_view</type>
           <declname>ritz</declname>
-          <defval>&quot;SR&quot;</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -23,64 +37,65 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="271" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="17" bodyend="39"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" line="9" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp" bodystart="22" bodyend="41" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" declline="9" declcolumn="26"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::time_evolve_theta</definition>
-        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;U)</argsstring>
-        <name>time_evolve_theta</name>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1a5a61d826e74a8d7e9eeac0a5c1163177" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::infinite::opt::find_ground_state</definition>
+        <argsstring>(const class_tensors_infinite &amp;tensors, StateRitz ritz)</argsstring>
+        <name>find_ground_state</name>
+        <param>
+          <type>const <ref refid="classclass__tensors__infinite" kindref="compound">class_tensors_infinite</ref> &amp;</type>
+          <declname>tensors</declname>
+        </param>
+        <param>
+          <type><ref refid="config_2enums_8h_1a8273b6e17b65f3bf523ec0247a2eecdc" kindref="member">StateRitz</ref></type>
+          <declname>ritz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" line="10" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp" bodystart="18" bodyend="20" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" declline="10" declcolumn="26"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1a3ae27fa959980e8cdffe49b736f8b9c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::infinite::opt::time_evolve_state</definition>
+        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;U)</argsstring>
+        <name>time_evolve_state</name>
         <param>
           <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
-          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1_1opt_1ae5c79224cbc8416ef91b056dfc88fe5a" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>U</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><verbatim>  1--[ Θ ]--3
-     |   |
-     0   2
-                   1--[ Θ ]--3
-     0   1   ---&gt;     |   |
-     |   |            0   2
-     [ U ]
-     |   |
-     2   3
-</verbatim> </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="47" bodyend="64"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void tools::infinite::opt::truncate_theta</definition>
-        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_state_infinite &amp;state)</argsstring>
-        <name>truncate_theta</name>
-        <param>
-          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
-          <declname>theta</declname>
-        </param>
-        <param>
-          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
+<para><verbatim>  1--[ mps ]--2
+        |
+        0
+                         1--[ mps ]--2
+        0         ---&gt;         |
+        |                      0
+      [ U ]
+        |
+        1
+</verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="273" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="70" bodyend="78"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" line="11" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp" bodystart="47" bodyend="63" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" declline="11" declcolumn="26"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="270" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/opt.h" line="7" column="30"/>
   </compounddef>
 </doxygen>

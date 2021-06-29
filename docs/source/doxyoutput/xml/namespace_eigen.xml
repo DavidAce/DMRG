@@ -1,11 +1,132 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespace_eigen" kind="namespace" language="C++">
     <compoundname>Eigen</compoundname>
+    <innerclass refid="struct_eigen_1_1_index_pair" prot="public">Eigen::IndexPair</innerclass>
+    <innernamespace refid="namespace_eigen_1_1internal">Eigen::internal</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespace_eigen_1a18de8671b35c5012fa791969b884df02" prot="public" static="no">
+        <type>Eigen::Matrix&lt; std::complex&lt; double &gt;, 2, 2 &gt;</type>
+        <definition>using Eigen::Matrix2cd = typedef Eigen::Matrix&lt;std::complex&lt;double&gt;,2,2&gt;</definition>
+        <argsstring></argsstring>
+        <name>Matrix2cd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="52" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1aab1bf1a37c6cbc8faf1c426a5e4f943c" prot="public" static="no">
+        <type>Eigen::Matrix&lt; std::complex&lt; double &gt;, 3, 3 &gt;</type>
+        <definition>using Eigen::Matrix3cd = typedef Eigen::Matrix&lt;std::complex&lt;double&gt;,3,3&gt;</definition>
+        <argsstring></argsstring>
+        <name>Matrix3cd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="53" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" prot="public" static="no">
+        <type>Eigen::Matrix&lt; std::complex&lt; double &gt;, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using Eigen::MatrixXcd = typedef Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixXcd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="54" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1abc09ccddf6c3bd35f6da37cad5a68812" prot="public" static="no">
+        <type>Eigen::Matrix&lt; std::complex&lt; double &gt;, 2, 1 &gt;</type>
+        <definition>using Eigen::Vector2cd = typedef Eigen::Matrix&lt;std::complex&lt;double&gt;,2,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>Vector2cd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="55" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1a5b736602a2b5e99a9c7244c5b2cf071e" prot="public" static="no">
+        <type>Eigen::Matrix&lt; std::complex&lt; double &gt;, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using Eigen::VectorXcd = typedef Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorXcd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="56" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1a1b7b8004eb3eb175450ca7edb4cba63d" prot="public" static="no">
+        <type>Eigen::Matrix&lt; double, 2, 2 &gt;</type>
+        <definition>using Eigen::Matrix2d = typedef Eigen::Matrix&lt;double,2,2&gt;</definition>
+        <argsstring></argsstring>
+        <name>Matrix2d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="58" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1a450b58092045d181f82d87c64d236f28" prot="public" static="no">
+        <type>Eigen::Matrix&lt; double, 3, 3 &gt;</type>
+        <definition>using Eigen::Matrix3d = typedef Eigen::Matrix&lt;double,3,3&gt;</definition>
+        <argsstring></argsstring>
+        <name>Matrix3d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="59" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1a41bc7020fd92c399733d9e5b815f0b10" prot="public" static="no">
+        <type>Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using Eigen::MatrixXd = typedef Eigen::Matrix&lt;double,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixXd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="60" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_eigen_1a58d991460c038b5dc833ca50d80657e3" prot="public" static="no">
+        <type>Eigen::Matrix&lt; double, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using Eigen::VectorXd = typedef Eigen::Matrix&lt;double,Eigen::Dynamic,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorXd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="61" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" line="15" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/general/eigen_tensor_fwd_decl.h" line="51" column="15"/>
   </compounddef>
 </doxygen>

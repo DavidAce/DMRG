@@ -69,36 +69,30 @@ Classes
 
 - :ref:`exhale_class_classpcg__detail_1_1specific__stream`
 
+- :ref:`exhale_class_classpcg__detail_1_1unique__stream`
+
 
 Functions
 ---------
 
 
-- :ref:`exhale_function_namespacepcg__detail_1ae301c41cc112c18882cd3f69d4a79c00`
-
 - :ref:`exhale_function_namespacepcg__detail_1aa5d4605056ffa53aa9a18c804a75902d`
+
+- :ref:`exhale_function_namespacepcg__detail_1ae301c41cc112c18882cd3f69d4a79c00`
 
 - :ref:`exhale_function_namespacepcg__detail_1a4aae5e3d1c68d31e2608dcd41572869c`
 
-- :ref:`exhale_function_namespacepcg__detail_1a0f30773c4f997330cf3b2380a1ebc82d`
+- :ref:`exhale_function_namespacepcg__detail_1a2a685b95ec6acf2c3752f559c19522c8`
 
-- :ref:`exhale_function_namespacepcg__detail_1af588d7f518702204287680eb7cc277e7`
+- :ref:`exhale_function_namespacepcg__detail_1a9bdb968fe93be9771ef57fd68c3171d6`
 
 - :ref:`exhale_function_namespacepcg__detail_1a533d2dabb5e41bebf5f53025ee45ed6c`
 
 - :ref:`exhale_function_namespacepcg__detail_1af5285db7f4a5ff43c3f68fe9ea87426e`
 
-- :ref:`exhale_function_namespacepcg__detail_1a655de592633ab35a7a3566d770121416`
+- :ref:`exhale_function_namespacepcg__detail_1a119a58a33b73016e654a5baea6320a67`
 
-- :ref:`exhale_function_namespacepcg__detail_1aa57137134c0dde6e0c67e829923e0a49`
-
-- :ref:`exhale_function_namespacepcg__detail_1a5076fb5d29a1e7226df47ddba552512b`
-
-- :ref:`exhale_function_namespacepcg__detail_1a7c64172ece8dce70c1e0f9a41e4e4409`
-
-- :ref:`exhale_function_namespacepcg__detail_1a6b95611bc9c355e26db45d06136a32dd`
-
-- :ref:`exhale_function_namespacepcg__detail_1a8eca94340632aea6e654fc12f4f54fb3`
+- :ref:`exhale_function_namespacepcg__detail_1a6c87065f72ce4036ef066df998f7a039`
 
 
 Typedefs
@@ -112,16 +106,3 @@ Typedefs
 - :ref:`exhale_typedef_namespacepcg__detail_1a4915560ccb551e1ee48ba0184eb7a6f1`
 
 - :ref:`exhale_typedef_namespacepcg__detail_1ad322c970b880dc963bd35ce5840946d3`
-
-
-Variables
----------
-
-
-- :ref:`exhale_variable_namespacepcg__detail_1a7cefe974db0a1bb3a1fef33b171dfe60`
-
-- :ref:`exhale_variable_namespacepcg__detail_1a247ab2bf10e0640c12437b650ab15848`
-
-- :ref:`exhale_variable_namespacepcg__detail_1a1338b2f0b0575e795053506ae0579262`
-
-- :ref:`exhale_variable_namespacepcg__detail_1a260bd33be49f954c81d6905bd68728c8`

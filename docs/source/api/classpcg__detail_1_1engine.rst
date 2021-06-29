@@ -3,7 +3,7 @@
 Template Class engine
 =====================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_random.hpp`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_math_rnd_pcg_random.hpp`
 
 
 Nested Relationships
@@ -24,8 +24,8 @@ Base Types
 **********
 
 - ``protected output_mixin``
-- ``public stream_mixin``
-- ``protected multiplier_mixin``
+- ``public pcg_detail::oneseq_stream< itype >`` (:ref:`exhale_class_classpcg__detail_1_1oneseq__stream`)
+- ``protected pcg_detail::default_multiplier< itype >`` (:ref:`exhale_struct_structpcg__detail_1_1default__multiplier`)
 
 
 Class Documentation

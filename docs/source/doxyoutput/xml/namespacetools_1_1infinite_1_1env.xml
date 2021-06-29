@@ -1,16 +1,24 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1infinite_1_1env" kind="namespace" language="C++">
     <compoundname>tools::infinite::env</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1env_1a1c1baa954a4f7932c970ef798fc23b73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1env_1aad0d5c5ba9809fcbb98b82a54fd4d259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void tools::infinite::env::initialize</definition>
-        <argsstring>(class_state_infinite &amp;state)</argsstring>
-        <name>initialize</name>
+        <definition>void tools::infinite::env::reset_edges</definition>
+        <argsstring>(const class_state_infinite &amp;state, const class_model_infinite &amp;model, class_edges_infinite &amp;edges)</argsstring>
+        <name>reset_edges</name>
         <param>
-          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -18,13 +26,38 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="261" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp" bodystart="11" bodyend="16"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" line="7" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/env.cpp" bodystart="12" bodyend="17" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" declline="7" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1env_1a077b82467f3fa1145491bbd253bf00c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::env::enlarge_edges</definition>
+        <argsstring>(const class_state_infinite &amp;state, const class_model_infinite &amp;model, class_edges_infinite &amp;edges)</argsstring>
+        <name>enlarge_edges</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__model__infinite" kindref="compound">class_model_infinite</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__edges__infinite" kindref="compound">class_edges_infinite</ref> &amp;</type>
+          <declname>edges</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" line="8" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/env.cpp" bodystart="19" bodyend="27" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" declline="8" declcolumn="17"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="260" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" line="6" column="30"/>
   </compounddef>
 </doxygen>

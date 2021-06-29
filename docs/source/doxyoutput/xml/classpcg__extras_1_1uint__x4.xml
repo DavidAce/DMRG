@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="classpcg__extras_1_1uint__x4" kind="class" language="C++" prot="public">
     <compoundname>pcg_extras::uint_x4</compoundname>
     <includes refid="pcg__uint128_8hpp" local="no">pcg_uint128.hpp</includes>
@@ -23,7 +23,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="299" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="299" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="268" column="51" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="268" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -38,7 +38,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="221" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="200" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a0a4c624284c5144369ef05666def13e0" prot="public" static="no" mutable="no">
         <type>UInt</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="221" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="200" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a40b585610b37fed799966aa5f7cea783" prot="public" static="no" mutable="no">
         <type>UInt</type>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="221" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="200" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a73aba28aa323e0fe97e523b7dc7d217d" prot="public" static="no" mutable="no">
         <type>UInt</type>
@@ -77,11 +77,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="221" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="200" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a83cbeedc8e529c660c4a4c26be1a7825" prot="public" static="no" mutable="no">
-        <type>struct pcg_extras::uint_x4::@0::@2</type>
-        <definition>struct pcg_extras::uint_x4::@0::@2  pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::w</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1adef809eaf078b30680a2d3aa782cc3e2" prot="public" static="no" mutable="no">
+        <type>struct pcg_extras::uint_x4::@1::@3</type>
+        <definition>struct pcg_extras::uint_x4::@1::@3 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::w</definition>
         <argsstring></argsstring>
         <name>w</name>
         <briefdescription>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="222" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="201" column="15"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1ac9ce494991265b8a72742554b3929ca4" prot="public" static="no" mutable="no">
         <type>UIntX2</type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="224" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="224" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="203" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="203" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a08e930db22fa71047efe218e3f5b31f7" prot="public" static="no" mutable="no">
         <type>UIntX2</type>
@@ -116,11 +116,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="224" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="224" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="203" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="203" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a71bcde902bc987df52a28e9bd6a5daf3" prot="public" static="no" mutable="no">
-        <type>struct pcg_extras::uint_x4::@0::@3</type>
-        <definition>struct pcg_extras::uint_x4::@0::@3  pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::d</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a6f6817c37e4645249a8444d0a98d6453" prot="public" static="no" mutable="no">
+        <type>struct pcg_extras::uint_x4::@1::@4</type>
+        <definition>struct pcg_extras::uint_x4::@1::@4 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::d</definition>
         <argsstring></argsstring>
         <name>d</name>
         <briefdescription>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="225" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="204" column="15"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a54e6f9da6e35d0ef34a7cc597027d586" prot="public" static="no" mutable="no">
         <type>UInt</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="229" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="229" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="208" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="208" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a1188cc911ff117d390aed7d04adb2b33" prot="public" static="no" mutable="no">
         <type>UIntX2</type>
@@ -155,20 +155,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="230" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="230" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="209" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="209" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a97329c61554a4f670346843860833572" prot="public" static="no" mutable="no">
-        <type>union pcg_extras::uint_x4::@0</type>
-        <definition>union pcg_extras::uint_x4::@0 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::@1</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a6150625f5a20dea2baf32eea32d35953" prot="public" static="no" mutable="no">
+        <type>union pcg_extras::uint_x4::@1</type>
+        <definition>union pcg_extras::uint_x4::@1 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::@2</definition>
         <argsstring></argsstring>
-        <name>@1</name>
+        <name>@2</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="231" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="210" column="9"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -183,9 +183,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="234" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="213" column="9"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a0baa6b223acc2977d01f3176a19dd4b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a0baa6b223acc2977d01f3176a19dd4b9" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::uint_x4</definition>
         <argsstring>(UInt v3, UInt v2, UInt v1, UInt v0)</argsstring>
@@ -212,9 +212,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="236" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="236" bodyend="244"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="215" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="215" bodyend="227"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a81b94f129c687f354a62e6b3036501d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a81b94f129c687f354a62e6b3036501d6" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::uint_x4</definition>
         <argsstring>(UIntX2 v23, UIntX2 v01)</argsstring>
@@ -233,12 +233,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="246" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="246" bodyend="254"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="229" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="229" bodyend="241"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a0c147c557e90caa420eef3e48c22563c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a8666a6fab573bba79c7f6c63574faf82" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>class Integral</type>
+          </param>
+          <param>
+            <type>typename std::enable_if&lt;(std::is_integral&lt; Integral &gt;::value &amp;&amp;sizeof(Integral)&lt;=sizeof(UIntX2))&gt;::type *</type>
+            <defval>nullptr</defval>
           </param>
         </templateparamlist>
         <type>constexpr</type>
@@ -255,9 +259,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="260" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="260" bodyend="268"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="244" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="244" bodyend="256"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a48ac65420a3585a62480ef4bfddf7bed" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a48ac65420a3585a62480ef4bfddf7bed" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator uint64_t</definition>
         <argsstring>() const</argsstring>
@@ -268,9 +272,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="270" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="270" bodyend="273"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="258" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="258" bodyend="258"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1aaaec6cba85d3800991f6c9ca44255d9d" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1aaaec6cba85d3800991f6c9ca44255d9d" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator uint32_t</definition>
         <argsstring>() const</argsstring>
@@ -281,9 +285,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="275" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="275" bodyend="278"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="260" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="260" bodyend="260"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1acc9f701faa869080eefc0103fff32b99" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1acc9f701faa869080eefc0103fff32b99" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator int</definition>
         <argsstring>() const</argsstring>
@@ -294,9 +298,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="280" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="280" bodyend="283"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="262" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="262" bodyend="262"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a9d181b6dea38f9413d7694c31ad6317f" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a9d181b6dea38f9413d7694c31ad6317f" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator uint16_t</definition>
         <argsstring>() const</argsstring>
@@ -307,9 +311,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="285" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="285" bodyend="288"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="264" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="264" bodyend="264"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a80d2cccacc78aafe87d956d17204dbf1" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a80d2cccacc78aafe87d956d17204dbf1" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator uint8_t</definition>
         <argsstring>() const</argsstring>
@@ -320,9 +324,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="290" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="290" bodyend="293"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="266" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="266" bodyend="266"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1ab06b4814f261d8a463217e69af1ebd16" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1ab06b4814f261d8a463217e69af1ebd16" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator uint_missing_t</definition>
         <argsstring>() const</argsstring>
@@ -333,9 +337,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="301" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="301" bodyend="304"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="270" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="270" bodyend="270"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a9989f4b4311d904d5e77de682fc79ebb" prot="public" static="no" const="yes" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a9989f4b4311d904d5e77de682fc79ebb" prot="public" static="no" constexpr="yes" const="yes" explicit="yes" inline="yes" virt="non-virtual">
         <type>constexpr</type>
         <definition>constexpr pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator bool</definition>
         <argsstring>() const</argsstring>
@@ -346,7 +350,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="306" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="306" bodyend="309"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="272" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="272" bodyend="272"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a14525e6f7de5af0210f2a26776049db2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -363,7 +367,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="369" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="369" bodyend="373"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="331" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="331" bodyend="334"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1aa007370bae1f86f0a0ef220a78ea14f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -380,7 +384,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="375" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="375" bodyend="379"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="336" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="336" bodyend="339"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1ac21f284eebd8b9e942a19e1669df58f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -397,7 +401,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="381" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="381" bodyend="385"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="341" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="341" bodyend="344"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a114f68186d734d5e0634b84b25c49d28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -414,7 +418,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="387" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="387" bodyend="391"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="346" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="346" bodyend="349"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a6bf44e478a91469d6ba070aedbdb903d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -431,13 +435,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="393" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="393" bodyend="397"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="351" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="351" bodyend="354"/>
       </memberdef>
-      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a3ab400e553fdaa411cbfb0c01f8aad8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a3bfb86a780b1edddc1d1d9ccfc7ed87c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
         <definition>uint_x4&amp; pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::operator&amp;=</definition>
         <argsstring>(const uint_x4 &amp;rhs)</argsstring>
-        <name>operator &amp;=</name>
+        <name>operator&amp;=</name>
         <param>
           <type>const <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
           <declname>rhs</declname>
@@ -448,7 +452,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="399" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="399" bodyend="403"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="356" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="356" bodyend="359"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a65c08acb5cbcf1787a603245adcceb97" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -465,7 +469,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="405" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="405" bodyend="409"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="361" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="361" bodyend="364"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a33a1e710dbe5c269c633cd601dbbd95d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -482,7 +486,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="411" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="411" bodyend="415"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="366" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="366" bodyend="369"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a84a578b5e7fe9e94002072c3b6b072fe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -499,7 +503,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="417" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="417" bodyend="421"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="371" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="371" bodyend="374"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a2c6d11ee717365a1062af80cff7944b0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref> &amp;</type>
@@ -516,11 +520,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="423" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="423" bodyend="427"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="376" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="376" bodyend="379"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a8353658d9076a9e7a8bc65bd0c8a9233" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1ae7e91698ff0beb62e5856dbfccc2baa3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -530,7 +534,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator*</definition>
+        <definition>uint_x4&lt;U, V&gt; operator*</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator*</name>
         <param>
@@ -545,9 +549,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="312" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="275" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a3fd87b9d57aa9393d5e751927334b8bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a51be52d999ff80a05449a4c9e1c21996" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -557,7 +561,7 @@
           </param>
         </templateparamlist>
         <type>friend std::pair&lt; <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;, <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt; &gt;</type>
-        <definition>std::pair&lt; uint_x4&lt;U,V&gt;,uint_x4&lt;U,V&gt; &gt; divmod</definition>
+        <definition>std::pair&lt;uint_x4&lt;U, V&gt;, uint_x4&lt;U, V&gt; &gt; divmod</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>divmod</name>
         <param>
@@ -572,9 +576,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="316" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="278" column="26"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a8f3cdb7a48eccdd783c8b7533a059f58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a36010580e7a028969c8075c96cb79369" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -584,7 +588,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator+</definition>
+        <definition>uint_x4&lt;U, V&gt; operator+</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator+</name>
         <param>
@@ -599,9 +603,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="319" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="281" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1ae26f8fcf56d2edcc3f12f0274b5490c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1acc92241da9bfb753d857a22b57ce8519" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -611,7 +615,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator-</definition>
+        <definition>uint_x4&lt;U, V&gt; operator-</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator-</name>
         <param>
@@ -626,9 +630,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="322" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="284" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a21dd7c527e9f35c05f9c5257a6b66009" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a85e81b89f970926e0d77e2640d0fc81d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -638,7 +642,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator&lt;&lt;</definition>
+        <definition>uint_x4&lt;U, V&gt; operator&lt;&lt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -653,9 +657,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="325" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="287" column="9"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a730d0a157bd4bc87bc3cd80378ef899a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1aff9775496442029c08ff311c41d57fe1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -665,7 +669,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator&gt;&gt;</definition>
+        <definition>uint_x4&lt;U, V&gt; operator&gt;&gt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -680,9 +684,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="328" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="290" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a8653467a58c728769b8fae07c5460a06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1ab25f5a7dad13a3d283794318b9e704ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -692,9 +696,9 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator&amp;</definition>
+        <definition>uint_x4&lt;U, V&gt; operator&amp;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
-        <name>operator &amp;</name>
+        <name>operator&amp;</name>
         <param>
           <type>const <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt; &amp;</type>
         </param>
@@ -707,9 +711,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="331" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="293" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a74e81a327c63a18471d084545726bec8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a7fa84cb80440c1c77f216c6d1882865d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -719,7 +723,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator|</definition>
+        <definition>uint_x4&lt;U, V&gt; operator|</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator|</name>
         <param>
@@ -734,9 +738,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="334" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="296" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1adb048a368f5422b565ea82d05fb1b15e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1afd442a51ccfb82488b0be1a82e396789" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -746,7 +750,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator^</definition>
+        <definition>uint_x4&lt;U, V&gt; operator^</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator^</name>
         <param>
@@ -761,7 +765,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="337" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="299" column="24"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1aa6eb4a341209bc7cbf02048d5ce8583f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -788,7 +792,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="340" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="302" column="21"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a477ecc4d6dec66167afb3f0142c891a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -815,7 +819,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="343" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="305" column="21"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1abb7f79fd327df67371b16aef4e24def0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -842,7 +846,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="346" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="308" column="16"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a73f0fd714503876c47aad39b352ae166" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -869,7 +873,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="349" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="311" column="16"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a01f63afe553adc192ebbbfc4c473ee3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -896,7 +900,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="352" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="314" column="21"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a47211ed5d8588c68538455a7c1a2e714" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -923,9 +927,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="355" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="317" column="21"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a158b063da725371d565a58880d1a7c56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1af05c83dd4f680f35916fdf602c02d8bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -935,7 +939,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator~</definition>
+        <definition>uint_x4&lt;U, V&gt; operator~</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator~</name>
         <param>
@@ -947,9 +951,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="358" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="320" column="24"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a11185c1e044a7a67d77071aa40c32146" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1adc0f03f50f95bcc4e9c2a59fec86c7a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename U</type>
@@ -959,7 +963,7 @@
           </param>
         </templateparamlist>
         <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
-        <definition>uint_x4&lt;U,V&gt; operator-</definition>
+        <definition>uint_x4&lt;U, V&gt; operator-</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator-</name>
         <param>
@@ -971,7 +975,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="361" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="323" column="24"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a4dbcc693b6f4618e3abe0533703d074e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -996,7 +1000,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="364" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="432" bodyend="445"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="326" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="383" bodyend="394"/>
       </memberdef>
       <memberdef kind="friend" id="classpcg__extras_1_1uint__x4_1a221d0f7daf2c6a2b33a68cb9514c8c1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1021,21 +1025,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="367" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="448" bodyend="460"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="329" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="397" bodyend="407"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" line="208" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_uint128.hpp" bodystart="208" bodyend="429"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="187" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="187" bodyend="380"/>
     <listofallmembers>
-      <member refid="classpcg__extras_1_1uint__x4_1a71bcde902bc987df52a28e9bd6a5daf3" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>d</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a6f6817c37e4645249a8444d0a98d6453" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>d</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a1188cc911ff117d390aed7d04adb2b33" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>da</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a3fd87b9d57aa9393d5e751927334b8bb" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>divmod</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a51be52d999ff80a05449a4c9e1c21996" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>divmod</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a4dbcc693b6f4618e3abe0533703d074e" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>flog2</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a8653467a58c728769b8fae07c5460a06" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator &amp;</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a3ab400e553fdaa411cbfb0c01f8aad8f" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator &amp;=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a9989f4b4311d904d5e77de682fc79ebb" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator bool</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1acc9f701faa869080eefc0103fff32b99" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator int</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a9d181b6dea38f9413d7694c31ad6317f" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator uint16_t</name></member>
@@ -1045,41 +1047,43 @@
       <member refid="classpcg__extras_1_1uint__x4_1ab06b4814f261d8a463217e69af1ebd16" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator uint_missing_t</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a477ecc4d6dec66167afb3f0142c891a6" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator!=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1ac21f284eebd8b9e942a19e1669df58f8" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator%=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a8353658d9076a9e7a8bc65bd0c8a9233" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator*</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1ab25f5a7dad13a3d283794318b9e704ac" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&amp;</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a3bfb86a780b1edddc1d1d9ccfc7ed87c" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&amp;=</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1ae7e91698ff0beb62e5856dbfccc2baa3" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator*</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a14525e6f7de5af0210f2a26776049db2" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator*=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a8f3cdb7a48eccdd783c8b7533a059f58" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator+</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a36010580e7a028969c8075c96cb79369" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator+</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a114f68186d734d5e0634b84b25c49d28" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator+=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1ae26f8fcf56d2edcc3f12f0274b5490c1" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator-</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a11185c1e044a7a67d77071aa40c32146" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator-</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1acc92241da9bfb753d857a22b57ce8519" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator-</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1adc0f03f50f95bcc4e9c2a59fec86c7a5" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator-</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a6bf44e478a91469d6ba070aedbdb903d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator-=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1aa007370bae1f86f0a0ef220a78ea14f6" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator/=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1abb7f79fd327df67371b16aef4e24def0" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&lt;</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a21dd7c527e9f35c05f9c5257a6b66009" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&lt;&lt;</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a85e81b89f970926e0d77e2640d0fc81d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&lt;&lt;</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a2c6d11ee717365a1062af80cff7944b0" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&lt;&lt;=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a73f0fd714503876c47aad39b352ae166" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&lt;=</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1aa6eb4a341209bc7cbf02048d5ce8583f" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator==</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a01f63afe553adc192ebbbfc4c473ee3d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&gt;</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a47211ed5d8588c68538455a7c1a2e714" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&gt;=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a730d0a157bd4bc87bc3cd80378ef899a" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&gt;&gt;</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1aff9775496442029c08ff311c41d57fe1" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&gt;&gt;</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a84a578b5e7fe9e94002072c3b6b072fe" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator&gt;&gt;=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1adb048a368f5422b565ea82d05fb1b15e" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator^</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1afd442a51ccfb82488b0be1a82e396789" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator^</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a33a1e710dbe5c269c633cd601dbbd95d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator^=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a74e81a327c63a18471d084545726bec8" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator|</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a7fa84cb80440c1c77f216c6d1882865d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator|</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a65c08acb5cbcf1787a603245adcceb97" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator|=</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a158b063da725371d565a58880d1a7c56" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator~</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1af05c83dd4f680f35916fdf602c02d8bb" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>operator~</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a221d0f7daf2c6a2b33a68cb9514c8c1a" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>trailingzeros</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1abe617c9eaea9579d24c8e72bc32555fa" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_missing_t</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1abfd14459c8de4058d841892f0d206b8c" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_x4</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a0baa6b223acc2977d01f3176a19dd4b9" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_x4</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a81b94f129c687f354a62e6b3036501d6" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_x4</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a0c147c557e90caa420eef3e48c22563c" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_x4</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a8666a6fab573bba79c7f6c63574faf82" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>uint_x4</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a73aba28aa323e0fe97e523b7dc7d217d" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v0</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a08e930db22fa71047efe218e3f5b31f7" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v01</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a40b585610b37fed799966aa5f7cea783" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v1</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a0a4c624284c5144369ef05666def13e0" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v2</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1ac9ce494991265b8a72742554b3929ca4" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v23</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1aff10441bc2bd3dcfa67d20ba7031960e" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v3</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1a83cbeedc8e529c660c4a4c26be1a7825" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>w</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1adef809eaf078b30680a2d3aa782cc3e2" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>w</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a54e6f9da6e35d0ef34a7cc597027d586" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>wa</name></member>
     </listofallmembers>
   </compounddef>

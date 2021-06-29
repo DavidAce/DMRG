@@ -1,23 +1,23 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespaceqm_1_1time_evolution" kind="namespace" language="C++">
     <compoundname>qm::timeEvolution</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a78103280aef02f54e28b7d670f5d6837" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
-        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_1st_order</definition>
-        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1aadfa0528fb8a58423c6a2143d1792eec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; Scalar, 2 &gt; &gt; qm::timeEvolution::Suzuki_Trotter_1st_order</definition>
+        <argsstring>(cplx delta_t, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_evn, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_odd)</argsstring>
         <name>Suzuki_Trotter_1st_order</name>
         <param>
-          <type>const std::complex&lt; double &gt;</type>
-          <declname>t</declname>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
+          <declname>delta_t</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_evn</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_odd</declname>
         </param>
         <briefdescription>
@@ -26,23 +26,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="92" bodyend="95"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="158" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="158" bodyend="165" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="55" declcolumn="28"/>
       </memberdef>
-      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a083310714a315dc80200b5c530789dde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
-        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_2nd_order</definition>
-        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a55e2eb4d85469d056085a65dea13ed2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; Scalar, 2 &gt; &gt; qm::timeEvolution::Suzuki_Trotter_2nd_order</definition>
+        <argsstring>(cplx delta_t, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_evn, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_odd)</argsstring>
         <name>Suzuki_Trotter_2nd_order</name>
         <param>
-          <type>const std::complex&lt; double &gt;</type>
-          <declname>t</declname>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
+          <declname>delta_t</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_evn</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_odd</declname>
         </param>
         <briefdescription>
@@ -51,104 +51,126 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="97" bodyend="101"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="167" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="167" bodyend="172" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="56" declcolumn="28"/>
       </memberdef>
-      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a6f07f0c3a2181990bb149a1716a7bad5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
-        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_4th_order</definition>
-        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a2b1e02afa3fbfa5438924bc310504c94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; Scalar, 2 &gt; &gt; qm::timeEvolution::Suzuki_Trotter_4th_order</definition>
+        <argsstring>(cplx delta_t, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_evn, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_odd)</argsstring>
         <name>Suzuki_Trotter_4th_order</name>
         <param>
-          <type>const std::complex&lt; double &gt;</type>
-          <declname>t</declname>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
+          <declname>delta_t</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_evn</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_odd</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Implementation based on Janke, W., &amp; Sauer, T. (1992). Properties of higher-order Trotter formulas. Physics Letters A, 165(3), 199–205. <ulink url="https://doi.org/10.1016/0375-9601(92)90035-K">https://doi.org/10.1016/0375-9601(92)90035-K</ulink> </para>        </detaileddescription>
+<para>Implementation based on Janke, W., &amp; Sauer, T. (1992). Properties of higher-order Trotter formulas. Physics Letters A, 165(3), 199–205. <ulink url="https://doi.org/10.1016/0375-9601(92)90035-K">https://doi.org/10.1016/0375-9601(92)90035-K</ulink> </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="104" bodyend="130"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="174" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="174" bodyend="201" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="57" declcolumn="28"/>
       </memberdef>
-      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a33cd64100e493c77493f03371d1f0ca4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt;</type>
-        <definition>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt; qm::timeEvolution::get_2site_evolution_gates</definition>
-        <argsstring>(const std::complex&lt; double &gt; t, const int susuki_trotter_order, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
-        <name>get_2site_evolution_gates</name>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a671e7d2d833e4ec7f65278095086ac14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; Scalar, 2 &gt; &gt; qm::timeEvolution::get_twosite_time_evolution_operators</definition>
+        <argsstring>(cplx delta_t, size_t susuki_trotter_order, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_evn, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_odd)</argsstring>
+        <name>get_twosite_time_evolution_operators</name>
         <param>
-          <type>const std::complex&lt; double &gt;</type>
-          <declname>t</declname>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
+          <declname>delta_t</declname>
         </param>
         <param>
-          <type>const int</type>
+          <type>size_t</type>
           <declname>susuki_trotter_order</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_evn</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_odd</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3. These gates need to be applied to the MPS one at a time with a swap in between. </para>        </detaileddescription>
+<para>Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3. These gates need to be applied to the MPS one at a time with a swap in between. </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="133" bodyend="150"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="203" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="203" bodyend="215" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="58" declcolumn="28"/>
       </memberdef>
-      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1ac04e5bd4da8ae4c7181588285e4da170" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt;</type>
-        <definition>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt; qm::timeEvolution::compute_G</definition>
-        <argsstring>(const std::complex&lt; double &gt; a, const int susuki_trotter_order, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1ac12526d97e4ec7951d9fef9f7efccc57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; Scalar, 2 &gt; &gt; qm::timeEvolution::compute_G</definition>
+        <argsstring>(cplx a, size_t susuki_trotter_order, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_evn, const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;h_odd)</argsstring>
         <name>compute_G</name>
         <param>
-          <type>const std::complex&lt; double &gt;</type>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
           <declname>a</declname>
         </param>
         <param>
-          <type>const int</type>
+          <type>size_t</type>
           <declname>susuki_trotter_order</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_evn</declname>
         </param>
         <param>
-          <type>const Eigen::MatrixXcd &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
           <declname>h_odd</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns a set of 2-site unitary gates for the time evolution operator. <verbatim>Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
-G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
-Note that G(-a) = G(a)* if  exp(iaM) !
-</verbatim></para><para><verbatim>            0         1
-            |         |
+<para>Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 2 tensor. The legs contain two physical spin indices each G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO. Note that G(-a) = G(a)* if exp(iaM) !</para>
+<para><verbatim>                 0
+                 |
             [ exp(aH) ]
-            |         |
-            2         3
-</verbatim> </para>        </detaileddescription>
+                 |
+                 1
+</verbatim> </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="160" bodyend="175"/>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="217" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="217" bodyend="236" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="59" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a73eddf90559fa5d269512f94bd3b4b80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt;, std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt; &gt;</type>
+        <definition>std::pair&lt; std::vector&lt; qm::Gate &gt;, std::vector&lt; qm::Gate &gt; &gt; qm::timeEvolution::get_time_evolution_gates</definition>
+        <argsstring>(cplx delta_t, const std::vector&lt; qm::Gate &gt; &amp;hams_nsite)</argsstring>
+        <name>get_time_evolution_gates</name>
+        <param>
+          <type><ref refid="namespaceqm_1a7b9394b4ad3ba7d7b39a09e2ef62be32" kindref="member">cplx</ref></type>
+          <declname>delta_t</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref> &gt; &amp;</type>
+          <declname>hams_nsite</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="238" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="238" bodyend="282" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="60" declcolumn="26"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="40" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="54" column="27"/>
   </compounddef>
 </doxygen>

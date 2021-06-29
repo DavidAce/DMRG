@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="classpcg__detail_1_1extended" kind="class" language="C++" prot="public">
     <compoundname>pcg_detail::extended</compoundname>
     <basecompoundref prot="public" virt="non-virtual">baseclass</basecompoundref>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1144" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1144" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="896" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="896" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" prot="public" static="no">
         <type>baseclass::result_type</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1145" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1145" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="897" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="897" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classpcg__detail_1_1extended_1a64baae65f154ad0d1a7bb57cca871d47" prot="public" static="no">
         <type><ref refid="structpcg__detail_1_1inside__out" kindref="compound">inside_out</ref>&lt; extvalclass &gt;</type>
@@ -66,39 +66,39 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1146" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1146" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="898" column="36" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="898" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ab2cfda4b535eb02fa3db2cf3e2ec8a39" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ab2cfda4b535eb02fa3db2cf3e2ec8a39" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr <ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
         <definition>constexpr bitcount_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::rtypebits</definition>
         <argsstring></argsstring>
         <name>rtypebits</name>
-        <initializer>= sizeof(<ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref>)*8</initializer>
+        <initializer>= sizeof(<ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref>) * 8</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1149" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="901" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="901" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ae83fad8d96c53f5cc3f507304497b175" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ae83fad8d96c53f5cc3f507304497b175" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr <ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
         <definition>constexpr bitcount_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::stypebits</definition>
         <argsstring></argsstring>
         <name>stypebits</name>
-        <initializer>= sizeof(<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>)*8</initializer>
+        <initializer>= sizeof(<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>) * 8</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1150" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="902" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="902" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a234c40f44b89a281594e0b229b83c189" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a234c40f44b89a281594e0b229b83c189" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr <ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
         <definition>constexpr bitcount_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_limit_pow2</definition>
         <argsstring></argsstring>
@@ -110,9 +110,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1152" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="904" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="904" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr size_t</type>
         <definition>constexpr size_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</definition>
         <argsstring></argsstring>
@@ -124,9 +124,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1154" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1154" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="906" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="906" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1af742031eb6b211feca341549ca6e197f" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1af742031eb6b211feca341549ca6e197f" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr size_t</type>
         <definition>constexpr size_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_shift</definition>
         <argsstring></argsstring>
@@ -138,39 +138,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1155" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1155" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="907" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="907" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a7e868e8d4ae31d7c872b416f85c6184d" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a7e868e8d4ae31d7c872b416f85c6184d" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr <ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref></type>
         <definition>constexpr state_type pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_mask</definition>
         <argsstring></argsstring>
         <name>table_mask</name>
-        <initializer>=
-        (<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(1U) &lt;&lt; table_pow2) - state_type(1U)</initializer>
+        <initializer>= (<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(1U) &lt;&lt; table_pow2) - <ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(1U)</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1156" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1156" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="908" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="908" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr bool</type>
         <definition>constexpr bool pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tick</definition>
         <argsstring></argsstring>
         <name>may_tick</name>
-        <initializer>=
-        (advance_pow2 &lt; <ref refid="classpcg__detail_1_1extended_1ae83fad8d96c53f5cc3f507304497b175" kindref="member">stypebits</ref>) &amp;&amp; (advance_pow2 &lt; <ref refid="classpcg__detail_1_1extended_1a234c40f44b89a281594e0b229b83c189" kindref="member">tick_limit_pow2</ref>)</initializer>
+        <initializer>= (advance_pow2 &lt; <ref refid="classpcg__detail_1_1extended_1ae83fad8d96c53f5cc3f507304497b175" kindref="member">stypebits</ref>) &amp;&amp; (advance_pow2 &lt; <ref refid="classpcg__detail_1_1extended_1a234c40f44b89a281594e0b229b83c189" kindref="member">tick_limit_pow2</ref>)</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1159" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1159" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="910" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="910" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a50f15c19d43998b80ad7c9eeb270920e" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a50f15c19d43998b80ad7c9eeb270920e" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr size_t</type>
         <definition>constexpr size_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_shift</definition>
         <argsstring></argsstring>
@@ -182,27 +180,25 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1161" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1161" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="911" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="911" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr <ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref></type>
         <definition>constexpr state_type pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_mask</definition>
         <argsstring></argsstring>
         <name>tick_mask</name>
-        <initializer>=
-        <ref refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" kindref="member">may_tick</ref> ? <ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(
-                       (uint64_t(1) &lt;&lt; (advance_pow2*<ref refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" kindref="member">may_tick</ref>)) - 1)
-                                        
-                 : ~<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(0U)</initializer>
+        <initializer>= <ref refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" kindref="member">may_tick</ref> ? <ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>((uint64_t(1) &lt;&lt; (advance_pow2 * <ref refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" kindref="member">may_tick</ref>)) - 1)
+                                                         
+                                                          : ~<ref refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" kindref="member">state_type</ref>(0U)</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1162" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1162" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="912" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="912" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" prot="private" static="yes" mutable="no">
+      <memberdef kind="variable" id="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr bool</type>
         <definition>constexpr bool pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tock</definition>
         <argsstring></argsstring>
@@ -214,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1168" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1168" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="916" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="916" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -229,7 +225,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1170" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1170" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="918" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="918" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -244,9 +240,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1172" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1435" bodyend="1445"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="920" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1091" bodyend="1098"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a0d81db8641a6144e45738018a89f3850" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="pcg__extras_8hpp_1ad25d06434a609db5310c4b4e11f48040" kindref="member">PCG_NOINLINE</ref> void</type>
@@ -268,9 +264,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1174" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1450" bodyend="1472"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="922" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1101" bodyend="1119"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a36486b3339ae8242e65ea3218d3e5e26" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref> &amp;</type>
@@ -283,14 +279,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1176" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1176" bodyend="1198"/>
-        <references refid="classpcg__detail_1_1extended_1a7e868e8d4ae31d7c872b416f85c6184d" compoundref="pcg__random_8hpp" startline="1156">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_mask</references>
-        <references refid="classpcg__detail_1_1extended_1af742031eb6b211feca341549ca6e197f" compoundref="pcg__random_8hpp" startline="1155">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_shift</references>
-        <references refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" compoundref="pcg__random_8hpp" startline="1159">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tick</references>
-        <references refid="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" compoundref="pcg__random_8hpp" startline="1162">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_mask</references>
-        <references refid="classpcg__detail_1_1extended_1a50f15c19d43998b80ad7c9eeb270920e" compoundref="pcg__random_8hpp" startline="1161">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_shift</references>
-        <references refid="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" compoundref="pcg__random_8hpp" startline="1168">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tock</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="924" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="924" bodyend="941"/>
+        <references refid="classpcg__detail_1_1extended_1a7e868e8d4ae31d7c872b416f85c6184d" compoundref="pcg__random_8hpp" startline="908">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_mask</references>
+        <references refid="classpcg__detail_1_1extended_1af742031eb6b211feca341549ca6e197f" compoundref="pcg__random_8hpp" startline="907">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_shift</references>
+        <references refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" compoundref="pcg__random_8hpp" startline="910">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tick</references>
+        <references refid="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" compoundref="pcg__random_8hpp" startline="912">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_mask</references>
+        <references refid="classpcg__detail_1_1extended_1a50f15c19d43998b80ad7c9eeb270920e" compoundref="pcg__random_8hpp" startline="911">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_shift</references>
+        <references refid="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" compoundref="pcg__random_8hpp" startline="916">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tock</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -303,9 +299,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1278" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1335" bodyend="1351"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="989" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1023" bodyend="1036"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -322,13 +318,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1279" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1326" bodyend="1331"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="990" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1018" bodyend="1020"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="classpcg__detail_1_1extended_1a87de70733c1c7e5b628834eff39c6819" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__detail_1_1extended_1a87de70733c1c7e5b628834eff39c6819" prot="public" static="yes" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>constexpr size_t</type>
         <definition>static constexpr size_t pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::period_pow2</definition>
         <argsstring>()</argsstring>
@@ -339,8 +335,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1201" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1201" bodyend="1204"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="944" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="944" bodyend="944"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -358,8 +354,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1206" bodyend="1211"/>
-        <references refid="classpcg__detail_1_1extended_1a36486b3339ae8242e65ea3218d3e5e26" compoundref="pcg__random_8hpp" startline="1176" endline="1198">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::get_extended_value</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="946" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="946" bodyend="950"/>
+        <references refid="classpcg__detail_1_1extended_1a36486b3339ae8242e65ea3218d3e5e26" compoundref="pcg__random_8hpp" startline="924" endline="941">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::get_extended_value</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a09db52d110feeaa594ab04209685c2d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref></type>
@@ -376,7 +372,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1213" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1213" bodyend="1216"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="952" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="952" bodyend="952"/>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a7f59d13e5255386164b06619a1e384d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -393,8 +389,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1218" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1218" bodyend="1223"/>
-        <references refid="classpcg__detail_1_1extended_1a36486b3339ae8242e65ea3218d3e5e26" compoundref="pcg__random_8hpp" startline="1176" endline="1198">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::get_extended_value</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="954" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="954" bodyend="958"/>
+        <references refid="classpcg__detail_1_1extended_1a36486b3339ae8242e65ea3218d3e5e26" compoundref="pcg__random_8hpp" startline="924" endline="941">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::get_extended_value</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1ad917a2241597772e81668695c18ab2bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -416,10 +412,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1225" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1476" bodyend="1508"/>
-        <references refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" compoundref="pcg__random_8hpp" startline="1159">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tick</references>
-        <references refid="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" compoundref="pcg__random_8hpp" startline="1162">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_mask</references>
-        <references refid="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" compoundref="pcg__random_8hpp" startline="1168">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tock</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="960" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1122" bodyend="1143"/>
+        <references refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" compoundref="pcg__random_8hpp" startline="910">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tick</references>
+        <references refid="classpcg__detail_1_1extended_1adb17aa0ed60443a8c422e774c2356eb9" compoundref="pcg__random_8hpp" startline="912">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::tick_mask</references>
+        <references refid="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" compoundref="pcg__random_8hpp" startline="916">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::may_tock</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a484d1b7cb53ef387153c321c96ec0deb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -436,8 +432,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1227" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1227" bodyend="1230"/>
-        <references refid="classpcg__detail_1_1extended_1ad917a2241597772e81668695c18ab2bb" compoundref="pcg__random_8hpp" startline="1476" endline="1508">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::advance</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="962" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="962" bodyend="962"/>
+        <references refid="classpcg__detail_1_1extended_1ad917a2241597772e81668695c18ab2bb" compoundref="pcg__random_8hpp" startline="1122" endline="1143">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::advance</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a2bdc8e8e19d8f0fe6d948aca502e12f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -454,8 +450,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1232" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1232" bodyend="1236"/>
-        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1326" endline="1331">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="964" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="964" bodyend="964"/>
+        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1018" endline="1020">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a95e71dcfcfaa9d25fdf0124eb6cbc2a9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -476,8 +472,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1238" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1238" bodyend="1242"/>
-        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1326" endline="1331">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="966" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="966" bodyend="966"/>
+        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1018" endline="1020">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a77f7e9f6c07fbc1495eba30eb6ef6be0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -508,8 +504,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1248" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1248" bodyend="1253"/>
-        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1326" endline="1331">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="972" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="972" bodyend="974"/>
+        <references refid="classpcg__detail_1_1extended_1abc0720b51a3a438758f73fd305686c42" compoundref="pcg__random_8hpp" startline="1018" endline="1020">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::datainit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a7c7bf80c696f2c9da304cf818667e38b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -522,8 +518,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1255" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1255" bodyend="1259"/>
-        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1335" endline="1351">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="976" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="976" bodyend="976"/>
+        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1023" endline="1036">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a5cc1d5ac70e34632d03684ae175f1b3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -540,8 +536,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1261" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1261" bodyend="1265"/>
-        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1335" endline="1351">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="978" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="978" bodyend="978"/>
+        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1023" endline="1036">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1a8efbc38f19ebf1813617245993e0112a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -568,8 +564,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1271" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1271" bodyend="1275"/>
-        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1335" endline="1351">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="984" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="984" bodyend="986"/>
+        <references refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" compoundref="pcg__random_8hpp" startline="1023" endline="1036">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::selfinit</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1extended_1ad27409604764df608c71f5c34e40074e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -578,7 +574,7 @@
           </param>
           <param>
             <type>typename</type>
-            <defval>typename std::enable_if&lt;           !std::is_convertible&lt;SeedSeq, <ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref>&gt;::value        &amp;&amp; !std::is_convertible&lt;SeedSeq, <ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&gt;::value&gt;::type</defval>
+            <defval>typename std::enable_if&lt;!std::is_convertible&lt;SeedSeq, <ref refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" kindref="member">result_type</ref>&gt;::value &amp;&amp; !std::is_convertible&lt;SeedSeq, <ref refid="classpcg__detail_1_1extended" kindref="compound">extended</ref>&gt;::value&gt;::type</defval>
           </param>
         </templateparamlist>
         <type></type>
@@ -595,11 +591,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1286" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1286" bodyend="1290"/>
-        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="1154">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
-        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="1170">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="995" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="995" bodyend="997"/>
+        <references refid="classpcg__detail_1_1extended_1ab620b21cdcfaa30cf3e73ca8ac2e5041" compoundref="pcg__random_8hpp" startline="906">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::table_size</references>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
-      <memberdef kind="function" id="classpcg__detail_1_1extended_1af67216cce3a9091fea149dce8fd3cab9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classpcg__detail_1_1extended_1acec73d459c8f941f2916649c2d2a219f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename...</type>
@@ -609,7 +605,7 @@
         </templateparamlist>
         <type>void</type>
         <definition>void pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::seed</definition>
-        <argsstring>(Args &amp;&amp;... args)</argsstring>
+        <argsstring>(Args &amp;&amp;...args)</argsstring>
         <name>seed</name>
         <param>
           <type>Args &amp;&amp;...</type>
@@ -621,7 +617,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1293" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1293" bodyend="1296"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1000" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1000" bodyend="1002"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
@@ -665,9 +661,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1300" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1005" column="21"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__detail_1_1extended_1a1889092c48e8eae1cc937197c6d57176" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__detail_1_1extended_1a6fb66eb95a2d0ba64773c48da2f895b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -698,7 +694,7 @@
           </param>
         </templateparamlist>
         <type>friend std::basic_ostream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_ostream&lt;CharT,Traits&gt;&amp; operator&lt;&lt;</definition>
+        <definition>std::basic_ostream&lt;CharT, Traits&gt;&amp; operator&lt;&lt;</definition>
         <argsstring>(std::basic_ostream&lt; CharT, Traits &gt; &amp;out, const extended&lt; table_pow2_, advance_pow2_, baseclass_, extvalclass_, kdd_ &gt; &amp;)</argsstring>
         <name>operator&lt;&lt;</name>
         <param>
@@ -714,9 +710,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1308" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1009" column="9"/>
       </memberdef>
-      <memberdef kind="friend" id="classpcg__detail_1_1extended_1a4187839cf940702c776e0bcb7c3dfdf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classpcg__detail_1_1extended_1a9c201e811f3ea0f302e755d3464cab06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename CharT</type>
@@ -747,7 +743,7 @@
           </param>
         </templateparamlist>
         <type>friend std::basic_istream&lt; CharT, Traits &gt; &amp;</type>
-        <definition>std::basic_istream&lt;CharT,Traits&gt;&amp; operator&gt;&gt;</definition>
+        <definition>std::basic_istream&lt;CharT, Traits&gt;&amp; operator&gt;&gt;</definition>
         <argsstring>(std::basic_istream&lt; CharT, Traits &gt; &amp;in, extended&lt; table_pow2_, advance_pow2_, baseclass_, extvalclass_, kdd_ &gt; &amp;)</argsstring>
         <name>operator&gt;&gt;</name>
         <param>
@@ -763,7 +759,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1317" column="1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1013" column="35"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -771,28 +767,28 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="376">
+      <node id="2">
         <label>baseclass</label>
       </node>
-      <node id="375">
+      <node id="1">
         <label>pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;</label>
         <link refid="classpcg__detail_1_1extended"/>
-        <childnode refid="376" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="378">
+      <node id="2">
         <label>baseclass</label>
       </node>
-      <node id="377">
+      <node id="1">
         <label>pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;</label>
         <link refid="classpcg__detail_1_1extended"/>
-        <childnode refid="378" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1142" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1142" bodyend="1321"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="894" column="36" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="894" bodyend="1015"/>
     <listofallmembers>
       <member refid="classpcg__detail_1_1extended_1ac6ce75937526e0003b0d46ec9e90251e" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>__attribute__</name></member>
       <member refid="classpcg__detail_1_1extended_1ad917a2241597772e81668695c18ab2bb" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>advance</name></member>
@@ -813,13 +809,13 @@
       <member refid="classpcg__detail_1_1extended_1ad0d69e4199fa8fc3e368d15007b92773" prot="private" virt="non-virtual"><scope>pcg_detail::extended</scope><name>may_tick</name></member>
       <member refid="classpcg__detail_1_1extended_1a25ebcf79c66b6c892141b5891c7a5c76" prot="private" virt="non-virtual"><scope>pcg_detail::extended</scope><name>may_tock</name></member>
       <member refid="classpcg__detail_1_1extended_1a09db52d110feeaa594ab04209685c2d8" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator()</name></member>
-      <member refid="classpcg__detail_1_1extended_1a1889092c48e8eae1cc937197c6d57176" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator&lt;&lt;</name></member>
+      <member refid="classpcg__detail_1_1extended_1a6fb66eb95a2d0ba64773c48da2f895b0" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator&lt;&lt;</name></member>
       <member refid="classpcg__detail_1_1extended_1a40929ecf1de81eaea048b61014233b80" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator==</name></member>
-      <member refid="classpcg__detail_1_1extended_1a4187839cf940702c776e0bcb7c3dfdf2" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator&gt;&gt;</name></member>
+      <member refid="classpcg__detail_1_1extended_1a9c201e811f3ea0f302e755d3464cab06" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>operator&gt;&gt;</name></member>
       <member refid="classpcg__detail_1_1extended_1a87de70733c1c7e5b628834eff39c6819" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>period_pow2</name></member>
       <member refid="classpcg__detail_1_1extended_1ad4e11342d5bc82d54ad61fbc7bf9330c" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>result_type</name></member>
       <member refid="classpcg__detail_1_1extended_1ab2cfda4b535eb02fa3db2cf3e2ec8a39" prot="private" virt="non-virtual"><scope>pcg_detail::extended</scope><name>rtypebits</name></member>
-      <member refid="classpcg__detail_1_1extended_1af67216cce3a9091fea149dce8fd3cab9" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>seed</name></member>
+      <member refid="classpcg__detail_1_1extended_1acec73d459c8f941f2916649c2d2a219f" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>seed</name></member>
       <member refid="classpcg__detail_1_1extended_1acbfa117fc73c2405d0c73fd5ea2f8d2b" prot="private" virt="non-virtual"><scope>pcg_detail::extended</scope><name>selfinit</name></member>
       <member refid="classpcg__detail_1_1extended_1a7f59d13e5255386164b06619a1e384d3" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>set</name></member>
       <member refid="classpcg__detail_1_1extended_1af07d941ef553f1871d64a361ead2e871" prot="public" virt="non-virtual"><scope>pcg_detail::extended</scope><name>state_type</name></member>

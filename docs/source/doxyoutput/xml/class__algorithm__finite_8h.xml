@@ -1,144 +1,238 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="class__algorithm__finite_8h" kind="file" language="C++">
     <compoundname>class_algorithm_finite.h</compoundname>
     <includes refid="class__algorithm__base_8h" local="no">algorithms/class_algorithm_base.h</includes>
-    <includedby refid="class__algorithm__finite_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</includedby>
-    <includedby refid="class__f_d_m_r_g_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.h</includedby>
-    <includedby refid="class__x_d_m_r_g_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.h</includedby>
+    <includes refid="class__tensors__finite_8h" local="no">tensors/class_tensors_finite.h</includes>
+    <includedby refid="class__algorithm__finite_8cpp" local="yes">/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp</includedby>
+    <includedby refid="class__fdmrg_8h" local="yes">/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.h</includedby>
+    <includedby refid="class__flbit_8h" local="yes">/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.h</includedby>
+    <includedby refid="class__xdmrg_8h" local="yes">/home/david/GitProjects/DMRG++/source/algorithms/class_xdmrg.h</includedby>
     <incdepgraph>
-      <node id="123">
-        <label>list</label>
+      <node id="18">
+        <label>limits</label>
       </node>
-      <node id="117">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h</label>
-        <link refid="class__algorithm__finite_8h"/>
-        <childnode refid="118" relation="include">
+      <node id="14">
+        <label>tensors/class_tensors_finite.h</label>
+        <link refid="class__tensors__finite_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
         </childnode>
       </node>
-      <node id="129">
+      <node id="20">
+        <label>Eigen/src/Core/util/Constants.h</label>
+      </node>
+      <node id="8">
+        <label>stdexcept</label>
+      </node>
+      <node id="7">
+        <label>numeric</label>
+      </node>
+      <node id="17">
         <label>string</label>
       </node>
-      <node id="132">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="124">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="125" relation="include">
+      <node id="25">
+        <label>measure/tensors_measure_finite.h</label>
+        <link refid="tensors__measure__finite_8h"/>
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="126" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
-      </node>
-      <node id="120">
-        <label>map</label>
-      </node>
-      <node id="128">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="119" relation="include">
-        </childnode>
-        <childnode refid="129" relation="include">
-        </childnode>
-        <childnode refid="126" relation="include">
-        </childnode>
-        <childnode refid="121" relation="include">
-        </childnode>
-        <childnode refid="130" relation="include">
-        </childnode>
-        <childnode refid="131" relation="include">
-        </childnode>
-        <childnode refid="132" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
       </node>
-      <node id="127">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
+      <node id="26">
+        <label>tensors/edges/class_env_pair.h</label>
+        <link refid="class__env__pair_8h"/>
       </node>
-      <node id="121">
+      <node id="23">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorForwardDeclarations.h</label>
+      </node>
+      <node id="27">
+        <label>math/svd/settings.h</label>
+        <link refid="svd_2settings_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>unsupported/Eigen/CXX11/src/Tensor/TensorMacros.h</label>
+      </node>
+      <node id="28">
+        <label>fmt/core.h</label>
+      </node>
+      <node id="9">
+        <label>string_view</label>
+      </node>
+      <node id="13">
+        <label>optional</label>
+      </node>
+      <node id="11">
         <label>vector</label>
       </node>
-      <node id="118">
-        <label>algorithms/class_algorithm_base.h</label>
-        <link refid="class__algorithm__base_8h"/>
-        <childnode refid="119" relation="include">
+      <node id="16">
+        <label>general/eigen_tensor_fwd_decl.h</label>
+        <link refid="eigen__tensor__fwd__decl_8h"/>
+        <childnode refid="17" relation="include">
         </childnode>
-        <childnode refid="120" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
-        <childnode refid="121" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="122" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
-        <childnode refid="123" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
-        <childnode refid="124" relation="include">
+        <childnode refid="21" relation="include">
         </childnode>
-        <childnode refid="127" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
-        <childnode refid="128" relation="include">
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
         </childnode>
       </node>
-      <node id="130">
+      <node id="15">
         <label>array</label>
       </node>
-      <node id="131">
-        <label>hdf5.h</label>
+      <node id="21">
+        <label>Eigen/src/Core/util/Meta.h</label>
       </node>
-      <node id="126">
-        <label>iostream</label>
+      <node id="22">
+        <label>Eigen/src/Core/util/ForwardDeclarations.h</label>
       </node>
-      <node id="125">
-        <label>chrono</label>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h</label>
+        <link refid="class__algorithm__finite_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
       </node>
-      <node id="122">
+      <node id="5">
+        <label>cstddef</label>
+      </node>
+      <node id="19">
+        <label>Eigen/src/Core/util/Macros.h</label>
+      </node>
+      <node id="2">
+        <label>algorithms/class_algorithm_base.h</label>
+        <link refid="class__algorithm__base_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
         <label>complex</label>
       </node>
-      <node id="119">
+      <node id="12">
         <label>memory</label>
+      </node>
+      <node id="6">
+        <label>config/enums.h</label>
+        <link refid="config_2enums_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>algorithms/class_algorithm_status.h</label>
+        <link refid="class__algorithm__status_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="137">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
-        <link refid="class__f_d_m_r_g_8cpp"/>
+      <node id="6">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_xdmrg.cpp</label>
+        <link refid="class__xdmrg_8cpp"/>
       </node>
-      <node id="133">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h</label>
-        <link refid="class__algorithm__finite_8h"/>
-        <childnode refid="134" relation="include">
-        </childnode>
-        <childnode refid="135" relation="include">
-        </childnode>
-        <childnode refid="138" relation="include">
-        </childnode>
-      </node>
-      <node id="135">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.h</label>
-        <link refid="class__f_d_m_r_g_8h"/>
-        <childnode refid="136" relation="include">
-        </childnode>
-        <childnode refid="137" relation="include">
-        </childnode>
-      </node>
-      <node id="134">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
-        <link refid="class__algorithm__finite_8cpp"/>
-      </node>
-      <node id="139">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="136">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+      <node id="4">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="138">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.h</label>
-        <link refid="class__x_d_m_r_g_8h"/>
-        <childnode refid="136" relation="include">
+      <node id="5">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.cpp</label>
+        <link refid="class__fdmrg_8cpp"/>
+      </node>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h</label>
+        <link refid="class__algorithm__finite_8h"/>
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="139" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.h</label>
+        <link refid="class__fdmrg_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.h</label>
+        <link refid="class__flbit_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_xdmrg.h</label>
+        <link refid="class__xdmrg_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="8">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.cpp</label>
+        <link refid="class__flbit_8cpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classclass__algorithm__finite" prot="public">class_algorithm_finite</innerclass>
@@ -154,79 +248,93 @@
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__base_8h" kindref="compound">algorithms/class_algorithm_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__measurements__finite" kindref="compound">class_h5table_measurements_finite</ref>;</highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref>;</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tensors__finite_8h" kindref="compound">tensors/class_tensors_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__model__finite" kindref="compound">class_model_finite</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__edges__finite" kindref="compound">class_edges_finite</ref>;</highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight></codeline>
-<codeline lineno="13" refid="classclass__algorithm__finite" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__algorithm__finite" kindref="compound">class_algorithm_finite</ref>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base" kindref="compound">class_algorithm_base</ref><sp/>{</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>;</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a400c889ba19892c299f1ae049d3a07bb" kindref="member">class_algorithm_finite</ref>(</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/><ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>,</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8" kindref="member">num_sites</ref></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Tables</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="25" refid="classclass__algorithm__finite_1a09b6d44725ae3d32093c37580b59626d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;class_h5table_buffer&lt;class_h5table_measurements_finite&gt;&gt;<sp/><sp/><ref refid="classclass__algorithm__finite_1a09b6d44725ae3d32093c37580b59626d" kindref="member">h5tbuf_measurements</ref>;<sp/></highlight><highlight class="comment">//Written<sp/>every<sp/>sweep</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//MPS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29" refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;class_state_finite&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1ac14b36df7eb86c0a8ccb05dec4c0eec9" kindref="member">state</ref>;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::list&lt;std::unique_ptr&lt;class_state_finite&gt;&gt;<sp/>state_champions;<sp/>//<sp/>We<sp/>keep<sp/>the<sp/>best<sp/>from<sp/>each<sp/>sweep</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::list&lt;class_state_finite&gt;<sp/>state_champions;<sp/>//<sp/>We<sp/>keep<sp/>the<sp/>best<sp/>from<sp/>each<sp/>sweep</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>What<sp/>happens<sp/>when<sp/>stuck<sp/>this<sp/>many<sp/>iterations:</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>1:<sp/>direct,<sp/>2:<sp/>subspace,<sp/>2:<sp/>subspace,<sp/>4:<sp/>update<sp/>bond<sp/>dim<sp/>if<sp/>possile,<sp/>else<sp/>stop</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34" refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" kindref="member">max_stuck_iters</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>4;<sp/></highlight><highlight class="comment">//<sp/>If<sp/>stuck<sp/>for<sp/>this<sp/>many<sp/>sweeps<sp/>-&gt;<sp/>stop<sp/>simulation</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="35" refid="classclass__algorithm__finite_1ad171a763b608bcfe1054ce56bf5ea7d2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1ad171a763b608bcfe1054ce56bf5ea7d2" kindref="member">min_stuck_iters</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;<sp/></highlight><highlight class="comment">//<sp/>If<sp/>stuck<sp/>for<sp/>this<sp/>many<sp/>sweeps<sp/>-&gt;<sp/>do<sp/>subspace<sp/>instead<sp/>of<sp/>direct</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//What<sp/>happens<sp/>when<sp/>saturated<sp/>this<sp/>many<sp/>iterations</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="37" refid="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" kindref="member">min_saturation_iters</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;<sp/></highlight><highlight class="comment">//<sp/>If<sp/>both<sp/>var<sp/>and<sp/>ent<sp/>saturated<sp/><sp/>this<sp/>long<sp/>-&gt;<sp/>got_stuck:<sp/>true</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="38" refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" kindref="member">max_saturation_iters</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>3;<sp/></highlight><highlight class="comment">//<sp/>If<sp/>either<sp/>var<sp/>or<sp/>ent<sp/>saturated<sp/>this<sp/>long<sp/>-&gt;<sp/>got_stuck:<sp/>true</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="39" refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" kindref="member">has_projected</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a0ce48333412bf3d6ee639d09c46e8a51" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1aef508b162680eadb951cf3811642fce9" kindref="member">run_preprocessing</ref>();</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a37993b5dd8c0999078d23f699d533efc" kindref="member">run_postprocessing</ref>();</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a54acaecd0069e1c586e060cdfe41c67a" kindref="member">single_DMRG_step</ref>(std::string<sp/>ritz);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1ab10abda24e7005f8b35a2d05e9cc7921" kindref="member">store_wave_function</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8dcbb27105c5e5623050c545d8b5f3cf" kindref="member">move_center_point</ref>();</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1af95402763a137d45e2b25ceecc9252af" kindref="member">update_bond_dimension_limit</ref>(std::optional&lt;long&gt;<sp/>tmp_bond_limit<sp/>=<sp/>std::nullopt)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a453b5c2fb7cbbce1e3572259bc81c7d8" kindref="member">clear_saturation_status</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>override;</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a52ad711d5cc01fa67e7db4190d748ffb" kindref="member">reset_to_random_state</ref>(const<sp/><ref refid="namespacestd" kindref="compound">std</ref>::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>parity_sector<sp/>=<sp/>&quot;random&quot;,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref><sp/>=<sp/>-1)<sp/>final;</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a56fa115bbb861cb586ba78ef0624978b" kindref="member">write_state</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1aa96d6f71f47d67fe96153659fc98b677" kindref="member">write_measurements</ref><sp/>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a586a8ac4f8036c870b826485a42bd6d8" kindref="member">write_sim_status</ref><sp/><sp/><sp/>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1ab5734a8b4a609be5f402b87bae2c4f64" kindref="member">write_profiling</ref><sp/><sp/><sp/><sp/>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a6383a637d4b518f378b1d666d50c6206" kindref="member">copy_from_tmp</ref><sp/><sp/><sp/><sp/><sp/><sp/>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1ac996a89d34ba9c9323e04c8e1fad54e2" kindref="member">print_status_update</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725" kindref="member">print_status_full</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1adb9ddcca8ca3a07a687c1abd370dec4a" kindref="member">check_convergence_variance</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8fe25d66a89a7ca074476f410c62524c" kindref="member">check_convergence_entg_entropy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a00b510706001a64633d113f6ec212e6a" kindref="member">write_projection</ref>(const<sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state_projected,<sp/><ref refid="namespacestd" kindref="compound">std</ref>::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>parity_sector);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::list&lt;bool&gt;<sp/><sp/><sp/>B_mpo_vec;<sp/>//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="67" refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" kindref="member">V_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>variances</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="68" refid="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1aaf142efbc8a5964f4741510ab7028c91" kindref="member">X_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>moves<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>V_mpo_slope<sp/>=<sp/>0;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="70" refid="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" kindref="member">V_mpo_slopes</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>variance<sp/>slopes</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::vector&lt;std::list&lt;bool&gt;<sp/><sp/>&gt;<sp/>BS_mat;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="73" refid="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::vector&lt;<ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;&gt;<sp/><ref refid="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" kindref="member">S_mat</ref>;</highlight></codeline>
-<codeline lineno="74" refid="classclass__algorithm__finite_1a3907217095a878d781f55a6771b9c0ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::vector&lt;<ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a3907217095a878d781f55a6771b9c0ca" kindref="member">X_mat</ref>;</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>S_slope<sp/>=<sp/>0;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="76" refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" kindref="member">S_slopes</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>variance<sp/>slopes</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>class<sp/>h5pp_table_measurements_finite;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="classclass__algorithm__finite" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__algorithm__finite" kindref="compound">class_algorithm_finite</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base" kindref="compound">class_algorithm_base</ref><sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a82a008615f845f5ad5a40e25f5abc671" kindref="member">class_algorithm_finite</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,<sp/><ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref><sp/><ref refid="classclass__algorithm__base_1a4c3f79ef6e69fe89a7e5b6d1f3ad3f34" kindref="member">algo_type</ref>);</highlight></codeline>
+<codeline lineno="19" refid="classclass__algorithm__finite_1a5dd8e3c8c4c49db67834c08b02dfea77" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tensors__finite" kindref="compound">class_tensors_finite</ref><sp/><ref refid="classclass__algorithm__finite_1a5dd8e3c8c4c49db67834c08b02dfea77" kindref="member">tensors</ref>;<sp/></highlight><highlight class="comment">//<sp/>State,<sp/>model<sp/>and<sp/>edges</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="classclass__algorithm__finite_1a8cd8f956556aebf98f6ed5b35ef1df4a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8cd8f956556aebf98f6ed5b35ef1df4a" kindref="member">excited_state_number</ref><sp/>=<sp/>0;<sp/></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Control<sp/>behavior<sp/>when<sp/>stuck</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a5f272b18fd4eb5fee0f35f231b2dfb89" kindref="member">max_stuck_iters</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>20;<sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>5;<sp/><sp/>/*!&lt;<sp/>If<sp/>stuck<sp/>for<sp/>this<sp/>many<sp/>sweeps<sp/>-&gt;<sp/>stop.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" kindref="member">max_saturation_iters</ref><sp/>=<sp/>100;<sp/><sp/></highlight><highlight class="comment">//<sp/>10;<sp/><sp/>/*!&lt;<sp/>If<sp/>either<sp/>var<sp/>or<sp/>ent<sp/>saturated<sp/>this<sp/>long<sp/>-&gt;<sp/>algorithm<sp/>saturated:<sp/>true<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a72360228d7c045aee8c2ae3b7c7a8a4f" kindref="member">min_saturation_iters</ref><sp/>=<sp/>1;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>1;<sp/><sp/><sp/>/*!&lt;<sp/>Saturated<sp/>at<sp/>least<sp/>this<sp/>many<sp/>iters<sp/>before<sp/>stopping<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="classclass__algorithm__finite_1a0dd164b1d3efdeef2be6febc6f92c583" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a0dd164b1d3efdeef2be6febc6f92c583" kindref="member">min_converged_iters</ref><sp/><sp/>=<sp/>2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="31" refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a72b4aa7bd0e8d16a2a98a13d8770dd58" kindref="member">has_projected</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="32" refid="classclass__algorithm__finite_1a1f1777e94b4f4385bb13f9bef95c61dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a1f1777e94b4f4385bb13f9bef95c61dc" kindref="member">has_expanded</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="33" refid="classclass__algorithm__finite_1afe739ece30be039df7bb6333da5acf39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1afe739ece30be039df7bb6333da5acf39" kindref="member">has_damped</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="34" refid="classclass__algorithm__finite_1a1e63eab967c9d9340d9205c3dc7507ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a1e63eab967c9d9340d9205c3dc7507ce" kindref="member">chi_quench_steps</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="35" refid="classclass__algorithm__finite_1a57bbed424c2236370bd488cc54600f0a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a57bbed424c2236370bd488cc54600f0a" kindref="member">num_chi_quenches</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="36" refid="classclass__algorithm__finite_1a7ccd0bb5100ff67ce4df7c4478bcb319" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a7ccd0bb5100ff67ce4df7c4478bcb319" kindref="member">max_chi_quenches</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="37" refid="classclass__algorithm__finite_1a2adefbd0f1620458a28f24ec0044ed7f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a2adefbd0f1620458a28f24ec0044ed7f" kindref="member">chi_lim_quench_ahead</ref><sp/>=<sp/>32;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="38" refid="classclass__algorithm__finite_1aaf13bc89f3c463a4c9ab5a460f82e874" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1aaf13bc89f3c463a4c9ab5a460f82e874" kindref="member">chi_lim_quench_trail</ref><sp/>=<sp/>32;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="39" refid="classclass__algorithm__finite_1a070190f822e54d4aec142238a47d1f09" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a070190f822e54d4aec142238a47d1f09" kindref="member">num_perturbations</ref><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="40" refid="classclass__algorithm__finite_1a8862acc0cbf67cb0ec5329eafbc7a715" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a8862acc0cbf67cb0ec5329eafbc7a715" kindref="member">max_perturbations</ref><sp/><sp/><sp/><sp/>=<sp/>2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="41" refid="classclass__algorithm__finite_1a48c182668fed94c08ce984956b0ec6c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a48c182668fed94c08ce984956b0ec6c1" kindref="member">perturbation_steps</ref><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="42" refid="classclass__algorithm__finite_1a7810e9c213482dd4863a7d14cb8e0346" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a7810e9c213482dd4863a7d14cb8e0346" kindref="member">damping_steps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="43" refid="classclass__algorithm__finite_1a291b852dab91aa7f869d9c4250dab429" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a291b852dab91aa7f869d9c4250dab429" kindref="member">num_dampings</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="44" refid="classclass__algorithm__finite_1a184e1fc5c38564d1eff775fa9555e562" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a184e1fc5c38564d1eff775fa9555e562" kindref="member">max_dampings</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="45" refid="classclass__algorithm__finite_1a59a18d1613c3d26af1d5a8d39f39bf2e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a59a18d1613c3d26af1d5a8d39f39bf2e" kindref="member">iter_discard</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="46" refid="classclass__algorithm__finite_1ae599a2883b5e576b0b69f03faca28b8c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1ae599a2883b5e576b0b69f03faca28b8c" kindref="member">num_discards</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="47" refid="classclass__algorithm__finite_1ad5f7168d2eec06732eb74e4b97d8805c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1ad5f7168d2eec06732eb74e4b97d8805c" kindref="member">max_discards</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="48" refid="classclass__algorithm__finite_1aaea5faef0f1bcc68820e7f86a77ac82d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1aaea5faef0f1bcc68820e7f86a77ac82d" kindref="member">num_expansion_iters</ref><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="49" refid="classclass__algorithm__finite_1ae154da6dd4bb4836a6577505abed6b25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1ae154da6dd4bb4836a6577505abed6b25" kindref="member">max_expansion_iters</ref><sp/><sp/>=<sp/>16;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="50" refid="classclass__algorithm__finite_1a6a1ae08373b06f01d4b746dd0f7c2e90" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a6a1ae08373b06f01d4b746dd0f7c2e90" kindref="member">max_expansion_alpha</ref><sp/><sp/>=<sp/>0.2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="51" refid="classclass__algorithm__finite_1a9cf692068daac2fb334ada83a0603886" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;double&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a9cf692068daac2fb334ada83a0603886" kindref="member">sub_expansion_alpha</ref><sp/>=<sp/>std::nullopt;<sp/><sp/></highlight></codeline>
+<codeline lineno="52" refid="classclass__algorithm__finite_1af42260924092ccb272c5ca4f700038fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1af42260924092ccb272c5ca4f700038fe" kindref="member">damping_exponents</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="53" refid="classclass__algorithm__finite_1a1a2ed7db66089814ced016d0f93ccd7b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;OptMode&gt;<sp/><sp/><ref refid="classclass__algorithm__finite_1a1a2ed7db66089814ced016d0f93ccd7b" kindref="member">last_optmode</ref><sp/><sp/>=<sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="54" refid="classclass__algorithm__finite_1a7dce1f378997193fffda76e73314db75" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;OptSpace&gt;<sp/><ref refid="classclass__algorithm__finite_1a7dce1f378997193fffda76e73314db75" kindref="member">last_optspace</ref><sp/>=<sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a14fc566b3920b5c8541f776a822fe0a4" kindref="member">run_algorithm</ref>()<sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1ac1b7db3efa95c1240c457eb29825120a" kindref="member">run_preprocessing</ref>()<sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Specific<sp/>for<sp/>each<sp/>algorithm<sp/>type</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a37993b5dd8c0999078d23f699d533efc" kindref="member">run_postprocessing</ref>();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a93360714317e0a3b24af983b007221b4" kindref="member">cfg_store_wave_function</ref>()<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1aa9fc4a0111ae78e0a61e5b97223eda8b" kindref="member">resume</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a449bdbc5c87a4f8bb46509278a1e0688" kindref="member">run_default_task_list</ref>()<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a4f369185f794545116447b1a3a587625" kindref="member">try_projection</ref>(std::optional&lt;std::string&gt;<sp/><ref refid="namespacesettings_1_1strategy_1aa22c188c182105105eb8a3dba1588d23" kindref="member">target_sector</ref><sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a42c3ba8f6917186a93577844aed4392b" kindref="member">try_full_expansion</ref>();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a661ad455699f881c2ff834bbc0388f99" kindref="member">try_discard_small_schmidt</ref>();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a31675464960455f0e8fc7294a8f14c47" kindref="member">try_bond_dimension_quench</ref>();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a92c41533b4b93b564a710bedd3eb98a2" kindref="member">try_hamiltonian_perturbation</ref>();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1afb58057c87ac28cb03296240205ab7d7" kindref="member">try_disorder_damping</ref>();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1aa51f43031831b46cef58fabde7410452" kindref="member">move_center_point</ref>(std::optional&lt;long&gt;<sp/>num_moves<sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a18d4f093525edb51068e78656195370c" kindref="member">reduce_mpo_energy</ref>();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1af9b89cf9cc5921e4fce483944eb0ce15" kindref="member">rebuild_mpo_squared</ref>();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1ad4868cc94f2a7dc1e543fcaf10a79296" kindref="member">update_variance_max_digits</ref>(std::optional&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" kindref="member">energy</ref><sp/>=<sp/>std::nullopt)<sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1af95402763a137d45e2b25ceecc9252af" kindref="member">update_bond_dimension_limit</ref>(std::optional&lt;long&gt;<sp/>tmp_bond_limit<sp/>=<sp/>std::nullopt)<sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a3f9c4aa638fb9ca80033657be16903b8" kindref="member">randomize_model</ref>();</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>()<sp/>final;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a8fa80baac08c61d142ac0114329a1592" kindref="member">clear_convergence_status</ref>()<sp/>override;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__finite_1a39433db5a7d4de5b17d342f8cd6e9be8" kindref="member">randomize_state</ref>(<ref refid="config_2enums_8h_1a06d9333e5541d14a05e83e78d4a07e11" kindref="member">ResetReason</ref><sp/>reason,<sp/><ref refid="config_2enums_8h_1adbe3cea8d0d506925fa70531119e2976" kindref="member">StateInit</ref><sp/>state_init,<sp/>std::optional&lt;<ref refid="config_2enums_8h_1ab9aca94621ab32fee58ebbbd4dbdcc0b" kindref="member">StateInitType</ref>&gt;<sp/>state_type<sp/>=<sp/>std::nullopt,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal">&gt;<sp/>sector<sp/>=<sp/>std::nullopt,<sp/>std::optional&lt;</highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;<sp/>chi_lim<sp/>=<sp/>std::nullopt,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><ref refid="namespacesettings_1_1strategy_1a59f890d5cd99ba257fac12c9ebe361bb" kindref="member">use_eigenspinors</ref><sp/>=<sp/>std::nullopt,<sp/>std::optional&lt;</highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;<sp/><ref refid="namespacesettings_1_1input_1ac26e006d28280b3712305f9e7c39824d" kindref="member">bitfield</ref><sp/>=<sp/>std::nullopt,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="namespacesettings_1_1precision_1a0cc3a40383a3e2795dd38b77a6790872" kindref="member">svd_threshold</ref><sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a24226affd3cb1be61308e79c9d5225b2" kindref="member">write_to_file</ref>(<ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref><sp/>storage_reason<sp/>=<sp/><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref>::<ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a0f15e1247e93ddfa95c008106eb0d22f" kindref="member">CHECKPOINT</ref>,<sp/>std::optional&lt;<ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref>&gt;<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1abedc0dca6f4a94d01bf13c7797680765" kindref="member">copy_file</ref><sp/>=<sp/>std::nullopt)<sp/>override;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a36a983fdccbfe7f72e5bdf81fe06c23d" kindref="member">print_status_update</ref>()<sp/>override;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725" kindref="member">print_status_full</ref>()<sp/>final;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a9e5ff92799e6f46ed6e32d544e59d981" kindref="member">check_convergence_variance</ref>(std::optional&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/>threshold<sp/>=<sp/>std::nullopt,<sp/>std::optional&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/>saturation_sensitivity<sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1aeaabc1b9ca94f6d5bef1462941718687" kindref="member">check_convergence_entg_entropy</ref>(std::optional&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/>saturation_sensitivity<sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8afbac16dc34dd49f2ad7decc965b98a" kindref="member">check_convergence_spin_parity_sector</ref>(const<sp/>std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>&amp;<sp/><ref refid="namespacesettings_1_1strategy_1aa22c188c182105105eb8a3dba1588d23" kindref="member">target_sector</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/>1e-12);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a8acca60239cbdd96b5d36d3d63b0c499" kindref="member">setup_prefix</ref>(const<sp/><ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref><sp/>&amp;storage_reason,<sp/><ref refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071" kindref="member">StorageLevel</ref><sp/>&amp;storage_level,<sp/>const<sp/>std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>&amp;state_name,<sp/>std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>&amp;state_prefix,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>&amp;model_prefix,<sp/>std::vector&lt;std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal">&gt;<sp/>&amp;table_prefxs);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a24226affd3cb1be61308e79c9d5225b2" kindref="member">write_to_file</ref>(<ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref><sp/>storage_reason,<sp/>const<sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/>std::optional&lt;<ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref>&gt;<sp/>copy_policy<sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>template&lt;typename<sp/>T&gt;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__finite_1a24226affd3cb1be61308e79c9d5225b2" kindref="member">write_to_file</ref>(<ref refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01" kindref="member">StorageReason</ref><sp/>storage_reason,<sp/>const<sp/>T<sp/>&amp;data,<sp/>const<sp/>std::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>&amp;name,<sp/>std::optional&lt;<ref refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5" kindref="member">CopyPolicy</ref>&gt;<sp/>copy_policy<sp/>=<sp/>std::nullopt);</highlight></codeline>
+<codeline lineno="93" refid="classclass__algorithm__finite_1a7f82f92ac61f4efae5486ce310077088" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__finite_1a7f82f92ac61f4efae5486ce310077088" kindref="member">var_mpo_step</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>History<sp/>of<sp/>energy<sp/>variances<sp/>(from<sp/>mpo)<sp/>at<sp/>each<sp/>step</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="classclass__algorithm__finite_1a15cff998705259e12405380d943d26bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__finite_1a15cff998705259e12405380d943d26bb" kindref="member">var_mpo_iter</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>History<sp/>of<sp/>energy<sp/>variances<sp/>(from<sp/>mpo)<sp/>at<sp/>each<sp/>iteration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="classclass__algorithm__finite_1a96d01fcfd2c06e9b4ecf2e1da197b2a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::vector&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;&gt;<sp/><ref refid="classclass__algorithm__finite_1a96d01fcfd2c06e9b4ecf2e1da197b2a9" kindref="member">entropy_iter</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>History<sp/>of<sp/>entanglement<sp/>entropies<sp/>at<sp/>each<sp/>iteration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h"/>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.h"/>
   </compounddef>
 </doxygen>

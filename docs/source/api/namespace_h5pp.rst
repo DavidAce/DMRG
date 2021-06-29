@@ -11,3 +11,10 @@ Namespace h5pp
 
 
 
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_h5pp__hid`

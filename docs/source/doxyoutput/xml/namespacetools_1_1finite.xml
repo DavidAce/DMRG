@@ -1,35 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
   <compounddef id="namespacetools_1_1finite" kind="namespace" language="C++">
     <compoundname>tools::finite</compoundname>
-    <innernamespace refid="namespacetools_1_1finite_1_1debug">tools::finite::debug</innernamespace>
+    <innerclass refid="classtools_1_1finite_1_1cwrap" prot="public">tools::finite::cwrap</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1mwrap" prot="public">tools::finite::mwrap</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1wwrap" prot="public">tools::finite::wwrap</innerclass>
+    <innernamespace refid="namespacetools_1_1finite_1_1env">tools::finite::env</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1io">tools::finite::io</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1measure">tools::finite::measure</innernamespace>
-    <innernamespace refid="namespacetools_1_1finite_1_1mpo">tools::finite::mpo</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1mps">tools::finite::mps</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1multisite">tools::finite::multisite</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1ops">tools::finite::ops</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1opt">tools::finite::opt</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1print">tools::finite::print</innernamespace>
-      <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" prot="public" static="no">
-        <type>std::complex&lt; double &gt;</type>
-        <definition>using tools::finite::Scalar = typedef std::complex&lt;double&gt;</definition>
-        <argsstring></argsstring>
-        <name>Scalar</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="44" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>Functions for finite MPS algorithms like fDMRG and xDMRG These functions require the class_finite_chain_state containing the MPS and environments for all sites of the lattice. </para>    </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="43" column="1"/>
+    </detaileddescription>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/env.h" line="9" column="28"/>
   </compounddef>
 </doxygen>

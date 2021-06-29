@@ -3,7 +3,7 @@
 Variable tools::common::views::components_computed
 ==================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_GitProjects_DMRG++_source_tools_common_views.cpp`
 
 
 Variable Documentation
