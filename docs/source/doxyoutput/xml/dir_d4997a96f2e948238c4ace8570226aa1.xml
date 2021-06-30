@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="dir_d4997a96f2e948238c4ace8570226aa1" kind="dir">
     <compoundname>/home/david/GitProjects/DMRG++/source/tools</compoundname>
     <innerdir refid="dir_d9271c77aa46acc9d2d5497196dfae29">/home/david/GitProjects/DMRG++/source/tools/common</innerdir>

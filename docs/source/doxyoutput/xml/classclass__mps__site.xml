@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__mps__site" kind="class" language="C++" prot="public">
     <compoundname>class_mps_site</compoundname>
     <includes refid="class__mps__site_8h" local="no">class_mps_site.h</includes>
@@ -28,7 +28,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="5">$M$</formula> A or B tensor (note: not a Gamma tensor!) </para>
+<para><formula id="19">$M$</formula> A or B tensor (note: not a Gamma tensor!) </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -43,7 +43,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="6">$\Lambda$</formula> </para>
+<para><formula id="20">$\Lambda$</formula> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -58,7 +58,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="7">$\Lambda_C$</formula> Center lambda, if this is a center matrix </para>
+<para><formula id="21">$\Lambda_C$</formula> Center lambda, if this is a center matrix </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -155,7 +155,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="8">$U$</formula> A &quot;U&quot; matrix from SVD stored temporarily <linebreak/>
+<para><formula id="22">$U$</formula> A &quot;U&quot; matrix from SVD stored temporarily <linebreak/>
  </para>
         </detaileddescription>
         <inbodydescription>
@@ -171,7 +171,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="9">$S$</formula> A &quot;S&quot; matrix from SVD stored temporarily <linebreak/>
+<para><formula id="23">$S$</formula> A &quot;S&quot; matrix from SVD stored temporarily <linebreak/>
  </para>
         </detaileddescription>
         <inbodydescription>
@@ -187,7 +187,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="9">$S$</formula> A &quot;C&quot; matrix from SVD stored temporarily <linebreak/>
+<para><formula id="23">$S$</formula> A &quot;C&quot; matrix from SVD stored temporarily <linebreak/>
  </para>
         </detaileddescription>
         <inbodydescription>
@@ -203,7 +203,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="10">$V$</formula> A &quot;V&quot; matrix from SVD stored temporarily <linebreak/>
+<para><formula id="24">$V$</formula> A &quot;V&quot; matrix from SVD stored temporarily <linebreak/>
  </para>
         </detaileddescription>
         <inbodydescription>
@@ -257,6 +257,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="33" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="18" bodyend="26"/>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" compoundref="class__mps__site_8cpp" startline="250" endline="256">set_label</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1aa442a1a8f0feda7dea59d0c7642f0385" compoundref="class__mps__site_8cpp" startline="172" endline="175">set_position</references>
+        <references refid="classclass__mps__site_1ad1e7e31cdd1e0bc0f619c46b9259654e" compoundref="class__mps__site_8cpp" startline="248" endline="248">set_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a9959335613db5b85998f0e5cc87753a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -290,6 +295,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="34" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="28" bodyend="38"/>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" compoundref="class__mps__site_8cpp" startline="250" endline="256">set_label</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1aa442a1a8f0feda7dea59d0c7642f0385" compoundref="class__mps__site_8cpp" startline="172" endline="175">set_position</references>
+        <references refid="classclass__mps__site_1ad1e7e31cdd1e0bc0f619c46b9259654e" compoundref="class__mps__site_8cpp" startline="248" endline="248">set_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1afe524eebeb7995ac8681d8f4ecab2c7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -384,6 +394,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="41" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="63" bodyend="63"/>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="namespace_textra_1aa36ece75987a034d93a8afeb81cb1e46" compoundref="nmspc__tensor__extra_8h" startline="347" endline="355">Textra::isReal</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1af9837feb3806fea3457b96b2e68efd5c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -397,6 +410,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="42" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="64" bodyend="64"/>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="namespace_textra_1afe298645862508a85a9695e60345ece4" compoundref="nmspc__tensor__extra_8h" startline="364" endline="366">Textra::hasNaN</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a40e9b9ae5b59d38eb0e279a5b164139a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -410,6 +426,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="43" column="51" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="65" bodyend="67"/>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1af9837feb3806fea3457b96b2e68efd5c" compoundref="class__mps__site_8cpp" startline="64" endline="64">has_nan</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a744c77e94243365ca9049df2b40b7c68" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -423,6 +441,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="44" column="51" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="69" bodyend="84"/>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">dimensions</references>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">get_LC</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a0d9bd5bc4251ebb74b3357632ff999a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -436,6 +462,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="45" column="51" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="86" bodyend="106"/>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" compoundref="class__mps__site_8cpp" startline="115" endline="131">get_M</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">isCenter</references>
+        <references refid="namespace_textra_1a82d0a0f369c18c8430752d4108f05acc" compoundref="nmspc__tensor__extra_8h" startline="288" endline="290">Textra::MatrixMap</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -449,6 +483,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="46" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="55" bodyend="55"/>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ab08c40dc7ab9cb4fa63323f4246cc90f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -462,6 +497,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="47" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="57" bodyend="57"/>
+        <references refid="classclass__mps__site_1a4ac1723dc1be6691da78157b4d20f82c" compoundref="class__mps__site_8h" startline="18">L</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1adb7e82753d2ac523482b5cbc9a020e3b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -475,6 +511,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="48" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="58" bodyend="58"/>
+        <references refid="classclass__mps__site_1a595aabeb4e775b4ee6b16ff623ae06a6" compoundref="class__mps__site_8h" startline="17">M</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ab35e901e3a6f89bb180a8d329f3048f8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -488,6 +525,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="49" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="59" bodyend="59"/>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::DSizes&lt; long, 3 &gt;</type>
@@ -501,10 +539,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="50" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="61" bodyend="61"/>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" compoundref="class__mps__site_8cpp" startline="168" endline="168">spin_dim</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1a54dbbe68fef95546d392c50100f9e4f7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M_bare</definition>
+        <definition>const Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M_bare</definition>
         <argsstring>() const</argsstring>
         <name>get_M_bare</name>
         <briefdescription>
@@ -515,10 +556,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="51" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="108" bodyend="114"/>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1a595aabeb4e775b4ee6b16ff623ae06a6" compoundref="class__mps__site_8h" startline="17">M</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1a595a7027685bf01896f00cb0a9dbf779" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M</definition>
+        <definition>const Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M</definition>
         <argsstring>() const</argsstring>
         <name>get_M</name>
         <briefdescription>
@@ -529,10 +572,22 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="52" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="115" bodyend="131"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">get_LC</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="namespace_textra_1_1omp_1aa01a562f1a40bca141e5178ba0f055f6" compoundref="nmspc__tensor__omp_8cpp" startline="23" endline="26">Textra::omp::getDevice</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">isCenter</references>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
+        <references refid="classclass__mps__site_1afbf01dcf9cb9a7bb625d2f9c6bbaee0c" compoundref="class__mps__site_8h" startline="20">MC</references>
+        <references refid="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" compoundref="class__mps__site_8cpp" startline="168" endline="168">spin_dim</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1aa1c8e7d25613f6cb1489a7be758e4622" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_L</definition>
+        <definition>const Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_L</definition>
         <argsstring>() const</argsstring>
         <name>get_L</name>
         <briefdescription>
@@ -542,10 +597,17 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="53" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="133" bodyend="145"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">dimensions</references>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1a4ac1723dc1be6691da78157b4d20f82c" compoundref="class__mps__site_8h" startline="18">L</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1a794ee9101351e20449072a528144d5d2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_LC</definition>
+        <definition>const Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_LC</definition>
         <argsstring>() const</argsstring>
         <name>get_LC</name>
         <briefdescription>
@@ -555,10 +617,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="54" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="146" bodyend="155"/>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">dimensions</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">isCenter</references>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1aa2d80ad12e27abe22cd2d32cce8fcd6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1a4369c9c4f7950fce81b37c9af13c21bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt;Scalar, 3&gt;&amp; class_mps_site::get_M_bare</definition>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M_bare</definition>
         <argsstring>()</argsstring>
         <name>get_M_bare</name>
         <briefdescription>
@@ -567,11 +634,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="55" column="26"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="55" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="157" bodyend="157"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1a2ee2f4cbaf3bb8e11fb40870dab8c3c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1a346a7458ecee54ef01fb4b462daf1d39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt;Scalar, 3&gt;&amp; class_mps_site::get_M</definition>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M</definition>
         <argsstring>()</argsstring>
         <name>get_M</name>
         <briefdescription>
@@ -580,11 +647,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="56" column="26"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="56" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="158" bodyend="158"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1abf66f5bc0685422283d234b3df4e07d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1aa60f0056e3084fc8cfb8c98a002baafa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt;Scalar, 1&gt;&amp; class_mps_site::get_L</definition>
+        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_L</definition>
         <argsstring>()</argsstring>
         <name>get_L</name>
         <briefdescription>
@@ -593,11 +660,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="57" column="26"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="57" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="159" bodyend="159"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__mps__site_1a76112d985e3a48885139d717d1ab3458" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__mps__site_1acd304ba6e94c47b32cc91d4ec20ceb45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
-        <definition>Eigen::Tensor&lt;Scalar, 1&gt;&amp; class_mps_site::get_LC</definition>
+        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_LC</definition>
         <argsstring>()</argsstring>
         <name>get_LC</name>
         <briefdescription>
@@ -606,7 +673,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="58" column="26"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="58" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="160" bodyend="160"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -620,6 +687,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="59" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="161" bodyend="161"/>
+        <references refid="classclass__mps__site_1a4bc8241778b983484bd8038422af03fd" compoundref="class__mps__site_8h" startline="22">truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1afc16104aba7efa1893cd417653fccf1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -633,6 +701,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="60" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="162" bodyend="162"/>
+        <references refid="classclass__mps__site_1ae164f8098ffd735936dfcddcbfa57dd3" compoundref="class__mps__site_8h" startline="23">truncation_error_LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -646,6 +715,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="61" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="163" bodyend="166"/>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1a256db9e943211773e8dd5d0e6cfb3845" compoundref="class__mps__site_8h" startline="24">label</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ace3ae49b18d3e3272b5fc5cb29bc910b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; long, long, long &gt;</type>
@@ -659,6 +730,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="62" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="167" bodyend="167"/>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" compoundref="class__mps__site_8cpp" startline="168" endline="168">spin_dim</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -672,6 +746,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="63" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="168" bodyend="168"/>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -685,6 +760,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="64" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="169" bodyend="169"/>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -698,6 +774,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="65" column="38" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="170" bodyend="170"/>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -717,6 +794,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="68" column="8" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="178" bodyend="184"/>
+        <references refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" compoundref="class__mps__site_8h" startline="21">position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -734,6 +812,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="70" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="196" bodyend="204"/>
+        <references refid="classclass__mps__site_1a595aabeb4e775b4ee6b16ff623ae06a6" compoundref="class__mps__site_8h" startline="17">M</references>
+        <references refid="classclass__mps__site_1afbf01dcf9cb9a7bb625d2f9c6bbaee0c" compoundref="class__mps__site_8h" startline="20">MC</references>
+        <references refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" compoundref="class__mps__site_8h" startline="21">position</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -756,6 +838,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="71" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="205" bodyend="223"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classclass__mps__site_1a4ac1723dc1be6691da78157b4d20f82c" compoundref="class__mps__site_8h" startline="18">L</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" compoundref="class__mps__site_8h" startline="21">position</references>
+        <references refid="classclass__mps__site_1a4bc8241778b983484bd8038422af03fd" compoundref="class__mps__site_8h" startline="22">truncation_error</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
+        <references refid="namespace_textra_1a26506f91acdea6c85029ceb686d795ed" compoundref="nmspc__tensor__extra_8h" startline="303" endline="305">Textra::VectorMap</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1add74ff40c39694e4eb5c7177bc97c2c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -773,6 +863,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="72" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="224" bodyend="224"/>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a34c35d3cb3b4ff40ab3c3886e621cdf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -795,6 +886,17 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="73" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="226" bodyend="244"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__mps__site_1afbf01dcf9cb9a7bb625d2f9c6bbaee0c" compoundref="class__mps__site_8h" startline="20">MC</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" compoundref="class__mps__site_8h" startline="21">position</references>
+        <references refid="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" compoundref="class__mps__site_8cpp" startline="250" endline="256">set_label</references>
+        <references refid="classclass__mps__site_1ae164f8098ffd735936dfcddcbfa57dd3" compoundref="class__mps__site_8h" startline="23">truncation_error_LC</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
+        <references refid="namespace_textra_1a26506f91acdea6c85029ceb686d795ed" compoundref="nmspc__tensor__extra_8h" startline="303" endline="305">Textra::VectorMap</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a590251ed494bdd2670074e5f8f8a2dbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -812,6 +914,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="74" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="246" bodyend="246"/>
+        <references refid="classclass__mps__site_1a34c35d3cb3b4ff40ab3c3886e621cdf0" compoundref="class__mps__site_8cpp" startline="226" endline="244">set_LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ad1e7e31cdd1e0bc0f619c46b9259654e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -829,6 +932,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="75" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="248" bodyend="248"/>
+        <references refid="classclass__mps__site_1a4bc8241778b983484bd8038422af03fd" compoundref="class__mps__site_8h" startline="22">truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ad35e234bbbd5d53a9aedde6f5435a496" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -846,6 +950,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="76" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="249" bodyend="249"/>
+        <references refid="classclass__mps__site_1ae164f8098ffd735936dfcddcbfa57dd3" compoundref="class__mps__site_8h" startline="23">truncation_error_LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -863,6 +968,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="77" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="250" bodyend="256"/>
+        <references refid="classclass__mps__site_1a256db9e943211773e8dd5d0e6cfb3845" compoundref="class__mps__site_8h" startline="24">label</references>
+        <references refid="classclass__mps__site_1a41bf36d811a5ab8b260ef7a79a597604" compoundref="class__mps__site_8cpp" startline="264" endline="267">unset_L</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1aa442a1a8f0feda7dea59d0c7642f0385" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -880,6 +987,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="78" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="172" bodyend="175"/>
+        <references refid="classclass__mps__site_1afbf01dcf9cb9a7bb625d2f9c6bbaee0c" compoundref="class__mps__site_8h" startline="20">MC</references>
+        <references refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" compoundref="class__mps__site_8h" startline="21">position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1afd5078441c3d8ee955759fed9fda792a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -909,6 +1018,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="79" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="188" bodyend="194"/>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" compoundref="class__mps__site_8cpp" startline="250" endline="256">set_label</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1ad1e7e31cdd1e0bc0f619c46b9259654e" compoundref="class__mps__site_8cpp" startline="248" endline="248">set_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a8b9c026baf5785cff95c919f5d96de95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -922,6 +1035,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="81" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="257" bodyend="262"/>
+        <references refid="classclass__mps__site_1a256db9e943211773e8dd5d0e6cfb3845" compoundref="class__mps__site_8h" startline="24">label</references>
+        <references refid="classclass__mps__site_1a99352170c2830820c09046f46deb2519" compoundref="class__mps__site_8h" startline="19">LC</references>
+        <references refid="classclass__mps__site_1afbf01dcf9cb9a7bb625d2f9c6bbaee0c" compoundref="class__mps__site_8h" startline="20">MC</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a41bf36d811a5ab8b260ef7a79a597604" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -935,6 +1052,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="82" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="264" bodyend="267"/>
+        <references refid="classclass__mps__site_1a4ac1723dc1be6691da78157b4d20f82c" compoundref="class__mps__site_8h" startline="18">L</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a479d72f266fe8c7e555093486f0ce3fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -952,6 +1071,27 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="83" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="271" bodyend="325"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">dimensions</references>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">get_LC</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" compoundref="class__mps__site_8cpp" startline="161" endline="161">get_truncation_error</references>
+        <references refid="classclass__mps__site_1afc16104aba7efa1893cd417653fccf1c" compoundref="class__mps__site_8cpp" startline="162" endline="162">get_truncation_error_LC</references>
+        <references refid="classclass__mps__site_1ab08c40dc7ab9cb4fa63323f4246cc90f" compoundref="class__mps__site_8cpp" startline="57" endline="57">has_L</references>
+        <references refid="classclass__mps__site_1adb7e82753d2ac523482b5cbc9a020e3b" compoundref="class__mps__site_8cpp" startline="58" endline="58">has_M</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">isCenter</references>
+        <references refid="classclass__mps__site_1a256db9e943211773e8dd5d0e6cfb3845" compoundref="class__mps__site_8h" startline="24">label</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a8ff4b89a63db23de290d517048f084e2" compoundref="class__mps__site_8cpp" startline="250" endline="256">set_label</references>
+        <references refid="classclass__mps__site_1a34c35d3cb3b4ff40ab3c3886e621cdf0" compoundref="class__mps__site_8cpp" startline="226" endline="244">set_LC</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1a41bf36d811a5ab8b260ef7a79a597604" compoundref="class__mps__site_8cpp" startline="264" endline="267">unset_L</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a7dc50135d9e136844dcd1ce2d23a84ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -969,6 +1109,21 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="84" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="327" bodyend="347"/>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">get_LC</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="namespace_textra_1_1omp_1aa01a562f1a40bca141e5178ba0f055f6" compoundref="nmspc__tensor__omp_8cpp" startline="23" endline="26">Textra::omp::getDevice</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">isCenter</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespace_textra_1a2ec3c8de67b04570d63c5e62d0018eaf" compoundref="nmspc__tensor__extra_8h" startline="140" endline="143">Textra::normalize</references>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a34c35d3cb3b4ff40ab3c3886e621cdf0" compoundref="class__mps__site_8cpp" startline="226" endline="244">set_LC</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" compoundref="class__mps__site_8cpp" startline="168" endline="168">spin_dim</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a3ff64592e765842d39c4aac985a00cd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -986,6 +1141,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="85" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="349" bodyend="353"/>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="namespace_textra_1_1omp_1aa01a562f1a40bca141e5178ba0f055f6" compoundref="nmspc__tensor__omp_8cpp" startline="23" endline="26">Textra::omp::getDevice</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a37d941231ea325c682129c9a2ac92f42" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1007,6 +1168,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="87" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="356" bodyend="358"/>
+        <references refid="classclass__mps__site_1a8f615c152df16bad8fa3eb2fa02090a8" compoundref="class__mps__site_8h" startline="26">U_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a68f9dcffdb536c2b7a827b41a4359a79" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1032,6 +1194,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="88" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="359" bodyend="361"/>
+        <references refid="classclass__mps__site_1aa597e9ffe1c6fba561d0b5c435d1c6f4" compoundref="class__mps__site_8h" startline="27">S_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1adeccba4ad422bd84ce59570f5d665378" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1053,6 +1216,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="89" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="362" bodyend="364"/>
+        <references refid="classclass__mps__site_1aa597e9ffe1c6fba561d0b5c435d1c6f4" compoundref="class__mps__site_8h" startline="27">S_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1abd9710073f93799d896721d372e08b2b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1078,6 +1242,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="90" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="365" bodyend="367"/>
+        <references refid="classclass__mps__site_1ad1bb2412b2005418c0b11820a995a9cf" compoundref="class__mps__site_8h" startline="28">C_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1af25fd1cf4dc8b058fe57f550ceeb942c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1099,6 +1264,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="91" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="368" bodyend="370"/>
+        <references refid="classclass__mps__site_1ad1bb2412b2005418c0b11820a995a9cf" compoundref="class__mps__site_8h" startline="28">C_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1adaa517e23d41cf309dc0a83abbaf88dd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1120,6 +1286,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="92" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="371" bodyend="373"/>
+        <references refid="classclass__mps__site_1a564e33c05711dc48a48f3e8deb61d30f" compoundref="class__mps__site_8h" startline="29">V_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1afa2dfbd9d112676f5488a3ee40fe68e2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1133,6 +1300,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="93" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="380" bodyend="391"/>
+        <references refid="classclass__mps__site_1ad1bb2412b2005418c0b11820a995a9cf" compoundref="class__mps__site_8h" startline="28">C_stash</references>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__mps__site_1aa597e9ffe1c6fba561d0b5c435d1c6f4" compoundref="class__mps__site_8h" startline="27">S_stash</references>
+        <references refid="classclass__mps__site_1a8f615c152df16bad8fa3eb2fa02090a8" compoundref="class__mps__site_8h" startline="26">U_stash</references>
+        <references refid="classclass__mps__site_1a564e33c05711dc48a48f3e8deb61d30f" compoundref="class__mps__site_8h" startline="29">V_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a0e10987a03dcebdb4b49ad7688de1ce6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1150,6 +1323,25 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="94" column="49" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="393" bodyend="480"/>
+        <references refid="classclass__mps__site_1ad1bb2412b2005418c0b11820a995a9cf" compoundref="class__mps__site_8h" startline="28">C_stash</references>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">dimensions</references>
+        <references refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" compoundref="class__mps__site_8cpp" startline="169" endline="169">get_chiL</references>
+        <references refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" compoundref="class__mps__site_8cpp" startline="170" endline="170">get_chiR</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">get_label</references>
+        <references refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" compoundref="class__mps__site_8cpp" startline="108" endline="114">get_M_bare</references>
+        <references refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" compoundref="class__mps__site_8cpp" startline="178" endline="184">get_position</references>
+        <references refid="namespace_textra_1_1omp_1aa01a562f1a40bca141e5178ba0f055f6" compoundref="nmspc__tensor__omp_8cpp" startline="23" endline="26">Textra::omp::getDevice</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__mps__site_1a256db9e943211773e8dd5d0e6cfb3845" compoundref="class__mps__site_8h" startline="24">label</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__mps__site_1aa597e9ffe1c6fba561d0b5c435d1c6f4" compoundref="class__mps__site_8h" startline="27">S_stash</references>
+        <references refid="classclass__mps__site_1a0b4597c113303a2d052c919bd854edba" compoundref="class__mps__site_8cpp" startline="205" endline="223">set_L</references>
+        <references refid="classclass__mps__site_1a34c35d3cb3b4ff40ab3c3886e621cdf0" compoundref="class__mps__site_8cpp" startline="226" endline="244">set_LC</references>
+        <references refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" compoundref="class__mps__site_8cpp" startline="196" endline="204">set_M</references>
+        <references refid="classclass__mps__site_1a02a4608abd877ea022e8a930b6afd112" compoundref="class__mps__site_8cpp" startline="168" endline="168">spin_dim</references>
+        <references refid="classclass__mps__site_1a8f615c152df16bad8fa3eb2fa02090a8" compoundref="class__mps__site_8h" startline="26">U_stash</references>
+        <references refid="classclass__mps__site_1a564e33c05711dc48a48f3e8deb61d30f" compoundref="class__mps__site_8h" startline="29">V_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a8e3eba958f12aa731dd40799166bd053" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::optional&lt; <ref refid="classstash" kindref="compound">stash</ref>&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &gt; &gt; &amp;</type>
@@ -1163,6 +1355,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="96" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="375" bodyend="375"/>
+        <references refid="classclass__mps__site_1a8f615c152df16bad8fa3eb2fa02090a8" compoundref="class__mps__site_8h" startline="26">U_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ac4e7153dfb1431ebbf1ddbbae3c1701e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::optional&lt; <ref refid="classstash" kindref="compound">stash</ref>&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &gt; &gt; &amp;</type>
@@ -1176,6 +1369,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="97" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="376" bodyend="376"/>
+        <references refid="classclass__mps__site_1aa597e9ffe1c6fba561d0b5c435d1c6f4" compoundref="class__mps__site_8h" startline="27">S_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a7355a130c6f76c35308fe41bdc92a48f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::optional&lt; <ref refid="classstash" kindref="compound">stash</ref>&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &gt; &gt; &amp;</type>
@@ -1189,6 +1383,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="98" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="377" bodyend="377"/>
+        <references refid="classclass__mps__site_1ad1bb2412b2005418c0b11820a995a9cf" compoundref="class__mps__site_8h" startline="28">C_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1a8d61fb65d332e32a9547b45409cb5d29" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::optional&lt; <ref refid="classstash" kindref="compound">stash</ref>&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &gt; &gt; &amp;</type>
@@ -1202,6 +1397,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="99" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="378" bodyend="378"/>
+        <references refid="classclass__mps__site_1a564e33c05711dc48a48f3e8deb61d30f" compoundref="class__mps__site_8h" startline="29">V_stash</references>
       </memberdef>
       <memberdef kind="function" id="classclass__mps__site_1ac06597ddc35e33af34d2b0820c7711d4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::size_t</type>
@@ -1215,6 +1411,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="102" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.cpp" bodystart="483" bodyend="489"/>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">get_L</references>
+        <references refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" compoundref="class__mps__site_8cpp" startline="115" endline="131">get_M</references>
+        <references refid="namespacehash_1a7a3bf731a3de0a75358f07f74149cbef" compoundref="hash_8cpp" startline="23" endline="32">hash::hash_buffer</references>
+        <references refid="classclass__mps__site_1afa86670f5635d5f3af6a723631c7b666" compoundref="class__mps__site_8h" startline="25">unique_id</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1223,7 +1423,7 @@
     </detaileddescription>
     <collaborationgraph>
       <node id="3">
-        <label>std::basic_string&lt; char &gt;</label>
+        <label>std::basic_string&lt; Char &gt;</label>
       </node>
       <node id="1">
         <label>class_mps_site</label>
@@ -1238,7 +1438,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="12" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" bodystart="12" bodyend="103"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" line="12" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_mps_site.h" bodystart="12" bodyend="103"/>
     <listofallmembers>
       <member refid="classclass__mps__site_1a7dc50135d9e136844dcd1ce2d23a84ab" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>apply_mpo</name></member>
       <member refid="classclass__mps__site_1a3ff64592e765842d39c4aac985a00cd8" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>apply_mpo</name></member>
@@ -1257,15 +1457,15 @@
       <member refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_chiL</name></member>
       <member refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_chiR</name></member>
       <member refid="classclass__mps__site_1ace3ae49b18d3e3272b5fc5cb29bc910b" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_dims</name></member>
-      <member refid="classclass__mps__site_1aa1c8e7d25613f6cb1489a7be758e4622" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
-      <member refid="classclass__mps__site_1abf66f5bc0685422283d234b3df4e07d1" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
+      <member refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
+      <member refid="classclass__mps__site_1aa60f0056e3084fc8cfb8c98a002baafa" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
       <member refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_label</name></member>
-      <member refid="classclass__mps__site_1a794ee9101351e20449072a528144d5d2" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
-      <member refid="classclass__mps__site_1a76112d985e3a48885139d717d1ab3458" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
-      <member refid="classclass__mps__site_1a595a7027685bf01896f00cb0a9dbf779" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
-      <member refid="classclass__mps__site_1a2ee2f4cbaf3bb8e11fb40870dab8c3c8" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
-      <member refid="classclass__mps__site_1a54dbbe68fef95546d392c50100f9e4f7" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
-      <member refid="classclass__mps__site_1aa2d80ad12e27abe22cd2d32cce8fcd6d" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
+      <member refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
+      <member refid="classclass__mps__site_1acd304ba6e94c47b32cc91d4ec20ceb45" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
+      <member refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
+      <member refid="classclass__mps__site_1a346a7458ecee54ef01fb4b462daf1d39" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
+      <member refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
+      <member refid="classclass__mps__site_1a4369c9c4f7950fce81b37c9af13c21bb" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
       <member refid="classclass__mps__site_1a2f3ebdefc9fb80e5e6e4c971a51c86af" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_position</name></member>
       <member refid="classclass__mps__site_1ac4e7153dfb1431ebbf1ddbbae3c1701e" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_S_stash</name></member>
       <member refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_truncation_error</name></member>

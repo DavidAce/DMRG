@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="pcg__extras_8hpp" kind="file" language="C++">
     <compoundname>pcg_extras.hpp</compoundname>
     <includes local="no">cassert</includes>
@@ -289,7 +289,7 @@
 <codeline lineno="116"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
 <codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CharT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Traits&gt;</highlight></codeline>
-<codeline lineno="119" refid="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" kindref="member">operator&lt;&lt;</ref>(std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;out,<sp/><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">pcg128_t</ref><sp/>value)<sp/>{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" kindref="member">operator&lt;&lt;</ref>(std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;out,<sp/><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">pcg128_t</ref><sp/>value)<sp/>{</highlight></codeline>
 <codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>desired_base<sp/>=<sp/>out.flags()<sp/>&amp;<sp/>out.basefield;</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>want_hex<sp/><sp/><sp/><sp/><sp/>=<sp/>desired_base<sp/>==<sp/>out.hex;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"></highlight></codeline>
@@ -326,7 +326,7 @@
 <codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="154"><highlight class="normal"></highlight></codeline>
 <codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CharT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Traits&gt;</highlight></codeline>
-<codeline lineno="156" refid="namespacepcg__extras_1acb4075fd2b481eeaf4c77ecd36c939ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_istream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1acb4075fd2b481eeaf4c77ecd36c939ce" kindref="member">operator&gt;&gt;</ref>(std::basic_istream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;in,<sp/><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">pcg128_t</ref><sp/>&amp;value)<sp/>{</highlight></codeline>
+<codeline lineno="156" refid="namespacepcg__extras_1a7a30651a257dba7e5239c2f6b1c30eea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_istream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1acb4075fd2b481eeaf4c77ecd36c939ce" kindref="member">operator&gt;&gt;</ref>(std::basic_istream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;in,<sp/><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">pcg128_t</ref><sp/>&amp;value)<sp/>{</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::basic_istream&lt;CharT,<sp/>Traits&gt;::sentry<sp/>s(in);</highlight></codeline>
 <codeline lineno="158"><highlight class="normal"></highlight></codeline>
 <codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!s)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>in;</highlight></codeline>
@@ -369,7 +369,7 @@
 <codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="197"><highlight class="normal"></highlight></codeline>
 <codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CharT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Traits&gt;</highlight></codeline>
-<codeline lineno="199" refid="namespacepcg__extras_1a7a30651a257dba7e5239c2f6b1c30eea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" kindref="member">operator&lt;&lt;</ref>(std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;out,<sp/>uint8_t<sp/>value)<sp/>{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;<ref refid="namespacepcg__extras_1a1388aa862b3148c12c3ccf74c90cafb7" kindref="member">operator&lt;&lt;</ref>(std::basic_ostream&lt;CharT,<sp/>Traits&gt;<sp/>&amp;out,<sp/>uint8_t<sp/>value)<sp/>{</highlight></codeline>
 <codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>out<sp/>&lt;&lt;<sp/>uint32_t(value);</highlight></codeline>
 <codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="202"><highlight class="normal"></highlight></codeline>
@@ -482,9 +482,9 @@
 <codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">asm</highlight><highlight class="normal">(</highlight><highlight class="stringliteral">&quot;rorq<sp/><sp/><sp/>%%cl,<sp/>%0&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;=r&quot;</highlight><highlight class="normal">(value)<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;0&quot;</highlight><highlight class="normal">(value),<sp/></highlight><highlight class="stringliteral">&quot;c&quot;</highlight><highlight class="normal">(rot));</highlight></codeline>
 <codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value;</highlight></codeline>
 <codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="312"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif<sp/>//<sp/>__x86_64__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif<sp/></highlight><highlight class="comment">//<sp/>__x86_64__</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="313"><highlight class="normal"></highlight></codeline>
-<codeline lineno="314"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>PCG_USE_INLINE_ASM</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>PCG_USE_INLINE_ASM</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="315"><highlight class="normal"></highlight></codeline>
 <codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="317"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>The<sp/>C++<sp/>SeedSeq<sp/>concept<sp/>(modelled<sp/>by<sp/>seed_seq)<sp/>can<sp/>fill<sp/>an<sp/>array<sp/>of</highlight></codeline>
@@ -728,7 +728,7 @@
 <codeline lineno="555"><highlight class="normal"></highlight></codeline>
 <codeline lineno="556"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>pcg_extras</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="557"><highlight class="normal"></highlight></codeline>
-<codeline lineno="558"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>PCG_EXTRAS_HPP_INCLUDED</highlight></codeline>
+<codeline lineno="558"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>PCG_EXTRAS_HPP_INCLUDED</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp"/>
   </compounddef>

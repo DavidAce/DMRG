@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="struct_textra_1_1idx__dim__pair" kind="struct" language="C++" prot="public">
     <compoundname>Textra::idx_dim_pair</compoundname>
     <includes refid="nmspc__tensor__extra_8h" local="no">nmspc_tensor_extra.h</includes>
@@ -48,7 +48,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="54" column="23" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="54" bodyend="58"/>
+    <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="54" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="54" bodyend="58"/>
     <listofallmembers>
       <member refid="struct_textra_1_1idx__dim__pair_1a014b061f64a22a97842fd4c774b83da5" prot="public" virt="non-virtual"><scope>Textra::idx_dim_pair</scope><name>dimB</name></member>
       <member refid="struct_textra_1_1idx__dim__pair_1a86478621a8d56da3699316693fc7c4a0" prot="public" virt="non-virtual"><scope>Textra::idx_dim_pair</scope><name>idxA</name></member>

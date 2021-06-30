@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__algorithm__launcher" kind="class" language="C++" prot="public">
     <compoundname>class_algorithm_launcher</compoundname>
     <includes refid="class__algorithm__launcher_8h" local="no">class_algorithm_launcher.h</includes>
@@ -35,6 +35,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="15" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="25" bodyend="32"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a871001ee985c61bdc7b89732d9012850" compoundref="prof_8cpp" startline="355" endline="359">tools::common::profile::print_mem_usage</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6f00c4f75456402247086cdbb823aeb3" compoundref="prof_8cpp" startline="78" endline="78">tools::common::profile::print_profiling_all</references>
+        <references refid="namespacetools_1_1_logger_1a226e4a9b901367b2e4cb3e17809385b1" compoundref="log_8cpp" startline="58" endline="67">tools::Logger::setLogger</references>
+        <references refid="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" compoundref="class__algorithm__launcher_8cpp" startline="129" endline="142">setup_temp_path</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="90">settings::console::timestamp</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="89">settings::console::verbosity</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -48,6 +55,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="16" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="34" bodyend="44"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a871001ee985c61bdc7b89732d9012850" compoundref="prof_8cpp" startline="355" endline="359">tools::common::profile::print_mem_usage</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6f00c4f75456402247086cdbb823aeb3" compoundref="prof_8cpp" startline="78" endline="78">tools::common::profile::print_profiling_all</references>
+        <references refid="namespacetools_1_1_logger_1a226e4a9b901367b2e4cb3e17809385b1" compoundref="log_8cpp" startline="58" endline="67">tools::Logger::setLogger</references>
+        <references refid="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" compoundref="class__algorithm__launcher_8cpp" startline="129" endline="142">setup_temp_path</references>
+        <references refid="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" compoundref="class__algorithm__launcher_8cpp" startline="46" endline="127">start_h5pp_file</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="90">settings::console::timestamp</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="89">settings::console::verbosity</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -61,6 +76,30 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="17" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="46" bodyend="127"/>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56abfdf97ae01c73d83a58ec41f78a4291f">BACKUP</references>
+        <references refid="namespacesettings_1_1output_1a12531a556ccc8c2bb7ff9bb8d0f2e7e0" compoundref="nmspc__settings_8h" startline="53">settings::output::compression_level</references>
+        <references refid="namespacesettings_1_1input_1a253ced2729ed5306b500fe004317f27b" compoundref="nmspc__settings_8h" startline="39">settings::input::config_file_contents</references>
+        <references refid="namespacesettings_1_1input_1a2cec3efecce2fdb179786cc6525372c1" compoundref="nmspc__settings_8h" startline="38">settings::input::config_filename</references>
+        <references refid="config_2enums_8h_1ac9d1a893c937f96f278163777782de1eadca6e617f6fb54033deb311e7e7c93cc">FAST</references>
+        <references refid="namespacesettings_1_1output_1a62dca95e107f4fe3989df2c42eb4b8b2" compoundref="nmspc__settings_8h" startline="54">settings::output::file_collision_policy</references>
+        <references refid="namespacesettings_1_1output_1a8a111a5a0522f8d18924bc2885c10ed4" compoundref="nmspc__settings_8h" startline="55">settings::output::file_resume_policy</references>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071ab50339a10e1de285ac99d4c3990b8693">NONE</references>
+        <references refid="namespacesettings_1_1output_1a250dcb715268c07a745af0c289998d6b" compoundref="nmspc__settings_8h" startline="43">settings::output::output_filepath</references>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56a507f09f72160920edb481656c350e76c">RENAME</references>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56a560a2dd6f6744646473b3b19e1fe96d7">REPLACE</references>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56abac2aec3ee8d7d495123dbe5ca2fdac9">RESUME</references>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56afd597b5cf72d5cf1df84a017a16969e8">REVIVE</references>
+        <references refid="namespacesettings_1_1output_1a3cbc247c13365395ccf3b64df8051dfc" compoundref="nmspc__settings_8h" startline="66">settings::output::storage_level_checkpoint</references>
+        <references refid="namespacesettings_1_1output_1a47e6a89a65d530cf23d22088b19f3150" compoundref="nmspc__settings_8h" startline="72">settings::output::storage_level_emax_state</references>
+        <references refid="namespacesettings_1_1output_1a9d632b055bf34f4a8cb2a8b393682774" compoundref="nmspc__settings_8h" startline="71">settings::output::storage_level_emin_state</references>
+        <references refid="namespacesettings_1_1output_1ae406dc66f399d0c0e3902f7e9e81f8bc" compoundref="nmspc__settings_8h" startline="68">settings::output::storage_level_fail_state</references>
+        <references refid="namespacesettings_1_1output_1a53db66979510d116e12e429852c23df7" compoundref="nmspc__settings_8h" startline="67">settings::output::storage_level_good_state</references>
+        <references refid="namespacesettings_1_1output_1a82a9057be394d13264d9213aa909ef5c" compoundref="nmspc__settings_8h" startline="70">settings::output::storage_level_init_state</references>
+        <references refid="namespacesettings_1_1output_1a1f406e829d64fd245a9856b91025cdfb" compoundref="nmspc__settings_8h" startline="64">settings::output::storage_level_model</references>
+        <references refid="namespacesettings_1_1output_1a5be0e26e29c2bb54e41789a5896583ca" compoundref="nmspc__settings_8h" startline="69">settings::output::storage_level_proj_state</references>
+        <references refid="namespacesettings_1_1output_1a3fd8aec52aa269851a694889bcccddce" compoundref="nmspc__settings_8h" startline="65">settings::output::storage_level_savepoint</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,6 +113,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="18" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="129" bodyend="142"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a1aca97b360077e59190e008d5b1d4f4b" compoundref="h5tmp_8cpp" startline="55" endline="55">tools::common::io::h5tmp::get_original_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" compoundref="h5tmp_8cpp" startline="54" endline="54">tools::common::io::h5tmp::get_temporary_filepath</references>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacesettings_1_1output_1_1tmp_1a10c82d288cbc37459097ccec8658ad20" compoundref="nmspc__settings_8h" startline="76">settings::output::tmp::hdf5_final_path</references>
+        <references refid="namespacesettings_1_1output_1_1tmp_1a0b5776306469718bea2359acea5e4e88" compoundref="nmspc__settings_8h" startline="75">settings::output::tmp::hdf5_temp_path</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1output_1a250dcb715268c07a745af0c289998d6b" compoundref="nmspc__settings_8h" startline="43">settings::output::output_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab752a89da96453ee21f2836bccb70b71" compoundref="h5tmp_8cpp" startline="57" endline="57">tools::common::io::h5tmp::register_new_file</references>
+        <references refid="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" compoundref="nmspc__settings_8h" startline="50">settings::output::use_temp_dir</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -87,6 +135,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="20" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="144" bodyend="158"/>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacesettings_1_1output_1_1tmp_1a10c82d288cbc37459097ccec8658ad20" compoundref="nmspc__settings_8h" startline="76">settings::output::tmp::hdf5_final_path</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__algorithm__launcher_1a90bce732eacabf6228ecf88571521c4b" compoundref="class__algorithm__launcher_8cpp" startline="167" endline="172">run_fdmrg</references>
+        <references refid="classclass__algorithm__launcher_1a8f6d9636fa9f5cb6e1c35a50ac3e6f30" compoundref="class__algorithm__launcher_8cpp" startline="174" endline="189">run_flbit</references>
+        <references refid="classclass__algorithm__launcher_1a6e8562746f3a16a58672a236e5d0e54b" compoundref="class__algorithm__launcher_8cpp" startline="160" endline="165">run_idmrg</references>
+        <references refid="classclass__algorithm__launcher_1a6eee8e47fb972c99a34da0c03a451105" compoundref="class__algorithm__launcher_8cpp" startline="210" endline="215">run_itebd</references>
+        <references refid="classclass__algorithm__launcher_1a87fb0ad1c25ce50d99c57edddba48c2d" compoundref="class__algorithm__launcher_8cpp" startline="191" endline="208">run_xdmrg</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a6e8562746f3a16a58672a236e5d0e54b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -100,6 +156,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="21" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="160" bodyend="165"/>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="199">settings::idmrg::on</references>
+        <references refid="classclass__algorithm__infinite_1ae14b72b2eb26ac37f453c24cd2c5a68c" compoundref="class__algorithm__infinite_8cpp" startline="23" endline="29">class_algorithm_infinite::run</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a90bce732eacabf6228ecf88571521c4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -113,6 +172,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="22" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="167" bodyend="172"/>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="224">settings::fdmrg::on</references>
+        <references refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" compoundref="class__algorithm__finite_8cpp" startline="45" endline="91">class_algorithm_finite::run</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a8f6d9636fa9f5cb6e1c35a50ac3e6f30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -126,6 +188,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="23" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="174" bodyend="189"/>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1flbit_1ae3238133e75df789533c9e402f9e23c1" compoundref="nmspc__settings_8h" startline="236">settings::flbit::on</references>
+        <references refid="namespacesettings_1_1output_1a250dcb715268c07a745af0c289998d6b" compoundref="nmspc__settings_8h" startline="43">settings::output::output_filepath</references>
+        <references refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" compoundref="class__algorithm__finite_8cpp" startline="45" endline="91">class_algorithm_finite::run</references>
+        <references refid="namespacesettings_1_1input_1a79e48e7293bd7dc9c7197940b0f07ac3" compoundref="nmspc__settings_8h" startline="36">settings::input::seed</references>
+        <references refid="namespacernd_1a682f0f73a46eb8f7c12008f80c00b316" compoundref="rnd_8cpp" startline="25" endline="38">rnd::seed</references>
+        <references refid="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" compoundref="class__algorithm__launcher_8cpp" startline="129" endline="142">setup_temp_path</references>
+        <references refid="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" compoundref="class__algorithm__launcher_8cpp" startline="46" endline="127">start_h5pp_file</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a87fb0ad1c25ce50d99c57edddba48c2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -139,7 +210,17 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="24" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="191" bodyend="208"/>
-        <references refid="classclass__xdmrg_1a6699e95cd9e6ffdd6ceaf72a760c7d23" compoundref="class__xdmrg_8h" startline="25">class_xdmrg::time_gates_3site</references>
+        <references refid="namespacesettings_1_1output_1a62dca95e107f4fe3989df2c42eb4b8b2" compoundref="nmspc__settings_8h" startline="54">settings::output::file_collision_policy</references>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="255">settings::xdmrg::on</references>
+        <references refid="namespacesettings_1_1output_1a250dcb715268c07a745af0c289998d6b" compoundref="nmspc__settings_8h" startline="43">settings::output::output_filepath</references>
+        <references refid="config_2enums_8h_1ad7a337341b5fd69ba5a7a7dd2058ea56afd597b5cf72d5cf1df84a017a16969e8">REVIVE</references>
+        <references refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" compoundref="class__algorithm__finite_8cpp" startline="45" endline="91">class_algorithm_finite::run</references>
+        <references refid="namespacesettings_1_1input_1a79e48e7293bd7dc9c7197940b0f07ac3" compoundref="nmspc__settings_8h" startline="36">settings::input::seed</references>
+        <references refid="namespacernd_1a682f0f73a46eb8f7c12008f80c00b316" compoundref="rnd_8cpp" startline="25" endline="38">rnd::seed</references>
+        <references refid="classclass__algorithm__launcher_1adadfc6a2cd871115bee5a1385b10d015" compoundref="class__algorithm__launcher_8cpp" startline="129" endline="142">setup_temp_path</references>
+        <references refid="classclass__algorithm__launcher_1a8128f183fc4eed3f14eb8ece0cef778d" compoundref="class__algorithm__launcher_8cpp" startline="46" endline="127">start_h5pp_file</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a6eee8e47fb972c99a34da0c03a451105" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -153,7 +234,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="25" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="210" bodyend="215"/>
-        <references refid="classclass__itebd_1a5ae018e10fdbd15e59d87a08d779534c" compoundref="class__itebd_8h" startline="15">class_itebd::unitary_time_evolving_operators</references>
+        <references refid="classclass__algorithm__launcher_1a398eb3adf9eeeb7489388c9b74adfcbb" compoundref="class__algorithm__launcher_8h" startline="13">h5pp_file</references>
+        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="210">settings::itebd::on</references>
+        <references refid="classclass__algorithm__infinite_1ae14b72b2eb26ac37f453c24cd2c5a68c" compoundref="class__algorithm__infinite_8cpp" startline="23" endline="29">class_algorithm_infinite::run</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -172,7 +255,7 @@
         <label>std::shared_ptr&lt; h5pp::File &gt;</label>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="11" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="11" bodyend="26"/>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" line="11" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="11" bodyend="26"/>
     <listofallmembers>
       <member refid="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>
       <member refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>

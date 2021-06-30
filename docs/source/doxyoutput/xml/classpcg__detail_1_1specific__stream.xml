@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classpcg__detail_1_1specific__stream" kind="class" language="C++" prot="public">
     <compoundname>pcg_detail::specific_stream</compoundname>
     <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
@@ -97,7 +97,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="259" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="259" bodyend="259"/>
-        <references refid="classpcg__detail_1_1specific__stream_1a2ce85a36b8003708f31e2ebf3544f455" compoundref="pcg__random_8hpp" startline="253">pcg_detail::specific_stream&lt; itype &gt;::inc_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1specific__stream_1a812f8d7df7cd7145ed563c16a55cc7a9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>itype</type>
@@ -111,7 +110,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="261" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="261" bodyend="261"/>
-        <references refid="classpcg__detail_1_1specific__stream_1a2ce85a36b8003708f31e2ebf3544f455" compoundref="pcg__random_8hpp" startline="253">pcg_detail::specific_stream&lt; itype &gt;::inc_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__detail_1_1specific__stream_1a1cd78f949447eed81bd32151563f668a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -129,7 +127,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="263" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="263" bodyend="263"/>
-        <references refid="classpcg__detail_1_1specific__stream_1a2ce85a36b8003708f31e2ebf3544f455" compoundref="pcg__random_8hpp" startline="253">pcg_detail::specific_stream&lt; itype &gt;::inc_</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-func">
@@ -177,14 +174,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="272" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="272" bodyend="274"/>
-        <references refid="classpcg__detail_1_1specific__stream_1a2ce85a36b8003708f31e2ebf3544f455" compoundref="pcg__random_8hpp" startline="253">pcg_detail::specific_stream&lt; itype &gt;::inc_</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="249" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="249" bodyend="275"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="249" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="249" bodyend="275"/>
     <listofallmembers>
       <member refid="classpcg__detail_1_1specific__stream_1a3f7632a93f0732c5a7867d6432cdee30" prot="public" virt="non-virtual"><scope>pcg_detail::specific_stream</scope><name>can_specify_stream</name></member>
       <member refid="classpcg__detail_1_1specific__stream_1a2ce85a36b8003708f31e2ebf3544f455" prot="protected" virt="non-virtual"><scope>pcg_detail::specific_stream</scope><name>inc_</name></member>

@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" kind="class" language="C++" prot="public">
     <compoundname>tools::finite::opt::internal::ceres_base_functor</compoundname>
-    <basecompoundref prot="public" virt="non-virtual">FirstOrderFunction</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">ceres::FirstOrderFunction</basecompoundref>
     <derivedcompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;</derivedcompoundref>
     <derivedcompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</derivedcompoundref>
     <includes refid="ceres__base_8h" local="no">ceres_base.h</includes>
@@ -412,22 +412,32 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" line="46" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.cpp" bodystart="15" bodyend="34"/>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1bef8b7100a6685e17ef51118b57728c" compoundref="ceres__base_8h" startline="27">energy_tgt_per_site</references>
-        <references refid="classclass__algorithm__status_1af1f50c4e5b65d642478ae6421419228c" compoundref="class__algorithm__status_8h" startline="22">class_algorithm_status::energy_tgt_per_site</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a506407dd3ce5874aad6c43401f0498e0" compoundref="ceres__base_8h" startline="29">energy_max_per_site</references>
-        <references refid="classclass__algorithm__status_1a529e687471b62fbd48844bacd824359f" compoundref="class__algorithm__status_8h" startline="21">class_algorithm_status::energy_max_per_site</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad0e4490dfc4324060c4dfa60ee76315c" compoundref="ceres__base_8h" startline="28">energy_min_per_site</references>
-        <references refid="classclass__algorithm__status_1a6a4d044f86d512e6c9e43a61f50fc5d2" compoundref="class__algorithm__status_8h" startline="20">class_algorithm_status::energy_min_per_site</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aaeacf1bdeb827ca46fb2f623e76dec54" compoundref="ceres__base_8h" startline="25">energy_llim_per_site</references>
-        <references refid="classclass__algorithm__status_1a50ec138a23ad7ecc2d370487f94cad4f" compoundref="class__algorithm__status_8h" startline="24">class_algorithm_status::energy_llim_per_site</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a969920ebc8a54fd4fe1d38ad1f7c66ed" compoundref="ceres__base_8h" startline="26">energy_ulim_per_site</references>
-        <references refid="classclass__algorithm__status_1aa35aa4b05938ef80c45509eefde7a37a" compoundref="class__algorithm__status_8h" startline="23">class_algorithm_status::energy_ulim_per_site</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4cf55cb74d9e1107c11f6ea6d4519096" compoundref="ceres__base_8h" startline="31">energy_dens_target</references>
         <references refid="classclass__algorithm__status_1a5da96b3f2adea8e1e3193a7819522034" compoundref="class__algorithm__status_8h" startline="26">class_algorithm_status::energy_dens_target</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aac95b85ddd16608f4bb82fe8fb9c3ffe" compoundref="ceres__base_8h" startline="32">energy_dens_window</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4cf55cb74d9e1107c11f6ea6d4519096" compoundref="ceres__base_8h" startline="31">energy_dens_target</references>
         <references refid="classclass__algorithm__status_1abf4988dae5406a0c08d6229c9cf3d27c" compoundref="class__algorithm__status_8h" startline="27">class_algorithm_status::energy_dens_window</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a171b74acc255cbd18196fc109c22bb81" compoundref="ceres__base_8h" startline="41">iteration</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aac95b85ddd16608f4bb82fe8fb9c3ffe" compoundref="ceres__base_8h" startline="32">energy_dens_window</references>
+        <references refid="classclass__algorithm__status_1a50ec138a23ad7ecc2d370487f94cad4f" compoundref="class__algorithm__status_8h" startline="24">class_algorithm_status::energy_llim_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aaeacf1bdeb827ca46fb2f623e76dec54" compoundref="ceres__base_8h" startline="25">energy_llim_per_site</references>
+        <references refid="classclass__algorithm__status_1a529e687471b62fbd48844bacd824359f" compoundref="class__algorithm__status_8h" startline="21">class_algorithm_status::energy_max_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a506407dd3ce5874aad6c43401f0498e0" compoundref="ceres__base_8h" startline="29">energy_max_per_site</references>
+        <references refid="classclass__algorithm__status_1a6a4d044f86d512e6c9e43a61f50fc5d2" compoundref="class__algorithm__status_8h" startline="20">class_algorithm_status::energy_min_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad0e4490dfc4324060c4dfa60ee76315c" compoundref="ceres__base_8h" startline="28">energy_min_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" compoundref="ceres__base_8h" startline="24">energy_reduced</references>
+        <references refid="classclass__algorithm__status_1af1f50c4e5b65d642478ae6421419228c" compoundref="class__algorithm__status_8h" startline="22">class_algorithm_status::energy_tgt_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1bef8b7100a6685e17ef51118b57728c" compoundref="ceres__base_8h" startline="27">energy_tgt_per_site</references>
+        <references refid="classclass__algorithm__status_1aa35aa4b05938ef80c45509eefde7a37a" compoundref="class__algorithm__status_8h" startline="23">class_algorithm_status::energy_ulim_per_site</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a969920ebc8a54fd4fe1d38ad1f7c66ed" compoundref="ceres__base_8h" startline="26">energy_ulim_per_site</references>
+        <references refid="classclass__tensors__finite_1a2821ebade96b96a7ac4a8c26d0e64b8e" compoundref="class__tensors__finite_8cpp" startline="340" endline="345">class_tensors_finite::get_length</references>
         <references refid="classclass__algorithm__status_1a747785006ce496cf72c58be2ad89b79a" compoundref="class__algorithm__status_8h" startline="11">class_algorithm_status::iter</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a171b74acc255cbd18196fc109c22bb81" compoundref="ceres__base_8h" startline="41">iteration</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" compoundref="ceres__base_8h" startline="40">length</references>
+        <references refid="classclass__tensors__finite_1ae5292cd1a9588909b060778ef0ec8092" compoundref="class__tensors__finite_8h" startline="19">class_tensors_finite::model</references>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="83">settings::profiling::on</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a4231819b5f518d1bbee099137e4ba94c" compoundref="ceres__base_8h" startline="64">t_H2n</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ab7e32e738cfdf2de9bed75b25aae1c71" compoundref="ceres__base_8h" startline="66">t_Hn</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aca13ca186bb8d7ef3de0876e2936008b" compoundref="ceres__base_8h" startline="65">t_nH2n</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1aee536b684beb7ddd1b3cd6473d820f2f" compoundref="ceres__base_8h" startline="67">t_nHn</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5cc81a0bb9c6d5bf5948dbadf19ac81d" compoundref="ceres__base_8h" startline="63">t_step</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -650,12 +660,6 @@
     <collaborationgraph>
       <node id="3">
         <label>std::unique_ptr&lt; class_tic_toc &gt;</label>
-        <childnode refid="4" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
-      </node>
-      <node id="6">
-        <label>std::basic_string&lt; char &gt;</label>
       </node>
       <node id="1">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
@@ -663,30 +667,18 @@
         <childnode refid="2" relation="public-inheritance">
         </childnode>
         <childnode refid="3" relation="usage">
-          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_H2n</edgelabel>
+          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_nH2n</edgelabel>
-          <edgelabel>t_step</edgelabel>
           <edgelabel>t_nHn</edgelabel>
-        </childnode>
-      </node>
-      <node id="4">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="5" relation="usage">
-          <edgelabel>name</edgelabel>
+          <edgelabel>t_step</edgelabel>
         </childnode>
       </node>
       <node id="2">
         <label>ceres::FirstOrderFunction</label>
       </node>
-      <node id="5">
-        <label>std::string</label>
-        <childnode refid="6" relation="public-inheritance">
-        </childnode>
-      </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" line="18" column="62" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" bodystart="18" bodyend="68"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" line="18" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.h" bodystart="18" bodyend="68"/>
     <listofallmembers>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>ceres_base_functor</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad1a61c70c00b5f4ed703f587a1a2f41f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>counter</name></member>

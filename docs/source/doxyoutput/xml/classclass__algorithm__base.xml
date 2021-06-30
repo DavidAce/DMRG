@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__algorithm__base" kind="class" language="C++" prot="public" abstract="yes">
     <compoundname>class_algorithm_base</compoundname>
     <derivedcompoundref refid="classclass__algorithm__finite" prot="public" virt="non-virtual">class_algorithm_finite</derivedcompoundref>
@@ -139,14 +139,23 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="26" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="18" bodyend="26"/>
+        <references refid="classclass__algorithm__base_1a80c582c2364a996836b5c7fe29076c13" compoundref="class__algorithm__base_8h" startline="31">algo_name</references>
+        <references refid="classclass__algorithm__base_1a4c3f79ef6e69fe89a7e5b6d1f3ad3f34" compoundref="class__algorithm__base_8h" startline="30">algo_type</references>
+        <references refid="config_2enums_8h_1aa363e0dc56d2bdef0a2c3bf927637a0b" compoundref="config_2enums_8h" startline="178" endline="382">enum2str</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" compoundref="prof_8cpp" startline="136" endline="280">tools::common::profile::init_profiling</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a8aa67a8ac5f252dbbd66238df0034de4" compoundref="prof_8cpp" startline="72" endline="72">tools::common::profile::set_default_prof</references>
+        <references refid="namespacetools_1_1_logger_1a226e4a9b901367b2e4cb3e17809385b1" compoundref="log_8cpp" startline="58" endline="67">tools::Logger::setLogger</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="90">settings::console::timestamp</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="89">settings::console::verbosity</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void class_algorithm_base::run</definition>
         <argsstring>()=0</argsstring>
         <name>run</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1ae14b72b2eb26ac37f453c24cd2c5a68c">run</reimplementedby>
         <reimplementedby refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640">run</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__infinite_1ae14b72b2eb26ac37f453c24cd2c5a68c">run</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -160,10 +169,10 @@
         <definition>virtual void class_algorithm_base::check_convergence</definition>
         <argsstring>()=0</argsstring>
         <name>check_convergence</name>
-        <reimplementedby refid="classclass__idmrg_1aa378ca0af7c411888456acb71eab2572">check_convergence</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1a7a74237db858b9cccf2dc7ce32710927">check_convergence</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1ac2f1eb9b006203a1f367ef1a3dd43ae4">check_convergence</reimplementedby>
         <reimplementedby refid="classclass__flbit_1a6f30a38fe6b88ebddd5c09a827f3fbfb">check_convergence</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1aa378ca0af7c411888456acb71eab2572">check_convergence</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1a7a74237db858b9cccf2dc7ce32710927">check_convergence</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1a3a654aad624941a3ad0b15032f2684ed">check_convergence</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -204,10 +213,10 @@
         <definition>virtual bool class_algorithm_base::cfg_algorithm_is_on</definition>
         <argsstring>()=0</argsstring>
         <name>cfg_algorithm_is_on</name>
-        <reimplementedby refid="classclass__idmrg_1a0aec75121c993aa4b001ea27d62ba5e5">cfg_algorithm_is_on</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1ad64ccb61b93511d0fdf0f9369b072f8d">cfg_algorithm_is_on</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1a3a079fd8a9710a82fa899dc7dc62e05d">cfg_algorithm_is_on</reimplementedby>
         <reimplementedby refid="classclass__flbit_1a507324fd1fba03cbc04d6d585868f621">cfg_algorithm_is_on</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1a0aec75121c993aa4b001ea27d62ba5e5">cfg_algorithm_is_on</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1ad64ccb61b93511d0fdf0f9369b072f8d">cfg_algorithm_is_on</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1a00220352947ad04a24f6f501b076ab59">cfg_algorithm_is_on</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -222,10 +231,10 @@
         <definition>virtual size_t class_algorithm_base::cfg_print_freq</definition>
         <argsstring>()=0</argsstring>
         <name>cfg_print_freq</name>
-        <reimplementedby refid="classclass__idmrg_1afd21df1bbd26df188904297fa2497123">cfg_print_freq</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1aa95f746e3a32124dafd4a79a95798d21">cfg_print_freq</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1a5ef3e104bc981d05b4c676090a175219">cfg_print_freq</reimplementedby>
         <reimplementedby refid="classclass__flbit_1a9620b59388eb75b5eb8be58335314b66">cfg_print_freq</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1afd21df1bbd26df188904297fa2497123">cfg_print_freq</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1aa95f746e3a32124dafd4a79a95798d21">cfg_print_freq</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1a8e57039cae694ea44ec3a7998fe2472d">cfg_print_freq</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -240,10 +249,10 @@
         <definition>virtual long class_algorithm_base::cfg_chi_lim_max</definition>
         <argsstring>()=0</argsstring>
         <name>cfg_chi_lim_max</name>
-        <reimplementedby refid="classclass__idmrg_1a67f74cf05d313c8c8250b1526a85d071">cfg_chi_lim_max</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1a9213904c6c6f2285070b3321490eb3eb">cfg_chi_lim_max</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1a3d07445476e8dc21d33109052372c2fa">cfg_chi_lim_max</reimplementedby>
         <reimplementedby refid="classclass__flbit_1abdc4caf204d138933f938c478acfe871">cfg_chi_lim_max</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1a67f74cf05d313c8c8250b1526a85d071">cfg_chi_lim_max</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1a9213904c6c6f2285070b3321490eb3eb">cfg_chi_lim_max</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1a9c4ded32c5ec05cc8aee7d623e1e562e">cfg_chi_lim_max</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -258,10 +267,10 @@
         <definition>virtual bool class_algorithm_base::cfg_chi_lim_grow</definition>
         <argsstring>()=0</argsstring>
         <name>cfg_chi_lim_grow</name>
-        <reimplementedby refid="classclass__idmrg_1a015ffbecdbcb353c7db7daa4a00e0c19">cfg_chi_lim_grow</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1a033c659d40082f7364960e729b98fffe">cfg_chi_lim_grow</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1a6e47aee2e8d95795765fb379e090afe0">cfg_chi_lim_grow</reimplementedby>
         <reimplementedby refid="classclass__flbit_1a6b24272aba48ffe9c3a5db794c4888eb">cfg_chi_lim_grow</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1a015ffbecdbcb353c7db7daa4a00e0c19">cfg_chi_lim_grow</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1a033c659d40082f7364960e729b98fffe">cfg_chi_lim_grow</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1a943ba9c06a4f59612f290a278f20b015">cfg_chi_lim_grow</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -276,10 +285,10 @@
         <definition>virtual long class_algorithm_base::cfg_chi_lim_init</definition>
         <argsstring>()=0</argsstring>
         <name>cfg_chi_lim_init</name>
-        <reimplementedby refid="classclass__idmrg_1a557d99cdb90cabbc1d5d72e3d1212d98">cfg_chi_lim_init</reimplementedby>
-        <reimplementedby refid="classclass__itebd_1a8122138914de04d1ca32348d21e8da5c">cfg_chi_lim_init</reimplementedby>
         <reimplementedby refid="classclass__fdmrg_1a1226cc15545c65e96c6a9c7283b1b669">cfg_chi_lim_init</reimplementedby>
         <reimplementedby refid="classclass__flbit_1a3c17a92afc3937298924446ad5c10878">cfg_chi_lim_init</reimplementedby>
+        <reimplementedby refid="classclass__idmrg_1a557d99cdb90cabbc1d5d72e3d1212d98">cfg_chi_lim_init</reimplementedby>
+        <reimplementedby refid="classclass__itebd_1a8122138914de04d1ca32348d21e8da5c">cfg_chi_lim_init</reimplementedby>
         <reimplementedby refid="classclass__xdmrg_1ab365943f5dd699176bb90d1b82475bcd">cfg_chi_lim_init</reimplementedby>
         <briefdescription>
         </briefdescription>
@@ -310,8 +319,8 @@
         <definition>virtual void class_algorithm_base::print_status_full</definition>
         <argsstring>()=0</argsstring>
         <name>print_status_full</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9">print_status_full</reimplementedby>
         <reimplementedby refid="classclass__algorithm__finite_1a31460024ef07df92bc57719b2234a725">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9">print_status_full</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -325,8 +334,8 @@
         <definition>virtual void class_algorithm_base::clear_convergence_status</definition>
         <argsstring>()=0</argsstring>
         <name>clear_convergence_status</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1a2602edae65f1a9bf3b5437c2cdc446de">clear_convergence_status</reimplementedby>
         <reimplementedby refid="classclass__algorithm__finite_1a8fa80baac08c61d142ac0114329a1592">clear_convergence_status</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__infinite_1a2602edae65f1a9bf3b5437c2cdc446de">clear_convergence_status</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -340,8 +349,8 @@
         <definition>virtual void class_algorithm_base::update_variance_max_digits</definition>
         <argsstring>(std::optional&lt; double &gt; energy=std::nullopt)=0</argsstring>
         <name>update_variance_max_digits</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1acb14ea81ee6e72bc06bd3fbd1627249b">update_variance_max_digits</reimplementedby>
         <reimplementedby refid="classclass__algorithm__finite_1ad4868cc94f2a7dc1e543fcaf10a79296">update_variance_max_digits</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__infinite_1acb14ea81ee6e72bc06bd3fbd1627249b">update_variance_max_digits</reimplementedby>
         <param>
           <type>std::optional&lt; double &gt;</type>
           <declname>energy</declname>
@@ -397,6 +406,26 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="50" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="28" bodyend="57"/>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a0f15e1247e93ddfa95c008106eb0d22f">CHECKPOINT</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a897773140ef9a63d5de751d88edd0436">CHI_UPDATE</references>
+        <references refid="namespacesettings_1_1output_1a9e0297c0c7d4d406845f0ae2b8396dd5" compoundref="nmspc__settings_8h" startline="51">settings::output::copy_from_temp_freq</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a75051edf0fda6dfd3f703e3bdf864129" compoundref="h5tmp_8cpp" startline="124" endline="132">tools::common::io::h5tmp::copy_from_tmp</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01ae33d0e9926067a3fcfd37361b6b30f9f">EMAX_STATE</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01aed63a7bd13e4906bc2e1bbe74f89ac5a">EMIN_STATE</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a2c616b2713e2e0aed04b4c4752c88133">FINISHED</references>
+        <references refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5a2884c991e71a112e70c186a5c4458a24">FORCE</references>
+        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="27">h5pp_file</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a67a088c9d3535b13104e21e618f59382">INIT_STATE</references>
+        <references refid="classclass__algorithm__status_1a747785006ce496cf72c58be2ad89b79a" compoundref="class__algorithm__status_8h" startline="11">class_algorithm_status::iter</references>
+        <references refid="namespacenum_1a8f78d63b0e3b71f75f5a141900ba202a" compoundref="num_8h" startline="25" endline="31">num::mod</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a7a03bac2692f8d17e2cda1b0721ffd0e">MODEL</references>
+        <references refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5a88559a0cfd8250c9d65970cc145c92d4">OFF</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a786913b585b4a8a603375da88293b140">PROJ_STATE</references>
+        <references refid="config_2enums_8h_1a88f884ec2f6314f2c5abc9eb2438fc01a083da148a19edd2e36a68d82c8e87377">SAVEPOINT</references>
+        <references refid="classclass__algorithm__base_1a7eb3f86503fff1d7d00ec3cc61beb60b" compoundref="class__algorithm__base_8h" startline="28">status</references>
+        <references refid="classclass__algorithm__status_1a0071e2c8a215558eadd08fe35d5591ef" compoundref="class__algorithm__status_8h" startline="12">class_algorithm_status::step</references>
+        <references refid="config_2enums_8h_1a51a9760605ac8e44f3479429f911dad5a59dfb83f7cac4e3c8ee91700ef2ad90d">TRY</references>
+        <references refid="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" compoundref="nmspc__settings_8h" startline="50">settings::output::use_temp_dir</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a0a68686f23b45bcdc7c833a7bf348b54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -410,6 +439,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="51" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="59" bodyend="69"/>
+        <references refid="classclass__algorithm__base_1a9e2ef57748396e00830b20111c59bdd9">cfg_chi_lim_grow</references>
+        <references refid="classclass__algorithm__base_1a02248bae999554bcbbc84ba8bbaf6eb0">cfg_chi_lim_init</references>
+        <references refid="classclass__algorithm__base_1a3e25541163969ac43885855e9a701455">cfg_chi_lim_max</references>
+        <references refid="classclass__algorithm__status_1af09e39e39e315094313b3ac3c5a20baf" compoundref="class__algorithm__status_8h" startline="19">class_algorithm_status::chi_lim</references>
+        <references refid="classclass__algorithm__status_1aa2a344f5ca3b3a6230d82fabd0936d92" compoundref="class__algorithm__status_8h" startline="18">class_algorithm_status::chi_lim_init</references>
+        <references refid="classclass__algorithm__status_1a9c6881b9887afeabd4fdc42dab57fd5e" compoundref="class__algorithm__status_8h" startline="17">class_algorithm_status::chi_lim_max</references>
+        <references refid="classclass__algorithm__base_1a7eb3f86503fff1d7d00ec3cc61beb60b" compoundref="class__algorithm__base_8h" startline="28">status</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1affa46990d9763a23323280340fb62510" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -423,6 +459,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="52" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="151" bodyend="154"/>
+        <references refid="namespacesettings_1_1profiling_1ad8612ce49e359b4bbe0aa61952ae3c63" compoundref="nmspc__settings_8h" startline="84">settings::profiling::extra</references>
+        <references refid="namespacetools_1_1common_1_1profile_1acddc3d16e46bd859394c9e36cdfc1ead" compoundref="prof_8cpp" startline="109" endline="134">tools::common::profile::print_profiling_laps</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
@@ -451,6 +489,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="69" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="72" bodyend="82"/>
+        <references refid="namespaceiter_1aa13063344fcd21c395fe1c4c2ea6e9a0" compoundref="nmspc__iter_8h" startline="69" endline="71">iter::enumerate</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1ab832ca5e6b3de23ee408c760c68c843f" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">SaturationReport</ref></type>
@@ -472,6 +511,21 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="70" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="85" bodyend="149"/>
+        <references refid="namespaceiter_1aa13063344fcd21c395fe1c4c2ea6e9a0" compoundref="nmspc__iter_8h" startline="69" endline="71">iter::enumerate</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" compoundref="class__algorithm__base_8h" startline="57">class_algorithm_base::SaturationReport::has_computed</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1ab8c2530a0f676fc48916e551b679273d" compoundref="class__algorithm__base_8h" startline="58">class_algorithm_base::SaturationReport::has_saturated</references>
+        <references refid="namespacestat_1a2a94076e6fe025187ae3ae92faaaf005" compoundref="stat_8h" startline="65" endline="80">stat::mean</references>
+        <references refid="namespacestat_1a4331e29f7cae5b6ffb10e2e4800f4bb0" compoundref="stat_8h" startline="36" endline="62">stat::median</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1ae7a4b29efae375b47404dfb80e868455" compoundref="class__algorithm__base_8h" startline="59">class_algorithm_base::SaturationReport::saturated_count</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a75abc27fbf13a0be2547b307cc7d8528" compoundref="class__algorithm__base_8h" startline="60">class_algorithm_base::SaturationReport::saturated_point</references>
+        <references refid="namespacestat_1a798a4d2402254288245290d3398614cc" compoundref="stat_8h" startline="119" endline="153">stat::slope</references>
+        <references refid="namespacestat_1af170465dfabe875670740d08c99d7c85" compoundref="stat_8h" startline="170" endline="181">stat::smooth</references>
+        <references refid="namespacestat_1a33ef25674fc325393a7917f650e26715" compoundref="stat_8h" startline="90" endline="110">stat::stdev</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a386b600dae42a443b2fbebe111166ea8" compoundref="class__algorithm__base_8h" startline="62">class_algorithm_base::SaturationReport::Y_avg</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a05e6ebae330de1e3755b353027626407" compoundref="class__algorithm__base_8h" startline="67">class_algorithm_base::SaturationReport::Y_slp</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a6e230733998e28896446c5671425d815" compoundref="class__algorithm__base_8h" startline="63">class_algorithm_base::SaturationReport::Y_std</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a5399260d0035aeccfe65ceddd4b0f79f" compoundref="class__algorithm__base_8h" startline="64">class_algorithm_base::SaturationReport::Y_stn</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1aa225a94b5d4ddb16492b4dffc6e6a2d6" compoundref="class__algorithm__base_8h" startline="61">class_algorithm_base::SaturationReport::Y_vec</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -531,7 +585,7 @@
         <label>std::shared_ptr&lt; h5pp::File &gt;</label>
       </node>
       <node id="3">
-        <label>std::basic_string&lt; char &gt;</label>
+        <label>std::basic_string&lt; Char &gt;</label>
       </node>
       <node id="5">
         <label>std::complex&lt; double &gt;</label>
@@ -562,7 +616,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="21" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="21" bodyend="71"/>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="21" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="21" bodyend="71"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1a80c582c2364a996836b5c7fe29076c13" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>algo_name</name></member>
       <member refid="classclass__algorithm__base_1a4c3f79ef6e69fe89a7e5b6d1f3ad3f34" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>algo_type</name></member>

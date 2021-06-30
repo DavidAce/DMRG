@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespaceqm_1_1_spin_one" kind="namespace" language="C++">
     <compoundname>qm::SpinOne</compoundname>
       <sectiondef kind="var">
@@ -141,12 +141,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="146" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="146" bodyend="153"/>
+        <references refid="namespaceqm_1ac14000ed85c03f44fee79510a99e1447" compoundref="nmspc__quantum__mechanics_8cpp" startline="64" endline="68">qm::gen_manybody_spins</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="124" column="21"/>
+    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" line="124" column="1"/>
   </compounddef>
 </doxygen>

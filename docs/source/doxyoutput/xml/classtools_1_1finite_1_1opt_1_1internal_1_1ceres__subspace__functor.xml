@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" kind="class" language="C++" prot="public">
     <compoundname>tools::finite::opt::internal::ceres_subspace_functor</compoundname>
     <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_base_functor</basecompoundref>
@@ -94,6 +94,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" line="19" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.cpp" bodystart="14" bodyend="25"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" compoundref="ceres__subspace__functor_8h" startline="16">tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::eigvals</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a20a166fcddb704da3585dc47b9b1f984" compoundref="ceres__subspace__functor_8h" startline="15">tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::H2</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" compoundref="ceres__base_8h" startline="42">tools::finite::opt::internal::ceres_base_functor::num_parameters</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a6fef56e83a33caecd537f197194b2e33" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
         <type>bool</type>
@@ -119,6 +123,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" line="21" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.cpp" bodystart="28" bodyend="114"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" compoundref="finite_2measure_8cpp" startline="353" endline="369">tools::finite::measure::energy</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8145a38b82bae9aa25597372b688670e" compoundref="finite_2measure_8cpp" startline="377" endline="382">tools::finite::measure::energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1adf8bc0e9cd41a987d462608c75a36b40" compoundref="finite_2measure_8cpp" startline="469" endline="469">tools::finite::measure::energy_reduced</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1d47691c527644e67b5fbb53f46aa7a9" compoundref="finite_2measure_8cpp" startline="54" endline="54">tools::finite::measure::length</references>
+        <references refid="namespaceeig_1ae96cb5c133e7edfc21bb951904f03b3b" compoundref="math_2eig_2enums_8h" startline="9">eig::log</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" compoundref="matrix_8h" startline="30" endline="34">linalg::matrix::to_string</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -151,12 +163,6 @@
       </node>
       <node id="4">
         <label>std::unique_ptr&lt; class_tic_toc &gt;</label>
-        <childnode refid="5" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
-      </node>
-      <node id="7">
-        <label>std::basic_string&lt; char &gt;</label>
       </node>
       <node id="2">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
@@ -164,30 +170,18 @@
         <childnode refid="3" relation="public-inheritance">
         </childnode>
         <childnode refid="4" relation="usage">
-          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_H2n</edgelabel>
+          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_nH2n</edgelabel>
-          <edgelabel>t_step</edgelabel>
           <edgelabel>t_nHn</edgelabel>
-        </childnode>
-      </node>
-      <node id="5">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="6" relation="usage">
-          <edgelabel>name</edgelabel>
+          <edgelabel>t_step</edgelabel>
         </childnode>
       </node>
       <node id="3">
         <label>ceres::FirstOrderFunction</label>
       </node>
-      <node id="6">
-        <label>std::string</label>
-        <childnode refid="7" relation="public-inheritance">
-        </childnode>
-      </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" line="11" column="59" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" bodystart="11" bodyend="22"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" line="11" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.h" bodystart="11" bodyend="22"/>
     <listofallmembers>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_base_functor</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a117a9c0c4ec8843e3ba96561a8d56181" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_subspace_functor</name></member>

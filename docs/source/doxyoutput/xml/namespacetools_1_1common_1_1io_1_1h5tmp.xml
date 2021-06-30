@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1common_1_1io_1_1h5tmp" kind="namespace" language="C++">
     <compoundname>tools::common::io::h5tmp</compoundname>
     <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal">tools::common::io::h5tmp::internal</innernamespace>
@@ -77,8 +77,10 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="54" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="124" bodyend="132" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="54" declcolumn="21"/>
         <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1abedc0dca6f4a94d01bf13c7797680765" compoundref="h5tmp_8cpp" startline="139" endline="164">copy_file</references>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" compoundref="h5tmp_8cpp" startline="54" endline="54">get_temporary_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a552fcf9d3f1691bbcbe45922aeb9431e" compoundref="common_2io_8h" startline="46">tools::common::io::h5tmp::internal::file_register</references>
         <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a1aca97b360077e59190e008d5b1d4f4b" compoundref="h5tmp_8cpp" startline="55" endline="55">get_original_filepath</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" compoundref="h5tmp_8cpp" startline="54" endline="54">get_temporary_filepath</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a22330421f30be77cac5ee060bc4d0a8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -120,6 +122,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="56" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="139" bodyend="164" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="56" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a07f3c3387cb15bf80c403384f09b1449" compoundref="h5tmp_8cpp" startline="103" endline="122">create_directory</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a07f3c3387cb15bf80c403384f09b1449" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -137,6 +141,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="57" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="103" bodyend="122" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="57" declcolumn="21"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ab0f2e9dea5b85761dcd16a8b1abe97c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -155,12 +160,13 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="58" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp" bodystart="166" bodyend="186" declfile="/home/david/GitProjects/DMRG++/source/tools/common/io.h" declline="58" declcolumn="21"/>
         <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1_1internal_1a6ef3f8c63ac82f5589ab0d32a907d422" compoundref="h5tmp_8cpp" startline="48" endline="52">tools::common::io::h5tmp::internal::get_paths</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="39" column="19"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="39" column="5"/>
   </compounddef>
 </doxygen>

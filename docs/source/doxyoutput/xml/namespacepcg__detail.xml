@@ -1,32 +1,32 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacepcg__detail" kind="namespace" language="C++">
     <compoundname>pcg_detail</compoundname>
-    <innerclass refid="structpcg__detail_1_1default__increment" prot="public">pcg_detail::default_increment</innerclass>
     <innerclass refid="structpcg__detail_1_1default__multiplier" prot="public">pcg_detail::default_multiplier</innerclass>
-    <innerclass refid="classpcg__detail_1_1engine" prot="public">pcg_detail::engine</innerclass>
-    <innerclass refid="classpcg__detail_1_1extended" prot="public">pcg_detail::extended</innerclass>
-    <innerclass refid="structpcg__detail_1_1halfsize__trait" prot="public">pcg_detail::halfsize_trait</innerclass>
-    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01pcg128__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; pcg128_t &gt;</innerclass>
-    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint16__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint16_t &gt;</innerclass>
-    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint32__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint32_t &gt;</innerclass>
-    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint64__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint64_t &gt;</innerclass>
-    <innerclass refid="structpcg__detail_1_1inside__out" prot="public">pcg_detail::inside_out</innerclass>
-    <innerclass refid="structpcg__detail_1_1mcg__multiplier" prot="public">pcg_detail::mcg_multiplier</innerclass>
-    <innerclass refid="structpcg__detail_1_1mcg__unmultiplier" prot="public">pcg_detail::mcg_unmultiplier</innerclass>
+    <innerclass refid="structpcg__detail_1_1default__increment" prot="public">pcg_detail::default_increment</innerclass>
+    <innerclass refid="classpcg__detail_1_1unique__stream" prot="public">pcg_detail::unique_stream</innerclass>
     <innerclass refid="classpcg__detail_1_1no__stream" prot="public">pcg_detail::no_stream</innerclass>
     <innerclass refid="classpcg__detail_1_1oneseq__stream" prot="public">pcg_detail::oneseq_stream</innerclass>
-    <innerclass refid="structpcg__detail_1_1rxs__m__mixin" prot="public">pcg_detail::rxs_m_mixin</innerclass>
-    <innerclass refid="structpcg__detail_1_1rxs__m__xs__mixin" prot="public">pcg_detail::rxs_m_xs_mixin</innerclass>
-    <innerclass refid="structpcg__detail_1_1rxs__mixin" prot="public">pcg_detail::rxs_mixin</innerclass>
     <innerclass refid="classpcg__detail_1_1specific__stream" prot="public">pcg_detail::specific_stream</innerclass>
-    <innerclass refid="classpcg__detail_1_1unique__stream" prot="public">pcg_detail::unique_stream</innerclass>
-    <innerclass refid="structpcg__detail_1_1xsh__mixin" prot="public">pcg_detail::xsh_mixin</innerclass>
-    <innerclass refid="structpcg__detail_1_1xsh__rr__mixin" prot="public">pcg_detail::xsh_rr_mixin</innerclass>
+    <innerclass refid="classpcg__detail_1_1engine" prot="public">pcg_detail::engine</innerclass>
     <innerclass refid="structpcg__detail_1_1xsh__rs__mixin" prot="public">pcg_detail::xsh_rs_mixin</innerclass>
-    <innerclass refid="structpcg__detail_1_1xsl__mixin" prot="public">pcg_detail::xsl_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1xsh__rr__mixin" prot="public">pcg_detail::xsh_rr_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1rxs__mixin" prot="public">pcg_detail::rxs_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1mcg__multiplier" prot="public">pcg_detail::mcg_multiplier</innerclass>
+    <innerclass refid="structpcg__detail_1_1mcg__unmultiplier" prot="public">pcg_detail::mcg_unmultiplier</innerclass>
+    <innerclass refid="structpcg__detail_1_1rxs__m__xs__mixin" prot="public">pcg_detail::rxs_m_xs_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1rxs__m__mixin" prot="public">pcg_detail::rxs_m_mixin</innerclass>
     <innerclass refid="structpcg__detail_1_1xsl__rr__mixin" prot="public">pcg_detail::xsl_rr_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1halfsize__trait" prot="public">pcg_detail::halfsize_trait</innerclass>
+    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01pcg128__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; pcg128_t &gt;</innerclass>
+    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint64__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint64_t &gt;</innerclass>
+    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint32__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint32_t &gt;</innerclass>
+    <innerclass refid="structpcg__detail_1_1halfsize__trait_3_01uint16__t_01_4" prot="public">pcg_detail::halfsize_trait&lt; uint16_t &gt;</innerclass>
     <innerclass refid="structpcg__detail_1_1xsl__rr__rr__mixin" prot="public">pcg_detail::xsl_rr_rr_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1xsh__mixin" prot="public">pcg_detail::xsh_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1xsl__mixin" prot="public">pcg_detail::xsl_mixin</innerclass>
+    <innerclass refid="structpcg__detail_1_1inside__out" prot="public">pcg_detail::inside_out</innerclass>
+    <innerclass refid="classpcg__detail_1_1extended" prot="public">pcg_detail::extended</innerclass>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="namespacepcg__detail_1a6846cc3c8aeca330c4a5ab03bdbc9b32" prot="public" static="no">
         <templateparamlist>
@@ -255,6 +255,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="436" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="436" bodyend="461"/>
+        <references refid="classpcg__detail_1_1oneseq__stream_1abacdb579b5a3930ab4143c2fc01aa73b" compoundref="pcg__random_8hpp" startline="236">pcg_detail::oneseq_stream&lt; itype &gt;::can_specify_stream</references>
+        <references refid="namespacernd_1_1internal_1a182d68c34d82ec28adc2fcc301b07d8e" compoundref="rnd_8cpp" startline="16">rnd::internal::rng</references>
+        <references refid="classpcg__detail_1_1oneseq__stream_1a12107cf1c4f41caf6f3fc1366e7edf0d" compoundref="pcg__random_8hpp" startline="229" endline="229">pcg_detail::oneseq_stream&lt; itype &gt;::set_stream</references>
+        <references refid="classpcg__detail_1_1engine_1a8e29a3b26c9966667b6ea7a7f153b145" compoundref="pcg__random_8hpp" startline="297">pcg_detail::engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt;::state_</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1a4aae5e3d1c68d31e2608dcd41572869c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -304,6 +308,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="511" column="11" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="511" bodyend="515"/>
+        <references refid="classpcg__detail_1_1engine_1aa58dc06aeb00200b73dbb890abc50fbf" compoundref="pcg__random_8hpp" startline="491" endline="507">pcg_detail::engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt;::distance</references>
+        <references refid="classpcg__detail_1_1engine_1a8e29a3b26c9966667b6ea7a7f153b145" compoundref="pcg__random_8hpp" startline="297">pcg_detail::engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt;::state_</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1a533d2dabb5e41bebf5f53025ee45ed6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -353,6 +359,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="519" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="519" bodyend="522"/>
+        <references refid="classpcg__detail_1_1engine_1a8e29a3b26c9966667b6ea7a7f153b145" compoundref="pcg__random_8hpp" startline="297">pcg_detail::engine&lt; xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin &gt;::state_</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1ae301c41cc112c18882cd3f69d4a79c00" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -402,16 +409,17 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="526" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="526" bodyend="529"/>
+        <references refid="namespacepcg__detail_1a533d2dabb5e41bebf5f53025ee45ed6c" compoundref="pcg__random_8hpp" startline="519" endline="522">operator==</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1af5285db7f4a5ff43c3f68fe9ea87426e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -446,16 +454,17 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1039" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1039" bodyend="1044"/>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
       </memberdef>
       <memberdef kind="function" id="namespacepcg__detail_1aa5d4605056ffa53aa9a18c804a75902d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -500,12 +509,12 @@
             <type>typename Traits</type>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -550,12 +559,12 @@
             <type>typename Traits</type>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -590,12 +599,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1069" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="1069" bodyend="1088"/>
+        <references refid="classpcg__detail_1_1extended_1ad5695148631932b277ec2cbac96efcb4" compoundref="pcg__random_8hpp" startline="918">pcg_detail::extended&lt; table_pow2, advance_pow2, baseclass, extvalclass, kdd &gt;::data_</references>
+        <references refid="namespacernd_1_1internal_1a182d68c34d82ec28adc2fcc301b07d8e" compoundref="rnd_8cpp" startline="16">rnd::internal::rng</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="104" column="20"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="104" column="1"/>
   </compounddef>
 </doxygen>

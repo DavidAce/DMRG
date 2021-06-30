@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespaceqm" kind="namespace" language="C++">
     <compoundname>qm</compoundname>
     <innerclass refid="classqm_1_1_gate" prot="public">qm::Gate</innerclass>
@@ -95,6 +95,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="23" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="300" bodyend="326" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="23" declcolumn="18"/>
+        <references refid="namespaceqm_1a68dcee1c9dc776f82f24084e9767ba73" compoundref="class__quantum__gates_8cpp" startline="286" endline="297">get_gate_sequence</references>
+        <references refid="namespaceiter_1a1e5cef09853f63219ad5fd9d1c6b3ba9a48cd7517d21176f980daa5502d9efb31">iter::rev</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1acfc9b545e958f98b3892f004c9a38be5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; std::vector&lt; size_t &gt; &gt;</type>
@@ -121,6 +123,8 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="24" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="331" bodyend="358" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="24" declcolumn="18"/>
         <references refid="namespaceqm_1a1c71ff97346ef5f567643cb73fa5e133" compoundref="class__quantum__gates_8cpp" startline="360" endline="374">get_lightcone_picture</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespace_textra_1ae011dc74fd0ff312cc0d957a688142c9" compoundref="nmspc__tensor__extra_8h" startline="179" endline="189">Textra::trace</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1a1c71ff97346ef5f567643cb73fa5e133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; std::string &gt;</type>
@@ -156,6 +160,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="25" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="360" bodyend="374" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="25" declcolumn="18"/>
+        <references refid="namespaceiter_1aa13063344fcd21c395fe1c4c2ea6e9a0" compoundref="nmspc__iter_8h" startline="69" endline="71">iter::enumerate</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1aad20272bb677b5d8bc32a374b0a00c23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
@@ -177,6 +182,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="28" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="376" bodyend="698" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="28" declcolumn="15"/>
+        <references refid="classqm_1_1_gate_1a14e035e97dc00a4a8e002e60d7de4e70" compoundref="class__quantum__gates_8h" startline="44">qm::Gate::dim</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classqm_1_1_gate_1a2a3ead2ca14d76d3a684e10c7b2a4914" compoundref="class__quantum__gates_8h" startline="42">qm::Gate::op</references>
+        <references refid="classqm_1_1_gate_1a2cca439499d18a004ffadb3f7a94bf8a" compoundref="class__quantum__gates_8h" startline="43">qm::Gate::pos</references>
+        <references refid="classqm_1_1_gate_1abf89c056b0c6778e0989cf94a5da69e9" compoundref="class__quantum__gates_8cpp" startline="201" endline="214">qm::Gate::shape</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1afd23a90711c4c937b8b09b7cd253e038" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
@@ -198,6 +208,16 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="29" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="700" bodyend="866" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="29" declcolumn="15"/>
+        <references refid="class__quantum__gates_8cpp_1a1737662497cc054d3a2ffdd3f298bb3b" compoundref="class__quantum__gates_8cpp" startline="51" endline="55">concat</references>
+        <references refid="classqm_1_1_gate_1a14e035e97dc00a4a8e002e60d7de4e70" compoundref="class__quantum__gates_8h" startline="44">qm::Gate::dim</references>
+        <references refid="class__quantum__gates_8cpp_1af9e0a0fcb286a927f3062774ff946651" compoundref="class__quantum__gates_8cpp" startline="70" endline="80">group</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classqm_1_1_gate_1a2a3ead2ca14d76d3a684e10c7b2a4914" compoundref="class__quantum__gates_8h" startline="42">qm::Gate::op</references>
+        <references refid="classqm_1_1_gate_1a2cca439499d18a004ffadb3f7a94bf8a" compoundref="class__quantum__gates_8h" startline="43">qm::Gate::pos</references>
+        <references refid="class__quantum__gates_8cpp_1ae04c04d19d776ca7ff326a1e4b232d8f" compoundref="class__quantum__gates_8cpp" startline="66" endline="68">repeat</references>
+        <references refid="classqm_1_1_gate_1abf89c056b0c6778e0989cf94a5da69e9" compoundref="class__quantum__gates_8cpp" startline="201" endline="214">qm::Gate::shape</references>
+        <references refid="class__quantum__gates_8cpp_1a0d4c0426635d390502745c1264bca92e" compoundref="class__quantum__gates_8cpp" startline="17" endline="23">subset</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1a9b4849f15c787f4ceb8f852ddd53a8d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
@@ -219,6 +239,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="30" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="868" bodyend="874" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="30" declcolumn="15"/>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespaceqm_1a86e463086dba4c5f37b00fafb61754cb" compoundref="class__quantum__gates_8cpp" startline="889" endline="895">trace</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1a7a3dc1b644fe083079eb4766c0d45885" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
@@ -240,7 +262,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="31" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="876" bodyend="885" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="31" declcolumn="15"/>
-        <references refid="classqm_1_1_gate_1a83e31f30c53e536a4a05139edc6c86bd" compoundref="class__quantum__gates_8h" startline="40">qm::Gate::adj</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classqm_1_1_gate_1a5e9f0495a64982f37fb3807f6a19d77b" compoundref="class__quantum__gates_8cpp" startline="225" endline="229">qm::Gate::idx</references>
+        <references refid="namespaceqm_1a9b4849f15c787f4ceb8f852ddd53a8d1" compoundref="class__quantum__gates_8cpp" startline="868" endline="874">trace_idx</references>
+        <references refid="classqm_1_1_gate_1a3030d57a5040e76c0217d5e7937631e4" compoundref="class__quantum__gates_8cpp" startline="282" endline="282">qm::Gate::trace_pos</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1ac5cd8ad7b3f51f4c8d165dbdf3cc2f42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classqm_1_1_gate" kindref="compound">qm::Gate</ref></type>
@@ -262,6 +287,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="32" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="887" bodyend="887" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="32" declcolumn="15"/>
+        <references refid="classqm_1_1_gate_1a5e9f0495a64982f37fb3807f6a19d77b" compoundref="class__quantum__gates_8cpp" startline="225" endline="229">qm::Gate::idx</references>
+        <references refid="namespaceqm_1a7a3dc1b644fe083079eb4766c0d45885" compoundref="class__quantum__gates_8cpp" startline="876" endline="885">trace_pos</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1a86e463086dba4c5f37b00fafb61754cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref></type>
@@ -279,7 +306,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="33" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="889" bodyend="895" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="33" declcolumn="15"/>
-        <references refid="classqm_1_1_gate_1a83e31f30c53e536a4a05139edc6c86bd" compoundref="class__quantum__gates_8h" startline="40">qm::Gate::adj</references>
+        <references refid="classqm_1_1_gate_1a2a3ead2ca14d76d3a684e10c7b2a4914" compoundref="class__quantum__gates_8h" startline="42">qm::Gate::op</references>
+        <references refid="classqm_1_1_gate_1a2cca439499d18a004ffadb3f7a94bf8a" compoundref="class__quantum__gates_8h" startline="43">qm::Gate::pos</references>
+        <references refid="namespaceqm_1a7a3dc1b644fe083079eb4766c0d45885" compoundref="class__quantum__gates_8cpp" startline="876" endline="885">trace_pos</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1afcc63c5d32db63a6e7dc9e7403bdd611" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -308,6 +337,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="35" column="15" bodyfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.cpp" bodystart="898" bodyend="978" declfile="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" declline="35" declcolumn="15"/>
+        <references refid="classqm_1_1_gate_1a14e035e97dc00a4a8e002e60d7de4e70" compoundref="class__quantum__gates_8h" startline="44">qm::Gate::dim</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classqm_1_1_gate_1a5e9f0495a64982f37fb3807f6a19d77b" compoundref="class__quantum__gates_8cpp" startline="225" endline="229">qm::Gate::idx</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classqm_1_1_gate_1a2a3ead2ca14d76d3a684e10c7b2a4914" compoundref="class__quantum__gates_8h" startline="42">qm::Gate::op</references>
+        <references refid="classqm_1_1_gate_1a2cca439499d18a004ffadb3f7a94bf8a" compoundref="class__quantum__gates_8h" startline="43">qm::Gate::pos</references>
+        <references refid="classqm_1_1_gate_1abf89c056b0c6778e0989cf94a5da69e9" compoundref="class__quantum__gates_8cpp" startline="201" endline="214">qm::Gate::shape</references>
+        <references refid="namespacelinalg_1_1tensor_1a902061ec448462b019b3ca4158887651" compoundref="tensor_8h" startline="146" endline="183">linalg::tensor::trace</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1a41cbf588a567c9eee91b34e0ecd4e4b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref></type>
@@ -338,6 +375,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="20" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="24" bodyend="62" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="20" declcolumn="29"/>
+        <references refid="namespaceqm_1_1_spin_one_1a16bed2d6c7c94cde96fc428506302313" compoundref="nmspc__quantum__mechanics_8cpp" startline="136">qm::SpinOne::id</references>
+        <references refid="namespacelinalg_1_1matrix_1aaee12e367b742ebfa9ad001b24735656">linalg::matrix::kronecker</references>
+        <references refid="namespacelinalg_1_1tensor_1a43948c9feaefb419a3e8641ca240dd42" compoundref="tensor_8h" startline="34" endline="66">linalg::tensor::mirror</references>
+        <references refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" compoundref="matrix_8h" startline="30" endline="34">linalg::matrix::to_string</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1ac14000ed85c03f44fee79510a99e1447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; <ref refid="namespace_eigen_1aef9ed31256193462d78ea092d5a533da" kindref="member">Eigen::MatrixXcd</ref> &gt;</type>
@@ -364,6 +405,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="21" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="64" bodyend="68" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="21" declcolumn="24"/>
+        <references refid="namespaceqm_1a41cbf588a567c9eee91b34e0ecd4e4b5" compoundref="nmspc__quantum__mechanics_8cpp" startline="24" endline="62">gen_embedded_spin_operator</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1ac4afad00d74a3ee80f897ae46cf89c36" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>constexpr std::complex&lt; double &gt;</type>
@@ -412,6 +454,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/mps.h" line="12" column="12"/>
+    <location file="/home/david/GitProjects/DMRG++/source/physics/class_quantum_gates.h" line="15" column="1"/>
   </compounddef>
 </doxygen>

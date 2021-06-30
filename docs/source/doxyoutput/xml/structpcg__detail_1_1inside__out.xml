@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structpcg__detail_1_1inside__out" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::inside_out</compoundname>
     <basecompoundref prot="private" virt="non-virtual">baseclass</basecompoundref>
@@ -103,6 +103,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="879" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="879" bodyend="890"/>
+        <references refid="namespacesettings_1_1model_1_1ising__sdual_1a2121cbdb3135ff0ba4c0d382b81ddc9a" compoundref="nmspc__settings_8h" startline="112">settings::model::ising_sdual::delta</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -131,7 +132,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="863" column="39" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="863" bodyend="891"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="863" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="863" bodyend="891"/>
     <listofallmembers>
       <member refid="structpcg__detail_1_1inside__out_1a1adda3538412bfa2c7202475d7308f81" prot="public" virt="non-virtual"><scope>pcg_detail::inside_out</scope><name>external_advance</name></member>
       <member refid="structpcg__detail_1_1inside__out_1ae5519094e5b4ac9ca4e60bd7e1ed74fd" prot="public" virt="non-virtual"><scope>pcg_detail::inside_out</scope><name>external_step</name></member>

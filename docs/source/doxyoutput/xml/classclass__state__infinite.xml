@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__state__infinite" kind="class" language="C++" prot="public">
     <compoundname>class_state_infinite</compoundname>
     <includes refid="class__state__infinite_8h" local="no">class_state_infinite.h</includes>
@@ -144,6 +144,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="51" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="16" bodyend="18"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a490a4b1801a9f41f5d6f838dcac2feb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -225,6 +226,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="56" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="47" bodyend="60"/>
+        <references refid="classclass__state__infinite_1adc7a60752569ea4a63b0fd8716c9033f" compoundref="class__state__infinite_8h" startline="44">algo</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="classclass__state__infinite_1a307cb6e8369fd82697ae9e052c4c8cab" compoundref="class__state__infinite_8h" startline="48">lowest_recorded_variance</references>
+        <references refid="classclass__state__infinite_1a5a4ce8f495013148609cd943088090ab" compoundref="class__state__infinite_8h" startline="47">measurements</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
+        <references refid="classclass__state__infinite_1a1ad27ada2e042d55103d11061a480bef" compoundref="class__state__infinite_8h" startline="43">name</references>
+        <references refid="classclass__state__infinite_1abad9c51136ef58f8ca82ce5576a5a176" compoundref="class__state__infinite_8h" startline="41">swapped</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a6ce346168d171f2bb61f60506318021d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -242,6 +251,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="58" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="62" bodyend="79"/>
+        <references refid="config_2enums_8h_1a9f27db0468ce0ce2994eb68dc919b15da858fa9ae925c795dfa31e8ccab44cc76">ising_sdual</references>
+        <references refid="config_2enums_8h_1a9f27db0468ce0ce2994eb68dc919b15da4ccfba77ccf8015dcaa6f9315b148509">ising_tf_rf</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1model_1a3628af587c3663ba75c2a3d6db7e16e6" compoundref="nmspc__settings_8h" startline="95">settings::model::model_type</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespacesettings_1_1model_1_1ising__sdual_1a75153b8008a9b96417f44676ee0100a2" compoundref="nmspc__settings_8h" startline="116">settings::model::ising_sdual::spin_dim</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a839faecde06778d5f407aa43e29502ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -259,6 +276,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="60" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="81" bodyend="81"/>
+        <references refid="classclass__state__infinite_1a1ad27ada2e042d55103d11061a480bef" compoundref="class__state__infinite_8h" startline="43">name</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1afb1891d32becd2eaf99b3e1a2901f1ec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -272,6 +290,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="61" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="82" bodyend="82"/>
+        <references refid="classclass__state__infinite_1a1ad27ada2e042d55103d11061a480bef" compoundref="class__state__infinite_8h" startline="43">name</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2c86f883998ec7c76a6ffe02a500ad9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -289,6 +308,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="63" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="84" bodyend="84"/>
+        <references refid="classclass__state__infinite_1adc7a60752569ea4a63b0fd8716c9033f" compoundref="class__state__infinite_8h" startline="44">algo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1ad3f7811859817af204e1524ddfc35da5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref></type>
@@ -302,6 +322,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="64" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="85" bodyend="85"/>
+        <references refid="classclass__state__infinite_1adc7a60752569ea4a63b0fd8716c9033f" compoundref="class__state__infinite_8h" startline="44">algo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1ad05a7ad5517ca199ca636f67deb5e988" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -315,6 +336,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="66" column="45" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="193" bodyend="196"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1acdcb2a644cba061f4e02b05313379b14" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -328,6 +351,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="67" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="197" bodyend="197"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a9727e0c468cef9119ecb9ea106bfdba1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -341,6 +366,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="68" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="198" bodyend="198"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1afd32f9139276e02f5d00a928ef5ec30e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -354,6 +381,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="69" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="119" bodyend="122"/>
+        <references refid="classclass__state__infinite_1a7b699913047f61341519d49f5b117ab6" compoundref="class__state__infinite_8cpp" startline="126" endline="126">get_mps_siteA</references>
+        <references refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" compoundref="class__mps__site_8cpp" startline="161" endline="161">class_mps_site::get_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a920da3f9787c4ea0f4b98de4d5db7ba8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::pair&lt; size_t, size_t &gt;</type>
@@ -367,6 +396,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="70" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="87" bodyend="87"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a671df6470f3780504848ec4562a72aee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -380,6 +411,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="71" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="88" bodyend="88"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a4f5507dae5e9ae1572cbcdb60b3e2338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -393,6 +425,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="72" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="89" bodyend="89"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a9df057bd8817774da31206ab823562a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -406,6 +439,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="73" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="91" bodyend="91"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2fe758e3c9db71d470a6db86583f0ffc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -419,6 +453,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="74" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="92" bodyend="92"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a6fe9a16f8940af3014097cc5795a56eb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -432,6 +467,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="75" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="93" bodyend="93"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -445,6 +481,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="78" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="104" bodyend="104"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -458,6 +495,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="79" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="105" bodyend="105"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1aa4621d378c7e1332903a0af727b64415" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::DSizes&lt; long, 3 &gt;</type>
@@ -471,10 +509,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="80" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="124" bodyend="124"/>
+        <references refid="classclass__state__infinite_1a2fe758e3c9db71d470a6db86583f0ffc" compoundref="class__state__infinite_8cpp" startline="92" endline="92">chiA</references>
+        <references refid="classclass__state__infinite_1a6fe9a16f8940af3014097cc5795a56eb" compoundref="class__state__infinite_8cpp" startline="93" endline="93">chiB</references>
+        <references refid="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" compoundref="class__state__infinite_8cpp" startline="104" endline="104">get_spin_dimA</references>
+        <references refid="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" compoundref="class__state__infinite_8cpp" startline="105" endline="105">get_spin_dimB</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__infinite_1a2b404450f994e880160314fbecadf4d4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__infinite_1a7b699913047f61341519d49f5b117ab6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site &amp; class_state_infinite::get_mps_siteA</definition>
+        <definition>const class_mps_site &amp; class_state_infinite::get_mps_siteA</definition>
         <argsstring>() const</argsstring>
         <name>get_mps_siteA</name>
         <briefdescription>
@@ -484,10 +526,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="81" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="126" bodyend="126"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__infinite_1a30dc3e657d22c9acd651b5ecb56a0026" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__infinite_1ac291bacc45a80cad6bb0387fac4c0cf4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site &amp; class_state_infinite::get_mps_siteB</definition>
+        <definition>const class_mps_site &amp; class_state_infinite::get_mps_siteB</definition>
         <argsstring>() const</argsstring>
         <name>get_mps_siteB</name>
         <briefdescription>
@@ -497,10 +540,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="82" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="127" bodyend="127"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__infinite_1a404af2929f1937aeb9bc6feb759480c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__infinite_1a4bf94f4a4fcac5d5d15c65d8a36e633b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site&amp; class_state_infinite::get_mps_siteA</definition>
+        <definition>class_mps_site &amp; class_state_infinite::get_mps_siteA</definition>
         <argsstring>()</argsstring>
         <name>get_mps_siteA</name>
         <briefdescription>
@@ -509,11 +553,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="83" column="28"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="83" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="128" bodyend="128"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__infinite_1a4d624d05e48af7189dc1e53eb6fe193c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__infinite_1ab67e50f23b15422ec295d674de7d2483" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site&amp; class_state_infinite::get_mps_siteB</definition>
+        <definition>class_mps_site &amp; class_state_infinite::get_mps_siteB</definition>
         <argsstring>()</argsstring>
         <name>get_mps_siteB</name>
         <briefdescription>
@@ -522,7 +567,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="84" column="28"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="84" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="129" bodyend="129"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a0fece68034245e5a685ece0143db1a91" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
@@ -540,6 +586,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="85" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="130" bodyend="134"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2e08642aca5b2df835db9676c5864633" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
@@ -557,6 +605,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="86" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="135" bodyend="139"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a4c725e67b51726057da8604351a8f6a0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
@@ -574,6 +624,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="87" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="140" bodyend="144"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2f11e2b7cbbf35a2bb82f6cede592cc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
@@ -591,6 +643,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="88" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="145" bodyend="149"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a70ac44387422458f346b0feaa29e1d33" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -604,6 +658,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="90" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="152" bodyend="152"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -617,6 +672,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="91" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="153" bodyend="153"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -630,6 +686,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="92" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="154" bodyend="154"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -643,6 +700,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="93" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="155" bodyend="155"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1afeb60eaad5360f9e7d567ee8598999fa" compoundref="class__state__infinite_8h" startline="31">class_state_infinite::Cache::LC_diag</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a5d38c3c9d36cb1ae30e3901a57c634de" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -656,6 +717,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="94" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="156" bodyend="156"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1adca4f760a4108c13fdb16adf79071fb0" compoundref="class__state__infinite_8h" startline="32">class_state_infinite::Cache::LA_diag</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a2f5b80165d4d9c994dce99fc1a5a054b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -669,6 +734,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="95" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="157" bodyend="157"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1ae2a5a5370a1051577e7d5ead4bbaa177" compoundref="class__state__infinite_8h" startline="33">class_state_infinite::Cache::LB_diag</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a1a12b24b142b6f1e469acc670e1fc071" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -682,6 +751,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="96" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="158" bodyend="158"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">Textra::asDiagonalInversed</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1a5408ade7afd042d500fecee2ce96a596" compoundref="class__state__infinite_8h" startline="34">class_state_infinite::Cache::LC_diag_inv</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a17a24e46a956dd29385375b703d77f0d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -695,6 +768,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="97" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="159" bodyend="159"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">Textra::asDiagonalInversed</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1a5551e326630b868d9968235e0cb9793e" compoundref="class__state__infinite_8h" startline="35">class_state_infinite::Cache::LA_diag_inv</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1acf52d6c6a76fbd8f8db90acb7d204ca9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
@@ -708,6 +785,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="98" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="160" bodyend="160"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">Textra::asDiagonalInversed</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1a2450548da385e2a1cbdc456e901ead92" compoundref="class__state__infinite_8h" startline="36">class_state_infinite::Cache::LB_diag_inv</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a6ef456d46f23394a12509cb07bf57fdd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -721,6 +802,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="99" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="161" bodyend="161"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">Textra::asDiagonalInversed</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1acc881b5adda4cf2f2a2503ce02d94078" compoundref="class__state__infinite_8h" startline="29">class_state_infinite::Cache::GA</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a901fb62e668b43da0e7a8d69d9f437c7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -734,6 +820,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="100" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="162" bodyend="162"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">Textra::asDiagonalInversed</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="structclass__state__infinite_1_1_cache_1a5ae4285ddee202fcea7f60adf6666ac7" compoundref="class__state__infinite_8h" startline="30">class_state_infinite::Cache::GB</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1aea8cf2bcf9f27f013e366e84fd84ef38" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
@@ -747,6 +838,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="101" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="163" bodyend="163"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1af68300a38b46664e5cbad74c20ecfdf9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
@@ -760,6 +852,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="102" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="164" bodyend="164"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a1f0d81e7f9d46999d0cb929de6b8b479" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
@@ -773,6 +866,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="103" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="165" bodyend="165"/>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a1f21f7b40c9e37fe4d66bea5ee57b8f6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__infinite_1aa579cd672ec5860930cd3cb5f8f9534d" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -800,6 +894,14 @@
                0</verbatim></para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="105" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="168" bodyend="191"/>
+        <references refid="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" compoundref="class__state__infinite_8cpp" startline="153" endline="153">A</references>
+        <references refid="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" compoundref="class__state__infinite_8cpp" startline="154" endline="154">B</references>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="structclass__state__infinite_1_1_cache_1a6de5b3bce14b66576c30cb4345cd0cdc" compoundref="class__state__infinite_8h" startline="27">class_state_infinite::Cache::twosite_mps</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1ad3bf00292b4a6099513dad05b6dd9d23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -817,6 +919,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="106" column="51" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="300" bodyend="303"/>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a83a9a18970c6dd4b0f77bffbfb657a1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -831,6 +935,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="108" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="347" bodyend="366"/>
+        <references refid="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" compoundref="class__state__infinite_8cpp" startline="338" endline="338">clear_cache</references>
+        <references refid="classclass__state__infinite_1aabcec49f59d2234d4509bbc72ab9e832" compoundref="class__state__infinite_8cpp" startline="340" endline="343">clear_measurements</references>
+        <references refid="classclass__state__infinite_1aea8cf2bcf9f27f013e366e84fd84ef38" compoundref="class__state__infinite_8cpp" startline="163" endline="163">LC</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
+        <references refid="classclass__state__infinite_1abad9c51136ef58f8ca82ce5576a5a176" compoundref="class__state__infinite_8h" startline="41">swapped</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a20d07a565add5f6dae84ebccd567b4c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -857,6 +968,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="109" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="305" bodyend="307"/>
+        <references refid="namespacetools_1_1infinite_1_1mps_1af57214b0a7d4746c89d1771dbd1fb966" compoundref="infinite_2mps_8cpp" startline="13" endline="23">tools::infinite::mps::merge_twosite_tensor</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1ac20ae0bf7c955bb8a08aae9cdc038da4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -874,6 +986,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="110" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="309" bodyend="315"/>
+        <references refid="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" compoundref="class__state__infinite_8cpp" startline="338" endline="338">clear_cache</references>
+        <references refid="classclass__state__infinite_1a20d07a565add5f6dae84ebccd567b4c5" compoundref="class__state__infinite_8cpp" startline="305" endline="307">set_mps</references>
+        <references refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" compoundref="matrix_8h" startline="30" endline="34">linalg::matrix::to_string</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a3e30e1699de47c0e1141f88db819229c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -895,6 +1010,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="111" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="317" bodyend="322"/>
+        <references refid="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" compoundref="class__state__infinite_8cpp" startline="338" endline="338">clear_cache</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">class_mps_site::isCenter</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1aaca2c7e53724b1c25ad3efe689b3d275" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -920,6 +1039,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="112" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="324" bodyend="329"/>
+        <references refid="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" compoundref="class__state__infinite_8cpp" startline="338" endline="338">clear_cache</references>
+        <references refid="classclass__state__infinite_1aea8cf2bcf9f27f013e366e84fd84ef38" compoundref="class__state__infinite_8cpp" startline="163" endline="163">LC</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a6460235eccdbce1f2299d099b6db7dc0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -953,6 +1076,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="113" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="330" bodyend="336"/>
+        <references refid="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" compoundref="class__state__infinite_8cpp" startline="338" endline="338">clear_cache</references>
+        <references refid="classclass__state__infinite_1af68300a38b46664e5cbad74c20ecfdf9" compoundref="class__state__infinite_8cpp" startline="164" endline="164">LA</references>
+        <references refid="classclass__state__infinite_1a1f0d81e7f9d46999d0cb929de6b8b479" compoundref="class__state__infinite_8cpp" startline="165" endline="165">LB</references>
+        <references refid="classclass__state__infinite_1aea8cf2bcf9f27f013e366e84fd84ef38" compoundref="class__state__infinite_8cpp" startline="163" endline="163">LC</references>
+        <references refid="classclass__state__infinite_1a581c7731467d58cfeb505cae4fbf9e9a" compoundref="class__state__infinite_8h" startline="39">MPS_A</references>
+        <references refid="classclass__state__infinite_1a09b9a56c0939759fadf2e4afbf6ff11d" compoundref="class__state__infinite_8h" startline="40">MPS_B</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1aa337cbd68bed88136c332c12b8f920b0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -966,6 +1095,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="121" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="345" bodyend="345"/>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a8f2a9f5a8d62b3621fcd83df9b21c5ca" compoundref="infinite_2measure_8cpp" startline="15" endline="25">tools::infinite::measure::do_all_measurements</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1aabcec49f59d2234d4509bbc72ab9e832" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -979,6 +1109,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="122" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="340" bodyend="343"/>
+        <references refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" compoundref="views_8cpp" startline="34">tools::common::views::components_computed</references>
+        <references refid="classclass__state__infinite_1a5a4ce8f495013148609cd943088090ab" compoundref="class__state__infinite_8h" startline="47">measurements</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__infinite_1a4ac1cb90698101565bdbe2f775a5c635" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -992,6 +1124,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="123" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp" bodystart="338" bodyend="338"/>
+        <references refid="classclass__state__infinite_1a6288a31a22c5c842b424a9033f7c2b0e" compoundref="class__state__infinite_8h" startline="42">cache</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -999,6 +1132,9 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
+      <node id="4">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
       <node id="1">
         <label>class_state_infinite</label>
         <link refid="classclass__state__infinite"/>
@@ -1009,34 +1145,21 @@
           <edgelabel>name</edgelabel>
         </childnode>
         <childnode refid="5" relation="usage">
-          <edgelabel>MPS_B</edgelabel>
           <edgelabel>MPS_A</edgelabel>
+          <edgelabel>MPS_B</edgelabel>
         </childnode>
-        <childnode refid="7" relation="usage">
+        <childnode refid="6" relation="usage">
           <edgelabel>measurements</edgelabel>
-        </childnode>
-      </node>
-      <node id="4">
-        <label>std::basic_string&lt; char &gt;</label>
-      </node>
-      <node id="6">
-        <label>class_mps_site</label>
-        <link refid="classclass__mps__site"/>
-        <childnode refid="3" relation="usage">
-          <edgelabel>label</edgelabel>
         </childnode>
       </node>
       <node id="5">
         <label>std::unique_ptr&lt; class_mps_site &gt;</label>
-        <childnode refid="6" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
       </node>
       <node id="2">
         <label>class_state_infinite::Cache</label>
         <link refid="structclass__state__infinite_1_1_cache"/>
       </node>
-      <node id="7">
+      <node id="6">
         <label>state_measure_infinite</label>
         <link refid="structstate__measure__infinite"/>
       </node>
@@ -1046,7 +1169,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="21" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" bodystart="21" bodyend="124"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" line="21" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h" bodystart="21" bodyend="124"/>
     <listofallmembers>
       <member refid="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>A</name></member>
       <member refid="classclass__state__infinite_1a70ac44387422458f346b0feaa29e1d33" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>A_bare</name></member>
@@ -1072,10 +1195,10 @@
       <member refid="classclass__state__infinite_1a2e08642aca5b2df835db9676c5864633" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_site</name></member>
       <member refid="classclass__state__infinite_1a4c725e67b51726057da8604351a8f6a0" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_site</name></member>
       <member refid="classclass__state__infinite_1a2f11e2b7cbbf35a2bb82f6cede592cc8" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_site</name></member>
-      <member refid="classclass__state__infinite_1a2b404450f994e880160314fbecadf4d4" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteA</name></member>
-      <member refid="classclass__state__infinite_1a404af2929f1937aeb9bc6feb759480c0" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteA</name></member>
-      <member refid="classclass__state__infinite_1a30dc3e657d22c9acd651b5ecb56a0026" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteB</name></member>
-      <member refid="classclass__state__infinite_1a4d624d05e48af7189dc1e53eb6fe193c" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteB</name></member>
+      <member refid="classclass__state__infinite_1a7b699913047f61341519d49f5b117ab6" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteA</name></member>
+      <member refid="classclass__state__infinite_1a4bf94f4a4fcac5d5d15c65d8a36e633b" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteA</name></member>
+      <member refid="classclass__state__infinite_1ac291bacc45a80cad6bb0387fac4c0cf4" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteB</name></member>
+      <member refid="classclass__state__infinite_1ab67e50f23b15422ec295d674de7d2483" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_mps_siteB</name></member>
       <member refid="classclass__state__infinite_1afb1891d32becd2eaf99b3e1a2901f1ec" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_name</name></member>
       <member refid="classclass__state__infinite_1a671df6470f3780504848ec4562a72aee" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_positionA</name></member>
       <member refid="classclass__state__infinite_1a4f5507dae5e9ae1572cbcdb60b3e2338" prot="public" virt="non-virtual"><scope>class_state_infinite</scope><name>get_positionB</name></member>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="dir_5a2bb10aa94e3e78e9f9f2d4a3256a0b" kind="dir">
     <compoundname>/home/david/GitProjects/DMRG++/source/math</compoundname>
     <innerdir refid="dir_42a445a756ae6efb55cd13462b80ea52">/home/david/GitProjects/DMRG++/source/math/eig</innerdir>

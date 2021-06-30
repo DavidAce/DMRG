@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structclass__state__finite_1_1_cache" kind="struct" language="C++" prot="private">
     <compoundname>class_state_finite::Cache</compoundname>
       <sectiondef kind="public-attrib">
@@ -22,7 +22,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="39" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="39" bodyend="41"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="39" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="39" bodyend="41"/>
     <listofallmembers>
       <member refid="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" prot="public" virt="non-virtual"><scope>class_state_finite::Cache</scope><name>multisite_mps</name></member>
     </listofallmembers>

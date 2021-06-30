@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="ceres__subspace__hamiltonian_8cpp" kind="file" language="C++">
     <compoundname>ceres_subspace_hamiltonian.cpp</compoundname>
     <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
@@ -387,6 +387,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp" line="24" column="6" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp" bodystart="24" bodyend="40"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

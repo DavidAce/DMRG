@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="ceres__subspace__functor_8h" kind="file" language="C++">
     <compoundname>ceres_subspace_functor.h</compoundname>
     <includes refid="eigen__tensor__fwd__decl_8h" local="no">general/eigen_tensor_fwd_decl.h</includes>

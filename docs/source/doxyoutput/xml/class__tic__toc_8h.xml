@@ -1,10 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="class__tic__toc_8h" kind="file" language="C++">
     <compoundname>class_tic_toc.h</compoundname>
     <includes local="no">chrono</includes>
     <includes local="no">string</includes>
-    <includedby refid="prof_8h" local="no">/home/david/GitProjects/DMRG++/source/tools/common/prof.h</includedby>
     <includedby refid="class__tic__toc_8cpp" local="yes">/home/david/GitProjects/DMRG++/source/general/class_tic_toc.cpp</includedby>
     <includedby refid="arpack__solver_8cpp" local="no">/home/david/GitProjects/DMRG++/source/math/eig/arpack_solver/arpack_solver.cpp</includedby>
     <includedby refid="matvec__dense_8cpp" local="no">/home/david/GitProjects/DMRG++/source/math/eig/matvec/matvec_dense.cpp</includedby>
@@ -16,6 +15,7 @@
     <includedby refid="svd__eigen_8cpp" local="no">/home/david/GitProjects/DMRG++/source/math/svd/svd_eigen.cpp</includedby>
     <includedby refid="svd__lapacke_8cpp" local="no">/home/david/GitProjects/DMRG++/source/math/svd/svd_lapacke.cpp</includedby>
     <includedby refid="prof_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tools/common/prof.cpp</includedby>
+    <includedby refid="prof_8h" local="no">/home/david/GitProjects/DMRG++/source/tools/common/prof.h</includedby>
     <includedby refid="ceres__base_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.cpp</includedby>
     <incdepgraph>
       <node id="3">
@@ -34,47 +34,47 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="36">
+      <node id="46">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/report.cpp</label>
         <link refid="report_8cpp"/>
       </node>
-      <node id="11">
+      <node id="22">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_xdmrg.cpp</label>
         <link refid="class__xdmrg_8cpp"/>
       </node>
-      <node id="24">
+      <node id="34">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/ops.cpp</label>
         <link refid="ops_8cpp"/>
       </node>
-      <node id="46">
+      <node id="4">
         <label>/home/david/GitProjects/DMRG++/source/math/eig/matvec/matvec_dense.cpp</label>
         <link refid="matvec__dense_8cpp"/>
       </node>
-      <node id="35">
+      <node id="45">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/primme_variance.cpp</label>
         <link refid="primme__variance_8cpp"/>
       </node>
-      <node id="27">
+      <node id="37">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace.cpp</label>
         <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="48">
+      <node id="6">
         <label>/home/david/GitProjects/DMRG++/source/math/eig/matvec/matvec_sparse.cpp</label>
         <link refid="matvec__sparse_8cpp"/>
       </node>
-      <node id="33">
+      <node id="43">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_energy.cpp</label>
         <link refid="krylov__energy_8cpp"/>
       </node>
-      <node id="23">
+      <node id="33">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/mps.cpp</label>
         <link refid="finite_2mps_8cpp"/>
       </node>
-      <node id="37">
+      <node id="47">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt.cpp</label>
         <link refid="finite_2opt_8cpp"/>
       </node>
-      <node id="19">
+      <node id="29">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/io/h5dset.cpp</label>
         <link refid="finite_2io_2h5dset_8cpp"/>
       </node>
@@ -82,91 +82,69 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_base.cpp</label>
         <link refid="ceres__base_8cpp"/>
       </node>
-      <node id="25">
+      <node id="35">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp</label>
         <link refid="ceres__direct_8cpp"/>
       </node>
-      <node id="47">
+      <node id="5">
         <label>/home/david/GitProjects/DMRG++/source/math/eig/matvec/matvec_mpo.cpp</label>
         <link refid="matvec__mpo_8cpp"/>
       </node>
-      <node id="52">
+      <node id="10">
         <label>/home/david/GitProjects/DMRG++/source/math/svd/svd_eigen.cpp</label>
         <link refid="svd__eigen_8cpp"/>
       </node>
-      <node id="6">
+      <node id="17">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="51">
+      <node id="9">
         <label>/home/david/GitProjects/DMRG++/source/math/svd/svd.cpp</label>
         <link refid="math_2svd_2svd_8cpp"/>
       </node>
-      <node id="53">
+      <node id="11">
         <label>/home/david/GitProjects/DMRG++/source/math/svd/svd_lapacke.cpp</label>
         <link refid="svd__lapacke_8cpp"/>
       </node>
-      <node id="29">
+      <node id="39">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_diag_part.cpp</label>
         <link refid="ceres__subspace__diag__part_8cpp"/>
       </node>
-      <node id="3">
+      <node id="14">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
         <link refid="class__algorithm__base_8cpp"/>
       </node>
-      <node id="20">
+      <node id="30">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp</label>
         <link refid="finite_2io_2h5table_8cpp"/>
       </node>
-      <node id="32">
+      <node id="42">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="22">
+      <node id="32">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/measure.cpp</label>
         <link refid="finite_2measure_8cpp"/>
       </node>
-      <node id="10">
+      <node id="21">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_itebd.cpp</label>
         <link refid="class__itebd_8cpp"/>
       </node>
-      <node id="34">
+      <node id="44">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_variance.cpp</label>
         <link refid="krylov__variance_8cpp"/>
       </node>
-      <node id="12">
+      <node id="23">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_model_finite.cpp</label>
         <link refid="class__model__finite_8cpp"/>
       </node>
-      <node id="15">
+      <node id="26">
         <label>/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp</label>
         <link refid="common_2io_2h5table_8cpp"/>
       </node>
-      <node id="2">
+      <node id="13">
         <label>/home/david/GitProjects/DMRG++/source/tools/common/prof.h</label>
         <link refid="prof_8h"/>
-        <childnode refid="3" relation="include">
-        </childnode>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="5" relation="include">
-        </childnode>
-        <childnode refid="6" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
-        </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
-        </childnode>
-        <childnode refid="12" relation="include">
-        </childnode>
-        <childnode refid="13" relation="include">
-        </childnode>
         <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="15" relation="include">
@@ -192,6 +170,8 @@
         <childnode refid="25" relation="include">
         </childnode>
         <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -227,76 +207,6 @@
         </childnode>
         <childnode refid="43" relation="include">
         </childnode>
-      </node>
-      <node id="14">
-        <label>/home/david/GitProjects/DMRG++/source/tools/common/io/h5attr.cpp</label>
-        <link refid="h5attr_8cpp"/>
-      </node>
-      <node id="50">
-        <label>/home/david/GitProjects/DMRG++/source/math/eig/solver_primme.cpp</label>
-        <link refid="solver__primme_8cpp"/>
-      </node>
-      <node id="38">
-        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5dset.cpp</label>
-        <link refid="infinite_2io_2h5dset_8cpp"/>
-      </node>
-      <node id="7">
-        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.cpp</label>
-        <link refid="class__fdmrg_8cpp"/>
-      </node>
-      <node id="26">
-        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp</label>
-        <link refid="ceres__direct__functor_8cpp"/>
-      </node>
-      <node id="45">
-        <label>/home/david/GitProjects/DMRG++/source/math/eig/arpack_solver/arpack_solver.cpp</label>
-        <link refid="arpack__solver_8cpp"/>
-      </node>
-      <node id="31">
-        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp</label>
-        <link refid="ceres__subspace__hamiltonian_8cpp"/>
-      </node>
-      <node id="13">
-        <label>/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp</label>
-        <link refid="class__state__finite_8cpp"/>
-      </node>
-      <node id="49">
-        <label>/home/david/GitProjects/DMRG++/source/math/eig/solver.cpp</label>
-        <link refid="solver_8cpp"/>
-      </node>
-      <node id="30">
-        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.cpp</label>
-        <link refid="ceres__subspace__functor_8cpp"/>
-      </node>
-      <node id="21">
-        <label>/home/david/GitProjects/DMRG++/source/tools/finite/measure/entropy.cpp</label>
-        <link refid="entropy_8cpp"/>
-      </node>
-      <node id="42">
-        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_mom.cpp</label>
-        <link refid="measure__mom_8cpp"/>
-      </node>
-      <node id="28">
-        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_diag_full.cpp</label>
-        <link refid="ceres__subspace__diag__full_8cpp"/>
-      </node>
-      <node id="39">
-        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5table.cpp</label>
-        <link refid="infinite_2io_2h5table_8cpp"/>
-      </node>
-      <node id="41">
-        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_ham.cpp</label>
-        <link refid="measure__ham_8cpp"/>
-      </node>
-      <node id="40">
-        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="1">
-        <label>/home/david/GitProjects/DMRG++/source/general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="2" relation="include">
-        </childnode>
         <childnode refid="44" relation="include">
         </childnode>
         <childnode refid="45" relation="include">
@@ -317,44 +227,134 @@
         </childnode>
         <childnode refid="53" relation="include">
         </childnode>
-        <childnode refid="16" relation="include">
+      </node>
+      <node id="25">
+        <label>/home/david/GitProjects/DMRG++/source/tools/common/io/h5attr.cpp</label>
+        <link refid="h5attr_8cpp"/>
+      </node>
+      <node id="8">
+        <label>/home/david/GitProjects/DMRG++/source/math/eig/solver_primme.cpp</label>
+        <link refid="solver__primme_8cpp"/>
+      </node>
+      <node id="48">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5dset.cpp</label>
+        <link refid="infinite_2io_2h5dset_8cpp"/>
+      </node>
+      <node id="18">
+        <label>/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.cpp</label>
+        <link refid="class__fdmrg_8cpp"/>
+      </node>
+      <node id="36">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp</label>
+        <link refid="ceres__direct__functor_8cpp"/>
+      </node>
+      <node id="3">
+        <label>/home/david/GitProjects/DMRG++/source/math/eig/arpack_solver/arpack_solver.cpp</label>
+        <link refid="arpack__solver_8cpp"/>
+      </node>
+      <node id="41">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_hamiltonian.cpp</label>
+        <link refid="ceres__subspace__hamiltonian_8cpp"/>
+      </node>
+      <node id="24">
+        <label>/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp</label>
+        <link refid="class__state__finite_8cpp"/>
+      </node>
+      <node id="7">
+        <label>/home/david/GitProjects/DMRG++/source/math/eig/solver.cpp</label>
+        <link refid="solver_8cpp"/>
+      </node>
+      <node id="40">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_functor.cpp</label>
+        <link refid="ceres__subspace__functor_8cpp"/>
+      </node>
+      <node id="31">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/measure/entropy.cpp</label>
+        <link refid="entropy_8cpp"/>
+      </node>
+      <node id="52">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_mom.cpp</label>
+        <link refid="measure__mom_8cpp"/>
+      </node>
+      <node id="38">
+        <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_subspace_diag_full.cpp</label>
+        <link refid="ceres__subspace__diag__full_8cpp"/>
+      </node>
+      <node id="49">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5table.cpp</label>
+        <link refid="infinite_2io_2h5table_8cpp"/>
+      </node>
+      <node id="51">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_ham.cpp</label>
+        <link refid="measure__ham_8cpp"/>
+      </node>
+      <node id="50">
+        <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1">
+        <label>/home/david/GitProjects/DMRG++/source/general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
         </childnode>
         <childnode refid="54" relation="include">
         </childnode>
       </node>
-      <node id="44">
+      <node id="2">
         <label>/home/david/GitProjects/DMRG++/source/general/class_tic_toc.cpp</label>
         <link refid="class__tic__toc_8cpp"/>
       </node>
-      <node id="5">
+      <node id="16">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
         <link refid="class__algorithm__infinite_8cpp"/>
       </node>
-      <node id="4">
+      <node id="15">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
         <link refid="class__algorithm__finite_8cpp"/>
       </node>
-      <node id="43">
+      <node id="53">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>
-      <node id="9">
+      <node id="20">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_idmrg.cpp</label>
         <link refid="class__idmrg_8cpp"/>
       </node>
-      <node id="17">
+      <node id="27">
         <label>/home/david/GitProjects/DMRG++/source/tools/common/split.cpp</label>
         <link refid="split_8cpp"/>
       </node>
-      <node id="16">
+      <node id="12">
         <label>/home/david/GitProjects/DMRG++/source/tools/common/prof.cpp</label>
         <link refid="prof_8cpp"/>
       </node>
-      <node id="18">
+      <node id="28">
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/env.cpp</label>
         <link refid="finite_2env_8cpp"/>
       </node>
-      <node id="8">
+      <node id="19">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.cpp</label>
         <link refid="class__flbit_8cpp"/>
       </node>

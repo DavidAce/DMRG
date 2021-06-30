@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="nmspc__settings_8h" kind="file" language="C++">
     <compoundname>nmspc_settings.h</compoundname>
     <includes refid="debug_8h" local="yes">debug.h</includes>
@@ -9,7 +9,6 @@
     <includedby refid="class__algorithm__base_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.cpp</includedby>
     <includedby refid="class__algorithm__finite_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp</includedby>
     <includedby refid="class__algorithm__infinite_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_infinite.cpp</includedby>
-    <includedby refid="class__state__infinite_8h" local="no">/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h</includedby>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__fdmrg_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.cpp</includedby>
     <includedby refid="class__flbit_8cpp" local="no">/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.cpp</includedby>
@@ -26,6 +25,7 @@
     <includedby refid="class__model__infinite_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tensors/model/class_model_infinite.cpp</includedby>
     <includedby refid="class__state__finite_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp</includedby>
     <includedby refid="class__state__infinite_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp</includedby>
+    <includedby refid="class__state__infinite_8h" local="no">/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h</includedby>
     <includedby refid="common_2io_2h5table_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tools/common/io/h5table.cpp</includedby>
     <includedby refid="h5tmp_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tools/common/io/h5tmp.cpp</includedby>
     <includedby refid="prof_8cpp" local="no">/home/david/GitProjects/DMRG++/source/tools/common/prof.cpp</includedby>
@@ -100,7 +100,7 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="24">
+      <node id="10">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_xdmrg.cpp</label>
         <link refid="class__xdmrg_8cpp"/>
       </node>
@@ -117,35 +117,35 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="22" relation="include">
-        </childnode>
-        <childnode refid="23" relation="include">
-        </childnode>
         <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="24" relation="include">
-        </childnode>
-        <childnode refid="25" relation="include">
-        </childnode>
-        <childnode refid="26" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-        <childnode refid="28" relation="include">
-        </childnode>
-        <childnode refid="29" relation="include">
-        </childnode>
-        <childnode refid="30" relation="include">
-        </childnode>
-        <childnode refid="31" relation="include">
-        </childnode>
-        <childnode refid="32" relation="include">
-        </childnode>
-        <childnode refid="33" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -187,11 +187,11 @@
         </childnode>
         <childnode refid="53" relation="include">
         </childnode>
-        <childnode refid="16" relation="include">
+        <childnode refid="28" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="30" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="33" relation="include">
         </childnode>
       </node>
       <node id="53">
@@ -218,7 +218,7 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/mps-internal/product_states.cpp</label>
         <link refid="product__states_8cpp"/>
       </node>
-      <node id="11">
+      <node id="23">
         <label>/home/david/GitProjects/DMRG++/source/tools/common/views.cpp</label>
         <link refid="views_8cpp"/>
       </node>
@@ -234,23 +234,23 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct.cpp</label>
         <link refid="ceres__direct_8cpp"/>
       </node>
-      <node id="20">
+      <node id="32">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/print.cpp</label>
         <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="26">
+      <node id="12">
         <label>/home/david/GitProjects/DMRG++/source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="10">
+      <node id="20">
         <label>/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.cpp</label>
         <link refid="class__state__infinite_8cpp"/>
       </node>
-      <node id="6">
+      <node id="5">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="28">
+      <node id="14">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_ising_sdual.cpp</label>
         <link refid="class__ising__sdual_8cpp"/>
       </node>
@@ -278,7 +278,7 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/measure.cpp</label>
         <link refid="finite_2measure_8cpp"/>
       </node>
-      <node id="8">
+      <node id="9">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_itebd.cpp</label>
         <link refid="class__itebd_8cpp"/>
       </node>
@@ -286,7 +286,7 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/krylov_variance.cpp</label>
         <link refid="krylov__variance_8cpp"/>
       </node>
-      <node id="31">
+      <node id="17">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_model_finite.cpp</label>
         <link refid="class__model__finite_8cpp"/>
       </node>
@@ -298,55 +298,55 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/mps-internal/entangled_states.cpp</label>
         <link refid="entangled__states_8cpp"/>
       </node>
-      <node id="9">
+      <node id="22">
         <label>/home/david/GitProjects/DMRG++/source/tensors/class_tensors_infinite.cpp</label>
         <link refid="class__tensors__infinite_8cpp"/>
       </node>
-      <node id="29">
+      <node id="15">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_ising_tf_rf.cpp</label>
         <link refid="class__ising__tf__rf_8cpp"/>
       </node>
-      <node id="13">
+      <node id="25">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5dset.cpp</label>
         <link refid="infinite_2io_2h5dset_8cpp"/>
       </node>
-      <node id="22">
+      <node id="6">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_fdmrg.cpp</label>
         <link refid="class__fdmrg_8cpp"/>
       </node>
-      <node id="27">
+      <node id="13">
         <label>/home/david/GitProjects/DMRG++/source/tensors/class_tensors_finite.cpp</label>
         <link refid="class__tensors__finite_8cpp"/>
       </node>
-      <node id="30">
+      <node id="16">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_lbit.cpp</label>
         <link refid="class__lbit_8cpp"/>
       </node>
-      <node id="33">
+      <node id="19">
         <label>/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp</label>
         <link refid="class__state__finite_8cpp"/>
       </node>
-      <node id="25">
+      <node id="11">
         <label>/home/david/GitProjects/DMRG++/source/config/nmspc_settings.cpp</label>
         <link refid="nmspc__settings_8cpp"/>
       </node>
-      <node id="21">
+      <node id="33">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/svd.cpp</label>
         <link refid="tools_2infinite_2svd_8cpp"/>
       </node>
-      <node id="17">
+      <node id="29">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_mom.cpp</label>
         <link refid="measure__mom_8cpp"/>
       </node>
-      <node id="14">
+      <node id="26">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/io/h5table.cpp</label>
         <link refid="infinite_2io_2h5table_8cpp"/>
       </node>
-      <node id="16">
+      <node id="28">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure_ham.cpp</label>
         <link refid="measure__ham_8cpp"/>
       </node>
-      <node id="15">
+      <node id="27">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/measure.cpp</label>
         <link refid="infinite_2measure_8cpp"/>
       </node>
@@ -358,19 +358,19 @@
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
         <link refid="class__algorithm__finite_8cpp"/>
       </node>
-      <node id="19">
+      <node id="31">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>
-      <node id="12">
+      <node id="24">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/env.cpp</label>
         <link refid="infinite_2env_8cpp"/>
       </node>
-      <node id="32">
+      <node id="18">
         <label>/home/david/GitProjects/DMRG++/source/tensors/model/class_model_infinite.cpp</label>
         <link refid="class__model__infinite_8cpp"/>
       </node>
-      <node id="7">
+      <node id="8">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_idmrg.cpp</label>
         <link refid="class__idmrg_8cpp"/>
       </node>
@@ -386,50 +386,50 @@
         <label>/home/david/GitProjects/DMRG++/source/tools/finite/env.cpp</label>
         <link refid="finite_2env_8cpp"/>
       </node>
-      <node id="18">
+      <node id="30">
         <label>/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp</label>
         <link refid="infinite_2mps_8cpp"/>
       </node>
-      <node id="23">
+      <node id="7">
         <label>/home/david/GitProjects/DMRG++/source/algorithms/class_flbit.cpp</label>
         <link refid="class__flbit_8cpp"/>
       </node>
-      <node id="5">
+      <node id="21">
         <label>/home/david/GitProjects/DMRG++/source/tensors/state/class_state_infinite.h</label>
         <link refid="class__state__infinite_8h"/>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
-        </childnode>
-        <childnode refid="12" relation="include">
-        </childnode>
-        <childnode refid="13" relation="include">
-        </childnode>
-        <childnode refid="14" relation="include">
-        </childnode>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="16" relation="include">
-        </childnode>
-        <childnode refid="17" relation="include">
-        </childnode>
-        <childnode refid="18" relation="include">
-        </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -464,10 +464,10 @@
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="debug_8h" kindref="compound">debug.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="config_2enums_8h" kindref="compound">enums.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="math_2eig_2enums_8h" kindref="compound">enums.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight></codeline>
-<codeline lineno="17"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__config__reader" kindref="compound">class_config_reader</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__config__reader" kindref="compound">class_config_reader</ref>;</highlight></codeline>
 <codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__dmrg__config" kindref="compound">class_dmrg_config</ref>;</highlight></codeline>
 <codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceh5pp" kindref="compound">h5pp</ref><sp/>{</highlight></codeline>
 <codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">File;</highlight></codeline>
@@ -476,7 +476,7 @@
 <codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>clang-format<sp/>off<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
 <codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings" kindref="compound">settings</ref><sp/>{</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" kindref="member">load_config</ref>(<ref refid="classclass__config__reader" kindref="compound">class_config_reader</ref><sp/>&amp;indata);</highlight></codeline>
+<codeline lineno="26" refid="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" kindref="member">load_config</ref>(<ref refid="classclass__config__reader" kindref="compound">class_config_reader</ref><sp/>&amp;indata);</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" kindref="member">load_config</ref>(<ref refid="classclass__dmrg__config" kindref="compound">class_dmrg_config</ref><sp/>&amp;dmrg_config);</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1a8bbba7ea217bebfd94944dd43d9513cf" kindref="member">load_config</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;<sp/><ref refid="namespacesettings_1_1input_1a2cec3efecce2fdb179786cc6525372c1" kindref="member">config_filename</ref>);</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight></codeline>

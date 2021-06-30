@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.17">
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
   <compound refid="struct_amplitude" kind="struct"><name>Amplitude</name>
     <member refid="struct_amplitude_1a06794ded8c7d05505ad2387c5839c67a" kind="variable"><name>bits</name></member>
     <member refid="struct_amplitude_1ae9cb24219beceadf9355e9e5994a8e7b" kind="variable"><name>site</name></member>
@@ -49,18 +49,18 @@
     <member refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1bfgs__entry_1a69776ac59f1f1df59c4e518e6bedb89d" kind="variable"><name>counter</name></member>
     <member refid="structtools_1_1finite_1_1opt_1_1internal_1_1reports_1_1bfgs__entry_1a28ed7aa37367f15742cfae381e90a4f3" kind="variable"><name>time</name></member>
   </compound>
-  <compound refid="structclass__model__infinite_1_1_cache" kind="struct"><name>class_model_infinite::Cache</name>
-    <member refid="structclass__model__infinite_1_1_cache_1a0a79c8cb5afe466b579874d5eaa8729f" kind="variable"><name>twosite_mpo_AB</name></member>
-    <member refid="structclass__model__infinite_1_1_cache_1adb0b34b037e92dd6cdf08a4f14d037ed" kind="variable"><name>twosite_mpo_BA</name></member>
-    <member refid="structclass__model__infinite_1_1_cache_1a905f02a595a4e217f1bd9d209b830046" kind="variable"><name>twosite_ham_AB</name></member>
-    <member refid="structclass__model__infinite_1_1_cache_1af97d4822c4b46b67f7e897ba1ac9d8d1" kind="variable"><name>twosite_ham_BA</name></member>
-  </compound>
   <compound refid="structclass__model__finite_1_1_cache" kind="struct"><name>class_model_finite::Cache</name>
     <member refid="structclass__model__finite_1_1_cache_1aa53651c8e290ccd0c02d7c8fa01d856d" kind="variable"><name>cached_sites</name></member>
     <member refid="structclass__model__finite_1_1_cache_1a1fd358e0915e6ed4e5fccecd51454c5b" kind="variable"><name>multisite_mpo</name></member>
     <member refid="structclass__model__finite_1_1_cache_1a2d52fd684b596e6374baff13b9a1056f" kind="variable"><name>multisite_ham</name></member>
     <member refid="structclass__model__finite_1_1_cache_1aa2a0cecd695cc93913a73d65ac2f40ea" kind="variable"><name>multisite_mpo_squared</name></member>
     <member refid="structclass__model__finite_1_1_cache_1a440cce3ae6470d74303da2b09ee2f54e" kind="variable"><name>multisite_ham_squared</name></member>
+  </compound>
+  <compound refid="structclass__model__infinite_1_1_cache" kind="struct"><name>class_model_infinite::Cache</name>
+    <member refid="structclass__model__infinite_1_1_cache_1a0a79c8cb5afe466b579874d5eaa8729f" kind="variable"><name>twosite_mpo_AB</name></member>
+    <member refid="structclass__model__infinite_1_1_cache_1adb0b34b037e92dd6cdf08a4f14d037ed" kind="variable"><name>twosite_mpo_BA</name></member>
+    <member refid="structclass__model__infinite_1_1_cache_1a905f02a595a4e217f1bd9d209b830046" kind="variable"><name>twosite_ham_AB</name></member>
+    <member refid="structclass__model__infinite_1_1_cache_1af97d4822c4b46b67f7e897ba1ac9d8d1" kind="variable"><name>twosite_ham_BA</name></member>
   </compound>
   <compound refid="structclass__state__finite_1_1_cache" kind="struct"><name>class_state_finite::Cache</name>
     <member refid="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" kind="variable"><name>multisite_mps</name></member>
@@ -446,14 +446,14 @@
     <member refid="classclass__edges__infinite_1aa66e638d5bf9288584dedd1ee76b0ff5" kind="function"><name>get_position</name></member>
     <member refid="classclass__edges__infinite_1a5f89900c135e792e59f418a082b2c22f" kind="function"><name>is_real</name></member>
     <member refid="classclass__edges__infinite_1a2323b8e633c336a6b4673ec43e41a133" kind="function"><name>has_nan</name></member>
-    <member refid="classclass__edges__infinite_1a243280055d7a2489e7ea4a079778f192" kind="function"><name>get_ene</name></member>
-    <member refid="classclass__edges__infinite_1a6c945f01f9e4d133896c0bd125f094d9" kind="function"><name>get_var</name></member>
-    <member refid="classclass__edges__infinite_1a0c7a677baaa8ef1ca8840bce62c08a40" kind="function"><name>get_ene</name></member>
-    <member refid="classclass__edges__infinite_1aad3c7d1647a26ca9f22b59138b32b667" kind="function"><name>get_var</name></member>
-    <member refid="classclass__edges__infinite_1ad26651a9fa0d255e4e281d8825f65333" kind="function"><name>get_ene_blk</name></member>
-    <member refid="classclass__edges__infinite_1aaadc3dee4a75884d070cc07b40e3ea2c" kind="function"><name>get_var_blk</name></member>
-    <member refid="classclass__edges__infinite_1a649e4aee8bcc66d7825326724c06344c" kind="function"><name>get_ene_blk</name></member>
-    <member refid="classclass__edges__infinite_1af7d68f5752c1bc2ac51b8078397ef4ef" kind="function"><name>get_var_blk</name></member>
+    <member refid="classclass__edges__infinite_1aef52c12aa68596547169d3bcc9877e7d" kind="function"><name>get_ene</name></member>
+    <member refid="classclass__edges__infinite_1a272e05530a553383becc3d8d7cb7ed7a" kind="function"><name>get_var</name></member>
+    <member refid="classclass__edges__infinite_1af1cb5239a08acf4dd950bd52cec60c25" kind="function"><name>get_ene</name></member>
+    <member refid="classclass__edges__infinite_1a403949b44643c3e1f3186c533f9d77cd" kind="function"><name>get_var</name></member>
+    <member refid="classclass__edges__infinite_1a9b30654cfeae4822da9798d4f1644e59" kind="function"><name>get_ene_blk</name></member>
+    <member refid="classclass__edges__infinite_1a21d336f32895d5665f1f5c5f91f320e9" kind="function"><name>get_var_blk</name></member>
+    <member refid="classclass__edges__infinite_1a6cd0642edb806012f0ab107ac979ee5b" kind="function"><name>get_ene_blk</name></member>
+    <member refid="classclass__edges__infinite_1a8bdd05c08487a8e686ff58510fa5f99a" kind="function"><name>get_var_blk</name></member>
   </compound>
   <compound refid="classclass__env__base" kind="class"><name>class_env_base</name>
     <member refid="classclass__env__base_1a2fc90a74288d70693d472d2fadb6b4bd" kind="typedef"><name>Scalar</name></member>
@@ -483,8 +483,8 @@
     <member refid="classclass__env__base_1a5729eb11fb86ca38ae93b4232a70fd09" kind="function"><name>assert_block</name></member>
     <member refid="classclass__env__base_1a6d5d093901e4d3c0ebf156b1ed67ade3" kind="function"><name>assert_validity</name></member>
     <member refid="classclass__env__base_1a25130bd04cf9fa1e3d5db4f17200ce9a" kind="function"><name>assert_unique_id</name></member>
-    <member refid="classclass__env__base_1aff146f74eb6e99ae51aff6984ac772fe" kind="function"><name>get_block</name></member>
-    <member refid="classclass__env__base_1a2e494a27de18226075b80c1e2eab68ed" kind="function"><name>get_block</name></member>
+    <member refid="classclass__env__base_1a8691846054f07c5080a51793d4dd340f" kind="function"><name>get_block</name></member>
+    <member refid="classclass__env__base_1aa329af74698fd706bde0dd8bf1ad104c" kind="function"><name>get_block</name></member>
     <member refid="classclass__env__base_1a4e8ddb2631a5fa45f5719e59949c3b00" kind="function"><name>has_block</name></member>
     <member refid="classclass__env__base_1ae7b6926cb2cc38c36ba3e7c4f189b7db" kind="function"><name>is_real</name></member>
     <member refid="classclass__env__base_1a8c23cb75a5afea790e87d663c2967284" kind="function"><name>has_nan</name></member>
@@ -776,10 +776,10 @@
     <member refid="classclass__model__infinite_1af5ebfe68f07d27579d2e3a5f12e6f1bb" kind="function"><name>is_real</name></member>
     <member refid="classclass__model__infinite_1a16e60d6d93cfafe357ad330a3c877886" kind="function"><name>has_nan</name></member>
     <member refid="classclass__model__infinite_1a00b5e303256d893a3093fd6f490d2edf" kind="function"><name>assert_validity</name></member>
-    <member refid="classclass__model__infinite_1a48a5de7b098292572e49e36b89b3f0e9" kind="function"><name>get_mpo_siteA</name></member>
-    <member refid="classclass__model__infinite_1a7a0a9d7633b71b4fc39da8af8347c67f" kind="function"><name>get_mpo_siteB</name></member>
-    <member refid="classclass__model__infinite_1a598347e67825799446e4ff33bdf14e06" kind="function"><name>get_mpo_siteA</name></member>
-    <member refid="classclass__model__infinite_1ae3970a0eaa0f6b17fa6d36d81779d646" kind="function"><name>get_mpo_siteB</name></member>
+    <member refid="classclass__model__infinite_1a13c9b13980e2f47e2a3e8a725ba4a643" kind="function"><name>get_mpo_siteA</name></member>
+    <member refid="classclass__model__infinite_1a2d50f5f292dc6fe3c9a1717a4639d6ff" kind="function"><name>get_mpo_siteB</name></member>
+    <member refid="classclass__model__infinite_1a5d2c89d5e7c33cb19bfbbaeff3e0242f" kind="function"><name>get_mpo_siteA</name></member>
+    <member refid="classclass__model__infinite_1a768c2432c8da1433f0915efd66c398c5" kind="function"><name>get_mpo_siteB</name></member>
     <member refid="classclass__model__infinite_1a4269f930f7b051584fa92faf77f4c738" kind="function"><name>get_2site_mpo_AB</name></member>
     <member refid="classclass__model__infinite_1a9f36c3a19359f34f04c62e598f40d125" kind="function"><name>get_2site_mpo_BA</name></member>
     <member refid="classclass__model__infinite_1ac5613bc7c308e45703d24bb3e05d4c69" kind="function"><name>get_2site_ham_AB</name></member>
@@ -823,8 +823,8 @@
     <member refid="classclass__mpo__site_1aa71f31494abe78f0b6475bf1a1c10281" kind="function"><name>has_mpo_squared</name></member>
     <member refid="classclass__mpo__site_1ac2e0ee2cc8c3938bba6fb60f0aff51aa" kind="function"><name>get_non_compressed_mpo_squared</name></member>
     <member refid="classclass__mpo__site_1a0d029520442567ca9ad21ce83bc288b0" kind="function"><name>MPO</name></member>
-    <member refid="classclass__mpo__site_1a601ff0768275d8bf52cdfe1dfc0fe8bb" kind="function"><name>MPO2</name></member>
-    <member refid="classclass__mpo__site_1a0bd449862c316a4e614a9c3b04c9651c" kind="function"><name>MPO2</name></member>
+    <member refid="classclass__mpo__site_1ac5a40509b613761957398c3a7a11e6ba" kind="function"><name>MPO2</name></member>
+    <member refid="classclass__mpo__site_1a779d67370ed34ba062933c2404a2508b" kind="function"><name>MPO2</name></member>
     <member refid="classclass__mpo__site_1a242d6dff0f510850b920559d8cada845" kind="function"><name>MPO2_nbody_view</name></member>
     <member refid="classclass__mpo__site_1a061f0bb31990724dd59255e97f039333" kind="function"><name>get_position</name></member>
     <member refid="classclass__mpo__site_1ad3fd18394d0e58f3000a1ba04c9b96d9" kind="function"><name>get_parameter_names</name></member>
@@ -895,14 +895,14 @@
     <member refid="classclass__mps__site_1adb7e82753d2ac523482b5cbc9a020e3b" kind="function"><name>has_M</name></member>
     <member refid="classclass__mps__site_1ab35e901e3a6f89bb180a8d329f3048f8" kind="function"><name>has_LC</name></member>
     <member refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" kind="function"><name>dimensions</name></member>
-    <member refid="classclass__mps__site_1a54dbbe68fef95546d392c50100f9e4f7" kind="function"><name>get_M_bare</name></member>
-    <member refid="classclass__mps__site_1a595a7027685bf01896f00cb0a9dbf779" kind="function"><name>get_M</name></member>
-    <member refid="classclass__mps__site_1aa1c8e7d25613f6cb1489a7be758e4622" kind="function"><name>get_L</name></member>
-    <member refid="classclass__mps__site_1a794ee9101351e20449072a528144d5d2" kind="function"><name>get_LC</name></member>
-    <member refid="classclass__mps__site_1aa2d80ad12e27abe22cd2d32cce8fcd6d" kind="function"><name>get_M_bare</name></member>
-    <member refid="classclass__mps__site_1a2ee2f4cbaf3bb8e11fb40870dab8c3c8" kind="function"><name>get_M</name></member>
-    <member refid="classclass__mps__site_1abf66f5bc0685422283d234b3df4e07d1" kind="function"><name>get_L</name></member>
-    <member refid="classclass__mps__site_1a76112d985e3a48885139d717d1ab3458" kind="function"><name>get_LC</name></member>
+    <member refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" kind="function"><name>get_M_bare</name></member>
+    <member refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kind="function"><name>get_M</name></member>
+    <member refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" kind="function"><name>get_L</name></member>
+    <member refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" kind="function"><name>get_LC</name></member>
+    <member refid="classclass__mps__site_1a4369c9c4f7950fce81b37c9af13c21bb" kind="function"><name>get_M_bare</name></member>
+    <member refid="classclass__mps__site_1a346a7458ecee54ef01fb4b462daf1d39" kind="function"><name>get_M</name></member>
+    <member refid="classclass__mps__site_1aa60f0056e3084fc8cfb8c98a002baafa" kind="function"><name>get_L</name></member>
+    <member refid="classclass__mps__site_1acd304ba6e94c47b32cc91d4ec20ceb45" kind="function"><name>get_LC</name></member>
     <member refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" kind="function"><name>get_truncation_error</name></member>
     <member refid="classclass__mps__site_1afc16104aba7efa1893cd417653fccf1c" kind="function"><name>get_truncation_error_LC</name></member>
     <member refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" kind="function"><name>get_label</name></member>
@@ -993,8 +993,8 @@
     <member refid="classclass__state__finite_1a7f2fa97dc037b0b817b51e7aa9e38460" kind="function"><name>assert_validity</name></member>
     <member refid="classclass__state__finite_1a8cff3eaf9bad48263fe1b9056ac62592" kind="function"><name>get_mps_site</name></member>
     <member refid="classclass__state__finite_1aae8885ec8cc1f5815c441b9c970e9f69" kind="function"><name>get_mps_site</name></member>
-    <member refid="classclass__state__finite_1a107ba163006f6f946a23e516f9725052" kind="function"><name>get_mps_site</name></member>
-    <member refid="classclass__state__finite_1a1a301ddbccd25c49fc63d3c65c831129" kind="function"><name>get_mps_site</name></member>
+    <member refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" kind="function"><name>get_mps_site</name></member>
+    <member refid="classclass__state__finite_1a0fb2578f010f53bd57ae373ba643da31" kind="function"><name>get_mps_site</name></member>
     <member refid="classclass__state__finite_1acb84a22703c0f6a517469bf2d18ac6da" kind="function"><name>get_mps_sites</name></member>
     <member refid="classclass__state__finite_1a4da8198f2ea44977bbb5c64e448610ba" kind="function"><name>set_mps_sites</name></member>
     <member refid="classclass__state__finite_1ae5341703fe4dcfac1dafffa52498818f" kind="function"><name>active_dimensions</name></member>
@@ -1061,10 +1061,10 @@
     <member refid="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" kind="function"><name>get_spin_dimA</name></member>
     <member refid="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" kind="function"><name>get_spin_dimB</name></member>
     <member refid="classclass__state__infinite_1aa4621d378c7e1332903a0af727b64415" kind="function"><name>dimensions</name></member>
-    <member refid="classclass__state__infinite_1a2b404450f994e880160314fbecadf4d4" kind="function"><name>get_mps_siteA</name></member>
-    <member refid="classclass__state__infinite_1a30dc3e657d22c9acd651b5ecb56a0026" kind="function"><name>get_mps_siteB</name></member>
-    <member refid="classclass__state__infinite_1a404af2929f1937aeb9bc6feb759480c0" kind="function"><name>get_mps_siteA</name></member>
-    <member refid="classclass__state__infinite_1a4d624d05e48af7189dc1e53eb6fe193c" kind="function"><name>get_mps_siteB</name></member>
+    <member refid="classclass__state__infinite_1a7b699913047f61341519d49f5b117ab6" kind="function"><name>get_mps_siteA</name></member>
+    <member refid="classclass__state__infinite_1ac291bacc45a80cad6bb0387fac4c0cf4" kind="function"><name>get_mps_siteB</name></member>
+    <member refid="classclass__state__infinite_1a4bf94f4a4fcac5d5d15c65d8a36e633b" kind="function"><name>get_mps_siteA</name></member>
+    <member refid="classclass__state__infinite_1ab67e50f23b15422ec295d674de7d2483" kind="function"><name>get_mps_siteB</name></member>
     <member refid="classclass__state__infinite_1a0fece68034245e5a685ece0143db1a91" kind="function"><name>get_mps_site</name></member>
     <member refid="classclass__state__infinite_1a2e08642aca5b2df835db9676c5864633" kind="function"><name>get_mps_site</name></member>
     <member refid="classclass__state__infinite_1a4c725e67b51726057da8604351a8f6a0" kind="function"><name>get_mps_site</name></member>
@@ -1605,10 +1605,10 @@
     <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a489ae11af03e430ecfed13d9d26094ef" kind="variable"><name>data</name></member>
     <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1aaeeeacb69e77bbba0b7acd8cf46a1306" kind="function"><name>operator[]</name></member>
     <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a713a03f42d2ee982598d290d21405977" kind="function"><name>append</name></member>
-    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a7a59437197c0b4cb90119bfee1e023d9" kind="function"><name>begin</name></member>
-    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a03fe0db5488b70575fbc7662daf95730" kind="function"><name>end</name></member>
-    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1aac5aa3a169e941770916535f4c78468f" kind="function"><name>begin</name></member>
-    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a8bc9de6e514ad3aafe2122411a7a7b44" kind="function"><name>end</name></member>
+    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1ad93c92acd276fdec91b6e960de75e80f" kind="function"><name>begin</name></member>
+    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a53d8f3b8ecc562e85e819e47fbdab741" kind="function"><name>end</name></member>
+    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1abc92432a6597c52a4c1dfd6a2c891b42" kind="function"><name>begin</name></member>
+    <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1ad4ab4d62999e98326fdb946b897be64b" kind="function"><name>end</name></member>
     <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1a8ed1773c2b4b5b7ed9310f0fcb5bcd9d" kind="function"><name>find</name></member>
     <member refid="classtools_1_1common_1_1profile_1_1internal_1_1insert__ordered__map_1aef9da0dd391b0289dbb05b2c551616bd" kind="function"><name>find</name></member>
   </compound>
@@ -1675,17 +1675,17 @@
   </compound>
   <compound refid="structsfinae_1_1is__std__array_3_01std_1_1array_3_01_t_00_01_n_01_4_01_4" kind="struct"><name>sfinae::is_std_array&lt; std::array&lt; T, N &gt; &gt;</name>
   </compound>
-  <compound refid="structsfinae_1_1is__std__complex" kind="struct"><name>sfinae::is_std_complex</name>
-  </compound>
   <compound refid="structhash_1_1is__std__complex" kind="struct"><name>hash::is_std_complex</name>
   </compound>
   <compound refid="structlinalg_1_1is__std__complex" kind="struct"><name>linalg::is_std_complex</name>
   </compound>
-  <compound refid="structsfinae_1_1is__std__complex_3_01std_1_1complex_3_01_t_01_4_01_4" kind="struct"><name>sfinae::is_std_complex&lt; std::complex&lt; T &gt; &gt;</name>
+  <compound refid="structsfinae_1_1is__std__complex" kind="struct"><name>sfinae::is_std_complex</name>
   </compound>
   <compound refid="structhash_1_1is__std__complex_3_01std_1_1complex_3_01_t_01_4_01_4" kind="struct"><name>hash::is_std_complex&lt; std::complex&lt; T &gt; &gt;</name>
   </compound>
   <compound refid="structlinalg_1_1is__std__complex_3_01std_1_1complex_3_01_t_01_4_01_4" kind="struct"><name>linalg::is_std_complex&lt; std::complex&lt; T &gt; &gt;</name>
+  </compound>
+  <compound refid="structsfinae_1_1is__std__complex_3_01std_1_1complex_3_01_t_01_4_01_4" kind="struct"><name>sfinae::is_std_complex&lt; std::complex&lt; T &gt; &gt;</name>
   </compound>
   <compound refid="structsfinae_1_1is__std__vector" kind="struct"><name>sfinae::is_std_vector</name>
   </compound>
@@ -1714,10 +1714,10 @@
   <compound refid="classexcept_1_1load__error" kind="class"><name>except::load_error</name>
   </compound>
   <compound refid="class_matrix_replacement" kind="class"><name>MatrixReplacement</name>
-    <member refid="class_matrix_replacement_1afe0281321ae50f13f9fb9750f6fb6b6d" kind="enum"><name>@0</name></member>
-    <member refid="class_matrix_replacement_1afe0281321ae50f13f9fb9750f6fb6b6da45d529732d17749ddb21826d07a9183b" kind="enumvalue"><name>ColsAtCompileTime</name></member>
-    <member refid="class_matrix_replacement_1afe0281321ae50f13f9fb9750f6fb6b6da4eac3a8fcb627fdacd21f01015f782ba" kind="enumvalue"><name>MaxColsAtCompileTime</name></member>
-    <member refid="class_matrix_replacement_1afe0281321ae50f13f9fb9750f6fb6b6dae88d5e7e3fed6eb60f96e507a4acc939" kind="enumvalue"><name>IsRowMajor</name></member>
+    <member refid="class_matrix_replacement_1a6250a49abfc609d9bb7a26bc7f189b33" kind="enum"><name>@4</name></member>
+    <member refid="class_matrix_replacement_1a6250a49abfc609d9bb7a26bc7f189b33a45d529732d17749ddb21826d07a9183b" kind="enumvalue"><name>ColsAtCompileTime</name></member>
+    <member refid="class_matrix_replacement_1a6250a49abfc609d9bb7a26bc7f189b33a4eac3a8fcb627fdacd21f01015f782ba" kind="enumvalue"><name>MaxColsAtCompileTime</name></member>
+    <member refid="class_matrix_replacement_1a6250a49abfc609d9bb7a26bc7f189b33ae88d5e7e3fed6eb60f96e507a4acc939" kind="enumvalue"><name>IsRowMajor</name></member>
     <member refid="class_matrix_replacement_1a13d991a6f59e410f3e64e05af852d84d" kind="typedef"><name>Scalar</name></member>
     <member refid="class_matrix_replacement_1a4bba4a204b81fc4a11cbe1e384aa92a8" kind="typedef"><name>RealScalar</name></member>
     <member refid="class_matrix_replacement_1a23df3600d991b2fa3a3dfcdaa5b7c3e7" kind="typedef"><name>StorageIndex</name></member>
@@ -2140,6 +2140,26 @@
     <member refid="classeig_1_1solution_1a19ce14814cc67517d7de8ce0e1ab151c" kind="function"><name>eigvals_are_real</name></member>
     <member refid="classeig_1_1solution_1a3e22c1666ffdab09686458e08c6efd22" kind="function"><name>get_eigvecs_type</name></member>
   </compound>
+  <compound refid="classeig_1_1solver" kind="class"><name>eig::solver</name>
+    <member refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kind="variable"><name>config</name></member>
+    <member refid="classeig_1_1solver_1adb6f937de4a4ca5b691c811604d34a51" kind="variable"><name>result</name></member>
+    <member refid="classeig_1_1solver_1a192c778d08cbab9863105b31116fbe41" kind="function"><name>solver</name></member>
+    <member refid="classeig_1_1solver_1a7277a552f5a880793a22caf9b32a3bb4" kind="function"><name>solver</name></member>
+    <member refid="classeig_1_1solver_1af3bdd06a2d3c571af0e61450830fe80f" kind="function"><name>solver</name></member>
+    <member refid="classeig_1_1solver_1ac19e79c860b8fdabfd29cd0af0bd1571" kind="function"><name>setLogLevel</name></member>
+    <member refid="classeig_1_1solver_1a61969f51247b66be38d25cd2d2383aef" kind="function"><name>setLogLevel</name></member>
+    <member refid="classeig_1_1solver_1a3f7a1f4b7a09dd6888e13be16dfee8bc" kind="function"><name>subtract_phase</name></member>
+    <member refid="classeig_1_1solver_1a7d8b25e25ccb6c132279990447923623" kind="function"><name>dsyevd</name></member>
+    <member refid="classeig_1_1solver_1abf5bc32024158cae7edd08f6bf3d4abd" kind="function"><name>zheevd</name></member>
+    <member refid="classeig_1_1solver_1aea7737f2de417fa1a3149b0212fbe4d5" kind="function"><name>dgeev</name></member>
+    <member refid="classeig_1_1solver_1ac83481320fe7767f16f000be709857b9" kind="function"><name>zgeev</name></member>
+    <member refid="classeig_1_1solver_1a0a5b423a9debdaeb2d49a44b07321fa4" kind="function"><name>eig_init</name></member>
+    <member refid="classeig_1_1solver_1a8e683a0ea00eb635d6f787e88bb95c0f" kind="function"><name>eig</name></member>
+    <member refid="classeig_1_1solver_1a2bfad927715227dc2dd7216b5244ac0f" kind="function"><name>eigs_init</name></member>
+    <member refid="classeig_1_1solver_1a5ba7331e3b316fff73eeeb0e9eaaf9c1" kind="function"><name>eigs</name></member>
+    <member refid="classeig_1_1solver_1a2bfdfb742d44e96b9ae2aca586f0644c" kind="function"><name>eigs</name></member>
+    <member refid="classeig_1_1solver_1ac0e7bfac712c409c994ed6bba5f525d5" kind="function"><name>eigs_primme</name></member>
+  </compound>
   <compound refid="classsvd_1_1solver" kind="class"><name>svd::solver</name>
     <member refid="classsvd_1_1solver_1a94c8a97655623563702edc711b4b25fb" kind="typedef"><name>MatrixType</name></member>
     <member refid="classsvd_1_1solver_1a7657c5bd3f60bdd8cf736b6830b6b987" kind="typedef"><name>VectorType</name></member>
@@ -2179,26 +2199,6 @@
     <member refid="classsvd_1_1solver_1a1acb641e1b3c541456991b967b7cbe64" kind="function"><name>do_svd</name></member>
     <member refid="classsvd_1_1solver_1a8cf101199dd197eb9acf45ac5806d088" kind="function"><name>do_svd_eigen</name></member>
     <member refid="classsvd_1_1solver_1a2646f3ccaa446827166dfb499acb9780" kind="function"><name>do_svd_lapacke</name></member>
-  </compound>
-  <compound refid="classeig_1_1solver" kind="class"><name>eig::solver</name>
-    <member refid="classeig_1_1solver_1a66d407432ee71de14a136e24dcd80d27" kind="variable"><name>config</name></member>
-    <member refid="classeig_1_1solver_1adb6f937de4a4ca5b691c811604d34a51" kind="variable"><name>result</name></member>
-    <member refid="classeig_1_1solver_1a192c778d08cbab9863105b31116fbe41" kind="function"><name>solver</name></member>
-    <member refid="classeig_1_1solver_1a7277a552f5a880793a22caf9b32a3bb4" kind="function"><name>solver</name></member>
-    <member refid="classeig_1_1solver_1af3bdd06a2d3c571af0e61450830fe80f" kind="function"><name>solver</name></member>
-    <member refid="classeig_1_1solver_1ac19e79c860b8fdabfd29cd0af0bd1571" kind="function"><name>setLogLevel</name></member>
-    <member refid="classeig_1_1solver_1a61969f51247b66be38d25cd2d2383aef" kind="function"><name>setLogLevel</name></member>
-    <member refid="classeig_1_1solver_1a3f7a1f4b7a09dd6888e13be16dfee8bc" kind="function"><name>subtract_phase</name></member>
-    <member refid="classeig_1_1solver_1a7d8b25e25ccb6c132279990447923623" kind="function"><name>dsyevd</name></member>
-    <member refid="classeig_1_1solver_1abf5bc32024158cae7edd08f6bf3d4abd" kind="function"><name>zheevd</name></member>
-    <member refid="classeig_1_1solver_1aea7737f2de417fa1a3149b0212fbe4d5" kind="function"><name>dgeev</name></member>
-    <member refid="classeig_1_1solver_1ac83481320fe7767f16f000be709857b9" kind="function"><name>zgeev</name></member>
-    <member refid="classeig_1_1solver_1a0a5b423a9debdaeb2d49a44b07321fa4" kind="function"><name>eig_init</name></member>
-    <member refid="classeig_1_1solver_1a8e683a0ea00eb635d6f787e88bb95c0f" kind="function"><name>eig</name></member>
-    <member refid="classeig_1_1solver_1a2bfad927715227dc2dd7216b5244ac0f" kind="function"><name>eigs_init</name></member>
-    <member refid="classeig_1_1solver_1a5ba7331e3b316fff73eeeb0e9eaaf9c1" kind="function"><name>eigs</name></member>
-    <member refid="classeig_1_1solver_1a2bfdfb742d44e96b9ae2aca586f0644c" kind="function"><name>eigs</name></member>
-    <member refid="classeig_1_1solver_1ac0e7bfac712c409c994ed6bba5f525d5" kind="function"><name>eigs_primme</name></member>
   </compound>
   <compound refid="classpcg__detail_1_1specific__stream" kind="class"><name>pcg_detail::specific_stream</name>
     <member refid="classpcg__detail_1_1specific__stream_1ac1c9e408dfbfd9058fa8aeffef9ac3c4" kind="typedef"><name>state_type</name></member>
@@ -2249,6 +2249,157 @@
     <member refid="structpcg__extras_1_1static__arbitrary__seed_1a0168de8c2e22973e0d7802ed69050d6f" kind="variable"><name>value</name></member>
     <member refid="structpcg__extras_1_1static__arbitrary__seed_1ad73865d934154c023d3f74ea062f0d41" kind="function"><name>fnv</name></member>
   </compound>
+  <compound refid="structh5pp__table__fdmrg__profiling_1_1table" kind="struct"><name>h5pp_table_fdmrg_profiling::table</name>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1ace6e7c4c0195f247dce20e26279d999a" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a752ec8a724101639faca5a5b05070394" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a164afc330a75aff10d76f1a1d70bec6b" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a9baac13449646435997ff5782ce9dcb6" kind="variable"><name>t_tot</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1aa3ae0d7727cb1d831192eb1a26dfa2e9" kind="variable"><name>t_pre</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a1631a6de50ccfe32619cf2abf92c5cee" kind="variable"><name>t_rnd</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0759af1b8b6ef7d61e9736a682b12902" kind="variable"><name>t_pos</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a821d977577491b4ff118e437ccf9e314" kind="variable"><name>t_sim</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a1409de664fe5eaa1c1ab63c36a3c6455" kind="variable"><name>t_con</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1af3ae95efbb09b43c1737be7c33150349" kind="variable"><name>t_eig</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0bbf89af73a0a3afca23fd7b8ff29446" kind="variable"><name>t_svd</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a4a405ddb558757164f74902dc13852a7" kind="variable"><name>t_env</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a9d862fc1684db73ccf18e690da542619" kind="variable"><name>t_ent</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1af3afe16a9b24a66bac47890709fa08f3" kind="variable"><name>t_spn</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a71728b19e545efcc6bf2ecba31b66d10" kind="variable"><name>t_ene</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a99e397b1bc05f2c7272035fe5887f47d" kind="variable"><name>t_var</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a29ff95d85ed5ad04fa81ae65bf7d8278" kind="variable"><name>t_prj</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0080432f38a5acba7da943eef1e059ae" kind="variable"><name>t_dbg</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a829b021f383e00027ee6a3c6cddd3851" kind="variable"><name>t_out</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1ae982a1a21d132d18dec4cde6e90f9967" kind="variable"><name>t_hdf</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1afa2f685ee1a2ff439548fe52cb6f0c58" kind="variable"><name>t_mps</name></member>
+    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a08b865a3930b6add9915a5fec8c83f83" kind="variable"><name>t_mpo</name></member>
+  </compound>
+  <compound refid="structh5pp__table__flbit__profiling_1_1table" kind="struct"><name>h5pp_table_flbit_profiling::table</name>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a06ea49918587aa477590fad2c20e2abf" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a65a2a0704054553fa1078a46db90f0d9" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a573bde45bda3d7834d82136835abe960" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a45ffa134dbbc1d05b3a2c536fb11188d" kind="variable"><name>t_tot</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a9eb88b47075f04e123d654a0177335ff" kind="variable"><name>t_pre</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a7edd151124735226e9dfa389a83b0599" kind="variable"><name>t_rnd</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a54bfa167f824f82184d06d54a4e5ab36" kind="variable"><name>t_pos</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a596e83d89ff7e9fb292fa72c06e8fbbb" kind="variable"><name>t_sim</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a064a3dda515c46d8c162e58e76bdae61" kind="variable"><name>t_con</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a7730aff705424024fb7ef05a7a733e01" kind="variable"><name>t_eig</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1ae3200f0a98fca1900b591563f41ee0ce" kind="variable"><name>t_evo</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a038baf21ce4eb5cb35462a9161e31ea4" kind="variable"><name>t_map</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8162692881a620fa9b4dc00413f3bf1f" kind="variable"><name>t_svd</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1aa43c38a666670c6c21c290a4304cc27c" kind="variable"><name>t_env</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a79feb55d3a9390376f3c048eff9e66d9" kind="variable"><name>t_ent</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a6f5525f362b40acc68d9f54e45349857" kind="variable"><name>t_num</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8ed8ce711689b43d41ccfeae3156bee0" kind="variable"><name>t_spn</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8a1c5cbf5ffc16a7b49d6e1268456546" kind="variable"><name>t_ene</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1aa7c09f076bb02b862c4fabc23eaf6f17" kind="variable"><name>t_var</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1ad17d26165e05f1d5e5f0da837fe9420f" kind="variable"><name>t_prj</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a91bf6daa7a44e9f0e9c41a9e2f8497ea" kind="variable"><name>t_dbg</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1ac51cce92eaaf45e2ec0f5caf317fcc82" kind="variable"><name>t_out</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a5d73c2e754fcef419a6f0d9a7f621b59" kind="variable"><name>t_hdf</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1aeed6d33513d5fa66c71c0d806c65ac8b" kind="variable"><name>t_mps</name></member>
+    <member refid="structh5pp__table__flbit__profiling_1_1table_1a34599f9f3618e42629abeb24893f171c" kind="variable"><name>t_mpo</name></member>
+  </compound>
+  <compound refid="structh5pp__table__idmrg__profiling_1_1table" kind="struct"><name>h5pp_table_idmrg_profiling::table</name>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a396ba4fab49d415bf87e8cb50786746b" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ad4073a0febcff0b5b30f9e48dafd9236" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ab8dac1df11d93434e8209e3cac105b23" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a32eef1a90c3ebb49fa8b97f68ad44e61" kind="variable"><name>t_tot</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1afe61fbc9f4e86cb4c5254b935681a874" kind="variable"><name>t_pre</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ad1aa69854d8ebfc0ada5f33b848ca2ce" kind="variable"><name>t_rnd</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a386ae531678b067b84c5f1241f751584" kind="variable"><name>t_pos</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a2d44b71db36062b4b48e2ff23cf26fd8" kind="variable"><name>t_sim</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a85a25a7ba044eecce6c75f9a366f8537" kind="variable"><name>t_con</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a7a69d678280994a2aa11be396509a37d" kind="variable"><name>t_eig</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a51adebd1e4c850f7f13a68d42d1a971b" kind="variable"><name>t_svd</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a55bb910bc038f7e210ca86e168859380" kind="variable"><name>t_env</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a1d646ecb408877a40f5c838c9e51790f" kind="variable"><name>t_ent</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1aee898f9b07378326005c20f78e2fc1c6" kind="variable"><name>t_ene</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a81e20fe5f288979cc3d742ed50477233" kind="variable"><name>t_var</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a8630d6a63cfb0a0290f5b3c8e00f8c71" kind="variable"><name>t_dbg</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a4201966c902ea54a4f3403d904cd59ca" kind="variable"><name>t_out</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a2b2caec9c92810a0d2a1b727f8fd92a2" kind="variable"><name>t_hdf</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a247533c9affa3a3aa86c5a4efc1900b5" kind="variable"><name>t_ene_ham</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a59a2489aa7a959c732d70302a0d617e3" kind="variable"><name>t_ene_mom</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a067e792bac3319df4e159a082054173b" kind="variable"><name>t_var_ham</name></member>
+    <member refid="structh5pp__table__idmrg__profiling_1_1table_1af7a8e7a95fa3fa17f15a7e58eedf8790" kind="variable"><name>t_var_mom</name></member>
+  </compound>
+  <compound refid="structh5pp__table__itebd__profiling_1_1table" kind="struct"><name>h5pp_table_itebd_profiling::table</name>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a691afaea7152cd9969da2a4dee502b49" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a05c2b1ef1c1d197a6bb47538c09e8eea" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1af6188be295360282a552e89b47200520" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1ae24e7cee81794782a64f371bf96e5c34" kind="variable"><name>t_tot</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a035e29d0cb5070f970d5d5d2c1d15390" kind="variable"><name>t_pre</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1abfd5237369373eb7f5ce0f99b13a6eaf" kind="variable"><name>t_pos</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a83c9494bbccb4aad57b70dad1da5aad0" kind="variable"><name>t_sim</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1aa788e4ae23fb0f90fdb321ff95be07f1" kind="variable"><name>t_con</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1ae89c57bc58bb5b30c1c5fa97cf725e57" kind="variable"><name>t_svd</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1aa61a02d0441a67827a3828c702573592" kind="variable"><name>t_evo</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a89fa1a892dfdf4ae97c84acdd705a21b" kind="variable"><name>t_ent</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a47f4db8df72048ae8eb9479abaddabb4" kind="variable"><name>t_dbg</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a1f812f29d50a3efd3e595fd4c48425bb" kind="variable"><name>t_out</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a0d372e1f5d963dec3b2b3905a87a111d" kind="variable"><name>t_hdf</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a3db20547bf08d0f3cf121bbdf78e3757" kind="variable"><name>t_ene_ham</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1af8c8ea6fb2e1645102371e0da570db59" kind="variable"><name>t_ene_mom</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1ac9a5e3ace371bd8ed14e35ac4658c56e" kind="variable"><name>t_var_ham</name></member>
+    <member refid="structh5pp__table__itebd__profiling_1_1table_1a03b676365607f70436b5cece47fbb1ba" kind="variable"><name>t_var_mom</name></member>
+  </compound>
+  <compound refid="structh5pp__table__measurements__finite_1_1table" kind="struct"><name>h5pp_table_measurements_finite::table</name>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1aee6c60731d7cde5d76af1c26480672e5" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a994727af62420a815ae0fd3f4667b4e8" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a36b4312db9a1c576f07d1d9e279ca1be" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1ac4e14962429f29bd7268f7e2cd9d00f8" kind="variable"><name>length</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1afbed31c8f038f34a22d5cb8c37144bc0" kind="variable"><name>bond_dimension_midchain</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1aa521c897b5188b9861f3541975c13c66" kind="variable"><name>bond_dimension_current</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1ad71809dcdcd244b71dfc9d8dcb7c50bf" kind="variable"><name>bond_dimension_limit</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a65a2f11a07374ccbe2b1a8e357479a68" kind="variable"><name>bond_dimension_maximum</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a961ce70bd730a63a2e0bd4b363f4fd46" kind="variable"><name>entanglement_entropy_midchain</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a7283074258f42bc16f7aa3cafcc7402d" kind="variable"><name>entanglement_entropy_current</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a3ec948567c46ea71cf4ccebe0b85774b" kind="variable"><name>number_entropy_midchain</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1ab971f38342fb9a18e0028bf3e4b14f8b" kind="variable"><name>number_entropy_current</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a7350d0782870aebabb2873105d443f6d" kind="variable"><name>norm</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a78585e740321fe00ef646cc64a174c26" kind="variable"><name>energy</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a4377687443ee5524883c0564f5b98d2d" kind="variable"><name>energy_per_site</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a04fbefcb0465a4e551ce140b8dc95eb7" kind="variable"><name>energy_variance</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1ac82803469d65bbb0bc0f0efb0630bcd0" kind="variable"><name>energy_variance_per_site</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1aac0e502e41ba0d69c97352ca0b98eff6" kind="variable"><name>energy_variance_lowest</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a15691010bd8a965fca75d577f3b9d997" kind="variable"><name>energy_variance_per_site_lowest</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a89cd56b459a6ef105225e495c8c739d3" kind="variable"><name>spin_components</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1aa15d34b3006b9263a57202e1a76e4741" kind="variable"><name>truncation_error</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1a9a56f4406efa7aa4166b454c09c41730" kind="variable"><name>total_time</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1aced10e354e8c2a43ce97b79c3a4412c5" kind="variable"><name>algorithm_time</name></member>
+    <member refid="structh5pp__table__measurements__finite_1_1table_1ad9acb573b6e92e01fabca5814621d2cd" kind="variable"><name>physical_time</name></member>
+  </compound>
+  <compound refid="structh5pp__table__measurements__infinite_1_1table" kind="struct"><name>h5pp_table_measurements_infinite::table</name>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ad63b24f2bf323ebe6e9fdd8083c1d589" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a9d00bdb062ff37fbb2176ca5dfea8643" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1abf8cc1052399b367bc166f579b1d7355" kind="variable"><name>position</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ac414dc1d3479374fc8f00c2981a30f1d" kind="variable"><name>length</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7e55625f0145d3c17e28ef7556d35e63" kind="variable"><name>bond_dimension</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ae47bca0ebc622c667e978e1194277335" kind="variable"><name>bond_dimension_limit</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a2f9a8deb50b5e6581acf27fba3e408e8" kind="variable"><name>bond_dimension_maximum</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a6b2ceef8a046e4488b4a41b5250984aa" kind="variable"><name>entanglement_entropy</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab9e4c2b0be318111788a959773729249" kind="variable"><name>norm</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ad5c9e9605f6e6ae1561dadd52f5e14ce" kind="variable"><name>energy_mpo</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a8c397198d5dae350424273fe9b258c89" kind="variable"><name>energy_per_site_mpo</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ada5cce620ba3ff291048534e8be4b8e2" kind="variable"><name>energy_per_site_ham</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1adae8b2fdcbe57e3575ada45339885a82" kind="variable"><name>energy_per_site_mom</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a556c7495904d8cfe5c0a8fa3b51d478c" kind="variable"><name>energy_variance_mpo</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7c4449fd489a12d5ceb5a0bd4f6c552f" kind="variable"><name>energy_variance_per_site_mpo</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab98a6ad89ad925b62853b1c81bd8e80a" kind="variable"><name>energy_variance_per_site_ham</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1af64b2042fdfce3b526755649a14d62b0" kind="variable"><name>energy_variance_per_site_mom</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a8b5871c85ec8508085c46c8eb4727ff0" kind="variable"><name>truncation_error</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ada96499a9bbf073dcebcc8827aafd74c" kind="variable"><name>wall_time</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab03513686460483ec367e550b3526917" kind="variable"><name>phys_time</name></member>
+    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7706f0b570ee71594d3a3004384b0170" kind="variable"><name>time_step</name></member>
+  </compound>
+  <compound refid="structh5pp__table__memory__usage_1_1table" kind="struct"><name>h5pp_table_memory_usage::table</name>
+    <member refid="structh5pp__table__memory__usage_1_1table_1a623e7f233fde35fef6ebaf3349343a20" kind="variable"><name>iter</name></member>
+    <member refid="structh5pp__table__memory__usage_1_1table_1aabc880d4eb6fd0d1df2a6e0cf3e2f86a" kind="variable"><name>step</name></member>
+    <member refid="structh5pp__table__memory__usage_1_1table_1a8bcfe453f6625b0cfea22b392bb338da" kind="variable"><name>rss</name></member>
+    <member refid="structh5pp__table__memory__usage_1_1table_1acc63b385abf41540b1d4724ac08930f1" kind="variable"><name>hwm</name></member>
+    <member refid="structh5pp__table__memory__usage_1_1table_1abcc2d66a0273271a313c5f72941d0f00" kind="variable"><name>vm</name></member>
+  </compound>
   <compound refid="structh5pp__table__xdmrg__profiling_1_1table" kind="struct"><name>h5pp_table_xdmrg_profiling::table</name>
     <member refid="structh5pp__table__xdmrg__profiling_1_1table_1a0d827d5cc149c52f94d9250ebf4949e3" kind="variable"><name>iter</name></member>
     <member refid="structh5pp__table__xdmrg__profiling_1_1table_1a412e47f8cad2d43f21bb5de30e5f6f13" kind="variable"><name>step</name></member>
@@ -2292,72 +2443,32 @@
     <member refid="structh5pp__table__xdmrg__profiling_1_1table_1a41a0540eadf8f378bad56f10394c0dec" kind="variable"><name>t_opt_sub_vH</name></member>
     <member refid="structh5pp__table__xdmrg__profiling_1_1table_1a569ed5bbf649158b5fc029a832081115" kind="variable"><name>t_opt_sub_vHv</name></member>
   </compound>
-  <compound refid="structh5pp__table__measurements__infinite_1_1table" kind="struct"><name>h5pp_table_measurements_infinite::table</name>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ad63b24f2bf323ebe6e9fdd8083c1d589" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a9d00bdb062ff37fbb2176ca5dfea8643" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1abf8cc1052399b367bc166f579b1d7355" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ac414dc1d3479374fc8f00c2981a30f1d" kind="variable"><name>length</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7e55625f0145d3c17e28ef7556d35e63" kind="variable"><name>bond_dimension</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ae47bca0ebc622c667e978e1194277335" kind="variable"><name>bond_dimension_limit</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a2f9a8deb50b5e6581acf27fba3e408e8" kind="variable"><name>bond_dimension_maximum</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a6b2ceef8a046e4488b4a41b5250984aa" kind="variable"><name>entanglement_entropy</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab9e4c2b0be318111788a959773729249" kind="variable"><name>norm</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ad5c9e9605f6e6ae1561dadd52f5e14ce" kind="variable"><name>energy_mpo</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a8c397198d5dae350424273fe9b258c89" kind="variable"><name>energy_per_site_mpo</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ada5cce620ba3ff291048534e8be4b8e2" kind="variable"><name>energy_per_site_ham</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1adae8b2fdcbe57e3575ada45339885a82" kind="variable"><name>energy_per_site_mom</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a556c7495904d8cfe5c0a8fa3b51d478c" kind="variable"><name>energy_variance_mpo</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7c4449fd489a12d5ceb5a0bd4f6c552f" kind="variable"><name>energy_variance_per_site_mpo</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab98a6ad89ad925b62853b1c81bd8e80a" kind="variable"><name>energy_variance_per_site_ham</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1af64b2042fdfce3b526755649a14d62b0" kind="variable"><name>energy_variance_per_site_mom</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a8b5871c85ec8508085c46c8eb4727ff0" kind="variable"><name>truncation_error</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ada96499a9bbf073dcebcc8827aafd74c" kind="variable"><name>wall_time</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1ab03513686460483ec367e550b3526917" kind="variable"><name>phys_time</name></member>
-    <member refid="structh5pp__table__measurements__infinite_1_1table_1a7706f0b570ee71594d3a3004384b0170" kind="variable"><name>time_step</name></member>
+  <compound refid="structh5tb__ising__sdual_1_1table" kind="struct"><name>h5tb_ising_sdual::table</name>
+    <member refid="structh5tb__ising__sdual_1_1table_1ad216b25d848f731863a3b42f443e1427" kind="variable"><name>J_mean</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a5b2737a2c51234eeef9be3e4bf93a77e" kind="variable"><name>J_stdv</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1ae82ecf20ec88e53109ae326aa5daeeca" kind="variable"><name>J_rand</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a8dc4d575f4b506655ca72550999060ad" kind="variable"><name>J_avrg</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a3dc0ddcb0e916123c736df36986a51bb" kind="variable"><name>J_pert</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1abfc48fc2fadd049003e284aa160d798e" kind="variable"><name>h_mean</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1aaf8e32153a46bcfbe2c100ca13de7636" kind="variable"><name>h_stdv</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1aa68fbe3bbdae50adae81f0148570c8a8" kind="variable"><name>h_rand</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1af4fbcdfd5b46de4591e2832f174c0ec4" kind="variable"><name>h_avrg</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1afd63f4e3be0db115e5de8ad88da2009e" kind="variable"><name>h_pert</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a1eaf95eeea9f54993a72325f1717f5a5" kind="variable"><name>lambda</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1ac9f2920227d5da1314c87ecdbdffa3a2" kind="variable"><name>delta</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a0eaa95ce3c00c13e7257f5d491cb86d7" kind="variable"><name>spin_dim</name></member>
+    <member refid="structh5tb__ising__sdual_1_1table_1a4923d877c786dfc5d6bfaa65f3937231" kind="variable"><name>distribution</name></member>
   </compound>
-  <compound refid="structh5pp__table__fdmrg__profiling_1_1table" kind="struct"><name>h5pp_table_fdmrg_profiling::table</name>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1ace6e7c4c0195f247dce20e26279d999a" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a752ec8a724101639faca5a5b05070394" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a164afc330a75aff10d76f1a1d70bec6b" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a9baac13449646435997ff5782ce9dcb6" kind="variable"><name>t_tot</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1aa3ae0d7727cb1d831192eb1a26dfa2e9" kind="variable"><name>t_pre</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a1631a6de50ccfe32619cf2abf92c5cee" kind="variable"><name>t_rnd</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0759af1b8b6ef7d61e9736a682b12902" kind="variable"><name>t_pos</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a821d977577491b4ff118e437ccf9e314" kind="variable"><name>t_sim</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a1409de664fe5eaa1c1ab63c36a3c6455" kind="variable"><name>t_con</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1af3ae95efbb09b43c1737be7c33150349" kind="variable"><name>t_eig</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0bbf89af73a0a3afca23fd7b8ff29446" kind="variable"><name>t_svd</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a4a405ddb558757164f74902dc13852a7" kind="variable"><name>t_env</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a9d862fc1684db73ccf18e690da542619" kind="variable"><name>t_ent</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1af3afe16a9b24a66bac47890709fa08f3" kind="variable"><name>t_spn</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a71728b19e545efcc6bf2ecba31b66d10" kind="variable"><name>t_ene</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a99e397b1bc05f2c7272035fe5887f47d" kind="variable"><name>t_var</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a29ff95d85ed5ad04fa81ae65bf7d8278" kind="variable"><name>t_prj</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a0080432f38a5acba7da943eef1e059ae" kind="variable"><name>t_dbg</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a829b021f383e00027ee6a3c6cddd3851" kind="variable"><name>t_out</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1ae982a1a21d132d18dec4cde6e90f9967" kind="variable"><name>t_hdf</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1afa2f685ee1a2ff439548fe52cb6f0c58" kind="variable"><name>t_mps</name></member>
-    <member refid="structh5pp__table__fdmrg__profiling_1_1table_1a08b865a3930b6add9915a5fec8c83f83" kind="variable"><name>t_mpo</name></member>
-  </compound>
-  <compound refid="structh5pp__table__itebd__profiling_1_1table" kind="struct"><name>h5pp_table_itebd_profiling::table</name>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a691afaea7152cd9969da2a4dee502b49" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a05c2b1ef1c1d197a6bb47538c09e8eea" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1af6188be295360282a552e89b47200520" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1ae24e7cee81794782a64f371bf96e5c34" kind="variable"><name>t_tot</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a035e29d0cb5070f970d5d5d2c1d15390" kind="variable"><name>t_pre</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1abfd5237369373eb7f5ce0f99b13a6eaf" kind="variable"><name>t_pos</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a83c9494bbccb4aad57b70dad1da5aad0" kind="variable"><name>t_sim</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1aa788e4ae23fb0f90fdb321ff95be07f1" kind="variable"><name>t_con</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1ae89c57bc58bb5b30c1c5fa97cf725e57" kind="variable"><name>t_svd</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1aa61a02d0441a67827a3828c702573592" kind="variable"><name>t_evo</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a89fa1a892dfdf4ae97c84acdd705a21b" kind="variable"><name>t_ent</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a47f4db8df72048ae8eb9479abaddabb4" kind="variable"><name>t_dbg</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a1f812f29d50a3efd3e595fd4c48425bb" kind="variable"><name>t_out</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a0d372e1f5d963dec3b2b3905a87a111d" kind="variable"><name>t_hdf</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a3db20547bf08d0f3cf121bbdf78e3757" kind="variable"><name>t_ene_ham</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1af8c8ea6fb2e1645102371e0da570db59" kind="variable"><name>t_ene_mom</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1ac9a5e3ace371bd8ed14e35ac4658c56e" kind="variable"><name>t_var_ham</name></member>
-    <member refid="structh5pp__table__itebd__profiling_1_1table_1a03b676365607f70436b5cece47fbb1ba" kind="variable"><name>t_var_mom</name></member>
+  <compound refid="structh5tb__ising__tf__rf_1_1table" kind="struct"><name>h5tb_ising_tf_rf::table</name>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1af0a9d1cb4f94eae56646d965f249627e" kind="variable"><name>J1</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1a061a28e29c0030d61d7696ad6877e564" kind="variable"><name>J2</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1a891878a6700c91ba53ecf303ffa523c1" kind="variable"><name>h_tran</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1a1cb4d07675ed0a7c3a65b8b6ee258880" kind="variable"><name>h_mean</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1ae9c661c6f5023547e1dbf731ec4c253e" kind="variable"><name>h_stdv</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1a67771eb5666f628518f36d3682a75f6b" kind="variable"><name>h_rand</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1af3849403b23f565aa090d900037ff157" kind="variable"><name>h_pert</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1ab30f9286cc4628ef7e2ced3f277f9d1d" kind="variable"><name>spin_dim</name></member>
+    <member refid="structh5tb__ising__tf__rf_1_1table_1aa4ff1e299de6e6a98b9de144b2641d82" kind="variable"><name>distribution</name></member>
   </compound>
   <compound refid="structh5tb__lbit_1_1table" kind="struct"><name>h5tb_lbit::table</name>
     <member refid="structh5tb__lbit_1_1table_1a858fea35ee20427702a94196490676df" kind="variable"><name>J1_rand</name></member>
@@ -2378,117 +2489,6 @@
     <member refid="structh5tb__lbit_1_1table_1a57b77b4f50f0531581d18d397b915566" kind="variable"><name>u_layer</name></member>
     <member refid="structh5tb__lbit_1_1table_1a2f18b9a82dc002e9661234fe1ac57a42" kind="variable"><name>spin_dim</name></member>
     <member refid="structh5tb__lbit_1_1table_1a6358265adb22e6b96862d0dbc50039d3" kind="variable"><name>distribution</name></member>
-  </compound>
-  <compound refid="structh5pp__table__flbit__profiling_1_1table" kind="struct"><name>h5pp_table_flbit_profiling::table</name>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a06ea49918587aa477590fad2c20e2abf" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a65a2a0704054553fa1078a46db90f0d9" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a573bde45bda3d7834d82136835abe960" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a45ffa134dbbc1d05b3a2c536fb11188d" kind="variable"><name>t_tot</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a9eb88b47075f04e123d654a0177335ff" kind="variable"><name>t_pre</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a7edd151124735226e9dfa389a83b0599" kind="variable"><name>t_rnd</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a54bfa167f824f82184d06d54a4e5ab36" kind="variable"><name>t_pos</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a596e83d89ff7e9fb292fa72c06e8fbbb" kind="variable"><name>t_sim</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a064a3dda515c46d8c162e58e76bdae61" kind="variable"><name>t_con</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a7730aff705424024fb7ef05a7a733e01" kind="variable"><name>t_eig</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1ae3200f0a98fca1900b591563f41ee0ce" kind="variable"><name>t_evo</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a038baf21ce4eb5cb35462a9161e31ea4" kind="variable"><name>t_map</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8162692881a620fa9b4dc00413f3bf1f" kind="variable"><name>t_svd</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1aa43c38a666670c6c21c290a4304cc27c" kind="variable"><name>t_env</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a79feb55d3a9390376f3c048eff9e66d9" kind="variable"><name>t_ent</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a6f5525f362b40acc68d9f54e45349857" kind="variable"><name>t_num</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8ed8ce711689b43d41ccfeae3156bee0" kind="variable"><name>t_spn</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a8a1c5cbf5ffc16a7b49d6e1268456546" kind="variable"><name>t_ene</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1aa7c09f076bb02b862c4fabc23eaf6f17" kind="variable"><name>t_var</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1ad17d26165e05f1d5e5f0da837fe9420f" kind="variable"><name>t_prj</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a91bf6daa7a44e9f0e9c41a9e2f8497ea" kind="variable"><name>t_dbg</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1ac51cce92eaaf45e2ec0f5caf317fcc82" kind="variable"><name>t_out</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a5d73c2e754fcef419a6f0d9a7f621b59" kind="variable"><name>t_hdf</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1aeed6d33513d5fa66c71c0d806c65ac8b" kind="variable"><name>t_mps</name></member>
-    <member refid="structh5pp__table__flbit__profiling_1_1table_1a34599f9f3618e42629abeb24893f171c" kind="variable"><name>t_mpo</name></member>
-  </compound>
-  <compound refid="structh5pp__table__memory__usage_1_1table" kind="struct"><name>h5pp_table_memory_usage::table</name>
-    <member refid="structh5pp__table__memory__usage_1_1table_1a623e7f233fde35fef6ebaf3349343a20" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__memory__usage_1_1table_1aabc880d4eb6fd0d1df2a6e0cf3e2f86a" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__memory__usage_1_1table_1a8bcfe453f6625b0cfea22b392bb338da" kind="variable"><name>rss</name></member>
-    <member refid="structh5pp__table__memory__usage_1_1table_1acc63b385abf41540b1d4724ac08930f1" kind="variable"><name>hwm</name></member>
-    <member refid="structh5pp__table__memory__usage_1_1table_1abcc2d66a0273271a313c5f72941d0f00" kind="variable"><name>vm</name></member>
-  </compound>
-  <compound refid="structh5tb__ising__tf__rf_1_1table" kind="struct"><name>h5tb_ising_tf_rf::table</name>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1af0a9d1cb4f94eae56646d965f249627e" kind="variable"><name>J1</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1a061a28e29c0030d61d7696ad6877e564" kind="variable"><name>J2</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1a891878a6700c91ba53ecf303ffa523c1" kind="variable"><name>h_tran</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1a1cb4d07675ed0a7c3a65b8b6ee258880" kind="variable"><name>h_mean</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1ae9c661c6f5023547e1dbf731ec4c253e" kind="variable"><name>h_stdv</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1a67771eb5666f628518f36d3682a75f6b" kind="variable"><name>h_rand</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1af3849403b23f565aa090d900037ff157" kind="variable"><name>h_pert</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1ab30f9286cc4628ef7e2ced3f277f9d1d" kind="variable"><name>spin_dim</name></member>
-    <member refid="structh5tb__ising__tf__rf_1_1table_1aa4ff1e299de6e6a98b9de144b2641d82" kind="variable"><name>distribution</name></member>
-  </compound>
-  <compound refid="structh5pp__table__idmrg__profiling_1_1table" kind="struct"><name>h5pp_table_idmrg_profiling::table</name>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a396ba4fab49d415bf87e8cb50786746b" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ad4073a0febcff0b5b30f9e48dafd9236" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ab8dac1df11d93434e8209e3cac105b23" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a32eef1a90c3ebb49fa8b97f68ad44e61" kind="variable"><name>t_tot</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1afe61fbc9f4e86cb4c5254b935681a874" kind="variable"><name>t_pre</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1ad1aa69854d8ebfc0ada5f33b848ca2ce" kind="variable"><name>t_rnd</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a386ae531678b067b84c5f1241f751584" kind="variable"><name>t_pos</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a2d44b71db36062b4b48e2ff23cf26fd8" kind="variable"><name>t_sim</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a85a25a7ba044eecce6c75f9a366f8537" kind="variable"><name>t_con</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a7a69d678280994a2aa11be396509a37d" kind="variable"><name>t_eig</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a51adebd1e4c850f7f13a68d42d1a971b" kind="variable"><name>t_svd</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a55bb910bc038f7e210ca86e168859380" kind="variable"><name>t_env</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a1d646ecb408877a40f5c838c9e51790f" kind="variable"><name>t_ent</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1aee898f9b07378326005c20f78e2fc1c6" kind="variable"><name>t_ene</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a81e20fe5f288979cc3d742ed50477233" kind="variable"><name>t_var</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a8630d6a63cfb0a0290f5b3c8e00f8c71" kind="variable"><name>t_dbg</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a4201966c902ea54a4f3403d904cd59ca" kind="variable"><name>t_out</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a2b2caec9c92810a0d2a1b727f8fd92a2" kind="variable"><name>t_hdf</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a247533c9affa3a3aa86c5a4efc1900b5" kind="variable"><name>t_ene_ham</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a59a2489aa7a959c732d70302a0d617e3" kind="variable"><name>t_ene_mom</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1a067e792bac3319df4e159a082054173b" kind="variable"><name>t_var_ham</name></member>
-    <member refid="structh5pp__table__idmrg__profiling_1_1table_1af7a8e7a95fa3fa17f15a7e58eedf8790" kind="variable"><name>t_var_mom</name></member>
-  </compound>
-  <compound refid="structh5tb__ising__sdual_1_1table" kind="struct"><name>h5tb_ising_sdual::table</name>
-    <member refid="structh5tb__ising__sdual_1_1table_1ad216b25d848f731863a3b42f443e1427" kind="variable"><name>J_mean</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a5b2737a2c51234eeef9be3e4bf93a77e" kind="variable"><name>J_stdv</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1ae82ecf20ec88e53109ae326aa5daeeca" kind="variable"><name>J_rand</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a8dc4d575f4b506655ca72550999060ad" kind="variable"><name>J_avrg</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a3dc0ddcb0e916123c736df36986a51bb" kind="variable"><name>J_pert</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1abfc48fc2fadd049003e284aa160d798e" kind="variable"><name>h_mean</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1aaf8e32153a46bcfbe2c100ca13de7636" kind="variable"><name>h_stdv</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1aa68fbe3bbdae50adae81f0148570c8a8" kind="variable"><name>h_rand</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1af4fbcdfd5b46de4591e2832f174c0ec4" kind="variable"><name>h_avrg</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1afd63f4e3be0db115e5de8ad88da2009e" kind="variable"><name>h_pert</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a1eaf95eeea9f54993a72325f1717f5a5" kind="variable"><name>lambda</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1ac9f2920227d5da1314c87ecdbdffa3a2" kind="variable"><name>delta</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a0eaa95ce3c00c13e7257f5d491cb86d7" kind="variable"><name>spin_dim</name></member>
-    <member refid="structh5tb__ising__sdual_1_1table_1a4923d877c786dfc5d6bfaa65f3937231" kind="variable"><name>distribution</name></member>
-  </compound>
-  <compound refid="structh5pp__table__measurements__finite_1_1table" kind="struct"><name>h5pp_table_measurements_finite::table</name>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1aee6c60731d7cde5d76af1c26480672e5" kind="variable"><name>iter</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a994727af62420a815ae0fd3f4667b4e8" kind="variable"><name>step</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a36b4312db9a1c576f07d1d9e279ca1be" kind="variable"><name>position</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1ac4e14962429f29bd7268f7e2cd9d00f8" kind="variable"><name>length</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1afbed31c8f038f34a22d5cb8c37144bc0" kind="variable"><name>bond_dimension_midchain</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1aa521c897b5188b9861f3541975c13c66" kind="variable"><name>bond_dimension_current</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1ad71809dcdcd244b71dfc9d8dcb7c50bf" kind="variable"><name>bond_dimension_limit</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a65a2f11a07374ccbe2b1a8e357479a68" kind="variable"><name>bond_dimension_maximum</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a961ce70bd730a63a2e0bd4b363f4fd46" kind="variable"><name>entanglement_entropy_midchain</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a7283074258f42bc16f7aa3cafcc7402d" kind="variable"><name>entanglement_entropy_current</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a3ec948567c46ea71cf4ccebe0b85774b" kind="variable"><name>number_entropy_midchain</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1ab971f38342fb9a18e0028bf3e4b14f8b" kind="variable"><name>number_entropy_current</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a7350d0782870aebabb2873105d443f6d" kind="variable"><name>norm</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a78585e740321fe00ef646cc64a174c26" kind="variable"><name>energy</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a4377687443ee5524883c0564f5b98d2d" kind="variable"><name>energy_per_site</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a04fbefcb0465a4e551ce140b8dc95eb7" kind="variable"><name>energy_variance</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1ac82803469d65bbb0bc0f0efb0630bcd0" kind="variable"><name>energy_variance_per_site</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1aac0e502e41ba0d69c97352ca0b98eff6" kind="variable"><name>energy_variance_lowest</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a15691010bd8a965fca75d577f3b9d997" kind="variable"><name>energy_variance_per_site_lowest</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a89cd56b459a6ef105225e495c8c739d3" kind="variable"><name>spin_components</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1aa15d34b3006b9263a57202e1a76e4741" kind="variable"><name>truncation_error</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1a9a56f4406efa7aa4166b454c09c41730" kind="variable"><name>total_time</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1aced10e354e8c2a43ce97b79c3a4412c5" kind="variable"><name>algorithm_time</name></member>
-    <member refid="structh5pp__table__measurements__finite_1_1table_1ad9acb573b6e92e01fabca5814621d2cd" kind="variable"><name>physical_time</name></member>
   </compound>
   <compound refid="structtensors__measure__finite" kind="struct"><name>tensors_measure_finite</name>
     <member refid="structtensors__measure__finite_1a63bbbd41d8e7318279127528e4bee62f" kind="variable"><name>length</name></member>
@@ -2533,13 +2533,13 @@
     <member refid="classpcg__extras_1_1uint__x4_1a0a4c624284c5144369ef05666def13e0" kind="variable"><name>v2</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a40b585610b37fed799966aa5f7cea783" kind="variable"><name>v1</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a73aba28aa323e0fe97e523b7dc7d217d" kind="variable"><name>v0</name></member>
-    <member refid="classpcg__extras_1_1uint__x4_1adef809eaf078b30680a2d3aa782cc3e2" kind="variable"><name>w</name></member>
+    <member refid="classpcg__extras_1_1uint__x4_1a890dad95cd61191b14f0ac0d31568c73" kind="variable"><name>w</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1ac9ce494991265b8a72742554b3929ca4" kind="variable"><name>v23</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a08e930db22fa71047efe218e3f5b31f7" kind="variable"><name>v01</name></member>
-    <member refid="classpcg__extras_1_1uint__x4_1a6f6817c37e4645249a8444d0a98d6453" kind="variable"><name>d</name></member>
+    <member refid="classpcg__extras_1_1uint__x4_1ae40912a504f91e9d84d27063744853f5" kind="variable"><name>d</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a54e6f9da6e35d0ef34a7cc597027d586" kind="variable"><name>wa</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a1188cc911ff117d390aed7d04adb2b33" kind="variable"><name>da</name></member>
-    <member refid="classpcg__extras_1_1uint__x4_1a6150625f5a20dea2baf32eea32d35953" kind="variable"><name>@2</name></member>
+    <member refid="classpcg__extras_1_1uint__x4_1a97329c61554a4f670346843860833572" kind="variable"><name>@1</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1abfd14459c8de4058d841892f0d206b8c" kind="function"><name>uint_x4</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a0baa6b223acc2977d01f3176a19dd4b9" kind="function"><name>uint_x4</name></member>
     <member refid="classpcg__extras_1_1uint__x4_1a81b94f129c687f354a62e6b3036501d6" kind="function"><name>uint_x4</name></member>
@@ -2617,6 +2617,8 @@
   <compound refid="structpcg__detail_1_1xsl__rr__rr__mixin" kind="struct"><name>pcg_detail::xsl_rr_rr_mixin</name>
     <member refid="structpcg__detail_1_1xsl__rr__rr__mixin_1acb07e7049dcdc8d04ee3b1c35cb60c1b" kind="typedef"><name>htype</name></member>
     <member refid="structpcg__detail_1_1xsl__rr__rr__mixin_1a5c914f5d43e5f16351bba8feacf9f8c6" kind="function"><name>output</name></member>
+  </compound>
+  <compound refid="namespaceceres" kind="namespace"><name>ceres</name>
   </compound>
   <compound refid="namespacedebug" kind="namespace"><name>debug</name>
     <member refid="namespacedebug_1a2774636e7327b6cff8d7ca2ca4a5841e" kind="function"><name>register_callbacks</name></member>
@@ -2959,21 +2961,21 @@
     <member refid="namespaceqm_1_1mpo_1a0d2793fa28c12c6b2844134f9d89c112" kind="function"><name>random_pauli_mpos</name></member>
   </compound>
   <compound refid="namespaceqm_1_1spin_half" kind="namespace"><name>qm::spinHalf</name>
-    <member refid="namespaceqm_1_1spin_half_1a125814890137064c194f04a553c1c49d" kind="variable"><name>sx</name></member>
-    <member refid="namespaceqm_1_1spin_half_1ac02887d9435d2dfe72ac19c75f2c2e5c" kind="variable"><name>sy</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a00fcbb67dca99ab7e75f8c3606ff5275" kind="variable"><name>sz</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a87b7001c3b6d0872b5ed86e6afe7eed5" kind="variable"><name>id</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a2f6d4728957bc677ba7a106d98eae67f" kind="variable"><name>sx_spinors</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a3e9f1fda80f3208afeb0b42e6dbd909b" kind="variable"><name>sy_spinors</name></member>
-    <member refid="namespaceqm_1_1spin_half_1acb26f81505dce9c456fa778723949d6d" kind="variable"><name>sz_spinors</name></member>
+    <member refid="namespaceqm_1_1spin_half_1ae2a3b703d77bff861c17f02785eb4539" kind="variable"><name>sx</name></member>
+    <member refid="namespaceqm_1_1spin_half_1ad89389f68e78e9d72c2249d69ed2d397" kind="variable"><name>sy</name></member>
+    <member refid="namespaceqm_1_1spin_half_1ac450a6ccd34bddc24f807f0b3a97ea5f" kind="variable"><name>sz</name></member>
+    <member refid="namespaceqm_1_1spin_half_1a998a0415bed8d81a6830dc19487ee381" kind="variable"><name>sp</name></member>
+    <member refid="namespaceqm_1_1spin_half_1afe6f0dcbb87cf9f9b1911e3f2c5168b0" kind="variable"><name>sm</name></member>
+    <member refid="namespaceqm_1_1spin_half_1a6e531542ad7b6d1713f0c60ab77c1b02" kind="variable"><name>id</name></member>
+    <member refid="namespaceqm_1_1spin_half_1a1ec5c94fc7ebde524737c12018654cf6" kind="variable"><name>sx_spinors</name></member>
+    <member refid="namespaceqm_1_1spin_half_1a55f84c37b3b9188cca7639bf30ec6c2b" kind="variable"><name>sy_spinors</name></member>
+    <member refid="namespaceqm_1_1spin_half_1aae4554ab07fff562bfc43523c7070b01" kind="variable"><name>sz_spinors</name></member>
     <member refid="namespaceqm_1_1spin_half_1afd85cdedfd4461df16a88c97fe3ea243" kind="variable"><name>SX</name></member>
     <member refid="namespaceqm_1_1spin_half_1a6a366908810d602495ad413ddb9e97d0" kind="variable"><name>SY</name></member>
     <member refid="namespaceqm_1_1spin_half_1adee16087a8eb7598c285630579d551a1" kind="variable"><name>SZ</name></member>
     <member refid="namespaceqm_1_1spin_half_1affbf550995483fe7078f073448a1c40e" kind="variable"><name>II</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a998a0415bed8d81a6830dc19487ee381" kind="variable"><name>sp</name></member>
-    <member refid="namespaceqm_1_1spin_half_1afe6f0dcbb87cf9f9b1911e3f2c5168b0" kind="variable"><name>sm</name></member>
-    <member refid="namespaceqm_1_1spin_half_1aa131c64baeb52e9c8cef1bb1140576d6" kind="function"><name>gen_embedded_spin_operator</name></member>
-    <member refid="namespaceqm_1_1spin_half_1a3bca1d7ac4cce945806ad639e17cdf3b" kind="function"><name>gen_twobody_spins</name></member>
+    <member refid="namespaceqm_1_1spin_half_1a5d30db96023a4c17d8229c78cf0769fc" kind="function"><name>gen_embedded_spin_operator</name></member>
+    <member refid="namespaceqm_1_1spin_half_1ab4b0b23ee752be0b7651d27cf5f1c4d8" kind="function"><name>gen_twobody_spins</name></member>
   </compound>
   <compound refid="namespaceqm_1_1_spin_one" kind="namespace"><name>qm::SpinOne</name>
     <member refid="namespaceqm_1_1_spin_one_1a86943091b0ad27c0dfee22caf74bb2ab" kind="variable"><name>sx</name></member>
@@ -3002,31 +3004,31 @@
     <member refid="namespaceqm_1_1time_evolution_1a55e2eb4d85469d056085a65dea13ed2a" kind="function"><name>Suzuki_Trotter_2nd_order</name></member>
     <member refid="namespaceqm_1_1time_evolution_1a2b1e02afa3fbfa5438924bc310504c94" kind="function"><name>Suzuki_Trotter_4th_order</name></member>
     <member refid="namespaceqm_1_1time_evolution_1a671e7d2d833e4ec7f65278095086ac14" kind="function"><name>get_twosite_time_evolution_operators</name></member>
-    <member refid="namespaceqm_1_1time_evolution_1ac12526d97e4ec7951d9fef9f7efccc57" kind="function"><name>compute_G</name></member>
+    <member refid="namespaceqm_1_1time_evolution_1a19dfdfd3c5d982f8f29579a3278a7700" kind="function"><name>compute_G</name></member>
     <member refid="namespaceqm_1_1time_evolution_1a73eddf90559fa5d269512f94bd3b4b80" kind="function"><name>get_time_evolution_gates</name></member>
   </compound>
   <compound refid="namespacernd" kind="namespace"><name>rnd</name>
-    <member refid="namespacernd_1aedbd405b79a78a71d4b2c3f7983bc36d" kind="function"><name>seed</name></member>
+    <member refid="namespacernd_1a682f0f73a46eb8f7c12008f80c00b316" kind="function"><name>seed</name></member>
     <member refid="namespacernd_1af44150b262378e134541acd2b24f16d6" kind="function"><name>uniform_integer_01</name></member>
     <member refid="namespacernd_1a21f2eb40562fe01bb019e6ba3520356c" kind="function"><name>uniform_double_01</name></member>
+    <member refid="namespacernd_1a9726ed99bac2dd3bf7d558f9c0fc5f54" kind="function"><name>uniform_integer_box</name></member>
+    <member refid="namespacernd_1a670b5e2bacd088ee0a2a553343a1a23e" kind="function"><name>uniform_integer_box</name></member>
+    <member refid="namespacernd_1a8dc328bd0d3c873f4461bc12774020db" kind="function"><name>uniform_integer_box</name></member>
+    <member refid="namespacernd_1adc3d7cdcd3ceabe45a1adf1999e92dca" kind="function"><name>uniform_integer_box</name></member>
+    <member refid="namespacernd_1a6fb1ab9dc9af50bc657701ed3b707fb8" kind="function"><name>uniform_integer_box</name></member>
     <member refid="namespacernd_1a69584859e820206050f500593a895201" kind="function"><name>uniform_double_box</name></member>
     <member refid="namespacernd_1ad124c6d0091bdeb14d718c02d7489572" kind="function"><name>uniform_double_box</name></member>
     <member refid="namespacernd_1a2fc8b3151f191adf4e8979e7bd0fa1bc" kind="function"><name>uniform_complex_in_unit_circle</name></member>
     <member refid="namespacernd_1a1200e3fafa51a75ea747c3291602514b" kind="function"><name>uniform_complex_on_unit_circle</name></member>
     <member refid="namespacernd_1a91b6711063542db8dfe47f8dbffbda6b" kind="function"><name>uniform_complex_box</name></member>
+    <member refid="namespacernd_1ae0a85727f9a330dde03005a2d317d61d" kind="function"><name>uniform_unit_n_sphere</name></member>
     <member refid="namespacernd_1ae900edafe53015345d879e9d6d22f5a6" kind="function"><name>uniform_complex_slice</name></member>
-    <member refid="namespacernd_1a8a788ffebef2560ff9b6279b734f0f65" kind="function"><name>normal</name></member>
-    <member refid="namespacernd_1a9d9bb64a1bbc14f7db8885fbc067d401" kind="function"><name>log_normal</name></member>
-    <member refid="namespacernd_1ad52fc8a681c1754a7c06defa9cf72323" kind="function"><name>random_with_replacement</name></member>
-    <member refid="namespacernd_1a4da7ea4936f6232f74e3c19a2294a49a" kind="function"><name>random_with_replacement</name></member>
-    <member refid="namespacernd_1ac9847186bbb572a96fcbef1acdee5f2f" kind="function"><name>gaussian_truncated</name></member>
-    <member refid="namespacernd_1a9726ed99bac2dd3bf7d558f9c0fc5f54" kind="function"><name>uniform_integer_box</name></member>
-    <member refid="namespacernd_1a28bd3c0efc36f0b6dacdede58f9899cc" kind="function"><name>uniform_unit_n_sphere</name></member>
+    <member refid="namespacernd_1aebdebc00de7973df6ab263fe2170acdc" kind="function"><name>normal</name></member>
+    <member refid="namespacernd_1a5f881606a308f630abe72598e73da82e" kind="function"><name>log_normal</name></member>
+    <member refid="namespacernd_1a8d7d14357ff514ea7dfc4a030e1763c0" kind="function"><name>random_with_replacement</name></member>
+    <member refid="namespacernd_1aa7652a358cd6ba27a7667183a7f6f782" kind="function"><name>random_with_replacement</name></member>
+    <member refid="namespacernd_1a0acfcf32617528825f100788a58ca4cd" kind="function"><name>gaussian_truncated</name></member>
     <member refid="namespacernd_1a6d76c7bbaa15f2f3ed93f9723cfc9047" kind="function"><name>shuffle</name></member>
-    <member refid="namespacernd_1a670b5e2bacd088ee0a2a553343a1a23e" kind="function"><name>uniform_integer_box</name></member>
-    <member refid="namespacernd_1a8dc328bd0d3c873f4461bc12774020db" kind="function"><name>uniform_integer_box</name></member>
-    <member refid="namespacernd_1adc3d7cdcd3ceabe45a1adf1999e92dca" kind="function"><name>uniform_integer_box</name></member>
-    <member refid="namespacernd_1a6fb1ab9dc9af50bc657701ed3b707fb8" kind="function"><name>uniform_integer_box</name></member>
     <member refid="namespacernd_1ad5cfc4a5153b4709dab52eab23498761" kind="function"><name>shuffle</name></member>
     <member refid="namespacernd_1a70e4e85e443ad0eaa33fe1d3dfcb8d14" kind="function"><name>shuffle</name></member>
     <member refid="namespacernd_1aba3f817df26db2b5548d77154ee9648c" kind="function"><name>shuffle</name></member>
@@ -3421,9 +3423,9 @@
   <compound refid="namespacetools_1_1common_1_1io" kind="namespace"><name>tools::common::io</name>
   </compound>
   <compound refid="namespacetools_1_1common_1_1io_1_1h5attr" kind="namespace"><name>tools::common::io::h5attr</name>
-    <member refid="namespacetools_1_1common_1_1io_1_1h5attr_1ad3d6b8303c5a1215fa858eb9c6329f7d" kind="function"><name>save_meta</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5attr_1a9bfc9a5eb2cb0593f9a156d95a487593" kind="function"><name>save_attr</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5attr_1a73a7e9b2d087a7c6b2103f681342f722" kind="function"><name>bootstrap_save_log</name></member>
+    <member refid="namespacetools_1_1common_1_1io_1_1h5attr_1ad3d6b8303c5a1215fa858eb9c6329f7d" kind="function"><name>save_meta</name></member>
   </compound>
   <compound refid="namespacetools_1_1common_1_1io_1_1h5find" kind="namespace"><name>tools::common::io::h5find</name>
     <member refid="namespacetools_1_1common_1_1io_1_1h5find_1a33a9b1b7586f39b476da84fc86610b45" kind="function"><name>find_latest_root</name></member>
@@ -3434,12 +3436,12 @@
     <member refid="namespacetools_1_1common_1_1io_1_1h5resume_1abc8f5a38db37a2f0a0e983106996bae2" kind="function"><name>find_resumable_state</name></member>
   </compound>
   <compound refid="namespacetools_1_1common_1_1io_1_1h5table" kind="namespace"><name>tools::common::io::h5table</name>
+    <member refid="namespacetools_1_1common_1_1io_1_1h5table_1a56f6b3cfa690ec68ef20adc0da3328b9" kind="function"><name>bootstrap_save_log</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5table_1a525a17bb107b2532c7434e15e9d77919" kind="function"><name>save_sim_status</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5table_1abba11255902d84ff98de52517e3d35d5" kind="function"><name>save_profiling</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5table_1a7d793f2e69905e7b9d3bd608ddf37230" kind="function"><name>save_mem_usage</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5table_1ab7dfb42152a58294bf62b42c31d26792" kind="function"><name>load_sim_status</name></member>
     <member refid="namespacetools_1_1common_1_1io_1_1h5table_1a223253b70c25698ca9bd750a6c2692db" kind="function"><name>load_profiling</name></member>
-    <member refid="namespacetools_1_1common_1_1io_1_1h5table_1a56f6b3cfa690ec68ef20adc0da3328b9" kind="function"><name>bootstrap_save_log</name></member>
   </compound>
   <compound refid="namespacetools_1_1common_1_1io_1_1h5tmp" kind="namespace"><name>tools::common::io::h5tmp</name>
     <member refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a47830091ef95bf73c45261f4f297baa7" kind="function"><name>get_temporary_filepath</name></member>
@@ -3476,10 +3478,10 @@
     <member refid="namespacetools_1_1common_1_1profile_1a6f1f875a4b0d19fe53aa9c97d11182c1" kind="function"><name>mem_vm_in_mb</name></member>
   </compound>
   <compound refid="namespacetools_1_1common_1_1profile_1_1internal" kind="namespace"><name>tools::common::profile::internal</name>
-    <member refid="namespacetools_1_1common_1_1profile_1_1internal_1a9381ede3ac0234ab86f27766224f95b2" kind="typedef"><name>MapTicTocUnique</name></member>
-    <member refid="namespacetools_1_1common_1_1profile_1_1internal_1ac24ab22e0aa102934c23290e4518d488" kind="typedef"><name>AlgoProf</name></member>
     <member refid="namespacetools_1_1common_1_1profile_1_1internal_1ab7818635263ccf7b8c0cc1b940180955" kind="typedef"><name>iterator</name></member>
     <member refid="namespacetools_1_1common_1_1profile_1_1internal_1aee801965db7a15d9c0fa4752ee630fc0" kind="typedef"><name>const_iterator</name></member>
+    <member refid="namespacetools_1_1common_1_1profile_1_1internal_1a9381ede3ac0234ab86f27766224f95b2" kind="typedef"><name>MapTicTocUnique</name></member>
+    <member refid="namespacetools_1_1common_1_1profile_1_1internal_1ac24ab22e0aa102934c23290e4518d488" kind="typedef"><name>AlgoProf</name></member>
     <member refid="namespacetools_1_1common_1_1profile_1_1internal_1aca9ed7ccb22d5a37848fc707af1b4d6f" kind="variable"><name>default_algo_type</name></member>
   </compound>
   <compound refid="namespacetools_1_1common_1_1split" kind="namespace"><name>tools::common::split</name>
@@ -3548,12 +3550,12 @@
   <compound refid="namespacetools_1_1finite_1_1io" kind="namespace"><name>tools::finite::io</name>
   </compound>
   <compound refid="namespacetools_1_1finite_1_1io_1_1h5dset" kind="namespace"><name>tools::finite::io::h5dset</name>
+    <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a7b84b256349ce2c4dc25f33b4792b79d" kind="function"><name>bootstrap_save_log</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a889f48f8f06e2c89ea780c5a777b4318" kind="function"><name>decide_layout</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a4a1497464dfeb9f046aa69f5e03137f8" kind="function"><name>save_state</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1ab438427d45b47486dd5f0bbf9c4e6381" kind="function"><name>save_model</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a971db612bb64ae688935e17dabb9eea7" kind="function"><name>save_entgm</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a2e76eaff45783e77b0899689bf6ccc41" kind="function"><name>save_data</name></member>
-    <member refid="namespacetools_1_1finite_1_1io_1_1h5dset_1a7b84b256349ce2c4dc25f33b4792b79d" kind="function"><name>bootstrap_save_log</name></member>
   </compound>
   <compound refid="namespacetools_1_1finite_1_1io_1_1h5resume" kind="namespace"><name>tools::finite::io::h5resume</name>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5resume_1af68f8d3826255fca767178054581c6e6" kind="function"><name>load_simulation</name></member>
@@ -3562,13 +3564,13 @@
     <member refid="namespacetools_1_1finite_1_1io_1_1h5resume_1a9c329325e82f535ad55534888122e8a9" kind="function"><name>validate</name></member>
   </compound>
   <compound refid="namespacetools_1_1finite_1_1io_1_1h5table" kind="namespace"><name>tools::finite::io::h5table</name>
+    <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a6b45a66ca3ec2e096f7bcff8427c3023" kind="function"><name>bootstrap_save_log</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a187ac1870ecb52df88efde9f9e739848" kind="function"><name>save_measurements</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1aa1c794fc842c02ba2e3ec11a2264caeb" kind="function"><name>save_measurements</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a57ec03d1579b8139509698780c1674b3" kind="function"><name>save_model</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a156b7dac31a63f91dac37e9e47f0e39e" kind="function"><name>save_sim_status</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1ae7ea13a2d98d5ccf418a72a9d2a8e333" kind="function"><name>save_profiling</name></member>
     <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a4bf36d7e5205aacf329d78f6d48d5cee" kind="function"><name>save_mem_usage</name></member>
-    <member refid="namespacetools_1_1finite_1_1io_1_1h5table_1a6b45a66ca3ec2e096f7bcff8427c3023" kind="function"><name>bootstrap_save_log</name></member>
   </compound>
   <compound refid="namespacetools_1_1finite_1_1measure" kind="namespace"><name>tools::finite::measure</name>
     <member refid="namespacetools_1_1finite_1_1measure_1a26e1b23777c92e7ee442e4eb54b9c2ec" kind="typedef"><name>Scalar</name></member>
@@ -3783,11 +3785,11 @@
   <compound refid="namespacetools_1_1infinite_1_1io" kind="namespace"><name>tools::infinite::io</name>
   </compound>
   <compound refid="namespacetools_1_1infinite_1_1io_1_1h5dset" kind="namespace"><name>tools::infinite::io::h5dset</name>
+    <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1ad51ef86e96240af38edb3f80bf703c6e" kind="function"><name>bootstrap_save_log</name></member>
     <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a343570294d4cc03a58d5947ae0078ab7" kind="function"><name>decide_layout</name></member>
     <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1af475da87a81f10ad432cc0fe9496e46f" kind="function"><name>save_state</name></member>
     <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1af66d5418871e252b8d543b4ed4c53c3f" kind="function"><name>save_edges</name></member>
     <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a6d959bea50d5c72f3acb66129ab7b391" kind="function"><name>save_model</name></member>
-    <member refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1ad51ef86e96240af38edb3f80bf703c6e" kind="function"><name>bootstrap_save_log</name></member>
   </compound>
   <compound refid="namespacetools_1_1infinite_1_1io_1_1h5resume" kind="namespace"><name>tools::infinite::io::h5resume</name>
     <member refid="namespacetools_1_1infinite_1_1io_1_1h5resume_1abfe69d68347c3bb6513a3d252144fc83" kind="function"><name>load_tensors</name></member>
@@ -4636,9 +4638,9 @@
   </compound>
   <compound refid="dir_08283d6d60bf683acfe1f6e5af914fc0" kind="dir"><name>/home/david/GitProjects/DMRG++/source/tools/infinite</name>
   </compound>
-  <compound refid="dir_6955625c2a1e9708d086556c1d3fe65d" kind="dir"><name>/home/david/GitProjects/DMRG++/source/tools/finite/io</name>
-  </compound>
   <compound refid="dir_d2fa117a0b2767983c2af334a0b862d5" kind="dir"><name>/home/david/GitProjects/DMRG++/source/tools/infinite/io</name>
+  </compound>
+  <compound refid="dir_6955625c2a1e9708d086556c1d3fe65d" kind="dir"><name>/home/david/GitProjects/DMRG++/source/tools/finite/io</name>
   </compound>
   <compound refid="dir_37bd406f6e4f9ec832c1811d38426631" kind="dir"><name>/home/david/GitProjects/DMRG++/source/tools/common/io</name>
   </compound>

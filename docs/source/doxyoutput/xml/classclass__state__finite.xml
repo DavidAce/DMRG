@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__state__finite" kind="class" language="C++" prot="public">
     <compoundname>class_state_finite</compoundname>
     <includes refid="class__state__finite_8h" local="no">class_state_finite.h</includes>
@@ -206,6 +206,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="59" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="35" bodyend="47"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1acd27402752b06bd245716d2b5a087ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
@@ -223,6 +224,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="60" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="50" bodyend="64"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1a1c3042c0b53a06045d372748e76affe1" compoundref="class__state__finite_8h" startline="47">algo</references>
+        <references refid="classclass__state__finite_1a5d8c673164ccbc3250a286761dc0b7ae" compoundref="class__state__finite_8h" startline="44">cache</references>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
+        <references refid="classclass__state__finite_1aa6500ac30c212c000c7ed4b38b9371e0" compoundref="class__state__finite_8h" startline="52">measurements</references>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
+        <references refid="classclass__state__finite_1a3bc7a1bd8ed74cfc49c8238e88f11f34" compoundref="class__state__finite_8h" startline="46">name</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ae22b08bd324c5c5ceea2548b93946d4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -249,6 +258,19 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="62" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="66" bodyend="102"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
+        <references refid="config_2enums_8h_1a9f27db0468ce0ce2994eb68dc919b15da858fa9ae925c795dfa31e8ccab44cc76">ising_sdual</references>
+        <references refid="config_2enums_8h_1a9f27db0468ce0ce2994eb68dc919b15da4ccfba77ccf8015dcaa6f9315b148509">ising_tf_rf</references>
+        <references refid="config_2enums_8h_1a9f27db0468ce0ce2994eb68dc919b15dadddf2a46d68383919ecbfac48519033a">lbit</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1model_1aabf0ff2a07a4b8ae7e4141b1bde089cd" compoundref="nmspc__settings_8h" startline="96">settings::model::model_size</references>
+        <references refid="namespacesettings_1_1model_1a3628af587c3663ba75c2a3d6db7e16e6" compoundref="nmspc__settings_8h" startline="95">settings::model::model_type</references>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespacesettings_1_1model_1_1ising__sdual_1a75153b8008a9b96417f44676ee0100a2" compoundref="nmspc__settings_8h" startline="116">settings::model::ising_sdual::spin_dim</references>
+        <references refid="namespacesettings_1_1model_1_1lbit_1a197811e35eb6db18b2636acddf4015a5" compoundref="nmspc__settings_8h" startline="132">settings::model::lbit::spin_dim</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a4396e3b976d10e96fc1f00f8c1e2dadc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -266,6 +288,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="64" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="104" bodyend="104"/>
+        <references refid="classclass__state__finite_1a3bc7a1bd8ed74cfc49c8238e88f11f34" compoundref="class__state__finite_8h" startline="46">name</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1abb83259eaa9424a83af61225fb0b73a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -279,6 +302,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="65" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="105" bodyend="105"/>
+        <references refid="classclass__state__finite_1a3bc7a1bd8ed74cfc49c8238e88f11f34" compoundref="class__state__finite_8h" startline="46">name</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a4fe3c071b3378cd86f44c7e0ccb3a9f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -296,6 +320,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="67" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="107" bodyend="107"/>
+        <references refid="classclass__state__finite_1a1c3042c0b53a06045d372748e76affe1" compoundref="class__state__finite_8h" startline="47">algo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1acdb743a9c84d30955c3f2ccdbcd89a62" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9" kindref="member">AlgorithmType</ref></type>
@@ -309,6 +334,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="68" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="108" bodyend="108"/>
+        <references refid="classclass__state__finite_1a1c3042c0b53a06045d372748e76affe1" compoundref="class__state__finite_8h" startline="47">algo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a971fa45cb1a3df3a0573b52d0c35c2b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
@@ -322,6 +348,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="70" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="254" bodyend="260"/>
+        <references refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" compoundref="class__mps__site_8cpp" startline="133" endline="145">class_mps_site::get_L</references>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">class_mps_site::get_LC</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aa429713d01dbd7d72056bb28914ca312" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
@@ -335,6 +364,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="71" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="262" bodyend="262"/>
+        <references refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" compoundref="class__mps__site_8cpp" startline="146" endline="155">class_mps_site::get_LC</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -354,6 +386,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="74" column="8" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="115" bodyend="117"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -373,6 +406,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="76" column="8" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="124" bodyend="139"/>
+        <references refid="classclass__state__finite_1a01d3c323d97905e8f2b3da7c6289e408" compoundref="class__state__finite_8cpp" startline="149" endline="154">get_labels</references>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ad27778f1d88bf5045dd4a4b452604e49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -386,6 +421,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="78" column="44" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="110" bodyend="112"/>
+        <references refid="namespaceiter_1aa13063344fcd21c395fe1c4c2ea6e9a0" compoundref="nmspc__iter_8h" startline="69" endline="71">iter::enumerate</references>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1afbd69eb73c65d1e5558e131e2636c897" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -399,6 +436,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="79" column="44" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="156" bodyend="156"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a5481332aa5f53d1708dd1d21fff2b6cb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -412,6 +450,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="80" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="148" bodyend="148"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a01d3c323d97905e8f2b3da7c6289e408" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; std::string &gt;</type>
@@ -425,6 +464,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="81" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="149" bodyend="154"/>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a565799aa41e80aea21140dbdab569c14" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::array&lt; long, 3 &gt;</type>
@@ -438,6 +479,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="82" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="158" bodyend="164"/>
+        <references refid="classclass__mps__site_1a5790fc1572b4b61301764f1c9eea9a02" compoundref="class__mps__site_8cpp" startline="61" endline="61">class_mps_site::dimensions</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1afee443b8c1ffb89ac25f92d95e4b0690" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::array&lt; long, 3 &gt;</type>
@@ -451,6 +494,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="83" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="166" bodyend="177"/>
+        <references refid="namespacetools_1_1finite_1_1print_1a1e1262915b86672358ac45af9dbb46ef">tools::finite::print::dimensions</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a1e62ac17530d3658e3d00c4af44a3e9c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::array&lt; long, 3 &gt;</type>
@@ -464,6 +509,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="84" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="179" bodyend="179"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1multisite_1a5ff531639e3f8e3a3a5aed3eb66edf9e" compoundref="multisite_8cpp" startline="16" endline="29">tools::finite::multisite::get_dimensions</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a5b078146227d5362152c038fe1a0d850" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -477,6 +524,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="85" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="181" bodyend="184"/>
+        <references refid="classclass__state__finite_1a565799aa41e80aea21140dbdab569c14" compoundref="class__state__finite_8cpp" startline="158" endline="164">dimensions_1site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a0effab5a6872e3f9687c1b4c290ca7f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -490,6 +538,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="86" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="186" bodyend="189"/>
+        <references refid="classclass__state__finite_1afee443b8c1ffb89ac25f92d95e4b0690" compoundref="class__state__finite_8cpp" startline="166" endline="177">dimensions_2site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ae414336fd8247c08999d3a5bb8116f4e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -503,6 +552,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="87" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="191" bodyend="194"/>
+        <references refid="classclass__state__finite_1a1e62ac17530d3658e3d00c4af44a3e9c" compoundref="class__state__finite_8cpp" startline="179" endline="179">dimensions_nsite</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a6e6d1576289d692e93f1cd9b28aa082f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -516,6 +566,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="88" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="143" bodyend="146"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a017b45589c0286dc0f5ccf99d3f669c2" compoundref="finite_2measure_8cpp" startline="126" endline="138">tools::finite::measure::bond_dimensions</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aeddc7bc70f553dbeb53ff7d6aa8c1e3a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -529,6 +580,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="89" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="196" bodyend="196"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a102a0f8961c46707afd775706066f2ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -560,6 +612,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="91" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="199" bodyend="204"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="55" endline="55">class_mps_site::isCenter</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aacf480078f03e2f731525c73cf144d37" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -578,6 +633,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="92" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="206" bodyend="208"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a6593cb01ff689f39b38b0e5e40eae44f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -596,6 +652,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="93" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="210" bodyend="210"/>
+        <references refid="classclass__state__finite_1aa64f2ea42551053a8ba011cd5ef606b9" compoundref="class__state__finite_8cpp" startline="199" endline="204">position_is_outward_edge_left</references>
+        <references refid="classclass__state__finite_1aacf480078f03e2f731525c73cf144d37" compoundref="class__state__finite_8cpp" startline="206" endline="208">position_is_outward_edge_right</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1af518b023eb84f2d10419ea91ea6b0086" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -614,6 +672,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="94" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="212" bodyend="214"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a2c713cd630350b7e4f520bcd3662ee52" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -632,6 +691,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="95" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="216" bodyend="218"/>
+        <references refid="classclass__state__finite_1ac9367df7afc52021cb3fd5eeaefac3b5" compoundref="class__state__finite_8h" startline="43">direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ae534d298a65fde25c043aedf9b009392" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -650,6 +710,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="96" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="220" bodyend="220"/>
+        <references refid="classclass__state__finite_1af518b023eb84f2d10419ea91ea6b0086" compoundref="class__state__finite_8cpp" startline="212" endline="214">position_is_inward_edge_left</references>
+        <references refid="classclass__state__finite_1a2c713cd630350b7e4f520bcd3662ee52" compoundref="class__state__finite_8cpp" startline="216" endline="218">position_is_inward_edge_right</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a5d89d9fafa2a58042fbee537b527f022" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -688,6 +750,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="98" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="224" bodyend="224"/>
+        <references refid="classclass__state__finite_1a5481332aa5f53d1708dd1d21fff2b6cb" compoundref="class__state__finite_8cpp" startline="148" endline="148">get_direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a59d68c43313f20891f5b1bf69c2b4bd0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -713,6 +776,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="99" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="226" bodyend="228"/>
+        <references refid="classclass__state__finite_1a5481332aa5f53d1708dd1d21fff2b6cb" compoundref="class__state__finite_8cpp" startline="148" endline="148">get_direction</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a177700ddab714b1f831b53d6fd46adf8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -739,6 +803,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="101" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="232" bodyend="236"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a5a269545dbf5192eaa299760d3efdbf6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -752,6 +817,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="102" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="238" bodyend="242"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a7f2fa97dc037b0b817b51e7aa9e38460" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -765,6 +831,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="104" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="244" bodyend="252"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a8cff3eaf9bad48263fe1b9056ac62592" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -788,6 +855,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="107" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="265" bodyend="273"/>
+        <references refid="classclass__state__finite_1a79ddc64014b1469e44229868cc3198f4" compoundref="class__state__finite_8h" startline="50">mps_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aae8885ec8cc1f5815c441b9c970e9f69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -812,9 +880,9 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="109" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="278" bodyend="280"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__finite_1a107ba163006f6f946a23e516f9725052" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site &amp; class_state_finite::get_mps_site</definition>
+        <definition>const class_mps_site &amp; class_state_finite::get_mps_site</definition>
         <argsstring>() const</argsstring>
         <name>get_mps_site</name>
         <briefdescription>
@@ -824,10 +892,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="110" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="284" bodyend="284"/>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__state__finite_1a1a301ddbccd25c49fc63d3c65c831129" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__state__finite_1a0fb2578f010f53bd57ae373ba643da31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
-        <definition>class_mps_site&amp; class_state_finite::get_mps_site</definition>
+        <definition>class_mps_site &amp; class_state_finite::get_mps_site</definition>
         <argsstring>()</argsstring>
         <name>get_mps_site</name>
         <briefdescription>
@@ -836,7 +905,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="111" column="32"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="111" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="286" bodyend="286"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1acb84a22703c0f6a517469bf2d18ac6da" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &gt;</type>
@@ -854,6 +925,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="112" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="288" bodyend="292"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a4da8198f2ea44977bbb5c64e448610ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -871,6 +943,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="113" column="33" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="293" bodyend="295"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ae5341703fe4dcfac1dafffa52498818f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::array&lt; long, 3 &gt;</type>
@@ -884,6 +957,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="115" column="16" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="297" bodyend="297"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1multisite_1a5ff531639e3f8e3a3a5aed3eb66edf9e" compoundref="multisite_8cpp" startline="16" endline="29">tools::finite::multisite::get_dimensions</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a6dd63c4993f173373d4524bcbed2a366" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -897,6 +972,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="116" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="299" bodyend="299"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1multisite_1a0ed35897f5fabcbc1d55233b85418898" compoundref="multisite_8cpp" startline="65" endline="68">tools::finite::multisite::get_problem_size</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a3313c00be1341e4abbc20f531a27a1d2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; long &gt;</type>
@@ -914,6 +991,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="117" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="301" bodyend="307"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ab10b938ce1f292e086391de450694bce" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; long &gt;</type>
@@ -927,6 +1006,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="118" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="309" bodyend="309"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a49f623f81789f2211bd18a05b59cf661" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">Scalar</ref>, 3 &gt;</type>
@@ -944,6 +1024,22 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="120" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="311" bodyend="382"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__state__finite_1a5d8c673164ccbc3250a286761dc0b7ae" compoundref="class__state__finite_8h" startline="44">cache</references>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ae302ec3b2665b7eb9f69b892d6b8c08e" compoundref="prof_8cpp" startline="68" endline="71">tools::common::profile::get_default_prof</references>
+        <references refid="classclass__mps__site_1af5b2479fd39a7691bc62f0f1ec161e2b" compoundref="class__mps__site_8cpp" startline="163" endline="166">class_mps_site::get_label</references>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" compoundref="class__mps__site_8cpp" startline="115" endline="131">class_mps_site::get_M</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="namespace_textra_1_1omp_1aa01a562f1a40bca141e5178ba0f055f6" compoundref="nmspc__tensor__omp_8cpp" startline="23" endline="26">Textra::omp::getDevice</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873" compoundref="nmspc__settings_8h" startline="185">settings::precision::max_norm_error</references>
+        <references refid="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" compoundref="class__state__finite_8h" startline="40">class_state_finite::Cache::multisite_mps</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="namespace_textra_1a26506f91acdea6c85029ceb686d795ed" compoundref="nmspc__tensor__extra_8h" startline="303" endline="305">Textra::VectorMap</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a46120dcbd2487ac2d11d7278cc66b6cd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
@@ -957,6 +1053,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="121" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="384" bodyend="388"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1a5d8c673164ccbc3250a286761dc0b7ae" compoundref="class__state__finite_8h" startline="44">cache</references>
+        <references refid="structclass__state__finite_1_1_cache_1a91f2a6d4ce2ea73129e98532d19b1fb4" compoundref="class__state__finite_8h" startline="40">class_state_finite::Cache::multisite_mps</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ada7fffb20d78081d0403420b903c7fd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -978,6 +1077,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="124" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="390" bodyend="390"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__mps__site_1ad1e7e31cdd1e0bc0f619c46b9259654e" compoundref="class__mps__site_8cpp" startline="248" endline="248">class_mps_site::set_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a35a8fb259a874e194f562a31abfe4e92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -995,6 +1096,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="125" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="391" bodyend="391"/>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
+        <references refid="classclass__state__finite_1ada7fffb20d78081d0403420b903c7fd6" compoundref="class__state__finite_8cpp" startline="390" endline="390">set_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aebd3a34c668f4b0c3ac23748402786b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1012,6 +1115,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="126" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="393" bodyend="397"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a7ea3e83584cbab7a0a057c023d2ccb29" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1029,6 +1134,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="127" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="399" bodyend="399"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" compoundref="class__mps__site_8cpp" startline="161" endline="161">class_mps_site::get_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a53291a0b9ca06d09275ae757cfcd719b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1042,6 +1149,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="128" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="401" bodyend="407"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" compoundref="class__mps__site_8cpp" startline="161" endline="161">class_mps_site::get_truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ac0e3da8e8c4cefc506775d2090cd1c2c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1055,6 +1164,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="129" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="409" bodyend="409"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">get_position</references>
+        <references refid="classclass__mps__site_1afc16104aba7efa1893cd417653fccf1c" compoundref="class__mps__site_8cpp" startline="162" endline="162">class_mps_site::get_truncation_error_LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a82cd097602ba95c01aba83ebda814200" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1068,6 +1180,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="130" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="410" bodyend="416"/>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__mps__site_1ad90a47294f7bb6066f117cc61a85723a" compoundref="class__mps__site_8cpp" startline="161" endline="161">class_mps_site::get_truncation_error</references>
+        <references refid="classclass__mps__site_1afc16104aba7efa1893cd417653fccf1c" compoundref="class__mps__site_8cpp" startline="162" endline="162">class_mps_site::get_truncation_error_LC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a3acedac1b97b8f6d56113c90f1399609" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; double &gt;</type>
@@ -1081,6 +1196,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="131" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="418" bodyend="418"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1aceff8b820375b35c3bf41a0bdfc4fb" compoundref="finite_2measure_8cpp" startline="275" endline="286">tools::finite::measure::truncation_errors</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a5591244ade0473e2f8b560c45749c17b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; double &gt;</type>
@@ -1094,6 +1210,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="132" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="419" bodyend="431"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
+        <references refid="classclass__state__finite_1a53291a0b9ca06d09275ae757cfcd719b" compoundref="class__state__finite_8cpp" startline="401" endline="407">get_truncation_error</references>
+        <references refid="classclass__state__finite_1ac0e3da8e8c4cefc506775d2090cd1c2c" compoundref="class__state__finite_8cpp" startline="409" endline="409">get_truncation_error_LC</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1aceff8b820375b35c3bf41a0bdfc4fb" compoundref="finite_2measure_8cpp" startline="275" endline="286">tools::finite::measure::truncation_errors</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a9edc0481fe3d71e5a46b92babe7f8819" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -1111,6 +1232,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="134" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="433" bodyend="438"/>
+        <references refid="classclass__state__finite_1a3acedac1b97b8f6d56113c90f1399609" compoundref="class__state__finite_8cpp" startline="418" endline="418">get_truncation_errors</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1aceff8b820375b35c3bf41a0bdfc4fb" compoundref="finite_2measure_8cpp" startline="275" endline="286">tools::finite::measure::truncation_errors</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a20b53df188bb9a2401a714ad3bb72604" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -1128,6 +1251,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="135" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="440" bodyend="444"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a017b45589c0286dc0f5ccf99d3f669c2" compoundref="finite_2measure_8cpp" startline="126" endline="138">tools::finite::measure::bond_dimensions</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a81beeaca8a37c224a7bd5f3715357347" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1149,6 +1273,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="136" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="446" bodyend="448"/>
+        <references refid="classclass__state__finite_1a20b53df188bb9a2401a714ad3bb72604" compoundref="class__state__finite_8cpp" startline="440" endline="444">num_bonds_reached_chi</references>
+        <references refid="classclass__state__finite_1a9edc0481fe3d71e5a46b92babe7f8819" compoundref="class__state__finite_8cpp" startline="433" endline="438">num_sites_truncated</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aeeb103dfd67addd01bb819bb4a4afdbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1167,6 +1293,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="138" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="450" bodyend="453"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__state__finite_1aa6500ac30c212c000c7ed4b38b9371e0" compoundref="class__state__finite_8h" startline="52">measurements</references>
+        <references refid="config_2enums_8h_1a098f82343817bde21e94f4540923cc5ea1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a123659e5c3939027f7cbad210f9a8b53" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1185,6 +1314,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="139" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="455" bodyend="458"/>
+        <references refid="classclass__state__finite_1a5d8c673164ccbc3250a286761dc0b7ae" compoundref="class__state__finite_8h" startline="44">cache</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="config_2enums_8h_1a098f82343817bde21e94f4540923cc5ea1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a98fccd07a3361d5d9e432e4817f92715" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1198,6 +1330,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="140" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="460" bodyend="460"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a330b5fd06f76cae1b9cb5835412f343f" compoundref="finite_2measure_8cpp" startline="26" endline="32">tools::finite::measure::do_all_measurements</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a194a18bab95441979621cc96904ecfc2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1215,6 +1348,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="142" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="462" bodyend="465"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aac20894e82fc4759efd31d0606536c7e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1232,6 +1368,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="143" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="467" bodyend="470"/>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aeff06c13bbd5f3a8dd6c5c0d1c85a6f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1253,6 +1391,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="144" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="472" bodyend="475"/>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1a012ade3589dd6a8c942cb422af20e7d8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1266,6 +1406,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="145" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="477" bodyend="481"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aad264b7abf53b1fc18811daead5b5f95" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1279,6 +1423,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="146" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="483" bodyend="486"/>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1ab851fc8e14821b7dfdbce8b4f0f623ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1292,6 +1438,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="147" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="488" bodyend="497"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1abce27af7c2a6688287e826aaed719491" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1305,6 +1455,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="148" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="499" bodyend="506"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" compoundref="class__state__finite_8cpp" startline="115" endline="117">get_length</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__finite_1a012ade3589dd6a8c942cb422af20e7d8" compoundref="class__state__finite_8cpp" startline="477" endline="481">is_normalized_on_all_sites</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__state__finite_1a47e66055bc6c8e6fdaee3d6aa0e17dd2" compoundref="class__state__finite_8h" startline="45">tag_normalized_sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__state__finite_1aa113c936862a10d6cbbd90b8f12c563f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; size_t &gt;</type>
@@ -1318,6 +1474,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="150" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.cpp" bodystart="508" bodyend="513"/>
+        <references refid="classclass__state__finite_1a6fc37c3c3d3ab22f2896d06c342a0323" compoundref="class__state__finite_8h" startline="51">active_sites</references>
+        <references refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" compoundref="class__state__finite_8cpp" startline="284" endline="284">get_mps_site</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1326,6 +1484,9 @@
     </detaileddescription>
     <collaborationgraph>
       <node id="7">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="4">
         <label>state_measure_finite</label>
         <link refid="structstate__measure__finite"/>
       </node>
@@ -1335,25 +1496,12 @@
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="6">
-        <label>std::basic_string&lt; char &gt;</label>
-      </node>
-      <node id="8">
+      <node id="5">
         <label>class_state_finite::Cache</label>
         <link refid="structclass__state__finite_1_1_cache"/>
       </node>
-      <node id="4">
-        <label>class_mps_site</label>
-        <link refid="classclass__mps__site"/>
-        <childnode refid="5" relation="usage">
-          <edgelabel>label</edgelabel>
-        </childnode>
-      </node>
       <node id="3">
         <label>std::unique_ptr&lt; class_mps_site &gt;</label>
-        <childnode refid="4" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
       </node>
       <node id="1">
         <label>class_state_finite</label>
@@ -1361,35 +1509,35 @@
         <childnode refid="2" relation="usage">
           <edgelabel>mps_sites</edgelabel>
         </childnode>
-        <childnode refid="7" relation="usage">
+        <childnode refid="4" relation="usage">
           <edgelabel>measurements</edgelabel>
         </childnode>
-        <childnode refid="8" relation="usage">
+        <childnode refid="5" relation="usage">
           <edgelabel>cache</edgelabel>
         </childnode>
-        <childnode refid="5" relation="usage">
+        <childnode refid="6" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
-        <childnode refid="9" relation="usage">
+        <childnode refid="8" relation="usage">
           <edgelabel>active_sites</edgelabel>
         </childnode>
-        <childnode refid="10" relation="usage">
+        <childnode refid="9" relation="usage">
           <edgelabel>tag_normalized_sites</edgelabel>
         </childnode>
       </node>
-      <node id="10">
+      <node id="9">
         <label>std::vector&lt; bool &gt;</label>
       </node>
-      <node id="9">
+      <node id="8">
         <label>std::vector&lt; size_t &gt;</label>
       </node>
-      <node id="5">
+      <node id="6">
         <label>std::string</label>
-        <childnode refid="6" relation="public-inheritance">
+        <childnode refid="7" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="34" column="25" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="34" bodyend="151"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="34" column="1" bodyfile="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" bodystart="34" bodyend="151"/>
     <listofallmembers>
       <member refid="classclass__state__finite_1ae5341703fe4dcfac1dafffa52498818f" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>active_dimensions</name></member>
       <member refid="classclass__state__finite_1a6dd63c4993f173373d4524bcbed2a366" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>active_problem_size</name></member>
@@ -1417,8 +1565,8 @@
       <member refid="classclass__state__finite_1acef57556e5eb3ab21c28588aaae9575b" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_length</name></member>
       <member refid="classclass__state__finite_1a8cff3eaf9bad48263fe1b9056ac62592" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
       <member refid="classclass__state__finite_1aae8885ec8cc1f5815c441b9c970e9f69" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
-      <member refid="classclass__state__finite_1a107ba163006f6f946a23e516f9725052" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
-      <member refid="classclass__state__finite_1a1a301ddbccd25c49fc63d3c65c831129" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
+      <member refid="classclass__state__finite_1a1151fd3728fcd18ecbe87e1fcba011bd" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
+      <member refid="classclass__state__finite_1a0fb2578f010f53bd57ae373ba643da31" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_site</name></member>
       <member refid="classclass__state__finite_1acb84a22703c0f6a517469bf2d18ac6da" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_mps_sites</name></member>
       <member refid="classclass__state__finite_1a49f623f81789f2211bd18a05b59cf661" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_multisite_mps</name></member>
       <member refid="classclass__state__finite_1a46120dcbd2487ac2d11d7278cc66b6cd" prot="public" virt="non-virtual"><scope>class_state_finite</scope><name>get_multisite_mps</name></member>
