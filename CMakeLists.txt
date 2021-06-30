@@ -119,11 +119,11 @@ add_library(dmrg-dbg OBJECT
 
 add_library(dmrg-primme INTERFACE)
 
-target_include_directories(dmrg-main PRIVATE source)
-target_include_directories(dmrg-eig  PRIVATE source)
-target_include_directories(dmrg-arp  PRIVATE source)
-target_include_directories(dmrg-opt  PRIVATE source)
-target_include_directories(dmrg-dbg  PRIVATE source)
+target_include_directories(dmrg-main PUBLIC source)
+target_include_directories(dmrg-eig PUBLIC source)
+target_include_directories(dmrg-arp PUBLIC source)
+target_include_directories(dmrg-opt PUBLIC source)
+target_include_directories(dmrg-dbg PUBLIC source)
 
 add_library(dmrg-flags INTERFACE)
 target_include_directories(dmrg-flags SYSTEM INTERFACE source)
@@ -350,10 +350,8 @@ endif ()
 #############################
 ## DOCS
 #############################
-# Simple testing with ctest
 if (DMRG_ENABLE_DOCS)
-    find_package(Doxygen REQUIRED)
-
+    add_subdirectory(docs)
 endif ()
 
 
