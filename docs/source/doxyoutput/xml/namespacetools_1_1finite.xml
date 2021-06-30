@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1finite" kind="namespace" language="C++">
     <compoundname>tools::finite</compoundname>
-    <innerclass refid="classtools_1_1finite_1_1cwrap" prot="public">tools::finite::cwrap</innerclass>
     <innerclass refid="classtools_1_1finite_1_1mwrap" prot="public">tools::finite::mwrap</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1cwrap" prot="public">tools::finite::cwrap</innerclass>
     <innerclass refid="classtools_1_1finite_1_1wwrap" prot="public">tools::finite::wwrap</innerclass>
     <innernamespace refid="namespacetools_1_1finite_1_1env">tools::finite::env</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1io">tools::finite::io</innernamespace>
@@ -17,6 +17,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/env.h" line="9" column="28"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/env.h" line="9" column="1"/>
   </compounddef>
 </doxygen>

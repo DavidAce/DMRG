@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1infinite" kind="namespace" language="C++">
     <compoundname>tools::infinite</compoundname>
     <innernamespace refid="namespacetools_1_1infinite_1_1env">tools::infinite::env</innernamespace>
@@ -13,6 +13,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/io.h" line="14" column="29"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/env.h" line="6" column="1"/>
   </compounddef>
 </doxygen>

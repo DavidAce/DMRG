@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacepcg__engines" kind="namespace" language="C++">
     <compoundname>pcg_engines</compoundname>
       <sectiondef kind="typedef">
@@ -799,12 +799,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a3e03bba4dd0f982e64cb6a05aa292716" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -833,12 +833,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1ae927fc069cdfd0b8a7253203356a8ddf" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -867,12 +867,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a2219f32c0fa22be7bba65007ca054be7" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -901,12 +901,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a20b19f2e93d9efdb0a5bfce397bcc7cd" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -935,12 +935,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a16d00b84d7cafb288e2773a0e4bb6b5c" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -966,12 +966,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1aaece97cbecd7aec8e5d4d94750cf939a" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -997,12 +997,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1afe38976650c3c06f32cd90dd862b9826" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -1028,12 +1028,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a5843763a3ef99a042f8c4d68009093a0" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -1059,12 +1059,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a7badaf4a86bce28c8e8dcd371d33ec26" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -1090,12 +1090,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1abf03d3742277d0d968ca2b6ead616921" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -1121,12 +1121,12 @@
       <memberdef kind="typedef" id="namespacepcg__engines_1a3eacde14c2dc0f0e78e63b5c76eb8b3c" prot="public" static="no">
         <templateparamlist>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>table_pow2</declname>
             <defname>table_pow2</defname>
           </param>
           <param>
-            <type>bitcount_t</type>
+            <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
             <declname>advance_pow2</declname>
             <defname>advance_pow2</defname>
           </param>
@@ -1154,6 +1154,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1147" column="21"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="1147" column="1"/>
   </compounddef>
 </doxygen>

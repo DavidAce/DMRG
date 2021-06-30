@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1common_1_1io" kind="namespace" language="C++">
     <compoundname>tools::common::io</compoundname>
     <innernamespace refid="namespacetools_1_1common_1_1io_1_1h5attr">tools::common::io::h5attr</innernamespace>
@@ -11,6 +11,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io.h" line="13" column="27"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/io/h5attr.cpp" line="10" column="1"/>
   </compounddef>
 </doxygen>

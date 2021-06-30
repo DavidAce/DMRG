@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1infinite_1_1print" kind="namespace" language="C++">
     <compoundname>tools::infinite::print</compoundname>
       <sectiondef kind="func">
@@ -15,11 +15,15 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="13">$\Gamma$</formula>-tensors. </para>
+<para>Print the tensor dimensions for all <formula id="31">$\Gamma$</formula>-tensors. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" line="6" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/print.cpp" bodystart="20" bodyend="44" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" declline="6" declcolumn="17"/>
+        <references refid="classclass__tensors__infinite_1a993ea5f77d1fa220ca70c7c6c9508395" compoundref="class__tensors__infinite_8h" startline="18">class_tensors_infinite::edges</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classclass__tensors__infinite_1a9d1de037ae9f00fa93ccab4703ea0ab4" compoundref="class__tensors__infinite_8h" startline="17">class_tensors_infinite::model</references>
+        <references refid="classclass__tensors__infinite_1aea3ce807c53d7cb190588bad9df1a00a" compoundref="class__tensors__infinite_8h" startline="16">class_tensors_infinite::state</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1print_1a239fe30e0c1919b06db07bcfa0ffdba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -33,7 +37,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="13">$\Gamma$</formula>-tensors. </para>
+<para>Print the tensor dimensions for all <formula id="31">$\Gamma$</formula>-tensors. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -55,12 +59,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" line="8" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/print.cpp" bodystart="14" bodyend="18" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" declline="8" declcolumn="17"/>
+        <references refid="namespacetools_1_1finite_1_1print_1a43650762255b8212f67c4f943a1d4ccf" compoundref="finite_2print_8cpp" startline="34" endline="37">tools::finite::print::model</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" line="5" column="32"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/print.h" line="5" column="1"/>
   </compounddef>
 </doxygen>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespaceqm_1_1mpo" kind="namespace" language="C++">
     <compoundname>qm::mpo</compoundname>
       <sectiondef kind="func">
@@ -25,6 +25,8 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="84" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="649" bodyend="677" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="84" declcolumn="9"/>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1a31cb135a8b7fc64fc83d01c6372b06c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -59,6 +61,8 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="91" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="680" bodyend="718" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="91" declcolumn="9"/>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1a92b8000f9d534c88052b993f37db1e79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -86,6 +90,9 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="97" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="721" bodyend="770" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="97" declcolumn="9"/>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" compoundref="nmspc__tensor__extra_8h" startline="222" endline="224">Textra::TensorCast</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1a6b516ae6840d502b90df7cbf96208c75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -118,6 +125,8 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="103" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="773" bodyend="838" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="103" declcolumn="9"/>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1ac31d8bcaedce2c5521574db45c0cd8cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -147,6 +156,9 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="109" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="841" bodyend="912" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="109" declcolumn="9"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1a1cd78f42cac8af8ad395523a0cb5fef8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -175,23 +187,27 @@
  O_i =      | 0   s1  0  .  |
             | 0   0  s2  .  |
             | .   .   . ... |
-</verbatim></para>
-<para>where for each O_i the matrices s0, s1, s2 are shuffled randomly</para>
+</verbatim> where for each O_i the matrices s0, s1, s2 are shuffled randomly</para>
 <para>If mode == <ref refid="config_2enums_8h_1a97e56591b206f0b9aaf7d78cfd92c8c5a2d5127b8139f1f5f1086c4053324733a" kindref="member">RandomizerMode::SELECT1</ref>: <verbatim> O_i =  | s  |
-</verbatim></para>
-<para>where for each O_i one of the matrices s0, s1, s2... is selected randomly</para>
+</verbatim> where for each O_i one of the matrices s0, s1, s2... is selected randomly</para>
 <para>If mode == <ref refid="config_2enums_8h_1a97e56591b206f0b9aaf7d78cfd92c8c5af0bbe167a0195d9e9e25a922a8588ed9" kindref="member">RandomizerMode::ASIS</ref>: <verbatim>            | s0  0   0  .  |
  O_i =      | 0   s1  0  .  |
             | 0   0  s2  .  |
             | .   .   . ... |
-</verbatim></para>
-<para>where for each O_i the matrices s0, s1, s2... are placed in order as given </para>
+</verbatim> where for each O_i the matrices s0, s1, s2... are placed in order as given </para>
         </detaileddescription>
         <inbodydescription>
 <para>&lt; Extent of pauli matrices in a rank-4 tensor</para>
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="115" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="915" bodyend="1013" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="115" declcolumn="9"/>
+        <references refid="config_2enums_8h_1a97e56591b206f0b9aaf7d78cfd92c8c5af0bbe167a0195d9e9e25a922a8588ed9">ASIS</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="config_2enums_8h_1a97e56591b206f0b9aaf7d78cfd92c8c5a2d5127b8139f1f5f1086c4053324733a">SELECT1</references>
+        <references refid="config_2enums_8h_1a97e56591b206f0b9aaf7d78cfd92c8c5a790b1468c0b9fb28fa9317ce7dd5fe6a">SHUFFLE</references>
+        <references refid="namespacernd_1a6d76c7bbaa15f2f3ed93f9723cfc9047" compoundref="rnd_8cpp" startline="135" endline="137">rnd::shuffle</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" compoundref="nmspc__tensor__extra_8h" startline="222" endline="224">Textra::TensorCast</references>
       </memberdef>
       <memberdef kind="function" id="namespaceqm_1_1mpo_1a0d2793fa28c12c6b2844134f9d89c112" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; std::vector&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1a918c5d37486420c19db4a2686e3a7eec" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
@@ -223,12 +239,16 @@
 <para>&lt; Extent of pauli matrices in a rank-2 tensor</para>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="121" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.cpp" bodystart="1016" bodyend="1065" declfile="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" declline="121" declcolumn="9"/>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacesettings_1_1model_1_1ising__tf__rf_1a7fe0e9551891ad2c3388308f5dc9196c" compoundref="nmspc__settings_8h" startline="105">settings::model::ising_tf_rf::spin_dim</references>
+        <references refid="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" compoundref="nmspc__tensor__extra_8h" startline="222" endline="224">Textra::TensorCast</references>
+        <references refid="namespacernd_1a69584859e820206050f500593a895201" compoundref="rnd_8cpp" startline="54" endline="57">rnd::uniform_double_box</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="79" column="17"/>
+    <location file="/home/david/GitProjects/DMRG++/source/physics/nmspc_quantum_mechanics.h" line="79" column="5"/>
   </compounddef>
 </doxygen>

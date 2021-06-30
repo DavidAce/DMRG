@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classpcg__extras_1_1uint__x4" kind="class" language="C++" prot="public">
     <compoundname>pcg_extras::uint_x4</compoundname>
     <includes refid="pcg__uint128_8hpp" local="no">pcg_uint128.hpp</includes>
@@ -79,9 +79,9 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="200" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1adef809eaf078b30680a2d3aa782cc3e2" prot="public" static="no" mutable="no">
-        <type>struct pcg_extras::uint_x4::@1::@3</type>
-        <definition>struct pcg_extras::uint_x4::@1::@3 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::w</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a890dad95cd61191b14f0ac0d31568c73" prot="public" static="no" mutable="no">
+        <type>struct pcg_extras::uint_x4::@0::@2</type>
+        <definition>struct pcg_extras::uint_x4::@0::@2 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::w</definition>
         <argsstring></argsstring>
         <name>w</name>
         <briefdescription>
@@ -118,9 +118,9 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="203" column="28" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="203" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a6f6817c37e4645249a8444d0a98d6453" prot="public" static="no" mutable="no">
-        <type>struct pcg_extras::uint_x4::@1::@4</type>
-        <definition>struct pcg_extras::uint_x4::@1::@4 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::d</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1ae40912a504f91e9d84d27063744853f5" prot="public" static="no" mutable="no">
+        <type>struct pcg_extras::uint_x4::@0::@3</type>
+        <definition>struct pcg_extras::uint_x4::@0::@3 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::d</definition>
         <argsstring></argsstring>
         <name>d</name>
         <briefdescription>
@@ -157,11 +157,11 @@
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="209" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="209" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a6150625f5a20dea2baf32eea32d35953" prot="public" static="no" mutable="no">
-        <type>union pcg_extras::uint_x4::@1</type>
-        <definition>union pcg_extras::uint_x4::@1 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::@2</definition>
+      <memberdef kind="variable" id="classpcg__extras_1_1uint__x4_1a97329c61554a4f670346843860833572" prot="public" static="no" mutable="no">
+        <type>union pcg_extras::uint_x4::@0</type>
+        <definition>union pcg_extras::uint_x4::@0 pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::@1</definition>
         <argsstring></argsstring>
-        <name>@2</name>
+        <name>@1</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -213,6 +213,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="215" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="215" bodyend="227"/>
+        <references refid="classpcg__extras_1_1uint__x4_1a73aba28aa323e0fe97e523b7dc7d217d" compoundref="pcg__uint128_8hpp" startline="200">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v0</references>
+        <references refid="classpcg__extras_1_1uint__x4_1a40b585610b37fed799966aa5f7cea783" compoundref="pcg__uint128_8hpp" startline="200">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v1</references>
+        <references refid="classpcg__extras_1_1uint__x4_1a0a4c624284c5144369ef05666def13e0" compoundref="pcg__uint128_8hpp" startline="200">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v2</references>
+        <references refid="classpcg__extras_1_1uint__x4_1aff10441bc2bd3dcfa67d20ba7031960e" compoundref="pcg__uint128_8hpp" startline="200">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v3</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a81b94f129c687f354a62e6b3036501d6" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>constexpr</type>
@@ -234,6 +238,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="229" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="229" bodyend="241"/>
+        <references refid="classpcg__extras_1_1uint__x4_1a08e930db22fa71047efe218e3f5b31f7" compoundref="pcg__uint128_8hpp" startline="203">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v01</references>
+        <references refid="classpcg__extras_1_1uint__x4_1ac9ce494991265b8a72742554b3929ca4" compoundref="pcg__uint128_8hpp" startline="203">pcg_extras::uint_x4&lt; UInt, UIntX2 &gt;::v23</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1uint__x4_1a8666a6fab573bba79c7f6c63574faf82" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -533,7 +539,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator*</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator*</name>
@@ -560,7 +566,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend std::pair&lt; <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;, <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt; &gt;</type>
+        <type>std::pair&lt; <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;, <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt; &gt;</type>
         <definition>std::pair&lt;uint_x4&lt;U, V&gt;, uint_x4&lt;U, V&gt; &gt; divmod</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>divmod</name>
@@ -587,7 +593,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator+</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator+</name>
@@ -614,7 +620,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator-</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator-</name>
@@ -641,7 +647,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator&lt;&lt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&lt;&lt;</name>
@@ -668,7 +674,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator&gt;&gt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&gt;&gt;</name>
@@ -695,7 +701,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator&amp;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&amp;</name>
@@ -722,7 +728,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator|</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator|</name>
@@ -749,7 +755,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator^</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator^</name>
@@ -776,7 +782,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator==</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator==</name>
@@ -803,7 +809,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator!=</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator!=</name>
@@ -830,7 +836,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator&lt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&lt;</name>
@@ -857,7 +863,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator&lt;=</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&lt;=</name>
@@ -884,7 +890,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator&gt;</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&gt;</name>
@@ -911,7 +917,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend bool</type>
+        <type>bool</type>
         <definition>bool operator&gt;=</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;, const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator&gt;=</name>
@@ -938,7 +944,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator~</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator~</name>
@@ -962,7 +968,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
+        <type><ref refid="classpcg__extras_1_1uint__x4" kindref="compound">uint_x4</ref>&lt; U, V &gt;</type>
         <definition>uint_x4&lt;U, V&gt; operator-</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>operator-</name>
@@ -986,7 +992,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
+        <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
         <definition>bitcount_t flog2</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>flog2</name>
@@ -1011,7 +1017,7 @@
             <type>typename V</type>
           </param>
         </templateparamlist>
-        <type>friend <ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
+        <type><ref refid="namespacepcg__extras_1a65a637ab6de9e71377b242891018695c" kindref="member">bitcount_t</ref></type>
         <definition>bitcount_t trailingzeros</definition>
         <argsstring>(const uint_x4&lt; U, V &gt; &amp;)</argsstring>
         <name>trailingzeros</name>
@@ -1032,9 +1038,9 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="187" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="187" bodyend="380"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" line="187" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_uint128.hpp" bodystart="187" bodyend="380"/>
     <listofallmembers>
-      <member refid="classpcg__extras_1_1uint__x4_1a6f6817c37e4645249a8444d0a98d6453" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>d</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1ae40912a504f91e9d84d27063744853f5" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>d</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a1188cc911ff117d390aed7d04adb2b33" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>da</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a51be52d999ff80a05449a4c9e1c21996" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>divmod</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a4dbcc693b6f4618e3abe0533703d074e" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>flog2</name></member>
@@ -1083,7 +1089,7 @@
       <member refid="classpcg__extras_1_1uint__x4_1a0a4c624284c5144369ef05666def13e0" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v2</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1ac9ce494991265b8a72742554b3929ca4" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v23</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1aff10441bc2bd3dcfa67d20ba7031960e" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>v3</name></member>
-      <member refid="classpcg__extras_1_1uint__x4_1adef809eaf078b30680a2d3aa782cc3e2" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>w</name></member>
+      <member refid="classpcg__extras_1_1uint__x4_1a890dad95cd61191b14f0ac0d31568c73" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>w</name></member>
       <member refid="classpcg__extras_1_1uint__x4_1a54e6f9da6e35d0ef34a7cc597027d586" prot="public" virt="non-virtual"><scope>pcg_extras::uint_x4</scope><name>wa</name></member>
     </listofallmembers>
   </compounddef>

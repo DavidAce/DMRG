@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespace_textra" kind="namespace" language="C++">
     <compoundname>Textra</compoundname>
     <innerclass refid="struct_textra_1_1idx__dim__pair" prot="public">Textra::idx_dim_pair</innerclass>
@@ -302,6 +302,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="61" column="27" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="61" bodyend="71"/>
+        <references refid="namespacetools_1_1finite_1_1print_1a1e1262915b86672358ac45af9dbb46ef">tools::finite::print::dimensions</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a37687efdda82cdb06c9fcb9ae9c7a866" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -434,6 +435,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="116" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="116" bodyend="119"/>
+        <references refid="namespace_textra_1acc59a4f20b99a0fd697c204183b9b6db" compoundref="nmspc__tensor__extra_8h" startline="111" endline="113">asDiagonalInversed</references>
+        <references refid="namespace_textra_1ae4adc4f53646417d7c2992c393610094" compoundref="nmspc__tensor__extra_8h" startline="93" endline="98">extractDiagonal</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -456,6 +459,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="122" column="12" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="122" bodyend="124"/>
+        <references refid="namespace_textra_1a37687efdda82cdb06c9fcb9ae9c7a866" compoundref="nmspc__tensor__extra_8h" startline="76" endline="83">asEval</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a5f56dc93eefb399b6d351ba7fec85716" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -478,6 +482,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="128" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="128" bodyend="137"/>
+        <references refid="namespace_textra_1a37687efdda82cdb06c9fcb9ae9c7a866" compoundref="nmspc__tensor__extra_8h" startline="76" endline="83">asEval</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a2ec3c8de67b04570d63c5e62d0018eaf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -567,6 +572,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="153" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="153" bodyend="155"/>
+        <references refid="namespace_textra_1ae17bce4ded691562012858fb38bbe40c" compoundref="nmspc__tensor__extra_8h" startline="146" endline="150">TensorConstant</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1acd37e413b112a7f8bfb3f5545b3407b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -643,6 +649,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="170" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="170" bodyend="174"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">asDiagonal</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ae011dc74fd0ff312cc0d957a688142c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -674,6 +681,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="179" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="179" bodyend="189"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">asDiagonal</references>
+        <references refid="namespaceqm_1_1spin_half_1a6e531542ad7b6d1713f0c60ab77c1b02" compoundref="nmspc__quantum__mechanics_8cpp" startline="88">qm::spinHalf::id</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">idx</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ae538462362205a31f540cb244a739588" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -705,6 +715,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="192" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="192" bodyend="209"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">asDiagonal</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">idx</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -804,6 +816,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="233" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="233" bodyend="236"/>
+        <references refid="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" compoundref="nmspc__tensor__extra_8h" startline="222" endline="224">TensorCast</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a46291d0e1b234a1c8a086be9ce0fa83b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -826,6 +839,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="239" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="239" bodyend="245"/>
+        <references refid="namespace_textra_1a8647dc1884c205829ea3c78b5fbe3ad7" compoundref="nmspc__tensor__extra_8h" startline="222" endline="224">TensorCast</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a3087116f15e45dc51ccef75506151be5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -888,6 +902,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="253" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="253" bodyend="255"/>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1aeb35d2ee77421e594bd469e0f8ada467" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -910,6 +925,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="258" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="258" bodyend="264"/>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">TensorMap</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a337e1d8716e1f2818586f9813eb158d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -943,6 +959,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="273" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="273" bodyend="277"/>
+        <references refid="namespace_textra_1a37687efdda82cdb06c9fcb9ae9c7a866" compoundref="nmspc__tensor__extra_8h" startline="76" endline="83">asEval</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ae1f575ce11586f1ebc16c1b3206a318e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -965,6 +982,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="280" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="280" bodyend="285"/>
+        <references refid="namespace_textra_1a37687efdda82cdb06c9fcb9ae9c7a866" compoundref="nmspc__tensor__extra_8h" startline="76" endline="83">asEval</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a82d0a0f369c18c8430752d4108f05acc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1307,6 +1325,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="358" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="358" bodyend="361"/>
+        <references refid="namespace_textra_1aa36ece75987a034d93a8afeb81cb1e46" compoundref="nmspc__tensor__extra_8h" startline="347" endline="355">isReal</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1afe298645862508a85a9695e60345ece4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1367,6 +1386,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="369" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="369" bodyend="372"/>
+        <references refid="namespace_textra_1afe298645862508a85a9695e60345ece4" compoundref="nmspc__tensor__extra_8h" startline="364" endline="366">hasNaN</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a34123857104ed8a9c77ce2f6365bda74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1416,6 +1436,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="395" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="395" bodyend="398"/>
+        <references refid="namespace_textra_1a34123857104ed8a9c77ce2f6365bda74" compoundref="nmspc__tensor__extra_8h" startline="375" endline="392">subtract_phase</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1af6755d93497c739f4cab661892897c46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1473,6 +1494,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="414" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="414" bodyend="417"/>
+        <references refid="namespace_textra_1af6755d93497c739f4cab661892897c46" compoundref="nmspc__tensor__extra_8h" startline="401" endline="411">add_phase</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a4b7023317b7791adc6a9b5338b816c26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1530,6 +1552,6 @@
     <detaileddescription>
 <para>This namespace makes shorthand typedef&apos;s to <ref refid="namespace_eigen" kindref="compound">Eigen</ref>&apos;s unsupported Tensor module, and provides handy functions to interface between <computeroutput>Eigen::Tensor</computeroutput> and <computeroutput>Eigen::Matrix</computeroutput> objects. The contents of this namespace is co clear it is self-documenting ;) </para>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="11" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/general/nmspc_tensor_extra.h" line="12" column="1"/>
   </compounddef>
 </doxygen>

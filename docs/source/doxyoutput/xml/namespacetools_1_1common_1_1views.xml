@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1common_1_1views" kind="namespace" language="C++">
     <compoundname>tools::common::views</compoundname>
       <sectiondef kind="typedef">
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="10" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" bodystart="10" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="21" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" prot="public" static="no" mutable="no">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="10" column="53" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" bodystart="10" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="22" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" prot="public" static="no" mutable="no">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="12" column="31" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" bodystart="12" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="25" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="25" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" prot="public" static="no" mutable="no">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 2 &gt;</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="13" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" bodystart="13" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="27" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" prot="public" static="no" mutable="no">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 2 &gt;</type>
@@ -156,7 +156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="14" column="32" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" bodystart="14" bodyend="-1"/>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="29" column="19" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a63bd20afdfdcf6aa73749384bd88bd5b" prot="public" static="no" mutable="no">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -246,7 +246,36 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="20" column="37" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="46" bodyend="144" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="20" declcolumn="37"/>
+        <references refid="classclass__state__infinite_1a70ac44387422458f346b0feaa29e1d33" compoundref="class__state__infinite_8cpp" startline="152" endline="152">class_state_infinite::A_bare</references>
+        <references refid="classclass__state__infinite_1a6fe9a16f8940af3014097cc5795a56eb" compoundref="class__state__infinite_8cpp" startline="93" endline="93">class_state_infinite::chiB</references>
+        <references refid="classclass__state__infinite_1a9df057bd8817774da31206ab823562a1" compoundref="class__state__infinite_8cpp" startline="91" endline="91">class_state_infinite::chiC</references>
         <references refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" compoundref="views_8cpp" startline="34">components_computed</references>
+        <references refid="classclass__state__infinite_1a901fb62e668b43da0e7a8d69d9f437c7" compoundref="class__state__infinite_8cpp" startline="162" endline="162">class_state_infinite::GB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a160fdb9681661126ea341c2b7fcc37d4" compoundref="views_8cpp" startline="146" endline="162">get_theta</references>
+        <references refid="namespacetools_1_1common_1_1views_1aab5cba6dde260f2d04baed270b3203d1" compoundref="views_8cpp" startline="196" endline="208">get_theta_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1ae7b533170a59708a71f8a16d28650004" compoundref="views_8cpp" startline="210" endline="221">get_theta_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1a3aee0aab4433cd0fbfd905bcd3254b19" compoundref="views_8cpp" startline="177" endline="194">get_theta_swapped</references>
+        <references refid="namespacetools_1_1common_1_1views_1a5db009920b3ce3e1651f1cc62dc78a59" compoundref="views_8cpp" startline="257" endline="260">get_transfer_matrix_theta_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a67327600c310f92fc07203a026f55e8c" compoundref="views_8cpp" startline="262" endline="264">get_transfer_matrix_theta_odd</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" compoundref="views_8cpp" startline="26">l_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" compoundref="views_8cpp" startline="28">l_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1a36bfe7677c9483dec42ed1514ccae553" compoundref="views_8cpp" startline="24">LAGA</references>
+        <references refid="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" compoundref="class__state__infinite_8cpp" startline="155" endline="155">class_state_infinite::LC_diag</references>
+        <references refid="namespacetools_1_1common_1_1views_1a5fcc6c645e5864269622a52e44c7a467" compoundref="views_8cpp" startline="25">LCGB</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" compoundref="views_8cpp" startline="27">r_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" compoundref="views_8cpp" startline="29">r_odd</references>
+        <references refid="namespace_textra_1a3087116f15e45dc51ccef75506151be5" compoundref="nmspc__tensor__extra_8h" startline="248" endline="250">Textra::TensorMap</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="20">theta</references>
+        <references refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" compoundref="views_8cpp" startline="21">theta_evn_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" compoundref="views_8cpp" startline="22">theta_odd_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" compoundref="views_8cpp" startline="23">theta_sw</references>
+        <references refid="namespace_textra_1ae011dc74fd0ff312cc0d957a688142c9" compoundref="nmspc__tensor__extra_8h" startline="179" endline="189">Textra::trace</references>
+        <references refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" compoundref="views_8cpp" startline="32">transfer_matrix_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a63bd20afdfdcf6aa73749384bd88bd5b" compoundref="views_8cpp" startline="30">transfer_matrix_LAGA</references>
+        <references refid="namespacetools_1_1common_1_1views_1a5f3754c29ed7877a4a929274303cd5d9" compoundref="views_8cpp" startline="31">transfer_matrix_LCGB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" compoundref="views_8cpp" startline="33">transfer_matrix_odd</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a160fdb9681661126ea341c2b7fcc37d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -265,7 +294,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>.</para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>.</para>
 <para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
                   |                 |
                   0                 2
@@ -275,6 +304,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="22" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="146" bodyend="162" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="22" declcolumn="26"/>
+        <references refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" compoundref="class__mps__site_8cpp" startline="115" endline="131">class_mps_site::get_M</references>
+        <references refid="classclass__state__finite_1a8cff3eaf9bad48263fe1b9056ac62592" compoundref="class__state__finite_8cpp" startline="265" endline="273">class_state_finite::get_mps_site</references>
+        <references refid="classclass__state__finite_1af27b5634665d41f1393d1674396f8530" compoundref="class__state__finite_8cpp" startline="124" endline="139">class_state_finite::get_position</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a1183e7301ad32a04234a63807efdeab9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -293,7 +327,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>.</para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>.</para>
 <para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
                   |                 |
                   0                 2</verbatim> </para>
@@ -301,6 +335,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="24" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="164" bodyend="175" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="24" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" compoundref="class__state__infinite_8cpp" startline="153" endline="153">class_state_infinite::A</references>
+        <references refid="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" compoundref="class__state__infinite_8cpp" startline="154" endline="154">class_state_infinite::B</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a3aee0aab4433cd0fbfd905bcd3254b19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -319,7 +357,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>, with A and B swapped.</para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>, with A and B swapped.</para>
 <para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LC ]--3
                   |                 |
                   0                 2</verbatim> </para>
@@ -327,6 +365,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="25" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="177" bodyend="194" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="25" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" compoundref="class__state__infinite_8cpp" startline="154" endline="154">class_state_infinite::B</references>
+        <references refid="classclass__state__infinite_1a6ef456d46f23394a12509cb07bf57fdd" compoundref="class__state__infinite_8cpp" startline="161" endline="161">class_state_infinite::GA</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" compoundref="class__state__infinite_8cpp" startline="155" endline="155">class_state_infinite::LC_diag</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aab5cba6dde260f2d04baed270b3203d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -345,7 +388,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>.</para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>.</para>
 <para>Returns a right normalized two-site MPS <verbatim>     1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
                   |                 |
                   0                 2</verbatim> </para>
@@ -353,6 +396,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="27" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="196" bodyend="208" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="27" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" compoundref="class__state__infinite_8cpp" startline="153" endline="153">class_state_infinite::A</references>
+        <references refid="classclass__state__infinite_1a901fb62e668b43da0e7a8d69d9f437c7" compoundref="class__state__infinite_8cpp" startline="162" endline="162">class_state_infinite::GB</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ae7b533170a59708a71f8a16d28650004" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -371,7 +418,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>, with A and B swapped.</para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>, with A and B swapped.</para>
 <para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]--[ LB ] -- [ GA ]--3
                   |                 |
                   0                 2</verbatim> </para>
@@ -379,6 +426,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="28" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="210" bodyend="221" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="28" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" compoundref="class__state__infinite_8cpp" startline="154" endline="154">class_state_infinite::B</references>
+        <references refid="classclass__state__infinite_1a6ef456d46f23394a12509cb07bf57fdd" compoundref="class__state__infinite_8cpp" startline="161" endline="161">class_state_infinite::GA</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" compoundref="class__state__infinite_8cpp" startline="155" endline="155">class_state_infinite::LC_diag</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a7d2f40f6043cd64db0623ef8faa32b97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -396,6 +448,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="30" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="223" bodyend="229" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="30" declcolumn="26"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="classclass__state__infinite_1a9df057bd8817774da31206ab823562a1" compoundref="class__state__infinite_8cpp" startline="91" endline="91">class_state_infinite::chiC</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a53a53aa529faacabc2340316f4efb48c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -418,6 +472,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="31" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="231" bodyend="233" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="31" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1af0611141cb73e28f845311a5bd4b8a77" compoundref="class__state__infinite_8cpp" startline="153" endline="153">class_state_infinite::A</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad0d1259ce6f92aa25273f6fb708f7b90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -440,6 +497,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="32" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="235" bodyend="242" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="32" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1a6ef456d46f23394a12509cb07bf57fdd" compoundref="class__state__infinite_8cpp" startline="161" endline="161">class_state_infinite::GA</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" compoundref="class__state__infinite_8cpp" startline="155" endline="155">class_state_infinite::LC_diag</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a85725fe02dbd35064ccdd8429ab688c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -462,6 +523,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="33" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="244" bodyend="246" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="33" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1a3f158ccfa299749074dde6f7cf0631e8" compoundref="class__state__infinite_8cpp" startline="154" endline="154">class_state_infinite::B</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a9711a0671f1c5ed63c0a7add30b4d212" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -484,6 +548,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="34" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="248" bodyend="255" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="34" declcolumn="26"/>
+        <references refid="classclass__state__infinite_1a901fb62e668b43da0e7a8d69d9f437c7" compoundref="class__state__infinite_8cpp" startline="162" endline="162">class_state_infinite::GB</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="classclass__state__infinite_1af447918805d3fa5fe4b2e9a866d4ae90" compoundref="class__state__infinite_8cpp" startline="155" endline="155">class_state_infinite::LC_diag</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a5db009920b3ce3e1651f1cc62dc78a59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -506,7 +574,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="35" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="257" bodyend="260" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="35" declcolumn="26"/>
-        <references refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" compoundref="views_8h" startline="14">r_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1aab5cba6dde260f2d04baed270b3203d1" compoundref="views_8cpp" startline="196" endline="208">get_theta_evn</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a67327600c310f92fc07203a026f55e8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -529,6 +599,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="36" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="262" bodyend="264" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="36" declcolumn="26"/>
+        <references refid="namespacetools_1_1common_1_1views_1ae7b533170a59708a71f8a16d28650004" compoundref="views_8cpp" startline="210" endline="221">get_theta_odd</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad58ebce39073f0a47571bdd435e167f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -550,6 +623,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="37" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" bodystart="266" bodyend="279" declfile="/home/david/GitProjects/DMRG++/source/tools/common/views.h" declline="37" declcolumn="26"/>
+        <references refid="namespacetools_1_1common_1_1views_1a53a53aa529faacabc2340316f4efb48c" compoundref="views_8cpp" startline="231" endline="233">get_transfer_matrix_LBGA</references>
+        <references refid="namespacetools_1_1common_1_1views_1a9711a0671f1c5ed63c0a7add30b4d212" compoundref="views_8cpp" startline="248" endline="255">get_transfer_matrix_LCGB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a7d2f40f6043cd64db0623ef8faa32b97" compoundref="views_8cpp" startline="223" endline="229">get_transfer_matrix_zero</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacenum_1a8f78d63b0e3b71f75f5a141900ba202a" compoundref="num_8h" startline="25" endline="31">num::mod</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad06dc59b775dca9f2726ae8db51d13b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1_1views_1a8801fa4052fdbe4160e638f289456b9e" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -568,7 +646,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>. </para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -591,7 +669,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>, with A and B swapped. </para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>, with A and B swapped. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -614,7 +692,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>. </para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -637,7 +715,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="12">$\Theta$</formula>, with A and B swapped. </para>
+<para>Returns rank 4 tensor <formula id="30">$\Theta$</formula>, with A and B swapped. </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
@@ -818,6 +896,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.h" line="8" column="30"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/common/views.cpp" line="19" column="1"/>
   </compounddef>
 </doxygen>

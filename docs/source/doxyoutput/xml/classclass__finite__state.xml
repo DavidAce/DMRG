@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classclass__finite__state" kind="class" language="C++" prot="public">
     <compoundname>class_finite_state</compoundname>
     <includes refid="class__state__finite_8h" local="no">class_state_finite.h</includes>
@@ -7,12 +7,12 @@
 <para>Stores the finite mps state and components to operate on it, such as environments and model mpo&apos;s. </para>
     </briefdescription>
     <detaileddescription>
-<para>The finite state mps is always partitioned into two lists, corresponding to the two sides left and right of the current position. Each site contains a &quot;Vidal&quot; site, i.e., a bond matrix <formula id="0">$ \Lambda $</formula> and an mps tensor <formula id="1">$\Gamma $</formula> in Vidal&apos;s notation. In the left side the sites are left normalized, with the bond matrix on the left <formula id="2">$ \Lambda \Gamma \ = A$</formula>. In the right side the sites are right normalized, with the bond matrix on the right <formula id="3">$ \Gamma \Lambda = B$</formula>. At the center is the center bond matrix MPS_C, a.k.a. <formula id="4">$ \Lambda^C $</formula>. For a state with 10 sites the layout is seen below</para>
+<para>The finite state mps is always partitioned into two lists, corresponding to the two sides left and right of the current position. Each site contains a &quot;Vidal&quot; site, i.e., a bond matrix <formula id="25">$ \Lambda $</formula> and an mps tensor <formula id="26">$\Gamma $</formula> in Vidal&apos;s notation. In the left side the sites are left normalized, with the bond matrix on the left <formula id="27">$ \Lambda \Gamma \ = A$</formula>. In the right side the sites are right normalized, with the bond matrix on the right <formula id="28">$ \Gamma \Lambda = B$</formula>. At the center is the center bond matrix MPS_C, a.k.a. <formula id="29">$ \Lambda^C $</formula>. For a state with 10 sites the layout is seen below</para>
 <para><programlisting><codeline><highlight class="normal">|Finite<sp/>state&gt;<sp/>=<sp/><sp/>---MPS_L(0)---<sp/>...<sp/>MPS_L(4)---MPS_L(5)---MPS_C---MPS_R(6)---MPS_R(7)---...---MPS_R(9)</highlight></codeline>
 </programlisting></para>
 <para>The numbers in parentheses denote the position in the chain, note that this isn&apos;t the same as the position in the corresponding containers. </para>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="14" column="1"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tensors/state/class_state_finite.h" line="15" column="1"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

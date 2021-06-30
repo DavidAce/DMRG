@@ -9,6 +9,11 @@ Namespaces
 .. toctree::
    :maxdepth: 5
 
+   namespace_ceres.rst
+
+.. toctree::
+   :maxdepth: 5
+
    namespace_debug.rst
 
 .. toctree::
@@ -2626,12 +2631,12 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespaceqm_1_1spin_half_1aa131c64baeb52e9c8cef1bb1140576d6.rst
+   function_namespaceqm_1_1spin_half_1a5d30db96023a4c17d8229c78cf0769fc.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespaceqm_1_1spin_half_1a3bca1d7ac4cce945806ad639e17cdf3b.rst
+   function_namespaceqm_1_1spin_half_1ab4b0b23ee752be0b7651d27cf5f1c4d8.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2646,7 +2651,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespaceqm_1_1time_evolution_1ac12526d97e4ec7951d9fef9f7efccc57.rst
+   function_namespaceqm_1_1time_evolution_1a19dfdfd3c5d982f8f29579a3278a7700.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2716,7 +2721,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1ac9847186bbb572a96fcbef1acdee5f2f.rst
+   function_namespacernd_1a0acfcf32617528825f100788a58ca4cd.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2741,27 +2746,27 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1a9d9bb64a1bbc14f7db8885fbc067d401.rst
+   function_namespacernd_1a5f881606a308f630abe72598e73da82e.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1a8a788ffebef2560ff9b6279b734f0f65.rst
+   function_namespacernd_1aebdebc00de7973df6ab263fe2170acdc.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1ad52fc8a681c1754a7c06defa9cf72323.rst
+   function_namespacernd_1a8d7d14357ff514ea7dfc4a030e1763c0.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1a4da7ea4936f6232f74e3c19a2294a49a.rst
+   function_namespacernd_1aa7652a358cd6ba27a7667183a7f6f782.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1aedbd405b79a78a71d4b2c3f7983bc36d.rst
+   function_namespacernd_1a682f0f73a46eb8f7c12008f80c00b316.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2861,7 +2866,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacernd_1a28bd3c0efc36f0b6dacdede58f9899cc.rst
+   function_namespacernd_1ae0a85727f9a330dde03005a2d317d61d.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4940,7 +4945,7 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1a87b7001c3b6d0872b5ed86e6afe7eed5.rst
+   variable_namespaceqm_1_1spin_half_1a6e531542ad7b6d1713f0c60ab77c1b02.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4960,7 +4965,7 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1a125814890137064c194f04a553c1c49d.rst
+   variable_namespaceqm_1_1spin_half_1ae2a3b703d77bff861c17f02785eb4539.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4970,12 +4975,12 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1a2f6d4728957bc677ba7a106d98eae67f.rst
+   variable_namespaceqm_1_1spin_half_1a1ec5c94fc7ebde524737c12018654cf6.rst
 
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1ac02887d9435d2dfe72ac19c75f2c2e5c.rst
+   variable_namespaceqm_1_1spin_half_1ad89389f68e78e9d72c2249d69ed2d397.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4985,12 +4990,12 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1a3e9f1fda80f3208afeb0b42e6dbd909b.rst
+   variable_namespaceqm_1_1spin_half_1a55f84c37b3b9188cca7639bf30ec6c2b.rst
 
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1a00fcbb67dca99ab7e75f8c3606ff5275.rst
+   variable_namespaceqm_1_1spin_half_1ac450a6ccd34bddc24f807f0b3a97ea5f.rst
 
 .. toctree::
    :maxdepth: 5
@@ -5000,7 +5005,7 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_namespaceqm_1_1spin_half_1acb26f81505dce9c456fa778723949d6d.rst
+   variable_namespaceqm_1_1spin_half_1aae4554ab07fff562bfc43523c7070b01.rst
 
 .. toctree::
    :maxdepth: 5

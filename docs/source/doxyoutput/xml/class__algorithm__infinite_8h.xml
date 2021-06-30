@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="class__algorithm__infinite_8h" kind="file" language="C++">
     <compoundname>class_algorithm_infinite.h</compoundname>
     <includes refid="class__algorithm__base_8h" local="no">algorithms/class_algorithm_base.h</includes>
@@ -237,7 +237,7 @@
 <codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Tables</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::shared_ptr&lt;class_h5table_buffer&lt;class_h5table_measurements_infinite&gt;&gt;<sp/><sp/>h5tbuf_measurements;<sp/>//Written<sp/>every<sp/>iteration</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" kindref="member">run_simulation</ref>()<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="22" refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" kindref="member">run_simulation</ref>()<sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" kindref="member">run_preprocessing</ref>();</highlight></codeline>
 <codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" kindref="member">run_postprocessing</ref>();</highlight></codeline>
 <codeline lineno="25"><highlight class="normal"></highlight></codeline>

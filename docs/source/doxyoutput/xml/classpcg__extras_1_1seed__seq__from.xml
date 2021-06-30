@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classpcg__extras_1_1seed__seq__from" kind="class" language="C++" prot="public">
     <compoundname>pcg_extras::seed_seq_from</compoundname>
     <includes refid="pcg__extras_8hpp" local="no">pcg_extras.hpp</includes>
@@ -62,7 +62,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="502" column="9" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="502" bodyend="504"/>
-        <references refid="classpcg__extras_1_1seed__seq__from_1a3066831574b0c1b36ccd7441194feb7c" compoundref="pcg__extras_8hpp" startline="496">pcg_extras::seed_seq_from&lt; RngType &gt;::rng_</references>
       </memberdef>
       <memberdef kind="function" id="classpcg__extras_1_1seed__seq__from_1acd4556759cf92f49bf958e0cacb72e07" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -109,7 +108,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="494" column="24" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="494" bodyend="514"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="494" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="494" bodyend="514"/>
     <listofallmembers>
       <member refid="classpcg__extras_1_1seed__seq__from_1acd4556759cf92f49bf958e0cacb72e07" prot="public" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>generate</name></member>
       <member refid="classpcg__extras_1_1seed__seq__from_1a9a0e65175ac6814b655b479fecbbc515" prot="private" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>result_type</name></member>

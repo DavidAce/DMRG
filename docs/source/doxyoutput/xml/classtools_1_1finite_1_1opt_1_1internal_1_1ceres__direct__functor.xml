@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kind="class" language="C++" prot="public">
     <compoundname>tools::finite::opt::internal::ceres_direct_functor</compoundname>
     <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_base_functor</basecompoundref>
@@ -228,6 +228,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="25" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="237" bodyend="242"/>
+        <references refid="namespacetools_1_1common_1_1contraction_1a8fc132d09a968c9503d8491a80d14d35" compoundref="matrix__vector__product_8cpp" startline="9" endline="40">tools::common::contraction::matrix_vector_product</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23784a554b11687593861af05dd09418" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -245,6 +246,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="26" column="42" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="178" bodyend="234"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2fc1c9fa6b304ab47e3d433380bb7e1" compoundref="finite_2opt_8cpp" startline="189" endline="204">tools::finite::opt::internal::get_ops</references>
+        <references refid="namespacetools_1_1common_1_1contraction_1a8fc132d09a968c9503d8491a80d14d35" compoundref="matrix__vector__product_8cpp" startline="9" endline="40">tools::common::contraction::matrix_vector_product</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -268,6 +271,24 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="29" column="18" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="31" bodyend="78"/>
+        <references refid="classclass__tensors__finite_1afdbc4ffdfdcb6ba6b9f7a5bedc02369c" compoundref="class__tensors__finite_8cpp" startline="327" endline="327">class_tensors_finite::active_problem_dims</references>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af628a1cd598b6103b98b30f2279c6802" compoundref="ceres__direct__functor_8h" startline="17">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::dims</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1aff6cb0098987b7474437a0bc5e5e4969" compoundref="ceres__direct__functor_8h" startline="19">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2L</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a7279c342dcaaccae09149992db75afe0" compoundref="ceres__direct__functor_8h" startline="19">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::env2R</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a4b4e3326e33d636f17c59cce065a95d2" compoundref="ceres__direct__functor_8h" startline="18">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envL</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a77d6844e2023e884ed51f16aa7ccd7de" compoundref="ceres__direct__functor_8h" startline="18">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::envR</references>
+        <references refid="classclass__tensors__finite_1aec9c56a31e44834b29cfd80267b7a0b4" compoundref="class__tensors__finite_8cpp" startline="97" endline="99">class_tensors_finite::get_multisite_ene_blk</references>
+        <references refid="classclass__tensors__finite_1a0b9db303a34df4b74e23f4983b5a72b9" compoundref="class__tensors__finite_8cpp" startline="93" endline="93">class_tensors_finite::get_multisite_mpo</references>
+        <references refid="classclass__tensors__finite_1abd4db7bccd10cded53ab521ffa9d84a3" compoundref="class__tensors__finite_8cpp" startline="95" endline="95">class_tensors_finite::get_multisite_mpo_squared</references>
+        <references refid="classclass__tensors__finite_1a5b7b07dd18d5509ad4e6448a69aa3627" compoundref="class__tensors__finite_8cpp" startline="100" endline="102">class_tensors_finite::get_multisite_var_blk</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac5d9c952f319c69b7ab445f308e3cdee" compoundref="ceres__direct__functor_8h" startline="16">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::H2n_tensor</references>
+        <references refid="namespacedebug_1a0f6c677b6f8eca6e032f39cfbba3e433" compoundref="ceres__direct__functor_8cpp" startline="16" endline="18">debug::hasNaN</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af1deec2e11c578d8c7a1de7371f50ca0" compoundref="ceres__direct__functor_8h" startline="16">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::Hn_tensor</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a550e3150463193c78ec09a739ab692e9" compoundref="ceres__direct__functor_8h" startline="20">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::mpo</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ac6b7935725bbd4c6f573a547d70d05c4" compoundref="ceres__direct__functor_8h" startline="20">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;::mpo2</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" compoundref="ceres__base_8h" startline="42">tools::finite::opt::internal::ceres_base_functor::num_parameters</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a8253aa3a22ca3487ee441f30a9898870" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
         <type>bool</type>
@@ -293,6 +314,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="30" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="81" bodyend="175"/>
+        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" compoundref="finite_2measure_8cpp" startline="353" endline="369">tools::finite::measure::energy</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8145a38b82bae9aa25597372b688670e" compoundref="finite_2measure_8cpp" startline="377" endline="382">tools::finite::measure::energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1adf8bc0e9cd41a987d462608c75a36b40" compoundref="finite_2measure_8cpp" startline="469" endline="469">tools::finite::measure::energy_reduced</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1d47691c527644e67b5fbb53f46aa7a9" compoundref="finite_2measure_8cpp" startline="54" endline="54">tools::finite::measure::length</references>
+        <references refid="namespaceeig_1ae96cb5c133e7edfc21bb951904f03b3b" compoundref="math_2eig_2enums_8h" startline="9">eig::log</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespace_textra_1afaa9f7837b252493251f108e0b64fc1b" compoundref="nmspc__tensor__extra_8h" startline="122" endline="124">Textra::norm</references>
+        <references refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" compoundref="matrix_8h" startline="30" endline="34">linalg::matrix::to_string</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab43e51d1875106c434cb750efdeb6430" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -306,6 +336,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="31" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="247" bodyend="274"/>
+        <references refid="namespace_textra_1a9985d656f87652d2d09c81c517be2e07" compoundref="nmspc__tensor__extra_8h" startline="101" endline="103">Textra::asDiagonal</references>
+        <references refid="namespace_textra_1a1016341dbbd0dbced92875cd7ce7268e" compoundref="nmspc__tensor__extra_8h" startline="41" endline="41">Textra::idx</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="structsvd_1_1settings_1aa8c802686d205c5f958c5b48c44970c1" compoundref="svd_2settings_8h" startline="6">svd::settings::switchsize</references>
+        <references refid="structsvd_1_1settings_1abb1784f960b306432bd857a066052b7c" compoundref="svd_2settings_8h" startline="5">svd::settings::threshold</references>
+        <references refid="structsvd_1_1settings_1a08fb51096b63dc44b0e2b1abe96bdd67" compoundref="svd_2settings_8h" startline="8">svd::settings::use_bdc</references>
+        <references refid="structsvd_1_1settings_1a137063a182afc9c80d91c86feb047aa7" compoundref="svd_2settings_8h" startline="9">svd::settings::use_lapacke</references>
       </memberdef>
       <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a23e70464be07a67518509f6d9d5945d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -323,6 +360,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="32" column="14" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.cpp" bodystart="278" bodyend="314"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -352,20 +390,14 @@
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor"/>
         <childnode refid="2" relation="public-inheritance">
         </childnode>
-        <childnode refid="8" relation="usage">
+        <childnode refid="5" relation="usage">
           <edgelabel>shift</edgelabel>
         </childnode>
       </node>
       <node id="4">
         <label>std::unique_ptr&lt; class_tic_toc &gt;</label>
-        <childnode refid="5" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
       </node>
-      <node id="7">
-        <label>std::basic_string&lt; char &gt;</label>
-      </node>
-      <node id="8">
+      <node id="5">
         <label>std::complex&lt; double &gt;</label>
       </node>
       <node id="2">
@@ -374,30 +406,18 @@
         <childnode refid="3" relation="public-inheritance">
         </childnode>
         <childnode refid="4" relation="usage">
-          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_H2n</edgelabel>
+          <edgelabel>t_Hn</edgelabel>
           <edgelabel>t_nH2n</edgelabel>
-          <edgelabel>t_step</edgelabel>
           <edgelabel>t_nHn</edgelabel>
-        </childnode>
-      </node>
-      <node id="5">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="6" relation="usage">
-          <edgelabel>name</edgelabel>
+          <edgelabel>t_step</edgelabel>
         </childnode>
       </node>
       <node id="3">
         <label>ceres::FirstOrderFunction</label>
       </node>
-      <node id="6">
-        <label>std::string</label>
-        <childnode refid="7" relation="public-inheritance">
-        </childnode>
-      </node>
     </collaborationgraph>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="12" column="57" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="12" bodyend="33"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" line="12" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/opt-internal/ceres_direct_functor.h" bodystart="12" bodyend="33"/>
     <listofallmembers>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a310083aadc61bb007de38129686a98a3" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_base_functor</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a2cb9c5ba89f9725b5830361ca74358b2" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_direct_functor</scope><name>ceres_direct_functor</name></member>

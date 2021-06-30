@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="main_8cpp" kind="file" language="C++">
     <compoundname>main.cpp</compoundname>
     <includes refid="class__algorithm__launcher_8h" local="no">algorithms/class_algorithm_launcher.h</includes>
@@ -235,8 +235,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/main.cpp" line="50" column="13" bodyfile="/home/david/GitProjects/DMRG++/source/main.cpp" bodystart="50" bodyend="59"/>
-        <references refid="namespacesettings_1a9aa08a0392a2f6f3084d65af2f7841ba" compoundref="debug_8h" startline="7">settings::debug</references>
-        <references refid="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" compoundref="nmspc__settings_8h" startline="50">settings::output::use_temp_dir</references>
       </memberdef>
       <memberdef kind="function" id="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -273,8 +271,8 @@
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"></codeline>
-<codeline lineno="3"><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__launcher_8h" kindref="compound">algorithms/class_algorithm_launcher.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__launcher_8h" kindref="compound">algorithms/class_algorithm_launcher.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">config/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__omp_8h" kindref="compound">general/nmspc_tensor_omp.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -340,13 +338,13 @@
 <codeline lineno="66" refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Append<sp/>the<sp/>seed_model<sp/>to<sp/>the<sp/>output<sp/>filename</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp::fs::path<sp/>oldFileName<sp/>=<sp/>filename;</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp::fs::path<sp/>newFileName<sp/>=<sp/>filename;</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(oldFileName.stem().string().find(<ref refid="namespacelinalg_1_1tensor_1a4fab1b7985e6991f7f0eb430f436a150" kindref="member">std::to_string</ref>(number))<sp/>!=<sp/>std::string::npos)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>filename;</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>newFileName.replace_filename(oldFileName.stem().string()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="namespacelinalg_1_1tensor_1a4fab1b7985e6991f7f0eb430f436a150" kindref="member">std::to_string</ref>(number)<sp/>+<sp/>oldFileName.extension().string());</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(oldFileName.stem().string().find(<ref refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" kindref="member">std::to_string</ref>(number))<sp/>!=<sp/>std::string::npos)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>filename;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>newFileName.replace_filename(oldFileName.stem().string()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="namespacelinalg_1_1matrix_1a47330fd73f538435fc51d33de3a9a67b" kindref="member">std::to_string</ref>(number)<sp/>+<sp/>oldFileName.extension().string());</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Appended<sp/>number<sp/>[{}]<sp/>to<sp/>filename:<sp/>[{}]&quot;</highlight><highlight class="normal">,<sp/>number,<sp/>newFileName.string());</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>newFileName.string();</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])<sp/>{</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Register<sp/>termination<sp/>codes<sp/>and<sp/>what<sp/>to<sp/>do<sp/>in<sp/>those<sp/>cases</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacedebug_1a2774636e7327b6cff8d7ca2ca4a5841e" kindref="member">debug::register_callbacks</ref>();</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
@@ -450,7 +448,7 @@
 <codeline lineno="190"><highlight class="normal"></highlight></codeline>
 <codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Seed<sp/>with<sp/>random::device<sp/>initially<sp/>(This<sp/>also<sp/>takes<sp/>care<sp/>of<sp/>srand<sp/>used<sp/>by<sp/>Eigen)</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>to<sp/>make<sp/>reproducible<sp/>simulations</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacernd_1aedbd405b79a78a71d4b2c3f7983bc36d" kindref="member">rnd::seed</ref>(<ref refid="namespacesettings_1_1input_1a79e48e7293bd7dc9c7197940b0f07ac3" kindref="member">settings::input::seed</ref>);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacernd_1a682f0f73a46eb8f7c12008f80c00b316" kindref="member">rnd::seed</ref>(<ref refid="namespacesettings_1_1input_1a79e48e7293bd7dc9c7197940b0f07ac3" kindref="member">settings::input::seed</ref>);</highlight></codeline>
 <codeline lineno="194"><highlight class="normal"></highlight></codeline>
 <codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Set<sp/>the<sp/>number<sp/>of<sp/>threads<sp/>to<sp/>be<sp/>used</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="196"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(EIGEN_USE_THREADS)</highlight><highlight class="normal"></highlight></codeline>

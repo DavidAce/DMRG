@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacespdlog" kind="namespace" language="C++">
     <compoundname>spdlog</compoundname>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="17" column="16"/>
+    <location file="/home/david/GitProjects/DMRG++/source/algorithms/class_algorithm_base.h" line="17" column="1"/>
   </compounddef>
 </doxygen>

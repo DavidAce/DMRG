@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1infinite_1_1mps" kind="namespace" language="C++">
     <compoundname>tools::infinite::mps</compoundname>
       <sectiondef kind="typedef">
@@ -47,10 +47,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.h" line="13" column="17" bodyfile="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.cpp" bodystart="13" bodyend="23" declfile="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.h" declline="13" declcolumn="17"/>
-        <references refid="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" compoundref="class__state__infinite_8cpp" startline="104" endline="104">class_state_infinite::get_spin_dimA</references>
-        <references refid="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" compoundref="class__state__infinite_8cpp" startline="105" endline="105">class_state_infinite::get_spin_dimB</references>
+        <references refid="classclass__state__infinite_1a7b699913047f61341519d49f5b117ab6" compoundref="class__state__infinite_8cpp" startline="126" endline="126">class_state_infinite::get_mps_siteA</references>
+        <references refid="classclass__state__infinite_1ac291bacc45a80cad6bb0387fac4c0cf4" compoundref="class__state__infinite_8cpp" startline="127" endline="127">class_state_infinite::get_mps_siteB</references>
         <references refid="classclass__state__infinite_1a671df6470f3780504848ec4562a72aee" compoundref="class__state__infinite_8cpp" startline="88" endline="88">class_state_infinite::get_positionA</references>
         <references refid="classclass__state__infinite_1a4f5507dae5e9ae1572cbcdb60b3e2338" compoundref="class__state__infinite_8cpp" startline="89" endline="89">class_state_infinite::get_positionB</references>
+        <references refid="classclass__state__infinite_1a2b173cce003a21d3ff55231ec663e978" compoundref="class__state__infinite_8cpp" startline="104" endline="104">class_state_infinite::get_spin_dimA</references>
+        <references refid="classclass__state__infinite_1a13083c8e51ddcfa75337e81378e2ff83" compoundref="class__state__infinite_8cpp" startline="105" endline="105">class_state_infinite::get_spin_dimB</references>
+        <references refid="classclass__mps__site_1a479d72f266fe8c7e555093486f0ce3fd" compoundref="class__mps__site_8cpp" startline="271" endline="325">class_mps_site::merge_mps</references>
+        <references refid="namespacetools_1_1common_1_1split_1aaeb82c8632b58196774224be23586b76" compoundref="split_8cpp" startline="12" endline="266">tools::common::split::split_mps</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1mps_1a7f89e93b5ab289f21292f99b90046ebc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -88,6 +92,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.h" line="11" column="30"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/infinite/mps.h" line="11" column="1"/>
   </compounddef>
 </doxygen>

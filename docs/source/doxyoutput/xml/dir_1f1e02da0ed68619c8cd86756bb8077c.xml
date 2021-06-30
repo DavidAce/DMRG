@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="dir_1f1e02da0ed68619c8cd86756bb8077c" kind="dir">
     <compoundname>/home/david/GitProjects/DMRG++/source/algorithms</compoundname>
     <innerfile refid="class__algorithm__base_8cpp">class_algorithm_base.cpp</innerfile>

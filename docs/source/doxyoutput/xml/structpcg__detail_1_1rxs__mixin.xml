@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structpcg__detail_1_1rxs__mixin" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::rxs_mixin</compoundname>
     <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
@@ -34,7 +34,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="620" column="20" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="620" bodyend="637"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="620" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="620" bodyend="637"/>
     <listofallmembers>
       <member refid="structpcg__detail_1_1rxs__mixin_1ad1a22573f3e256d85a724481b8b22f71" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_mixin</scope><name>output_rxs</name></member>
     </listofallmembers>

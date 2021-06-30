@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacesettings_1_1precision" kind="namespace" language="C++">
     <compoundname>settings::precision</compoundname>
       <sectiondef kind="var">
@@ -399,6 +399,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="166" column="23"/>
+    <location file="/home/david/GitProjects/DMRG++/source/config/nmspc_settings.h" line="166" column="5"/>
   </compounddef>
 </doxygen>

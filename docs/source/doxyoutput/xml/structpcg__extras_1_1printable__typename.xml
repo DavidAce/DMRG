@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structpcg__extras_1_1printable__typename" kind="struct" language="C++" prot="public">
     <compoundname>pcg_extras::printable_typename</compoundname>
     <includes refid="pcg__extras_8hpp" local="no">pcg_extras.hpp</includes>
@@ -12,7 +12,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="540" column="29" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="540" bodyend="540"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" line="540" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_extras.hpp" bodystart="540" bodyend="540"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

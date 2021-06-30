@@ -1,8 +1,34 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacetools_1_1finite_1_1io_1_1h5table" kind="namespace" language="C++">
     <compoundname>tools::finite::io::h5table</compoundname>
       <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a6b45a66ca3ec2e096f7bcff8427c3023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::h5table::bootstrap_save_log</definition>
+        <argsstring>(std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;save_log, const h5pp::File &amp;h5ppFile, const std::string &amp;link)</argsstring>
+        <name>bootstrap_save_log</name>
+        <param>
+          <type>std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;</type>
+          <declname>save_log</declname>
+        </param>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>link</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" line="19" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="19" bodyend="29"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+      </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a187ac1870ecb52df88efde9f9e739848" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::h5table::save_measurements</definition>
@@ -39,6 +65,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="27" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="45" bodyend="48" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="27" declcolumn="21"/>
+        <references refid="classclass__tensors__finite_1a4679ab6f9da1e325569d20d5503bc0b5" compoundref="class__tensors__finite_8h" startline="18">class_tensors_finite::state</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1aa1c794fc842c02ba2e3ec11a2264caeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -80,7 +107,38 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="28" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="50" bodyend="95" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="28" declcolumn="21"/>
+        <references refid="classclass__algorithm__status_1ac041307dbf2e92fb9cbd3184c655a5d1" compoundref="class__algorithm__status_8h" startline="33">class_algorithm_status::algo_time</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1ac53254bd2378dbcbc01ad85fbba9390d" compoundref="finite_2measure_8cpp" startline="111" endline="118">tools::finite::measure::bond_dimension_current</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1ae78241c83c7ea8018a9f93026bfd1b2e" compoundref="finite_2measure_8cpp" startline="120" endline="124">tools::finite::measure::bond_dimension_midchain</references>
+        <references refid="namespacetools_1_1finite_1_1io_1_1h5table_1a6b45a66ca3ec2e096f7bcff8427c3023" compoundref="finite_2io_2h5table_8cpp" startline="19" endline="29">bootstrap_save_log</references>
+        <references refid="classclass__algorithm__status_1af09e39e39e315094313b3ac3c5a20baf" compoundref="class__algorithm__status_8h" startline="19">class_algorithm_status::chi_lim</references>
+        <references refid="classclass__algorithm__status_1a9c6881b9887afeabd4fdc42dab57fd5e" compoundref="class__algorithm__status_8h" startline="17">class_algorithm_status::chi_lim_max</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8ae7478d97212560ade16da80c5284ea" compoundref="finite_2measure_8cpp" startline="353" endline="369">tools::finite::measure::energy</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8145a38b82bae9aa25597372b688670e" compoundref="finite_2measure_8cpp" startline="377" endline="382">tools::finite::measure::energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a8a96f8adaa39895086a3feae2a0e5b47" compoundref="finite_2measure_8cpp" startline="390" endline="438">tools::finite::measure::energy_variance</references>
+        <references refid="classclass__algorithm__status_1a1329f0aae3fa4eeae14609ea9c3df7cf" compoundref="class__algorithm__status_8h" startline="28">class_algorithm_status::energy_variance_lowest</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1aee2b1efe5c266357b6572fbb35808b96" compoundref="finite_2measure_8cpp" startline="446" endline="451">tools::finite::measure::energy_variance_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1ad4d342b14748aa9b6e9238a708a2ba8f" compoundref="finite_2measure_8cpp" startline="156" endline="166">tools::finite::measure::entanglement_entropy_current</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150" compoundref="finite_2measure_8cpp" startline="168" endline="175">tools::finite::measure::entanglement_entropy_midchain</references>
+        <references refid="config_2enums_8h_1a9243adfb7445f1adcf51b73329e774c9a098abf727fec7ef7c238795a33b490f1">fLBIT</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ae302ec3b2665b7eb9f69b892d6b8c08e" compoundref="prof_8cpp" startline="68" endline="71">tools::common::profile::get_default_prof</references>
+        <references refid="classclass__tensors__finite_1a2821ebade96b96a7ac4a8c26d0e64b8e" compoundref="class__tensors__finite_8cpp" startline="340" endline="345">class_tensors_finite::get_length</references>
+        <references refid="classclass__state__finite_1a82cd097602ba95c01aba83ebda814200" compoundref="class__state__finite_8cpp" startline="410" endline="416">class_state_finite::get_truncation_error_midchain</references>
+        <references refid="classh5pp__table__measurements__finite_1a995f06b5f7bdb59935fd0bc7c2a36a24" compoundref="table__types_8h" startline="16">h5pp_table_measurements_finite::h5_type</references>
+        <references refid="classclass__algorithm__status_1a747785006ce496cf72c58be2ad89b79a" compoundref="class__algorithm__status_8h" startline="11">class_algorithm_status::iter</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a1d47691c527644e67b5fbb53f46aa7a9" compoundref="finite_2measure_8cpp" startline="54" endline="54">tools::finite::measure::length</references>
+        <references refid="namespaceeig_1ae96cb5c133e7edfc21bb951904f03b3b" compoundref="math_2eig_2enums_8h" startline="9">eig::log</references>
+        <references refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071ab50339a10e1de285ac99d4c3990b8693">NONE</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" compoundref="finite_2measure_8cpp" startline="57" endline="109">tools::finite::measure::norm</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1aa29ff51967a40d406924198bd2b33450" compoundref="entropy_8cpp" startline="286" endline="310">tools::finite::measure::number_entropy_current</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a485ac0c2835bcac4a71f1cb15e5e3254" compoundref="entropy_8cpp" startline="312" endline="330">tools::finite::measure::number_entropy_midchain</references>
+        <references refid="classclass__algorithm__status_1a0a073c1fba00d0ece3bfced529f10aff" compoundref="class__algorithm__status_8h" startline="31">class_algorithm_status::phys_time</references>
+        <references refid="classclass__algorithm__status_1a92eedac9b796e697deaa83ebf4125800" compoundref="class__algorithm__status_8h" startline="13">class_algorithm_status::position</references>
         <references refid="classh5pp__table__measurements__finite_1aee1e36b9e4a831ed2bba62f4bc58f8d1" compoundref="table__types_8h" startline="46" endline="76">h5pp_table_measurements_finite::register_table_type</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a22e2b3240464cf0e14082b7386acbe3b" compoundref="finite_2measure_8cpp" startline="242" endline="249">tools::finite::measure::spin_components</references>
+        <references refid="classclass__algorithm__status_1a0071e2c8a215558eadd08fe35d5591ef" compoundref="class__algorithm__status_8h" startline="12">class_algorithm_status::step</references>
+        <references refid="structh5pp__table__measurements__finite_1_1table_1a994727af62420a815ae0fd3f4667b4e8" compoundref="table__types_8h" startline="20">h5pp_table_measurements_finite::table::step</references>
+        <references refid="classclass__algorithm__status_1a2de1e0848d4341c015c1b4fc5e197c0e" compoundref="class__algorithm__status_8h" startline="32">class_algorithm_status::wall_time</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a57ec03d1579b8139509698780c1674b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -111,6 +169,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="29" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="33" bodyend="43" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="29" declcolumn="21"/>
+        <references refid="config_2enums_8h_1aa363e0dc56d2bdef0a2c3bf927637a0b" compoundref="config_2enums_8h" startline="178" endline="382">enum2str</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ae302ec3b2665b7eb9f69b892d6b8c08e" compoundref="prof_8cpp" startline="68" endline="71">tools::common::profile::get_default_prof</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="log_8h" startline="5">tools::log</references>
+        <references refid="namespacetools_1_1finite_1_1print_1a43650762255b8212f67c4f943a1d4ccf" compoundref="finite_2print_8cpp" startline="34" endline="37">tools::finite::print::model</references>
+        <references refid="namespacesettings_1_1model_1aabf0ff2a07a4b8ae7e4141b1bde089cd" compoundref="nmspc__settings_8h" startline="96">settings::model::model_size</references>
+        <references refid="namespacesettings_1_1model_1a3628af587c3663ba75c2a3d6db7e16e6" compoundref="nmspc__settings_8h" startline="95">settings::model::model_type</references>
+        <references refid="config_2enums_8h_1a27ddd8557d89817da29a3fb110318071ab50339a10e1de285ac99d4c3990b8693">NONE</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a156b7dac31a63f91dac37e9e47f0e39e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -140,6 +205,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="30" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="97" bodyend="100" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="30" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1a525a17bb107b2532c7434e15e9d77919" compoundref="common_2io_2h5table_8cpp" startline="26" endline="48">tools::common::io::h5table::save_sim_status</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1ae7ea13a2d98d5ccf418a72a9d2a8e333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -169,6 +235,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="31" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="102" bodyend="105" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="31" declcolumn="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1abba11255902d84ff98de52517e3d35d5" compoundref="common_2io_2h5table_8cpp" startline="50" endline="239">tools::common::io::h5table::save_profiling</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a4bf36d7e5205aacf329d78f6d48d5cee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -198,37 +265,13 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="32" column="21" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="107" bodyend="110" declfile="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" declline="32" declcolumn="21"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5table_1a6b45a66ca3ec2e096f7bcff8427c3023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void tools::finite::io::h5table::bootstrap_save_log</definition>
-        <argsstring>(std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;save_log, const h5pp::File &amp;h5ppFile, const std::string &amp;link)</argsstring>
-        <name>bootstrap_save_log</name>
-        <param>
-          <type>std::unordered_map&lt; std::string, std::pair&lt; uint64_t, uint64_t &gt;&gt; &amp;</type>
-          <declname>save_log</declname>
-        </param>
-        <param>
-          <type>const h5pp::File &amp;</type>
-          <declname>h5ppFile</declname>
-        </param>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>link</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" line="19" column="10" bodyfile="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" bodystart="19" bodyend="29"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1a7d793f2e69905e7b9d3bd608ddf37230" compoundref="common_2io_2h5table_8cpp" startline="241" endline="265">tools::common::io::h5table::save_mem_usage</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io.h" line="26" column="21"/>
+    <location file="/home/david/GitProjects/DMRG++/source/tools/finite/io/h5table.cpp" line="18" column="1"/>
   </compounddef>
 </doxygen>

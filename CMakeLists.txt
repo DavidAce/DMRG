@@ -22,6 +22,7 @@ option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
 option(DMRG_PRINT_INFO "Print information during cmake configure" OFF)
 option(DMRG_PRINT_CHECKS "Print more information during cmake configure" OFF)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
+option(DMRG_ENABLE_DOCS "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 
 # Make an "enum" for valid download methods
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)
@@ -344,6 +345,17 @@ if (DMRG_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif ()
+
+
+#############################
+## DOCS
+#############################
+# Simple testing with ctest
+if (DMRG_ENABLE_DOCS)
+    find_package(Doxygen REQUIRED)
+
+endif ()
+
 
 
 

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="indexpage" kind="page">
     <compoundname>index</compoundname>
     <title>DMRG++</title>
@@ -175,16 +175,16 @@
 </sect1>
 <sect1 id="index_1notation">
 <title>Notation</title>
-<para>The <emphasis>Vidal canonical form</emphasis>, i.e. ... <formula id="14">$\Gamma\Lambda\Gamma\Lambda$</formula>..., is the underlying data structure for MPS throughout this code. In code we denote</para>
+<para>The <emphasis>Vidal canonical form</emphasis>, i.e. ... <formula id="0">$\Gamma\Lambda\Gamma\Lambda$</formula>..., is the underlying data structure for MPS throughout this code. In code we denote</para>
 <para><itemizedlist>
-<listitem><para><formula id="15">$\Gamma \rightarrow$</formula> <computeroutput>G</computeroutput></para>
-</listitem><listitem><para><formula id="16">$\Lambda \rightarrow$</formula> <computeroutput>L</computeroutput></para>
+<listitem><para><formula id="1">$\Gamma \rightarrow$</formula> <computeroutput>G</computeroutput></para>
+</listitem><listitem><para><formula id="2">$\Lambda \rightarrow$</formula> <computeroutput>L</computeroutput></para>
 </listitem></itemizedlist>
 </para>
-<para>There are methods to obtain the MPS in <emphasis>mixed canonical form</emphasis> as well, i.e. <formula id="17">$AAA...AACBB...BBB$</formula>, where <formula id="18">$A$</formula>&apos;s are left unitary, <formula id="19">$B$</formula>&apos;s are right-unitary and <formula id="20">$C$</formula> is a (diagonal) bond-matrix. The <formula id="18">$A$</formula>&apos;s and <formula id="19">$B$</formula>&apos;s are obtained from the Vidal canonical form by simple contraction:</para>
+<para>There are methods to obtain the MPS in <emphasis>mixed canonical form</emphasis> as well, i.e. <formula id="3">$AAA...AACBB...BBB$</formula>, where <formula id="4">$A$</formula>&apos;s are left unitary, <formula id="5">$B$</formula>&apos;s are right-unitary and <formula id="6">$C$</formula> is a (diagonal) bond-matrix. The <formula id="4">$A$</formula>&apos;s and <formula id="5">$B$</formula>&apos;s are obtained from the Vidal canonical form by simple contraction:</para>
 <para><itemizedlist>
-<listitem><para><formula id="21">$A = \Lambda \Gamma$</formula></para>
-</listitem><listitem><para><formula id="22">$B = \Gamma \Lambda$</formula></para>
+<listitem><para><formula id="7">$A = \Lambda \Gamma$</formula></para>
+</listitem><listitem><para><formula id="8">$B = \Gamma \Lambda$</formula></para>
 </listitem></itemizedlist>
 </para>
 <sect2 id="index_1convention">
@@ -196,7 +196,7 @@
 </para>
 <sect3 id="index_1example">
 <title>Example:</title>
-<para>Consider for some position <formula id="23">$n$</formula> on the chain <formula id="24">$\Gamma = \Gamma^{\sigma_n}_{a,b}$</formula>. Here <formula id="25">$\sigma_n \in [-1,1]$</formula> is a particle with local (physical) dimension <formula id="26">$d$</formula> = 2, and <formula id="27">$a,b$</formula> are the remaining dimensions, in practice they are bond dimensions of <formula id="28">$\Lambda^{n-1}$</formula> and <formula id="29">$\Lambda^{n}$</formula>, respectively, which can be numbers <formula id="30">$\in [1,\chi]$</formula>.</para>
+<para>Consider for some position <formula id="9">$n$</formula> on the chain <formula id="10">$\Gamma = \Gamma^{\sigma_n}_{a,b}$</formula>. Here <formula id="11">$\sigma_n \in [-1,1]$</formula> is a particle with local (physical) dimension <formula id="12">$d$</formula> = 2, and <formula id="13">$a,b$</formula> are the remaining dimensions, in practice they are bond dimensions of <formula id="14">$\Lambda^{n-1}$</formula> and <formula id="15">$\Lambda^{n}$</formula>, respectively, which can be numbers <formula id="16">$\in [1,\chi]$</formula>.</para>
 <para>In diagrammatic tensor notation this is: <verbatim>                        [d]          0
             G     = [a]__|__[b] = 1__|__2
 </verbatim> where after the second equality the index order is shown. In code this corresponds to</para>
@@ -204,7 +204,7 @@
 <codeline><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/>=<sp/>3</highlight></codeline>
 <codeline><highlight class="normal">Eigen::Tensor&lt;Scalar,rank&gt;<sp/>G(d,a,b);</highlight></codeline>
 </programlisting></para>
-<para>An exception to this rule is theta: We have <formula id="31">$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$</formula>:</para>
+<para>An exception to this rule is theta: We have <formula id="17">$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$</formula>:</para>
 <para><verbatim>                                [d] [d]                0   2
             Theta     = [chia]___|___|___[chib] = 1 ___|___|___ 3
 </verbatim></para>
@@ -222,26 +222,22 @@
 <para><blockquote><para><ulink url="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study</ulink><linebreak/>
  by Kjäll, Zaletel, Mong, Bardarson, and Pollmann, 2012 <linebreak/>
  </para>
-</blockquote></para>
-<para><blockquote><para><ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</ulink><linebreak/>
+</blockquote><blockquote><para><ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</ulink><linebreak/>
  by F. Pollmann. <linebreak/>
  </para>
-</blockquote></para>
-<para><blockquote><para><ulink url="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</ulink><linebreak/>
+</blockquote><blockquote><para><ulink url="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</ulink><linebreak/>
  by U. Schollwöck, 2008 <linebreak/>
  </para>
-</blockquote></para>
-<para><blockquote><para><ulink url="https://doi.org/10.1103/PhysRevB.78.155117">The iTEBD algorithm beyond unitary evolution</ulink><linebreak/>
+</blockquote><blockquote><para><ulink url="https://doi.org/10.1103/PhysRevB.78.155117">The iTEBD algorithm beyond unitary evolution</ulink><linebreak/>
  by Orus &amp; Vidal, 2008<linebreak/>
  </para>
-</blockquote></para>
-<para><blockquote><para><ulink url="http://arxiv.org/abs/0804.2509">Infinite size density matrix renormalization group, revisited</ulink><linebreak/>
+</blockquote><blockquote><para><ulink url="http://arxiv.org/abs/0804.2509">Infinite size density matrix renormalization group, revisited</ulink><linebreak/>
  by McCulloch, 2008 <linebreak/>
  </para>
-</blockquote></para>
-<para><blockquote><para>[Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group </para>
-</blockquote>Approach](<ulink url="https://doi.org/10.1103/PhysRevLett.116.247204">https://doi.org/10.1103/PhysRevLett.116.247204</ulink>)<linebreak/>
+</blockquote><blockquote><para><ulink url="https://doi.org/10.1103/PhysRevLett.116.247204">Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach</ulink><linebreak/>
  &gt; by V. Khemani, F. Pollmann &amp; S. L. Sondhi, 2016</para>
+<para></para>
+</blockquote></para>
 </sect2>
 </sect1>
 <sect1 id="index_1details">
@@ -255,5 +251,6 @@
 </para>
 </sect1>
     </detaileddescription>
+    <location file="/home/david/GitProjects/DMRG++/source/main.h"/>
   </compounddef>
 </doxygen>

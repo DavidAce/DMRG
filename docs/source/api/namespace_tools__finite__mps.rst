@@ -28,9 +28,9 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a14982ec74405851e191d532d7ed5a4f7`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a19e5889ea7a673129e943686488bd492`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a2608dab7b129b75b58b355a71589a6a0`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a19e5889ea7a673129e943686488bd492`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a9bac3a578ff2de26864096de90d6f443`
 

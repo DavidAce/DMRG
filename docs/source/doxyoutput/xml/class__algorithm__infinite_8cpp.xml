@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="class__algorithm__infinite_8cpp" kind="file" language="C++">
     <compoundname>class_algorithm_infinite.cpp</compoundname>
     <includes refid="class__algorithm__infinite_8h" local="yes">class_algorithm_infinite.h</includes>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structpcg__detail_1_1xsl__rr__rr__mixin" kind="struct" language="C++" prot="public">
     <compoundname>pcg_detail::xsl_rr_rr_mixin</compoundname>
     <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
@@ -43,13 +43,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="792" column="22" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="792" bodyend="813"/>
+        <references refid="namespacepcg__extras_1afae38bd6d5a7e1d79b8e32fc38dbabe3" compoundref="pcg__extras_8hpp" startline="273" endline="281">pcg_extras::rotr</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="789" column="26" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="789" bodyend="814"/>
+    <location file="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" line="789" column="5" bodyfile="/home/david/GitProjects/DMRG++/source/math/rnd/pcg_random.hpp" bodystart="789" bodyend="814"/>
     <listofallmembers>
       <member refid="structpcg__detail_1_1xsl__rr__rr__mixin_1acb07e7049dcdc8d04ee3b1c35cb60c1b" prot="public" virt="non-virtual"><scope>pcg_detail::xsl_rr_rr_mixin</scope><name>htype</name></member>
       <member refid="structpcg__detail_1_1xsl__rr__rr__mixin_1a5c914f5d43e5f16351bba8feacf9f8c6" prot="public" virt="non-virtual"><scope>pcg_detail::xsl_rr_rr_mixin</scope><name>output</name></member>

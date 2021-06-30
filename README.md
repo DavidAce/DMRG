@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/DavidAce/DMRG/workflows/Actions/badge.svg)](https://github.com/DavidAce/DMRG/actions)
+[![Ubuntu 20.04](https://github.com/DavidAce/DMRG/workflows/Ubuntu%2020.04/badge.svg?branch=master)](https://github.com/DavidAce/DMRG/actions)
 [![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
 
 # DMRG++
