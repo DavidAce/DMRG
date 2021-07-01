@@ -10,28 +10,21 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ##############################################################################
     if(DMRG_ENABLE_MKL)
         find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-        if(TARGET mkl::mkl)
-            include(cmake/getExpandedTarget.cmake)
-            expand_target_libs(mkl::mkl MKL_LIBRARIES)
-            # Passing MKL_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
-            # Replacing each ";" with spaces will work until arpack-ng tries to link as is.
-            # Instead we should use the generator expression trick to let arpack understand that these
-            # are multiple libraries
-            string (REPLACE ";" "$<SEMICOLON>" MKL_LIBRARIES "${MKL_LIBRARIES}")
-            list(APPEND DMRG_CONAN_OPTIONS
-                    OPTIONS arpack-ng:blas=All
-                    OPTIONS arpack-ng:blas_libraries=${MKL_LIBRARIES}
-                    OPTIONS arpack-ng:lapack_libraries=${MKL_LIBRARIES}
-                    )
-        else()
-            message(FATAL_ERROR "Undefined target: mkl::mkl")
-        endif()
-    else()
+
+        include(cmake/getExpandedTarget.cmake)
+        expand_target_libs(BLAS::BLAS BLAS_LIBRARIES)
+        # Passing BLAS_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
+        # Replacing each ";" with spaces will work until arpack-ng tries to link as is.
+        # Instead we should use the generator expression trick to let arpack understand that these
+        # are multiple libraries
+        string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES "${BLAS_LIBRARIES}")
+        list(APPEND DMRG_CONAN_OPTIONS
+                OPTIONS arpack-ng:blas=All
+                OPTIONS arpack-ng:blas_libraries=${BLAS_LIBRARIES}
+                OPTIONS arpack-ng:lapack_libraries=${BLAS_LIBRARIES}
+                )
         cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-        if(_host_name MATCHES "travis|TRAVIS|Travis|fv-")
-            message(STATUS "Setting OpenBLAS dynamic_arch=False")
-            list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
-        elseif(_host_name MATCHES "raken")
+        if(_host_name MATCHES "raken")
             message(STATUS
                     "Setting OpenBLAS dynamic_arch=True"
                     "Remember to set environment variable"
@@ -42,8 +35,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             message(STATUS "Setting OpenBLAS dynamic_arch=False")
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
         endif()
-        find_package(Fortran REQUIRED)
     endif()
+
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
     endif()

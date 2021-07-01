@@ -21,14 +21,21 @@ foreach (test ${TESTS})
     target_link_libraries(dmrg-${test_nwe} PRIVATE dmrg-deps dmrg-flags)
 endforeach ()
 
+
+add_custom_target(dmrg-test-all
+        COMMENT "Building tests"
+        DEPENDS ${test_tgt_list}
+        )
+
+
 # Speed up compilation with precompiled headers
-if(DMRG_ENABLE_PCH)
-    if(COMMAND target_precompile_headers)
+if (DMRG_ENABLE_PCH)
+    if (COMMAND target_precompile_headers)
         foreach (tgt ${test_tgt_list})
-            if(NOT TARGET ${first_tgt})
+            if (NOT TARGET ${first_tgt})
                 target_precompile_headers(${tgt} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
                 set(first_tgt ${tgt})
-            else()
+            else ()
                 target_precompile_headers(${tgt} REUSE_FROM ${first_tgt})
             endif()
         endforeach()
