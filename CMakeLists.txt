@@ -22,7 +22,7 @@ option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
 option(DMRG_PRINT_INFO "Print information during cmake configure" OFF)
 option(DMRG_PRINT_CHECKS "Print more information during cmake configure" OFF)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
-option(DMRG_ENABLE_DOCS "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
+option(DMRG_ENABLE_DOCS "Build documentation" OFF)
 
 # Make an "enum" for valid download methods
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)

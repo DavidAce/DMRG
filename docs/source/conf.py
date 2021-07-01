@@ -14,6 +14,17 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+# -- Read The Docs setup --------------------------------------------------------------
+
+import os
+import subprocess
+
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if on_rtd:
+    subprocess.call('cd ..; doxygen', shell=True)
+
+
 
 # -- Project information -----------------------------------------------------
 
@@ -43,6 +54,7 @@ extensions = [
 
 
 # Breathe Configuration
+breathe_projects = { 'DMRG++': '../xml' }
 breathe_default_project = "DMRG++"
 
 highlight_language = 'c++'
@@ -64,25 +76,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 import sphinx_rtd_theme
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_theme_options = {
-    'canonical_url': '',
-    'analytics_id': '',
-    'display_version': True,
-    'prev_next_buttons_location': 'bottom',
-    'style_external_links': False,
-
-    'logo_only': False,
-
-    # Toc options
-    'collapse_navigation': True,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
-}
-# html_logo = ''
-# github_url = ''
-# html_baseurl = ''
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
