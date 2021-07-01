@@ -8,11 +8,6 @@
 #include "enums.h"
 #include <string>
 #include <vector>
-/*!
- *  \namespace settings
- *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
- *  the different algorithms.
- */
 
 class class_config_reader;
 class class_dmrg_config;
@@ -22,25 +17,50 @@ namespace h5pp {
 
 /* clang-format off */
 
+
+/*!
+ *  \namespace settings
+ *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
+ *  the different algorithms.
+ */
 namespace settings {
     extern void load_config(class_config_reader &indata);
     extern void load_config(class_dmrg_config &dmrg_config);
     extern void load_config(const std::string & config_filename);
 
+    /*!  \namespace settings::threading Parameters for multithreading */
     namespace threading{
         inline int omp_threads = 1;                                              /*!< Number of threads for openmp threads used in blas/lapack and Eigen. num_threads <= 0 will try to use as many as possible */
         inline int stl_threads = 1;                                              /*!< Number of threads for c++11 threading. Used in Eigen::Tensor. stl_threads <= 0 will try to use as many as possible */
     }
 
+    /*!  \namespace settings::input Settings for initialization */
     namespace input{
         inline long        seed                                 = 1;                            /*!< Main seed for the random number generator. */
         inline long        bitfield                             = -1;                           /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
-        inline std::string config_filename                      = "input/input.config";            /*!< Default config filename. Can either be a .config file or a .h5 file with a config stored as a string in /common/config_file_contents */
+        inline std::string config_filename                      = "input/input.cfg";            /*!< Default config filename. Can either be a .cfg file or a .h5 file with a config stored as a string in /common/config_file_contents */
         inline std::string config_file_contents;
     }
 
+    /*!  \namespace settings::output Settings for output-file generation
+     *
+     * **NOTE: Storage levels**
+     *
+     *  enum StorageLevel:
+     *       - `NONE`:   no data is saved at all
+     *       - `LIGHT`:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_profiling == true)
+     *       - `NORMAL`: Same as `LIGHT` + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (lambda-matrices), and model Hamiltonian parameters
+     *       - `FULL`:   Same as `NORMAL` + MPS (Gamma + Lambda matrices) + MPO at each site.
+     *
+     * **Note: Resume**
+     *
+     * Simulations can only be resumed from a state or checkpoint saved with `StorageLevel::FULL`.
+     *
+     * The only exception is `storage_level_model == StorageLevel::NORMAL` which is enough to recreate MPOs, since they can be reconstructed from the Hamiltonian parameter table
+     *
+     */
     namespace output {
-        inline std::string         output_filepath                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
+        inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
         inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but chi-update savepoints can still happen */
@@ -54,13 +74,6 @@ namespace settings {
         inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME,RENAME,DELETE */
         inline FileResumePolicy    file_resume_policy              = FileResumePolicy::FULL;       /*!< Depends on dataset "common/finished_all=bool" FULL: Ignore bool -> Scan .cfg to add missing items. FAST: exit if true. */
 
-        // Storage Levels.
-        // NOTE 1: A simulation can only be resumed from FULL state storage or savepoint.
-        // NOTE 2: storage_level_model == NORMAL is enough to recreate MPO's when resuming, since they can be reconstructed from the Hamiltonian parameter table
-        //      NONE:   no data is saved at all
-        //      LIGHT:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_profiling == true)
-        //      NORMAL: Same as LIGHT + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (lambda-matrices), and model Hamiltonian parameters
-        //      FULL:   Same as NORMAL + MPS (Gamma + Lambda matrices) + MPO at each site.
         inline StorageLevel     storage_level_model      = StorageLevel::LIGHT;  /*!< Storage level for the model realization. LIGHT stores nothing. NORMAL stores the Hamiltonian parameter table, and FULL also the MPO's */
         inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume (if FULL) */
         inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements (can also be used for resume if FULL) */
@@ -78,24 +91,25 @@ namespace settings {
     }
 
 
-    //Profiling
+    /*!  \namespace settings::profiling Settings for performance profiling */
     namespace profiling {
         inline bool     on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
         inline bool     extra     = false;                         /*!< Prints more profiling */
         inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time output. */
     }
-    //Console settings
+
+    /*! \namespace settings::console Settings for console output */
     namespace console {
         inline size_t verbosity  = 2;                              /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline bool   timestamp  = false;                          /*!< Whether to put a timestamp on console outputs */
     }
 
-    //Parameters for the model Hamiltonian
+    /*! \namespace settings::model Settings for the Hamiltonian spin-model */
     namespace model {
         inline ModelType    model_type = ModelType::ising_tf_rf;   /*!< Choice of model type: {ising_tf_rf_nn, ising_selfdual_tf_rf_nn}  */
         inline size_t       model_size = 16;                       /*!< Number of sites on the chain. Only relevant for finite algorithms: fDMRG and xDMRG */
 
-        //Parameters for the transvese-field next-nearest neighbor Ising model with a random field
+        /*! \namespace settings::model::ising_tf_rf Settings for the Transverse-field Ising model with a random on-site field */
         namespace ising_tf_rf {
             inline double       J1         = 1;                 /*!< Ferromagnetic coupling for nearest neighbors.*/
             inline double       J2         = 1;                 /*!< Ferromagnetic coupling for next-nearest neighbors.*/
@@ -106,7 +120,7 @@ namespace settings {
             inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
         }
 
-        //Parameters for the selfdual transverse-field random-field next-nearest neighbor Ising model
+        /*! \namespace settings::model::ising_sdual Settings for the Self-dual Ising model */
         namespace ising_sdual {
             inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
             inline double       delta         = 0;              /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing max(J_mean,h_mean) = 1 */
@@ -117,7 +131,7 @@ namespace settings {
             inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */
         }
 
-        //Parameters for the l-bit hamiltonian
+        /*! \namespace settings::model::lbit Settings for the l-bit Hamiltonian */
         namespace lbit {
             inline double       J1_mean       = 0;              /*!< Constant offset for on-site */
             inline double       J2_mean       = 0;              /*!< Constant offset for two-body interaction */
@@ -134,7 +148,7 @@ namespace settings {
         }
     }
 
-    // Options for strategy that affect convergence and targeted state
+    /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
         inline bool          krylov_opt_when_stuck      = true;                                   /*!< Try finding the SM eigenpair of (H-E/L)² using arpack when stuck (takes longer, but gives good results) */
         inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
@@ -162,14 +176,14 @@ namespace settings {
 }
 
 
-    //Parmaters that control precision in MPS, eigensolver and SVD
+    /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
         inline double   eig_tolerance                   = 1e-12 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
-        inline bool     compress_mpo_squared            = true;                                   /*!< Use SVD to compress the squared mpo bond dimension */
+        inline bool     compress_mpo_squared            = true;     /*!< Use SVD to compress the squared mpo bond dimension */
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_shifted_mpo                 = true  ;   /*!< Some steps after reducing MPO energy by Er, we have E-Er = dE. For increased precision, this shifts the local MPOs by dE before optimization */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
@@ -194,9 +208,9 @@ namespace settings {
     }
 
 
-    //Parameters controlling iDMRG
+    /*! \namespace settings::idmrg Settings for the infinite DMRG algorithm */
     namespace idmrg {
-        inline bool on           = true;                           /*!< Turns iDMRG simulation on/off. */
+        inline bool on           = false;                          /*!< Turns iDMRG simulation on/off. */
         inline size_t max_iters  = 5000;                           /*!< Maximum number of iDMRG iterations before forced termination */
         inline long chi_lim_max  = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_lim_grow = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
@@ -205,9 +219,9 @@ namespace settings {
     }
 
 
-    //Parameters controlling iTEBD
+    /*! \namespace settings::itebd Settings for the imaginary-time infinite TEBD algorithm  */
     namespace itebd {
-        inline bool     on                    = true;                /*!< Turns iTEBD simulation on/off. */
+        inline bool     on                    = false;               /*!< Turns iTEBD simulation on/off. */
         inline size_t   max_iters             = 100000;              /*!< Maximum number of iTEBD iterations before forced termination */
         inline double   time_step_init_real   = 0.0;                 /*!< Real part of initial time step delta_t */
         inline double   time_step_init_imag   = 0.1;                 /*!< Imag part of initial time step delta_t */
@@ -219,9 +233,9 @@ namespace settings {
         inline size_t   print_freq            = 5000;                /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
-    //Parameters controlling fdmrg
+    /*! \namespace settings::fdmrg Settings for the finite DMRG algorithm */
     namespace fdmrg {
-        inline bool     on           = true;                         /*!< Turns fdmrg simulation on/off. */
+        inline bool     on           = false;                        /*!< Turns fdmrg simulation on/off. */
         inline size_t   max_iters    = 10;                           /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters    = 4;                            /*!< Min number of iterations. One iterations moves L steps. */
         inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
@@ -231,7 +245,8 @@ namespace settings {
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
-    //Parameters controlling flbit
+
+    /*! \namespace settings::flbit Settings for the finite l-bit algorithm */
     namespace flbit {
         inline bool     on                      = false;                    /*!< Turns flbit simulation on/off. */
         inline size_t   max_iters               = 10000;                    /*!< Max number of iterations. One iterations moves L steps. */
@@ -250,9 +265,9 @@ namespace settings {
         inline bool     store_wavefn            = false;                    /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
-    //Parameters controlling xDMRG
+    /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
-        inline bool     on                              = true;             /*!< Turns xDMRG simulation on/off. */
+        inline bool     on                              = false;            /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters                       = 10;               /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters                       = 4;                /*!< Min number of iterations. One iterations moves L steps. */
         inline size_t   olap_iters                      = 2;                /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */

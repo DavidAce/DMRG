@@ -11,13 +11,13 @@ list(APPEND Sphinx_ROOT ${CONDA_ROOT})
 
 set(DOXYGEN_GENERATE_XML YES)
 set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
+set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
 find_package(Doxygen REQUIRED)
 doxygen_add_docs(dmrg-doxygen
         ALL
         ${PROJECT_SOURCE_DIR}/source
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generating Doxygen XML")
+        COMMENT "Documentation -- Doxygen XML")
 
 
 find_package(Sphinx REQUIRED)
@@ -31,4 +31,9 @@ add_custom_target(dmrg-sphinx ALL
         -Dbreathe_projects.DMRG++=${CMAKE_CURRENT_SOURCE_DIR}/xml # Tell Breathe where to find the Doxygen XML output
         ${SPHINX_SOURCE} ${SPHINX_BUILD}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/source
-        COMMENT "Generating documentation with Sphinx")
+        COMMENT "Documentation -- Sphinx")
+
+add_custom_target(dmrg-docs ALL
+        COMMAND ${CMAKE_COMMAND} --build . --config $<CONFIG> --target dmrg-doxygen dmrg-sphinx
+        COMMENT "Generating documentation Doxygen+Sphinx")
+
