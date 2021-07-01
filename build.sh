@@ -30,7 +30,8 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-asan              : Enable runtime sanitizers, i.e. -fsanitize=address
    | --enable-coverage          : Enable test coverage
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
-   | --enable-tests             : Enable CTest tests
+   | --enable-tests             : Enable CTest (builds test targets)
+   | --run-tests                : Run CTest
    | --print-cmake-error        : Prints CMakeError.log upon failure
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose CMake and Makefiles
@@ -59,7 +60,6 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 install-prefix:\
                 install-pkg-dir:\
                 package-manager:\
-                enable-tests\
                 enable-shared\
                 shared:\
                 gcc-toolchain:\
@@ -69,6 +69,8 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 enable-lto\
                 enable-asan\
                 enable-coverage\
+                enable-tests\
+                run-tests\
                 no-modules\
                 print-cmake-error
                 verbose\
@@ -89,12 +91,13 @@ target="all"
 march="haswell"
 enable_shared="OFF"
 package_manager="find"
-enable_tests="OFF"
 enable_threads="OFF"
 enable_mkl="OFF"
 enable_lto="OFF"
 enable_asan="OFF"
 enable_coverage="OFF"
+enable_tests="OFF"
+run_tests="OFF"
 install_prefix="~/dmrg-install"
 install_pkg_dir="~/dmrg-deps-install"
 make_threads=8
@@ -151,13 +154,14 @@ do
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             enable_shared="ON"              ; echo " * Shared libraries         : ON"      ; shift   ;;
        --shared)                    enable_shared=$2                ; echo " * Shared libraries         : $2"      ; shift 2 ;;
-       --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-threads)            enable_threads="ON"             ; echo " * C++11 Threads            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Intel MKL                : ON"      ; shift   ;;
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization   : ON"      ; shift   ;;
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
        --enable-coverage)           enable_coverage="ON"            ; echo " * Coverage                 : ON"      ; shift   ;;
+       --enable-tests)              enable_tests="ON"               ; echo " * Enable CTest             : ON"      ; shift   ;;
+       --run-tests)                 run_tests="ON"                  ; echo " * Run CTest                : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose cmake & make     : ON"      ; shift   ;;
@@ -388,11 +392,11 @@ if [ -z "$dry_run" ] ;then
     fi
 
 
-    if [ "$enable_tests" = "ON" ] ;then
+    if [ "$run_tests" = "ON" ] ;then
         if [[ "$target" == *"test-"* ]]; then
             ctest --build-config $build_type --verbose  --build-target $target -R $target
         else
-            ctest --build-config $build_type --verbose  --output-on-failure
+            ctest --build-config $build_type --verbose  --output-on-failure -R dmrg
         fi
     fi
 
