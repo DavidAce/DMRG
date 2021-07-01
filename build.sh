@@ -394,7 +394,7 @@ if [ -z "$dry_run" ] ;then
 
     if [ "$run_tests" = "ON" ] ;then
         if [[ "$target" == *"test-"* ]]; then
-            ctest --build-config $build_type --verbose  --build-target $target -R $target
+            ctest --build-config $build_type --verbose  --output-on-failure --build-target $target -R $target
         else
             ctest --build-config $build_type --verbose  --output-on-failure -R dmrg
         fi
