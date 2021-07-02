@@ -18,17 +18,13 @@ cmake
 
 [options]
 openblas:build_lapack=True
-openblas:dynamic_arch=False
+openblas:dynamic_arch=True
+
 ceres-solver:use_glog=True
 ceres-solver:use_gflags=True
 
-#ceres-solver:march=native
-#ceres-solver:verbose=True
-# backward-cpp:stack_walking=unwind
-# backward-cpp:stack_details=dwarf
-
-gflags:shared=False
-glog:shared=False
+#gflags:shared=False
+#glog:shared=False
 
 
 ### NOTE October 4 2020 ####

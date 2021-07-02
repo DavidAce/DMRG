@@ -3,7 +3,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     include(cmake/InstallPackage.cmake)
 
     # Set CMake build options
-    if(OPENBLAS_MARCH)
+    if(OPENBLAS_TARGET)
         list(APPEND OpenBLAS_ARGS -DTARGET:STRING=${OPENBLAS_MARCH})
     endif()
     list(APPEND OpenBLAS_ARGS -DUSE_THREAD:BOOL=ON)

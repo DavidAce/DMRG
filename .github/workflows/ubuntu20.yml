@@ -15,7 +15,7 @@ jobs:
     name: ${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
     runs-on: ubuntu-20.04
     env:
-      cache-name: cache-${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
+      cache-name: cache-v1-${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
     strategy:
       fail-fast: true # True stops all on first error. Stick to false when debugging
       matrix:
@@ -72,13 +72,16 @@ jobs:
           pip install conan
           conan user
 
+      - name: Setup OpenBLAS core type
+        run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+
         # ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
         run: |
           ./build.sh  \
           --enable-tests \
           --enable-coverage \
-          -a haswell \
+          -a generic \
           --build-type=${{ matrix.build_type }} \
           -j 2 --verbose-cmake \
           --package-manager=${{ matrix.manager }} \

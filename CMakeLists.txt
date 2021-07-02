@@ -33,8 +33,8 @@ if (NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
 endif ()
 
 # Make an "enum" for valid march
-set(DMRG_MICROARCH_VALID haswell zen zenver1 native)
-set(DMRG_MICROARCH native CACHE STRING "Download method for external dependencies")
+set(DMRG_MICROARCH_VALID generic haswell zen zenver1 native)
+set(DMRG_MICROARCH native CACHE STRING "CPU micro-architecture")
 set_property(CACHE DMRG_MICROARCH PROPERTY STRINGS ${DMRG_MICROARCH_VALID})
 if (NOT DMRG_MICROARCH IN_LIST DMRG_MICROARCH_VALID)
     message(FATAL_ERROR "DMRG_MICROARCH must be one of ${DMRG_MICROARCH_VALID}")
@@ -152,7 +152,7 @@ CheckCXXOptional()
 ##################################################
 # -fsanitize=leak -fsanitize=undefined -fsanitize=alignment  -fsanitize=leak -fsanitize=undefined -fsanitize=alignment
 target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
-target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g ${MARCH} ${MTUNE}>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
@@ -162,6 +162,7 @@ target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CO
 target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 
 
+#######################################
 #######################################
 # Settings for sanitizers           ###
 #######################################
@@ -322,19 +323,23 @@ if (DMRG_PRINT_INFO)
 endif ()
 
 
-
 ###################
 ### INFORMATION ###
 ###################
-message("")
-message("=============================================================================")
-message("")
-message("      To clean cmake files, run './build.sh -c'")
-message("      To see more options,  run './build.sh -h'")
-message("")
-message("=============================================================================")
-message("")
 
+message("")
+message("=============================================================================")
+message("")
+if (OpenBLAS_FOUND OR NOT TARGET mkl::mkl)
+    # Using OpenBLAS
+    message("   OpenBLAS DYNAMIC_ARCH: Remember to set architecture before launch:")
+    message("          export OPENBLAS_CORETYPE=<microarch>\n")
+endif ()
+message("   To clean cmake files, run './build.sh -c'")
+message("   To see more options,  run './build.sh -h'")
+message("")
+message("=============================================================================")
+message("")
 
 
 #############################

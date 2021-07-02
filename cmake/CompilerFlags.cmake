@@ -4,19 +4,30 @@ message(STATUS "FC compiler ${CMAKE_Fortran_COMPILER}")
 message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
 
 #####################################################
-### Set  the same microarchitecture for OpenBLAS  ###
+### Set the  microarchitecture for OpenBLAS       ###
 #####################################################
-if(NOT DMRG_MICROARCH)
-    set(DMRG_MICROARCH "native")
+cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
+if($ENV{CI} OR $ENV{GITHUB_ACTIONS} OR DMRG_MICROARCH MATCHES "generic|Generic|GENERIC")
+    set(MARCH -march=x86-64)
+    set(MTUNE -mtune=generic)
+    set(OPENBLAS_TARGET GENERIC)
+elseif(_host_name MATCHES "raken" OR DMRG_MICROARCH MATCHES "haswell|Haswell|HASWELL" )
+    set(MARCH -march=haswell)
+    set(MTUNE -mtune=zenver1)
+    set(OPENBLAS_TARGET HASWELL)
+elseif(DMRG_MICROARCH MATCHES "zen|zn" )
+    set(MARCH -march=zenver1)
+    set(MTUNE -mtune=zenver1)
+    set(OPENBLAS_TARGET ZEN)
+elseif(DEFINED DMRG_MICROARCH)
+    string(TOUPPER "${DMRG_MICROARCH}" OPENBLAS_TARGET)
+    set(MARCH -march=${DMRG_MICROARCH})
+    set(MTUNE -mtune=${DMRG_MICROARCH})
+else()
+    set(MARCH -march=haswell)
+    set(MTUNE -mtune=haswell)
+    set(OPENBLAS_TARGET HASWELL)
 endif()
-if (DMRG_MICROARCH STREQUAL "zenver1")
-    set(OPENBLAS_MARCH ZEN)
-elseif (DMRG_MICROARCH STREQUAL "native")
-    set(OPENBLAS_MARCH HASWELL)
-elseif(DMRG_MICROARCH AND NOT DMRG_MICROARCH STREQUAL "native")
-    string(TOUPPER "${DMRG_MICROARCH}" OPENBLAS_MARCH)
-endif()
-
 
 ######################################################################################
 ###                   Apply RELEASE/DEBUG compile flags                            ###
@@ -46,8 +57,8 @@ endif()
 # hurt performance more, like -mno-avx, removing -DNDEBUG, or lowering -O3 to -O2.
 ######################################################################################
 
-message(STATUS "Using -march=${DMRG_MICROARCH}")
-set(CMAKE_CXX_FLAGS  "-march=${DMRG_MICROARCH} -mtune=${DMRG_MICROARCH}")
+message(STATUS "Using ${MARCH} ${MTUNE}")
+set(CMAKE_CXX_FLAGS  "${MARCH} ${MTUNE}")
 set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer") #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O2")
