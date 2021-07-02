@@ -96,6 +96,8 @@ enable_mkl="OFF"
 enable_lto="OFF"
 enable_asan="OFF"
 enable_coverage="OFF"
+enable_ccache="OFF"
+enable_pch="OFF"
 enable_tests="OFF"
 run_tests="OFF"
 install_prefix="~/dmrg-install"
@@ -128,6 +130,8 @@ do
                                     enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
                                     enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
+                                    enable_pch="ON"                 ; echo " * Preompiled headers       : $enable_pch"     ;
+                                    enable_ccache="ON"              ; echo " * Ccache                   : $enable_ccache"  ;
                                     make_threads=16                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
                                     verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
@@ -141,6 +145,8 @@ do
                                     enable_threads="ON"             ; echo " * C++11 Threads            : $enable_threads" ;
                                     enable_mkl="ON"                 ; echo " * Intel MKL                : $enable_mkl"     ;
                                     enable_lto="ON"                 ; echo " * Link Time Optimization   : $enable_lto"     ;
+                                    enable_pch="ON"                 ; echo " * Preompiled headers       : $enable_pch"     ;
+                                    enable_ccache="ON"              ; echo " * Ccache                   : $enable_ccache"  ;
                                     make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
                                     verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
@@ -160,7 +166,9 @@ do
        --enable-lto)                enable_lto="ON"                 ; echo " * Link Time Optimization   : ON"      ; shift   ;;
        --enable-asan)               enable_asan="ON"                ; echo " * Runtime sanitizers       : ON"      ; shift   ;;
        --enable-coverage)           enable_coverage="ON"            ; echo " * Coverage                 : ON"      ; shift   ;;
-       --enable-tests)              enable_tests="ON"               ; echo " * Enable CTest             : ON"      ; shift   ;;
+       --enable-pch)                enable_pch="ON"                 ; echo " * Preompiled headers       : ON"      ; shift   ;;
+       --enable-ccache)             enable_ccache="ON"              ; echo " * Ccache                   : ON"      ; shift   ;;
+       --enable-tests)              enable_tests="ON"               ; echo " * Build Tests              : ON"      ; shift   ;;
        --run-tests)                 run_tests="ON"                  ; echo " * Run CTest                : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
@@ -337,6 +345,8 @@ cat << EOF >&2
           -DDMRG_ENABLE_LTO=$enable_lto
           -DDMRG_ENABLE_ASAN=$enable_asan
           -DDMRG_ENABLE_COVERAGE=$enable_coverage
+          -DDMRG_ENABLE_PCH:BOOL=$enable_pch
+          -DDMRG_ENABLE_CCACHE:BOOL=$enable_ccache
           $extra_flags
            -G $generator
            ../../
@@ -361,6 +371,8 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_LTO=$enable_lto \
           -DDMRG_ENABLE_ASAN=$enable_asan \
           -DDMRG_ENABLE_COVERAGE=$enable_coverage \
+          -DDMRG_ENABLE_PCH:BOOL=$enable_pch \
+          -DDMRG_ENABLE_CCACHE:BOOL=$enable_ccache \
           $extra_flags \
            -G "$generator" \
            ../../

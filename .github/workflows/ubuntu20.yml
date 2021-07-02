@@ -72,6 +72,9 @@ jobs:
           pip install conan
           conan user
 
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1
+
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
 
@@ -81,6 +84,8 @@ jobs:
           ./build.sh  \
           --enable-tests \
           --enable-coverage \
+          --enable-ccache \
+          --enable-pch \
           -a generic \
           --build-type=${{ matrix.build_type }} \
           -j 2 --verbose-cmake \
