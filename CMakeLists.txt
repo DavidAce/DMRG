@@ -330,7 +330,7 @@ endif ()
 message("")
 message("=============================================================================")
 message("")
-if (OpenBLAS_FOUND OR NOT TARGET mkl::mkl)
+if (OPENBLAS_DYNAMIC_ARCH AND NOT TARGET mkl::mkl)
     # Using OpenBLAS
     message("   OpenBLAS DYNAMIC_ARCH: Remember to set architecture before launch:")
     message("          export OPENBLAS_CORETYPE=<microarch>\n")
