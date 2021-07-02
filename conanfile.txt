@@ -18,7 +18,7 @@ cmake
 
 [options]
 openblas:build_lapack=True
-openblas:dynamic_arch=True
+openblas:dynamic_arch=False
 
 ceres-solver:use_glog=True
 ceres-solver:use_gflags=True
