@@ -7,5 +7,5 @@
 - ***x*DMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
 - ***f*LBIT:** *Finite* l-BIT. Time evolution on a finite system in the basis of local integrals of motion (the
   l-bits) of an MBL phase.
-- ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally
+- ***i*TEBD:** *Imaginary* Time Evolving Block Decimation. Finds the ground state of infinite and translationally
   invariant systems using unitary operators that perform imaginary time evolution.
