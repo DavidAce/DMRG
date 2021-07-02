@@ -28,6 +28,8 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-mkl               : Enable Intel MKL
    | --enable-lto               : Enable Link Time Optimization
    | --enable-asan              : Enable runtime sanitizers, i.e. -fsanitize=address
+   | --enable-pch               : Enable Precompiled Headers
+   | --enable-ccache            : Enable ccache for speeding up compilation
    | --enable-coverage          : Enable test coverage
 -t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest (builds test targets)
@@ -69,6 +71,8 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 enable-lto\
                 enable-asan\
                 enable-coverage\
+                enable-pch\
+                enable-ccache\
                 enable-tests\
                 run-tests\
                 no-modules\
