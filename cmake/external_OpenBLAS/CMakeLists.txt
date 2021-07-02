@@ -6,7 +6,7 @@ endif()
 include(GNUInstallDirs)
 include(ExternalProject)
 if(NOT TARGET)
-    set(TARGET HASWELL)
+    set(TARGET GENERIC)
 endif()
 
 
@@ -28,7 +28,7 @@ ExternalProject_Add(external_OpenBLAS
         -DCMAKE_INSTALL_MESSAGE=LAZY
         # OpenBLAS flags
         -DTARGET:STRING=${TARGET}
-        -DDYNAMIC_ARCH:BOOL=OFF
+        -DDYNAMIC_ARCH:BOOL=ON
         -DUSE_THREAD:BOOL=${USE_THREAD}
         -DBUILD_RELAPACK:BOOL=${BUILD_RELAPACK}
         -DBINARY=64

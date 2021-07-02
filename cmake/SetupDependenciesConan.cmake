@@ -10,7 +10,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ##############################################################################
     if(DMRG_ENABLE_MKL)
         find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-
         include(cmake/getExpandedTarget.cmake)
         expand_target_libs(BLAS::BLAS BLAS_LIBRARIES)
         # Passing BLAS_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
@@ -23,18 +22,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 OPTIONS arpack-ng:blas_libraries=${BLAS_LIBRARIES}
                 OPTIONS arpack-ng:lapack_libraries=${BLAS_LIBRARIES}
                 )
-        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-        if(_host_name MATCHES "raken")
-            message(STATUS
-                    "Setting OpenBLAS dynamic_arch=True"
-                    "Remember to set environment variable"
-                    "   OPENBLAS_CORETYPE=<microarch>"
-                    "before launching the executable")
-            list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=True)
-        else()
-            message(STATUS "Setting OpenBLAS dynamic_arch=False")
-            list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
-        endif()
     endif()
 
     if(CMAKE_BUILD_TYPE MATCHES "Debug")

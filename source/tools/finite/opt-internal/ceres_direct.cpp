@@ -16,6 +16,7 @@
 #include <tools/finite/opt-internal/opt-internal.h>
 #include <tools/finite/opt-internal/report.h>
 #include <tools/finite/opt_mps.h>
+
 tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const class_algorithm_status &status,
                                                                                       OptType optType, OptMode optMode, OptSpace optSpace) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
