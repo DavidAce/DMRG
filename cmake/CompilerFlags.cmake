@@ -15,7 +15,7 @@ if($ENV{CI} OR $ENV{GITHUB_ACTIONS} OR DMRG_MICROARCH MATCHES "generic|Generic|G
     set(OPENBLAS_DYNAMIC_ARCH OFF)
 elseif(_host_name MATCHES "raken" OR DMRG_MICROARCH MATCHES "haswell|Haswell|HASWELL" )
     set(MARCH -march=haswell)
-    set(MTUNE -mtune=zenver1)
+    set(MTUNE -mtune=znver1)
     set(OPENBLAS_TARGET HASWELL)
     set(OPENBLAS_DYNAMIC_ARCH OFF)
 elseif(DMRG_MICROARCH MATCHES "zen|zn" )
