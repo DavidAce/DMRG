@@ -12,7 +12,7 @@ location    = "input"
 
 
 sites               = np.array([16,20])
-lambdas             = [0.000]
+lambdas             = [0.000, 0.001]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [2]
