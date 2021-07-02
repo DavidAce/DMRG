@@ -8,6 +8,9 @@ include(ExternalProject)
 if(NOT TARGET)
     set(TARGET GENERIC)
 endif()
+if(NOT DEFINED DYNAMIC_ARCH)
+    set(DYNAMIC_ARCH OFF)
+endif()
 
 
 ExternalProject_Add(external_OpenBLAS
@@ -28,7 +31,7 @@ ExternalProject_Add(external_OpenBLAS
         -DCMAKE_INSTALL_MESSAGE=LAZY
         # OpenBLAS flags
         -DTARGET:STRING=${TARGET}
-        -DDYNAMIC_ARCH:BOOL=ON
+        -DDYNAMIC_ARCH:BOOL=${DYNAMIC_ARCH}
         -DUSE_THREAD:BOOL=${USE_THREAD}
         -DBUILD_RELAPACK:BOOL=${BUILD_RELAPACK}
         -DBINARY=64

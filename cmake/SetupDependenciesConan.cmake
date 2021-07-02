@@ -24,9 +24,9 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 )
     endif()
 
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
-    endif()
+#    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+#        list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
+#    endif()
     if(BUILD_SHARED_LIBS)
         list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=True")
     else()
@@ -63,7 +63,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 CONAN_COMMAND
                 conan
                 HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
-                PATHS $ENV{HOME}/.local $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
+                PATHS
+                $ENV{HOME}/anaconda3
+                $ENV{HOME}/miniconda3
+                $ENV{HOME}/anaconda
+                $ENV{HOME}/miniconda
+                $ENV{HOME}/.local
+                $ENV{HOME}/.conda
                 PATH_SUFFIXES bin envs/dmrg/bin
         )
         if(NOT CONAN_COMMAND)
