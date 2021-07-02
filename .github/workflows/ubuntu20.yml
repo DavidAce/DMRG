@@ -74,6 +74,9 @@ jobs:
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ env.cache-name }}
+          max-size: 1000M
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
