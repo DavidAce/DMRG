@@ -130,7 +130,16 @@ else
     echo "Executable does not exist: $exec"
     exit 1
 fi
-
+# Make sure the executable would find its dynamically loaded libraries
+# This is copied from build.sh
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    module load foss/2020b
+    export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
+    export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
+elif [[ "$HOSTNAME" == *"raken"* ]];then
+    module load imkl
+fi
 
 if ldd $exec | grep 'not found'; then
   echo "Some dynamic libraries were not found."
