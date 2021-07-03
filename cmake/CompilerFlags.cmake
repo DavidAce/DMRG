@@ -63,6 +63,12 @@ endif()
 # hurt performance more, like -mno-avx, removing -DNDEBUG, or lowering -O3 to -O2.
 ######################################################################################
 
+#######################################
+### Write compile commands to file  ###
+#######################################
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 message(STATUS "Using ${MARCH} ${MTUNE}")
 set(CMAKE_CXX_FLAGS  "${MARCH} ${MTUNE}")
 set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic")
