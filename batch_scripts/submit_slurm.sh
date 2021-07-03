@@ -131,6 +131,13 @@ else
     exit 1
 fi
 
+
+if ldd $exec | grep 'not found'; then
+  echo "Some dynamic libraries were not found."
+  echo "Perhaps a module needs to be loaded."
+  exit 1
+fi
+
 # Load the required parallel module
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module try-load parallel/20181122-nsc1

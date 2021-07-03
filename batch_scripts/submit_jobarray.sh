@@ -133,7 +133,22 @@ if [ "$simsperarray" -gt "$simspercfg" ]; then
     exit 1
 fi
 
-
+# Deactivate conda so that we do not get conflicting dynamic libraries
+if [ -n "$CONDA_PREFIX" ] ; then
+    if [ -f "$CONDA_PREFIX_1/etc/profile.d/conda.sh" ]; then
+        source $CONDA_PREFIX_1/etc/profile.d/conda.sh
+    fi
+    if [ -f "$CONDA_PREFIX/etc/profile.d/conda.sh" ]; then
+        source $CONDA_PREFIX/etc/profile.d/conda.sh
+    fi
+    counter=0
+    while [ -n "$CONDA_PREFIX" ] && [  $counter -lt 10 ]; do
+        let counter=counter+1
+        echo "Deactivating conda environment $CONDA_PREFIX"
+        conda deactivate
+    done
+    conda info --envs
+fi
 
 
 exec=../build/$build_type/$execname
@@ -143,6 +158,38 @@ else
     echo "Executable does not exist: $exec"
     #exit 1
 fi
+
+# Make sure the executable would find its dynamically loaded libraries
+# This is copied from build.sh
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    module load foss/2020b
+    export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
+    export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
+elif [[ "$HOSTNAME" == *"raken"* ]];then
+    module load imkl
+fi
+
+# Make sure the executable would find its dynamically loaded libraries
+# This is copied from build.sh
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    module load foss/2020b
+    export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
+    export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
+elif [[ "$HOSTNAME" == *"raken"* ]];then
+    module load imkl
+fi
+
+
+if ldd $exec | grep 'not found'; then
+  echo "Some dynamic libraries were not found."
+  echo "Perhaps a module needs to be loaded."
+  exit 1
+fi
+
+
+
 
 # Load the required parallel module
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
