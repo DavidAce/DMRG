@@ -130,14 +130,6 @@ target_include_directories(dmrg-flags SYSTEM INTERFACE source)
 
 add_library(dmrg-deps INTERFACE)
 
-##################################################################
-###  Force cmake to find .a library suffixes on static builds  ###
-##################################################################
-if (NOT BUILD_SHARED_LIBS)
-    target_link_options(DMRG++ PUBLIC -static-libgcc -static-libstdc++)   ### Static linkage
-endif ()
-
-
 #######################################################
 ###  Check  #include<optional> or                   ###
 ###  or     #include<experimental/optional>         ###
@@ -232,7 +224,7 @@ include(cmake/SetupDependencies.cmake)
 target_link_libraries(dmrg-arp PUBLIC dmrg-flags)
 target_link_libraries(dmrg-eig PUBLIC dmrg-flags)
 target_link_libraries(dmrg-opt PUBLIC dmrg-flags)
-target_link_libraries(dmrg-dbg  PUBLIC dmrg-flags)
+target_link_libraries(dmrg-dbg PUBLIC dmrg-flags)
 target_link_libraries(dmrg-main PUBLIC dmrg-flags)
 target_link_libraries(DMRG++ PUBLIC dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-dbg dmrg-deps dmrg-flags)  # Link everything to main project
 #if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
@@ -242,14 +234,19 @@ target_link_libraries(DMRG++ PUBLIC dmrg-main dmrg-eig dmrg-arp dmrg-opt dmrg-db
 #    target_compile_options(dmrg-main PRIVATE -ftime-trace)
 #    target_compile_options(DMRG++ PRIVATE -ftime-trace)
 #endif()
-
+##################################################################
+###  Link system libs statically                               ###
+##################################################################
+if (NOT BUILD_SHARED_LIBS)
+    target_link_options(DMRG++ PUBLIC -static-libgcc -static-libstdc++)
+endif ()
 
 
 ##################################################################
 ### Speed up compilation with precompiled headers              ###
 ##################################################################
-if(DMRG_ENABLE_PCH)
-    if(COMMAND target_precompile_headers)
+if (DMRG_ENABLE_PCH)
+    if (COMMAND target_precompile_headers)
         target_precompile_headers(dmrg-flags INTERFACE <string> <vector> <array> <optional> <complex> <memory>)
         target_precompile_headers(dmrg-eig PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
         target_precompile_headers(dmrg-opt PRIVATE <Eigen/Core> <unsupported/Eigen/CXX11/Tensor>)
