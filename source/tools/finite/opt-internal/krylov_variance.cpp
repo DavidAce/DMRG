@@ -43,27 +43,19 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
     solver_max.setLogLevel(2);
 
     solver_shift.config.tol      = settings::precision::eig_tolerance;
-    solver_shift.config.maxIter  = 200;
+    solver_shift.config.maxIter  = 400;
     solver_shift.config.maxTime  = 30 * 60;
     solver_shift.config.maxNev   = 1;
     solver_shift.config.maxNcv   = 64;
     solver_shift.config.compress = true;
     solver_shift.setLogLevel(2);
     //
-    //    solver_primme_lm.config.tol      = settings::precision::eig_tolerance;
-    //    solver_primme_lm.config.maxIter  = 50000;
-    //    solver_primme_lm.config.maxTime  = 30 * 60;
-    //    solver_primme_lm.config.maxNev   = 1;
-    //    solver_primme_lm.config.maxNcv   = 128;
-    //    solver_primme_lm.config.compress = true;
-    //    solver_primme_lm.config.lib      = eig::Lib::PRIMME;
-    //    solver_primme_lm.setLogLevel(2);
 
     solver_primme_sa.config.tol      = settings::precision::eig_tolerance;
-    solver_primme_sa.config.maxIter  = 80000;
+    solver_primme_sa.config.maxIter  = 800000;
     solver_primme_sa.config.maxTime  = 30 * 60;
     solver_primme_sa.config.maxNev   = 1;
-    solver_primme_sa.config.maxNcv   = 32; // 128
+    solver_primme_sa.config.maxNcv   = 64; // 128
     solver_primme_sa.config.compress = true;
     solver_primme_sa.config.lib      = eig::Lib::PRIMME;
     solver_primme_sa.setLogLevel(2);
