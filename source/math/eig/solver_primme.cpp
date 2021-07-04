@@ -249,7 +249,33 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
         primme_free(&primme);
     } else {
         primme_free(&primme);
-        throw std::runtime_error("Primme returned with nonzero exit status: " + std::to_string(info));
+        std::string msg;
+        switch(info) {
+            case -1:
+                msg = "PRIMME_UNEXPECTED_FAILURE:\n"
+                      "set printLevel > 0 to see the call stack";
+                break;
+            case -2:
+                msg = "PRIMME_MALLOC_FAILURE:\n"
+                      "either CPU or GPU";
+                break;
+            case -3:
+                msg = "PRIMME_MAIN_ITER_FAILURE\n"
+                      "maximum number of outer iterations maxOuterIterations or matvecs maxMatvecs reached";
+                break;
+            case -4: msg = "Argument primme is null"; break;
+            case -5: msg = "n < 0 or nLocal < 0 or nLocal > n"; break;
+            case -6: msg = "numProcs < 1"; break;
+            case -40: msg = "PRIMME_LAPACK_FAILURE"; break;
+            case -41: msg = "PRIMME_USER_FAILURE"; break;
+            case -42: msg = "PRIMME_ORTHO_CONST_FAILURE"; break;
+            case -43: msg = "PRIMME_PARALLEL_FAILURE"; break;
+            case -44: msg = "PRIMME_FUNCTION_UNAVAILABLE"; break;
+            default:
+                msg = "Unknown error code: Go to \n"
+                      "http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure";
+        }
+        eig::log->warn("Primme returned with nonzero exit status {}: {}", info, msg);
     }
 
     matvecmpo_real_ptr    = nullptr;
