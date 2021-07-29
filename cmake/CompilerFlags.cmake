@@ -70,10 +70,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 message(STATUS "Using ${MARCH} ${MTUNE}")
-set(CMAKE_CXX_FLAGS  "${MARCH} ${MTUNE}")
-set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer") #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O2")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${MARCH} ${MTUNE}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -fno-strict-aliasing -Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer") #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+#set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
