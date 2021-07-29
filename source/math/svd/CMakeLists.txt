@@ -1,0 +1,6 @@
+add_library(dmrg-math-svd OBJECT)
+target_sources(dmrg-math-svd PRIVATE svd.cpp svd_eigen.cpp svd_lapacke.cpp)
+target_link_libraries(dmrg-math-svd PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-math-svd REUSE_FROM dmrg-pch)
+endif ()

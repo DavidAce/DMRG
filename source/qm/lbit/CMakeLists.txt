@@ -1,0 +1,6 @@
+add_library(dmrg-qm-lbit OBJECT)
+target_sources(dmrg-qm-lbit PRIVATE lbit.cpp)
+target_link_libraries(dmrg-qm-lbit PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-qm-lbit REUSE_FROM dmrg-pch)
+endif ()

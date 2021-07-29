@@ -1,0 +1,6 @@
+add_library(dmrg-qm-mpo OBJECT)
+target_sources(dmrg-qm-mpo PRIVATE mpo.cpp)
+target_link_libraries(dmrg-qm-mpo PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-qm-mpo REUSE_FROM dmrg-pch)
+endif ()

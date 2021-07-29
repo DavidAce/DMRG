@@ -1,0 +1,6 @@
+add_library(dmrg-tools-finite-env OBJECT)
+target_sources(dmrg-tools-finite-env PRIVATE env.cpp)
+target_link_libraries(dmrg-tools-finite-env PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-tools-finite-env REUSE_FROM dmrg-pch)
+endif ()

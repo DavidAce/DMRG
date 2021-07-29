@@ -1,0 +1,6 @@
+add_library(dmrg-math-hash OBJECT)
+target_sources(dmrg-math-hash PRIVATE hash.cpp)
+target_link_libraries(dmrg-math-hash PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-math-hash REUSE_FROM dmrg-pch)
+endif ()

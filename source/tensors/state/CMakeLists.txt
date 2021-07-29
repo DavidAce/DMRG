@@ -1,0 +1,6 @@
+add_library(dmrg-tensors-state OBJECT)
+target_sources(dmrg-tensors-state PRIVATE StateFinite.cpp StateInfinite.cpp)
+target_link_libraries(dmrg-tensors-state PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-tensors-state REUSE_FROM dmrg-pch)
+endif ()

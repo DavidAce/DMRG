@@ -1,0 +1,6 @@
+add_library(dmrg-math-eig-primme OBJECT)
+target_sources(dmrg-math-eig-primme PRIVATE solver_primme.cpp)
+target_link_libraries(dmrg-math-eig-primme PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-math-eig-primme REUSE_FROM dmrg-pch)
+endif ()

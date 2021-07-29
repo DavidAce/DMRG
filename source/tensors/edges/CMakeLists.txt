@@ -1,0 +1,6 @@
+add_library(dmrg-tensors-edges OBJECT)
+target_sources(dmrg-tensors-edges PRIVATE EdgesFinite.cpp EdgesInfinite.cpp)
+target_link_libraries(dmrg-tensors-edges PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-tensors-edges REUSE_FROM dmrg-pch)
+endif ()

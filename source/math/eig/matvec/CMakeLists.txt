@@ -1,0 +1,6 @@
+add_library(dmrg-math-eig-matvec OBJECT)
+target_sources(dmrg-math-eig-matvec PUBLIC matvec_dense.cpp matvec_sparse.cpp matvec_mpo.cpp)
+target_link_libraries(dmrg-math-eig-matvec PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-math-eig-matvec REUSE_FROM dmrg-pch)
+endif ()

@@ -1,0 +1,6 @@
+add_library(dmrg-tensors-mps OBJECT)
+target_sources(dmrg-tensors-mps PRIVATE MpsSite.cpp)
+target_link_libraries(dmrg-tensors-mps PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-tensors-mps REUSE_FROM dmrg-pch)
+endif ()

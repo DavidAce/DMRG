@@ -25,7 +25,7 @@ ExternalProject_Add(external_primme
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            ${CMAKE_MAKE_PROGRAM} ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
+            make ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
         INSTALL_COMMAND
             cmake -E copy_directory <SOURCE_DIR>/lib <INSTALL_DIR>/lib &&

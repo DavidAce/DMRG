@@ -1,0 +1,6 @@
+add_library(dmrg-tools-finite-mps OBJECT)
+target_sources(dmrg-tools-finite-mps PRIVATE mps.cpp mps_init_entangled_state.cpp mps_init_product_state.cpp)
+target_link_libraries(dmrg-tools-finite-mps PUBLIC dmrg-deps dmrg-flags)
+if (DMRG_ENABLE_PCH)
+    target_precompile_headers(dmrg-tools-finite-mps REUSE_FROM dmrg-pch)
+endif ()
