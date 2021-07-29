@@ -1,10 +1,6 @@
-//
-// Created by david on 2018-05-24.
-//
-
 #pragma once
 
-#include <algorithms/class_algorithm_status.h>
+#include <algorithms/AlgorithmStatus.h>
 #include <array>
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
@@ -466,12 +462,38 @@ class h5pp_table_itebd_profiling {
 class h5pp_table_algorithm_status {
     public:
     static inline h5pp::hid::h5t h5_type;
-    using table = class_algorithm_status;
+    static inline h5pp::hid::h5t h5_algo_type;
+    static inline h5pp::hid::h5t h5_algo_stop;
+    using table = AlgorithmStatus;
 
     h5pp_table_algorithm_status() { register_table_type(); }
     static void register_table_type() {
         if(h5_type.valid()) return;
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+
+        if(not h5_algo_type.valid()) {
+            h5_algo_type = H5Tcreate(H5T_ENUM, sizeof(AlgorithmType));
+            int val;
+            H5Tenum_insert(h5_algo_type, "iDMRG", (val = 0, &val));
+            H5Tenum_insert(h5_algo_type, "fDMRG", (val = 1, &val));
+            H5Tenum_insert(h5_algo_type, "xDMRG", (val = 2, &val));
+            H5Tenum_insert(h5_algo_type, "iTEBD", (val = 3, &val));
+            H5Tenum_insert(h5_algo_type, "flBIT", (val = 4, &val));
+            H5Tenum_insert(h5_algo_type, "ANY", (val = 5, &val));
+            H5Tlock(h5_algo_type);
+        }
+        if(not h5_algo_stop.valid()) {
+            h5_algo_stop = H5Tcreate(H5T_ENUM, sizeof(AlgorithmStop));
+            int val;
+            H5Tenum_insert(h5_algo_stop, "SUCCEEDED", (val = 0, &val));
+            H5Tenum_insert(h5_algo_stop, "SATURATED", (val = 1, &val));
+            H5Tenum_insert(h5_algo_stop, "MAX_ITERS", (val = 2, &val));
+            H5Tenum_insert(h5_algo_stop, "MAX_RESET", (val = 3, &val));
+            H5Tenum_insert(h5_algo_stop, "RANDOMIZE", (val = 4, &val));
+            H5Tenum_insert(h5_algo_stop, "NONE", (val = 5, &val));
+            H5Tlock(h5_algo_stop);
+        }
+
         /* clang-format off */
         H5Tinsert(h5_type, "iter",                        HOFFSET(table, iter),                       H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "step",                        HOFFSET(table, step),                       H5T_NATIVE_ULONG);
@@ -497,6 +519,8 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    h5pp::type::compound::H5T_COMPLEX<double>::h5type());
+        H5Tinsert(h5_type, "algo_type",                   HOFFSET(table, algo_type),                  h5_algo_type);
+        H5Tinsert(h5_type, "algo_stop",                   HOFFSET(table, algo_stop),                  h5_algo_stop);
         H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "algorithm_has_succeeded",     HOFFSET(table, algorithm_has_succeeded),    H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "algorithm_has_to_stop",       HOFFSET(table, algorithm_has_to_stop),      H5T_NATIVE_UINT8);
@@ -514,6 +538,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max),H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
+        H5Tlock(h5_type);
         /* clang-format on */
     }
 };
@@ -539,5 +564,25 @@ class h5pp_table_memory_usage {
         H5Tinsert(h5_type, "rss", HOFFSET(table, rss), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "hwm", HOFFSET(table, hwm), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "vm", HOFFSET(table, vm), H5T_NATIVE_DOUBLE);
+    }
+};
+
+class h5pp_ur {
+    public:
+    static inline h5pp::hid::h5t h5_type;
+
+    struct item {
+        double time;
+        double avg;
+        size_t count;
+    };
+
+    h5pp_ur() { register_table_type(); }
+    static void register_table_type() {
+        if(h5_type.valid()) return;
+        h5_type = H5Tcreate(H5T_COMPOUND, sizeof(item));
+        H5Tinsert(h5_type, "time", HOFFSET(item, time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "avg", HOFFSET(item, avg), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "count", HOFFSET(item, count), H5T_NATIVE_UINT64);
     }
 };

@@ -1,23 +1,15 @@
-//
-// Created by david on 2020-06-04.
-//
-
 #include "solver.h"
-#include "arpack_solver/arpack_solver.h"
-#include "math/eig/matvec/matvec_dense.h"
-#include "math/eig/matvec/matvec_mpo.h"
-#include "math/eig/matvec/matvec_sparse.h"
-#include <general/class_tic_toc.h>
+#include "log.h"
+#include "matvec/matvec_dense.h"
+#include "matvec/matvec_mpo.h"
+#include "matvec/matvec_sparse.h"
+#include "solver_arpack/solver_arpack.h"
+#include <tid/tid.h>
 
-eig::solver::solver() {
-    if(not eig::log) eig::log = tools::Logger::setLogger("eig", 2, true);
-}
+eig::solver::solver() { eig::setLevel(spdlog::level::info); }
 
-eig::solver::solver(size_t logLevel) : solver() { tools::Logger::setLogLevel(eig::log, logLevel); }
-eig::solver::solver(std::shared_ptr<spdlog::logger> logger) { eig::log = std::move(logger); }
-
-void eig::solver::setLogLevel(spdlog::level::level_enum level) const { tools::Logger::setLogLevel(eig::log, level); }
-void eig::solver::setLogLevel(size_t level) const { tools::Logger::setLogLevel(eig::log, level); }
+eig::solver::solver(size_t logLevel) : solver() { eig::setLevel(logLevel); }
+void eig::solver::setLogLevel(size_t level) const { eig::setLevel(level); }
 
 template<typename Scalar>
 void eig::solver::subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev)
@@ -63,7 +55,8 @@ void eig::solver::eig_init(Form form, Type type, Vecs compute_eigvecs, Dephase r
 
 template<eig::Form form, typename Scalar>
 void eig::solver::eig(const Scalar *matrix, size_type L, Vecs compute_eigvecs_, Dephase remove_phase_) {
-    int info = 0;
+    auto t_eig = tid::tic_scope("eig");
+    int  info  = 0;
     try {
         if constexpr(std::is_same_v<Scalar, real>) {
             eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
@@ -149,17 +142,18 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
 template<typename Scalar, eig::Storage storage>
 void eig::solver::eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma,
                        Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual) {
+    auto t_eig   = tid::tic_scope("eig");
     bool is_cplx = std::is_same<std::complex<double>, Scalar>::value;
     Type type    = is_cplx ? Type::CPLX : Type::REAL;
     eigs_init(L, nev, ncv, ritz, form, type, side, sigma, shift_invert, storage, compute_eigvecs, remove_phase);
 
     if constexpr(storage == Storage::DENSE) {
         auto                               matrix_dense = MatVecDense<Scalar>(matrix, L, true);
-        arpack_solver<MatVecDense<Scalar>> solver(matrix_dense, config, result, residual);
+        solver_arpack<MatVecDense<Scalar>> solver(matrix_dense, config, result, residual);
         solver.eigs();
     } else if constexpr(storage == Storage::SPARSE) {
         auto                                       matrix_sparse = MatVecSparse<Scalar, false>(matrix, L, true);
-        arpack_solver<MatVecSparse<Scalar, false>> solver(matrix_sparse, config, result, residual);
+        solver_arpack<MatVecSparse<Scalar, false>> solver(matrix_sparse, config, result, residual);
         solver.eigs();
     }
 }
@@ -173,6 +167,7 @@ template void eig::solver::eigs(const eig::cplx *matrix, size_type L, size_type 
 template<typename MatrixProductType>
 void eig::solver::eigs(MatrixProductType &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma, Shinv shift_invert,
                        Vecs compute_eigvecs, Dephase remove_phase, typename MatrixProductType::Scalar *residual) {
+    auto t_eig   = tid::tic_scope("eig");
     using Scalar = typename MatrixProductType::Scalar;
     Type type;
     if constexpr(std::is_same_v<Scalar, real>)
@@ -184,7 +179,7 @@ void eig::solver::eigs(MatrixProductType &matrix, size_type nev, size_type ncv, 
     eigs_init(matrix.rows(), nev, ncv, ritz, form, type, side, sigma, shift_invert, matrix.storage, compute_eigvecs, remove_phase);
     switch(config.lib.value()) {
         case Lib::ARPACK: {
-            arpack_solver<MatrixProductType> solver(matrix, config, result, residual);
+            solver_arpack<MatrixProductType> solver(matrix, config, result, residual);
             solver.eigs();
             break;
         }

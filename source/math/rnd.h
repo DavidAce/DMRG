@@ -1,19 +1,12 @@
-//
-// Created by david on 2016-07-24.
-//
-
 #pragma once
 #include <complex>
 #include <optional>
-#include <random>
-
-
+#include <vector>
 
 namespace rnd {
 
-
     // Random functions
-    extern void                 seed(std::optional<long> n = std::nullopt);
+    void                        seed(std::optional<long> n = std::nullopt);
     extern int                  uniform_integer_01();
     extern double               uniform_double_01();
     extern double               uniform_double_box(double min, double max);
@@ -24,8 +17,8 @@ namespace rnd {
     extern std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max);
     extern double               normal(double mean, double std);
     extern double               log_normal(double mean, double std);
-    extern std::vector<int>     random_with_replacement(const std::vector<int> & indata);
-    extern std::vector<int>     random_with_replacement(const std::vector<int> & indata, size_t num_choose);
+    extern std::vector<int>     random_with_replacement(const std::vector<int> &indata);
+    extern std::vector<int>     random_with_replacement(const std::vector<int> &indata, size_t num_choose);
     extern double               gaussian_truncated(double lowerLimit, double upperLimit, double mean, double std);
 
     template<typename T>
@@ -35,6 +28,6 @@ namespace rnd {
     std::vector<T> uniform_unit_n_sphere(size_t n);
 
     template<typename T>
-    void shuffle(T & list);
+    void shuffle(T &list);
 
 }

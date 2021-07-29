@@ -4,7 +4,8 @@
 #include <string_view>
 #include <type_traits>
 #include <vector>
-enum class AlgorithmType { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
+enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
+enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode { EIGEN, LAPACKE };
@@ -13,15 +14,14 @@ enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
 enum class CopyPolicy { FORCE, TRY, OFF };
-enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy {
-    RESUME,  // Resume simulation from the latest "FULL" storage state. Throw if none is found.
-    BACKUP,  // Backup the existing file by appending .bak, then start with a new file.
-    RENAME,  // Rename the current file by appending .# to avoid collision with existing.
-    REVIVE,  // Try RESUME, but do REPLACE on error instead of throwing
-    REPLACE  // Just erase/truncate the existing file and start from the beginning.
+    RESUME, // Resume simulation from the latest "FULL" storage state. Throw if none is found.
+    BACKUP, // Backup the existing file by appending .bak, then start with a new file.
+    RENAME, // Rename the current file by appending .# to avoid collision with existing.
+    REVIVE, // Try RESUME, but do REPLACE on error instead of throwing
+    REPLACE // Just erase/truncate the existing file and start from the beginning.
 };
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
@@ -127,48 +127,37 @@ enum class xdmrg_task {
     PROF_RESET,
 };
 
-template <typename T, bool B = std::is_enum<T>::value>
+template<typename T, bool B = std::is_enum<T>::value>
 struct is_scoped_enum : std::false_type {};
-template <typename T>
+template<typename T>
 struct is_scoped_enum<T, true> : std::integral_constant<bool, !std::is_convertible<T, typename std::underlying_type<T>::type>::value> {};
 template<typename T>
 constexpr bool is_scoped_enum_v = is_scoped_enum<T>();
 
-
-template<typename E,
-         typename = std::enable_if<is_scoped_enum_v<E>>,
-         typename = std::enable_if<std::is_same_v<E,OptExit>>>
+template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
 constexpr typename std::underlying_type<E>::type enum2int(E e) noexcept {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-template<typename E,
-    typename = std::enable_if<is_scoped_enum_v<E>>,
-    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
 constexpr inline E operator|(E lhs, E rhs) {
     using T = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<T>(lhs) | static_cast<T>(rhs));
 }
 
-template<typename E,
-    typename = std::enable_if<is_scoped_enum_v<E>>,
-    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
 constexpr inline E operator&(E lhs, E rhs) {
     using T = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<T>(lhs) & static_cast<T>(rhs));
 }
 
-template<typename E,
-    typename = std::enable_if<is_scoped_enum_v<E>>,
-    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
 constexpr inline E &operator|=(E &lhs, E rhs) {
     lhs = lhs | rhs;
     return lhs;
 }
 
-template<typename E,
-    typename = std::enable_if<is_scoped_enum_v<E>>,
-    typename = std::enable_if<std::is_same_v<E,OptExit>>>
+template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
 inline bool has_flag(E target, E check) {
     return (target & check) == check;
 }
@@ -176,6 +165,7 @@ inline bool has_flag(E target, E check) {
 /* clang-format off */
 template<typename T>
 constexpr std::string_view enum2str(const T &item) {
+    static_assert(std::is_enum_v<T> and "enum2str<T>: T must be an enum");
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == AlgorithmType::iDMRG)                                return "iDMRG";
         if(item == AlgorithmType::fDMRG)                                return "fDMRG";
@@ -206,13 +196,13 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == EdgeStatus::STALE)                                   return "STALE";
         if(item == EdgeStatus::FRESH)                                   return "FRESH";
     }
-    if constexpr(std::is_same_v<T, StopReason>) {
-        if(item == StopReason::SUCCEEDED)                               return "SUCCEEDED";
-        if(item == StopReason::SATURATED)                               return "SATURATED";
-        if(item == StopReason::MAX_ITERS)                               return "MAX_ITERS";
-        if(item == StopReason::MAX_RESET)                               return "MAX_RESET";
-        if(item == StopReason::RANDOMIZE)                               return "RANDOMIZE";
-        if(item == StopReason::NONE)                                    return "NONE";
+    if constexpr(std::is_same_v<T, AlgorithmStop>) {
+        if(item == AlgorithmStop::SUCCEEDED)                               return "SUCCEEDED";
+        if(item == AlgorithmStop::SATURATED)                               return "SATURATED";
+        if(item == AlgorithmStop::MAX_ITERS)                               return "MAX_ITERS";
+        if(item == AlgorithmStop::MAX_RESET)                               return "MAX_RESET";
+        if(item == AlgorithmStop::RANDOMIZE)                               return "RANDOMIZE";
+        if(item == AlgorithmStop::NONE)                                    return "NONE";
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == ResetReason::INIT)                                   return "INIT";
@@ -429,13 +419,13 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "STALE")                                 return EdgeStatus::STALE ;
         if(item == "FRESH")                                 return EdgeStatus::FRESH ;
     }
-    if constexpr(std::is_same_v<T, StopReason>) {
-        if(item == "SUCCEEDED")                             return StopReason::SUCCEEDED;
-        if(item == "SATURATED")                             return StopReason::SATURATED;
-        if(item == "MAX_ITERS")                             return StopReason::MAX_ITERS;
-        if(item == "MAX_RESET")                             return StopReason::MAX_RESET;
-        if(item == "RANDOMIZE")                             return StopReason::RANDOMIZE;
-        if(item == "NONE")                                  return StopReason::NONE;
+    if constexpr(std::is_same_v<T, AlgorithmStop>) {
+        if(item == "SUCCEEDED")                             return AlgorithmStop::SUCCEEDED;
+        if(item == "SATURATED")                             return AlgorithmStop::SATURATED;
+        if(item == "MAX_ITERS")                             return AlgorithmStop::MAX_ITERS;
+        if(item == "MAX_RESET")                             return AlgorithmStop::MAX_RESET;
+        if(item == "RANDOMIZE")                             return AlgorithmStop::RANDOMIZE;
+        if(item == "NONE")                                  return AlgorithmStop::NONE;
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == "INIT")                                  return ResetReason::INIT;

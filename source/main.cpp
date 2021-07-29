@@ -1,11 +1,11 @@
 /*! \file */
 
-#include <algorithms/class_algorithm_launcher.h>
-#include <config/nmspc_settings.h>
-#include <general/nmspc_tensor_omp.h>
+#include <algorithms/AlgorithmLauncher.h>
+#include <config/settings.h>
 #include <h5pp/h5pp.h>
 #include <io/filesystem.h>
 #include <math/rnd.h>
+#include <math/tenx.h>
 #include <tools/common/log.h>
 
 #if defined(OPENBLAS_AVAILABLE)
@@ -20,8 +20,8 @@
     #include <mkl_service.h>
 #endif
 
-#include <config/class_dmrg_config.h>
-#include <general/stack_trace.h>
+#include <config/loader.h>
+#include <debug/stacktrace.h>
 #include <getopt.h>
 #include <gitversion.h>
 #include <thread>
@@ -164,10 +164,10 @@ int main(int argc, char *argv[]) {
     // B: Try loading given config file.
     //   Note that there is a default "input/input.config" if none was given
     if(not config.empty()) {
-        class_dmrg_config dmrg_config(config);
+        Loader dmrg_config(config);
         if(dmrg_config.file_exists) {
             dmrg_config.load();
-            settings::load_config(dmrg_config); // B2
+            settings::load(dmrg_config); // B2
         } else
             throw std::runtime_error(fmt::format("Could not find config file: {}", config)); // Invalid file given
         settings::input::config_filename = config;
@@ -195,8 +195,8 @@ int main(int argc, char *argv[]) {
 // Set the number of threads to be used
 #if defined(EIGEN_USE_THREADS)
     if(settings::threading::stl_threads <= 0) { settings::threading::stl_threads = (int) std::thread::hardware_concurrency(); }
-    Textra::omp::setNumThreads(settings::threading::stl_threads);
-    tools::log->info("Using Eigen Tensor with {} C++11 threads", Textra::omp::num_threads);
+    tenx::omp::setNumThreads(settings::threading::stl_threads);
+    tools::log->info("Using Eigen Tensor with {} C++11 threads", tenx::omp::num_threads);
 #else
     if(settings::threading::stl_threads > 1)
         tools::log->warn("EIGEN_USE_THREADS is not defined: "
@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file
-    class_algorithm_launcher launcher;
+    AlgorithmLauncher launcher;
 
     // Run the algorithms
     launcher.run_algorithms();

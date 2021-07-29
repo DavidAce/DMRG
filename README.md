@@ -1,5 +1,5 @@
 [![Ubuntu 20.04](https://github.com/DavidAce/DMRG/workflows/Ubuntu%2020.04/badge.svg?branch=master)](https://github.com/DavidAce/DMRG/actions)
-[![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
+[![codecov](https://codecov.h5/gh/DavidAce/DMRG/branch/master/graph/badge.svg?Token=9YE72CJ522)](https://codecov.h5/gh/DavidAce/DMRG)
 
 # DMRG++
 
@@ -24,7 +24,7 @@ eigenstate of the system with high precision. DMRG++ includes 4 different algori
 
 For more information on using DMRG++, visit
 
-http://kth-dmrg.readthedocs.io/
+http://kth-dmrg.readthedocs.h5/
 
 ### Working Notes (in construction)
 
@@ -130,7 +130,7 @@ take one of these strings:
 | `cmake` **
 ¹**                     | Use isolated CMake instances to download and install dependencies during configure. Disregards pre-installed dependencies on your system |
 | `conan` **
-²**                     | Use the [Conan package manager](https://conan.io/) to download and install dependencies automatically. Disregards libraries elsewhere on your system  |
+²**                     | Use the [Conan package manager](https://conan.h5/) to download and install dependencies automatically. Disregards libraries elsewhere on your system  |
 
 There are several variables you can pass to CMake to guide `find_package` calls and install location,
 see [CMake options](#cmake-options) below.

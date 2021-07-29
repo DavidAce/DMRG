@@ -1,13 +1,13 @@
-//
-// Created by david on 2018-10-30.
-//
-
 #pragma once
-#include "math/eig/enums.h"
+#include "../enums.h"
 #include <array>
+#include <complex>
+#include <memory>
 #include <vector>
+namespace tid {
+    class ur;
+}
 
-class class_tic_toc;
 class primme_params;
 
 template<class Scalar_>
@@ -20,9 +20,9 @@ class MatVecMPO {
     constexpr static eig::Storage storage          = eig::Storage::TENSOR;
 
     private:
-    const Scalar_ *     envL;
-    const Scalar_ *     envR;
-    const Scalar_ *     mpo;
+    const Scalar_      *envL;
+    const Scalar_      *envR;
+    const Scalar_      *mpo;
     std::array<long, 3> shape_mps;
     std::array<long, 4> shape_mpo;
     std::array<long, 3> shape_envL;
@@ -42,9 +42,9 @@ class MatVecMPO {
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
     public:
-    MatVecMPO(const Scalar_ *     envL_,      /*!< The left block tensor.  */
-              const Scalar_ *     envR_,      /*!< The right block tensor.  */
-              const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
+    MatVecMPO(const Scalar_      *envL_,      /*!< The left block tensor.  */
+              const Scalar_      *envR_,      /*!< The right block tensor.  */
+              const Scalar_      *mpo_,       /*!< The Hamiltonian MPO's  */
               std::array<long, 3> shape_mps_, /*!< An array containing the dimensions of the multisite mps  */
               std::array<long, 4> shape_mpo_  /*!< An array containing the dimensions of the multisite mpo  */
     );
@@ -69,9 +69,9 @@ class MatVecMPO {
     [[nodiscard]] const eig::Form &get_form() const;
     [[nodiscard]] const eig::Side &get_side() const;
 
-    [[nodiscard]] const Scalar *      get_mpo() const { return mpo; }
-    [[nodiscard]] const Scalar *      get_envL() const { return envL; }
-    [[nodiscard]] const Scalar *      get_envR() const { return envR; }
+    [[nodiscard]] const Scalar       *get_mpo() const { return mpo; }
+    [[nodiscard]] const Scalar       *get_envL() const { return envL; }
+    [[nodiscard]] const Scalar       *get_envR() const { return envR; }
     [[nodiscard]] std::array<long, 4> get_shape_mpo() const { return shape_mpo; }
     [[nodiscard]] std::array<long, 3> get_shape_envL() const { return shape_envL; }
     [[nodiscard]] std::array<long, 3> get_shape_envR() const { return shape_envR; }
@@ -81,7 +81,7 @@ class MatVecMPO {
     [[nodiscard]] bool isReadyCompress() const { return readyCompress; }
 
     // Profiling
-    std::unique_ptr<class_tic_toc> t_factorOP;
-    std::unique_ptr<class_tic_toc> t_multOPv;
-    std::unique_ptr<class_tic_toc> t_multAx;
+    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_multOPv;
+    std::unique_ptr<tid::ur> t_multAx;
 };

@@ -1,6 +1,6 @@
 set(test_inc
-${CMAKE_SOURCE_DIR}/source/physics/class_quantum_gates.cpp
-${CMAKE_SOURCE_DIR}/source/physics/nmspc_quantum_mechanics.cpp
-${CMAKE_SOURCE_DIR}/source/math/rnd/rnd.cpp
-${CMAKE_SOURCE_DIR}/source/math/linalg/matrix.cpp
+$<TARGET_OBJECTS:dmrg-math-rnd>
+$<TARGET_OBJECTS:dmrg-math-linalg>
+$<TARGET_OBJECTS:dmrg-qm-spin>
 )
+

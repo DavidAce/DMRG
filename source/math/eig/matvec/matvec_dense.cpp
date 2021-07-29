@@ -1,12 +1,7 @@
-//
-// Created by david on 2018-11-16.
-//
-
 #include "matvec_dense.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
-#include <general/class_tic_toc.h>
-#include <memory>
+#include <tid/tid.h>
 #define profile_matrix_product_dense 1
 
 // Function definitions
@@ -37,7 +32,7 @@ MatVecDense<Scalar>::~MatVecDense() {
     dense_lu::reset();
 }
 
-// Pointer to data constructor, copies the matrix into an internal Eigen matrix.
+// Pointer to data constructor, copies the matrix into an init Eigen matrix.
 template<typename Scalar>
 MatVecDense<Scalar>::MatVecDense(const Scalar *const A_, const long L_, const bool copy_data, const eig::Form form_, const eig::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
@@ -57,21 +52,19 @@ void MatVecDense<Scalar>::FactorOP()
  *  Factors P(A-sigma*I) = LU
  */
 {
+    auto token = t_factorOP->tic_token();
     if(readyFactorOp) return; // happens only once
     if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
-    t_factorOP->tic();
     if constexpr(std::is_same_v<Scalar, eig::real>) { dense_lu::lu_real.value().compute(A_matrix); }
     if constexpr(std::is_same_v<Scalar, eig::cplx>) { dense_lu::lu_cplx.value().compute(A_matrix); }
-
     readyFactorOp = true;
-    t_factorOP->toc();
 }
 
 template<typename Scalar>
 void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
     assert(readyFactorOp and "FactorOp() has not been run yet.");
-    t_multOPv->tic();
+    auto t_token = t_multOPv->tic_token();
     switch(side) {
         case eig::Side::R: {
             Eigen::Map<VectorType<Scalar>> x_in(x_in_ptr, L);
@@ -91,13 +84,12 @@ void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    t_multOPv->toc();
     counter++;
 }
 
 template<typename Scalar>
 void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
-    auto                                 token = t_multAx->tic_token();
+    auto                                 t_token = t_multAx->tic_token();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
     switch(form) {
         case eig::Form::NSYM:
@@ -131,15 +123,15 @@ void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
 
 template<typename T>
 void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    auto                                 token = t_multAx->tic_token();
+    auto                                 t_token = t_multAx->tic_token();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
     switch(form) {
         case eig::Form::NSYM:
             switch(side) {
                 case eig::Side::R: {
                     for(int i = 0; i < *blockSize; i++) {
-                        T *                            x_in  = static_cast<T *>(x) + *ldx * i;
-                        T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                        T                             *x_in  = static_cast<T *>(x) + *ldx * i;
+                        T                             *x_out = static_cast<T *>(y) + *ldy * i;
                         Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                         Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                         x_vec_out.noalias() = A_matrix * x_vec_in;
@@ -149,8 +141,8 @@ void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize
                 }
                 case eig::Side::L: {
                     for(int i = 0; i < *blockSize; i++) {
-                        T *                            x_in  = static_cast<T *>(x) + *ldx * i;
-                        T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                        T                             *x_in  = static_cast<T *>(x) + *ldx * i;
+                        T                             *x_out = static_cast<T *>(y) + *ldy * i;
                         Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                         Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                         x_vec_out.noalias() = x_vec_in * A_matrix;
@@ -165,8 +157,8 @@ void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize
             break;
         case eig::Form::SYMM: {
             for(int i = 0; i < *blockSize; i++) {
-                T *                            x_in  = static_cast<T *>(x) + *ldx * i;
-                T *                            x_out = static_cast<T *>(y) + *ldy * i;
+                T                             *x_in  = static_cast<T *>(x) + *ldx * i;
+                T                             *x_out = static_cast<T *>(y) + *ldy * i;
                 Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                 Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                 x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Lower>() * x_vec_in;
@@ -217,9 +209,9 @@ const eig::Side &MatVecDense<Scalar>::get_side() const {
 
 template<typename Scalar>
 void MatVecDense<Scalar>::init_profiling() {
-    t_factorOP = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time FactorOp");
-    t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultOpv");
-    t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_dense, 5, "Time MultAx");
+    t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
+    t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
+    t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
 // Explicit instantiations

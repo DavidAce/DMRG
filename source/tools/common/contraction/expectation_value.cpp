@@ -1,7 +1,6 @@
-#include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_tensor_omp.h>
+#include <io/fmt.h>
+#include <math/tenx.h>
 #include <tools/common/contraction.h>
-#include <tools/common/fmt.h>
 using namespace tools::common::contraction;
 
 /* clang-format off */
@@ -30,17 +29,18 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
         throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
 
     Eigen::Tensor<Scalar, 0> expval;
-    expval.device(Textra::omp::getDevice()) =
+    expval.device(tenx::omp::getDevice()) =
         envL
-            .contract(mps,                  Textra::idx({0}, {1}))
-            .contract(mpo,                  Textra::idx({2, 1}, {2, 0}))
-            .contract(mps.conjugate(),      Textra::idx({3, 0}, {0, 1}))
-            .contract(envR,                 Textra::idx({0, 2, 1}, {0, 1, 2}));
+            .contract(mps,                  tenx::idx({0}, {1}))
+            .contract(mpo,                  tenx::idx({2, 1}, {2, 0}))
+            .contract(mps.conjugate(),      tenx::idx({3, 0}, {0, 1}))
+            .contract(envR,                 tenx::idx({0, 2, 1}, {0, 1, 2}));
 
     double moment = 0;
     if constexpr(std::is_same_v<Scalar,cplx>){
         moment = std::real(expval(0));
         if(abs(std::imag(expval(0))) > 1e-10)
+//            printf("Expectation value has an imaginary part: %.16f + i %.16f", std::real(expval(0)), std::imag(expval(0)));
             fmt::print("Expectation value has an imaginary part: {:.16f} + i {:.16f}\n", std::real(expval(0)), std::imag(expval(0)));
         //        throw std::runtime_error(fmt::format("Expectation value has an imaginary part: {:.16f} + i {:.16f}", std::real(expval(0)), std::imag(expval(0))));
     }else
@@ -80,12 +80,12 @@ template double tools::common::contraction::expectation_value(const cplx * const
 //
 //    Eigen::Tensor<Scalar, 0> M1;
 //    /* clang-format off */
-//    M1.device(Textra::omp::getDevice()) =
+//    M1.device(tenx::omp::getDevice()) =
 //        envL
-//            .contract(mps,                  Textra::idx({0}, {1}))
-//            .contract(mpo,                  Textra::idx({2, 1}, {2, 0}))
-//            .contract(mps.conjugate(),      Textra::idx({3, 0}, {0, 1}))
-//            .contract(envR,                 Textra::idx({0, 2, 1}, {0, 1, 2}));
+//            .contract(mps,                  tenx::idx({0}, {1}))
+//            .contract(mpo,                  tenx::idx({2, 1}, {2, 0}))
+//            .contract(mps.conjugate(),      tenx::idx({3, 0}, {0, 1}))
+//            .contract(envR,                 tenx::idx({0, 2, 1}, {0, 1, 2}));
 //    /* clang-format on */
 //
 //    if(abs(std::imag(M1(0))) > 1e-10) {

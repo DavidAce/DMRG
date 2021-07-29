@@ -1,7 +1,3 @@
-//
-// Created by david on 2020-06-04.
-//
-
 #include "solution.h"
 
 void eig::solution::build_eigvecs_cplx() {

@@ -3,7 +3,7 @@
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <Eigen/SparseLU>
-#include <general/class_tic_toc.h>
+#include <tid/tid.h>
 #define profile_matrix_product_sparse 1
 
 template<typename T>
@@ -73,7 +73,7 @@ void MatVecSparse<Scalar, sparseLU>::FactorOP()
 {
     if(readyFactorOp) { return; }
     if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
-    t_factorOP->tic();
+    auto                                 t_token = t_factorOP->tic_token();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
 
     // Real
@@ -89,7 +89,6 @@ void MatVecSparse<Scalar, sparseLU>::FactorOP()
     }
     if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU) { sparse_lu::lu_cplx_sparse.value().compute(sparse_lu::A_cplx_sparse.value()); }
 
-    t_factorOP->toc();
     readyFactorOp = true;
 }
 
@@ -189,8 +188,8 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
                 case eig::Side::R: {
                     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
                     for(int i = 0; i < *blockSize; i++) {
-                        T *                    x_in  = static_cast<T *>(x) + *ldx * i;
-                        T *                    x_out = static_cast<T *>(y) + *ldy * i;
+                        T                     *x_in  = static_cast<T *>(x) + *ldx * i;
+                        T                     *x_out = static_cast<T *>(y) + *ldy * i;
                         Eigen::Map<VectorType> x_vec_in(x_in, L);
                         Eigen::Map<VectorType> x_vec_out(x_out, L);
                         if constexpr(not sparseLU)
@@ -206,8 +205,8 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
                 case eig::Side::L: {
                     using VectorTypeT = Eigen::Matrix<T, 1, Eigen::Dynamic>;
                     for(int i = 0; i < *blockSize; i++) {
-                        T *                     x_in  = static_cast<T *>(x) + *ldx * i;
-                        T *                     x_out = static_cast<T *>(y) + *ldy * i;
+                        T                      *x_in  = static_cast<T *>(x) + *ldx * i;
+                        T                      *x_out = static_cast<T *>(y) + *ldy * i;
                         Eigen::Map<VectorTypeT> x_vec_in(x_in, L);
                         Eigen::Map<VectorTypeT> x_vec_out(x_out, L);
                         if constexpr(not sparseLU)
@@ -228,8 +227,8 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
         case eig::Form::SYMM: {
             using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
             for(int i = 0; i < *blockSize; i++) {
-                T *                    x_in  = static_cast<T *>(x) + *ldx * i;
-                T *                    x_out = static_cast<T *>(y) + *ldy * i;
+                T                     *x_in  = static_cast<T *>(x) + *ldx * i;
+                T                     *x_out = static_cast<T *>(y) + *ldy * i;
                 Eigen::Map<VectorType> x_vec_in(x_in, L);
                 Eigen::Map<VectorType> x_vec_out(x_out, L);
                 if constexpr(not sparseLU) x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Upper>() * x_vec_in;
@@ -296,9 +295,9 @@ const eig::Side &MatVecSparse<Scalar, sparseLU>::get_side() const {
 
 template<typename Scalar, bool sparseLU>
 void MatVecSparse<Scalar, sparseLU>::init_profiling() {
-    t_factorOP = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time FactorOp");
-    t_multOPv  = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultOpv");
-    t_multAx   = std::make_unique<class_tic_toc>(profile_matrix_product_sparse, 5, "Time MultAx");
+    t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
+    t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
+    t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
 // Explicit instantiations

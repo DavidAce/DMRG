@@ -1,32 +1,26 @@
-//
-// Created by david on 2019-01-30.
-//
-
 #include <config/debug.h>
-#include <general/nmspc_iter.h>
-#include <general/nmspc_tensor_extra.h>
+#include <general/iter.h>
+#include <io/fmt.h>
 #include <math/rnd.h>
-#include <physics/nmspc_quantum_mechanics.h>
-#include <tensors/model/class_mpo_site.h>
-#include <tensors/state/class_mps_site.h>
-#include <tensors/state/class_state_finite.h>
-#include <tools/common/fmt.h>
+#include <math/tenx.h>
+#include <qm/mpo.h>
+#include <qm/spin.h>
+#include <tensors/site/mpo/MpoSite.h>
+#include <tensors/site/mps/MpsSite.h>
+#include <tensors/state/StateFinite.h>
+#include <tid/tid.h>
 #include <tools/common/log.h>
-#include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 
-using Scalar = std::complex<double>;
-using namespace Textra;
-
-void tools::finite::ops::apply_mpo(class_state_finite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
+void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
                                    const Eigen::Tensor<Scalar, 3> &Redge) {
     std::vector<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
     apply_mpos(state, mpos, Ledge, Redge);
 }
 
-void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 1> &Ledge,
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 1> &Ledge,
                                     const Eigen::Tensor<Scalar, 1> &Redge) {
     Eigen::Tensor<Scalar, 3> Ledge3, Redge3;
     {
@@ -35,7 +29,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
 
         long mpsDim = mps_dims[1];
         long mpoDim = mpo_dims[0];
-        Ledge3.resize(Textra::array3{mpsDim, mpsDim, mpoDim});
+        Ledge3.resize(tenx::array3{mpsDim, mpsDim, mpoDim});
         Ledge3.setZero();
         for(long i = 0; i < mpsDim; i++) {
             std::array<long, 1> extent1                     = {mpoDim};
@@ -50,7 +44,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
 
         long mpsDim = mps_dims[2];
         long mpoDim = mpo_dims[1];
-        Redge3.resize(Textra::array3{mpsDim, mpsDim, mpoDim});
+        Redge3.resize(tenx::array3{mpsDim, mpsDim, mpoDim});
         Redge3.setZero();
         for(long i = 0; i < mpsDim; i++) {
             std::array<long, 1> extent1                     = {mpoDim};
@@ -62,7 +56,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
     apply_mpos(state, mpos, Ledge3, Redge3);
 }
 
-void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
                                     const Eigen::Tensor<Scalar, 3> &Redge) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
@@ -104,17 +98,17 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *    |
          *    |------ 1
          */
-        auto &                   mps      = state.get_mps_site(0ul);
+        auto                    &mps      = state.get_mps_site(0ul);
         auto                     isCenter = mps.isCenter();
         auto                     label    = mps.get_label();
         long                     mpoDimL  = mpos.front().dimension(0);
         auto                     Ldim     = Ledge.dimension(0);
         Eigen::Tensor<Scalar, 3> M_temp =
             Ledge
-                .shuffle(Textra::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
-                .reshape(Textra::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
-                .contract(mps.get_M_bare(), Textra::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
-                .shuffle(Textra::array3{1, 0, 2});                 // Shuffle back to convention
+                .shuffle(tenx::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
+                .reshape(tenx::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
+                .contract(mps.get_M_bare(), tenx::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
+                .shuffle(tenx::array3{1, 0, 2});                 // Shuffle back to convention
         if(isCenter or label != "B") {
             Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
             mps.set_mps(M_temp, one, 0, label);
@@ -142,15 +136,15 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
          *                                                    |
          *                                            1 ------|
          */
-        auto &                   mps      = state.get_mps_site(state.get_length()-1);
+        auto                    &mps      = state.get_mps_site(state.get_length() - 1);
         auto                     label    = mps.get_label();
         bool                     isCenter = mps.isCenter();
         long                     mpoDimR  = mpos.back().dimension(1);
         auto                     Rdim     = Redge.dimension(0);
-        Eigen::Tensor<Scalar, 3> M_temp   = Redge.shuffle(Textra::array3{0, 2, 1})
-                                              .reshape(Textra::array2{Rdim * mpoDimR, Rdim})
-                                              .contract(mps.get_M(), Textra::idx({0}, {2})) // Include LC if it's there
-                                              .shuffle(Textra::array3{1, 2, 0});
+        Eigen::Tensor<Scalar, 3> M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
+                                              .reshape(tenx::array2{Rdim * mpoDimR, Rdim})
+                                              .contract(mps.get_M(), tenx::idx({0}, {2})) // Include LC if it's there
+                                              .shuffle(tenx::array3{1, 2, 0});
         Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
         if(isCenter) {
             mps.set_M(M_temp);
@@ -179,7 +173,7 @@ void tools::finite::ops::apply_mpos(class_state_finite &state, const std::vector
     state.assert_validity();
 }
 
-void tools::finite::ops::project_to_sector(class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
     // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
     // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
     // This operation leaves the global norm unchanged (thanks to the 0.5 factor) but locally each MPS loses its
@@ -189,7 +183,7 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
 
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::log->info("Projecting state into sector with sign {}", sign);
-    auto t_prj = tools::common::profile::get_default_prof()["t_prj"]->tic_token();
+    auto t_prj           = tid::tic_scope("projection");
     auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     state.clear_measurements();
@@ -201,12 +195,12 @@ void tools::finite::ops::project_to_sector(class_state_finite &state, const Eige
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
 }
 
-void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, const std::string &sector) {
+void tools::finite::ops::project_to_nearest_sector(StateFinite &state, const std::string &sector) {
     /*
      * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
      *
      * This can happen in a couple of different scenarios:
-     *      - The global state has spin component X = -1.0 and we project to +X (or vice versa)
+     *      - The global state has spin component X = -1.0 and we project to X = +1.0 (or vice versa)
      *
      * Therefore the projection is only done if the state has a chance of surviving
      * Otherwise emit a warning and return
@@ -218,8 +212,8 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
     bool                     sector_is_valid          = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
     auto                     spin_alignment_threshold = 1e-3;
     if(sector_is_valid) {
-        auto sector_sign                         = mps::internal::get_sign(sector);
-        auto paulimatrix                         = mps::internal::get_pauli(sector);
+        auto sector_sign                         = mps::init::get_sign(sector);
+        auto paulimatrix                         = mps::init::get_pauli(sector);
         auto spin_component_along_requested_axis = tools::finite::measure::spin_component(state, paulimatrix);
         // Now we have to check that the intended projection is safe
         auto spin_alignment = sector_sign * spin_component_along_requested_axis;
@@ -248,7 +242,7 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
         project_to_nearest_sector(state, chosen_axis);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
-        Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spinHalf::sx + coeffs(1) * qm::spinHalf::sy + coeffs(2) * qm::spinHalf::sz;
+        Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spin::half::sx + coeffs(1) * qm::spin::half::sy + coeffs(2) * qm::spin::half::sz;
         return project_to_sector(state, random_c2, 1);
     } else if(sector == "none") {
         return;
@@ -256,71 +250,97 @@ void tools::finite::ops::project_to_nearest_sector(class_state_finite &state, co
         throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
 }
 
-class_state_finite tools::finite::ops::get_projection_to_sector(const class_state_finite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
+StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign) {
     auto state_projected = state;
     project_to_sector(state_projected, paulimatrix, sign);
     return state_projected;
 }
 
-class_state_finite tools::finite::ops::get_projection_to_nearest_sector(const class_state_finite &state, const std::string &sector) {
+StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, const std::string &sector) {
     auto state_projected = state;
     project_to_nearest_sector(state_projected, sector);
     return state_projected;
 }
 
-double tools::finite::ops::overlap(const class_state_finite &state1, const class_state_finite &state2) {
+StateFinite tools::finite::ops::get_normalized_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign,
+                                                                    std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+    auto state_projected = state;
+    state_projected.clear_measurements();
+    state_projected.clear_cache();
+    tools::finite::mps::normalize_state(state_projected, chi_lim, svd_settings, NormPolicy::IFNEEDED);
+    tools::finite::ops::project_to_sector(state_projected, paulimatrix, sign);
+    tools::finite::mps::normalize_state(state_projected, chi_lim, svd_settings, NormPolicy::ALWAYS);
+    auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state_projected, paulimatrix));
+    if(std::abs(abs_spin_component - 1.0) > 1e-6) throw std::runtime_error(fmt::format("Projection failed: spin = {:.16f}", abs_spin_component));
+    return state_projected;
+}
+
+StateFinite tools::finite::ops::get_normalized_projection_to_nearest_sector(const StateFinite &state, const std::string &sector, std::optional<long> chi_lim,
+                                                                            std::optional<svd::settings> svd_settings) {
+    auto state_projected = state;
+    state_projected.clear_measurements();
+    state_projected.clear_cache();
+    tools::finite::mps::normalize_state(state_projected, chi_lim, svd_settings, NormPolicy::IFNEEDED);
+    tools::finite::ops::project_to_nearest_sector(state_projected, sector);
+    tools::finite::mps::normalize_state(state_projected, chi_lim, svd_settings, NormPolicy::ALWAYS);
+    auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state_projected, sector));
+    if(std::abs(abs_spin_component - 1.0) > 1e-6) throw std::runtime_error(fmt::format("Projection failed: spin {} = {:.16f}", sector, abs_spin_component));
+    return state_projected;
+}
+
+double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
     size_t                   pos     = 0;
-    Eigen::Tensor<Scalar, 2> overlap = state1.get_mps_site(pos).get_M().contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0, 1}, {0, 1}));
+    Eigen::Tensor<Scalar, 2> overlap = state1.get_mps_site(pos).get_M().contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {0, 1}));
     for(pos = 1; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), Textra::idx({0}, {1}))
-                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), Textra::idx({0, 1}, {1, 0}));
+        Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
+                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
         overlap = temp;
     }
 
-    double norm_chain = std::real(Textra::MatrixMap(overlap).trace());
+    double norm_chain = std::real(tenx::MatrixMap(overlap).trace());
     return norm_chain;
 }
 
-double tools::finite::ops::expectation_value(const class_state_finite &state1, const class_state_finite &state2,
-                                             const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos,
-                                             const Eigen::Tensor<std::complex<double>, 3> &Ledge, const Eigen::Tensor<std::complex<double>, 3> &Redge) {
-    assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
-    assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto                     mpo_it = mpos.begin();
-    Eigen::Tensor<Scalar, 3> L      = Ledge;
-    for(size_t pos = 0; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar, 3> temp = L.contract(state1.get_mps_site(pos).get_M(), idx({0}, {1}))
-                                            .contract(*mpo_it++, idx({1, 2}, {0, 2}))
-                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), idx({0, 3}, {1, 0}))
-                                            .shuffle(array3{0, 2, 1});
-
-        L = temp;
-    }
-    assert(L.dimensions() == Redge.dimensions());
-    Eigen::Tensor<Scalar, 0> E_all_sites  = L.contract(Redge, idx({0, 1, 2}, {0, 1, 2}));
-    double                   energy_chain = std::real(E_all_sites(0));
-    return energy_chain;
-}
-
-double tools::finite::ops::exp_sq_value(const class_state_finite &state1, const class_state_finite &state2,
-                                        const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
-                                        const Eigen::Tensor<std::complex<double>, 4> &Redge) {
-    assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
-    assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto                     mpo_it = mpos.begin();
-    Eigen::Tensor<Scalar, 4> L      = Ledge;
-    for(size_t pos = 0; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar, 4> temp = L.contract(state1.get_mps_site(pos).get_M(), idx({0}, {1}))
-                                            .contract(*mpo_it, idx({1, 3}, {0, 2}))
-                                            .contract(*mpo_it++, idx({1, 4}, {0, 2}))
-                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), idx({0, 4}, {1, 0}))
-                                            .shuffle(array4{0, 3, 1, 2});
-
-        L = temp;
-    }
-    assert(L.dimensions() == Redge.dimensions());
-    Eigen::Tensor<Scalar, 0> H2_all_sites = L.contract(Redge, idx({0, 1, 2, 3}, {0, 1, 2, 3}));
-    return std::real(H2_all_sites(0));
-}
+// double tools::finite::ops::expectation_value(const StateFinite &state1, const StateFinite &state2,
+//                                              const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos,
+//                                              const Eigen::Tensor<std::complex<double>, 3> &Ledge, const Eigen::Tensor<std::complex<double>, 3> &Redge) {
+//     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
+//     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
+//     auto                     mpo_it = mpos.begin();
+//     Eigen::Tensor<Scalar, 3> L      = Ledge;
+//     for(size_t pos = 0; pos < state1.get_length(); pos++) {
+//         Eigen::Tensor<Scalar, 3> temp = L.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
+//                                             .contract(*mpo_it++, tenx::idx({1, 2}, {0, 2}))
+//                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 3}, {1, 0}))
+//                                             .shuffle(tenx::array3{0, 2, 1});
+//
+//         L = temp;
+//     }
+//     assert(L.dimensions() == Redge.dimensions());
+//     Eigen::Tensor<Scalar, 0> E_all_sites  = L.contract(Redge, tenx::idx({0, 1, 2}, {0, 1, 2}));
+//     double                   energy_chain = std::real(E_all_sites(0));
+//     return energy_chain;
+// }
+//
+// double tools::finite::ops::exp_sq_value(const StateFinite &state1, const StateFinite &state2,
+//                                         const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
+//                                         const Eigen::Tensor<std::complex<double>, 4> &Redge) {
+//     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
+//     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
+//     auto                     mpo_it = mpos.begin();
+//     Eigen::Tensor<Scalar, 4> L      = Ledge;
+//     for(size_t pos = 0; pos < state1.get_length(); pos++) {
+//         Eigen::Tensor<Scalar, 4> temp = L.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
+//                                             .contract(*mpo_it, tenx::idx({1, 3}, {0, 2}))
+//                                             .contract(*mpo_it++, tenx::idx({1, 4}, {0, 2}))
+//                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 4}, {1, 0}))
+//                                             .shuffle(tenx::array4{0, 3, 1, 2});
+//
+//         L = temp;
+//     }
+//     assert(L.dimensions() == Redge.dimensions());
+//     Eigen::Tensor<Scalar, 0> H2_all_sites = L.contract(Redge, tenx::idx({0, 1, 2, 3}, {0, 1, 2, 3}));
+//     return std::real(H2_all_sites(0));
+// }

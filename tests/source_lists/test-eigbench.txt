@@ -1,0 +1,6 @@
+set(test_lnk
+    dmrg-math
+    dmrg-general
+    dmrg-tools-common-log
+    dmrg-tools-common-con
+ )

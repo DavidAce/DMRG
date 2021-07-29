@@ -1,12 +1,12 @@
-//
-// Created by david on 2018-11-16.
-//
-
 #pragma once
 
-#include "math/eig/enums.h"
+#include "../enums.h"
+#include <complex>
+#include <memory>
 #include <vector>
-class class_tic_toc;
+namespace tid {
+    class ur;
+}
 class primme_params;
 
 template<typename Scalar_>
@@ -20,7 +20,7 @@ class MatVecDense {
 
     private:
     std::vector<Scalar> A_stl; // The actual matrix. Given matrices will be copied into this one if desired
-    const Scalar *      A_ptr; // A pointer to the matrix, to allow optional copying of the matrix. Note that PartialPivLU stores LU in A.
+    const Scalar       *A_ptr; // A pointer to the matrix, to allow optional copying of the matrix. Note that PartialPivLU stores LU in A.
     const long          L;     // The linear matrix dimension
     eig::Form           form;  // Chooses SYMMETRIC / NONSYMMETRIC mode
     eig::Side           side;  // Chooses whether to find (R)ight or (L)eft eigenvectors
@@ -30,7 +30,7 @@ class MatVecDense {
     bool                 readyShift    = false; // Flag to make sure the shift has occurred
 
     public:
-    // Pointer to data constructor, copies the matrix into an internal Eigen matrix.
+    // Pointer to data constructor, copies the matrix into an init Eigen matrix.
     MatVecDense(const Scalar *const A_, const long L_, const bool copy_data, const eig::Form form_ = eig::Form::SYMM, const eig::Side side_ = eig::Side::R);
 
     ~MatVecDense();
@@ -56,8 +56,8 @@ class MatVecDense {
     [[nodiscard]] bool isReadyShift() const { return readyShift; }
 
     // Profiling
-    void                           init_profiling();
-    std::unique_ptr<class_tic_toc> t_factorOP;
-    std::unique_ptr<class_tic_toc> t_multOPv;
-    std::unique_ptr<class_tic_toc> t_multAx;
+    void                     init_profiling();
+    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_multOPv;
+    std::unique_ptr<tid::ur> t_multAx;
 };

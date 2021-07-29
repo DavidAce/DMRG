@@ -1,12 +1,28 @@
-#include(cmake/SetupDependenciesFind.cmake)
+
+#################################################################
+### Preempt Threads::Threads                                   ###
+### It's looked for in dependencies, so we make it right       ###
+### before it's done wrong, i.e. with pthread instead of       ###
+### -lpthread.                                                 ###
+### Here we specify the linking twice                          ###
+### 1) As string to make sure -lpthread gets sandwiched by     ###
+###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
+###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
+### 2) As usual to make sure that if somebody links            ###
+###    Threads::Threads, then any repeated pthread appended    ###
+###    to the end (the wrong order causes linking errors)      ###
+##################################################################
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+target_link_libraries(Threads::Threads INTERFACE rt dl)
+
+
 include(cmake/SetupDependenciesCMake.cmake)
 include(cmake/SetupDependenciesConan.cmake)
-
 
 include(cmake/InstallPackage.cmake)
 install_package(primme MODULE)
 
-target_link_libraries(dmrg-eig PUBLIC primme::primme)
 
 ##################################################################
 ### Link all the things!                                       ###
@@ -16,13 +32,15 @@ if(TARGET OpenMP::OpenMP_CXX)
 else()
     target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
 endif()
-target_link_libraries(dmrg-deps INTERFACE h5pp::h5pp arpack::arpack++ Ceres::ceres primme::primme)
-target_link_libraries(dmrg-main PUBLIC h5pp::h5pp)
-target_link_libraries(dmrg-opt PUBLIC spdlog::spdlog Ceres::ceres)
-target_link_libraries(dmrg-eig PUBLIC spdlog::spdlog Eigen3::Eigen)
-target_link_libraries(dmrg-arp PUBLIC spdlog::spdlog arpack::arpack++ primme::primme)
 
+add_library(dmrg-deps INTERFACE)
+target_link_libraries(dmrg-deps INTERFACE
+        h5pp::h5pp
+        arpack::arpack++
+        primme::primme
+        Ceres::ceres
+        )
 if(TARGET unwind::unwind)
-    target_link_libraries(dmrg-dbg PUBLIC unwind::unwind)
-    target_compile_definitions(dmrg-dbg PUBLIC DMRG_HAS_UNWIND=1)
+    target_link_libraries(dmrg-deps INTERFACE unwind::unwind)
+    target_compile_definitions(dmrg-deps INTERFACE DMRG_HAS_UNWIND=1)
 endif()

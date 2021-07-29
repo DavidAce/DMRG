@@ -1,13 +1,14 @@
 #include "matvec_mpo.h"
-#include <general/class_tic_toc.h>
+#include "../log.h"
 #include <math/svd.h>
+#include <tid/tid.h>
 #include <tools/common/contraction.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 template<typename Scalar_>
-MatVecMPO<Scalar_>::MatVecMPO(const Scalar_ *     envL_,      /*!< The left block tensor.  */
-                              const Scalar_ *     envR_,      /*!< The right block tensor.  */
-                              const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
+MatVecMPO<Scalar_>::MatVecMPO(const Scalar_      *envL_,      /*!< The left block tensor.  */
+                              const Scalar_      *envR_,      /*!< The right block tensor.  */
+                              const Scalar_      *mpo_,       /*!< The Hamiltonian MPO's  */
                               std::array<long, 3> shape_mps_, /*!< An array containing the shapes of theta  */
                               std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the MPO  */
                               )
@@ -16,10 +17,10 @@ MatVecMPO<Scalar_>::MatVecMPO(const Scalar_ *     envL_,      /*!< The left bloc
     if(envL == nullptr) throw std::runtime_error("Lblock is a nullptr!");
     if(envR == nullptr) throw std::runtime_error("Rblock is a nullptr!");
     if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
-    mps_size = shape_mps[0] * shape_mps[1] * shape_mps[2];
-    t_factorOP = std::make_unique<class_tic_toc>(true, 5, "Time FactorOp");
-    t_multOPv  = std::make_unique<class_tic_toc>(true, 5, "Time MultOpv");
-    t_multAx   = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
+    mps_size   = shape_mps[0] * shape_mps[1] * shape_mps[2];
+    t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
+    t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
+    t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
 template<typename Scalar>
@@ -136,54 +137,53 @@ void MatVecMPO<T>::compress() {
     Eigen::Tensor<T, 4> mpo_l2r, mpo_r2l;
     {
         // Compress left to right
-        auto [U_l2r,S,V_l2r] = svd.split_mpo_l2r(mpo_tmp);
-        mpo_l2r = U_l2r.contract(Textra::asDiagonal(S), Textra::idx({1},{0})).shuffle(std::array<long,4>{0,3,1,2});
+        auto [U_l2r, S, V_l2r] = svd.split_mpo_l2r(mpo_tmp);
+        mpo_l2r                = U_l2r.contract(tenx::asDiagonal(S), tenx::idx({1}, {0})).shuffle(std::array<long, 4>{0, 3, 1, 2});
         // Resize the new buffer for the compressed version of envR
-        std::array<long,3> shape_newR = {shape_envR[0], shape_envR[1], S.size()};
-        size_t newR_size = shape_newR[0]* shape_newR[1]* shape_newR[2];
+        std::array<long, 3> shape_newR = {shape_envR[0], shape_envR[1], S.size()};
+        auto                newR_size  = static_cast<size_t>(shape_newR[0] * shape_newR[1] * shape_newR[2]);
         envR_internal.resize(newR_size);
 
         // Define maps to work with the pointers
         Eigen::TensorMap<Eigen::Tensor<const T, 3>> envR_map(envR, shape_envR);
-        Eigen::TensorMap<Eigen::Tensor<T,3>> envR_internal_map (envR_internal.data(), shape_newR);
-        envR_internal_map  = envR_map.contract(V_l2r, Textra::idx({2},{1}));
+        Eigen::TensorMap<Eigen::Tensor<T, 3>>       envR_internal_map(envR_internal.data(), shape_newR);
+        envR_internal_map = envR_map.contract(V_l2r, tenx::idx({2}, {1}));
 
         // Reseat the pointer and update the size
-        envR = envR_internal.data();
+        envR       = envR_internal.data();
         shape_envR = shape_newR;
     }
     {
         // Compress right to left
-        auto [U_r2l,S ,V_r2l] = svd.split_mpo_r2l(mpo_l2r);
-        mpo_r2l = Textra::asDiagonal(S).contract(V_r2l, Textra::idx({1},{0}));
+        auto [U_r2l, S, V_r2l] = svd.split_mpo_r2l(mpo_l2r);
+        mpo_r2l                = tenx::asDiagonal(S).contract(V_r2l, tenx::idx({1}, {0}));
 
         // Resize the new buffer for the compressed version of envR
-        std::array<long,3> shape_newL = {shape_envL[0], shape_envL[1], S.size()};
-        size_t newL_size = shape_newL[0] * shape_newL[1]* shape_newL[2];
+        std::array<long, 3> shape_newL = {shape_envL[0], shape_envL[1], S.size()};
+        auto                newL_size  = static_cast<size_t>(shape_newL[0] * shape_newL[1] * shape_newL[2]);
         envL_internal.resize(newL_size);
 
         // Define maps to work with the pointers
         Eigen::TensorMap<Eigen::Tensor<const T, 3>> envL_map(envL, shape_envL);
-        Eigen::TensorMap<Eigen::Tensor<T,3>> envL_internal_map (envL_internal.data(), shape_newL);
-        envL_internal_map  = envL_map.contract(U_r2l, Textra::idx({2},{0}));
+        Eigen::TensorMap<Eigen::Tensor<T, 3>>       envL_internal_map(envL_internal.data(), shape_newL);
+        envL_internal_map = envL_map.contract(U_r2l, tenx::idx({2}, {0}));
 
         // Reseat the pointer and update the size
-        envL = envL_internal.data();
+        envL       = envL_internal.data();
         shape_envL = shape_newL;
     }
     {
-
         // Copy the new mpo
         shape_mpo = mpo_r2l.dimensions();
-        mpo_internal.resize(mpo_r2l.size());
-        Eigen::TensorMap<Eigen::Tensor<T,4>> mpo_internal_map (mpo_internal.data(), shape_mpo);
+        mpo_internal.resize(static_cast<size_t>(mpo_r2l.size()));
+        Eigen::TensorMap<Eigen::Tensor<T, 4>> mpo_internal_map(mpo_internal.data(), shape_mpo);
         mpo_internal_map = mpo_r2l;
 
         // Reseat the pointer
         mpo = mpo_internal.data();
     }
     readyCompress = true;
-    eig::log->trace("Compressed mpo² dimensions {}", shape_mpo);
+    eig::log->trace("Compressed MPO² dimensions {}", shape_mpo);
 }
 
 template<typename Scalar>

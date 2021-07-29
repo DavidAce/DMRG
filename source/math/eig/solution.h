@@ -6,13 +6,13 @@
 namespace eig {
     class solver;
     template<typename MatrixType>
-    class arpack_solver;
+    class solver_arpack;
 
     class solution {
         public:
         friend class solver;
         template<typename MatrixType>
-        friend class arpack_solver;
+        friend class solver_arpack;
 
         private:
         std::vector<real> eigvals_real;

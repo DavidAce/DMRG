@@ -1,20 +1,16 @@
-//
-// Created by david on 2019-01-29.
-//
-
 #include <string>
-#include <tensors/class_tensors_finite.h>
-#include <tensors/edges/class_edges_finite.h>
-#include <tensors/edges/class_env_ene.h>
-#include <tensors/model/class_model_finite.h>
-#include <tensors/model/class_mpo_site.h>
-#include <tensors/state/class_mps_site.h>
-#include <tensors/state/class_state_finite.h>
+#include <tensors/edges/EdgesFinite.h>
+#include <tensors/model/ModelFinite.h>
+#include <tensors/site/env/EnvEne.h>
+#include <tensors/site/mpo/MpoSite.h>
+#include <tensors/site/mps/MpsSite.h>
+#include <tensors/state/StateFinite.h>
+#include <tensors/TensorsFinite.h>
 #include <tools/common/log.h>
 #include <tools/finite/print.h>
 using Scalar = std::complex<double>;
 
-void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
+void tools::finite::print::dimensions(const TensorsFinite &tensors) {
     for(size_t pos = 0; pos < tensors.get_length(); pos++) {
         std::string tag;
         if(pos == tensors.get_position()) tag = "<---- Position A";
@@ -31,7 +27,7 @@ void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
     tools::log->info("Direction: {}", tensors.state->get_direction());
 }
 
-void tools::finite::print::model(const class_model_finite &model) {
+void tools::finite::print::model(const ModelFinite &model) {
     model.get_mpo(0).print_parameter_names();
     for(size_t pos = 0; pos < model.get_length(); pos++) model.get_mpo(pos).print_parameter_values();
 }

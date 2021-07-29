@@ -5,7 +5,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <general/nmspc_tensor_omp.h>
+#include <math/omp.h>
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>

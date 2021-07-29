@@ -1,12 +1,10 @@
 #pragma once
 #include <complex>
-#include <tools/common/log.h>
 
 namespace eig {
     using real      = double;
     using cplx      = std::complex<double>;
     using size_type = long;
-    inline std::shared_ptr<spdlog::logger> log;
 
     // Enums
     enum class Lib { ARPACK, PRIMME };                      // Choose the underlying library

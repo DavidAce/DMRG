@@ -1,3 +1,0 @@
-set(test_inc
-${CMAKE_SOURCE_DIR}/source/general/nmspc_tensor_extra.h
-)

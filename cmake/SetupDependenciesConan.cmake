@@ -3,13 +3,18 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
     #  Make sure we use DMRG's own find modules
     list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake)
+    find_package(Threads REQUIRED)
     find_package(OpenMP COMPONENTS CXX REQUIRED)
     find_package(Fortran REQUIRED)
+    # Find packages or install if missing
+
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
     ##############################################################################
     if(DMRG_ENABLE_MKL)
         find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+        add_library(lapacke::lapacke ALIAS mkl::mkl) # Lapacke is included
+
         include(cmake/getExpandedTarget.cmake)
         expand_target_libs(BLAS::BLAS BLAS_LIBRARIES)
         # Passing BLAS_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
@@ -173,13 +178,17 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Make aliases
     add_library(Eigen3::Eigen       ALIAS CONAN_PKG::eigen)
     add_library(h5pp::h5pp          ALIAS CONAN_PKG::h5pp)
+    add_library(fmt::fmt            ALIAS CONAN_PKG::fmt)
     add_library(spdlog::spdlog      ALIAS CONAN_PKG::spdlog)
     add_library(arpack::arpack++    ALIAS CONAN_PKG::arpack++)
     add_library(Ceres::ceres        ALIAS CONAN_PKG::ceres-solver)
+    add_library(unwind::unwind      ALIAS CONAN_PKG::libunwind)
     if(TARGET CONAN_PKG::openblas)
         add_library(OpenBLAS::OpenBLAS  ALIAS CONAN_PKG::openblas)
-    endif()
-    if(TARGET CONAN_PKG::libunwind)
-        add_library(unwind::unwind      ALIAS CONAN_PKG::libunwind)
+        #For convenience, define these targes
+        add_library(BLAS::BLAS ALIAS CONAN_PKG::openblas)
+        add_library(LAPACK::LAPACK ALIAS CONAN_PKG::openblas)
+        add_library(lapacke::lapacke  ALIAS CONAN_PKG::openblas)
+
     endif()
 endif()

@@ -1,5 +1,5 @@
+#include <io/fmt.h>
 #include <tools/common/log.h>
-#include <tools/common/fmt.h>
 int main (){
     tools::log = tools::Logger::setLogger("test-log",0,true);
     tools::log->info("This is a test log");

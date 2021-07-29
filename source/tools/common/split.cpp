@@ -1,17 +1,16 @@
 #include "split.h"
-#include "prof.h"
-#include <config/nmspc_settings.h>
+#include "log.h"
+#include <config/settings.h>
 #include <deque>
-#include <general/nmspc_iter.h>
-#include <general/nmspc_tensor_omp.h>
+#include <general/iter.h>
 #include <math/svd.h>
 #include <optional>
-#include <tensors/state/class_mps_site.h>
-#include <tools/common/fmt.h>
+#include <tensors/site/mps/MpsSite.h>
+#include <tid/tid.h>
 
-std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
-                                                            const std::vector<size_t> &positions, long center_position, long chi_limit,
-                                                            std::optional<svd::settings> svd_settings) {
+std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+                                                     const std::vector<size_t> &positions, long center_position, long chi_limit,
+                                                     std::optional<svd::settings> svd_settings) {
     /*  Here we split an mps containing multiple sites into its consituent sites.
      *  Consider a case with 3 sites:
      *  spin_dims = {2,2,2}
@@ -106,12 +105,11 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         throw std::runtime_error(fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                              spin_dims, positions));
     if(chi_limit <= 0) throw std::runtime_error(fmt::format("Invalid bond dimension limit:  chi_limit = {}", chi_limit));
-
+    auto t_split = tid::tic_scope("split");
     // Setup the svd settings if not given explicitly
     if(not svd_settings) svd_settings = svd::settings();
     if(not svd_settings->threshold) svd_settings->threshold = settings::precision::svd_threshold;
     if(not svd_settings->switchsize) svd_settings->switchsize = settings::precision::svd_switchsize;
-
 
     // Split the multisite tensor at the given center position.
     std::vector<size_t> positions_left, positions_right;
@@ -140,8 +138,8 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     }
 
     // Initialize the new mps_sites
-    std::vector<class_mps_site> mps_sites_As;
-    std::deque<class_mps_site>  mps_sites_Bs;
+    std::vector<MpsSite> mps_sites_As;
+    std::deque<MpsSite>  mps_sites_Bs;
     // Initialize the left/right unitary matrices
     Eigen::Tensor<Scalar, 3> U, V;
     Eigen::Tensor<Scalar, 1> S;
@@ -158,8 +156,8 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
                           spin_dims, spin_dims_left, spin_dims_right);
     if(positions.size() == positions_left.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 1");
-        auto t_split_svda = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic_token();
-        mps_sites_As      = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
+        auto t_o1    = tid::tic_scope("o1");
+        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
         // Remnant stash
         auto &mps     = mps_sites_As.back();
         auto &S_stash = mps.get_S_stash();
@@ -170,8 +168,8 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         }
     } else if(positions.size() == positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 2 - sites {} become B's", positions);
-        auto t_split_svdb = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic_token();
-        mps_sites_Bs      = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
+        auto t_o2    = tid::tic_scope("o2");
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
         // Take care of stash
         auto &mps     = mps_sites_Bs.front();
         auto &S_stash = mps.get_S_stash();
@@ -182,8 +180,7 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         }
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {
         if constexpr(settings::debug_split) tools::log->trace("Option 3");
-        auto t_split_svdm = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdm"]->tic_token();
-        auto t_svd        = tools::common::profile::get_default_prof()["t_svd"]->tic_token();
+        auto t_o3 = tid::tic_scope("o3");
         // Set up the SVD
         svd::solver svd(svd_settings);
         std::tie(U, S, V) = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
@@ -191,50 +188,44 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
         mps_sites_As.back().set_LC(S, svd.truncation_error);
         mps_sites_Bs.emplace_back(V, std::nullopt, positions.back(), 0, "B");
 
-        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
-        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
-        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
-        *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
     } else if(positions_left.size() >= positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 4");
-        auto t_split_svda = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic_token();
-        mps_sites_As      = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
+        auto t_o4    = tid::tic_scope("o4");
+        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
         // We expect stashed S and V. Merge these and send onward to B's
         auto &V_stash = mps_sites_As.back().get_V_stash();
         auto &S_stash = mps_sites_As.back().get_S_stash();
         if(V_stash and S_stash) {
-            V = Textra::asDiagonal(S_stash->data).contract(V_stash->data, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
+            V = tenx::asDiagonal(S_stash->data).contract(V_stash->data, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
             V_stash.reset();
             S_stash.reset();
-            auto t_split_svdb = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic_token();
-            mps_sites_Bs      = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_settings);
+            mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_settings);
             // Remnant S is now an LC for the last A
             auto &LC_stash = mps_sites_Bs.front().get_S_stash();
             auto &mpsA     = mps_sites_As.back();
             mpsA.set_LC(LC_stash->data, LC_stash->error);
             LC_stash.reset();
             // Remnant U is merged back into A
-            mpsA.merge_stash(mps_sites_Bs.front());
+            mpsA.take_stash(mps_sites_Bs.front());
         }
     } else if(positions_left.size() < positions_right.size()) {
         if constexpr(settings::debug) tools::log->trace("Option 5");
-        auto t_split_svdb = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svdb"]->tic_token();
-        mps_sites_Bs      = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
+        auto t_o5    = tid::tic_scope("o5");
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
         // We expect stashed U and S. Merge these and send onward to A's
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
         if(U_stash and S_stash) {
-            U = U_stash->data.contract(Textra::asDiagonal(S_stash->data), Textra::idx({2}, {0}));
+            U = U_stash->data.contract(tenx::asDiagonal(S_stash->data), tenx::idx({2}, {0}));
             U_stash.reset();
             S_stash.reset();
-            auto t_split_svda = tools::common::profile::prof[AlgorithmType::ANY]["t_split_svda"]->tic_token();
-            mps_sites_As      = internal::split_mps_into_As(U, spin_dims_left, positions_left, chi_limit, svd_settings);
+            mps_sites_As = internal::split_mps_into_As(U, spin_dims_left, positions_left, chi_limit, svd_settings);
             // Remnant S is now an LC for the last A
             auto &LC_stash = mps_sites_As.back().get_S_stash();
             auto &mpsA     = mps_sites_As.back();
             mpsA.set_LC(LC_stash->data, LC_stash->error);
             LC_stash.reset();
-            mps_sites_Bs.front().merge_stash(mpsA);
+            mps_sites_Bs.front().take_stash(mpsA);
         }
     }
 
@@ -265,9 +256,9 @@ std::vector<class_mps_site> tools::common::split::split_mps(const Eigen::Tensor<
     return mps_sites_As;
 }
 
-std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
-                                                                              const std::vector<size_t> &positions, long chi_limit,
-                                                                              std::optional<svd::settings> svd_settings) {
+std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
+                                                                       const std::vector<size_t> &positions, long chi_limit,
+                                                                       std::optional<svd::settings> svd_settings) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the left.
      *  Consider a case with 3 sites and
      *  spin_dims = {2,2,2}
@@ -311,10 +302,10 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
-    if(positions.empty()) return std::vector<class_mps_site>();
-
+    if(positions.empty()) return std::vector<MpsSite>();
+    auto t_to_a = tid::tic_scope("to_a");
     // Initialize the resulting container of split sites
-    std::vector<class_mps_site> mps_sites;
+    std::vector<MpsSite> mps_sites;
 
     // Now we have multiple spin dimensions
 
@@ -343,14 +334,10 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
         if(S_prev) {
             // Let V absorb S from the previous SVD (see note below)
             SV_temp.resize(V.dimensions());
-            SV_temp.device(Textra::omp::getDevice()) = Textra::asDiagonal(S_prev.value()).contract(V, Textra::idx({1}, {1})).shuffle(Textra::array3{1, 0, 2});
-            V                                        = SV_temp;
+            SV_temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(S_prev.value()).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+            V                                      = SV_temp;
         }
-        auto t_splitA_svd = tools::common::profile::prof[AlgorithmType::ANY]["t_splitA_svd"]->tic_token();
-        auto t_svd        = tools::common::profile::get_default_prof()["t_svd"]->tic_token();
         std::tie(U, S, V) = svd.schmidt_into_left_normalized(V, spin_dim, chi_limit);
-        t_svd.toc();
-        t_splitA_svd.toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
         // Note: Now we have the three components
@@ -366,11 +353,6 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
         S_prev_error = svd.truncation_error;
     }
 
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
-
     // Now we have a series of A-A-A-A matrices and their corresponding L's
     // At the last step we have residual S and V left over. Stash them!
     auto &mps = mps_sites.back();
@@ -380,9 +362,9 @@ std::vector<class_mps_site> tools::common::split::internal::split_mps_into_As(co
     return mps_sites;
 }
 
-std::deque<class_mps_site>
-    // std::pair<Eigen::Tensor<class_mps_site::Scalar,3>,std::vector<class_mps_site>>
-    tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<class_mps_site::Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
+std::deque<MpsSite>
+    // std::pair<Eigen::Tensor<MpsSite::Scalar,3>,std::vector<MpsSite>>
+    tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<MpsSite::Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                       const std::vector<size_t> &positions, long chi_limit, std::optional<svd::settings> svd_settings) {
     /*  Here we split an mps containing multiple sites into its consituent sites from the right
      *  Consider a case with 3 sites and
@@ -427,10 +409,11 @@ std::deque<class_mps_site>
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
-    if(positions.empty()) return std::deque<class_mps_site>();
+    if(positions.empty()) return std::deque<MpsSite>();
+    auto t_to_b = tid::tic_scope("to_b");
 
     // Initialize the resulting container of split sites
-    std::deque<class_mps_site> mps_sites;
+    std::deque<MpsSite> mps_sites;
     // Now we have multiple spin dimensions
 
     // Set up the SVD
@@ -457,14 +440,10 @@ std::deque<class_mps_site>
         if(S_prev) {
             // Let V absorb S from the previous SVD (see note below)
             US_temp.resize(U.dimensions());
-            US_temp.device(Textra::omp::getDevice()) = U.contract(Textra::asDiagonal(S), Textra::idx({2}, {0}));
-            U                                        = US_temp;
+            US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
+            U                                      = US_temp;
         }
-        auto t_splitB_svd = tools::common::profile::prof[AlgorithmType::ANY]["t_splitB_svd"]->tic_token();
-        auto t_svd        = tools::common::profile::get_default_prof()["t_svd"]->tic_token();
         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, chi_limit);
-        t_svd.toc();
-        t_splitB_svd.toc();
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
         // Note: Now we have the three components
@@ -479,11 +458,6 @@ std::deque<class_mps_site>
         S_prev       = S;
         S_prev_error = svd.truncation_error;
     }
-
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_wrk"] += *svd.t_wrk;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_adj"] += *svd.t_adj;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_jac"] += *svd.t_jac;
-    *tools::common::profile::prof[AlgorithmType::ANY]["t_svd_svd"] += *svd.t_svd;
 
     // Now we have a series of B-B-B-B matrices and their corresponding L's
     // At the last step we have residual U and S left over. Stash them!

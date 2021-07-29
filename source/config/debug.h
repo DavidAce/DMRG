@@ -4,7 +4,7 @@ namespace settings {
 #ifdef NDEBUG
     inline constexpr bool debug = false;
 #else
-    inline constexpr bool debug = true;
+    inline constexpr bool debug = false;
 #endif
     // These are for very specific, very expensive debugging when developing those steps
     inline constexpr bool debug_split = false;

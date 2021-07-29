@@ -1,12 +1,14 @@
 #pragma once
 #include "enums.h"
 #include <optional>
+#include <vector>
 namespace eig {
 
     class settings {
         public:
         // Solver library
-        std::optional<Lib> lib = std::nullopt;
+        std::optional<Lib>         lib           = std::nullopt;
+        std::optional<std::string> primme_method = std::nullopt;
         // Precision
         std::optional<double>    tol     = std::nullopt;
         std::optional<double>    maxTime = std::nullopt;

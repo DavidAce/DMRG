@@ -1,6 +1,7 @@
 #include <complex>
 #include <functional>
 #include <math/hash.h>
+#include <tid/tid.h>
 
 namespace hash {
     template<typename T>
@@ -21,7 +22,8 @@ namespace hash {
 
     template<typename T>
     std::size_t hash_buffer(const T *v, unsigned long size, std::size_t seed) {
-        std::size_t h = seed;
+        auto        t_hash = tid::tic_token("hash");
+        std::size_t h      = seed;
         if constexpr(is_std_complex_v<T>) {
             for(unsigned long idx = 0; idx < size; idx++) hash_combine(h, v[idx].real(), v[idx].imag());
             return h;

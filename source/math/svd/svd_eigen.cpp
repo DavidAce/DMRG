@@ -1,19 +1,11 @@
-
-//
-// Created by david on 2019-05-27.
-//
-
 #include <complex.h>
 #undef I
 
 #include <Eigen/QR>
 #include <Eigen/SVD>
-#include <general/class_tic_toc.h>
 #include <math/svd.h>
+#include <tid/tid.h>
 
-//
-// Created by david on 2021-03-26.
-//
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
  *  Performs rigorous checks to ensure stability of DMRG.
@@ -28,6 +20,7 @@
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    auto t_eigen = tid::tic_scope("eigen");
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     svd::log->trace("Starting SVD with Eigen");
@@ -54,15 +47,13 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
         // Run the svd
-        t_jac->tic();
+        auto t_jcb = tid::tic_token("jcb");
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
-        t_jac->toc();
     } else {
         svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
         // Run the svd
-        t_svd->tic();
+        auto t_bdc = tid::tic_token("bdc");
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-        t_svd->toc();
     }
     if(count) count.value()++;
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());

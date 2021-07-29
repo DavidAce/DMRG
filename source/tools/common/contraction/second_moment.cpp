@@ -19,35 +19,35 @@
 //    if(log2spin >= std::max(log2chiL, log2chiR)) {
 //        if(log2chiL > log2chiR) {
 //            //            tools::log->trace("H2 path: log2spin > std::max(log2chiL , log2chiR)  and  log2chiL > log2chiR ");
-//            Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(Textra::array3{1, 0, 2});
-//            M2.device(Textra::omp::getDevice()) =
+//            Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(tenx::array3{1, 0, 2});
+//            M2.device(tenx::omp::getDevice()) =
 //                mps_shuffled
-//                    .contract(envL, Textra::idx({0}, {0}))
-//                    .contract(mpo,  Textra::idx({0, 3}, {2, 0}))
-//                    .contract(envR, Textra::idx({0, 3}, {0, 2}))
-//                    .contract(mpo , Textra::idx({2, 1, 4}, {2, 0, 1}))
-//                    .contract(mps_shuffled.conjugate(), Textra::idx({2, 0, 1}, {1, 0, 2}));
+//                    .contract(envL, tenx::idx({0}, {0}))
+//                    .contract(mpo,  tenx::idx({0, 3}, {2, 0}))
+//                    .contract(envR, tenx::idx({0, 3}, {0, 2}))
+//                    .contract(mpo , tenx::idx({2, 1, 4}, {2, 0, 1}))
+//                    .contract(mps_shuffled.conjugate(), tenx::idx({2, 0, 1}, {1, 0, 2}));
 //        }
 //        else {
 //            //            tools::log->trace("H2 path: log2spin >= std::max(log2chiL , log2chiR) and  log2chiL <= log2chiR ");
-//            Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(Textra::array3{2, 0, 1});
-//            M2.device(Textra::omp::getDevice()) =
+//            Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(tenx::array3{2, 0, 1});
+//            M2.device(tenx::omp::getDevice()) =
 //                mps_shuffled
-//                    .contract(envR, Textra::idx({0}, {0}))
-//                    .contract(mpo,  Textra::idx({0, 3}, {2, 1}))
-//                    .contract(envL, Textra::idx({0, 3}, {0, 2}))
-//                    .contract(mpo,  Textra::idx({2, 4, 1}, {2, 0, 1}))
-//                    .contract(mps_shuffled.conjugate(), Textra::idx({2, 1, 0}, {1, 2, 0}));
+//                    .contract(envR, tenx::idx({0}, {0}))
+//                    .contract(mpo,  tenx::idx({0, 3}, {2, 1}))
+//                    .contract(envL, tenx::idx({0, 3}, {0, 2}))
+//                    .contract(mpo,  tenx::idx({2, 4, 1}, {2, 0, 1}))
+//                    .contract(mps_shuffled.conjugate(), tenx::idx({2, 1, 0}, {1, 2, 0}));
 //        }
 //    } else {
 //        //        tools::log->trace("H2 path: log2spin < std::max(log2chiL , log2chiR)");
-//        Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(Textra::array3{1, 0, 2});
-//        M2.device(Textra::omp::getDevice()) =
-//            mps_shuffled.contract(envL, Textra::idx({0}, {0}))
-//                .contract(mpo,  Textra::idx({0, 3}, {2, 0}))
-//                .contract(mpo,  Textra::idx({4, 2}, {2, 0}))
-//                .contract(envR, Textra::idx({0, 2, 3}, {0, 2, 3}))
-//                .contract(mps_shuffled.conjugate(), Textra::idx({1, 0, 2}, {1, 0, 2}));
+//        Eigen::Tensor<Scalar, 3> mps_shuffled = mps.shuffle(tenx::array3{1, 0, 2});
+//        M2.device(tenx::omp::getDevice()) =
+//            mps_shuffled.contract(envL, tenx::idx({0}, {0}))
+//                .contract(mpo,  tenx::idx({0, 3}, {2, 0}))
+//                .contract(mpo,  tenx::idx({4, 2}, {2, 0}))
+//                .contract(envR, tenx::idx({0, 2, 3}, {0, 2, 3}))
+//                .contract(mps_shuffled.conjugate(), tenx::idx({1, 0, 2}, {1, 0, 2}));
 //    }
 //    /* clang-format on */
 //    if(abs(std::imag(M2(0))) > 1e-10) {

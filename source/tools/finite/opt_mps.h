@@ -2,7 +2,7 @@
 #include <complex>
 #include <config/enums.h>
 #include <optional>
-#include <tensors/state/class_mps_site.h>
+#include <tensors/site/mps/MpsSite.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt {
@@ -40,8 +40,8 @@ namespace tools::finite::opt {
         std::optional<OptExit>                optExit       = std::nullopt;
 
         public:
-        bool                        is_basis_vector = false;
-        std::vector<class_mps_site> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
+        bool                 is_basis_vector = false;
+        std::vector<MpsSite> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
 
         opt_mps() = default;
         // Constructor used for candidates
@@ -51,12 +51,12 @@ namespace tools::finite::opt {
         opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                 double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
-        [[nodiscard]] const std::string &                get_name() const;
-        [[nodiscard]] const Eigen::Tensor<cplx, 3> &     get_tensor() const;
+        [[nodiscard]] const std::string                 &get_name() const;
+        [[nodiscard]] const Eigen::Tensor<cplx, 3>      &get_tensor() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
         [[nodiscard]] Eigen::Map<Eigen::VectorXd>        get_vector_cplx_as_2xreal();
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
-        [[nodiscard]] const std::vector<size_t> &        get_sites() const;
+        [[nodiscard]] const std::vector<size_t>         &get_sites() const;
         [[nodiscard]] double                             get_energy() const;
         [[nodiscard]] double                             get_energy_reduced() const;
         [[nodiscard]] double                             get_energy_per_site() const;

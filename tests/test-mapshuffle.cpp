@@ -1,6 +1,6 @@
-#include <math/svd.h>
+#include <io/fmt.h>
 #include <math/rnd.h>
-#include <tools/common/fmt.h>
+#include <math/svd.h>
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 4>, long,long,long,long>
 gen_random_tensor(){

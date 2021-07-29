@@ -1,8 +1,8 @@
 #pragma once
 
 #include "solution.h"
+#include <fmt/format.h>
 #include <unsupported/Eigen/CXX11/Tensor>
-
 namespace eig::view {
 
     template<typename T>
@@ -19,13 +19,13 @@ namespace eig::view {
 
         auto &eigvals = result.get_eigvals<Scalar>();
         if(eigvals.empty()) throw std::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");
-        long size = converged_only ? result.meta.nev_converged : eigvals.size();
+        long size = converged_only ? static_cast<long>(result.meta.nev_converged) : static_cast<long>(eigvals.size());
         return Eigen::Map<VectorType<Scalar>>(eigvals.data(), size);
     }
 
     template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
     Scalar get_eigval(eig::solution &result, integral_type num = 0) {
-        return get_eigvals<Scalar>(result,false)(static_cast<long>(num));
+        return get_eigvals<Scalar>(result, false)(static_cast<long>(num));
     }
 
     template<typename Scalar>

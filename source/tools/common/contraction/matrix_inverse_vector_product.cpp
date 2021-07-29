@@ -1,24 +1,21 @@
 
-#include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_tensor_omp.h>
-#include <tools/common/contraction.h>
-#include <tools/common/fmt.h>
-
-
-
-#include <iostream>
 #include <Eigen/IterativeLinearSolvers>
+#include <io/fmt.h>
+#include <iostream>
+#include <math/tenx.h>
+#include <tools/common/contraction.h>
 #include <unsupported/Eigen/IterativeSolvers>
 
-template<typename Scalar_> class MatrixReplacement;
-template<typename T> using DenseMatrix = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>;
+template<typename Scalar_>
+class MatrixReplacement;
+template<typename T>
+using DenseMatrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 namespace Eigen {
     namespace internal {
-// MatrixReplacement looks-like a SparseMatrix, so let's inherits its traits:
+        // MatrixReplacement looks-like a SparseMatrix, so let's inherits its traits:
         template<typename Scalar_>
-        struct traits<MatrixReplacement<Scalar_>> :  public Eigen::internal::traits<DenseMatrix<Scalar_> >
-        {};
+        struct traits<MatrixReplacement<Scalar_>> : public Eigen::internal::traits<DenseMatrix<Scalar_>> {};
     }
 }
 
@@ -29,50 +26,42 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     public:
     // Required typedefs, constants, and method:
     typedef Scalar_ Scalar;
-    typedef double RealScalar;
-    typedef int StorageIndex;
-    enum {
-        ColsAtCompileTime = Eigen::Dynamic,
-        MaxColsAtCompileTime = Eigen::Dynamic,
-        IsRowMajor = false
-    };
+    typedef double  RealScalar;
+    typedef int     StorageIndex;
+    enum { ColsAtCompileTime = Eigen::Dynamic, MaxColsAtCompileTime = Eigen::Dynamic, IsRowMajor = false };
 
-
-    const Scalar_ *     envL = nullptr;
-    const Scalar_ *     envR = nullptr;
-    const Scalar_ *     mpo = nullptr;
+    const Scalar_      *envL = nullptr;
+    const Scalar_      *envR = nullptr;
+    const Scalar_      *mpo  = nullptr;
     std::array<long, 3> shape_mps;
     std::array<long, 4> shape_mpo;
     std::array<long, 3> shape_envL;
     std::array<long, 3> shape_envR;
     std::vector<Scalar> shift_mpo;
     long                mps_size;
-//    eig::Form           form = eig::Form::SYMM;
-//    eig::Side           side = eig::Side::R;
+    //    eig::Form           form = eig::Form::SYMM;
+    //    eig::Side           side = eig::Side::R;
     // Profiling
-//    std::unique_ptr<class_tic_toc> t_multAx;
-    mutable int         counter = 0;
+    mutable int                 counter = 0;
     mutable std::vector<Scalar> tmp;
-
 
     [[nodiscard]] Eigen::Index rows() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
     [[nodiscard]] Eigen::Index cols() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
     template<typename Rhs>
-    Eigen::Product<MatrixReplacement,Rhs,Eigen::AliasFreeProduct> operator*(const Eigen::MatrixBase<Rhs>& x) const {
-        return Eigen::Product<MatrixReplacement,Rhs,Eigen::AliasFreeProduct>(*this, x.derived());
+    Eigen::Product<MatrixReplacement, Rhs, Eigen::AliasFreeProduct> operator*(const Eigen::MatrixBase<Rhs> &x) const {
+        return Eigen::Product<MatrixReplacement, Rhs, Eigen::AliasFreeProduct>(*this, x.derived());
     }
 
     // Custom API:
-    MatrixReplacement()  = default;
+    MatrixReplacement() = default;
 
-    void attachTensors(
-        const Scalar_ *     envL_,      /*!< The left block tensor.  */
-        const Scalar_ *     envR_,      /*!< The right block tensor.  */
-        const Scalar_ *     mpo_,       /*!< The Hamiltonian MPO's  */
-        std::array<long, 3> shape_mps_, /*!< An array containing the shapes of the mps  */
-        std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the mpo  */
-    ){
+    void attachTensors(const Scalar_      *envL_,      /*!< The left block tensor.  */
+                       const Scalar_      *envR_,      /*!< The right block tensor.  */
+                       const Scalar_      *mpo_,       /*!< The Hamiltonian MPO's  */
+                       std::array<long, 3> shape_mps_, /*!< An array containing the shapes of the mps  */
+                       std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the mpo  */
+    ) {
         envL       = envL_;
         envR       = envR_;
         mpo        = mpo_;
@@ -84,59 +73,48 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
         if(envR == nullptr) throw std::runtime_error("Rblock is a nullptr!");
         if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
         mps_size = shape_mps[0] * shape_mps[1] * shape_mps[2];
-//        t_multAx = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
+        //        t_multAx = std::make_unique<class_tic_toc>(true, 5, "Time MultAx");
     }
-
 };
 
-
-// Implementation of MatrixReplacement * Eigen::DenseVector though a specialization of internal::generic_product_impl:
+// Implementation of MatrixReplacement * Eigen::DenseVector though a specialization of init::generic_product_impl:
 namespace Eigen {
     namespace internal {
 
         template<typename Rhs, typename ReplScalar>
         struct generic_product_impl<MatrixReplacement<ReplScalar>, Rhs, DenseShape, DenseShape, GemvProduct> // GEMV stands for matrix-vector
-            : generic_product_impl_base<MatrixReplacement<ReplScalar>,Rhs,generic_product_impl<MatrixReplacement<ReplScalar>,Rhs> >
-        {
-            typedef typename Product<MatrixReplacement<ReplScalar>,Rhs>::Scalar Scalar;
+            : generic_product_impl_base<MatrixReplacement<ReplScalar>, Rhs, generic_product_impl<MatrixReplacement<ReplScalar>, Rhs>> {
+            typedef typename Product<MatrixReplacement<ReplScalar>, Rhs>::Scalar Scalar;
 
             template<typename Dest>
-            static void scaleAndAddTo(Dest& dst, const MatrixReplacement<ReplScalar>& mat, const Rhs& rhs, const Scalar& alpha)
-            {
+            static void scaleAndAddTo(Dest &dst, const MatrixReplacement<ReplScalar> &mat, const Rhs &rhs, const Scalar &alpha) {
                 // This method should implement "dst += alpha * lhs * rhs" inplace,
                 // however, for iterative solvers, alpha is always equal to 1, so let's not worry about it.
-                assert(alpha==Scalar(1) && "scaling is not implemented");
+                assert(alpha == Scalar(1) && "scaling is not implemented");
                 EIGEN_ONLY_USED_FOR_DEBUG(alpha);
 
-//                auto token = mat.t_multAx->tic_token();
+                //                auto token = mat.t_multAx->tic_token();
                 mat.tmp.resize(static_cast<size_t>(dst.size()));
-                Eigen::Map<Dest> tmp_map (mat.tmp.data(), dst.size());
-//                std::cout << "dst size " << dst.size() << " | rhs size " << rhs.size() << std::endl;
-//                if(dst.size() != rhs.size())
-//                    dst.conservativeResize(rhs.size());
+                Eigen::Map<Dest> tmp_map(mat.tmp.data(), dst.size());
+                //                std::cout << "dst size " << dst.size() << " | rhs size " << rhs.size() << std::endl;
+                //                if(dst.size() != rhs.size())
+                //                    dst.conservativeResize(rhs.size());
 
-                tools::common::contraction::matrix_vector_product(tmp_map.data(), rhs.data(), mat.shape_mps,
-                                                                  mat.mpo,  mat.shape_mpo,
-                                                                  mat.envL, mat.shape_envL,
+                tools::common::contraction::matrix_vector_product(tmp_map.data(), rhs.data(), mat.shape_mps, mat.mpo, mat.shape_mpo, mat.envL, mat.shape_envL,
                                                                   mat.envR, mat.shape_envR);
 
                 dst.noalias() += tmp_map;
                 mat.counter++;
-//
-//                // Here we could simply call dst.noalias() += lhs.my_matrix() * rhs,
-//                // but let's do something fancier (and less efficient):
-//                for(Index i=0; i<lhs.cols(); ++i)
-//                    dst += rhs(i) * lhs.my_matrix().col(i);
+                //
+                //                // Here we could simply call dst.noalias() += lhs.my_matrix() * rhs,
+                //                // but let's do something fancier (and less efficient):
+                //                for(Index i=0; i<lhs.cols(); ++i)
+                //                    dst += rhs(i) * lhs.my_matrix().col(i);
             }
         };
 
     }
 }
-
-
-
-
-
 
 /* clang-format off */
 template<typename Scalar>
@@ -174,8 +152,8 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
 
         Eigen::Index MaxIters = 200000;
         double tolerance = 1e-14;
-        Eigen::Map<Textra::VectorType<Scalar>> res(res_ptr, matRepl.rows());
-        Eigen::Map<const Textra::VectorType<Scalar>> mps(mps_ptr, matRepl.rows());
+        Eigen::Map<tenx::VectorType<Scalar>> res(res_ptr, matRepl.rows());
+        Eigen::Map<const tenx::VectorType<Scalar>> mps(mps_ptr, matRepl.rows());
         if constexpr (std::is_same_v<Scalar,std::complex<double>>){
 
             Eigen::BiCGSTAB<MatrixReplacement<Scalar>, Eigen::IdentityPreconditioner> bicg;
@@ -205,11 +183,11 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             minres.setTolerance(tolerance);
             minres.compute(matRepl);
             res = minres.solve(mps);
-            std::cout << "MINRES:   #iterations: " << minres.iterations()
-                      << ", #count: " << matRepl.counter
-                      << ", norm: " << res.norm()
-                      << ", estimated error: " << minres.error()
-                      << std::endl;
+//            std::cout << "MINRES:   #iterations: " << minres.iterations()
+//                      << ", #count: " << matRepl.counter
+//                      << ", norm: " << res.norm()
+//                      << ", estimated error: " << minres.error()
+//                      << std::endl;
     //    std::cout << "x: \n" << x << std::endl;
         }
 

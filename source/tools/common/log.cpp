@@ -1,6 +1,5 @@
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
-#include <tools/common/log.h>
+#include "log.h"
+#include <io/spdlog.h>
 
 void tools::Logger::enableTimestamp(const std::shared_ptr<spdlog::logger> &other_log) {
     if(other_log != nullptr) {
@@ -18,20 +17,20 @@ void tools::Logger::disableTimestamp(const std::shared_ptr<spdlog::logger> &othe
 }
 
 template<typename levelType>
-void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, levelType levelZeroToFive) {
+void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, levelType levelZeroToSix) {
     if constexpr(std::is_same_v<levelType, spdlog::level::level_enum>)
-        other_log->set_level(levelZeroToFive);
+        other_log->set_level(levelZeroToSix);
     else if constexpr(std::is_integral_v<levelType>) {
-        if(levelZeroToFive > 5) { throw std::runtime_error("Expected verbosity level integer in [0-5]. Got: " + std::to_string(levelZeroToFive)); }
-        return tools::Logger::setLogLevel(other_log, static_cast<spdlog::level::level_enum>(levelZeroToFive));
+        if(levelZeroToSix > 5) { throw std::runtime_error("Expected verbosity level integer in [0-5]. Got: " + std::to_string(levelZeroToSix)); }
+        return tools::Logger::setLogLevel(other_log, static_cast<spdlog::level::level_enum>(levelZeroToSix));
     } else if constexpr(std::is_same_v<levelType, std::optional<size_t>>) {
-        if(levelZeroToFive)
-            return setLogLevel(other_log, levelZeroToFive.value());
+        if(levelZeroToSix)
+            return setLogLevel(other_log, levelZeroToSix.value());
         else
             return;
     } else if constexpr(std::is_same_v<levelType, std::optional<spdlog::level::level_enum>>) {
-        if(levelZeroToFive)
-            return setLogLevel(other_log, levelZeroToFive.value());
+        if(levelZeroToSix)
+            return setLogLevel(other_log, levelZeroToSix.value());
         else
             return;
     } else {
@@ -41,12 +40,12 @@ void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log
     //    other_log->debug("Log verbosity level: {}", static_cast<int>(other_log->level()));
 }
 
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, int levelZeroToFive);
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, long levelZeroToFive);
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, size_t levelZeroToFive);
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<size_t> levelZeroToFive);
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<spdlog::level::level_enum> levelZeroToFive);
-template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, spdlog::level::level_enum levelZeroToFive);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, int levelZeroToSix);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, long levelZeroToSix);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, size_t levelZeroToSix);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<size_t> levelZeroToSix);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, std::optional<spdlog::level::level_enum> levelZeroToSix);
+template void tools::Logger::setLogLevel(const std::shared_ptr<spdlog::logger> &other_log, spdlog::level::level_enum levelZeroToSix);
 
 size_t tools::Logger::getLogLevel(const std::shared_ptr<spdlog::logger> &other_log) {
     if(other_log != nullptr)
@@ -55,25 +54,26 @@ size_t tools::Logger::getLogLevel(const std::shared_ptr<spdlog::logger> &other_l
         return 2;
 }
 
-void tools::Logger::setLogger(std::shared_ptr<spdlog::logger> &other_log, const std::string &name, std::optional<size_t> levelZeroToFive,
+void tools::Logger::setLogger(std::shared_ptr<spdlog::logger> &other_log, const std::string &name, std::optional<size_t> levelZeroToSix,
                               std::optional<bool> timestamp) {
     if(spdlog::get(name) == nullptr)
         other_log = spdlog::stdout_color_mt(name, spdlog::color_mode::always);
     else
         other_log = spdlog::get(name);
     other_log->set_pattern("[%n]%^[%=8l]%$ %v"); // Disabled timestamp is the default
-    setLogLevel(other_log, levelZeroToFive);
+    setLogLevel(other_log, levelZeroToSix);
     if(timestamp and timestamp.value()) enableTimestamp(other_log);
 }
 
-std::shared_ptr<spdlog::logger> tools::Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToFive, std::optional<bool> timestamp) {
+std::shared_ptr<spdlog::logger> tools::Logger::setLogger(const std::string &name, std::optional<size_t> levelZeroToSix, std::optional<bool> timestamp) {
     std::shared_ptr<spdlog::logger> other_log;
+
     if(spdlog::get(name) == nullptr) {
         other_log = spdlog::stdout_color_mt(name, spdlog::color_mode::always);
     } else {
         other_log = spdlog::get(name);
     }
-    tools::Logger::setLogLevel(other_log, levelZeroToFive);
+    tools::Logger::setLogLevel(other_log, levelZeroToSix);
     if(not timestamp or (timestamp and timestamp.value()))
         tools::Logger::enableTimestamp(other_log);
     else if(timestamp and not timestamp.value())
@@ -82,8 +82,9 @@ std::shared_ptr<spdlog::logger> tools::Logger::setLogger(const std::string &name
 }
 
 std::shared_ptr<spdlog::logger> tools::Logger::getLogger(const std::string &name) {
-    if(spdlog::get(name) == nullptr)
-        throw std::runtime_error(fmt::format("Logger with name [{}] does not exist", name));
+    auto log_found = spdlog::get(name);
+    if(log_found == nullptr)
+        throw std::runtime_error(fmt::format("spdlog: logger does not exist: {}", name));
     else
-        return spdlog::get(name);
+        return log_found;
 }

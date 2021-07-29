@@ -9,11 +9,13 @@ function(expand_target_libs target_names expanded_list)
             unset(interface_libs)
             unset(imported_lib)
 #            message("Expanding target ${lib}")
-            get_target_property(lib_type  ${lib} TYPE)
-            if(NOT "${lib_type}" MATCHES "INTERFACE")
+            get_target_property(lib_type ${lib} TYPE)
+            get_target_property(lib_impt ${lib} IMPORTED)
+            if(lib_impt)
+                # The location property can only be read on imported targets
                 get_target_property(imported_lib  ${lib} LOCATION)
             endif()
-            get_target_property(interface_libs  ${lib} INTERFACE_LINK_LIBRARIES)
+            get_target_property(interface_libs ${lib} INTERFACE_LINK_LIBRARIES)
             # Now we have all the libs in the target "lib".
             # The imported lib is obviously not a target, but interface_libs may contain
             # many other targets. That's ok, for now we only do one level of expansion.
@@ -159,16 +161,13 @@ function(expand_target_all_targets target_names expanded_list)
             unset(private_libs)
             unset(imported_lib)
             get_target_property(lib_type ${target_name} TYPE)
-            if(lib_type MATCHES "STATIC|SHARED|UNKNOWN")
-                # This property is only allowed on importet libraries
+            get_target_property(lib_impt ${target_name} IMPORTED)
+            if(lib_impt)
+                # The location property can only be read on imported targets
                 get_target_property(imported_lib ${target_name} LOCATION)
             endif()
-            if(lib_type MATCHES "STATIC|SHARED|UNKNOWN|INTERFACE")
-                get_target_property(interface_libs ${target_name} INTERFACE_LINK_LIBRARIES)
-            endif()
-            if(lib_type MATCHES "STATIC|SHARED|UNKNOWN|OBJECT|EXECUTABLE" AND NOT lib_type MATCHES "INTERFACE")
-                get_target_property(private_libs ${target_name} LINK_LIBRARIES)
-            endif()
+            get_target_property(interface_libs ${target_name} INTERFACE_LINK_LIBRARIES)
+            get_target_property(private_libs ${target_name} LINK_LIBRARIES)
 
             foreach(elem ${imported_lib};${private_libs};${interface_libs})
                 if(TARGET ${elem} AND NOT ${elem} IN_LIST ${expanded_list} AND NOT ${elem} IN_LIST target_names AND NOT ${elem} IN_LIST target_names_expanded)

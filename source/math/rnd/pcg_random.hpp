@@ -412,13 +412,13 @@ namespace pcg_detail {
 
         template<typename CharT, typename Traits, typename xtype1, typename itype1, typename output_mixin1, bool output_previous1, typename stream_mixin1,
                  typename multiplier_mixin1>
-        friend std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits> &                                                        in,
+        friend std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits>                                                         &in,
                                                              engine<xtype1, itype1, output_mixin1, output_previous1, stream_mixin1, multiplier_mixin1> &rng);
     };
 
     template<typename CharT, typename Traits, typename xtype, typename itype, typename output_mixin, bool output_previous, typename stream_mixin,
              typename multiplier_mixin>
-    std::basic_ostream<CharT, Traits> &operator<<(std::basic_ostream<CharT, Traits> &                                                        out,
+    std::basic_ostream<CharT, Traits> &operator<<(std::basic_ostream<CharT, Traits>                                                         &out,
                                                   const engine<xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin> &rng) {
         auto orig_flags = out.flags(std::ios_base::dec | std::ios_base::left);
         auto space      = out.widen(' ');
@@ -433,7 +433,7 @@ namespace pcg_detail {
 
     template<typename CharT, typename Traits, typename xtype, typename itype, typename output_mixin, bool output_previous, typename stream_mixin,
              typename multiplier_mixin>
-    std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits> &                                                  in,
+    std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits>                                                   &in,
                                                   engine<xtype, itype, output_mixin, output_previous, stream_mixin, multiplier_mixin> &rng) {
         auto orig_flags = in.flags(std::ios_base::dec | std::ios_base::skipws);
 
@@ -544,7 +544,7 @@ namespace pcg_detail {
      * OUTPUT FUNCTIONS.
      *
      * These are the core of the PCG generation scheme.  They specify how to
-     * turn the base LCG's internal state into the output value of the final
+     * turn the base LCG's init state into the output value of the final
      * generator.
      *
      * They're implemented as mixin classes.
@@ -1050,7 +1050,7 @@ namespace pcg_detail {
     }
 
     template<typename CharT, typename Traits, bitcount_t table_pow2, bitcount_t advance_pow2, typename baseclass, typename extvalclass, bool kdd>
-    std::basic_ostream<CharT, Traits> &operator<<(std::basic_ostream<CharT, Traits> &                                    out,
+    std::basic_ostream<CharT, Traits> &operator<<(std::basic_ostream<CharT, Traits>                                     &out,
                                                   const extended<table_pow2, advance_pow2, baseclass, extvalclass, kdd> &rng) {
         auto orig_flags = out.flags(std::ios_base::dec | std::ios_base::left);
         auto space      = out.widen(' ');
@@ -1068,7 +1068,7 @@ namespace pcg_detail {
     template<typename CharT, typename Traits, bitcount_t table_pow2, bitcount_t advance_pow2, typename baseclass, typename extvalclass, bool kdd>
     std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits> &in, extended<table_pow2, advance_pow2, baseclass, extvalclass, kdd> &rng) {
         extended<table_pow2, advance_pow2, baseclass, extvalclass> new_rng;
-        auto &                                                     base_rng = static_cast<baseclass &>(new_rng);
+        auto                                                      &base_rng = static_cast<baseclass &>(new_rng);
         in >> base_rng;
 
         if(in.fail()) return in;

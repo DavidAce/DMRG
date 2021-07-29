@@ -1,12 +1,9 @@
-//
-// Created by david on 2016-07-24.
-//
-
-#include "math/rnd.h"
+#include "../rnd.h"
 #include "pcg_random.hpp"
-#include <cstdio>
-#include <stdexcept>
 #include <algorithm>
+#include <cstdio>
+#include <random>
+#include <stdexcept>
 
 namespace rnd {
 
@@ -20,7 +17,6 @@ namespace rnd {
         inline std::uniform_real_distribution<double> rand_double_0_2pi(0, 2.0 * M_PI);
         inline std::normal_distribution<double>       normal_double_01(0.0, 1.0);
     }
-
 
     void seed(std::optional<long> n) {
         if(n.has_value() and n.value() >= 0) {
@@ -131,13 +127,13 @@ namespace rnd {
         }
     }
 
-    template <typename T>
-    void shuffle(T & list){
+    template<typename T>
+    void shuffle(T &list) {
         std::shuffle(std::begin(list), std::end(list), internal::rng);
     }
-    template void shuffle(std::vector<int> & list);
-    template void shuffle(std::vector<unsigned> & list);
-    template void shuffle(std::vector<long> & list);
-    template void shuffle(std::vector<size_t> & list);
-    template void shuffle(std::vector<double> & list);
+    template void shuffle(std::vector<int> &list);
+    template void shuffle(std::vector<unsigned> &list);
+    template void shuffle(std::vector<long> &list);
+    template void shuffle(std::vector<size_t> &list);
+    template void shuffle(std::vector<double> &list);
 }

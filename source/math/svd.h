@@ -1,16 +1,13 @@
-//
-// Created by david on 2017-10-04.
-//
-
 #pragma once
 
 #include "svd/settings.h"
-#include <general/nmspc_tensor_extra.h>
 #include <math/num.h>
+#include <math/tenx.h>
 #include <optional>
 #include <tools/common/log.h>
-
-class class_tic_toc;
+namespace tid {
+    class ur;
+}
 
 namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
@@ -53,14 +50,7 @@ namespace svd {
         static std::optional<long long> count;
         double                          truncation_error = 0;
 
-        std::shared_ptr<class_tic_toc> t_wrk;
-        std::shared_ptr<class_tic_toc> t_adj;
-        std::shared_ptr<class_tic_toc> t_jac;
-        std::shared_ptr<class_tic_toc> t_svd;
-
         void setLogLevel(size_t logLevel);
-        void enableProfiling();
-        void disableProfiling();
 
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
@@ -69,14 +59,14 @@ namespace svd {
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor,
                                                                                                            std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd(tensor.data(), tensor.dimension(0), tensor.dimension(1), rank_max);
-            return std::make_tuple(Textra::TensorMap(U), Textra::TensorMap(S.normalized().template cast<Scalar>()), Textra::TensorMap(V));
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>>
             decompose(const Eigen::Tensor<Scalar, 3> &tensor, const long rows, const long cols, std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd(tensor.data(), rows, cols, rank_max);
-            return std::make_tuple(Textra::TensorMap(U), Textra::TensorMap(S.normalized().template cast<Scalar>()), Textra::TensorMap(V));
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Derived>
@@ -103,8 +93,8 @@ namespace svd {
              */
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
+            return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -116,8 +106,8 @@ namespace svd {
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}));
+            return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -129,8 +119,8 @@ namespace svd {
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");
             auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
-            return std::make_tuple(Textra::TensorMap(U, dL, chiL, rank), Textra::TensorMap(S.normalized().template cast<Scalar>(), rank),
-                                   Textra::TensorMap(V, rank, dR, chiR).shuffle(Textra::array3{1, 0, 2}), S.norm());
+            return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
+                                   tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}), S.norm());
         }
 
         template<typename Scalar>
@@ -156,7 +146,7 @@ namespace svd {
              *
              */
 
-            Eigen::Tensor<Scalar, 4> tensor_for_schmidt = tensor.reshape(Textra::array4{dL, dR, chiL, chiR}).shuffle(Textra::array4{0, 2, 1, 3});
+            Eigen::Tensor<Scalar, 4> tensor_for_schmidt = tensor.reshape(tenx::array4{dL, dR, chiL, chiR}).shuffle(tenx::array4{0, 2, 1, 3});
             return schmidt(tensor_for_schmidt, dL, chiL, dR, chiR, rank_max);
         }
 
@@ -286,16 +276,16 @@ namespace svd {
             auto                     dim2      = mpo.dimension(0);
             auto                     dim3      = mpo.dimension(1);
             auto                     dim_ddm   = dim0 * dim1 * dim2;
-            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{2, 3, 0, 1}).reshape(Textra::array2{dim_ddm, dim3}).real();
+            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}).real();
             auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             U *= avgS;
             S /= avgS;
             /* clang-format off */
             return std::make_tuple(
-                Textra::TensorMap(U).reshape(Textra::array4{dim0, dim1, dim2, rank}).shuffle(Textra::array4{2, 3, 0, 1}).template cast<Scalar>(),
-                Textra::TensorMap(S).template cast<Scalar>(),
-                Textra::TensorMap(V).template cast<Scalar>());
+                tenx::TensorMap(U).reshape(tenx::array4{dim0, dim1, dim2, rank}).shuffle(tenx::array4{2, 3, 0, 1}).template cast<Scalar>(),
+                tenx::TensorMap(S).template cast<Scalar>(),
+                tenx::TensorMap(V).template cast<Scalar>());
             /* clang-format off */
         }
         template<typename Scalar>
@@ -342,16 +332,16 @@ namespace svd {
             auto dim3    = mpo.dimension(1);
             auto dim_ddm = dim1 * dim2 * dim3;
 
-            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(Textra::array4{0, 2, 3, 1}).reshape(Textra::array2{dim0, dim_ddm}).real();
+            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}).real();
             auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             V *= avgS;                                            // Rescaled singular values
             S /= avgS;                                            // Rescaled singular values
             /* clang-format off */
             return std::make_tuple(
-                Textra::TensorMap(U).template cast<Scalar>(),
-                Textra::TensorMap(S).template cast<Scalar>(),
-                Textra::TensorMap(V).reshape(Textra::array4{rank, dim1, dim2, dim3}).shuffle(Textra::array4{0, 3, 1, 2}).template cast<Scalar>());
+                tenx::TensorMap(U).template cast<Scalar>(),
+                tenx::TensorMap(S).template cast<Scalar>(),
+                tenx::TensorMap(V).reshape(tenx::array4{rank, dim1, dim2, dim3}).shuffle(tenx::array4{0, 3, 1, 2}).template cast<Scalar>());
             /* clang-format off */
         }
     };

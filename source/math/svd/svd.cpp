@@ -1,19 +1,11 @@
-//
-// Created by david on 2019-05-27.
-//
-
 #include <Eigen/QR>
-#include <general/class_tic_toc.h>
 #include <math/svd.h>
+#include <tid/tid.h>
 
 std::optional<long long> svd::solver::count = 0;
 
 svd::solver::solver() {
     setLogLevel(2);
-    t_wrk = std::make_unique<class_tic_toc>();
-    t_adj = std::make_unique<class_tic_toc>();
-    t_jac = std::make_unique<class_tic_toc>();
-    t_svd = std::make_unique<class_tic_toc>();
     if(not count) count = 0;
 }
 void svd::solver::copy_settings(const svd::settings &svd_settings) {
@@ -22,26 +14,12 @@ void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
     if(svd_settings.use_lapacke) use_lapacke = svd_settings.use_lapacke.value();
-    if(svd_settings.profile and svd_settings.profile.value()) enableProfiling();
 }
 
 svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
 
 svd::solver::solver(std::optional<svd::settings> svd_settings) : solver() {
     if(svd_settings) copy_settings(svd_settings.value());
-}
-
-void svd::solver::enableProfiling() {
-    t_wrk->set_properties(true, 5, "work");
-    t_adj->set_properties(true, 5, "adjoint");
-    t_jac->set_properties(true, 5, "jacobi");
-    t_svd->set_properties(true, 5, "bdcsvd");
-}
-void svd::solver::disableProfiling() {
-    t_wrk->set_properties(false, 0, "");
-    t_adj->set_properties(false, 0, "");
-    t_jac->set_properties(false, 0, "");
-    t_svd->set_properties(false, 0, "");
 }
 
 void svd::solver::setLogLevel(size_t logLevel) {
@@ -66,6 +44,7 @@ void svd::solver::setLogLevel(size_t logLevel) {
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    auto t_svd = tid::tic_scope("svd");
     if(use_lapacke) {
         try {
             return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
@@ -73,7 +52,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->warn(FMT_COMPILE("Lapacke failed to perform SVD: {} | Trying Eigen"), ex.what());
             return do_svd_eigen(mat_ptr, rows, cols, rank_max);
         }
-    }else {
+    } else {
         try {
             return do_svd_eigen(mat_ptr, rows, cols, rank_max);
         } catch(const std::exception &ex) {
@@ -96,10 +75,11 @@ template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {
+    auto t_psinv = tid::tic_token("psinv");
     if(tensor.dimension(0) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)"); }
     if(tensor.dimension(1) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)"); }
     Eigen::Map<const MatrixType<Scalar>> mat(tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    return Textra::TensorCast(mat.completeOrthogonalDecomposition().pseudoInverse());
+    return tenx::TensorCast(mat.completeOrthogonalDecomposition().pseudoInverse());
 }
 
 //! \relates svd::class_SVD

@@ -1,7 +1,7 @@
 
-#include <general/stack_trace.h>
-#include <stdexcept>
+#include <debug/stacktrace.h>
 #include <iostream>
+#include <stdexcept>
 
 int main() {
     // Register termination codes and what to do in those cases

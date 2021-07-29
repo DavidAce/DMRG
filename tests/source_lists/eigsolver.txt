@@ -1,4 +1,0 @@
-set(test_inc
-${CMAKE_SOURCE_DIR}/source/math/class_eigsolver.cpp
-${CMAKE_SOURCE_DIR}/source/general/class_tic_toc.cpp
-)

@@ -1,24 +1,31 @@
 #pragma once
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
-class class_state_finite;
-class class_mpo_site;
+class StateFinite;
+class MpoSite;
 
 namespace tools::finite::ops {
     using Scalar = std::complex<double>;
     /* clang-format off */
-    extern void apply_mpo                                   (class_state_finite & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
-    extern void apply_mpos                                  (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,1> & Ledge, const Eigen::Tensor<Scalar,1> & Redge);
-    extern void apply_mpos                                  (class_state_finite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
-    extern void project_to_nearest_sector                   (class_state_finite & state, const std::string &sector);
-    extern void project_to_sector                           (class_state_finite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
+    extern void apply_mpo                                   (StateFinite & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+    extern void apply_mpos                                  (StateFinite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,1> & Ledge, const Eigen::Tensor<Scalar,1> & Redge);
+    extern void apply_mpos                                  (StateFinite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+    extern void project_to_nearest_sector                   (StateFinite & state, const std::string &sector);
+    extern void project_to_sector                           (StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
     [[nodiscard]] extern
-    class_state_finite get_projection_to_sector             (const class_state_finite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
+    StateFinite get_projection_to_sector                    (const StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
     [[nodiscard]] extern
-    class_state_finite get_projection_to_nearest_sector     (const class_state_finite & state, const std::string & sector);
+    StateFinite get_projection_to_nearest_sector            (const StateFinite & state, const std::string &sector);
 
-    [[nodiscard]] extern double overlap                     (const class_state_finite & state1, const class_state_finite & state2);
-    [[nodiscard]] extern double expectation_value           (const class_state_finite & state1, const class_state_finite & state2, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
-    [[nodiscard]] extern double exp_sq_value                (const class_state_finite & state1, const class_state_finite & state2, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
+    [[nodiscard]] extern
+    StateFinite get_normalized_projection_to_sector         (const StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    [[nodiscard]] extern
+    StateFinite get_normalized_projection_to_nearest_sector (const StateFinite & state, const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+
+
+
+    [[nodiscard]] extern double overlap                     (const StateFinite & state1, const StateFinite & state2);
+//    [[nodiscard]] extern double expectation_value           (const StateFinite & state1, const StateFinite & state2, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+//    [[nodiscard]] extern double exp_sq_value                (const StateFinite & state1, const StateFinite & state2, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
     /* clang-format on */
 }

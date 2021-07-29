@@ -1,8 +1,10 @@
 set(test_inc
-${CMAKE_SOURCE_DIR}/source/math/svd/svd.cpp
-${CMAKE_SOURCE_DIR}/source/math/svd/svd_eigen.cpp
-${CMAKE_SOURCE_DIR}/source/math/svd/svd_lapacke.cpp
-${CMAKE_SOURCE_DIR}/source/general/class_tic_toc.cpp
-${CMAKE_SOURCE_DIR}/source/math/rnd/rnd.cpp
-${CMAKE_SOURCE_DIR}/source/tools/common/log.cpp
+$<TARGET_OBJECTS:dmrg-math-svd>
+$<TARGET_OBJECTS:dmrg-math-rnd>
+$<TARGET_OBJECTS:dmrg-tools-common-log>
+$<TARGET_OBJECTS:dmrg-tools-common-contraction>
 )
+
+set(test_lnk
+    dmrg-general
+ )
