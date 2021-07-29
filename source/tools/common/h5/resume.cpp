@@ -1,13 +1,10 @@
-//
-// Created by david on 2020-03-28.
-//
 
 #include <config/enums.h>
 #include <h5pp/h5pp.h>
-#include <tools/common/io.h>
+#include <tools/common/h5.h>
 #include <tools/common/log.h>
 
-std::string tools::common::io::h5resume::extract_state_name(const std::string &state_prefix) {
+std::string tools::common::h5::resume::extract_state_name(const std::string &state_prefix) {
     std::string_view       state_pattern = "state_";
     std::string            state_name;
     std::string::size_type start_pos = state_prefix.find(state_pattern);
@@ -18,7 +15,7 @@ std::string tools::common::io::h5resume::extract_state_name(const std::string &s
     return state_name;
 }
 
-std::optional<size_t> tools::common::io::h5resume::extract_state_number(const std::string &state_prefix) {
+std::optional<size_t> tools::common::h5::resume::extract_state_number(const std::string &state_prefix) {
     std::string state_name = extract_state_name(state_prefix);
     std::string state_number;
     for(const auto &c : state_name) {
@@ -33,7 +30,7 @@ std::optional<size_t> tools::common::io::h5resume::extract_state_number(const st
     }
 }
 
-std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, const std::string &search) {
+std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, const std::string &search) {
     std::string_view         algo_name = enum2str(algo_type);
     std::vector<std::string> state_prefix_candidates;
 
@@ -42,9 +39,10 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
     else
         tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5ppFile.getFilePath());
 
-    for(const auto &candidate : h5ppFile.getAttributeNames("common/storage_level"))
+    for(const auto &candidate : h5ppFile.getAttributeNames("common/storage_level")) {
         if(candidate.find(algo_name) != std::string::npos and h5ppFile.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
             state_prefix_candidates.push_back(candidate);
+    }
 
     tools::log->info("Found state candidates: {}", state_prefix_candidates);
 

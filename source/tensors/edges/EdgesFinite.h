@@ -1,0 +1,86 @@
+#pragma once
+#include "tensors/site/env/EnvPair.h"
+#include <complex>
+#include <config/enums.h>
+#include <general/eigen_tensor_fwd_decl.h>
+#include <memory>
+#include <optional>
+#include <vector>
+
+class EnvEne;
+class EnvVar;
+
+class EdgesFinite {
+    public:
+    using Scalar = std::complex<double>;
+    std::vector<size_t> active_sites;
+
+    private:
+    //    size_t iter      = 0;
+    //    size_t step      = 0;
+    //    int    direction = 1;
+
+    std::vector<std::unique_ptr<EnvEne>> eneL;
+    std::vector<std::unique_ptr<EnvEne>> eneR;
+    std::vector<std::unique_ptr<EnvVar>> varL;
+    std::vector<std::unique_ptr<EnvVar>> varR;
+
+    public:
+    EdgesFinite();
+    ~EdgesFinite();                                       // Read comment on implementation
+    EdgesFinite(EdgesFinite &&other) noexcept;            // default move ctor
+    EdgesFinite &operator=(EdgesFinite &&other) noexcept; // default move assign
+    EdgesFinite(const EdgesFinite &other);                // copy ctor
+    EdgesFinite &operator=(const EdgesFinite &other);     // copy assign
+
+    void initialize(size_t model_size);
+
+    [[nodiscard]] const EnvEne &get_eneL(size_t pos) const;
+    [[nodiscard]] const EnvEne &get_eneR(size_t pos) const;
+    [[nodiscard]] const EnvVar &get_varL(size_t pos) const;
+    [[nodiscard]] const EnvVar &get_varR(size_t pos) const;
+    [[nodiscard]] EnvEne       &get_eneL(size_t pos);
+    [[nodiscard]] EnvVar       &get_varR(size_t pos);
+    [[nodiscard]] EnvVar       &get_varL(size_t pos);
+    [[nodiscard]] EnvEne       &get_eneR(size_t pos);
+
+    [[nodiscard]] size_t get_length() const;
+    [[nodiscard]] bool   is_real() const;
+    [[nodiscard]] bool   has_nan() const;
+    void                 assert_validity() const;
+
+    void eject_edges_inactive_ene(std::optional<std::vector<size_t>> sites = std::nullopt);
+    void eject_edges_inactive_var(std::optional<std::vector<size_t>> sites = std::nullopt);
+    void eject_edges_inactive(std::optional<std::vector<size_t>> sites = std::nullopt);
+
+    void eject_edges_all_ene();
+    void eject_edges_all_var();
+    void eject_edges_all();
+
+    [[nodiscard]] env_pair<const EnvEne> get_ene(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<const EnvVar> get_var(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<EnvEne>       get_ene(size_t posL, size_t posR);
+    [[nodiscard]] env_pair<EnvVar>       get_var(size_t posL, size_t posR);
+
+    [[nodiscard]] env_pair<const EnvEne> get_ene(size_t pos) const;
+    [[nodiscard]] env_pair<const EnvVar> get_var(size_t pos) const;
+    [[nodiscard]] env_pair<EnvEne>       get_ene(size_t pos);
+    [[nodiscard]] env_pair<EnvVar>       get_var(size_t pos);
+
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_ene_blk(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_var_blk(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_ene_blk(size_t posL, size_t posR);
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_var_blk(size_t posL, size_t posR);
+
+    [[nodiscard]] env_pair<const EnvEne> get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const EnvVar> get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<EnvEne>       get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<EnvVar>       get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt);
+
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+
+    [[nodiscard]] std::pair<std::vector<size_t>, std::vector<size_t>> get_active_ids() const;
+};
