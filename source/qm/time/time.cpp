@@ -1,4 +1,5 @@
 #include "qm/time.h"
+#include <config/debug.h>
 #include <general/iter.h>
 #include <math/linalg.h>
 #include <math/tenx.h>
@@ -119,19 +120,22 @@ namespace qm::time {
             time_evolution_gates_reverse.emplace_back(h.exp(imn * delta_t * 0.5)); // exp(-i * delta_t * h)
         }
 
-        // Sanity checks
-        if(std::imag(delta_t) == 0) {
-            for(auto &t : time_evolution_gates_forward)
-                if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                    throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
-                }
-            for(auto &t : time_evolution_gates_reverse)
-                if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                    throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
-                }
+        if constexpr(settings::debug){
+            // Sanity checks
+            if(std::imag(delta_t) == 0) {
+                for(auto &t : time_evolution_gates_forward)
+                    if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+                        throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                    }
+                for(auto &t : time_evolution_gates_reverse)
+                    if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+                        throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                    }
+            }
+
         }
 
-        return std::make_pair(time_evolution_gates_forward, time_evolution_gates_reverse);
+        return {time_evolution_gates_forward, time_evolution_gates_reverse};
     }
 
 }

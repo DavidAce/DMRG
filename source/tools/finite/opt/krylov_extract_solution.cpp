@@ -7,7 +7,7 @@
 #include <tools/finite/measure.h>
 
 void tools::finite::opt::internal::krylov_extract_solutions(const opt_mps &initial_mps, const TensorsFinite &tensors, eig::solver &solver,
-                                                            std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, const std::string &tag,
+                                                            std::vector<tools::finite::opt::opt_mps> &eigvecs_mps, std::string_view tag,
                                                             bool converged_only) {
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {

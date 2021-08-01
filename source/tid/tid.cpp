@@ -8,7 +8,7 @@ namespace tid {
         const ur *ur_ref_t::operator->() const { return &ref.get(); }
 
         [[nodiscard]] std::string ur_ref_t::str() const {
-            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>5.2f} % | avg {5:>5.2e} s | count {6}", key, tree_max_key_size,
+            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | count {6}", key, tree_max_key_size,
                                ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), ref.get().get_tic_count());
         }
 
@@ -106,10 +106,10 @@ namespace tid {
             tree.front().sum += un.second->get_time(); // Add up times under
 
             for(const auto &t : get_tree(*un.second, key)) {
-                if(un.second->get_time() == 0) {
-                    // If the intermediate node did not measure time, add the times under it instead
-                    tree.front().sum += t.sum;
-                }
+//                if(un.second->get_time() == 0) {
+//                    // If the intermediate node did not measure time, add the times under it instead
+//                    tree.front().sum += t.sum;
+//                }
                 tree.emplace_back(t);
             }
         }
@@ -123,11 +123,13 @@ namespace tid {
         size_t max_key_size = 0;
         if(max_it != tree.end()) max_key_size = max_it->key.size();
 
-        // Calculate the fractions
+        // Calculate the fractions and set the maximum key size
         for(auto &t : tree) {
             t.tree_max_key_size = max_key_size;
+            if(tree.front()->get_time() == 0) break;
             if(&t == &tree.front()) continue;
-            t.frac = std::max(t->get_time(), t.sum) / std::max(tree.front()->get_time(), tree.front().sum);
+            auto t_parent = tree.front()->get_time() == 0.0 ? tree.front().sum : tree.front()->get_time();
+            t.frac = t->get_time() / t_parent;
         }
 
         return tree;
@@ -141,6 +143,13 @@ namespace tid {
                 tree.insert(tree.end(), t.begin(), t.end());
             }
         }
+        // Find the longest key in the tree
+        auto max_it = std::max_element(tree.begin(), tree.end(), [](const auto &a, const auto &b) { return a.key.size() < b.key.size(); });
+        if(max_it != tree.end()) {
+            // Set the max key size
+            for(auto &t : tree) t.tree_max_key_size = max_it->key.size();
+        }
+
         return tree;
     }
 

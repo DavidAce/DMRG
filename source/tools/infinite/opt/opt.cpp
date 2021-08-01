@@ -12,7 +12,7 @@
 
 namespace tools::infinite::opt {
     Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &state, StateRitz ritz) {
-        return tools::infinite::opt::find_ground_state(state, enum2str(ritz));
+        return tools::infinite::opt::find_ground_state(state, enum2sv(ritz));
     }
 
     Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritzstring) {

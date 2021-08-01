@@ -364,7 +364,7 @@ namespace tenx {
     //******************************************************//
 
     template<typename Derived>
-    bool isReal(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] const std::string &name = "", double threshold = 1e-14) {
+    bool isReal(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] std::string_view name = "", double threshold = 1e-14) {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
@@ -375,18 +375,18 @@ namespace tenx {
     }
 
     template<typename Scalar, auto rank>
-    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, const std::string &name = "", double threshold = 1e-14) {
+    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, std::string_view name = "", double threshold = 1e-14) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return isReal(vector, name, threshold);
     }
 
     template<typename Derived>
-    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] const std::string &name = "") {
+    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] std::string_view name = "") {
         return obj.derived().hasNaN();
     }
 
     template<typename Scalar, auto rank>
-    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, const std::string &name = "") {
+    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, std::string_view name = "") {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return hasNaN(vector, name);
     }

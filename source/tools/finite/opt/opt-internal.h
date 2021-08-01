@@ -52,26 +52,24 @@ namespace tools::finite::opt::internal{
                                          const TensorsFinite &tensors,
                                          eig::solver &solver,
                                          std::vector<tools::finite::opt::opt_mps> &eigvecs_mps,
-                                         const std::string & tag = "",
+                                         std::string_view  tag = "",
                                          bool converged_only = true);
-    extern opt_mps primme_variance_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                const AlgorithmStatus &status, OptType optType, OptMode optMode,
-                                                OptSpace optSpace);
     extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const TensorsFinite & tensors, OptType optType, OptMode optMode, OptSpace optSpace);
     extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const StateFinite & state);
 
 
     namespace subspace{
         template<typename Scalar>
-        extern std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_part(const MatrixType<Scalar> & H_local, const TensorType<cplx,3> &multisite_mps, double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
+        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
+        find_subspace_iter(const TensorsFinite & tensors, double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
+
 
         template<typename Scalar>
-        extern std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_full(const MatrixType<Scalar> & H_local, const TensorType<cplx,3> &multisite_tensor);
+        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
+        find_subspace_full(const TensorsFinite & tensors);
 
         template<typename Scalar>
-        extern std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
+        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
         find_subspace(const TensorsFinite &tensors, double subspace_error_threshold, OptMode optMode, OptSpace optSpace);
 
         template<typename Scalar>

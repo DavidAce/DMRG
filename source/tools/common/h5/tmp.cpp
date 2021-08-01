@@ -14,7 +14,7 @@
 
 std::string get_dirname() { return "DMRG." + std::string(getenv("USER")); }
 
-std::string replace_substr(std::string text, const std::string &search, const std::string &replace) {
+std::string replace_substr(std::string text, std::string_view search, std::string_view replace) {
     size_t pos = 0;
     while((pos = text.find(search, pos)) != std::string::npos) {
         text.replace(pos, search.length(), replace);
@@ -34,7 +34,7 @@ std::string tools::common::h5::tmp::internal::get_tmp_dir() {
         return fs::temp_directory_path();
 }
 
-const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::register_paths(const std::string &filepath) {
+const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::register_paths(std::string_view filepath) {
     if(not fs::path(filepath).has_filename()) throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
     std::string filename = fs::path(filepath).filename();
     if(internal::file_register.find(filename) != internal::file_register.end()) return internal::file_register[filename];
@@ -44,18 +44,18 @@ const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::intern
     return internal::file_register[filename];
 }
 
-const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::get_paths(const std::string &filepath) {
+const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::get_paths(std::string_view filepath) {
     if(not fs::path(filepath).has_filename()) throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
     std::string filename = fs::path(filepath).filename();
     return internal::file_register[filename];
 }
 
-const std::string &tools::common::h5::tmp::get_temporary_filepath(const std::string &filepath) { return internal::get_paths(filepath).temporary_path; }
-const std::string &tools::common::h5::tmp::get_original_filepath(const std::string &filepath) { return internal::get_paths(filepath).original_path; }
+std::string_view tools::common::h5::tmp::get_temporary_filepath(std::string_view filepath) { return internal::get_paths(filepath).temporary_path; }
+std::string_view tools::common::h5::tmp::get_original_filepath(std::string_view filepath) { return internal::get_paths(filepath).original_path; }
 
-void tools::common::h5::tmp::register_new_file(const std::string &filepath) { internal::register_paths(filepath); }
+void tools::common::h5::tmp::register_new_file(std::string_view filepath) { internal::register_paths(filepath); }
 
-// std::string tools::common::h5::tmp::set_tmp_prefix(const std::string &filepath) {
+// std::string tools::common::h5::tmp::set_tmp_prefix(std::string_view filepath) {
 //    return init::register_paths(filepath).temporary_path;
 
 //
@@ -82,7 +82,7 @@ void tools::common::h5::tmp::register_new_file(const std::string &filepath) { in
 //    }
 //}
 
-// std::string tools::common::h5::tmp::unset_tmp_prefix(const std::string &filepath) {
+// std::string tools::common::h5::tmp::unset_tmp_prefix(std::string_view filepath) {
 //    return init::register_paths(filepath).original_path;
 //    fs::path temp_path = fs::path(get_tmp_dir()) / fs::path(get_dirname());
 //    std::string::size_type pos = output_filepath.find(temp_path.string());
@@ -99,7 +99,7 @@ void tools::common::h5::tmp::register_new_file(const std::string &filepath) { in
 
 //}
 
-void tools::common::h5::tmp::create_directory(const std::string &path) {
+void tools::common::h5::tmp::create_directory(std::string_view path) {
     if(path.empty()) return;
     if(tools::log == nullptr) {
         if(spdlog::get("DMRG") == nullptr)
@@ -151,9 +151,9 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
     save_log[h5ppfile.getFilePath()] = save_point;
 }
 
-void tools::common::h5::tmp::copy_from_tmp(const std::string &filepath) {
+void tools::common::h5::tmp::copy_from_tmp(std::string_view filepath) {
     if(filepath.empty()) return;
-    if(not fs::exists(get_temporary_filepath(filepath)) and internal::file_register.find(filepath) != internal::file_register.end()) {
+    if(not fs::exists(get_temporary_filepath(filepath)) and internal::file_register.find(std::string(filepath)) != internal::file_register.end()) {
         tools::log->debug("Temporary file is already deleted: [{}]", get_temporary_filepath(filepath));
         return;
     }
@@ -161,12 +161,12 @@ void tools::common::h5::tmp::copy_from_tmp(const std::string &filepath) {
     copy_file(get_temporary_filepath(filepath), get_original_filepath(filepath));
 }
 
-void tools::common::h5::tmp::copy_into_tmp(const std::string &filepath) {
+void tools::common::h5::tmp::copy_into_tmp(std::string_view filepath) {
     if(filepath.empty()) return;
     copy_file(get_original_filepath(filepath), get_temporary_filepath(filepath));
 }
 
-void tools::common::h5::tmp::copy_file(const std::string &src, const std::string &tgt) {
+void tools::common::h5::tmp::copy_file(std::string_view src, std::string_view tgt) {
     if(src == tgt) {
         tools::log->info("Skipping file copy. Identical paths: [{}] == [{}]", src, tgt);
         return;
@@ -178,7 +178,7 @@ void tools::common::h5::tmp::copy_file(const std::string &src, const std::string
         return;
     }
     auto t_copy = tid::tic_token("copy");
-    if(not fs::exists(target_path.parent_path())) { tools::common::h5::tmp::create_directory(target_path); }
+    if(not fs::exists(target_path.parent_path())) { tools::common::h5::tmp::create_directory(target_path.string()); }
     if(fs::exists(target_path)) {
         std::ifstream                          target_stream(target_path.string(), std::ios_base::binary);
         std::ifstream                          source_stream(source_path.string(), std::ios_base::binary);
@@ -193,7 +193,7 @@ void tools::common::h5::tmp::copy_file(const std::string &src, const std::string
     //    fs::copy(source_path, target_path, fs::copy_options::overwrite_existing);
 }
 
-void tools::common::h5::tmp::remove_from_tmp(const std::string &filepath) {
+void tools::common::h5::tmp::remove_from_tmp(std::string_view filepath) {
     if(filepath.empty()) {
         tools::log->trace("Nothing to delete\n");
         return;

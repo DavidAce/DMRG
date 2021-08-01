@@ -72,8 +72,8 @@ class AlgorithmStatus {
         energy_dens_window   = status.energy_dens_window;
         algo_type            = status.algo_type;
     }
-    [[nodiscard]] std::string_view algo_type_sv() const { return enum2str(algo_type); }
+    [[nodiscard]] std::string_view algo_type_sv() const { return enum2sv(algo_type); }
     [[nodiscard]] std::string      algo_type_str() const { return std::string(algo_type_sv()); }
-    [[nodiscard]] std::string_view algo_stop_sv() const { return enum2str(algo_stop); }
+    [[nodiscard]] std::string_view algo_stop_sv() const { return enum2sv(algo_stop); }
     [[nodiscard]] std::string      algo_stop_str() const { return std::string(algo_stop_sv()); }
 };

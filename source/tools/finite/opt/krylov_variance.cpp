@@ -19,10 +19,11 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
                                                                                        OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
+    initial_mps.validate_candidate();
     if(not tensors.model->is_reduced()) throw std::runtime_error("krylov_variance_optimization requires energy-reduced MPO²");
     if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_variance_optimization requires non-compressed MPO²");
 
-    auto t_var    = tid::tic_scope("var");
+    auto t_var    = tid::tic_scope("krylov");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     auto size     = initial_mps.get_tensor().size();
 
@@ -69,8 +70,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
         Eigen::Tensor<double, 3> residual  = initial_mps.get_tensor().real();
         auto                     dims_mpo2 = mpo2.dimensions();
 
-        if(size <= 1024) {
-            //        if(size <= settings::precision::max_size_full_diag) {
+        if(size <= settings::precision::max_size_full_diag) {
             tools::log->trace("Full diagonalization of (H-E)²");
             auto matrix = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
             solver_full.eig(matrix.data(), matrix.rows());
@@ -96,8 +96,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
                     "time {:.3f} | matprod {:.3f}s",
                     largest_eigval, solver_shift.result.meta.iter, solver_shift.result.meta.counter, solver_shift.result.meta.time_total,
                     solver_shift.result.meta.time_matprod);
-                tools::log->info("arnoldi found: {}", solver_shift.result.meta.arnoldi_found);
-                tools::log->info("eigvecs found: {}", solver_shift.result.meta.eigvecsR_found);
                 if(not solver_shift.result.meta.arnoldi_found or solver_shift.result.meta.iter > solver_shift.config.maxIter) {
                     // Reset the matrix
                     tools::log->debug("Finding excited state using shifted operator [(H-E)²-λ], with λ = 1.0 | primme SA | residual on ...");
@@ -147,7 +145,15 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_variance_optimi
                                   "time {:.3f} | matprod {:.3f}s",
                                   largest_eigval, solver_shift.result.meta.iter, solver_shift.result.meta.counter, solver_shift.result.meta.time_total,
                                   solver_shift.result.meta.time_matprod);
+                if(not solver_shift.result.meta.arnoldi_found or solver_shift.result.meta.iter > solver_shift.config.maxIter) {
+                    // Reset the matrix
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λ], with λ = 1.0 | primme SA | residual on ...");
+                    hamiltonian_squared = MatVecMPO<cplx>(env2L.data(), env2R.data(), mpo2.data(), dims_mps, dims_mpo2);
+                    residual            = initial_mps.get_tensor();
 
+                    solver_primme_sa.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON,
+                                          eig::Dephase::OFF, residual.data());
+                }
             } else {
                 tools::log->warn("Finding excited state using H² with ritz SM");
                 solver_shift.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SM, eig::Form::SYMM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::ON,

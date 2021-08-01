@@ -72,7 +72,7 @@ void StateInfinite::initialize(ModelType model_type) {
     MPS_A->set_LC(L);
 }
 
-void        StateInfinite::set_name(const std::string &statename) { name = statename; }
+void        StateInfinite::set_name(std::string_view statename) { name = statename; }
 std::string StateInfinite::get_name() const { return name; }
 
 void          StateInfinite::set_algorithm(const AlgorithmType &algo_type) { algo = algo_type; }

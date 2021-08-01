@@ -97,8 +97,6 @@ void AlgorithmFinite::run_postprocessing() {
 }
 
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
-    auto tic = tid::tic_scope("move");
-
     if(not num_moves.has_value()) {
         if(tensors.active_sites.empty())
             num_moves = 1;
@@ -251,7 +249,7 @@ void AlgorithmFinite::randomize_model() {
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
                                       std::optional<long> chi_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
     auto t_rnd = tid::tic_scope("init.rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -294,7 +292,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", tensors.state->get_name(), enum2str(state_init), enum2str(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
@@ -569,8 +567,8 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     status.entanglement_converged_for = status.entanglement_saturated_for;
 }
 
-void AlgorithmFinite::check_convergence_spin_parity_sector(const std::string &target_sector, double threshold) {
-    const std::array<std::string, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
+    constexpr std::array<std::string_view, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool                             sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
     if(sector_is_valid) {
         auto axis                        = tools::finite::mps::init::get_axis(settings::strategy::target_sector);
@@ -616,11 +614,11 @@ void AlgorithmFinite::write_to_file(StorageReason storage_reason, const StateFin
 }
 
 template<typename T>
-void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data, const std::string &name, std::optional<CopyPolicy> copy_policy) {
+void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy) {
     tools::finite::h5::save::data(*h5pp_file, data, name, tensors.state->get_name(), status, storage_reason, copy_policy);
 }
 
-template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<std::complex<double>, 2> &data, const std::string &name,
+template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name,
                                              std::optional<CopyPolicy> copy_policy);
 
 void AlgorithmFinite::print_status_update() {
@@ -663,7 +661,7 @@ void AlgorithmFinite::print_status_update() {
     }
 
     if(last_optmode and last_optspace)
-        report += fmt::format("opt:[{}|{}] ", enum2str(last_optmode.value()).substr(0, 3), enum2str(last_optspace.value()).substr(0, 3));
+        report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error()));
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);

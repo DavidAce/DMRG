@@ -79,11 +79,11 @@ class AlgorithmFinite : public AlgorithmBase {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
-    void check_convergence_spin_parity_sector(const std::string &target_sector, double threshold = 1e-12);
+    void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-12);
     void write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                        std::optional<CopyPolicy> copy_policy = std::nullopt);
     template<typename T>
-    void write_to_file(StorageReason storage_reason, const T &data, const std::string &name, std::optional<CopyPolicy> copy_policy = std::nullopt);
+    void write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy = std::nullopt);
     std::vector<double>              var_mpo_step; // History of energy variances (from mpo) at each step
     std::vector<double>              var_mpo_iter; // History of energy variances (from mpo) at each iteration
     std::vector<std::vector<double>> entropy_iter; // History of entanglement entropies at each iteration

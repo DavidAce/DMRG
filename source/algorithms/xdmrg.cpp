@@ -88,7 +88,7 @@ void xdmrg::resume() {
     }
 
     tools::log->info("Resuming task list:");
-    for(const auto &task : task_list) tools::log->info(" -- {}", enum2str(task));
+    for(const auto &task : task_list) tools::log->info(" -- {}", enum2sv(task));
 
     run_task_list(task_list);
 }
@@ -154,7 +154,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
         task_list.pop_front();
     }
     if(not task_list.empty()) {
-        for(auto &task : task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
+        for(auto &task : task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
         throw std::runtime_error("Simulation ended with unfinished tasks");
     }
 }
@@ -203,7 +203,7 @@ void xdmrg::run_preprocessing() {
 
 void xdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
-    tools::log->info("Starting {} simulation of model [{}] for state [{}]", status.algo_type_sv(), enum2str(settings::model::model_type),
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
@@ -233,7 +233,6 @@ void xdmrg::run_algorithm() {
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
-        tools::common::profile::print_profiling(status);
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
@@ -448,7 +447,7 @@ void xdmrg::single_xDMRG_step(std::vector<xdmrg::OptConf> optConf) {
         }
 
         tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
-                          optConf.size(), conf.label, enum2str(conf.optInit), enum2str(conf.optMode), enum2str(conf.optSpace), enum2str(conf.optType),
+                          optConf.size(), conf.label, enum2sv(conf.optInit), enum2sv(conf.optMode), enum2sv(conf.optSpace), enum2sv(conf.optType),
                           conf.chosen_sites, conf.problem_dims, conf.problem_size,
                           (conf.alpha_expansion ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         switch(conf.optInit) {
@@ -487,7 +486,7 @@ void xdmrg::single_xDMRG_step(std::vector<xdmrg::OptConf> optConf) {
         results.back().set_optexit(conf.optExit);
 
         tools::log->debug("Optimization [{}|{}]: {}. Variance change {:.4f} --> {:.4f} ({:.3f} %)",
-                          enum2str(conf.optMode), enum2str(conf.optSpace), flag2str(conf.optExit),
+                          enum2sv(conf.optMode), enum2sv(conf.optSpace), flag2str(conf.optExit),
                           std::log10(variance_before_step.value()),std::log10(results.back().get_variance()), results.back().get_relchange()*100);
 
         if(conf.optExit == OptExit::SUCCESS) break;
@@ -503,7 +502,7 @@ void xdmrg::single_xDMRG_step(std::vector<xdmrg::OptConf> optConf) {
                     "| [{}][{}] | time {:.4f} ms",
                     candidate.get_name(), candidate.get_sites().front(), candidate.get_sites().back(), candidate.get_alpha(), num_expansion_iters,
                     std::log10(candidate.get_variance()), candidate.get_energy_per_site(), candidate.get_overlap(), candidate.get_norm(),
-                    enum2str(candidate.get_optmode()), enum2str(candidate.get_optspace()), 1000 * candidate.get_time());
+                    enum2sv(candidate.get_optmode()), enum2sv(candidate.get_optspace()), 1000 * candidate.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
@@ -620,7 +619,7 @@ void xdmrg::check_convergence() {
 }
 
 void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector) {
-    tools::log->info("Resetting to state in energy window -- reason: {}", enum2str(reason));
+    tools::log->info("Resetting to state in energy window -- reason: {}", enum2sv(reason));
     tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 
     status.num_resets++;

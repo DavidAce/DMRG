@@ -10,6 +10,7 @@
 #include <tensors/site/mps/MpsSite.h>
 #include <tensors/state/StateFinite.h>
 #include <tensors/TensorsFinite.h>
+#include <tid/tid.h>
 #include <tools/common/h5.h>
 #include <tools/common/log.h>
 #include <tools/finite/env.h>
@@ -20,12 +21,12 @@
 
 namespace tools::finite::h5 {
     // Load model, state and simulation status from HDF5
-    void load::simulation(const h5pp::File &h5ppFile, const std::string &state_prefix, TensorsFinite &tensors, AlgorithmStatus &status,
+    void load::simulation(const h5pp::File &h5ppFile, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status,
                           AlgorithmType algo_type) {
         try {
             tensors.clear_measurements();
             tensors.clear_cache();
-            if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2str(StorageLevel::FULL))
+            if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
             tools::common::h5::load::status(h5ppFile, state_prefix, status);
             load::model(h5ppFile, state_prefix, *tensors.model);
@@ -35,8 +36,8 @@ namespace tools::finite::h5 {
         } catch(const std::exception &ex) { throw except::load_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
     }
 
-    void load::model(const h5pp::File &h5ppFile, const std::string &state_prefix, ModelFinite &model) {
-        if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2str(StorageLevel::FULL))
+    void load::model(const h5pp::File &h5ppFile, std::string_view state_prefix, ModelFinite &model) {
+        if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
             throw std::runtime_error("Given prefix to model data with StorageLevel < FULL. The model can only be resumed from FULL storage");
 
         // Find the path to the MPO
@@ -47,14 +48,14 @@ namespace tools::finite::h5 {
             tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
             auto model_type = h5ppFile.readAttribute<std::string>("model_type", table_path);
             auto model_size = h5ppFile.readAttribute<size_t>("model_size", table_path);
-            if(str2enum<ModelType>(model_type) != settings::model::model_type)
+            if(sv2enum<ModelType>(model_type) != settings::model::model_type)
                 throw std::runtime_error(fmt::format("Mismatch when loading model: model_type [{}] != settings::model::model_type [{}]", model_type,
-                                                     enum2str(settings::model::model_type)));
+                                                     enum2sv(settings::model::model_type)));
             if(model_size != settings::model::model_size)
                 throw std::runtime_error(
                     fmt::format("Mismatch when loading model: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
             for(const auto &mpo : model.MPO) mpo->load_hamiltonian(h5ppFile, model_prefix);
-            for(const auto &mpo : model.MPO) tools::log->trace("Loaded mpo: {}({})", enum2str(mpo->model_type), mpo->get_position());
+            for(const auto &mpo : model.MPO) tools::log->trace("Loaded mpo: {}({})", enum2sv(mpo->model_type), mpo->get_position());
         } else {
             throw std::runtime_error(fmt::format("Could not find model data in [{}]", model_prefix));
         }
@@ -62,9 +63,9 @@ namespace tools::finite::h5 {
         tools::finite::print::model(model);
     }
 
-    void load::state(const h5pp::File &h5ppFile, const std::string &state_prefix, StateFinite &state, const AlgorithmStatus &status) {
+    void load::state(const h5pp::File &h5ppFile, std::string_view state_prefix, StateFinite &state, const AlgorithmStatus &status) {
         using cplx = std::complex<double>;
-        if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2str(StorageLevel::FULL))
+        if(h5ppFile.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
             throw std::runtime_error("Given prefix to MPS data with StorageLevel < FULL. The MPS's can only be resumed from FULL storage");
         auto mps_prefix = h5ppFile.readAttribute<std::string>(state_prefix, "common/mps_prefix");
         auto model_type = h5ppFile.readAttribute<std::string>(state_prefix, "common/model_type");
@@ -72,13 +73,13 @@ namespace tools::finite::h5 {
         auto position   = h5ppFile.readAttribute<long>(state_prefix, "common/position");
         if(position != status.position)
             throw std::runtime_error(fmt::format("Mismatch when loading MPS: position [{}] != status.position [{}]", position, status.position));
-        if(str2enum<ModelType>(model_type) != settings::model::model_type)
+        if(sv2enum<ModelType>(model_type) != settings::model::model_type)
             throw std::runtime_error(fmt::format("Mismatch when loading MPS: model_type [{}] != settings::model::model_type [{}]", model_type,
-                                                 enum2str(settings::model::model_type)));
+                                                 enum2sv(settings::model::model_type)));
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
-        state.initialize(str2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
+        state.initialize(sv2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
         tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
         for(const auto &mps : state.mps_sites) {
             auto        pos         = mps->get_position<long>();
@@ -109,7 +110,7 @@ namespace tools::finite::h5 {
         }
     }
 
-    void compare(double val1, double val2, double tol, const std::string &tag) {
+    void compare(double val1, double val2, double tol, std::string_view tag) {
         if(val2 == 0) {
             tools::log->warn("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2,
                              std::abs(val1 - val2), tol);
@@ -124,15 +125,16 @@ namespace tools::finite::h5 {
                               tol);
     }
 
-    void load::validate(const h5pp::File &h5ppFile, const std::string &state_prefix, TensorsFinite &tensors, AlgorithmType algo_type) {
+    void load::validate(const h5pp::File &h5ppFile, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmType algo_type) {
+        auto t_val = tid::tic_scope("validate");
+        auto measurements_path = fmt::format("{}/measurements", state_prefix);
         if(algo_type == AlgorithmType::fLBIT) {
             // In this case we have loaded state_real from file.
             // However, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian
             // makes no sense.
             // Therefore, we have to validate using entropy, or other state-specific measurements that are independent of the hamlitonian.
-
             tensors.activate_sites({tensors.get_position<size_t>()});
-            auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+            auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
             tools::log->debug("Validating resumed state: [{}]", state_prefix);
             tools::log->debug("State labels: {}", tensors.state->get_labels());
             tensors.state->clear_cache();
@@ -142,7 +144,7 @@ namespace tools::finite::h5 {
                     "Entanglement entropy");
         } else {
             tensors.activate_sites({tensors.get_position<size_t>()});
-            auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(state_prefix + "/measurements");
+            auto expected_measurements = h5ppFile.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
             tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
             tools::log->debug("State labels: {}", tensors.state->get_labels());
             tensors.clear_measurements();

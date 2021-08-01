@@ -66,7 +66,7 @@ std::string Loader::remove_spaces(std::string str) {
     return str;
 }
 
-std::string Loader::remove_leading_spaces(std::string str, const std::string &whitespace) {
+std::string Loader::remove_leading_spaces(std::string str, std::string_view whitespace) {
     const auto strBegin = str.find_first_not_of(whitespace);
     if(strBegin == std::string::npos) return ""; // no content
     const auto strEnd   = str.find_last_not_of(whitespace);
@@ -74,11 +74,11 @@ std::string Loader::remove_leading_spaces(std::string str, const std::string &wh
     return str.substr(strBegin, strRange);
 }
 
-bool Loader::is_parameterline(const std::string &str) { return str.find('=') != std::string::npos; }
+bool Loader::is_parameterline(std::string_view str) { return str.find('=') != std::string_view::npos; }
 
-std::string::size_type Loader::find_comment_character(const std::string &str) {
-    std::vector<std::string> comment_symbols = {"//", "/*", "#"};
+std::string_view::size_type Loader::find_comment_character(std::string_view str) {
+    constexpr std::array<std::string_view, 3> comment_symbols = {"//", "/*", "#"};
     for(auto &sym : comment_symbols)
-        if(str.find(sym) != std::string::npos) return str.find(sym);
-    return str.npos;
+        if(str.find(sym) != std::string_view::npos) return str.find(sym);
+    return std::string_view::npos;
 }

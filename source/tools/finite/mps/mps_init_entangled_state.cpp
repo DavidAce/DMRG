@@ -27,7 +27,7 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
     return bond_dimensions;
 }
 
-void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] const std::string &sector, long chi_lim,
+void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector, long chi_lim,
                                                       bool use_eigenspinors) {
     if(use_eigenspinors)
         set_random_entangled_state_with_random_spinors(state, type, chi_lim);
@@ -75,7 +75,7 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigenspinors(StateFinite &state, StateInitType type, const std::string &sector,
+void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view sector,
                                                                                        long chi_lim) {
     const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);

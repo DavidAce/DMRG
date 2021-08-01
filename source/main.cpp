@@ -67,7 +67,7 @@ std::string filename_append_number(const std::string &filename, const long numbe
     h5pp::fs::path oldFileName = filename;
     h5pp::fs::path newFileName = filename;
     if(oldFileName.stem().string().find(std::to_string(number)) != std::string::npos) return filename;
-    newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(number) + oldFileName.extension().string());
+    newFileName.replace_filename(fmt::format("{}_{}{}", oldFileName.stem().string(), number, oldFileName.extension().string()));
     tools::log->info("Appended number [{}] to filename: [{}]", number, newFileName.string());
     return newFileName.string();
 }

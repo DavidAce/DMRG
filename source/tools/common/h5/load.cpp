@@ -7,7 +7,7 @@
 
 namespace tools::common::h5 {
 
-    void load::status(const h5pp::File &h5ppFile, const std::string &state_prefix, AlgorithmStatus &status) {
+    void load::status(const h5pp::File &h5ppFile, std::string_view state_prefix, AlgorithmStatus &status) {
         auto        tic        = tid::tic_scope("status");
         std::string table_path = fmt::format("{}/status", state_prefix);
         if(h5ppFile.linkExists(table_path)) {
@@ -19,7 +19,7 @@ namespace tools::common::h5 {
         }
     }
 
-    void load::timer(const h5pp::File &h5ppFile, const std::string &state_prefix, AlgorithmStatus &status) {
+    void load::timer(const h5pp::File &h5ppFile, std::string_view state_prefix, AlgorithmStatus &status) {
         if(not settings::profiling::on) return;
         std::string table_path = fmt::format("{}/profiling", state_prefix);
         if(h5ppFile.linkExists(table_path))

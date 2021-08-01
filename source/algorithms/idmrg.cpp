@@ -20,7 +20,7 @@ void idmrg::run_simulation() {
         tensors.state->set_name("state_emin");
     else
         tensors.state->set_name("state_emax");
-    tools::log->info("Starting {} simulation of model [{}] for state [{}]", status.algo_type_sv(), enum2str(settings::model::model_type),
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     while(true) {
@@ -77,7 +77,7 @@ void idmrg::single_iDMRG_step() {
     /*!
      * \fn void single_DMRG_step(class_superblock &state)
      */
-    tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
+    tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(ritz));
     Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, ritz);
     tensors.merge_twosite_tensor(twosite_tensor, status.chi_lim);
 }

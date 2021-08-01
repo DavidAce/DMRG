@@ -333,7 +333,7 @@ void IsingSdual::set_averages(std::vector<TableMap> all_parameters, bool infinit
     set_parameters(all_parameters[get_position()]);
 }
 
-void IsingSdual::save_hamiltonian(h5pp::File &file, const std::string &hamiltonian_table_path) const {
+void IsingSdual::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {
     if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb_ising_sdual::h5_type, hamiltonian_table_path, "Selfdual Ising");
     file.appendTableRecords(h5tb, hamiltonian_table_path);
     // Position 0 is also responsible for writing attributes
@@ -350,7 +350,7 @@ void IsingSdual::save_hamiltonian(h5pp::File &file, const std::string &hamiltoni
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", hamiltonian_table_path);
 }
 
-void IsingSdual::load_hamiltonian(const h5pp::File &file, const std::string &model_path) {
+void IsingSdual::load_hamiltonian(const h5pp::File &file, std::string_view model_path) {
     auto ham_table = fmt::format("{}/hamiltonian", model_path);
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(ham_table, position);

@@ -9,12 +9,12 @@
 
 namespace debug {
     template<typename Derived>
-    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] const std::string &name = "") {
+    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] std::string_view name = "") {
         return obj.derived().hasNaN();
     }
 
     template<typename Scalar, auto rank>
-    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, const std::string &name = "") {
+    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, std::string_view name = "") {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return hasNaN(vector, name);
     }

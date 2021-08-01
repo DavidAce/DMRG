@@ -140,7 +140,7 @@ void flbit::run_default_task_list() {
 
     run_task_list(default_task_list);
     if(not default_task_list.empty()) {
-        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
+        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
         throw std::runtime_error("Simulation ended with unfinished tasks");
     }
 }
@@ -184,17 +184,16 @@ void flbit::run_algorithm() {
     if(not state_lbit) transform_to_lbit_basis();
     if(time_points.empty()) create_time_points();
     if(std::abs(status.delta_t) == 0) update_time_step();
-    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2str(settings::model::model_type),
+    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
-    auto t_run = tid::tic_token("run");
+    auto t_run = tid::tic_scope("run");
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
         check_convergence();
-        print_status_update();
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
-
+        print_status_update();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
@@ -203,6 +202,7 @@ void flbit::run_algorithm() {
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
         t_run->start_lap();
+        tools::common::profile::print_profiling();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
@@ -216,11 +216,12 @@ void flbit::single_flbit_step() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
 
     // Time evolve here
-    auto t_evo = tid::tic_scope("evo");
+    auto t_step = tid::tic_scope("step");
+    auto t_evo  = tid::tic_scope("time_evo");
     tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
-
+    t_evo.toc();
     transform_to_real_basis();
 
     if(settings::model::model_size <= 10 and settings::debug) {
@@ -246,6 +247,7 @@ void flbit::single_flbit_step() {
 
 void flbit::update_time_step() {
     tools::log->trace("Updating time step");
+    auto t_updtstep = tid::tic_scope("update_time_step");
     if(time_points.empty()) create_time_points();
     auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size() - 1);
     auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
@@ -299,6 +301,7 @@ void flbit::check_convergence() {
 
 void flbit::create_time_points() {
     tools::log->info("Creating time points");
+    auto t_crt      = tid::tic_scope("create_time_points");
     auto time_start = std::complex<double>(settings::flbit::time_start_real, settings::flbit::time_start_imag);
     auto time_final = std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag);
     auto time_diff  = time_start - time_final;
@@ -330,6 +333,7 @@ void flbit::create_time_points() {
 
 void flbit::create_hamiltonian_gates() {
     tools::log->info("Creating Hamiltonian gates");
+    auto t_hamgates = tid::tic_scope("hamgates");
     ham_gates_1body.clear();
     ham_gates_2body.clear();
     ham_gates_3body.clear();
@@ -405,7 +409,7 @@ void flbit::create_lbit_transform_gates() {
 
 void flbit::transform_to_real_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
-    auto t_map    = tid::tic_scope("map");
+    auto t_map    = tid::tic_scope("l2r");
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
@@ -431,7 +435,7 @@ void flbit::transform_to_real_basis() {
 
 void flbit::transform_to_lbit_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
-    auto t_map = tid::tic_token("map");
+    auto t_map = tid::tic_scope("r2l");
     state_lbit = std::make_unique<StateFinite>(*tensors.state);
     state_lbit->set_name("state_lbit");
 
@@ -456,10 +460,12 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
     tensors.clear_cache();
     tensors.clear_measurements();
     AlgorithmFinite::write_to_file(storage_reason, *tensors.state, *tensors.model, *tensors.edges, copy_file);
-    auto t_save = tid::tic_scope("save");
 
     // Save the unitaries once
     if(storage_reason == StorageReason::MODEL) {
+        auto        t_h5      = tid::tic_scope("h5");
+        auto        t_model   = tid::tic_scope("MODEL");
+        auto        t_gates   = tid::tic_scope("gates");
         std::string grouppath = "/fLBIT/model/unitary_gates";
         if(h5pp_file->linkExists(grouppath)) return;
         for(const auto &[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
@@ -478,6 +484,9 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
 
     // Save the lbit analysis once
     if(storage_reason == StorageReason::MODEL) {
+        auto t_h5       = tid::tic_scope("h5");
+        auto t_model    = tid::tic_scope("MODEL");
+        auto t_analysis = tid::tic_scope("analysis");
         if(h5pp_file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;
@@ -529,14 +538,18 @@ void flbit::print_status_update() {
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-    report += fmt::format("Sₙ(L/2):{:<10.8f} ", tools::finite::measure::number_entropy_midchain(*tensors.state));
+    if(tensors.state->measurements.number_entropy_midchain) // This one is expensive
+        report += fmt::format("Sₙ(L/2):{:<10.8f} ", tensors.state->measurements.number_entropy_midchain.value());
+
+    if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
+        report += fmt::format("Sₙ(L/2) lbit:{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::chi_lim_max(status.algo_type), status.chi_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));
     report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
-    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tid::get("fLBIT::t_sim").get_lap()));
+    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);

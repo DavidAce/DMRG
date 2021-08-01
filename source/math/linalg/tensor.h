@@ -183,7 +183,7 @@ namespace linalg::tensor {
     }
 
     template<typename T>
-    std::string to_string(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, int prec = 1, int width = 2, const std::string &sep = ", ") {
+    std::string to_string(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, int prec = 1, int width = 2, std::string_view sep = ", ") {
         using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Eigen::DefaultDevice>;
         using Scalar    = typename Eigen::internal::remove_const<typename Evaluator::Scalar>::type;
 

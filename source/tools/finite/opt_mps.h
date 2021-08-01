@@ -45,13 +45,13 @@ namespace tools::finite::opt {
 
         opt_mps() = default;
         // Constructor used for candidates
-        opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
                 std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
-        opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                 double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
-        [[nodiscard]] const std::string                 &get_name() const;
+        [[nodiscard]] std::string_view                   get_name() const;
         [[nodiscard]] const Eigen::Tensor<cplx, 3>      &get_tensor() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
         [[nodiscard]] Eigen::Map<Eigen::VectorXd>        get_vector_cplx_as_2xreal();
@@ -77,14 +77,14 @@ namespace tools::finite::opt {
         [[nodiscard]] long                               get_krylov_ncv() const;
         [[nodiscard]] double                             get_krylov_tol() const;
         [[nodiscard]] double                             get_krylov_eigval() const;
-        [[nodiscard]] std::string                        get_krylov_ritz() const;
+        [[nodiscard]] std::string_view                   get_krylov_ritz() const;
         [[nodiscard]] cplx                               get_krylov_shift() const;
         [[nodiscard]] OptSpace                           get_optspace() const;
         [[nodiscard]] OptMode                            get_optmode() const;
         [[nodiscard]] OptExit                            get_optexit() const;
         void                                             clear();
         void                                             normalize();
-        void                                             set_name(const std::string &name_);
+        void                                             set_name(std::string_view name_);
         void                                             set_tensor(const Eigen::Tensor<cplx, 3> &tensor_);
         void                                             set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims);
         void                                             set_sites(const std::vector<size_t> &sites_);
@@ -107,7 +107,7 @@ namespace tools::finite::opt {
         void                                             set_krylov_ncv(long ncv_);
         void                                             set_krylov_tol(double tol_);
         void                                             set_krylov_eigval(double krylov_eigval_);
-        void                                             set_krylov_ritz(const std::string &ritz_);
+        void                                             set_krylov_ritz(std::string_view ritz_);
         void                                             set_krylov_shift(const cplx &ritz_);
         void                                             set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void                                             set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);

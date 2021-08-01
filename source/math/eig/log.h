@@ -25,5 +25,5 @@ namespace eig {
     inline auto log = spdlog::get("eig") == nullptr ? spdlog::stdout_color_mt("eig", spdlog::color_mode::always) : spdlog::get("eig");
     extern void setLevel(spdlog::level::level_enum level);
     extern void setLevel(size_t level);
-    extern void setTimeStamp(const std::string &stamp = "[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
+    extern void setTimeStamp(std::string_view stamp = "[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
 }

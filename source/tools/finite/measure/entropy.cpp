@@ -29,6 +29,8 @@ struct Amplitude {
     void eval_from_A(const StateFinite &state, long tgt_pos, const std::vector<Amplitude> &cache = {}) {
         // Start by calculating the mps sites that should be included in the amplitude
         if(not site or site.value() < tgt_pos) {
+            auto t_evalA = tid::tic_scope("evalA");
+
             // There are missing mps in the amplitude. Let's add them
             // First, check if it is already available in the amplitudes database
             // We can look it up by transforming the bits between 0 to bit_site to an integer
@@ -44,7 +46,7 @@ struct Amplitude {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() <= tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
-                        tools::log->trace("Cached   site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
+//                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
                         site = c.site;
                         ampl = c.ampl;
                     }
@@ -55,6 +57,7 @@ struct Amplitude {
                 ampl.resize(1);
                 ampl.setConstant(1.0);
             }
+            Eigen::Tensor<StateFinite::Scalar, 1> temp;
             // Contract the missing mps up to, but not including, the last mps at mps_site
             for(const auto &mps : state.mps_sites) {
                 long pos = mps->get_position<long>();
@@ -68,9 +71,11 @@ struct Amplitude {
                 std::array<long, 3> off  = {bits[static_cast<size_t>(pos)], 0, 0};
                 std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
 
-                // ampl never has a trailing Lambda, which means that we must SVD lambda out of B sites
-                Eigen::Tensor<StateFinite::Scalar, 1> temp =
-                    ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
+                // ampl never has a trailing Lambda
+                auto t_con = tid::tic_scope("contract");
+                temp.resize(size);
+                temp.device(tenx::omp::getDevice()) = ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
+                t_con.toc();
                 ampl = temp;
 
                 // Update the current site
@@ -85,6 +90,8 @@ struct Amplitude {
         // Start by calculating the mps sites that should be included in the amplitude
         // Remember that in eval_from_B we calculate the amplitude starting from the right-end of the chain
         if(not site or site.value() > tgt_pos) {
+            auto t_evalB = tid::tic_scope("evalB");
+
             // There are missing mps in the amplitude. Let's add them
             // First, check if it is already available in the amplitudes database
             // We can look it up by transforming the bits between 0 to bit_site to an integer
@@ -102,7 +109,7 @@ struct Amplitude {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() > tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
-                        tools::log->trace("Cached   site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
+//                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
                         site = c.site;
                         ampl = c.ampl;
                     }
@@ -113,6 +120,7 @@ struct Amplitude {
                 ampl.resize(1);
                 ampl.setConstant(1.0);
             }
+            Eigen::Tensor<StateFinite::Scalar, 1> temp;
             // Contract the missing mps
             for(const auto &mps : iter::reverse(state.mps_sites)) {
                 long pos = mps->get_position<long>();
@@ -127,9 +135,11 @@ struct Amplitude {
                 std::array<long, 3> off      = {bits[static_cast<size_t>(mps_rpos)], 0, 0};
                 std::array<long, 3> ext      = {1, mps->get_chiL(), mps->get_chiR()};
 
-                // ampl never has a trailing Lambda, which means that we must SVD lambda out of B sites
-                Eigen::Tensor<StateFinite::Scalar, 1> temp =
-                    mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
+                // ampl never has a trailing Lambda
+                auto t_con = tid::tic_scope("contract");
+                temp.resize(size);
+                temp.device(tenx::omp::getDevice()) = mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
+                t_con.toc();
                 ampl = temp;
                 // Update the current site
                 site = pos;
@@ -139,15 +149,16 @@ struct Amplitude {
         }
     }
 
-    void eval(const StateFinite &state, long tgt_pos, const std::vector<Amplitude> &database = {}) {
+    void eval(const StateFinite &state, long tgt_pos, const std::vector<Amplitude> &cache = {}) {
         if(tgt_pos <= state.get_position<long>())
-            eval_from_A(state, tgt_pos, database);
+            eval_from_A(state, tgt_pos, cache);
         else
-            eval_from_B(state, tgt_pos, database);
+            eval_from_B(state, tgt_pos, cache);
     }
 };
 
 std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &amplitudes, const std::vector<Amplitude> &cache = {}) {
+    auto                t_prob    = tid::tic_scope("probability");
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
     auto                tgt_rpos  = state_len - 1 - tgt_pos;
@@ -155,6 +166,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
 
     // Figure out which schmidt values to use
+    auto                     t_figout = tid::tic_scope("figout");
     Eigen::Tensor<double, 1> schmidt_values;
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
@@ -164,10 +176,12 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
     }
+    t_figout.toc();
 
     // Create optional slots for each schmidt value
+    auto                t_slots = tid::tic_scope("slots");
     std::vector<double> schmidt_vector(static_cast<size_t>(schmidt_values.size()));
-    for(auto &&[i, s] : iter::enumerate(schmidt_vector)) s = schmidt_values[static_cast<long>(i)];
+    for(const auto &[i, s] : iter::enumerate(schmidt_vector)) s = schmidt_values[static_cast<long>(i)];
     double cutoff = 1.0 / std::pow(state_len, 2);
     for(const auto &[i, s] : iter::enumerate(schmidt_vector)) {
         for(auto &a : amplitudes) {
@@ -182,8 +196,8 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
                 auto n  = a.bits.count();
                 auto sq = s * s;
                 probability[n] += sq;
-                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f} *", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
-                                  ampl_sqr);
+//                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f} *", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
+//                                  ampl_sqr);
                 break;
             }
             //            else {
@@ -207,6 +221,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
 }
 
 std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mps_pos) {
+    auto t_amp     = tid::tic_scope("amplitude");
     auto state_pos = state.get_position<long>();
     auto state_len = state.get_length<long>();
     auto spinprod  = [](long &acc, const auto &mps) {
@@ -232,16 +247,17 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
 std::vector<double> tools::finite::measure::number_entropies(const StateFinite &state) {
     if(state.measurements.number_entropies) return state.measurements.number_entropies.value();
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
+        throw std::runtime_error(fmt::format("Called number_entropies(StateFinite) from algorithm [{}]",enum2sv(state.get_algorithm())));
         // Only fLBIT has particle-number conservation
-        state.measurements.number_entropy_current = {};
+        state.measurements.number_entropy_current  = std::nullopt;
+        state.measurements.number_entropy_midchain = std::nullopt;
+        state.measurements.number_entropies        = std::nullopt;
         return {};
     }
-
-    if(state.get_algorithm() != AlgorithmType::fLBIT) return {}; // Only fLBIT has particle-number conservation
-    auto state_copy = state;                                     // Make a local copy so we can move it to the middle without touching the original state
+    auto t_num      = tid::tic_scope("number_entropy");
+    auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy, state_copy.find_largest_chi());
 
-    auto t_num           = tid::tic_scope("number_entropy");
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
     auto von_neumann_sum = [](double sum, const double p) {
@@ -276,52 +292,31 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     }
 
     tools::log->disable_backtrace();
-    state.measurements.number_entropies = number_entropies;
-    tools::log->info("Number entropies: {}", number_entropies);
+    state.measurements.number_entropies        = number_entropies;
+    state.measurements.number_entropy_midchain = number_entropies.at(state.get_length() / 2);
+    state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
+    tools::log->debug(FMT_STRING("Number entropies: {:.4f}"), fmt::join(number_entropies, ", "));
     return state.measurements.number_entropies.value();
 }
 
 double tools::finite::measure::number_entropy_current(const StateFinite &state) {
     if(state.measurements.number_entropy_current) return state.measurements.number_entropy_current.value();
-    if(state.get_algorithm() != AlgorithmType::fLBIT) {
-        // Only fLBIT has particle-number conservation
-        state.measurements.number_entropy_current = 0;
+    if(state.measurements.number_entropies) return state.measurements.number_entropies->at(state.get_position<size_t>() + 1);
+    auto entropies = number_entropies(state);
+    if(not entropies.empty()) {
+        state.measurements.number_entropy_current = entropies.at(state.get_position<size_t>() + 1);
+        return state.measurements.number_entropy_current.value();
+    } else
         return 0;
-    }
-    auto pos = state.get_position<long>();
-    if(state.measurements.number_entropies) {
-        if(state.measurements.number_entropies->size() != state.get_length<size_t>() + 1)
-            throw std::runtime_error(fmt::format("expected number_entropies.size() == lenght+1. Got: ({})", state.measurements.number_entropies->size()));
-        return state.measurements.number_entropies->at(static_cast<size_t>(pos + 1));
-    }
-
-    auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
-    tools::finite::mps::move_center_point_to_middle(state_copy, state.find_largest_chi());
-    auto von_neumann_sum = [](double sum, const double p) {
-        return p > 0 ? sum + p * std::log(p) : sum;
-    };
-    auto amplitudes                           = generate_amplitude_list(state_copy, pos);
-    auto probability                          = compute_probability(state_copy, pos, amplitudes);
-    state.measurements.number_entropy_current = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
-    return state.measurements.number_entropy_current.value();
 }
 
 double tools::finite::measure::number_entropy_midchain(const StateFinite &state) {
     if(state.measurements.number_entropy_midchain) return state.measurements.number_entropy_midchain.value();
     if(state.measurements.number_entropies) return state.measurements.number_entropies->at(state.get_length() / 2);
-    if(state.get_algorithm() != AlgorithmType::fLBIT) {
-        // Only fLBIT has particle-number conservation
-        state.measurements.number_entropy_current = 0;
+    auto entropies = number_entropies(state);
+    if(not entropies.empty()) {
+        state.measurements.number_entropy_midchain = entropies.at(state.get_length() / 2);
+        return state.measurements.number_entropy_midchain.value();
+    } else
         return 0;
-    }
-
-    auto von_neumann_sum = [](double sum, const double p) {
-        return p > 0 ? sum + p * std::log(p) : sum;
-    };
-
-    auto pos                                   = state.get_length<long>() / 2;
-    auto amplitudes                            = generate_amplitude_list(state, pos);
-    auto probability                           = compute_probability(state, pos, amplitudes);
-    state.measurements.number_entropy_midchain = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
-    return state.measurements.number_entropy_midchain.value();
 }

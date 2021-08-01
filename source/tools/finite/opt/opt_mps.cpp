@@ -3,7 +3,7 @@
 #include <io/fmt.h>
 using namespace tools::finite::opt;
 
-opt_mps::opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
                  std::optional<double> variance_, double overlap_, size_t length_)
     : name(name_), tensor(tensor_), sites(sites_), eigval(eigval_), energy_r(energy_reduced_), energy(eigval_ + energy_reduced_), variance(variance_),
       overlap(overlap_), length(length_) {
@@ -13,14 +13,14 @@ opt_mps::opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_
     time    = 0;
 }
 
-opt_mps::opt_mps(const std::string &name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                  double overlap_, size_t length_, size_t iter_, size_t counter_, size_t time_)
     : name(name_), tensor(tensor_), sites(sites_), energy(energy_), variance(variance_), overlap(overlap_), length(length_), iter(iter_), counter(counter_),
       time(time_) {
     norm = get_vector().norm();
 }
 
-const std::string &opt_mps::get_name() const {
+std::string_view opt_mps::get_name() const {
     if(name)
         return name.value();
     else
@@ -152,7 +152,7 @@ double opt_mps::get_krylov_eigval() const {
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-std::string opt_mps::get_krylov_ritz() const {
+std::string_view opt_mps::get_krylov_ritz() const {
     if(krylov_ritz)
         return krylov_ritz.value();
     else
@@ -222,7 +222,7 @@ void opt_mps::normalize() {
     norm = vector.norm();
 }
 
-void opt_mps::set_name(const std::string &name_) { name = name_; }
+void opt_mps::set_name(std::string_view name_) { name = name_; }
 void opt_mps::set_tensor(const Eigen::Tensor<cplx, 3> &tensor_) {
     tensor = tensor_;
     norm   = get_vector().norm();
@@ -264,7 +264,7 @@ void opt_mps::set_krylov_nev(long nev_) { krylov_nev = nev_; }
 void opt_mps::set_krylov_ncv(long ncv_) { krylov_ncv = ncv_; }
 void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
 void opt_mps::set_krylov_eigval(double krylov_eigval_) { krylov_eigval = krylov_eigval_; }
-void opt_mps::set_krylov_ritz(const std::string &krylov_ritz_) { krylov_ritz = krylov_ritz_; }
+void opt_mps::set_krylov_ritz(std::string_view krylov_ritz_) { krylov_ritz = std::string(krylov_ritz_); }
 void opt_mps::set_krylov_shift(const cplx &krylov_shift_) { krylov_shift = krylov_shift_; }
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {

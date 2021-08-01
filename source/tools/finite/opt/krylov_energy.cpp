@@ -19,7 +19,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_energy_optimiza
                                                                                      OptSpace optSpace) {
     using namespace internal;
     using namespace settings::precision;
-    auto t_ene = tid::tic_scope("ene");
+    auto t_ene = tid::tic_scope("krylov");
+    initial_mps.validate_candidate();
 
     eig::Ritz   ritz      = eig::Ritz::SM;
     const auto &mpo       = tensors.get_multisite_mpo();

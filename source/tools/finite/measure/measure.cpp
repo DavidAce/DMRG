@@ -51,6 +51,7 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 double tools::finite::measure::norm(const StateFinite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
+    auto t_chi = tid::tic_scope("norm");
     if(state.is_normalized_on_all_sites()) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
@@ -119,6 +120,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
     if(state.measurements.bond_dimensions) return state.measurements.bond_dimensions.value();
+    auto t_chi = tid::tic_scope("chi");
     std::vector<long> bond_dimensions;
     bond_dimensions.reserve(state.get_length() + 1);
     if(not state.has_center_point()) bond_dimensions.emplace_back(state.mps_sites.front()->get_chiL());
@@ -134,6 +136,7 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFinite &state) {
     std::vector<long> bond_dimensions;
     if(state.active_sites.empty()) return bond_dimensions;
+    auto t_chi = tid::tic_scope("chi_merged");
 
     for(const auto &pos : state.active_sites) {
         bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
@@ -149,7 +152,7 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFini
 
 double tools::finite::measure::entanglement_entropy_current(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_current) return state.measurements.entanglement_entropy_current.value();
-    auto t_ent = tid::tic_scope("entanglement");
+    auto t_ent = tid::tic_scope("neumann_entropy");
     if(state.has_center_point()) {
         auto                    &LC                     = state.current_bond();
         Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
@@ -161,7 +164,7 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
 
 double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
-    auto                     t_ent                   = tid::tic_token("entanglement");
+    auto                     t_ent                   = tid::tic_scope("neumann_entropy");
     auto                    &LC                      = state.midchain_bond();
     Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
     state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
@@ -170,7 +173,7 @@ double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const StateFinite &state) {
     if(state.measurements.entanglement_entropies) return state.measurements.entanglement_entropies.value();
-    auto                t_ent = tid::tic_token("entanglement");
+    auto                t_ent = tid::tic_scope("neumann_entropy");
     std::vector<double> entanglement_entropies;
     entanglement_entropies.reserve(state.get_length() + 1);
     if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
@@ -198,7 +201,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
     if(q == 3.0 and state.measurements.renyi_3) return state.measurements.renyi_3.value();
     if(q == 4.0 and state.measurements.renyi_4) return state.measurements.renyi_4.value();
     if(q == 100.0 and state.measurements.renyi_100) return state.measurements.renyi_100.value();
-    auto                t_ren = tid::tic_token("renyi");
+    auto                t_ren = tid::tic_scope("renyi_entropy");
     std::vector<double> renyi_q;
     renyi_q.reserve(state.get_length() + 1);
     if(not state.has_center_point()) renyi_q.emplace_back(0);
@@ -243,7 +246,7 @@ std::array<double, 3> tools::finite::measure::spin_components(const StateFinite 
 }
 
 double tools::finite::measure::spin_component(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix) {
-    auto t_spn       = tid::tic_token("spin");
+    auto t_spn       = tid::tic_scope("spin");
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<Scalar, 3> temp;
     for(const auto &mps : state.mps_sites) {
@@ -260,15 +263,16 @@ double tools::finite::measure::spin_component(const StateFinite &state, const Ei
     return spin;
 }
 
-double tools::finite::measure::spin_component(const StateFinite &state, const std::string &axis) {
-    if(axis.find('x') != std::string::npos) return measure::spin_component(state, qm::spin::half::sx);
-    if(axis.find('y') != std::string::npos) return measure::spin_component(state, qm::spin::half::sy);
-    if(axis.find('z') != std::string::npos) return measure::spin_component(state, qm::spin::half::sz);
-    throw std::runtime_error("Unexpected axis: " + axis);
+double tools::finite::measure::spin_component(const StateFinite &state, std::string_view axis) {
+    if(axis.find('x') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sx);
+    if(axis.find('y') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sy);
+    if(axis.find('z') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sz);
+    throw std::runtime_error("Unexpected axis: " + std::string(axis));
 }
 
 std::vector<double> tools::finite::measure::truncation_errors(const StateFinite &state) {
     if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
+    auto t_chi = tid::tic_scope("trunc");
     std::vector<double> truncation_errors;
     if(not state.has_center_point()) truncation_errors.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
@@ -328,8 +332,9 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
                                                  model.active_sites, edges.active_sites));
         return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements);
     } else {
-        const auto &mpo = model.get_multisite_mpo();
-        const auto &env = edges.get_multisite_ene_blk();
+        auto        t_msr = tid::tic_scope("measure");
+        const auto &mpo   = model.get_multisite_mpo();
+        const auto &env   = edges.get_multisite_ene_blk();
         tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(), model.active_sites,
                           mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
         auto   t_ene        = tid::tic_scope("ene");
@@ -409,7 +414,9 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements);
         else
             energy = tools::finite::measure::energy(state, model, edges, measurements);
-        double E2 = energy * energy;
+
+        auto   t_msr = tid::tic_scope("measure");
+        double E2    = energy * energy;
 
         if(not num::all_equal(model.active_sites, edges.active_sites))
             throw std::runtime_error(

@@ -42,7 +42,7 @@ class TensorsInfinite {
     [[nodiscard]] bool   has_nan() const;
 
     /* clang-format off */
-    void reset_to_random_product_state(const std::string & sector, long bitfield, bool use_eigenspinors);
+    void reset_to_random_product_state(std::string_view  sector, long bitfield, bool use_eigenspinors);
     /* clang-format on */
 
     void reset_edges();

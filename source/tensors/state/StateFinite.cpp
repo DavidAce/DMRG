@@ -20,9 +20,9 @@ StateFinite::StateFinite() = default; // Can't initialize lists since we don't k
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-StateFinite::~StateFinite()                   = default;            // default dtor
-StateFinite::StateFinite(StateFinite &&other) = default;            // default move ctor
-StateFinite &StateFinite::operator=(StateFinite &&other) = default; // default move assign
+StateFinite::~StateFinite() noexcept                   = default;            // default dtor
+StateFinite::StateFinite(StateFinite &&other) noexcept = default;            // default move ctor
+StateFinite &StateFinite::operator=(StateFinite &&other) noexcept = default; // default move assign
 
 /* clang-format off */
 StateFinite::StateFinite(const StateFinite &other):
@@ -94,8 +94,8 @@ void StateFinite::initialize(ModelType model_type, size_t model_size, size_t pos
     //    tag_edge_var_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
 }
 
-void        StateFinite::set_name(const std::string &statename) { name = statename; }
-std::string StateFinite::get_name() const { return name; }
+void             StateFinite::set_name(std::string_view statename) { name = statename; }
+std::string_view StateFinite::get_name() const { return name; }
 
 void          StateFinite::set_algorithm(const AlgorithmType &algo_type) { algo = algo_type; }
 AlgorithmType StateFinite::get_algorithm() const { return algo; }
@@ -138,9 +138,9 @@ long StateFinite::find_largest_chi() const {
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
 }
 
-int                      StateFinite::get_direction() const { return direction; }
-std::vector<std::string> StateFinite::get_labels() const {
-    std::vector<std::string> labels;
+int                           StateFinite::get_direction() const { return direction; }
+std::vector<std::string_view> StateFinite::get_labels() const {
+    std::vector<std::string_view> labels;
     labels.reserve(get_length());
     for(const auto &mps : mps_sites) labels.emplace_back(mps->get_label());
     return labels;

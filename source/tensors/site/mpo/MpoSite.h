@@ -81,10 +81,10 @@ class MpoSite {
     virtual void build_mpo()                                                                                     = 0;
     virtual void randomize_hamiltonian()                                                                         = 0;
     virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) = 0;
-    virtual void save_hamiltonian(h5pp::File &file, const std::string &model_prefix) const                       = 0;
-    virtual void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix)                       = 0;
-    void         save_mpo(h5pp::File &file, const std::string &model_prefix) const;
-    void         load_mpo(const h5pp::File &file, const std::string &model_prefix);
+    virtual void save_hamiltonian(h5pp::File &file, std::string_view model_prefix) const                       = 0;
+    virtual void load_hamiltonian(const h5pp::File &file, std::string_view model_prefix)                       = 0;
+    void         save_mpo(h5pp::File &file, std::string_view model_prefix) const;
+    void         load_mpo(const h5pp::File &file, std::string_view model_prefix);
     std::size_t  get_unique_id() const;
     std::size_t  get_unique_id_sq() const;
 };

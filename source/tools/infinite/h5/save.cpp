@@ -39,7 +39,7 @@ int tools::infinite::h5::save::decide_layout(std::string_view prefix_path) {
         return H5D_CHUNKED;
 }
 
-void tools::infinite::h5::save::state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
+void tools::infinite::h5::save::state(h5pp::File &h5ppFile, std::string_view state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
                                       const AlgorithmStatus &status) {
     if(storage_level == StorageLevel::NONE) return;
 
@@ -47,24 +47,25 @@ void tools::infinite::h5::save::state(h5pp::File &h5ppFile, const std::string &s
     // If it is empty because we are resuming, check if there is a log entry on file already
     auto                                                                  tic = tid::tic_token("state");
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    bootstrap_save_log(save_log, h5ppFile, {state_prefix + "/schmidt_midchain", state_prefix + "/mps"});
+    auto dset_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
+    auto mps_prefix = fmt::format("{}/mps", state_prefix);
+
+    bootstrap_save_log(save_log, h5ppFile, {dset_schmidt, mps_prefix});
     auto save_point = std::make_pair(status.iter, status.step);
     auto layout     = static_cast<H5D_layout_t>(decide_layout(state_prefix));
 
-    std::string dsetName = state_prefix + "/schmidt_midchain";
-    if(save_log[dsetName] != save_point) {
-        tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
-        h5ppFile.writeDataset(state.LC(), dsetName, layout);
-        h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-        h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetName);
-        h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
-        save_log[dsetName] = save_point;
+    if(save_log[dset_schmidt] != save_point) {
+        tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
+        h5ppFile.writeDataset(state.LC(), dset_schmidt, layout);
+        h5ppFile.writeAttribute(state.get_truncation_error(), "truncation_error", dset_schmidt);
+        h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dset_schmidt);
+        h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dset_schmidt);
+        save_log[dset_schmidt] = save_point;
     }
     if(storage_level < StorageLevel::NORMAL) return;
-    std::string mps_prefix = state_prefix + "/mps";
     if(save_log[mps_prefix] != save_point) {
-        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2str(storage_level));
-        dsetName = mps_prefix + "/L_A";
+        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
+        auto dsetName = mps_prefix + "/L_A";
         if(save_log[dsetName] != save_point) {
             h5ppFile.writeDataset(state.LA(), dsetName);
             h5ppFile.writeAttribute(state.LA().dimensions(), "dimensions", dsetName);
@@ -109,19 +110,19 @@ void tools::infinite::h5::save::state(h5pp::File &h5ppFile, const std::string &s
     }
 }
 
-void tools::infinite::h5::save::edges(h5pp::File &h5ppFile, const std::string &edges_prefix, const StorageLevel &storage_level, const EdgesInfinite &edges) {
+void tools::infinite::h5::save::edges(h5pp::File &h5ppFile, std::string_view edges_prefix, const StorageLevel &storage_level, const EdgesInfinite &edges) {
     if(storage_level < StorageLevel::NORMAL) return;
     auto        tic = tid::tic_token("edges");
     const auto &ene = edges.get_ene_blk();
     const auto &var = edges.get_var_blk();
-    h5ppFile.writeDataset(ene.L, edges_prefix + "/eneL");
-    h5ppFile.writeDataset(ene.R, edges_prefix + "/eneR");
-    h5ppFile.writeDataset(var.L, edges_prefix + "/varL");
-    h5ppFile.writeDataset(var.R, edges_prefix + "/varR");
+    h5ppFile.writeDataset(ene.L, fmt::format("{}/eneL",edges_prefix));
+    h5ppFile.writeDataset(ene.R, fmt::format("{}/eneR",edges_prefix));
+    h5ppFile.writeDataset(var.L, fmt::format("{}/varL",edges_prefix));
+    h5ppFile.writeDataset(var.R, fmt::format("{}/varR",edges_prefix));
 }
 
 /*! Write down the Hamiltonian model type and site info as attributes */
-void tools::infinite::h5::save::model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level, const ModelInfinite &model) {
+void tools::infinite::h5::save::model(h5pp::File &h5ppFile, std::string_view model_prefix, const StorageLevel &storage_level, const ModelInfinite &model) {
     if(storage_level < StorageLevel::LIGHT) return;
     tools::log->trace("Writing Hamiltonian model");
     auto table_path = fmt::format("{}/hamiltonian", model_prefix);
@@ -130,28 +131,28 @@ void tools::infinite::h5::save::model(h5pp::File &h5ppFile, const std::string &m
     auto t_ham = tid::tic_token("save_hamiltonian");
     model.get_mpo_siteA().save_hamiltonian(h5ppFile, table_path);
     model.get_mpo_siteB().save_hamiltonian(h5ppFile, table_path);
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", table_path);
+    h5ppFile.writeAttribute(enum2sv(settings::model::model_type), "model_type", table_path);
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
 }
 
-void tools::infinite::h5::save::mpo(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level, const ModelInfinite &model) {
+void tools::infinite::h5::save::mpo(h5pp::File &h5ppFile, std::string_view model_prefix, const StorageLevel &storage_level, const ModelInfinite &model) {
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
     if(h5ppFile.linkExists(model_prefix)) return tools::log->trace("The model has already been written to [{}]", model_prefix);
-    tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
+    tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2sv(storage_level));
     auto tic        = tid::tic_token("mpo");
     auto mpo_prefix = fmt::format("{}/mpo", model_prefix);
     model.get_mpo_siteA().save_mpo(h5ppFile, mpo_prefix);
     model.get_mpo_siteB().save_mpo(h5ppFile, mpo_prefix);
 
     h5ppFile.writeAttribute(2, "model_size", mpo_prefix);
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", mpo_prefix);
+    h5ppFile.writeAttribute(enum2sv(settings::model::model_type), "model_type", mpo_prefix);
 
     h5ppFile.writeAttribute(2, "model_size", model_prefix);
-    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix);
+    h5ppFile.writeAttribute(enum2sv(settings::model::model_type), "model_type", model_prefix);
 }
 
-void tools::infinite::h5::save::measurements(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
+void tools::infinite::h5::save::measurements(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level,
                                              const TensorsInfinite &tensors, const AlgorithmStatus &status) {
     if(storage_level == StorageLevel::NONE) return;
     auto table_path = fmt::format("{}/measurements", table_prefix);

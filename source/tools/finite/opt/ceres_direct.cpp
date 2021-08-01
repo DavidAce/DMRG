@@ -14,6 +14,7 @@
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
                                                                                     OptType optType, OptMode optMode, OptSpace optSpace) {
+    auto t_dir = tid::tic_scope("direct");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_state("current state", tensors.state->get_multisite_mps(), sites,
                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
@@ -21,7 +22,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                       tools::finite::measure::energy_variance(tensors),
                                       1.0, // Overlap
                                       tensors.get_length());
-
+    t_dir.toc(); // The next call to ceres_direct_optimization opens the "direct" scope again.
     return ceres_direct_optimization(tensors, initial_state, status, optType, optMode, optSpace);
 }
 
@@ -30,6 +31,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                                                                     OptSpace optSpace) {
     tools::log->trace("Optimizing in DIRECT mode");
     auto t_dir = tid::tic_scope("direct");
+    initial_mps.validate_candidate();
     if constexpr(settings::debug)
         if(initial_mps.has_nan()) throw std::runtime_error("initial_mps has nan's");
     reports::bfgs_add_entry("Direct", "init", initial_mps);

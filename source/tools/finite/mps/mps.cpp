@@ -21,6 +21,7 @@ bool tools::finite::mps::init::bitfield_is_valid(std::optional<long> bitfield) {
 }
 
 size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
+    auto t_move = tid::tic_scope("move");
     if(state.position_is_outward_edge()) {
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1)
             throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
@@ -67,6 +68,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
 }
 
 size_t tools::finite::mps::move_center_point(StateFinite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
+    auto t_move = tid::tic_scope("move");
     if(state.position_is_outward_edge(2)) {
         state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
         return 0;               // No moves this time, return 0
@@ -310,7 +312,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
     return true;
 }
 
-void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, const std::string &sector, long chi_lim, bool use_eigenspinors,
+void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view sector, long chi_lim, bool use_eigenspinors,
                                          std::optional<long> bitfield) {
     switch(init) {
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, sector, use_eigenspinors, bitfield);
@@ -459,19 +461,13 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         auto &gate = gates[pos];
         if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
 
-        auto t_gate_move = tid::tic_scope("gate_move");
         move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
-        t_gate_move.toc();
-
-        auto t_gate_apply  = tid::tic_scope("gate_apply");
         auto multisite_mps = state.get_multisite_mps(gate.pos);
         gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
             gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
             gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
-        t_gate_apply.toc();
-        auto t_gate_merge = tid::tic_scope("gate_merge");
         long min_position = static_cast<long>(gate.pos.front()) - 1;
         long max_position = static_cast<long>(gate.pos.back());
         long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
@@ -494,9 +490,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         }
     }
 
-    auto t_gate_return = tid::tic_scope("gate_return");
     move_center_point_to_edge(state, chi_lim, svd_settings);
-    t_gate_return.toc();
 
     auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
     if constexpr(settings::debug_gates)

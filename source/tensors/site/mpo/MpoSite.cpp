@@ -188,7 +188,7 @@ void MpoSite::print_parameter_values() const {
 //
 //
 
-void MpoSite::save_mpo(h5pp::File &file, const std::string &mpo_prefix) const {
+void MpoSite::save_mpo(h5pp::File &file, std::string_view mpo_prefix) const {
     std::string dataset_name = fmt::format("{}/H_{}", mpo_prefix, get_position());
     file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_COMPACT);
     file.writeAttribute(get_position(), "position", dataset_name);
@@ -202,7 +202,7 @@ void MpoSite::save_mpo(h5pp::File &file, const std::string &mpo_prefix) const {
     }
 }
 
-void MpoSite::load_mpo(const h5pp::File &file, const std::string &mpo_prefix) {
+void MpoSite::load_mpo(const h5pp::File &file, std::string_view mpo_prefix) {
     std::string mpo_dset = fmt::format("{}/H_{}", mpo_prefix, get_position());
     TableMap    map;
     if(file.linkExists(mpo_dset)) {

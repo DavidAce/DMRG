@@ -260,7 +260,7 @@ void settings::load(Loader &dmrg_config) {
 
 
 
-void settings::load(const std::string & config_filename){
+void settings::load(std::string_view  config_filename){
     Loader indata(config_filename);
     settings::load(indata);
 }

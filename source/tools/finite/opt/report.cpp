@@ -146,7 +146,7 @@ void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string &de
     if(tools::log->level() > spdlog::level::debug) return;
     bfgs_log.push_back({description, size, space, energy, variance, overlap, norm, delta_f, grad_norm, iter, counter, time});
 }
-void tools::finite::opt::internal::reports::bfgs_add_entry(const std::string &mode, const std::string &tag, const opt_mps &mps, std::optional<long> space) {
+void tools::finite::opt::internal::reports::bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space) {
     if(tools::log->level() > spdlog::level::debug) return;
     if(not space) space = mps.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
@@ -169,7 +169,7 @@ void tools::finite::opt::internal::reports::eigs_add_entry(long nev, double max_
 void tools::finite::opt::internal::reports::krylov_add_entry(const opt_mps &mps) {
     if(tools::log->level() > spdlog::level::debug) return;
     std::string description = fmt::format("{:<8} {:<24}", "krylov", mps.get_name());
-    krylov_log.push_back(krylov_entry{description, mps.get_krylov_ritz(), mps.get_tensor().size(), mps.get_krylov_nev(), mps.get_krylov_ncv(),
+    krylov_log.push_back(krylov_entry{description, std::string(mps.get_krylov_ritz()), mps.get_tensor().size(), mps.get_krylov_nev(), mps.get_krylov_ncv(),
                                       mps.get_energy_per_site(), mps.get_krylov_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
                                       mps.get_krylov_tol(), mps.get_iter(), mps.get_counter(), mps.get_time()});
 }

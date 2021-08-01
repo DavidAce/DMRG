@@ -20,7 +20,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
                         1.0, // Overlap
                         tensors.get_length());
 
-    return ground_state_optimization(initial_mps, tensors, status, enum2str(ritz));
+    return ground_state_optimization(initial_mps, tensors, status, enum2sv(ritz));
 }
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization(const opt_mps &initial_mps, const TensorsFinite &tensors,

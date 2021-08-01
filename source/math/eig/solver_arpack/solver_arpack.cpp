@@ -475,10 +475,10 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
         }
     }
 
-    tid::get("arpack") += t_tot->get_time();
-    tid::get("arpack.matvec") += t_mul->get_time();
-    tid::get("arpack.findeig") += t_fnd->get_time();
-    tid::get("arpack.prep") += t_pre->get_time();
+    tid::get("arpack") += *t_tot;
+    tid::get("arpack.matvec") += *t_mul;
+    tid::get("arpack.findeig") += *t_fnd;
+    tid::get("arpack.prep") += *t_pre;
 }
 
 template class eig::solver_arpack<MatVecDense<real>>;

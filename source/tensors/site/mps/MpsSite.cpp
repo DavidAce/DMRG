@@ -10,7 +10,7 @@
 using Scalar = MpsSite::Scalar;
 
 MpsSite::MpsSite() = default;
-MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, const std::string &label_)
+MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string_view label_)
 //    : M(M_), L(L_), position(pos), truncation_error(error), label(std::move(label_))
 {
     set_position(pos);
@@ -20,7 +20,7 @@ MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar,
     set_truncation_error(error);
 }
 
-MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, const std::string &label_)
+MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string_view label_)
 //    : M(M_), L(std::move(L_)), position(pos), truncation_error(error), label(std::move(label_))
 {
     set_position(pos);
@@ -179,7 +179,7 @@ T MpsSite::get_position() const {
 template size_t MpsSite::get_position<size_t>() const;
 template long   MpsSite::get_position<long>() const;
 
-void MpsSite::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string &label_) {
+void MpsSite::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, std::string_view label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
     set_M(M_);
     set_L(L_);
@@ -239,7 +239,7 @@ void MpsSite::set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_e
 
 void MpsSite::set_truncation_error(double error) { truncation_error = error; }
 void MpsSite::set_truncation_error_LC(double error) { truncation_error_LC = error; }
-void MpsSite::set_label(const std::string &label_) {
+void MpsSite::set_label(std::string_view label_) {
     // If we are flipping the kind of site from B to non B (or vice-versa), then the L matrix
     // should be removed since it changes side.
     if(not label.empty() and not label_.empty() and label.front() != label_.front()) unset_L();

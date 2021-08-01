@@ -231,7 +231,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
 
-    // Some sanity checks
+    // Sanity checks
     if(mps_sites_As.size() != spin_dims_left.size())
         throw std::runtime_error(
             fmt::format("Could not split multisite tensor: Got mps_sites_As.size() {} != spins_dims_left {}", mps_sites_As.size(), spin_dims_left.size()));

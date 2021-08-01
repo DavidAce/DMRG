@@ -38,7 +38,7 @@ class TensorsFinite {
 
     void initialize(ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
-    void randomize_state(StateInit state_init, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
+    void randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
                          std::optional<StateInitType> state_type = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
     void normalize_state(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 
@@ -48,9 +48,9 @@ class TensorsFinite {
     [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk() const;
     [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk() const;
 
-    [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt,
+    [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim = std::nullopt,
                                                                     std::optional<svd::settings> svd_settings = std::nullopt);
-    void                      project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim = std::nullopt,
+    void                      project_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim = std::nullopt,
                                                         std::optional<svd::settings> svd_settings = std::nullopt);
     [[nodiscard]] StateFinite get_state_with_hamiltonian_applied(std::optional<long>          chi_lim      = std::nullopt,
                                                                  std::optional<svd::settings> svd_settings = std::nullopt);

@@ -49,16 +49,16 @@ class StateFinite {
 
     public:
     StateFinite();
-    ~StateFinite();                                   // Read comment on implementation
-    StateFinite(StateFinite &&other);                 // default move ctor
-    StateFinite &operator=(StateFinite &&other);      // default move assign
-    StateFinite(const StateFinite &other);            // copy ctor
-    StateFinite &operator=(const StateFinite &other); // copy assign
+    ~StateFinite() noexcept;                              // Read comment on implementation
+    StateFinite(StateFinite &&other) noexcept;            // default move ctor
+    StateFinite &operator=(StateFinite &&other) noexcept; // default move assign
+    StateFinite(const StateFinite &other);                // copy ctor
+    StateFinite &operator=(const StateFinite &other);     // copy assign
 
     void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
 
-    void                      set_name(const std::string &statename);
-    [[nodiscard]] std::string get_name() const;
+    void                           set_name(std::string_view statename);
+    [[nodiscard]] std::string_view get_name() const;
 
     void                        set_algorithm(const AlgorithmType &algo_type);
     [[nodiscard]] AlgorithmType get_algorithm() const;
@@ -71,31 +71,31 @@ class StateFinite {
     template<typename T = size_t>
     [[nodiscard]] T get_position() const;
 
-    void                                   set_positions();
-    void                                   flip_direction();
-    [[nodiscard]] int                      get_direction() const;
-    [[nodiscard]] std::vector<std::string> get_labels() const;
-    [[nodiscard]] std::array<long, 3>      dimensions_1site() const;
-    [[nodiscard]] std::array<long, 3>      dimensions_2site() const;
-    [[nodiscard]] std::array<long, 3>      dimensions_nsite() const;
-    [[nodiscard]] long                     size_1site() const;
-    [[nodiscard]] long                     size_2site() const;
-    [[nodiscard]] long                     size_nsite() const;
-    [[nodiscard]] long                     find_largest_chi() const;
-    [[nodiscard]] bool                     position_is_the_middle() const;
-    [[nodiscard]] bool                     position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool                     position_is_outward_edge_left(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_outward_edge_right(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_outward_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_inward_edge_left(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_inward_edge_right(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_inward_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                     position_is_at(long pos) const;
-    [[nodiscard]] bool                     position_is_at(long pos, int dir) const;
-    [[nodiscard]] bool                     position_is_at(long pos, int dir, bool isCenter) const;
-    [[nodiscard]] bool                     has_center_point() const;
-    [[nodiscard]] bool                     is_real() const;
-    [[nodiscard]] bool                     has_nan() const;
+    void                                        set_positions();
+    void                                        flip_direction();
+    [[nodiscard]] int                           get_direction() const;
+    [[nodiscard]] std::vector<std::string_view> get_labels() const;
+    [[nodiscard]] std::array<long, 3>           dimensions_1site() const;
+    [[nodiscard]] std::array<long, 3>           dimensions_2site() const;
+    [[nodiscard]] std::array<long, 3>           dimensions_nsite() const;
+    [[nodiscard]] long                          size_1site() const;
+    [[nodiscard]] long                          size_2site() const;
+    [[nodiscard]] long                          size_nsite() const;
+    [[nodiscard]] long                          find_largest_chi() const;
+    [[nodiscard]] bool                          position_is_the_middle() const;
+    [[nodiscard]] bool                          position_is_the_middle_any_direction() const;
+    [[nodiscard]] bool                          position_is_outward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_outward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_outward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_inward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_inward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_inward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool                          position_is_at(long pos) const;
+    [[nodiscard]] bool                          position_is_at(long pos, int dir) const;
+    [[nodiscard]] bool                          position_is_at(long pos, int dir, bool isCenter) const;
+    [[nodiscard]] bool                          has_center_point() const;
+    [[nodiscard]] bool                          is_real() const;
+    [[nodiscard]] bool                          has_nan() const;
 
     void assert_validity() const;
 

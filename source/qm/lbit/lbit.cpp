@@ -2,6 +2,7 @@
 #include "../spin.h"
 #include "math/tenx.h"
 #include <algorithm>
+#include <config/debug.h>
 #include <general/iter.h>
 #include <io/fmt.h>
 #include <io/spdlog.h>
@@ -71,9 +72,12 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             unitaries.emplace_back(tenx::TensorMap(expifH), indices, spin_dims);
         }
     }
-    // Sanity check
-    for(const auto &u : unitaries)
-        if(not tenx::MatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+    if constexpr(settings::debug){
+        // Sanity check
+        for(const auto &u : unitaries)
+            if(not tenx::MatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+    }
+
     return unitaries;
 }
 
@@ -87,10 +91,13 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
     for(auto &h : hams_nsite) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-    for(auto &t : time_evolution_gates)
-        if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-            throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
-        }
+    if constexpr (settings::debug){
+        for(auto &t : time_evolution_gates)
+            if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+                throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+            }
+    }
+
     return time_evolution_gates;
 }
 

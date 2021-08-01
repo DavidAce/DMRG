@@ -2,6 +2,7 @@
 
 // -- (textra first)
 
+#include <config/debug.h>
 #include <tensors/edges/EdgesFinite.h>
 #include <tensors/model/ModelFinite.h>
 #include <tid/tid.h>
@@ -43,31 +44,38 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
     if(energy_shift != 0.0) shift_mpo_energy(mpo, energy_shift);
     tools::log->trace("Contracting multisite hamiltonian");
 
-    long dim0 = mpo.dimension(2);
-    long dim1 = env.L.dimension(0);
-    long dim2 = env.R.dimension(0);
-
+    long                                   dim0 = mpo.dimension(2);
+    long                                   dim1 = env.L.dimension(0);
+    long                                   dim2 = env.R.dimension(0);
     Eigen::Tensor<std::complex<double>, 6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham.device(tenx::omp::getDevice()) = env.L.contract(mpo, tenx::idx({2}, {0})).contract(env.R, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
-
+    auto                                   t_con = tid::tic_token("contract");
+    ham.device(tenx::omp::getDevice()) = env.L.contract(mpo, tenx::idx({2}, {0})).contract(env.R, tenx::idx({2}, {2})).shuffle(tenx::array6{3, 1, 5, 2, 0, 4});
+    //          .shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+    t_con.toc();
     auto cols = ham.dimension(0) * ham.dimension(1) * ham.dimension(2);
     auto rows = ham.dimension(3) * ham.dimension(4) * ham.dimension(5);
     long size = dim0 * dim1 * dim2;
     if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian rows (dim0*dim1*dim2) and size: {} != {}", cols, size));
     if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian cols (dim3*dim4*dim5) and size: {} != {}", rows, size));
 
-    auto   ham_map         = Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols);
-    double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham_map.size());
-    double sparcity        = static_cast<double>((ham_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham_map.size());
+    auto ham_map = Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols);
 
-    if(non_hermiticity > 1e-8) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}", non_hermiticity));
-    if(non_hermiticity > 1e-12) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
-    if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
-    tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
+    if constexpr(settings::debug) {
+        auto   t_herm          = tid::tic_token("herm");
+        double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham_map.size());
+        t_herm.toc();
+        auto   t_spar   = tid::tic_token("spar");
+        double sparcity = static_cast<double>((ham_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham_map.size());
+        t_spar.toc();
+        if(non_hermiticity > 1e-8) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}", non_hermiticity));
+        if(non_hermiticity > 1e-12) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}", non_hermiticity);
+        if(ham_map.hasNaN()) throw std::runtime_error("multisite hamiltonian has NaN's!");
+        tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity * 100);
+    }
     if constexpr(std::is_same_v<T, double>) {
-        return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
+        return ham_map.real();
     } else {
-        return Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
+        return ham_map;
     }
 }
 template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges,
@@ -77,7 +85,7 @@ template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonia
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix(const ModelFinite &model, const EdgesFinite &edges) {
-    auto        t_opt_sub_ham = tid::tic_scope("ham²");
+    auto        t_ham = tid::tic_scope("ham²");
     const auto &mpo2          = model.get_multisite_mpo_squared();
     const auto &env2          = edges.get_multisite_var_blk();
     tools::log->trace("Contracting multisite hamiltonian");
@@ -87,9 +95,11 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_ma
     long dim2 = env2.R.dimension(0);
 
     Eigen::Tensor<std::complex<double>, 6> ham2(dim0, dim1, dim2, dim0, dim1, dim2);
+    auto                                   t_con = tid::tic_token("contract");
     ham2.device(tenx::omp::getDevice()) =
-        env2.L.contract(mpo2, tenx::idx({2}, {0})).contract(env2.R, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
-
+        env2.L.contract(mpo2, tenx::idx({2}, {0})).contract(env2.R, tenx::idx({2}, {2})).shuffle(tenx::array6{3, 1, 5, 2, 0, 4});
+    //            .shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+    t_con.toc();
     auto cols = ham2.dimension(0) * ham2.dimension(1) * ham2.dimension(2);
     auto rows = ham2.dimension(3) * ham2.dimension(4) * ham2.dimension(5);
     long size = dim0 * dim1 * dim2;
@@ -97,17 +107,21 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_ma
     if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian cols (dim3*dim4*dim5) and size: {} != {}", rows, size));
 
     auto   ham2_map        = Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols);
-    double non_hermiticity = (ham2_map - ham2_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham2_map.size());
-    double sparcity        = static_cast<double>((ham2_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham2_map.size());
 
-    if(non_hermiticity > 1e-8) throw std::runtime_error(fmt::format("multisite hamiltonian squared is not hermitian: {:.16f}", non_hermiticity));
-    if(non_hermiticity > 1e-12) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
-    if(ham2_map.hasNaN()) throw std::runtime_error("multisite hamiltonian squared has NaN's!");
-    tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
+    if constexpr (settings::debug){
+        double non_hermiticity = (ham2_map - ham2_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham2_map.size());
+        double sparcity        = static_cast<double>((ham2_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham2_map.size());
+
+        if(non_hermiticity > 1e-8) throw std::runtime_error(fmt::format("multisite hamiltonian squared is not hermitian: {:.16f}", non_hermiticity));
+        if(non_hermiticity > 1e-12) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}", non_hermiticity);
+        if(ham2_map.hasNaN()) throw std::runtime_error("multisite hamiltonian squared has NaN's!");
+        tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity * 100);
+    }
+
     if constexpr(std::is_same_v<T, double>) {
-        return Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols).real().transpose().selfadjointView<Eigen::Lower>();
+        return ham2_map.real();
     } else {
-        return Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols).transpose().selfadjointView<Eigen::Lower>();
+        return ham2_map;
     }
 }
 template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix(const ModelFinite &model, const EdgesFinite &edges);

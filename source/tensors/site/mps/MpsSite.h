@@ -26,8 +26,8 @@ class MpsSite {
 
     public:
     ~MpsSite(); // Read comment on implementation
-    MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, const std::string &label_);
-    MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, const std::string &label_);
+    MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string_view label_);
+    MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string_view label_);
     MpsSite();                                // ctor
     MpsSite(const MpsSite &other);            // default copy ctor
     MpsSite(MpsSite &&other);                 // default move ctor
@@ -70,9 +70,9 @@ class MpsSite {
     void set_LC(const std::pair<Eigen::Tensor<Scalar, 1>, double> &LC_and_error);
     void set_truncation_error(double error);
     void set_truncation_error_LC(double error);
-    void set_label(const std::string &label_);
+    void set_label(std::string_view label_);
     void set_position(size_t position_);
-    void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, const std::string &label_);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error, std::string_view label_);
 
     void unset_LC();
     void unset_L();

@@ -340,11 +340,11 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2str(storage_reason), enum2str(storage_level), state_prefix);
+    tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
     // Start saving tensors and metadata
     tools::infinite::h5::save::state(*h5pp_file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::h5::save::edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
-    tools::common::h5::save::meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, status.algo_type,
+    tools::common::h5::save::meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size,
                                   tensors.state->get_name(), state_prefix, model_prefix, status);
     // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;

@@ -18,7 +18,7 @@ void tools::infinite::mps::merge_twosite_tensor(StateInfinite &state, const Eige
     state.get_mps_siteB().fuse_mps(mps_list.back());
 }
 
-void tools::infinite::mps::random_product_state([[maybe_unused]] const StateInfinite &state, [[maybe_unused]] const std::string &sector,
+void tools::infinite::mps::random_product_state([[maybe_unused]] const StateInfinite &state, [[maybe_unused]] std::string_view sector,
                                                 [[maybe_unused]] long bitfield, [[maybe_unused]] bool use_eigenspinors) {
     throw std::runtime_error("random product state for infinite state not implemented yet");
 }

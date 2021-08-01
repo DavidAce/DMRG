@@ -55,7 +55,7 @@ ModelFinite &ModelFinite::operator=(const ModelFinite &other) {
 }
 
 void ModelFinite::initialize(ModelType model_type_, size_t model_size) {
-    tools::log->info("Initializing model {} with {} sites", enum2str(model_type_), model_size);
+    tools::log->info("Initializing model {} with {} sites", enum2sv(model_type_), model_size);
     if(model_size < 2) throw std::logic_error("Tried to initialize model with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize model with more than 2048 sites");
     if(not MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");

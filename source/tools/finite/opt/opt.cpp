@@ -5,6 +5,7 @@
 #include "opt-internal.h"
 #include "report.h"
 #include <algorithms/AlgorithmStatus.h>
+#include <config/debug.h>
 #include <glog/logging.h>
 #include <string>
 #include <tensors/model/ModelFinite.h>
@@ -15,6 +16,7 @@
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMode optMode,
                                                                    OptSpace optSpace, OptType optType) {
+    auto    t_opt = tid::tic_scope("opt");
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
                         //                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
                         tools::finite::measure::energy_minus_energy_reduced(tensors), // Eigval
@@ -22,16 +24,15 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());
-
+    t_opt.toc(); // The next call to find_excited state opens the "opt" scope again.
     return find_excited_state(tensors, initial_mps, status, optMode, optSpace, optType);
 }
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
                                                                    OptMode optMode, OptSpace optSpace, OptType optType) {
     auto t_opt = tid::tic_scope("opt");
-    tools::log->trace("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2str(optMode),
-                      enum2str(optSpace), enum2str(optType), status.position, tensors.active_sites, tensors.active_problem_dims(),
-                      tensors.active_problem_size());
+    tools::log->trace("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2sv(optMode),
+                      enum2sv(optSpace), enum2sv(optType), status.position, tensors.active_sites, tensors.active_problem_dims(), tensors.active_problem_size());
 
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;
@@ -117,15 +118,14 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     if(initial_mps.get_sites() != tensors.active_sites)
         throw std::runtime_error(fmt::format("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites));
 
-    initial_mps.validate_candidate();
     opt_mps result;
     switch(optSpace) {
         /* clang-format off */
-        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
-        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors,initial_mps,status, optType, optMode,optSpace); break;
-        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
-        case OptSpace::KRYLOV_ENERGY:       result = internal::krylov_energy_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
-        case OptSpace::KRYLOV_VARIANCE:     result = internal::krylov_variance_optimization(tensors,initial_mps,status, optType,optMode,optSpace); break;
+        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
+        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
+        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
+        case OptSpace::KRYLOV_ENERGY:       result = internal::krylov_energy_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
+        case OptSpace::KRYLOV_VARIANCE:     result = internal::krylov_variance_optimization(tensors,initial_mps, status, optType, optMode, optSpace); break;
             /* clang-format on */
     }
     // Finish up and print reports
@@ -204,22 +204,22 @@ template<typename FunctorType>
 tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
     if(not log) log = tools::Logger::setLogger("xDMRG");
     log->set_level(tools::log->level());
-    if(log->level() == spdlog::level::debug) {
-        freq_log_iter = 10;
-        freq_log_time = 10;
-        init_log_time = 1;
+    if constexpr(settings::debug){
+        freq_log_iter = 1;
+        freq_log_time = 0;
+        init_log_time = 0;
     }
 }
 
 template<typename FunctorType>
 ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
-    //    if(summary.iteration > 100 and summary.cost_change < 1e-5 and summary.gradient_max_norm < 10.0 and summary.step_norm < 1e-6) return
-    //    ceres::SOLVER_ABORT;
     functor.set_delta_f(std::abs(summary.cost_change / summary.cost));
     if(not log) return ceres::SOLVER_CONTINUE;
     if(log->level() >= spdlog::level::info) return ceres::SOLVER_CONTINUE;
-    bool log_iter = summary.iteration - last_log_iter < freq_log_iter and summary.iteration > init_log_iter;
-    bool log_time = summary.cumulative_time_in_seconds - last_log_time < freq_log_time and summary.cumulative_time_in_seconds > init_log_time;
+    bool log_iter = summary.iteration - last_log_iter >= freq_log_iter and                  // log every freq_log_iter
+                    summary.iteration >= init_log_iter;                                     // when at least init_log_iter have passed
+    bool log_time = summary.cumulative_time_in_seconds - last_log_time >= freq_log_time and // log every last_log_time
+                    summary.cumulative_time_in_seconds >= init_log_time;                    // when at least init_log_time have passed
     if(not log_iter and not log_time) return ceres::SOLVER_CONTINUE;
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;

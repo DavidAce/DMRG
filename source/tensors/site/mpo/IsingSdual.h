@@ -45,6 +45,6 @@ class IsingSdual : public MpoSite {
     void build_mpo() override;
     void randomize_hamiltonian() override;
     void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) override;
-    void save_hamiltonian(h5pp::File &file, const std::string &hamiltonian_table_path) const override;
-    void load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) override;
+    void save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const override;
+    void load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) override;
 };

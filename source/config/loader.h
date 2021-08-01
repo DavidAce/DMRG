@@ -23,7 +23,7 @@ class Loader {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
             if constexpr(std::is_enum_v<T>)
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2str<T>(param_value));
+                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
             else
                 tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
@@ -31,14 +31,14 @@ class Loader {
     }
 
     private:
-    std::unordered_map<std::string, std::string> param_map;
-    [[nodiscard]] static std::string             remove_spaces(std::string str);
-    [[nodiscard]] static std::string             remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
-    [[nodiscard]] static bool                    is_parameterline(const std::string &s);
-    [[nodiscard]] static std::string::size_type  find_comment_character(const std::string &s);
+    std::unordered_map<std::string, std::string>     param_map;
+    [[nodiscard]] static std::string                 remove_spaces(std::string str);
+    [[nodiscard]] static std::string                 remove_leading_spaces(std::string str, std::string_view whitespace = " \t");
+    [[nodiscard]] static bool                        is_parameterline(std::string_view s);
+    [[nodiscard]] static std::string_view::size_type find_comment_character(std::string_view s);
 
     template<typename T>
-    [[nodiscard]] T parse_param(const std::string &param_val, const std::string &param_name) {
+    [[nodiscard]] T parse_param(const std::string & param_val, std::string_view param_name) {
         try {
             if(param_val.empty()) throw std::range_error(fmt::format("Parameter [{}] has no value", param_name));
             if constexpr(std::is_same_v<T, unsigned int>) {
@@ -53,7 +53,7 @@ class Loader {
             if constexpr(std::is_same_v<T, long long>) return std::stoll(param_val);
             if constexpr(std::is_same_v<T, size_t>) return std::stoul(param_val);
             if constexpr(std::is_same_v<T, double>) return std::stod(param_val);
-            if constexpr(std::is_enum_v<T>) return str2enum<T>(param_val);
+            if constexpr(std::is_enum_v<T>) return sv2enum<T>(param_val);
             if constexpr(std::is_same<T, std::string>::value) return param_val;
             if constexpr(std::is_same<T, bool>::value) {
                 if(param_val == "true") return true;

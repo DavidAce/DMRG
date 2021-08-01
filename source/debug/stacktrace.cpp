@@ -143,7 +143,7 @@ void debug::print_stack_trace() {
 void debug::print_stack_trace() {}
 #endif
 
-void debug::throw_stack_trace(const std::string &msg) {
+void debug::throw_stack_trace(const std::string & msg) {
     print_stack_trace();
     throw std::runtime_error(msg);
 }

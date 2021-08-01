@@ -242,7 +242,7 @@ void IsingTfRf::set_averages([[maybe_unused]] std::vector<TableMap> lattice_para
     set_parameters(lattice_parameters[get_position()]);
 }
 
-void IsingTfRf::save_hamiltonian(h5pp::File &file, const std::string &table_path) const {
+void IsingTfRf::save_hamiltonian(h5pp::File &file, std::string_view table_path) const {
     if(not file.linkExists(table_path)) file.createTable(h5tb_ising_tf_rf::h5_type, table_path, "Transverse-field Ising");
     file.appendTableRecords(h5tb, table_path);
     // Position 0 is also responsible for writing attributes
@@ -257,7 +257,7 @@ void IsingTfRf::save_hamiltonian(h5pp::File &file, const std::string &table_path
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
 
-void IsingTfRf::load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
+void IsingTfRf::load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) {
     auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_ising_tf_rf::table>(ham_table, position);

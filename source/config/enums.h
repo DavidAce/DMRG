@@ -164,8 +164,8 @@ inline bool has_flag(E target, E check) {
 
 /* clang-format off */
 template<typename T>
-constexpr std::string_view enum2str(const T &item) {
-    static_assert(std::is_enum_v<T> and "enum2str<T>: T must be an enum");
+constexpr std::string_view enum2sv(const T &item) {
+    static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == AlgorithmType::iDMRG)                                return "iDMRG";
         if(item == AlgorithmType::fDMRG)                                return "fDMRG";
@@ -388,7 +388,7 @@ std::string flag2str(const T &item) {
 
 
 template<typename T>
-constexpr auto str2enum(std::string_view item) {
+constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == "iDMRG")                                 return AlgorithmType::iDMRG;
         if(item == "fDMRG")                                 return AlgorithmType::fDMRG;
@@ -591,6 +591,6 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "FAIL_NOCHANGE")                         return OptExit::FAIL_NOCHANGE;
         if(item == "FAIL_WORSENED")                         return OptExit::FAIL_WORSENED;
     }
-    throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
+    throw std::runtime_error("sv2enum given invalid string item: " + std::string(item));
 }
 /* clang-format on */

@@ -4,15 +4,15 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         ceres_direct.cpp
         ceres_direct_functor.cpp
         ceres_subspace.cpp
-        ceres_subspace_diag_full.cpp
-        ceres_subspace_diag_part.cpp
+        ceres_subspace_find_full.cpp
+        ceres_subspace_find_iter.cpp
         ceres_subspace_filter.cpp
         ceres_subspace_functor.cpp
         ceres_subspace_hamiltonian.cpp
         ground_state.cpp
         krylov_energy.cpp
         krylov_variance.cpp
-        krylov_solution.cpp
+        krylov_extract_solution.cpp
         report.cpp
         opt.cpp
         opt_mps.cpp

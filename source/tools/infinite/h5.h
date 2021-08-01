@@ -17,20 +17,20 @@ namespace tools::infinite::h5 {
     /* clang-format off */
     namespace save{
         extern int decide_layout(std::string_view prefix_path);
-        extern void state            (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const StateInfinite & state, const AlgorithmStatus &status);
-        extern void edges            (h5pp::File & h5ppFile, const std::string & edges_prefix, const StorageLevel & storage_level, const EdgesInfinite & edges);
-        extern void model            (h5pp::File & h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const ModelInfinite & model);
-        extern void mpo              (h5pp::File & h5ppFile, const std::string & model_prefix, const StorageLevel & storage_level, const ModelInfinite & model);
-        extern void measurements     (h5pp::File & h5ppFile, const std::string & table_prefix, const StorageLevel & storage_level, const TensorsInfinite & tensors, const AlgorithmStatus & status);
+        extern void state            (h5pp::File & h5ppFile, std::string_view  state_prefix, const StorageLevel & storage_level, const StateInfinite & state, const AlgorithmStatus &status);
+        extern void edges            (h5pp::File & h5ppFile, std::string_view  edges_prefix, const StorageLevel & storage_level, const EdgesInfinite & edges);
+        extern void model            (h5pp::File & h5ppFile, std::string_view  model_prefix, const StorageLevel & storage_level, const ModelInfinite & model);
+        extern void mpo              (h5pp::File & h5ppFile, std::string_view  model_prefix, const StorageLevel & storage_level, const ModelInfinite & model);
+        extern void measurements     (h5pp::File & h5ppFile, std::string_view  table_prefix, const StorageLevel & storage_level, const TensorsInfinite & tensors, const AlgorithmStatus & status);
     }
 
     namespace load{
-        extern void tensors (const h5pp::File & h5ppFile, const std::string & state_prefix, TensorsInfinite & state, AlgorithmStatus & status);
-        extern void state (const h5pp::File & h5ppFile, const std::string & state_prefix, StateInfinite & state, const AlgorithmStatus & status);
-        extern void model (const h5pp::File & h5ppFile, const std::string & state_prefix, ModelInfinite & state, const AlgorithmStatus & status);
-        extern void validate (const h5pp::File & h5ppFile, const std::string & state_prefix, const TensorsInfinite & state, const AlgorithmStatus & status);
+        extern void tensors (const h5pp::File & h5ppFile, std::string_view  state_prefix, TensorsInfinite & state, AlgorithmStatus & status);
+        extern void state (const h5pp::File & h5ppFile, std::string_view  state_prefix, StateInfinite & state, const AlgorithmStatus & status);
+        extern void model (const h5pp::File & h5ppFile, std::string_view  state_prefix, ModelInfinite & state, const AlgorithmStatus & status);
+        extern void validate (const h5pp::File & h5ppFile, std::string_view  state_prefix, const TensorsInfinite & state, const AlgorithmStatus & status);
         extern std::vector<SimulationTask>
-            getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const StateInfinite & state, const AlgorithmStatus & status);
+            getTaskList(const h5pp::File &h5ppFile, std::string_view state_prefix, const StateInfinite & state, const AlgorithmStatus & status);
 
     }
     /* clang-format on */

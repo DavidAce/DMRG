@@ -6,21 +6,23 @@ class MpoSite;
 
 namespace tools::finite::ops {
     using Scalar = std::complex<double>;
+
     /* clang-format off */
     extern void apply_mpo                                   (StateFinite & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
     extern void apply_mpos                                  (StateFinite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,1> & Ledge, const Eigen::Tensor<Scalar,1> & Redge);
     extern void apply_mpos                                  (StateFinite & state, const std::vector<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
-    extern void project_to_nearest_sector                   (StateFinite & state, const std::string &sector);
+    extern std::optional<double> get_spin_component_in_sector(StateFinite & state, std::string_view sector);
+    extern void project_to_nearest_sector                   (StateFinite & state, std::string_view sector);
     extern void project_to_sector                           (StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
     [[nodiscard]] extern
     StateFinite get_projection_to_sector                    (const StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign);
     [[nodiscard]] extern
-    StateFinite get_projection_to_nearest_sector            (const StateFinite & state, const std::string &sector);
+    StateFinite get_projection_to_nearest_sector            (const StateFinite & state, std::string_view  sector);
 
     [[nodiscard]] extern
     StateFinite get_normalized_projection_to_sector         (const StateFinite & state, const Eigen::MatrixXcd & paulimatrix, int sign, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
     [[nodiscard]] extern
-    StateFinite get_normalized_projection_to_nearest_sector (const StateFinite & state, const std::string &sector, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    StateFinite get_normalized_projection_to_nearest_sector (const StateFinite & state, std::string_view sector, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
 
 
 

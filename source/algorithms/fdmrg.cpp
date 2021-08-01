@@ -94,7 +94,7 @@ void fdmrg::run_default_task_list() {
 
     run_task_list(default_task_list);
     if(not default_task_list.empty()) {
-        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2str(task));
+        for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
         throw std::runtime_error("Simulation ended with unfinished tasks");
     }
 }
@@ -115,7 +115,7 @@ void fdmrg::run_algorithm() {
         else
             tensors.state->set_name("state_emax");
     }
-    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2str(settings::model::model_type),
+    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
@@ -136,8 +136,6 @@ void fdmrg::run_algorithm() {
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
-        for(const auto &[key, u] : tid::internal::tid_db)
-            for(const auto &t : tid::get_tree(u)) tools::log->info("{}", t.str());
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
@@ -149,7 +147,7 @@ void fdmrg::single_fdmrg_step() {
      */
     auto t_step = tid::tic_scope("step");
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {}", status.iter, status.step, status.position, status.direction,
-                      enum2str(ritz));
+                      enum2sv(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
 
     if(tensors.active_sites.empty())

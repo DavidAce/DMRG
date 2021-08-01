@@ -20,7 +20,7 @@ namespace h5pp {
  */
 namespace settings {
     extern void load(Loader &dmrg_config);
-    extern void load(const std::string & config_filename);
+    extern void load(std::string_view  config_filename);
 
     extern bool   algorithm_is_on(AlgorithmType algo_type);
     extern long   chi_lim_max(AlgorithmType algo_type);
@@ -187,7 +187,7 @@ namespace settings {
         inline double   eig_tolerance                   = 1e-12 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16) */
+        inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16 , good could be ~64) */
         inline bool     compress_mpo_squared            = true;     /*!< Use SVD to compress the squared mpo bond dimension */
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_shifted_mpo                 = true  ;   /*!< Some steps after reducing MPO energy by Er, we have E-Er = dE. For increased precision, this shifts the local MPOs by dE before optimization */

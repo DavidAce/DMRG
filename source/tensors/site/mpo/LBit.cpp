@@ -353,7 +353,7 @@ void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameter
     set_parameters(lattice_parameters[get_position()]);
 }
 
-void LBit::save_hamiltonian(h5pp::File &file, const std::string &table_path) const {
+void LBit::save_hamiltonian(h5pp::File &file, std::string_view table_path) const {
     if(not file.linkExists(table_path)) file.createTable(h5tb_lbit::h5_type, table_path, "LBIT");
     file.appendTableRecords(h5tb, table_path);
     // Position 0 is also responsible for writing attributes
@@ -373,7 +373,7 @@ void LBit::save_hamiltonian(h5pp::File &file, const std::string &table_path) con
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
 
-void LBit::load_hamiltonian(const h5pp::File &file, const std::string &model_prefix) {
+void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) {
     auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_lbit::table>(ham_table, position);

@@ -4,10 +4,10 @@
 #include <tools/common/h5.h>
 #include <tools/common/log.h>
 
-std::string tools::common::h5::resume::extract_state_name(const std::string &state_prefix) {
-    std::string_view       state_pattern = "state_";
-    std::string            state_name;
-    std::string::size_type start_pos = state_prefix.find(state_pattern);
+std::string tools::common::h5::resume::extract_state_name(std::string_view state_prefix) {
+    constexpr std::string_view state_pattern = "state_";
+    std::string                state_name;
+    std::string::size_type     start_pos = state_prefix.find(state_pattern);
     if(start_pos != std::string::npos) {
         std::string::size_type len = state_prefix.find('/', start_pos) - start_pos;
         state_name                 = state_prefix.substr(start_pos, len); // E.g. "/xDMRG/state_0/results/..." would match state_0
@@ -15,7 +15,7 @@ std::string tools::common::h5::resume::extract_state_name(const std::string &sta
     return state_name;
 }
 
-std::optional<size_t> tools::common::h5::resume::extract_state_number(const std::string &state_prefix) {
+std::optional<size_t> tools::common::h5::resume::extract_state_number(std::string_view state_prefix) {
     std::string state_name = extract_state_name(state_prefix);
     std::string state_number;
     for(const auto &c : state_name) {
@@ -30,8 +30,8 @@ std::optional<size_t> tools::common::h5::resume::extract_state_number(const std:
     }
 }
 
-std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, const std::string &search) {
-    std::string_view         algo_name = enum2str(algo_type);
+std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, std::string_view search) {
+    std::string_view         algo_name = enum2sv(algo_type);
     std::vector<std::string> state_prefix_candidates;
 
     if(search.empty())

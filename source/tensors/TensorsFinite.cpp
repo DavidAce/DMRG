@@ -62,7 +62,7 @@ void TensorsFinite::randomize_model() {
     rebuild_edges();
 }
 
-void TensorsFinite::randomize_state(StateInit state_init, const std::string &sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
+void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
                                     std::optional<StateInitType> state_type, std::optional<svd::settings> svd_settings) {
     state->clear_measurements();
     if(not state_type) state_type = state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
@@ -96,7 +96,7 @@ const Eigen::Tensor<TensorsFinite::Scalar, 4> &TensorsFinite::get_multisite_mpo_
 env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_ene_blk() const { return std::as_const(*edges).get_multisite_ene_blk(); }
 env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_var_blk() const { return std::as_const(*edges).get_multisite_var_blk(); }
 
-StateFinite TensorsFinite::get_state_projected_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim,
+StateFinite TensorsFinite::get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim,
                                                                  std::optional<svd::settings> svd_settings) {
     auto state_projected = *state;
     state_projected.clear_measurements();
@@ -108,7 +108,7 @@ StateFinite TensorsFinite::get_state_projected_to_nearest_sector(const std::stri
     return state_projected;
 }
 
-void TensorsFinite::project_to_nearest_sector(const std::string &sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
     clear_measurements();
     if(not chi_lim) chi_lim = state->find_largest_chi();
     tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
@@ -178,7 +178,7 @@ struct DebugStatus {
     }
 };
 
-std::optional<DebugStatus> get_status(TensorsFinite &tensors, const std::string &tag) {
+std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view tag) {
     if constexpr(not settings::debug) return std::nullopt;
     tensors.model->clear_cache();
     tensors.measurements = tensors_measure_finite();
