@@ -14,8 +14,10 @@ function(expand_target_libs target_names expanded_list)
             get_target_property(lib_type ${lib} TYPE)
             get_target_property(lib_impt ${lib} IMPORTED)
             if(lib_impt)
-                # The location property can only be read on imported targets
-                get_target_property(imported_lib  ${lib} LOCATION)
+                if(NOT lib_type MATCHES "INTERFACE" OR CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+                    # The location property can only be read on imported targets, or interface imported when cmake > 3.19
+                    get_target_property(imported_lib ${target_name} LOCATION)
+                endif()
             endif()
             get_target_property(interface_libs ${lib} INTERFACE_LINK_LIBRARIES)
             # Now we have all the libs in the target "lib".
@@ -140,8 +142,10 @@ function(expand_target_one_level target_names expanded_list)
             get_target_property(lib_type ${lib} TYPE)
             get_target_property(lib_impt ${lib} IMPORTED)
             if(lib_impt)
-                # The location property can only be read on imported targets
-                get_target_property(imported_lib  ${target_name} LOCATION)
+                if(NOT lib_type MATCHES "INTERFACE" OR CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+                    # The location property can only be read on imported targets, or interface imported when cmake > 3.19
+                    get_target_property(imported_lib ${target_name} LOCATION)
+                endif()
             endif()
             if(NOT lib_type MATCHES "INTERFACE")
                 get_target_property(private_libs  ${target_name} LINK_LIBRARIES)
@@ -177,8 +181,10 @@ function(expand_target_all_targets target_names expanded_list)
             get_target_property(lib_type ${target_name} TYPE)
             get_target_property(lib_impt ${target_name} IMPORTED)
             if(lib_impt)
-                # The location property can only be read on imported targets
-                get_target_property(imported_lib ${target_name} LOCATION)
+                if(NOT lib_type MATCHES "INTERFACE" OR CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+                    # The location property can only be read on imported targets, or interface imported when cmake > 3.19
+                    get_target_property(imported_lib ${target_name} LOCATION)
+                endif()
             endif()
             if(NOT lib_type MATCHES "INTERFACE")
                 get_target_property(private_libs  ${target_name} LINK_LIBRARIES)
