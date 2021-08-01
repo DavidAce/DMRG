@@ -174,8 +174,10 @@ function(expand_target_all_targets target_names expanded_list)
                 # The location property can only be read on imported targets
                 get_target_property(imported_lib ${target_name} LOCATION)
             endif()
+            if(NOT lib_type MATCHES "INTERFACE")
+                get_target_property(private_libs  ${target_name} LINK_LIBRARIES)
+            endif()
             get_target_property(interface_libs ${target_name} INTERFACE_LINK_LIBRARIES)
-            get_target_property(private_libs ${target_name} LINK_LIBRARIES)
 
             foreach(elem ${imported_lib};${private_libs};${interface_libs})
                 if(TARGET ${elem} AND NOT ${elem} IN_LIST ${expanded_list} AND NOT ${elem} IN_LIST target_names AND NOT ${elem} IN_LIST target_names_expanded)
