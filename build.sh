@@ -80,7 +80,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
                 verbose\
                 verbose-make\
                 verbose-cmake\
-                generator\
+                generator:\
                 extra-flags:\
                 "  -- "$@")
 
@@ -111,7 +111,7 @@ print_cmake_error="OFF"
 verbose="OFF"
 verbose_make="OFF"
 verbose_cmake="OFF"
-generator="CodeBlocks - Unix Makefiles"
+generator="Ninja"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
 echo "Enabled options:"

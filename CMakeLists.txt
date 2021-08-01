@@ -173,21 +173,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_link_libraries(dmrg-flags INTERFACE -stdlib=libstdc++)
 endif ()
 
-##################################################################
-### Check if we can enable Link Time Optimization              ###
-##################################################################
-if(DMRG_ENABLE_LTO)
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT supported OUTPUT error)
-    if(supported)
-        message(STATUS "IPO / LTO supported, enabling")
-        set_target_properties(dmrg-flags PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
-    else()
-        message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
-        set(DMRG_ENABLE_LTO OFF CACHE)
-    endif ()
-endif ()
-
 
 ###########################################
 ### Fetch or find all the dependencies  ###
@@ -200,6 +185,25 @@ include(cmake/SetupDependencies.cmake)
 ################################
 add_executable(DMRG++)
 set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
+
+
+##################################################################
+### Check if we can enable Link Time Optimization              ###
+##################################################################
+if(DMRG_ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT supported OUTPUT error)
+    if(supported)
+        message(STATUS "IPO / LTO supported, enabling")
+        set_target_properties(DMRG++ PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+        if(CMAKE_VERSION VERSION_GREATER 3.19)
+            set_target_properties(dmrg-flags PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+        endif()
+    else()
+        message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
+        set(DMRG_ENABLE_LTO OFF CACHE)
+    endif ()
+endif ()
 
 add_subdirectory(source)
 
