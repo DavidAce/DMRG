@@ -272,8 +272,15 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         fi
         module list
     fi
+    if [[ "$generator" =~ Ninja|ninja ]] ; then
+      module load ninja/1.8.2
+    fi
 
+    if [[ "$enable_ccache" =~ ON|on|On|TRUE|True|true ]] ; then
+      module load ccache/4.2.1
+    fi
 
+    enable_ccache
     cmake --version
 elif [[ "$HOSTNAME" == *"raken"* ]];then
     if [ -z "$no_module" ]; then
@@ -292,8 +299,14 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
         fi
         module list
     fi
-fi
+    if [[ "$generator" =~ Ninja|ninja ]] ; then
+      module load ninja
+    fi
 
+    if [[ "$enable_ccache" =~ ON|on|On|TRUE|True|true ]] ; then
+      module load ccache
+    fi
+fi
 
 if [[ "$compiler" =~ GCC|Gcc|gcc|cc|GNU|gnu|Gnu ]] ; then
     echo "Exporting compiler flags for GCC"
