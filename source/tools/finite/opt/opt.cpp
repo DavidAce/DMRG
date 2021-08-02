@@ -224,9 +224,9 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
+    log->debug(FMT_STRING("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
-               "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}",
+               "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}"),
                summary.iteration,
                summary.cost,
                summary.cost_change,
@@ -236,9 +236,9 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                std::abs(summary.step_size), // By line search
                functor.get_count() - last_count,
                functor.get_count(),
-               fmt::format("{:>6.0f} ms",summary.step_solver_time_in_seconds * 1000),
-               fmt::format("{:>6.0f} ms",summary.iteration_time_in_seconds * 1000),
-               fmt::format("{:>5.3f} s",summary.cumulative_time_in_seconds),
+               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.step_solver_time_in_seconds * 1000),
+               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.iteration_time_in_seconds * 1000),
+               fmt::format(FMT_STRING("{:>5.3f} s"),summary.cumulative_time_in_seconds),
                static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9,
                functor.get_energy_per_site(),
                std::log10(functor.get_variance())

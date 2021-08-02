@@ -319,9 +319,12 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
             }
             static double last_log_time = 0;
             if(last_log_time > t_tot->get_time()) last_log_time = 0; // If this function has been run before
-            if(std::abs(t_tot->get_time() - last_log_time) > 5.0) {
-                eig::log->info("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op {}", iter, nops, t_tot->get_time(),
-                               t_mul->get_last_interval() / nops * 1000, msg);
+            auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
+            auto lvl                 = spdlog::level::debug;
+            if(time_since_last_log > 10.0) lvl = spdlog::level::info;
+            if(time_since_last_log > 5.0) {
+                eig::log->log(lvl, FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op {}"), iter, nops, t_tot->get_time(),
+                              t_mul->get_last_interval() / nops * 1000, msg);
                 last_log_time = t_tot->get_time();
             }
         }
@@ -347,8 +350,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         }
     }
 
-    eig::log->info("iter {:<4} | nops {:<5} | time {:8.2f} s | dt {:8.2f} ms | actual iters {}", iter, nops, t_tot->get_time(),
-                   t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
+    eig::log->debug(FMT_STRING("iter {:<4} | nops {:<5} | time {:8.2f} s | dt {:8.2f} ms | actual iters {}"), iter, nops, t_tot->get_time(),
+                    t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
     result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
     if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
 

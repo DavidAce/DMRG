@@ -126,15 +126,20 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     static double last_log_time = 0;
     if(last_log_time > primme->stats.elapsedTime) last_log_time = 0; // If this function has been run before
 
-    bool log_time = std::abs(primme->stats.elapsedTime - last_log_time) > 5.0 or last_log_time == 0;
-    bool log_init = primme->stats.numOuterIterations <= 1 or primme->stats.numMatvecs <= 1;
+    auto time_since_last_log_time = std::abs(primme->stats.elapsedTime - last_log_time);
+    bool log_time                 = time_since_last_log_time > 5.0;
+    bool log_init                 = primme->stats.numOuterIterations <= 1 or primme->stats.numMatvecs <= 1;
 
+    auto lvl                      = spdlog::level::debug;
+    if(time_since_last_log_time > 10.0) lvl = spdlog::level::info;
     if(log_time or log_init) {
-        eig::log->info("iter {:<4} | nops {:<5} | min eval {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op | block {} | basis {} | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                       primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, *blockSize, *basisSize, event_msg);
+        eig::log->log(lvl, FMT_STRING("iter {:<4} | nops {:<5} | min eval {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op | block {} | basis {} | {}"),
+                      primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+                      primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, *blockSize, *basisSize, event_msg);
         last_log_time = primme->stats.elapsedTime;
     }
+
+    // Terminate if its taking too long
     if(primme->stats.elapsedTime > primme_max_time) primme->maxMatvecs = 0;
 }
 

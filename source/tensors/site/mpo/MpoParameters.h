@@ -72,11 +72,11 @@ class h5tb_ising_sdual {
     }
     static void print_parameter_names() {
         auto name = get_parameter_names();
-        tools::log->info("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}", name[0], name[1], name[2], name[3], name[4],
+        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3], name[4],
                          name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
     }
     void print_parameter_values() const {
-        tools::log->info("{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8}",
+        tools::log->info(FMT_STRING("{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8}"),
                          param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg,
                          param.h_pert, param.lambda, param.delta, param.spin_dim, param.distribution);
     }

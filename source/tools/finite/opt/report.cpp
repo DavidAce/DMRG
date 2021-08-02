@@ -9,9 +9,7 @@
 void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
-    std::string format_hdr = "{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<8} {:<8} {:<18} {:<18}";
-    std::string format_num = "- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<18.3f} {:<18.3f}";
-    tools::log->debug(format_hdr.c_str(),
+    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<8} {:<8} {:<18} {:<18}"),
                       "Optimization report",
                       "size",
                       "space",
@@ -27,7 +25,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
                       "Time per count [ms]");
 
     for(auto &entry : bfgs_log){
-        tools::log->debug(format_num.c_str(),
+        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<7} {:<20.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<18.3f} {:<18.3f}"),
         entry.description, entry.size,
         entry.space, entry.energy,
         std::log10(entry.variance),
@@ -43,9 +41,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
 void tools::finite::opt::internal::reports::print_eigs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (eigs_log.empty()) return;
-    std::string format_hdr = "- {:<5} {:<20} {:<20} {:<20} {:<12} {:<12} {:<12} {:<6}";
-    std::string format_num = "- {:<5} {:<20.15f} {:<20.15f} {:<20.8f} {:<12.3f} {:<12.3f} {:<12.3f} {:<6}";
-    tools::log->debug(format_hdr.c_str(),
+    tools::log->debug(FMT_STRING("- {:<5} {:<20} {:<20} {:<20} {:<12} {:<12} {:<12} {:<6}"),
                        "nev",
                        "max <θ_i|θ>",
                        "min <θ_i|θ>",
@@ -56,7 +52,7 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                        "Steps" );
 
     for(auto &entry : eigs_log){
-        tools::log->debug(format_num.c_str(),
+        tools::log->debug(FMT_STRING("- {:<5} {:<20.15f} {:<20.15f} {:<20.8f} {:<12.3f} {:<12.3f} {:<12.3f} {:<6}"),
                           entry.nev,
                           entry.max_olap,
                           entry.min_olap,
@@ -76,9 +72,8 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
 void tools::finite::opt::internal::reports::print_time_report(){
     if (tools::log->level() > spdlog::level::trace) return;
     if(time_log.empty()) return;
-    std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
     std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
-    tools::log->trace(format_hdr.c_str(),
+    tools::log->trace(FMT_STRING("LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"),
                       "<ψ|H²|ψ>",
                       "<ψ|H|ψ>",
                       "H²|ψ>",
@@ -87,7 +82,8 @@ void tools::finite::opt::internal::reports::print_time_report(){
                       "step",
                       "l-bfgs");
     for(auto &entry : time_log){
-    tools::log->trace(format_num.c_str(),
+    tools::log->trace(FMT_STRING("{:^23}{:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}"),
+                     " ",
                      1000 * entry.vH2v,
                      1000 * entry.vHv,
                      1000 * entry.vH2,
