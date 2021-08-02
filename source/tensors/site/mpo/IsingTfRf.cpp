@@ -31,8 +31,8 @@ IsingTfRf::IsingTfRf(ModelType model_type_, size_t position_) : MpoSite(model_ty
         false; // There are no full lattice parameters but we set it to true here since the model is not supposed to be randomized per site
 }
 
-double IsingTfRf::get_field() const { return h5tb.param.h_tran + std::pow(h5tb.param.h_pert + h5tb.param.h_rand, 1 - beta); }
-double IsingTfRf::get_coupling() const { return std::pow(h5tb.param.J1, 1 - alpha); }
+double IsingTfRf::get_field() const { return h5tb.param.h_tran + h5tb.param.h_pert + h5tb.param.h_rand; }
+double IsingTfRf::get_coupling() const { return h5tb.param.J1; }
 void   IsingTfRf::print_parameter_names() const { h5tb.print_parameter_names(); }
 void   IsingTfRf::print_parameter_values() const { h5tb.print_parameter_values(); }
 
@@ -107,6 +107,7 @@ Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO_edge_left() const {
     ledge(2) = 1;
     return ledge;
 }
+
 Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO_edge_right() const {
     Eigen::Tensor<Scalar, 1> redge(3);
     redge.setZero();
@@ -139,17 +140,6 @@ void IsingTfRf::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
     unique_id_sq                     = std::nullopt;
-}
-
-void IsingTfRf::set_coupling_damping(double alpha_) { alpha = alpha_; }
-void IsingTfRf::set_field_damping(double beta_) {
-    beta = beta_;
-    if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
-        mpo_squared                                                                   = std::nullopt;
-        unique_id                                                                     = std::nullopt;
-        unique_id_sq                                                                  = std::nullopt;
-    }
 }
 
 void IsingTfRf::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) {

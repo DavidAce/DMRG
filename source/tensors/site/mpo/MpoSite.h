@@ -22,8 +22,6 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    double alpha      = 0;     /*!< Damping factor [0,1] on couplings, std::pow(J_rnd + J_ptb,1-alpha)  */
-    double beta       = 0;     /*!< Damping factor [0,1] on fields, std::pow(h_rnd + h_ptb,1-alpha)  */
     double e_reduced  = 0;     /*!< "Reduced" energy offset for this mpo (to make energy-reduced MPO views) */
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
@@ -55,7 +53,6 @@ class MpoSite {
     [[nodiscard]] std::vector<std::any>           get_parameter_values() const;
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
-    [[nodiscard]] bool                            is_damped() const;
     [[nodiscard]] bool                            is_reduced() const;
     [[nodiscard]] bool                            is_compressed_mpo_squared() const;
     [[nodiscard]] double                          get_reduced_energy() const;
@@ -76,8 +73,6 @@ class MpoSite {
     virtual void print_parameter_values() const                                                                  = 0;
     virtual void set_parameters(TableMap &parameters)                                                            = 0;
     virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                    = 0;
-    virtual void set_coupling_damping(double alpha)                                                              = 0;
-    virtual void set_field_damping(double beta)                                                                  = 0;
     virtual void build_mpo()                                                                                     = 0;
     virtual void randomize_hamiltonian()                                                                         = 0;
     virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) = 0;

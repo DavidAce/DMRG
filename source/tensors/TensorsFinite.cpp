@@ -263,15 +263,6 @@ void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optio
     rebuild_edges_var();
 }
 
-void TensorsFinite::damp_model_disorder(double coupling_damp, double field_damp) {
-    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
-    model->clear_cache();
-    model->damp_model_disorder(coupling_damp, field_damp);
-    model->reset_mpo_squared();
-    model->assert_validity();
-    rebuild_edges();
-}
-
 // Active sites
 void TensorsFinite::sync_active_sites() {
     active_sites        = state->active_sites;

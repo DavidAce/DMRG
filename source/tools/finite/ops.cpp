@@ -182,7 +182,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     // rebuild of environments.
 
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
-    tools::log->info("Projecting state into sector with sign {}", sign);
+    tools::log->debug("Projecting state to sector with sign {}", sign);
     auto t_prj           = tid::tic_scope("projection");
     auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
@@ -217,7 +217,7 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
      *
      */
 
-    tools::log->info("Projecting state to axis nearest sector {}", sector);
+    tools::log->debug("Projecting state to axis nearest sector {}", sector);
     auto t_prj                    = tid::tic_scope("proj");
     auto spin_component_in_sector = get_spin_component_in_sector(state, sector);
     if(spin_component_in_sector.has_value()) {
@@ -225,7 +225,7 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
         auto paulimatrix = mps::init::get_pauli(sector);
         auto spin_alignment = sector_sign * spin_component_in_sector.value();
         // Now we have to check that the intended projection is safe
-        tools::log->info("Spin component in {}: {:.16f}", sector, spin_component_in_sector.value());
+        tools::log->debug("Spin component in {}: {:.16f}", sector, spin_component_in_sector.value());
         if(spin_alignment > 0)
             // In this case the state has an aligned component along the requested axis --> safe
             project_to_sector(state, paulimatrix, sector_sign);

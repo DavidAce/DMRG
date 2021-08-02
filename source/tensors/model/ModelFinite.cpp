@@ -254,25 +254,9 @@ void ModelFinite::perturb_hamiltonian(double coupling_ptb, double field_ptb, Per
     if(coupling_ptb == 0.0 and field_ptb == 0.0 and is_perturbed()) throw std::runtime_error("Model: Should have unperturbed!");
 }
 
-void ModelFinite::damp_model_disorder(double coupling_damp, double field_damp) {
-    clear_cache();
-    for(const auto &mpo : MPO) {
-        mpo->set_coupling_damping(coupling_damp);
-        mpo->set_field_damping(field_damp);
-    }
-    if(coupling_damp == 0.0 and field_damp == 0.0 and is_damped()) throw std::runtime_error("Model: Should have undamped!");
-}
-
 bool ModelFinite::is_perturbed() const {
     for(size_t pos = 0; pos < get_length(); pos++) {
         if(get_mpo(pos).is_perturbed()) return true;
-    }
-    return false;
-}
-
-bool ModelFinite::is_damped() const {
-    for(size_t pos = 0; pos < get_length(); pos++) {
-        if(get_mpo(pos).is_damped()) return true;
     }
     return false;
 }

@@ -122,8 +122,6 @@ size_t MpoSite::get_position() const {
     }
 }
 
-bool MpoSite::is_damped() const { return alpha != 0.0 or beta != 0.0; }
-
 bool MpoSite::is_reduced() const { return e_reduced != 0.0; }
 
 bool MpoSite::is_compressed_mpo_squared() const {

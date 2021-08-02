@@ -31,8 +31,6 @@ class IsingTfRf : public MpoSite {
     void print_parameter_values() const override;
     void set_parameters(TableMap &parameters) override;
     void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) override;
-    void set_coupling_damping(double alpha) override;
-    void set_field_damping(double beta) override;
     void build_mpo() override;
     void randomize_hamiltonian() override;
     void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) override;

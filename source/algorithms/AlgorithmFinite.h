@@ -14,19 +14,10 @@ class AlgorithmFinite : public AlgorithmBase {
     explicit AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
     TensorsFinite tensors; // State, model and edges
 
-    size_t excited_state_number = 0; /*!< Keeps track of found excited states. Convention: "0" is the biased seed,
-                                      * and others become unbiased by randomizing from state 0 (or any other).
-                                      * Therefore, this number is only incremented when randomizing the current state*/
-
-    // Control behavior when stuck
-    size_t max_stuck_iters      = 20;  //  5;  /*!< If stuck for this many sweeps -> stop. */
-    size_t max_saturation_iters = 100; // 10;  /*!< If either var or ent saturated this long -> algorithm saturated: true */
-    size_t min_saturation_iters = 1;   // 1;   /*!< Saturated at least this many iters before stopping */
-    size_t min_converged_iters  = 2;   /*!< Converged at least this many iters before success */
+    size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
 
     bool                    has_projected        = false;        /*!< True if projection has already been tried */
     bool                    has_expanded         = false;        /*!< True if full expansion has already been tried */
-    bool                    has_damped           = false;        /*!< True if damping of hamiltonian parameters is ongoing */
     size_t                  chi_quench_steps     = 0;            /*!< Number of steps left doing chi-quenching */
     size_t                  num_chi_quenches     = 0;            /*!< Number of bond dimension quench trials that have occurred */
     size_t                  max_chi_quenches     = 2;            /*!< Maximum number of bond dimension quench trials allowed */
@@ -35,17 +26,12 @@ class AlgorithmFinite : public AlgorithmBase {
     size_t                  num_perturbations    = 0;            /*!< Number of perturbation trials done */
     size_t                  max_perturbations    = 2;            /*!< Maximum number of perturbation trials allowed */
     size_t                  perturbation_steps   = 0;            /*!< Number of steps left doing perturbation of MPOs */
-    size_t                  damping_steps        = 0;            /*!< Number of steps left doing disorder damping of MPOs */
-    size_t                  num_dampings         = 0;            /*!< Number of damping trials done */
-    size_t                  max_dampings         = 2;            /*!< Maximum number of damping trials allowed */
     size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
     size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
     size_t                  max_discards         = 2;            /*!< Maximum number of times to discard the smallest schmidt values */
     size_t                  num_expansion_iters  = 0;            /*!< Counter for number of iterations of subspace expansion */
-    size_t                  max_expansion_iters  = 16;           /*!< Maximum number of iterations doing subspace expansion */
     double                  max_expansion_alpha  = 0.2;          /*!< Maximum value of subspace expansion factor */
     std::optional<double>   sub_expansion_alpha  = std::nullopt; /*!< The current value of the subspace expansion factor */
-    std::vector<double>     damping_exponents;                   /*!< Exponents for for the damping trials */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
 
@@ -60,7 +46,6 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_discard_small_schmidt();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
-    void         try_disorder_damping();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         rebuild_mpo_squared();

@@ -226,7 +226,6 @@ void xdmrg::run_algorithm() {
         reduce_mpo_energy();
         try_discard_small_schmidt();
         try_bond_dimension_quench();
-        try_disorder_damping();
         try_hamiltonian_perturbation();
         try_projection();
         try_full_expansion();
@@ -268,7 +267,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         // If early in the simulation, and the bond dimension is small enough we use subspace optimization
         c1.optMode       = OptMode::VARIANCE;
         c1.optSpace      = OptSpace::SUBSPACE_AND_DIRECT;
-        c1.max_sites     = settings::strategy::multisite_mps_size_init;
+        c1.max_sites     = settings::strategy::multisite_mps_size_max;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
     }
@@ -277,7 +276,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
         c1.optMode       = OptMode::OVERLAP;
         c1.optSpace      = OptSpace::SUBSPACE_ONLY;
-        c1.max_sites     = settings::strategy::multisite_mps_size_init;
+        c1.max_sites     = settings::strategy::multisite_mps_size_max;
         c1.second_chance = false;
         if(settings::xdmrg::chi_lim_olap > 0) status.chi_lim = settings::xdmrg::chi_lim_olap;
     }
@@ -322,13 +321,13 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
 
     if(settings::strategy::expand_subspace_when_stuck and (status.algorithm_has_stuck_for > 0 or sub_expansion_alpha.has_value()) and
-       num_expansion_iters < max_expansion_iters) {
+       num_expansion_iters < settings::strategy::max_expansion_iters) {
         if(sub_expansion_alpha) c1.alpha_expansion = sub_expansion_alpha;
         if(not c1.alpha_expansion) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
         // Update alpha
         auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity / 10);
         tools::log->info("Determining alpha: report computed {} | saturated {} | expansion iters {} ({})", report.has_computed, report.has_saturated,
-                         num_expansion_iters, max_expansion_iters);
+                         num_expansion_iters, settings::strategy::max_expansion_iters);
         if(report.has_computed) {
             double factor_up = std::pow(5.0, 1.0 / static_cast<double>(tensors.get_length()));
             double factor_dn = std::pow(0.1, 1.0 / static_cast<double>(tensors.get_length()));
@@ -347,8 +346,8 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         }
         sub_expansion_alpha = c1.alpha_expansion;
         if(tensors.position_is_inward_edge()) num_expansion_iters++;
-    } else if(num_expansion_iters >= max_expansion_iters) {
-        tools::log->info("Could not enable alpha: More than num_expansion iters ({}) >=  max_expansion_iters ({})", num_expansion_iters, max_expansion_iters);
+    } else if(num_expansion_iters >= settings::strategy::max_expansion_iters) {
+        tools::log->info("Could not enable alpha: More than num_expansion iters ({}) >=  max_expansion_iters ({})", num_expansion_iters, settings::strategy::max_expansion_iters);
         c1.alpha_expansion = std::nullopt; // Back to normal
     }
     sub_expansion_alpha = c1.alpha_expansion;
@@ -364,7 +363,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > max_stuck_iters / 2) c1.max_sites = settings::strategy::multisite_mps_size_max;
+    if(status.algorithm_has_stuck_for > settings::strategy::max_stuck_iters / 2) c1.max_sites = settings::strategy::multisite_mps_size_max;
     if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
 
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
@@ -597,15 +596,15 @@ void xdmrg::check_convergence() {
        status.algorithm_has_stuck_for == 0)
         throw std::logic_error("Should not have zeroed");
 
-    status.algorithm_has_succeeded = status.algorithm_converged_for >= min_converged_iters and status.algorithm_saturated_for >= min_saturation_iters;
-    status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
+    status.algorithm_has_succeeded = status.algorithm_converged_for >= settings::strategy::min_converged_iters and status.algorithm_saturated_for >= settings::strategy::min_saturation_iters;
+    status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
                      status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
                      status.algorithm_has_to_stop, std::log10(status.energy_variance_prec_limit));
 
     status.algo_stop = AlgorithmStop::NONE;
-    if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed() and not tensors.model->is_damped()) {
+    if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed()) {
         if(status.iter >= settings::xdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCEEDED;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;

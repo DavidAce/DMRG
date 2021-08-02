@@ -134,19 +134,17 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFinite &state) {
-    std::vector<long> bond_dimensions;
-    if(state.active_sites.empty()) return bond_dimensions;
+    // Here we calculate the bond dimensions of the bonds that were merged into the full state in the last step
+    // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
     auto t_chi = tid::tic_scope("chi_merged");
-
+    if(state.active_sites.empty()) return {};
+    if(state.active_sites.size() <= 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+    std::vector<long> bond_dimensions;
     for(const auto &pos : state.active_sites) {
-        bond_dimensions.emplace_back(state.get_mps_site(pos).get_L().dimension(0));
-        if(state.get_mps_site(pos).isCenter()) { bond_dimensions.emplace_back(state.get_mps_site(pos).get_LC().dimension(0)); }
+        if(&pos == &state.active_sites.front()) continue;
+        const auto & mps = state.get_mps_site(pos);
+        bond_dimensions.push_back(mps.get_chiL());
     }
-    if(state.active_sites.size() > 1) {
-        bond_dimensions.pop_back();
-        bond_dimensions.erase(bond_dimensions.begin());
-    } else if(state.get_direction() == 1)
-        bond_dimensions.pop_back();
     return bond_dimensions;
 }
 

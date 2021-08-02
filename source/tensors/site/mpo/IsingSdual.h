@@ -15,8 +15,6 @@ class IsingSdual : public MpoSite {
     h5tb_ising_sdual     h5tb;
     [[nodiscard]] double get_coupling() const;
     [[nodiscard]] double get_field() const;
-    [[nodiscard]] double get_coupling(double J_rnd_, double J_ptb_, double alpha_) const;
-    [[nodiscard]] double get_field(double h_rnd_, double h_ptb_, double beta_) const;
 
     public:
     explicit IsingSdual(ModelType model_type_, size_t position_);
@@ -40,8 +38,6 @@ class IsingSdual : public MpoSite {
     void print_parameter_values() const override;
     void set_parameters(TableMap &parameters) override;
     void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) override;
-    void set_coupling_damping(double alpha) override;
-    void set_field_damping(double beta) override;
     void build_mpo() override;
     void randomize_hamiltonian() override;
     void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) override;

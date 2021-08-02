@@ -132,7 +132,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
-    dmrg_config.load_parameter("strategy::damping_when_stuck"                 , strategy::damping_when_stuck);
     dmrg_config.load_parameter("strategy::discard_schmidt_when_stuck"         , strategy::discard_schmidt_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
     dmrg_config.load_parameter("strategy::expand_on_saturation"               , strategy::expand_on_saturation);
@@ -144,9 +143,13 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
     dmrg_config.load_parameter("strategy::max_resets"                         , strategy::max_resets);
+    dmrg_config.load_parameter("strategy::max_stuck_iters"                    , strategy::max_stuck_iters);
+    dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturation_iters);
+    dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturation_iters);
+    dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
+    dmrg_config.load_parameter("strategy::max_expansion_iters"                , strategy::max_expansion_iters);
     dmrg_config.load_parameter("strategy::multisite_mps_size_def"             , strategy::multisite_mps_size_def);
     dmrg_config.load_parameter("strategy::multisite_mps_size_max"             , strategy::multisite_mps_size_max);
-    dmrg_config.load_parameter("strategy::multisite_mps_size_init"            , strategy::multisite_mps_size_init);
     dmrg_config.load_parameter("strategy::multisite_mps_step"                 , strategy::multisite_mps_step);
     dmrg_config.load_parameter("strategy::target_sector"                      , strategy::target_sector);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
@@ -171,12 +174,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
-    dmrg_config.load_parameter("precision::max_stuck_iters"                   , precision::max_stuck_iters);
-    dmrg_config.load_parameter("precision::min_converged_iters"               , precision::min_converged_iters);
-    dmrg_config.load_parameter("precision::min_saturation_iters"              , precision::min_saturation_iters);
-    dmrg_config.load_parameter("precision::max_saturation_iters"              , precision::max_saturation_iters);
-    dmrg_config.load_parameter("precision::max_expansion_iters"               , precision::max_expansion_iters);
-
 
     dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
     dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);

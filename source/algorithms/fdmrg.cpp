@@ -203,8 +203,9 @@ void fdmrg::check_convergence() {
     else
         status.algorithm_has_stuck_for = 0;
 
-    status.algorithm_has_succeeded = status.algorithm_converged_for > min_converged_iters and status.algorithm_saturated_for > min_saturation_iters;
-    status.algorithm_has_to_stop   = status.algorithm_has_stuck_for >= max_stuck_iters;
+    status.algorithm_has_succeeded =
+        status.algorithm_converged_for > settings::strategy::min_converged_iters and status.algorithm_saturated_for > settings::strategy::min_saturation_iters;
+    status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     if(status.algorithm_converged_for == 0 and status.variance_mpo_saturated_for * status.entanglement_saturated_for == 0 and
        status.algorithm_has_stuck_for != 0)

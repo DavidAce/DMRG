@@ -23,11 +23,6 @@ AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, Algorith
     tensors.initialize(settings::model::model_type, settings::model::model_size, 0);
     tensors.state->set_algorithm(algo_type);
     entropy_iter.resize(tensors.get_length() + 1);
-
-    max_stuck_iters      = settings::precision::max_stuck_iters;
-    min_saturation_iters = settings::precision::min_saturation_iters;
-    max_saturation_iters = settings::precision::max_saturation_iters;
-    max_expansion_iters  = settings::precision::max_expansion_iters;
 }
 
 // We need to make a destructor manually for the enclosing class "ModelFinite"
@@ -175,7 +170,7 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
     status.energy_variance_max_digits = static_cast<size_t>(max_digits);
     status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
-    tools::log->info("Energy variance precision limit: {:.4e}", status.energy_variance_prec_limit);
+    tools::log->debug("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
 }
 
 void AlgorithmFinite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
@@ -191,13 +186,9 @@ void AlgorithmFinite::update_bond_dimension_limit([[maybe_unused]] std::optional
 
     // If we got here we want increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
-    // * No experiments are on-going like perturbation or damping
+    // * No experiments are on-going like perturbation
     // * the simulation is stuck
     // * the state is limited by bond dimension
-    if(tensors.model->is_damped()) {
-        tools::log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
-        return;
-    }
     if(tensors.model->is_perturbed()) {
         tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
         return;
@@ -281,7 +272,6 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     num_perturbations = 0;
     num_chi_quenches  = 0;
     num_discards      = 0;
-    num_dampings      = 0;
     status.algo_stop  = AlgorithmStop::NONE;
     if(settings::chi_lim_grow(status.algo_type)) status.chi_lim = chi_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
@@ -306,6 +296,8 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     if(not tensors.position_is_inward_edge()) return;
     if(not target_sector and has_projected) return;
+    if(status.variance_mpo_converged_for > 0 and status.spin_parity_has_converged) return; // No need
+
     bool project_on_saturation = settings::strategy::project_on_saturation > 0 and status.algorithm_saturated_for > 0 and
                                  num::mod(status.algorithm_saturated_for - 1, settings::strategy::project_on_saturation) == 0;
     bool project_on_every_iter   = settings::strategy::project_on_every_iter > 0 and num::mod(status.iter, settings::strategy::project_on_every_iter) == 0;
@@ -313,10 +305,11 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
     if(project_on_every_iter or project_on_saturation or project_to_given_sector) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
-        tools::log->info("Trying projection to {} | pos {}", target_sector.value(), tensors.get_position<long>());
+        tools::log->info("Trying projection to {}", target_sector.value());
         auto sector_sign  = tools::finite::mps::init::get_sign(target_sector.value());
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
+
         if(sector_sign != 0) {
             tensors.project_to_nearest_sector(target_sector.value());
         } else {
@@ -330,7 +323,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             // projecting to the other sector will zero the norm. So we can only make this
             // decision if the the |spin component| << 1. Maybe < 0.5 is enough?
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
-            tools::log->info("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
+            tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.5) {
                 // Here we deem the spin component undecided enough to warrant a safe projection
                 auto tensors_neg = tensors;
@@ -345,8 +338,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
                 auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                tools::log->info("Variance after projection to -{} = {:.6f}", target_sector.value(), std::log10(variance_neg));
-                tools::log->info("Variance after projection to +{} = {:.6f}", target_sector.value(), std::log10(variance_pos));
+                tools::log->debug("Variance after projection to -{} = {:.6f}", target_sector.value(), std::log10(variance_neg));
+                tools::log->debug("Variance after projection to +{} = {:.6f}", target_sector.value(), std::log10(variance_pos));
                 if(variance_neg < variance_pos)
                     tensors = tensors_neg;
                 else
@@ -357,8 +350,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
-            tools::log->info("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
-                             std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+            tools::log->debug("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
+                              std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
         if(target_sector.value() == settings::strategy::target_sector) has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
@@ -455,37 +448,6 @@ void AlgorithmFinite::try_hamiltonian_perturbation() {
     }
 }
 
-void AlgorithmFinite::try_disorder_damping() {
-    // if(not state.position_is_inward_edge()) return;
-    // If there are damping exponents to process, do so
-    if(not damping_exponents.empty()) {
-        tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-        tensors.damp_model_disorder(damping_exponents.back(), 0);
-        damping_exponents.pop_back();
-        if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
-    }
-    if(not settings::strategy::damping_when_stuck) return;
-    if(tensors.model->is_damped()) return;
-    if(status.algorithm_has_stuck_for == 0) {
-        tools::log->info("Damping skipped: algorithm not stuck");
-        return;
-    }
-    if(num_dampings >= max_dampings) {
-        tools::log->info("Damping skipped: max number of damping trials ({}) have been made already", num_dampings);
-        return;
-    }
-    // damping_exponents = num::LogSpaced(6,0.0,0.25,0.001);
-    // damping_exponents = {0.0,0.1};
-    damping_exponents = {0.0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.256};
-    tools::log->info("Generating damping exponents = {}", damping_exponents);
-    has_damped = true;
-    clear_convergence_status();
-    tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-    tensors.damp_model_disorder(damping_exponents.back(), 0);
-    damping_exponents.pop_back();
-    if(damping_exponents.empty() and tensors.model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
-}
-
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of variance mpo");
@@ -497,7 +459,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value(), report.saturated_point);
         status.variance_mpo_saturated_for = report.saturated_count;
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Energy variance convergence: saturated {} iters (since {})", report.saturated_count, report.saturated_point);
+            tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Energy variance slope details:");
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
@@ -505,17 +467,11 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
             tools::log->trace(" -- converged count    = {} ", status.variance_mpo_converged_for);
             tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+            tools::log->trace(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
         }
-        tools::log->info("Energy variance slope details:");
-        tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-        tools::log->info(" -- saturated point    = {} ", report.saturated_point);
-        tools::log->info(" -- saturated count    = {} ", report.saturated_count);
-        tools::log->info(" -- converged count    = {} ", status.variance_mpo_converged_for);
-        tools::log->info(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-        tools::log->info(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-        tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-        tools::log->info(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
-        tools::log->info(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
     }
 }
 
@@ -545,31 +501,26 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
         auto &report                      = reports[last_saturated_site];
         status.entanglement_saturated_for = report.saturated_count;
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->info("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
-                             report.saturated_point);
+            tools::log->debug("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
+                              report.saturated_point);
         else if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("Entanglement slope details:");
             tools::log->trace(" -- site               = {}", last_saturated_site);
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
             tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
             tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
         }
-        tools::log->info("Entanglement slope details:");
-        tools::log->info(" -- site               = {}", last_saturated_site);
-        tools::log->info(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-        tools::log->info(" -- saturated point    = {} ", report.saturated_point);
-        tools::log->info(" -- saturated count    = {} ", report.saturated_count);
-        tools::log->info(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-        tools::log->info(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-        tools::log->info(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-        tools::log->info(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
 }
 
 void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
     constexpr std::array<std::string_view, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool                             sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
+    bool                                      sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
     if(sector_is_valid) {
         auto axis                        = tools::finite::mps::init::get_axis(settings::strategy::target_sector);
         auto sign                        = tools::finite::mps::init::get_sign(settings::strategy::target_sector);
@@ -577,7 +528,7 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
         if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
             tools::log->warn("Spin parity has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
-        tools::log->info("Spin component convergence: {} = {:.16f}", target_sector, spin_component_along_axis);
+        tools::log->debug("Spin component convergence: {} = {:.16f}", target_sector, spin_component_along_axis);
     } else
         status.spin_parity_has_converged = true; // Probably no sector was specified
 }
@@ -601,7 +552,6 @@ void AlgorithmFinite::clear_convergence_status() {
     status.chi_lim_has_reached_chi_max = false;
     status.spin_parity_has_converged   = false;
     has_projected                      = false;
-    has_damped                         = false;
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
@@ -632,26 +582,31 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format("iter:{:<4} ", status.iter);
     report += fmt::format("step:{:<5} ", status.step);
     report += fmt::format("L:{} ", tensors.get_length());
-    if(tensors.active_sites.empty())
-        report += fmt::format("l:[{:>2} {:<2}] ", status.position, status.position);
-    else if(tensors.state->get_direction() > 0)
-        report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
-    else if(tensors.state->get_direction() < 0)
-        report += fmt::format("l:[{:>2} {:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
+    std::string site_str;
+    if(tensors.active_sites.empty()) site_str = fmt::format("{:^5}", "?");
+    if(tensors.active_sites.size() == 1) site_str = fmt::format("{:^5}", tensors.active_sites.front());
+    if(tensors.active_sites.size() >= 2) site_str = fmt::format("{:>2} {:>2}", tensors.active_sites.front(), tensors.active_sites.back());
+    if(tensors.state->get_direction() > 0) {
+        report += fmt::format("l:|{}⟩ ", site_str);
+    } else if(tensors.state->get_direction() < 0) {
+        report += fmt::format("l:⟨{}| ", site_str);
+    }
 
     double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
     report += fmt::format("E/L:{:<20.16f} ", energy);
 
     if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
-    report += fmt::format("Sₑ(l):{:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
     report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance, std::log10(status.energy_variance_lowest));
     report += fmt::format("χ:{:<3}|{:<3}|", settings::chi_lim_max(status.algo_type), status.chi_lim);
     size_t comma_width       = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
+    size_t bracket_width     = 2;                                                       // The {} edges
     size_t bond_single_width = static_cast<size_t>(std::log10(settings::chi_lim_max(status.algo_type))) + 1;
-    size_t bond_string_width =
-        2 + (bond_single_width + comma_width) * (settings::strategy::multisite_mps_size_max == 1 ? 1 : settings::strategy::multisite_mps_size_max - 1);
+    size_t bond_num_elements = settings::strategy::multisite_mps_size_max == 1 ? 1 : settings::strategy::multisite_mps_size_max - 1;
+    size_t bond_string_width = bracket_width + (bond_single_width + comma_width) // The width of an element like " 54,"
+                                                   * bond_num_elements;          // Number of bonds
     std::vector<long> bonds_merged = tools::finite::measure::bond_dimensions_merged(*tensors.state);
     if(bonds_merged.empty())
         report += fmt::format("{0:<{1}} ", " ", bond_string_width);

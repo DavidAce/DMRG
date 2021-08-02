@@ -12,12 +12,11 @@ location    = "input"
 
 
 sites               = np.array([16,20])
-lambdas             = [0.000, 0.001]
+lambdas             = [0.000, 0.003]
 deltas              = [0.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [2]
 multisite_mps_size_max  = [2]
-multisite_mps_size_init = [6]
 output_prefix       = "output"
 
 
@@ -70,10 +69,9 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::ising_sdual::J_stdv"         : "1.0",
         "model::ising_sdual::h_stdv"         : "1.0",
         "xdmrg::chi_lim_max"                 : "768",
-        "xdmrg::max_states"                  : "1",
+        "xdmrg::max_states"                  : "2",
         "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_size_max"   : str(multi),
-        "strategy::multisite_mps_size_init"  : str(multisite_mps_size_init[0]),
         "strategy::initial_state"            : str(init),
     }
     os.makedirs(location + extra_prefix, exist_ok=True)

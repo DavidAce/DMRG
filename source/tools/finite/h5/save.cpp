@@ -46,12 +46,12 @@ namespace tools::finite::h5 {
     }
 
     void tools::finite::h5::save::measurements(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level,
-                                               const TensorsFinite &tensors, const AlgorithmStatus &status, AlgorithmType algo_type) {
-        save::measurements(h5ppFile, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status, algo_type);
+                                               const TensorsFinite &tensors, const AlgorithmStatus &status) {
+        save::measurements(h5ppFile, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status);
     }
 
     void save::measurements(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status, AlgorithmType algo_type) {
+                            const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
         std::string                                                           table_path = fmt::format("{}/measurements", table_prefix);
@@ -66,27 +66,30 @@ namespace tools::finite::h5 {
         if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
         h5pp_table_measurements_finite::table measurement_entry{};
-        measurement_entry.step                          = static_cast<uint64_t>(status.step);
-        measurement_entry.iter                          = static_cast<uint64_t>(status.iter);
-        measurement_entry.position                      = static_cast<long>(status.position);
-        measurement_entry.length                        = static_cast<uint64_t>(tools::finite::measure::length(state));
-        measurement_entry.bond_dimension_midchain       = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
-        measurement_entry.bond_dimension_current        = static_cast<long>(tools::finite::measure::bond_dimension_current(state));
-        measurement_entry.bond_dimension_limit          = status.chi_lim;
-        measurement_entry.bond_dimension_maximum        = status.chi_lim_max;
-        measurement_entry.entanglement_entropy_midchain = tools::finite::measure::entanglement_entropy_midchain(state);
-        measurement_entry.entanglement_entropy_current  = tools::finite::measure::entanglement_entropy_current(state);
-        measurement_entry.number_entropy_midchain       = tools::finite::measure::number_entropy_midchain(state);
-        measurement_entry.number_entropy_current        = tools::finite::measure::number_entropy_current(state);
-        measurement_entry.norm                          = tools::finite::measure::norm(state);
-        measurement_entry.energy                        = tools::finite::measure::energy(state, model, edges);
-        measurement_entry.energy_per_site               = tools::finite::measure::energy_per_site(state, model, edges);
-        if(algo_type != AlgorithmType::fLBIT) {
+        measurement_entry.step            = static_cast<uint64_t>(status.step);
+        measurement_entry.iter            = static_cast<uint64_t>(status.iter);
+        measurement_entry.position        = static_cast<long>(status.position);
+        measurement_entry.length          = static_cast<uint64_t>(tools::finite::measure::length(state));
+        measurement_entry.norm            = tools::finite::measure::norm(state);
+        measurement_entry.energy          = tools::finite::measure::energy(state, model, edges);
+        measurement_entry.energy_per_site = tools::finite::measure::energy_per_site(state, model, edges);
+        if(status.algo_type != AlgorithmType::fLBIT) {
             measurement_entry.energy_variance                 = tools::finite::measure::energy_variance(state, model, edges);
             measurement_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(state, model, edges);
             measurement_entry.energy_variance_lowest          = status.energy_variance_lowest;
             measurement_entry.energy_variance_per_site_lowest = status.energy_variance_lowest / state.get_length<double>();
         }
+        if(status.algo_type == AlgorithmType::fLBIT) {
+            measurement_entry.number_entropy_midchain = tools::finite::measure::number_entropy_midchain(state);
+            measurement_entry.number_entropy_current  = tools::finite::measure::number_entropy_current(state);
+        }
+        measurement_entry.entanglement_entropy_midchain = tools::finite::measure::entanglement_entropy_midchain(state);
+        measurement_entry.entanglement_entropy_current  = tools::finite::measure::entanglement_entropy_current(state);
+        measurement_entry.bond_dimension_midchain       = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
+        measurement_entry.bond_dimension_current        = static_cast<long>(tools::finite::measure::bond_dimension_current(state));
+        measurement_entry.bond_dimension_limit          = status.chi_lim;
+        measurement_entry.bond_dimension_maximum        = status.chi_lim_max;
+
         measurement_entry.spin_components  = tools::finite::measure::spin_components(state);
         measurement_entry.truncation_error = state.get_truncation_error_midchain();
         measurement_entry.total_time       = status.wall_time;
@@ -229,15 +232,15 @@ namespace tools::finite::h5 {
         h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 4), dsetname_renyi + "_4");
         h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 100), dsetname_renyi + "_100");
         h5ppFile.writeDataset(tools::finite::measure::truncation_errors(state), dsetname_trunc);
-        if(not tools::finite::measure::number_entropies(state).empty()) h5ppFile.writeDataset(tools::finite::measure::number_entropies(state), dsetname_numen);
+        if(status.algo_type == AlgorithmType::fLBIT) h5ppFile.writeDataset(tools::finite::measure::number_entropies(state), dsetname_numen);
     }
 
     template<typename T>
     void save::data(h5pp::File &h5ppFile, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status,
                     StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
         // Setup this save
-        auto                     t_h5   = tid::tic_scope("h5");
-        auto                     t_data = tid::tic_scope("data");
+        auto                     t_h5     = tid::tic_scope("h5");
+        auto                     t_data   = tid::tic_scope("data");
         auto                     t_reason = tid::tic_scope(enum2sv(storage_reason));
         StorageLevel             storage_level;
         std::string              state_prefix;
@@ -360,8 +363,8 @@ namespace tools::finite::h5 {
 
     void save::simulation(h5pp::File &h5ppfile, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
                           const StorageReason &storage_reason, std::optional<CopyPolicy> copy_policy) {
-        auto                     t_h5   = tid::tic_scope("h5");
-        auto                     t_sim = tid::tic_scope("sim");
+        auto                     t_h5     = tid::tic_scope("h5");
+        auto                     t_sim    = tid::tic_scope("sim");
         auto                     t_reason = tid::tic_scope(enum2sv(storage_reason));
         StorageLevel             storage_level;
         std::string              state_prefix;
@@ -421,7 +424,7 @@ namespace tools::finite::h5 {
             if(storage_reason == StorageReason::MODEL) break;
             tools::common::h5::save::status(h5ppfile, table_prefix, storage_level, status);
             tools::common::h5::save::mem(h5ppfile, table_prefix, storage_level, status);
-            tools::finite::h5::save::measurements(h5ppfile, table_prefix, storage_level, state, model, edges, status, status.algo_type);
+            tools::finite::h5::save::measurements(h5ppfile, table_prefix, storage_level, state, model, edges, status);
         }
         h5ppfile.setKeepFileClosed();
 

@@ -31,8 +31,8 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
         false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
 }
 
-// double LBit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
-// double LBit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
+// double LBit::get_field() const { return h5tb.param.J1_rand; }
+// double LBit::get_coupling() const { return h5tb.param.J2_rand + h5tb.param.J3_rand; }
 void LBit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
 void LBit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
@@ -227,19 +227,6 @@ void LBit::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
 }
 
-void LBit::set_coupling_damping(double alpha_) { alpha = alpha_; }
-void LBit::set_field_damping(double beta_) {
-    beta = beta_;
-    if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar, 2> n                                             = tenx::TensorCast(0.5 * (id + sz));
-        Eigen::Tensor<Scalar, 2> i                                             = tenx::TensorMap(id);
-        mpo_internal.slice(tenx::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
-        mpo_squared                                                            = std::nullopt;
-        unique_id                                                              = std::nullopt;
-        unique_id_sq                                                           = std::nullopt;
-    }
-}
-
 void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) {
     switch(ptbMode) {
         case PerturbMode::ABSOLUTE: {
@@ -268,8 +255,8 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        // double LBit::get_field() const { return +std::pow(h5tb.param.J1_rand, 1 - beta); }
-        // double LBit::get_coupling() const { return std::pow(h5tb.param.J2_rand + h5tb.param.J3_rand, 1 - alpha); }
+        // double LBit::get_field() const { return h5tb.param.J1_rand; }
+        // double LBit::get_coupling() const { return h5tb.param.J2_rand + h5tb.param.J3_rand; }
 
         Eigen::Tensor<Scalar, 2> n                                             = tenx::TensorCast(0.5 * (id + sz));
         Eigen::Tensor<Scalar, 2> i                                             = tenx::TensorMap(id);

@@ -37,10 +37,8 @@ IsingSdual::IsingSdual(ModelType model_type_, size_t position_) : MpoSite(model_
     h5tb_ising_sdual::register_table_type();
 }
 
-double IsingSdual::get_coupling() const { return std::pow(h5tb.param.J_rand + h5tb.param.J_pert, 1 - alpha); }
-double IsingSdual::get_field() const { return std::pow(h5tb.param.h_rand + h5tb.param.h_pert, 1 - beta); }
-double IsingSdual::get_coupling(double J_rnd_, double J_ptb_, double alpha_) const { return std::pow(J_rnd_ + J_ptb_, 1 - alpha_); }
-double IsingSdual::get_field(double h_rnd_, double h_ptb_, double beta_) const { return std::pow(h_rnd_ + h_ptb_, 1 - beta_); }
+double IsingSdual::get_coupling() const { return h5tb.param.J_rand + h5tb.param.J_pert; }
+double IsingSdual::get_field() const { return h5tb.param.h_rand + h5tb.param.h_pert; }
 void   IsingSdual::print_parameter_names() const { h5tb.print_parameter_names(); }
 void   IsingSdual::print_parameter_values() const { h5tb.print_parameter_values(); }
 
@@ -192,25 +190,6 @@ void IsingSdual::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
     unique_id_sq                     = std::nullopt;
-}
-
-void IsingSdual::set_coupling_damping(double alpha_) {
-    alpha = alpha_;
-    if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
-        mpo_squared                                                                   = std::nullopt;
-        unique_id                                                                     = std::nullopt;
-        unique_id_sq                                                                  = std::nullopt;
-    }
-}
-void IsingSdual::set_field_damping(double beta_) {
-    beta = beta_;
-    if(all_mpo_parameters_have_been_set) {
-        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
-        mpo_squared                                                                   = std::nullopt;
-        unique_id                                                                     = std::nullopt;
-        unique_id_sq                                                                  = std::nullopt;
-    }
 }
 
 void IsingSdual::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) {

@@ -22,12 +22,12 @@ class h5tb_ising_sdual {
         double J_stdv           = 0;         /*!< Standard deviation for the distribution of J_rnd */
         double J_rand           = 0;         /*!< Randomly distributed nearest neighbour coupling */
         double J_avrg           = 0;         /*!< Average of J_rnd between all sites*/
-        double J_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+        double J_pert           = 0;         /*!< Perturbation to the coupling, */
         double h_mean           = 0;         /*!< Mean for the distrbution of h_rnd */
         double h_stdv           = 0;         /*!< Standard deviation for the distribution of h_rnd */
         double h_rand           = 0;         /*!< Randomly distributed on-site field */
         double h_avrg           = 0;         /*!< Average of h_rnd on all sites */
-        double h_pert           = 0;         /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+        double h_pert           = 0;         /*!< Perturbation to the field */
         double lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
         double delta            = 0;         /*!< Difference J_mean - h_mean  */
         long   spin_dim         = 2;         /*!< Spin dimension */

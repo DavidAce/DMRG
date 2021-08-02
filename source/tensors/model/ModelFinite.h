@@ -31,7 +31,6 @@ class ModelFinite {
     void                                  set_reduced_energy(double total_energy);
     void                                  set_reduced_energy_per_site(double site_energy);
     void                                  perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-    void                                  damp_model_disorder(double coupling_damp, double field_damp);
 
     public:
     std::vector<std::unique_ptr<MpoSite>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
@@ -57,7 +56,6 @@ class ModelFinite {
     // For reduced energy MPO's
     [[nodiscard]] bool   is_reduced() const;
     [[nodiscard]] bool   is_perturbed() const;
-    [[nodiscard]] bool   is_damped() const;
     [[nodiscard]] bool   is_compressed_mpo_squared() const;
     [[nodiscard]] double get_energy_reduced() const;
     [[nodiscard]] double get_energy_per_site_reduced() const;
