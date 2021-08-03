@@ -154,9 +154,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 ententrp.append(msrmnt_last_entry['entanglement_entropy_midchain'])
                 walltime.append(status_last_entry['wall_time'])
                 resets.append(status_last_entry['num_resets'])
-                got_stuck.append(status_last_entry['algorithm_has_got_stuck'])
-                saturated.append(status_last_entry['algorithm_has_saturated'])
-                converged.append(status_last_entry['algorithm_has_converged'])
+                got_stuck.append(status_last_entry['algorithm_has_stuck_for'])
+                saturated.append(status_last_entry['algorithm_saturated_for'])
+                converged.append(status_last_entry['algorithm_converged_for'])
                 succeeded.append(status_last_entry['algorithm_has_succeeded'])
 
                 style = ''
