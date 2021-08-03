@@ -31,7 +31,7 @@ namespace tools::finite::opt::internal {
 
         // Generate the Hamiltonian matrix
         double energy_shift = 0.0;
-        if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo)
+        if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy)
             energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
 
         MatrixType<Scalar> H_local       = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(*tensors.model, *tensors.edges, energy_shift);

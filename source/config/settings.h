@@ -192,9 +192,9 @@ namespace settings {
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16 , good could be ~64) */
-        inline bool     compress_mpo_squared            = true;     /*!< Use SVD to compress the squared mpo bond dimension */
-        inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_shifted_mpo                 = true  ;   /*!< Some steps after reducing MPO energy by Er, we have E-Er = dE. For increased precision, this shifts the local MPOs by dE before optimization */
+        inline bool     use_compressed_mpo_squared      = true  ;   /*!< Use SVD to compress the bond dimension of the H² mpo */
+        inline bool     use_reduced_mpo_energy          = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
+        inline bool     use_shifted_mpo_energy          = true  ;   /*!< Some steps after reducing MPO energy by Er, we have E-Er = dE. For increased precision, this shifts the local MPOs by dE before optimization */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-2  ;   /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-6  ;   /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
@@ -206,7 +206,7 @@ namespace settings {
         inline long     max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline long     max_size_direct                 = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
         inline double   max_norm_error                  = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
-        inline double   overlap_high                    = 0.99;
+        inline double   overlap_high                    = 0.99  ;
         inline double   overlap_cat                     = 0.70710678;
     }
 

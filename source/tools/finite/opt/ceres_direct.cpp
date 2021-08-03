@@ -64,7 +64,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
 
-            if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not tensors.model->is_compressed_mpo_squared())
+            if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy and not tensors.model->is_compressed_mpo_squared())
                 functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the change in energy since the last energy reduction
             functor->compress();                                         // Compress the virtual bond between MPO² and the environments
 
@@ -89,7 +89,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             auto  initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *functor            = new ceres_direct_functor<double>(tensors, status);
 
-            if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not tensors.model->is_compressed_mpo_squared())
+            if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy and not tensors.model->is_compressed_mpo_squared())
                 functor->set_shift(initial_mps.get_eigval()); // Account for the change in energy since the last energy reduction
             functor->compress();                              // Compress the virtual bond between MPO² and the environments
 

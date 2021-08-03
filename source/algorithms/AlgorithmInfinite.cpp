@@ -48,7 +48,7 @@ void AlgorithmInfinite::randomize_model() {
 
 void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy) {
     if(not energy) energy = tools::infinite::measure::energy_per_site_mpo(tensors) * static_cast<double>(status.iter);
-    if(settings::precision::use_reduced_energy)
+    if(settings::precision::use_reduced_mpo_energy)
         status.energy_variance_max_digits =
             static_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value())))));
     else

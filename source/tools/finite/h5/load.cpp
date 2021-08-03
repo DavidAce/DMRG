@@ -152,7 +152,7 @@ namespace tools::finite::h5 {
             compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
             compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
 
-            if(settings::precision::use_reduced_energy) {
+            if(settings::precision::use_reduced_mpo_energy) {
                 tensors.reduce_mpo_energy();
                 tensors.rebuild_mpo_squared();
                 tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);

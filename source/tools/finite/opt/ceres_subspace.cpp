@@ -439,7 +439,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
     // Construct H² as a matrix (expensive operation!)
     // Also make sure you do this before prepending the current state. All candidates here should be basis vectors
     double energy_shift = 0.0;
-    if(settings::precision::use_reduced_energy and settings::precision::use_shifted_mpo and not model.is_compressed_mpo_squared())
+    if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy and not model.is_compressed_mpo_squared())
         energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
     Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<cplx>(model, edges, candidate_list, std::pow(energy_shift, 2));
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();

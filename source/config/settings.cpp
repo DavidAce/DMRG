@@ -161,9 +161,9 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eig_default_ncv"                   , precision::eig_default_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
-    dmrg_config.load_parameter("precision::compress_mpo_squared"              , precision::compress_mpo_squared);
-    dmrg_config.load_parameter("precision::use_reduced_energy"                , precision::use_reduced_energy);
-    dmrg_config.load_parameter("precision::use_shifted_mpo"                   , precision::use_shifted_mpo);
+    dmrg_config.load_parameter("precision::use_compressed_mpo_squared"        , precision::use_compressed_mpo_squared);
+    dmrg_config.load_parameter("precision::use_reduced_mpo_energy"            , precision::use_reduced_mpo_energy);
+    dmrg_config.load_parameter("precision::use_shifted_mpo_energy"            , precision::use_shifted_mpo_energy);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);

@@ -143,7 +143,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
 
 void AlgorithmFinite::reduce_mpo_energy() {
     if(not tensors.position_is_inward_edge()) return;
-    if(not settings::precision::use_reduced_energy) return;
+    if(not settings::precision::use_reduced_mpo_energy) return;
     // Reduce mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle
@@ -154,7 +154,7 @@ void AlgorithmFinite::reduce_mpo_energy() {
 
 void AlgorithmFinite::rebuild_mpo_squared() {
     if(not tensors.position_is_inward_edge()) return;
-    bool compress = settings::precision::compress_mpo_squared and status.algorithm_has_stuck_for == 0;
+    bool compress = settings::precision::use_compressed_mpo_squared and status.algorithm_has_stuck_for == 0;
     tensors.rebuild_mpo_squared(compress);
 }
 
@@ -165,7 +165,7 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
     double energy_abs                 = std::abs(energy.value());
     double energy_pow                 = energy_abs * energy_abs;
     double digits10                   = std::numeric_limits<double>::digits10;
-    double energy_top                 = settings::precision::use_reduced_energy ? energy_abs : energy_pow;
+    double energy_top                 = settings::precision::use_reduced_mpo_energy ? energy_abs : energy_pow;
     double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_top))) + 1;
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
     status.energy_variance_max_digits = static_cast<size_t>(max_digits);
