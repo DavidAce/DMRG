@@ -228,9 +228,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         np.nanmean(ententrp),
         np.nanmean(walltime) / 60,
         np.sum(resets),
-        np.sum(got_stuck),
-        np.sum(saturated),
-        np.sum(converged),
+        np.count_nonzero(got_stuck),
+        np.count_nonzero(saturated),
+        np.count_nonzero(converged),
         np.sum(succeeded),
         np.sum(finished))
     print("="*len(header))
