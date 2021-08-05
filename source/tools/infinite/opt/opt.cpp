@@ -11,7 +11,7 @@
 #include <tid/tid.h>
 
 namespace tools::infinite::opt {
-    Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &state, StateRitz ritz) {
+    Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &state, OptRitz ritz) {
         return tools::infinite::opt::find_ground_state(state, enum2sv(ritz));
     }
 

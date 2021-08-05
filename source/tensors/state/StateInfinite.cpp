@@ -329,6 +329,12 @@ void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Ten
     clear_cache();
 }
 
+bool StateInfinite::is_bond_limited(long chi_lim, double truncation_threshold) const {
+    bool has_truncated = get_truncation_error() > truncation_threshold;
+    bool has_reached_chi_max = chiC() >= chi_lim;
+    return has_truncated or has_reached_chi_max;
+}
+
 void StateInfinite::clear_cache() const { cache = Cache(); }
 
 void StateInfinite::clear_measurements() const {

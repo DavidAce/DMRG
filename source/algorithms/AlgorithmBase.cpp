@@ -24,7 +24,7 @@ void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<Co
 void AlgorithmBase::init_bond_dimension_limits() {
     status.chi_lim_init = settings::chi_lim_init(status.algo_type);
     status.chi_lim_max  = settings::chi_lim_max(status.algo_type);
-    if(settings::chi_lim_grow(status.algo_type))
+    if(settings::chi_lim_grow(status.algo_type) != ChiGrow::OFF)
         status.chi_lim = settings::chi_lim_init(status.algo_type);
     else
         status.chi_lim = settings::chi_lim_max(status.algo_type);

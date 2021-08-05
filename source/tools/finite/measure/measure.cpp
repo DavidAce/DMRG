@@ -15,7 +15,7 @@
 #include <tools/common/contraction.h>
 #include <tools/common/log.h>
 
-using Scalar = StateFinite::Scalar;
+using cplx = tools::finite::measure::cplx;
 
 void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     tensors.measurements.length                   = measure::length(tensors);
@@ -51,22 +51,22 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 double tools::finite::measure::norm(const StateFinite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
-    auto t_chi = tid::tic_scope("norm");
+    auto   t_chi = tid::tic_scope("norm");
     if(state.is_normalized_on_all_sites()) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
         const auto &mps = state.get_mps_site(pos);
         tools::log->trace("Measuring norm using site {} with dimensions {}", pos, mps.dimensions());
-        Eigen::Tensor<Scalar, 0> MM = mps.get_M().contract(mps.get_M().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
-        norm                        = std::real(MM(0));
+        Eigen::Tensor<cplx, 0> MM = mps.get_M().contract(mps.get_M().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
+        norm                      = std::real(MM(0));
 
     } else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
         tools::log->trace("Measuring norm using active sites {}", state.active_sites);
-        Eigen::Tensor<Scalar, 2> chain;
-        Eigen::Tensor<Scalar, 2> temp;
-        bool                     first = true;
+        Eigen::Tensor<cplx, 2> chain;
+        Eigen::Tensor<cplx, 2> temp;
+        bool                   first = true;
         for(const auto &pos : state.active_sites) {
-            const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M();
+            const Eigen::Tensor<cplx, 3> &M = state.get_mps_site(pos).get_M();
             if(first) {
                 chain = M.contract(M.conjugate(), tenx::idx({0, 1}, {0, 1}));
                 first = false;
@@ -80,9 +80,9 @@ double tools::finite::measure::norm(const StateFinite &state) {
         norm = std::abs(tenx::MatrixMap(chain).trace());
     } else {
         tools::log->trace("Measuring norm on full chain");
-        Eigen::Tensor<Scalar, 2> chain;
-        Eigen::Tensor<Scalar, 2> temp;
-        bool                     first = true;
+        Eigen::Tensor<cplx, 2> chain;
+        Eigen::Tensor<cplx, 2> temp;
+        bool                   first = true;
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
             if(first) {
@@ -120,7 +120,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
     if(state.measurements.bond_dimensions) return state.measurements.bond_dimensions.value();
-    auto t_chi = tid::tic_scope("chi");
+    auto              t_chi = tid::tic_scope("chi");
     std::vector<long> bond_dimensions;
     bond_dimensions.reserve(state.get_length() + 1);
     if(not state.has_center_point()) bond_dimensions.emplace_back(state.mps_sites.front()->get_chiL());
@@ -142,7 +142,7 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFini
     std::vector<long> bond_dimensions;
     for(const auto &pos : state.active_sites) {
         if(&pos == &state.active_sites.front()) continue;
-        const auto & mps = state.get_mps_site(pos);
+        const auto &mps = state.get_mps_site(pos);
         bond_dimensions.push_back(mps.get_chiL());
     }
     return bond_dimensions;
@@ -152,8 +152,8 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
     if(state.measurements.entanglement_entropy_current) return state.measurements.entanglement_entropy_current.value();
     auto t_ent = tid::tic_scope("neumann_entropy");
     if(state.has_center_point()) {
-        auto                    &LC                     = state.current_bond();
-        Eigen::Tensor<Scalar, 0> SE                     = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
+        auto                  &LC                       = state.current_bond();
+        Eigen::Tensor<cplx, 0> SE                       = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
         state.measurements.entanglement_entropy_current = std::abs(SE(0));
     } else
         state.measurements.entanglement_entropy_current = 0;
@@ -162,9 +162,9 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
 
 double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
-    auto                     t_ent                   = tid::tic_scope("neumann_entropy");
-    auto                    &LC                      = state.midchain_bond();
-    Eigen::Tensor<Scalar, 0> SE                      = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
+    auto                   t_ent                     = tid::tic_scope("neumann_entropy");
+    auto                  &LC                        = state.midchain_bond();
+    Eigen::Tensor<cplx, 0> SE                        = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
     state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
     return state.measurements.entanglement_entropy_midchain.value();
 }
@@ -176,8 +176,8 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     entanglement_entropies.reserve(state.get_length() + 1);
     if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
-        auto                    &L  = mps->get_L();
-        Eigen::Tensor<Scalar, 0> SE = -L.square().contract(L.square().log().eval(), tenx::idx({0}, {0}));
+        auto                  &L  = mps->get_L();
+        Eigen::Tensor<cplx, 0> SE = -L.square().contract(L.square().log().eval(), tenx::idx({0}, {0}));
         entanglement_entropies.emplace_back(std::abs(SE(0)));
         if(mps->isCenter()) {
             auto &LC = mps->get_LC();
@@ -204,8 +204,8 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
     renyi_q.reserve(state.get_length() + 1);
     if(not state.has_center_point()) renyi_q.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
-        const auto              &L = mps->get_L();
-        Eigen::Tensor<Scalar, 0> RE;
+        const auto            &L = mps->get_L();
+        Eigen::Tensor<cplx, 0> RE;
         RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
         renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
@@ -246,7 +246,7 @@ std::array<double, 3> tools::finite::measure::spin_components(const StateFinite 
 double tools::finite::measure::spin_component(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix) {
     auto t_spn       = tid::tic_scope("spin");
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
-    Eigen::Tensor<Scalar, 3> temp;
+    Eigen::Tensor<cplx, 3> temp;
     for(const auto &mps : state.mps_sites) {
         const auto &M = mps->get_M();
         temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
@@ -256,8 +256,8 @@ double tools::finite::measure::spin_component(const StateFinite &state, const Ei
     }
 
     if(L.dimensions() != R.dimensions()) throw std::runtime_error("spin_component(): L and R dimension mismatch");
-    Eigen::Tensor<Scalar, 0> spin_tmp = L.contract(R, tenx::idx({0, 1, 2}, {0, 1, 2}));
-    double                   spin     = std::real(spin_tmp(0));
+    Eigen::Tensor<cplx, 0> spin_tmp = L.contract(R, tenx::idx({0, 1, 2}, {0, 1, 2}));
+    double                 spin     = std::real(spin_tmp(0));
     return spin;
 }
 
@@ -270,7 +270,7 @@ double tools::finite::measure::spin_component(const StateFinite &state, std::str
 
 std::vector<double> tools::finite::measure::truncation_errors(const StateFinite &state) {
     if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
-    auto t_chi = tid::tic_scope("trunc");
+    auto                t_chi = tid::tic_scope("trunc");
     std::vector<double> truncation_errors;
     if(not state.has_center_point()) truncation_errors.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
@@ -292,9 +292,9 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
     return truncation_errors;
 }
 
-Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {
-    Eigen::Tensor<Scalar, 2> temp;
-    Eigen::Tensor<Scalar, 2> chain(1, 1);
+Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {
+    Eigen::Tensor<cplx, 2> temp;
+    Eigen::Tensor<cplx, 2> chain(1, 1);
     chain.setConstant(1.0);
     // The "chain" is a matrix whose 0 index keeps growing.
     // For each site that passes, it grows by GA.dimension(0) = phys dim
@@ -311,8 +311,8 @@ Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const StateFinite &s
         chain     = temp;
     }
 
-    Eigen::Tensor<Scalar, 1> mps_chain  = chain.reshape(tenx::array1{chain.dimension(0)});
-    double                   norm_chain = tenx::VectorMap(chain).norm();
+    Eigen::Tensor<cplx, 1> mps_chain  = chain.reshape(tenx::array1{chain.dimension(0)});
+    double                 norm_chain = tenx::VectorMap(chain).norm();
     if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
         tools::log->warn("Norm far from unity: {}", norm_chain);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
@@ -333,8 +333,9 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
         auto        t_msr = tid::tic_scope("measure");
         const auto &mpo   = model.get_multisite_mpo();
         const auto &env   = edges.get_multisite_ene_blk();
-        tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(), model.active_sites,
-                          mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
+        if constexpr(settings::debug)
+            tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
+                              model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
         auto   t_ene        = tid::tic_scope("ene");
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         if(measurements != nullptr) measurements->energy_minus_energy_reduced = e_minus_ered;
@@ -344,7 +345,7 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
 
 template double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
                                                                     tensors_measure_finite *measurements);
-template double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+template double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                                     tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
@@ -367,7 +368,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const Mode
 }
 
 template double tools::finite::measure::energy(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges, tensors_measure_finite *measurements);
-template double tools::finite::measure::energy(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+template double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
@@ -380,7 +381,7 @@ double tools::finite::measure::energy_per_site(const state_or_mps_type &state, c
 
 template double tools::finite::measure::energy_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
                                                         tensors_measure_finite *measurements);
-template double tools::finite::measure::energy_per_site(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+template double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                         tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
@@ -422,8 +423,9 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
 
         const auto &mpo = model.get_multisite_mpo_squared();
         const auto &env = edges.get_multisite_var_blk();
-        tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
-                          model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
+        if constexpr(settings::debug)
+            tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
+                              model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
 
         if(state.dimension(0) != mpo.dimension(2))
             throw std::runtime_error(
@@ -438,7 +440,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
 
 template double tools::finite::measure::energy_variance(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
                                                         tensors_measure_finite *measurements);
-template double tools::finite::measure::energy_variance(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+template double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                         tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
@@ -451,7 +453,7 @@ double tools::finite::measure::energy_variance_per_site(const state_or_mps_type 
 
 template double tools::finite::measure::energy_variance_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
                                                                  tensors_measure_finite *measurements);
-template double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+template double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                                  tensors_measure_finite *measurements);
 
 template<typename state_or_mps_type>
@@ -462,7 +464,7 @@ double tools::finite::measure::energy_normalized(const state_or_mps_type &state,
 
 template double tools::finite::measure::energy_normalized(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges, double, double,
                                                           tensors_measure_finite *measurements);
-template double tools::finite::measure::energy_normalized(const Eigen::Tensor<Scalar, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
+template double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
                                                           tensors_measure_finite *measurements);
 
 extern double tools::finite::measure::energy_reduced(const TensorsFinite &tensors) { return tensors.model->get_energy_reduced(); }
@@ -538,21 +540,44 @@ double tools::finite::measure::energy_normalized(const StateFinite &state, const
     return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax);
 }
 
-double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     return tools::finite::measure::energy_minus_energy_reduced(mps, *tensors.model, *tensors.edges);
 }
-double tools::finite::measure::energy(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges);
 }
-double tools::finite::measure::energy_per_site(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     return tools::finite::measure::energy_per_site(mps, *tensors.model, *tensors.edges);
 }
-double tools::finite::measure::energy_variance(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges);
 }
-double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     return tools::finite::measure::energy_variance_per_site(mps, *tensors.model, *tensors.edges);
 }
-double tools::finite::measure::energy_normalized(const Eigen::Tensor<Scalar, 3> &mps, const TensorsFinite &tensors, double emin, double emax) {
+double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, double emin, double emax) {
     return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax);
+}
+
+extern double tools::finite::measure::grad_max_norm(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
+    auto v = Eigen::Map<const Eigen::VectorXcd>(mps.data(), mps.size());
+
+    auto en1 = tensors.get_multisite_ene_blk();
+    auto H1t = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo(), en1.L, en1.R);
+    auto Hv  = Eigen::Map<const Eigen::VectorXcd>(H1t.data(), H1t.size());
+    auto vHv = v.dot(Hv);
+
+    auto en2  = tensors.get_multisite_var_blk();
+    auto H2t  = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo_squared(), en2.L, en2.R);
+    auto H2v  = Eigen::Map<const Eigen::VectorXcd>(H2t.data(), H2t.size());
+    auto vH2v = v.dot(H2v);
+
+    double var    = std::abs(vH2v - vHv * vHv);
+    auto   var_1  = 1.0 / var / std::log(10);
+    auto   norm_1 = 1.0 / v.norm();
+    auto   grad   = 2.0 * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v); // Factor 2 for complex
+
+    //    grad               = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
+
+    return grad.template lpNorm<Eigen::Infinity>();
 }

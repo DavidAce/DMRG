@@ -35,8 +35,10 @@ namespace tools::finite::opt {
         std::optional<double>                 krylov_eigval = std::nullopt;
         std::optional<std::string>            krylov_ritz   = std::nullopt;
         std::optional<cplx>                   krylov_shift  = std::nullopt;
+        std::optional<double>                 krylov_resid  = std::nullopt;
         std::optional<OptMode>                optMode       = std::nullopt;
         std::optional<OptSpace>               optSpace      = std::nullopt;
+        std::optional<OptRitz>                optRitz       = std::nullopt;
         std::optional<OptExit>                optExit       = std::nullopt;
 
         public:
@@ -79,6 +81,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                             get_krylov_eigval() const;
         [[nodiscard]] std::string_view                   get_krylov_ritz() const;
         [[nodiscard]] cplx                               get_krylov_shift() const;
+        [[nodiscard]] double                             get_krylov_resid() const;
         [[nodiscard]] OptSpace                           get_optspace() const;
         [[nodiscard]] OptMode                            get_optmode() const;
         [[nodiscard]] OptExit                            get_optexit() const;
@@ -108,7 +111,8 @@ namespace tools::finite::opt {
         void                                             set_krylov_tol(double tol_);
         void                                             set_krylov_eigval(double krylov_eigval_);
         void                                             set_krylov_ritz(std::string_view ritz_);
-        void                                             set_krylov_shift(const cplx &ritz_);
+        void                                             set_krylov_shift(const cplx &shift_);
+        void                                             set_krylov_resid(const double &resid);
         void                                             set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void                                             set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
         void                                             set_optspace(OptSpace optspace_);

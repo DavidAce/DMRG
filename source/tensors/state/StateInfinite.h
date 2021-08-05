@@ -114,6 +114,9 @@ class StateInfinite {
     //    template<typename T>
     //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix() const;
 
+    bool   is_bond_limited(long chi_limit, double truncation_threshold) const;
+
+
     void do_all_measurements() const;
     void clear_measurements() const;
     void clear_cache() const;

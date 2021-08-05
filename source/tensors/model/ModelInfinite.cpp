@@ -60,10 +60,10 @@ void ModelInfinite::reset_mpo_squared() {
 }
 
 void ModelInfinite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
-    if(settings::precision::use_compressed_mpo_squared) {
+    if(settings::precision::use_compressed_mpo_squared_all) {
         tools::log->trace("Compressing MPO²");
         throw std::runtime_error("Compressing the squared MPO² is currently unsupported on infinite systems.\n"
-                                 "Set settings::precision::use_compressed_mpo_squared = false");
+                                 "Set settings::precision::use_compressed_mpo_squared_all = false");
         auto mpo_compressed = get_compressed_mpo_squared(svdMode);
         HA->set_mpo_squared(mpo_compressed[0]);
         HA->set_mpo_squared(mpo_compressed[1]);

@@ -1,6 +1,7 @@
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
+#include "../matvec/matvec_mpo_eigen.h"
 #include "../matvec/matvec_sparse.h"
 #include "../sfinae.h"
 #include "../solver.h"
@@ -64,18 +65,23 @@ inline primme_target RitzToTarget(eig::Ritz ritz) {
     throw std::runtime_error("Wrong ritz enum");
 }
 
-static MatVecMPO<eig::real>    *matvecmpo_real_ptr    = nullptr;
-static MatVecMPO<eig::cplx>    *matvecmpo_cplx_ptr    = nullptr;
-static MatVecDense<eig::real>  *matvecdense_real_ptr  = nullptr;
-static MatVecDense<eig::cplx>  *matvecdense_cplx_ptr  = nullptr;
-static MatVecSparse<eig::real> *matvecsparse_real_ptr = nullptr;
-static MatVecSparse<eig::cplx> *matvecsparse_cplx_ptr = nullptr;
+static MatVecMPO<eig::real>      *matvecmpo_real_ptr      = nullptr;
+static MatVecMPO<eig::cplx>      *matvecmpo_cplx_ptr      = nullptr;
+static MatVecMPOEigen<eig::real> *matvecmpoeigen_real_ptr = nullptr;
+static MatVecMPOEigen<eig::cplx> *matvecmpoeigen_cplx_ptr = nullptr;
+static MatVecDense<eig::real>    *matvecdense_real_ptr    = nullptr;
+static MatVecDense<eig::cplx>    *matvecdense_cplx_ptr    = nullptr;
+static MatVecSparse<eig::real>   *matvecsparse_real_ptr   = nullptr;
+static MatVecSparse<eig::cplx>   *matvecsparse_cplx_ptr   = nullptr;
 
 static double primme_max_time = 60 * 60;
+static double primme_log_time = std::numeric_limits<double>::quiet_NaN();
 
 void MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
     if(matvecmpo_real_ptr != nullptr) return matvecmpo_real_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
     if(matvecmpo_cplx_ptr != nullptr) return matvecmpo_cplx_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
+    if(matvecmpoeigen_real_ptr != nullptr) return matvecmpoeigen_real_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
+    if(matvecmpoeigen_cplx_ptr != nullptr) return matvecmpoeigen_cplx_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
     if(matvecdense_real_ptr != nullptr) return matvecdense_real_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
     if(matvecdense_cplx_ptr != nullptr) return matvecdense_cplx_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
     if(matvecsparse_real_ptr != nullptr) return matvecsparse_real_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
@@ -123,28 +129,37 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
             break;
         } /* report time from consumed by a function*/
     }
-    static double last_log_time = 0;
-    if(last_log_time > primme->stats.elapsedTime) last_log_time = 0; // If this function has been run before
 
-    auto time_since_last_log_time = std::abs(primme->stats.elapsedTime - last_log_time);
-    bool log_time                 = time_since_last_log_time > 5.0;
-    bool log_init                 = primme->stats.numOuterIterations <= 1 or primme->stats.numMatvecs <= 1;
-
-    auto lvl                      = spdlog::level::debug;
-    if(time_since_last_log_time > 10.0) lvl = spdlog::level::info;
-    if(log_time or log_init) {
-        eig::log->log(lvl, FMT_STRING("iter {:<4} | nops {:<5} | min eval {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op | block {} | basis {} | {}"),
-                      primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                      primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, *blockSize, *basisSize, event_msg);
-        last_log_time = primme->stats.elapsedTime;
+    if(not std::isnan(primme_log_time)) {
+        static double last_log_time = 0;
+        if(last_log_time > primme->stats.elapsedTime) last_log_time = 0; // If this function has been run before
+        auto time_since_last_log = std::abs(primme->stats.elapsedTime - last_log_time);
+        if(time_since_last_log > primme_log_time) {
+            auto level = eig::log->level();
+            eig::log->log(
+                level,
+                FMT_STRING("iter {:<4} | ops {:<5} | f {:20.16f} | ε {:20.16f} {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op | block {} | basis {} | {}"),
+                primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->stats.estimateMinEVal, primme->stats.maxConvTol,
+                primme->stats.estimateResidualError, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, *blockSize,
+                *basisSize, event_msg);
+            last_log_time = primme->stats.elapsedTime;
+        }
     }
 
     // Terminate if its taking too long
-    if(primme->stats.elapsedTime > primme_max_time) primme->maxMatvecs = 0;
+    if(primme->stats.elapsedTime > primme_max_time) {
+        eig::log->warn("primme_max_time exeeded: {:.2f}", primme_max_time);
+        primme->maxMatvecs = 0;
+    }
 }
 
 template<typename MatrixProductType>
-int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductType::Scalar *residual) {
+int eig::solver::eigs_primme(MatrixProductType &matrix) {
+    using Scalar = typename MatrixProductType::Scalar;
+    if(config.residp == nullptr) throw std::runtime_error("No residual given to primme!");
+    #pragma message "remove the throw above in primme"
+    auto residual = static_cast<Scalar *>(config.residp);
+
     tid::ur t_tot, t_pre;
     auto    t_tot_token = t_tot.tic_token();
     auto    t_pre_token = t_pre.tic_token();
@@ -175,6 +190,10 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
         matvecmpo_real_ptr = &matrix;
     else if constexpr(std::is_same_v<MatrixProductType, MatVecMPO<eig::cplx>>)
         matvecmpo_cplx_ptr = &matrix;
+    else if constexpr(std::is_same_v<MatrixProductType, MatVecMPOEigen<eig::real>>)
+        matvecmpoeigen_real_ptr = &matrix;
+    else if constexpr(std::is_same_v<MatrixProductType, MatVecMPOEigen<eig::cplx>>)
+        matvecmpoeigen_cplx_ptr = &matrix;
     else if constexpr(std::is_same_v<MatrixProductType, MatVecDense<eig::real>>)
         matvecdense_real_ptr = &matrix;
     else if constexpr(std::is_same_v<MatrixProductType, MatVecDense<eig::cplx>>)
@@ -196,7 +215,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
     primme.maxBasisSize = std::clamp<int>(static_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
     if(config.maxTime) primme_max_time = config.maxTime.value();
-
+    if(config.log_time_period) primme_log_time = config.log_time_period.value();
     // Shifts
     std::vector<double> tgtShifts = {0.0};
     if(primme.target == primme_largest_abs || primme.target == primme_closest_geq || primme.target == primme_closest_leq ||
@@ -224,14 +243,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
      * PRIMME_DEFAULT_MIN_TIME and PRIMME_DEFAULT_MIN_MATVECS. But you can
      * set another method, such as PRIMME_LOBPCG_OrthoBasis_Window, directly */
     primme_set_method(stringToMethod(config.primme_method), &primme);
-
     // Override some parameters
     //    primme.restartingParams.maxPrevRetain = 2;
     //    primme.minRestartSize = 2;
     //    primme.maxBlockSize = 32;
 
     int                    info = 0;
-    std::vector<eig::real> rnorms(static_cast<size_t>(primme.numEvals));
+    result.meta.residual_norms.resize(static_cast<size_t>(primme.numEvals));
     //    /* Allocate space for converged Ritz values and residual norms */
     if constexpr(std::is_same_v<typename MatrixProductType::Scalar, eig::real>) {
         auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
@@ -240,13 +258,14 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
         eigvecs.resize(static_cast<size_t>(primme.numEvals) * static_cast<size_t>(primme.n));
         // Initial guess / residual
         if(residual != nullptr) {
+            eig::log->info("Copying initial guess");
             primme.initSize = 1;
             std::copy_n(residual, primme.n, eigvecs.data());
         }
 
         /* Call primme  */
         try {
-            info = dprimme(eigvals.data(), eigvecs.data(), rnorms.data(), &primme);
+            info = dprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("dprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("dprimme has exited with error: info {}", info);
         }
@@ -257,14 +276,14 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
         eigvecs.resize(static_cast<size_t>(primme.numEvals) * static_cast<size_t>(primme.n));
         // Initial guess / residual
         if(residual != nullptr) {
+            eig::log->info("Copying initial guess");
             primme.initSize = 1;
-            //            primme.numOrthoConst = 1;
             std::copy_n(residual, primme.n, eigvecs.data());
         }
 
         /* Call primme  */
         try {
-            info = zprimme(eigvals.data(), eigvecs.data(), rnorms.data(), &primme);
+            info = zprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("zprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("zprimme has exited with error: info {}", info);
         }
@@ -308,6 +327,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
     result.meta.iter           = primme.stats.numOuterIterations;
     result.meta.counter        = primme.stats.numMatvecs;
     result.meta.n              = primme.n;
+    result.meta.tag            = config.tag;
     result.meta.ritz           = TargetToString(primme.target);
     result.meta.form           = config.form.value();
     result.meta.type           = config.type.value();
@@ -329,9 +349,11 @@ int eig::solver::eigs_primme(MatrixProductType &matrix, typename MatrixProductTy
     return info;
 }
 
-template int eig::solver::eigs_primme(MatVecMPO<eig::real> &matrix, eig::real *residual);
-template int eig::solver::eigs_primme(MatVecMPO<eig::cplx> &matrix, eig::cplx *residual);
-template int eig::solver::eigs_primme(MatVecDense<eig::real> &matrix, eig::real *residual);
-template int eig::solver::eigs_primme(MatVecDense<eig::cplx> &matrix, eig::cplx *residual);
-template int eig::solver::eigs_primme(MatVecSparse<eig::real> &matrix, eig::real *residual);
-template int eig::solver::eigs_primme(MatVecSparse<eig::cplx> &matrix, eig::cplx *residual);
+template int eig::solver::eigs_primme(MatVecMPO<eig::real> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<eig::cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOEigen<eig::real> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOEigen<eig::cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<eig::real> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<eig::cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<eig::real> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<eig::cplx> &matrix);

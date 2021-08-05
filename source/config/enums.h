@@ -7,8 +7,8 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
-enum class StateRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class SVDMode { EIGEN, LAPACKE };
+enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
@@ -28,18 +28,17 @@ enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptMode { VARIANCE, OVERLAP };
-enum class OptSpace { SUBSPACE_ONLY, SUBSPACE_AND_DIRECT, DIRECT, KRYLOV_ENERGY, KRYLOV_VARIANCE };
-enum class OptWhen {
-    ALWAYS,
-    NEVER,
-    PREV_FAIL,
-};
+enum class OptSpace { SUBSPACE, DIRECT, KRYLOV };
+enum class OptRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
+enum class OptWhen : int { NEVER = 0, PREV_FAIL_GRADIENT = 1, PREV_FAIL_NOCHANGE = 2, PREV_FAIL_WORSENED = 4, PREV_FAIL_ERROR = 8, ALWAYS = 16 };
 
 enum class OptExit : int {
     SUCCESS       = 0,
     FAIL_GRADIENT = 1,
     FAIL_NOCHANGE = 2,
     FAIL_WORSENED = 4,
+    FAIL_ERROR    = 8,
+    NONE          = 16,
 };
 enum class OptMark {
     PASS,
@@ -134,32 +133,38 @@ struct is_scoped_enum<T, true> : std::integral_constant<bool, !std::is_convertib
 template<typename T>
 constexpr bool is_scoped_enum_v = is_scoped_enum<T>();
 
-template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
+template<typename T>
+constexpr bool is_scoped_enum_int_v() {
+    if constexpr(is_scoped_enum_v<T>)
+        return std::is_same_v<typename std::underlying_type<T>::type, int>;
+    else
+        return false;
+}
+
+template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
 constexpr typename std::underlying_type<E>::type enum2int(E e) noexcept {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
+template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
 constexpr inline E operator|(E lhs, E rhs) {
     using T = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<T>(lhs) | static_cast<T>(rhs));
 }
 
-template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
-constexpr inline E operator&(E lhs, E rhs) {
-    using T = std::underlying_type_t<E>;
-    return static_cast<E>(static_cast<T>(lhs) & static_cast<T>(rhs));
-}
-
-template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
+template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
 constexpr inline E &operator|=(E &lhs, E rhs) {
     lhs = lhs | rhs;
     return lhs;
 }
 
-template<typename E, typename = std::enable_if<is_scoped_enum_v<E>>, typename = std::enable_if<std::is_same_v<E, OptExit>>>
+template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
 inline bool has_flag(E target, E check) {
-    return (target & check) == check;
+    return (static_cast<int>(target) & static_cast<int>(check)) == static_cast<int>(check);
+}
+template<typename E1, typename E2, typename = std::enable_if_t<is_scoped_enum_int_v<E1>() and is_scoped_enum_int_v<E2>()>>
+inline bool have_common(E1 lhs, E2 rhs) {
+    return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
 }
 
 /* clang-format off */
@@ -179,13 +184,18 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == MultisiteMove::MID)                                  return "MID";
         if(item == MultisiteMove::MAX)                                  return "MAX";
     }
-    if constexpr(std::is_same_v<T, StateRitz>) {
-        if(item == StateRitz::SR)                                       return "SR";
-        if(item == StateRitz::LR)                                       return "LR";
+    if constexpr(std::is_same_v<T, OptRitz>) {
+        if(item == OptRitz::SR)                                       return "SR";
+        if(item == OptRitz::LR)                                       return "LR";
     }
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == SVDMode::EIGEN)                                      return "EIGEN";
         if(item == SVDMode::LAPACKE)                                    return "LAPACKE";
+    }
+    if constexpr(std::is_same_v<T, ChiGrow>) {
+        if(item == ChiGrow::OFF)                                        return "OFF";
+        if(item == ChiGrow::ON_SATURATION)                              return "ON_SATURATION";
+        if(item == ChiGrow::ON_ITERATION)                               return "ON_ITERATION";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
@@ -343,16 +353,17 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptMode::OVERLAP)                                   return "OVERLAP";
     }
     if constexpr(std::is_same_v<T,OptSpace>){
-        if(item == OptSpace::SUBSPACE_ONLY)                            return "SUBSPACE_ONLY";
-        if(item == OptSpace::SUBSPACE_AND_DIRECT)                      return "SUBSPACE_AND_DIRECT";
+        if(item == OptSpace::SUBSPACE)                                 return "SUBSPACE";
         if(item == OptSpace::DIRECT)                                   return "DIRECT";
-        if(item == OptSpace::KRYLOV_ENERGY)                            return "KRYLOV_ENERGY";
-        if(item == OptSpace::KRYLOV_VARIANCE)                          return "KRYLOV_VARIANCE";
+        if(item == OptSpace::KRYLOV)                                   return "KRYLOV";
     }
     if constexpr(std::is_same_v<T,OptWhen>){
-        if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
         if(item == OptWhen::NEVER)                                     return "NEVER";
-        if(item == OptWhen::PREV_FAIL)                                 return "PREV_FAIL";
+        if(item == OptWhen::PREV_FAIL_GRADIENT)                        return "PREV_FAIL_GRADIENT";
+        if(item == OptWhen::PREV_FAIL_NOCHANGE)                        return "PREV_FAIL_NOCHANGE";
+        if(item == OptWhen::PREV_FAIL_WORSENED)                        return "PREV_FAIL_WORSENED";
+        if(item == OptWhen::PREV_FAIL_ERROR)                           return "PREV_FAIL_ERROR";
+        if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == OptMark::PASS)                                      return "PASS";
@@ -367,23 +378,38 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptExit::FAIL_GRADIENT)                             return "FAIL_GRADIENT";
         if(item == OptExit::FAIL_NOCHANGE)                             return "FAIL_NOCHANGE";
         if(item == OptExit::FAIL_WORSENED)                             return "FAIL_WORSENED";
+        if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
+        if(item == OptExit::NONE)                                      return "NONE";
     }
     throw std::runtime_error("Given invalid enum item");
 }
 
 template<typename T>
 std::string flag2str(const T &item) {
+    static_assert((std::is_same_v<T, OptExit> or std::is_same_v<T,OptWhen>) and
+        "flag2str only works with OptWhen or OptExit");
+
+    std::vector<std::string> v;
     if constexpr(std::is_same_v<T,OptExit>){
-        std::vector<std::string> v;
         if(has_flag(item,OptExit::FAIL_GRADIENT)) v.emplace_back("FAIL_GRADIENT");
         if(has_flag(item,OptExit::FAIL_NOCHANGE)) v.emplace_back("FAIL_NOCHANGE");
         if(has_flag(item,OptExit::FAIL_WORSENED)) v.emplace_back("FAIL_WORSENED");
+        if(has_flag(item,OptExit::FAIL_ERROR))    v.emplace_back("FAIL_ERROR");
+        if(has_flag(item,OptExit::NONE))          v.emplace_back("NONE");
         if(v.empty()) return "SUCCESS";
-        else return  std::accumulate(std::begin(v), std::end(v), std::string(),
-                                   [](const std::string &ss, const std::string &s)
-                                   {return ss.empty() ? s : ss + "|" + s;});
     }
-    throw std::runtime_error("Given invalid enum item");
+    if constexpr(std::is_same_v<T,OptWhen>){
+        if(has_flag(item,OptWhen::PREV_FAIL_GRADIENT)) v.emplace_back("PREV_FAIL_GRADIENT");
+        if(has_flag(item,OptWhen::PREV_FAIL_NOCHANGE)) v.emplace_back("PREV_FAIL_NOCHANGE");
+        if(has_flag(item,OptWhen::PREV_FAIL_WORSENED)) v.emplace_back("PREV_FAIL_WORSENED");
+        if(has_flag(item,OptWhen::PREV_FAIL_ERROR))    v.emplace_back("PREV_FAIL_ERROR");
+        if(has_flag(item,OptWhen::ALWAYS))             v.emplace_back("ALWAYS");
+        if(v.empty()) return "NEVER";
+    }
+    return  std::accumulate(std::begin(v), std::end(v), std::string(),
+                            [](const std::string &ss, const std::string &s)
+                            {return ss.empty() ? s : ss + "|" + s;});
+
 }
 
 
@@ -402,13 +428,18 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "MID")                                   return MultisiteMove::MID;
         if(item == "MAX")                                   return MultisiteMove::MAX;
     }
-    if constexpr(std::is_same_v<T, StateRitz>) {
-        if(item == "SR")                                    return StateRitz::SR;
-        if(item == "LR")                                    return StateRitz::LR;
+    if constexpr(std::is_same_v<T, OptRitz>) {
+        if(item == "SR")                                    return OptRitz::SR;
+        if(item == "LR")                                    return OptRitz::LR;
     }
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == "EIGEN")                                 return SVDMode::EIGEN;
         if(item == "LAPACKE")                               return SVDMode::LAPACKE;
+    }
+    if constexpr(std::is_same_v<T, ChiGrow>) {
+        if(item == "OFF")                                   return ChiGrow::OFF;
+        if(item == "ON_SATURATION")                         return ChiGrow::ON_SATURATION;
+        if(item == "ON_ITERATION")                          return ChiGrow::ON_ITERATION;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;
@@ -566,16 +597,17 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OVERLAP")                               return OptMode::OVERLAP;
     }
     if constexpr(std::is_same_v<T,OptSpace>){
-        if(item == "SUBSPACE_ONLY")                         return OptSpace::SUBSPACE_ONLY;
-        if(item == "SUBSPACE_AND_DIRECT")                   return OptSpace::SUBSPACE_AND_DIRECT;
+        if(item == "SUBSPACE")                              return OptSpace::SUBSPACE;
         if(item == "DIRECT")                                return OptSpace::DIRECT;
-        if(item == "KRYLOV_ENERGY")                         return OptSpace::KRYLOV_ENERGY;
-        if(item == "KRYLOV_VARIANCE")                       return OptSpace::KRYLOV_VARIANCE;
+        if(item == "KRYLOV")                                return OptSpace::KRYLOV;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
-        if(item == "ALWAYS")                                return OptWhen::ALWAYS;
         if(item == "NEVER")                                 return OptWhen::NEVER;
-        if(item == "PREV_FAIL")                             return OptWhen::PREV_FAIL;
+        if(item == "PREV_FAIL_GRADIENT")                    return OptWhen::PREV_FAIL_GRADIENT;
+        if(item == "PREV_FAIL_NOCHANGE")                    return OptWhen::PREV_FAIL_NOCHANGE;
+        if(item == "PREV_FAIL_WORSENED")                    return OptWhen::PREV_FAIL_WORSENED;
+        if(item == "PREV_FAIL_ERROR")                       return OptWhen::PREV_FAIL_ERROR;
+        if(item == "ALWAYS")                                return OptWhen::ALWAYS;
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;
@@ -590,6 +622,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FAIL_GRADIENT")                         return OptExit::FAIL_GRADIENT;
         if(item == "FAIL_NOCHANGE")                         return OptExit::FAIL_NOCHANGE;
         if(item == "FAIL_WORSENED")                         return OptExit::FAIL_WORSENED;
+        if(item == "FAIL_ERROR")                            return OptExit::FAIL_ERROR;
+        if(item == "NONE")                                  return OptExit::NONE;
     }
     throw std::runtime_error("sv2enum given invalid string item: " + std::string(item));
 }

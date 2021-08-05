@@ -16,7 +16,7 @@ idmrg::idmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::mov
 }
 
 void idmrg::run_simulation() {
-    if(ritz == StateRitz::SR)
+    if(ritz == OptRitz::SR)
         tensors.state->set_name("state_emin");
     else
         tensors.state->set_name("state_emax");

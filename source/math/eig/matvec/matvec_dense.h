@@ -44,13 +44,14 @@ class MatVecDense {
     void              MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
     // Various utility functions
-    int              counter = 0;
-    void             print() const;
-    void             set_shift(std::complex<double> sigma_);
-    void             set_mode(const eig::Form form_);
-    void             set_side(const eig::Side side_);
-    const eig::Form &get_form() const;
-    const eig::Side &get_side() const;
+    int                     counter = 0;
+    void                    print() const;
+    void                    set_shift(std::complex<double> sigma_);
+    void                    set_mode(const eig::Form form_);
+    void                    set_side(const eig::Side side_);
+    [[nodiscard]] eig::Form get_form() const;
+    [[nodiscard]] eig::Side get_side() const;
+    [[nodiscard]] eig::Type get_type() const;
 
     [[nodiscard]] bool isReadyFactorOp() const { return readyFactorOp; }
     [[nodiscard]] bool isReadyShift() const { return readyShift; }

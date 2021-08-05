@@ -6,7 +6,7 @@ namespace tools::finite::opt {
     class opt_mps;
 }
 
-namespace tools::finite::opt::internal::reports {
+namespace tools::finite::opt::reports {
     struct bfgs_entry {
         std::string description;
         long        size, space;
@@ -28,7 +28,7 @@ namespace tools::finite::opt::internal::reports {
         std::string description;
         std::string ritz;
         long        size, nev, ncv;
-        double      energy, eigval, variance, overlap, norm, tol;
+        double      energy, eigval, variance, overlap, norm, tol,resid, grad;
         size_t      iter, counter;
         double      time;
     };

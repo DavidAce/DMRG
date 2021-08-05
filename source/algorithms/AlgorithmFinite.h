@@ -26,9 +26,6 @@ class AlgorithmFinite : public AlgorithmBase {
     size_t                  num_perturbations    = 0;            /*!< Number of perturbation trials done */
     size_t                  max_perturbations    = 2;            /*!< Maximum number of perturbation trials allowed */
     size_t                  perturbation_steps   = 0;            /*!< Number of steps left doing perturbation of MPOs */
-    size_t                  iter_discard         = 0;            /*!< Iteration when last discard occurred */
-    size_t                  num_discards         = 0;            /*!< Counter for number of times discarding the smallest schmidt values */
-    size_t                  max_discards         = 2;            /*!< Maximum number of times to discard the smallest schmidt values */
     size_t                  num_expansion_iters  = 0;            /*!< Counter for number of iterations of subspace expansion */
     double                  max_expansion_alpha  = 0.2;          /*!< Maximum value of subspace expansion factor */
     std::optional<double>   sub_expansion_alpha  = std::nullopt; /*!< The current value of the subspace expansion factor */
@@ -43,14 +40,13 @@ class AlgorithmFinite : public AlgorithmBase {
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
     void         try_full_expansion();
-    void         try_discard_small_schmidt();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         reduce_mpo_energy();
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
-    void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
+    void         update_bond_dimension_limit() final;
     void         randomize_model();
     void         run() final;
     void         clear_convergence_status() override;

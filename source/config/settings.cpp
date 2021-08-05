@@ -31,16 +31,27 @@ size_t settings::print_freq(AlgorithmType algo_type) {
         default: return 1;
     }
 }
-bool settings::chi_lim_grow(AlgorithmType algo_type) {
+ChiGrow settings::chi_lim_grow(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_grow;
         case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_grow;
         case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_grow;
         case AlgorithmType::iTEBD: return settings::itebd::chi_lim_grow;
         case AlgorithmType::fLBIT: return settings::flbit::chi_lim_grow;
-        default: return false;
+        default: return ChiGrow::OFF;
     }
 }
+double settings::chi_lim_grow_factor(AlgorithmType algo_type) {
+    switch(algo_type) {
+        case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_grow_factor;
+        case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_grow_factor;
+        case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_grow_factor;
+        case AlgorithmType::iTEBD: return settings::itebd::chi_lim_grow_factor;
+        case AlgorithmType::fLBIT: return settings::flbit::chi_lim_grow_factor;
+        default: return 1.5;
+    }
+}
+
 long settings::chi_lim_init(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_init;
@@ -77,7 +88,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
 
     dmrg_config.load_parameter("output::output_filepath"                      , output::output_filepath);
-    dmrg_config.load_parameter("output::save_timer"                       , output::save_profiling);
+    dmrg_config.load_parameter("output::save_profiling"                       , output::save_profiling);
     dmrg_config.load_parameter("output::savepoint_keep_newest_only"           , output::savepoint_keep_newest_only);
     dmrg_config.load_parameter("output::savepoint_frequency"                  , output::savepoint_frequency);
     dmrg_config.load_parameter("output::checkpoint_keep_newest_only"          , output::checkpoint_keep_newest_only);
@@ -132,7 +143,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
-    dmrg_config.load_parameter("strategy::discard_schmidt_when_stuck"         , strategy::discard_schmidt_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
     dmrg_config.load_parameter("strategy::expand_on_saturation"               , strategy::expand_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
@@ -161,15 +171,14 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eig_default_ncv"                   , precision::eig_default_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
-    dmrg_config.load_parameter("precision::use_compressed_mpo_squared"        , precision::use_compressed_mpo_squared);
+    dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
+    dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);
     dmrg_config.load_parameter("precision::use_reduced_mpo_energy"            , precision::use_reduced_mpo_energy);
-    dmrg_config.load_parameter("precision::use_shifted_mpo_energy"            , precision::use_shifted_mpo_energy);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
-    dmrg_config.load_parameter("precision::subspace_error_factor"             , precision::subspace_error_factor);
-    dmrg_config.load_parameter("precision::max_subspace_error"                , precision::max_subspace_error);
-    dmrg_config.load_parameter("precision::min_subspace_error"                , precision::min_subspace_error);
+    dmrg_config.load_parameter("precision::target_subspace_error"             , precision::target_subspace_error);
+    dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
     dmrg_config.load_parameter("precision::max_size_full_diag"                , precision::max_size_full_diag);
     dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
     dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
@@ -179,14 +188,15 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
 
     //Parameters controlling finite-DMRG
-    dmrg_config.load_parameter("fdmrg::on"           , fdmrg::on);
-    dmrg_config.load_parameter("fdmrg::max_iters"    , fdmrg::max_iters);
-    dmrg_config.load_parameter("fdmrg::min_iters"    , fdmrg::min_iters);
-    dmrg_config.load_parameter("fdmrg::chi_lim_max"  , fdmrg::chi_lim_max);
-    dmrg_config.load_parameter("fdmrg::chi_lim_grow" , fdmrg::chi_lim_grow);
-    dmrg_config.load_parameter("fdmrg::chi_lim_init" , fdmrg::chi_lim_init);
-    dmrg_config.load_parameter("fdmrg::print_freq "  , fdmrg::print_freq);
-    dmrg_config.load_parameter("fdmrg::store_wavefn" , fdmrg::store_wavefn);
+    dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
+    dmrg_config.load_parameter("fdmrg::max_iters"               , fdmrg::max_iters);
+    dmrg_config.load_parameter("fdmrg::min_iters"               , fdmrg::min_iters);
+    dmrg_config.load_parameter("fdmrg::chi_lim_max"             , fdmrg::chi_lim_max);
+    dmrg_config.load_parameter("fdmrg::chi_lim_grow"            , fdmrg::chi_lim_grow);
+    dmrg_config.load_parameter("fdmrg::chi_lim_grow_factor"     , fdmrg::chi_lim_grow_factor);
+    dmrg_config.load_parameter("fdmrg::chi_lim_init"            , fdmrg::chi_lim_init);
+    dmrg_config.load_parameter("fdmrg::print_freq "             , fdmrg::print_freq);
+    dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
 
     //Parameters controlling finite-LBIT
     dmrg_config.load_parameter("flbit::on"                      , flbit::on);
@@ -194,6 +204,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::min_iters"               , flbit::min_iters);
     dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
     dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
+    dmrg_config.load_parameter("flbit::chi_lim_grow_factor"     , flbit::chi_lim_grow_factor);
     dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
     dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
     dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
@@ -206,31 +217,33 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
 
     //Parameters controlling excited state DMRG
-    dmrg_config.load_parameter("xdmrg::on"                     , xdmrg::on);
-    dmrg_config.load_parameter("xdmrg::max_iters"              , xdmrg::max_iters);
-    dmrg_config.load_parameter("xdmrg::min_iters"              , xdmrg::min_iters);
-    dmrg_config.load_parameter("xdmrg::olap_iters"             , xdmrg::olap_iters);
-    dmrg_config.load_parameter("xdmrg::vsub_iters"             , xdmrg::vsub_iters);
-    dmrg_config.load_parameter("xdmrg::chi_lim_max"            , xdmrg::chi_lim_max);
-    dmrg_config.load_parameter("xdmrg::chi_lim_grow"           , xdmrg::chi_lim_grow);
-    dmrg_config.load_parameter("xdmrg::chi_lim_init"           , xdmrg::chi_lim_init);
-    dmrg_config.load_parameter("xdmrg::chi_lim_olap"           , xdmrg::chi_lim_olap);
-    dmrg_config.load_parameter("xdmrg::chi_lim_vsub"           , xdmrg::chi_lim_vsub);
-    dmrg_config.load_parameter("xdmrg::print_freq "            , xdmrg::print_freq);
-    dmrg_config.load_parameter("xdmrg::store_wavefn"           , xdmrg::store_wavefn);
-    dmrg_config.load_parameter("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
-    dmrg_config.load_parameter("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
-    dmrg_config.load_parameter("xdmrg::max_states"             , xdmrg::max_states);
+    dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
+    dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
+    dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
+    dmrg_config.load_parameter("xdmrg::olap_iters"                   , xdmrg::olap_iters);
+    dmrg_config.load_parameter("xdmrg::vsub_iters"                   , xdmrg::vsub_iters);
+    dmrg_config.load_parameter("xdmrg::chi_lim_max"                  , xdmrg::chi_lim_max);
+    dmrg_config.load_parameter("xdmrg::chi_lim_grow"                 , xdmrg::chi_lim_grow);
+    dmrg_config.load_parameter("xdmrg::chi_lim_grow_factor"          , xdmrg::chi_lim_grow_factor);
+    dmrg_config.load_parameter("xdmrg::chi_lim_init"                 , xdmrg::chi_lim_init);
+    dmrg_config.load_parameter("xdmrg::chi_lim_olap"                 , xdmrg::chi_lim_olap);
+    dmrg_config.load_parameter("xdmrg::chi_lim_vsub"                 , xdmrg::chi_lim_vsub);
+    dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
+    dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
+    dmrg_config.load_parameter("xdmrg::energy_density_target"        , xdmrg::energy_density_target);
+    dmrg_config.load_parameter("xdmrg::energy_density_window"        , xdmrg::energy_density_window);
+    dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
     dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
 
     //Parameters controlling infinite-DMRG
-    dmrg_config.load_parameter("idmrg::on"           , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_iters"    , idmrg::max_iters);
-    dmrg_config.load_parameter("idmrg::chi_lim_max"  , idmrg::chi_lim_max);
-    dmrg_config.load_parameter("idmrg::chi_lim_grow" , idmrg::chi_lim_grow);
-    dmrg_config.load_parameter("idmrg::chi_lim_init" , idmrg::chi_lim_init);
-    dmrg_config.load_parameter("idmrg::print_freq"   , idmrg::print_freq);
+    dmrg_config.load_parameter("idmrg::on"                  , idmrg::on);
+    dmrg_config.load_parameter("idmrg::max_iters"           , idmrg::max_iters);
+    dmrg_config.load_parameter("idmrg::chi_lim_max"         , idmrg::chi_lim_max);
+    dmrg_config.load_parameter("idmrg::chi_lim_grow"        , idmrg::chi_lim_grow);
+    dmrg_config.load_parameter("idmrg::chi_lim_grow_factor" , idmrg::chi_lim_grow_factor);
+    dmrg_config.load_parameter("idmrg::chi_lim_init"        , idmrg::chi_lim_init);
+    dmrg_config.load_parameter("idmrg::print_freq"          , idmrg::print_freq);
 
 
     //Parameters controlling imaginary TEBD (Zero temperature)
@@ -242,6 +255,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("itebd::suzuki_order"        , itebd::suzuki_order);
     dmrg_config.load_parameter("itebd::chi_lim_max"         , itebd::chi_lim_max  );
     dmrg_config.load_parameter("itebd::chi_lim_grow"        , itebd::chi_lim_grow);
+    dmrg_config.load_parameter("itebd::chi_lim_grow_factor" , itebd::chi_lim_grow_factor);
     dmrg_config.load_parameter("itebd::chi_lim_init"        , itebd::chi_lim_init);
     dmrg_config.load_parameter("itebd::print_freq"          , itebd::print_freq);
 

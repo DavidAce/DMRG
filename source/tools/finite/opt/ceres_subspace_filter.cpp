@@ -7,7 +7,7 @@
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_mps> &candidate_list, double maximum_subspace_error, size_t max_accept) {
+void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_mps> &candidate_list, double target_subspace_error, size_t max_accept) {
     // Sort the candidate list in order of descending overlaps. If the overlaps are the same, compare instead the distance in energy to the
     // current energy
     std::sort(candidate_list.begin(), candidate_list.end(), std::greater<>());
@@ -20,7 +20,7 @@ void tools::finite::opt::internal::subspace::filter_candidates(std::vector<opt_m
         if(candidate_list.size() <= max_accept) {
             if(candidate_list.size() <= min_accept) break;
             // Check what the subspace error would be if the last candidate was removed
-            if(subspace_errors.rbegin()[1] >= maximum_subspace_error) break;
+            if(subspace_errors.rbegin()[1] >= target_subspace_error) break;
         }
         if(candidate_list.back().is_basis_vector) subspace_errors.pop_back();
         candidate_list.pop_back();

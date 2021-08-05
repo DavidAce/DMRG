@@ -154,7 +154,7 @@ void AlgorithmFinite::reduce_mpo_energy() {
 
 void AlgorithmFinite::rebuild_mpo_squared() {
     if(not tensors.position_is_inward_edge()) return;
-    bool compress = settings::precision::use_compressed_mpo_squared and status.algorithm_has_stuck_for == 0;
+    bool compress = settings::precision::use_compressed_mpo_squared_all;
     tensors.rebuild_mpo_squared(compress);
 }
 
@@ -173,54 +173,72 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
     tools::log->debug("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
 }
 
-void AlgorithmFinite::update_bond_dimension_limit([[maybe_unused]] std::optional<long> tmp_bond_limit) {
+void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
     status.chi_lim_max                 = settings::chi_lim_max(status.algo_type);
     status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
-    if(not settings::chi_lim_grow(status.algo_type)) {
+    if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) {
         status.chi_lim = status.chi_lim_max;
         return;
     }
     if(status.chi_lim_has_reached_chi_max) return;
-    auto tic = tid::tic_scope("grow_chi");
+    auto tic = tid::tic_scope("chi_grow");
 
-    // If we got here we want increase the bond dimension limit progressively during the simulation
+
+    if constexpr (settings::debug){
+        if(tools::log->level() == spdlog::level::trace) {
+            double truncation_threshold = 2 * settings::precision::svd_threshold;
+            size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
+            size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
+            tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
+            tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
+            tools::log->trace("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
+            tools::log->trace("Truncated bond count  : {} ", trunc_bond_count);
+            tools::log->trace("Bonds at limit  count : {} ", bond_at_lim_count);
+            tools::log->trace("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
+        }
+    }
+
+
+    // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
-    // * No experiments are on-going like perturbation
-    // * the simulation is stuck
-    // * the state is limited by bond dimension
-    if(tensors.model->is_perturbed()) {
+    //      * No experiments are on-going like perturbation
+    //      * the state precision is limited by bond dimension
+    // In addition, if chi_lim_grow == ChiGrow::ON_SATURATION we add the condition
+    //      * the algorithm has got stuck
+
+    // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
+    // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
+    bool is_saturated       = status.entanglement_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
+    bool is_exp_ongoing     = tensors.model->is_perturbed();
+    bool is_bond_limited    = tensors.state->is_bond_limited(status.chi_lim, 2 * settings::precision::svd_threshold);
+    bool grow_on_saturation = settings::chi_lim_grow(status.algo_type) == ChiGrow::ON_SATURATION;
+    if(is_exp_ongoing) {
         tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
         return;
     }
-    if(status.algorithm_has_stuck_for == 0 and status.chi_lim >= 16) {
-        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.chi_lim);
+    if(grow_on_saturation and not is_saturated) {
+        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.chi_lim);
         return;
     }
 
-    if(tools::log->level() < spdlog::level::info) {
-        double truncation_threshold = 2 * settings::precision::svd_threshold;
-        size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
-        size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
-        tools::log->info("Truncation threshold  : {:<.8e}", truncation_threshold);
-        tools::log->info("Truncation errors     : {}", tensors.state->get_truncation_errors());
-        tools::log->info("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
-        tools::log->info("Truncated bond count  : {} ", trunc_bond_count);
-        tools::log->info("Bonds at limit  count : {} ", bond_at_lim_count);
-        tools::log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
-    }
-    bool state_is_bond_limited = tensors.state->is_bond_limited(status.chi_lim, 2 * settings::precision::svd_threshold);
-    if(not state_is_bond_limited) {
+    if(not is_bond_limited) {
         tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.chi_lim);
         return;
     }
+
+    // If we got to this point we will update the bond dimension by a factor
+    auto factor = settings::chi_lim_grow_factor(status.algo_type);
+    if(factor <= 1.0) throw std::runtime_error(fmt::format("Error: chi_lim_grow_factor == {:.3f} | must be larger than one", factor));
+
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
     if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
         randomize_state(ResetReason::CHI_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.chi_lim);
 
-    long chi_new = std::min(status.chi_lim * 2, status.chi_lim_max);
+    double chi_prod = std::ceil(factor * static_cast<double>(status.chi_lim));
+    long chi_new = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
     status.chi_lim                     = chi_new;
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
@@ -255,7 +273,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
     if(not chi_lim) {
         chi_lim = settings::chi_lim_init(status.algo_type);
-        if(not settings::chi_lim_grow(status.algo_type) and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+        if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
     }
     if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}", chi_lim.value()));
@@ -271,9 +289,8 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     status.direction  = tensors.state->get_direction();
     num_perturbations = 0;
     num_chi_quenches  = 0;
-    num_discards      = 0;
     status.algo_stop  = AlgorithmStop::NONE;
-    if(settings::chi_lim_grow(status.algo_type)) status.chi_lim = chi_lim.value();
+    if(settings::chi_lim_grow(status.algo_type) != ChiGrow::OFF) status.chi_lim = chi_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_chi() > chi_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(),
@@ -373,20 +390,6 @@ void AlgorithmFinite::try_full_expansion() {
     }
 }
 
-void AlgorithmFinite::try_discard_small_schmidt() {
-    if(settings::strategy::discard_schmidt_when_stuck == 0) return;
-    if(not tensors.position_is_inward_edge()) return;
-    if(num_discards >= max_discards) return;
-    if(status.algorithm_has_stuck_for < 2) return;
-    if(settings::strategy::discard_schmidt_when_stuck < 0)
-        throw std::runtime_error(fmt::format("Expected positive discard threshold. Got: {:.16f}", settings::strategy::discard_schmidt_when_stuck));
-    tools::log->info("Trying discard of smallest schmidt values: trials {}", num_discards);
-    tensors.normalize_state(status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
-    clear_convergence_status();
-    iter_discard = status.iter;
-    num_discards++;
-}
-
 void AlgorithmFinite::try_bond_dimension_quench() {
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_convergence_status();
@@ -460,17 +463,17 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         status.variance_mpo_saturated_for = report.saturated_count;
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
-        else if(tools::log->level() == spdlog::level::trace) {
-            tools::log->trace("Energy variance slope details:");
-            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->trace(" -- converged count    = {} ", status.variance_mpo_converged_for);
-            tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
-            tools::log->trace(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
+        if(tools::log->level() == spdlog::level::debug) {
+            tools::log->debug("Energy variance slope details:");
+            tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->debug(" -- converged count    = {} ", status.variance_mpo_converged_for);
+            tools::log->debug(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->debug(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->debug(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->debug(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+            tools::log->debug(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
         }
     }
 }
@@ -503,16 +506,16 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
                               report.saturated_point);
-        else if(tools::log->level() == spdlog::level::trace) {
-            tools::log->trace("Entanglement slope details:");
-            tools::log->trace(" -- site               = {}", last_saturated_site);
-            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+        if(tools::log->level() == spdlog::level::debug) {
+            tools::log->debug("Entanglement slope details:");
+            tools::log->debug(" -- site               = {}", last_saturated_site);
+            tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->debug(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->debug(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->debug(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->debug(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
         }
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
@@ -578,14 +581,14 @@ void AlgorithmFinite::print_status_update() {
 
     std::string report;
     //    report += fmt::format("{:<} ", status.algo_type_sv());
-    report += fmt::format("{:<} ", tensors.state->get_name());
-    report += fmt::format("iter:{:<4} ", status.iter);
-    report += fmt::format("step:{:<5} ", status.step);
-    report += fmt::format("L:{} ", tensors.get_length());
+    report += fmt::format(FMT_STRING("{:<} "), tensors.state->get_name());
+    report += fmt::format(FMT_STRING("iter:{:<4} "), status.iter);
+    report += fmt::format(FMT_STRING("step:{:<5} "), status.step);
+    report += fmt::format(FMT_STRING("L:{} "), tensors.get_length());
     std::string site_str;
-    if(tensors.active_sites.empty()) site_str = fmt::format("{:^5}", "?");
-    if(tensors.active_sites.size() == 1) site_str = fmt::format("{:^5}", tensors.active_sites.front());
-    if(tensors.active_sites.size() >= 2) site_str = fmt::format("{:>2} {:>2}", tensors.active_sites.front(), tensors.active_sites.back());
+    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^5}"), "?");
+    if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^5}"), tensors.active_sites.front());
+    if(tensors.active_sites.size() >= 2) site_str = fmt::format(FMT_STRING("{:>2} {:>2}"), tensors.active_sites.front(), tensors.active_sites.back());
     if(tensors.state->get_direction() > 0) {
         report += fmt::format("l:|{}⟩ ", site_str);
     } else if(tensors.state->get_direction() < 0) {
@@ -593,14 +596,14 @@ void AlgorithmFinite::print_status_update() {
     }
 
     double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
-    report += fmt::format("E/L:{:<20.16f} ", energy);
+    report += fmt::format(FMT_STRING("E/L:{:<20.16f} "), energy);
 
-    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format("ε:{:<6.4f} ", status.energy_dens); }
-    report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("ε:{:<6.4f} "), status.energy_dens); }
+    report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
-    report += fmt::format("log₁₀σ²E:{:<10.6f} [{:<10.6f}] ", variance, std::log10(status.energy_variance_lowest));
-    report += fmt::format("χ:{:<3}|{:<3}|", settings::chi_lim_max(status.algo_type), status.chi_lim);
+    report += fmt::format(FMT_STRING("log₁₀σ²E:{:<10.6f} [{:<10.6f}] "), variance, std::log10(status.energy_variance_lowest));
+    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::chi_lim_max(status.algo_type), status.chi_lim);
     size_t comma_width       = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
     size_t bond_single_width = static_cast<size_t>(std::log10(settings::chi_lim_max(status.algo_type))) + 1;
@@ -609,19 +612,19 @@ void AlgorithmFinite::print_status_update() {
                                                    * bond_num_elements;          // Number of bonds
     std::vector<long> bonds_merged = tools::finite::measure::bond_dimensions_merged(*tensors.state);
     if(bonds_merged.empty())
-        report += fmt::format("{0:<{1}} ", " ", bond_string_width);
+        report += fmt::format(FMT_STRING("{0:<{1}} "), " ", bond_string_width);
     else {
         std::string bonds_string = fmt::format("{}", bonds_merged);
-        report += fmt::format("{0:<{1}} ", bonds_string, bond_string_width);
+        report += fmt::format(FMT_STRING("{0:<{1}} "), bonds_string, bond_string_width);
     }
 
     if(last_optmode and last_optspace)
-        report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
-    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error()));
-    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
-    report += fmt::format("sat:[σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
-    report += fmt::format("time:{:<7} ", fmt::format("{:>7.2f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+        report += fmt::format(FMT_STRING("opt:[{}|{}] "), enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
+    report += fmt::format(FMT_STRING("log₁₀trnc:{:<8.4f} "), std::log10(tensors.state->get_truncation_error()));
+    report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
+    report += fmt::format(FMT_STRING("sat:[σ² {:<1} Sₑ {:<1}] "), status.variance_mpo_saturated_for, status.entanglement_saturated_for);
+    report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
+    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
 }

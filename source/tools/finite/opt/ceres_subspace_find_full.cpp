@@ -16,11 +16,7 @@ namespace tools::finite::opt::internal {
         auto t_full = tid::tic_scope("full");
 
         // Generate the Hamiltonian matrix
-        double energy_shift = 0.0;
-        if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy)
-            energy_shift = tools::finite::measure::energy_minus_energy_reduced(tensors);
-
-        MatrixType<Scalar> H_local       = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(*tensors.model, *tensors.edges, energy_shift);
+        MatrixType<Scalar> H_local       = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(*tensors.model, *tensors.edges);
         const auto        &multisite_mps = tensors.state->get_multisite_mps();
         const auto         multisite_vec = Eigen::Map<const Eigen::VectorXcd>(multisite_mps.data(), multisite_mps.size());
 
@@ -39,7 +35,7 @@ namespace tools::finite::opt::internal {
         double          subspace_error = 1.0 - sq_sum_overlap;
         long            nev            = eigvecs.cols();
         auto            time_eig       = tid::get("eig").get_last_interval();
-        auto            time_ham       = tid::get("ham").get_time();
+        auto            time_ham       = tid::get("ham").get_last_interval();
         reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), time_eig, time_ham, 0, 1);
         return {eigvecs, eigvals};
     }

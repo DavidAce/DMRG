@@ -1,3 +1,4 @@
+#include "../opt_meta.h"
 #include "../opt_mps.h"
 #include "ceres_direct_functor.h"
 #include "opt-internal.h"
@@ -13,7 +14,7 @@
 #include <tools/finite/measure.h>
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
-                                                                                    OptType optType, OptMode optMode, OptSpace optSpace) {
+                                                                                    OptMeta &meta) {
     auto t_dir = tid::tic_scope("direct");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_state("current state", tensors.state->get_multisite_mps(), sites,
@@ -23,12 +24,11 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                       1.0, // Overlap
                                       tensors.get_length());
     t_dir.toc(); // The next call to ceres_direct_optimization opens the "direct" scope again.
-    return ceres_direct_optimization(tensors, initial_state, status, optType, optMode, optSpace);
+    return ceres_direct_optimization(tensors, initial_state, status, meta);
 }
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                                                    const AlgorithmStatus &status, OptType optType, OptMode optMode,
-                                                                                    OptSpace optSpace) {
+                                                                                    const AlgorithmStatus &status, OptMeta &meta) {
     tools::log->trace("Optimizing in DIRECT mode");
     auto t_dir = tid::tic_scope("direct");
     initial_mps.validate_candidate();
@@ -46,27 +46,15 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     optimized_mps.set_length(initial_mps.get_length());
     optimized_mps.set_energy_reduced(initial_mps.get_energy_reduced());
 
-    // When we use "reduced-energy mpo's", the current energy per site is subtracted from all the MPO's at the beginning of every iteration.
-    // The subtracted number is called "energy_reduced".
-    // Directly after the energy subtraction, the target energy is exactly zero, and Var H = <(H-Er)²>
-    // However, after some steps in the same iteration, the optimizer may have found a state with slightly different energy,
-    // so the target energy is actually 0 + dE.
-    // We can obtain the shift amount dE = <H-Er>, which we call "eigval", i.e. the eigenvalue of the operator <H-Er>
-    // Then, technically Var H = <(H-E+|dE|)²>, and if unaccounted for, we may get Var H < 0, which is a real pain since
-    // we are optimizing the logarithm of Var H.
-    // Here we use functor->set_shift in order to account for the shifted energy and reach better precision.
-    // Note 1: shifting only works if the mpo is not already compressed
-    // Note 2: shifting only makes sense if we are using reduced-energy mpos
     auto t_lbfgs = tid::tic_scope("lbfgs");
-    switch(optType) {
+    switch(meta.optType) {
         case OptType::CPLX: {
             // Copy the initial guess and operate directly on it
             optimized_mps.set_tensor(initial_mps.get_tensor());
             auto *functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
-
-            if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy and not tensors.model->is_compressed_mpo_squared())
-                functor->set_shift(-std::abs(initial_mps.get_eigval())); // Account for the change in energy since the last energy reduction
-            functor->compress();                                         // Compress the virtual bond between MPO² and the environments
+            if(settings::precision::use_compressed_mpo_squared_otf)
+                // Compress the virtual bond between MPO² and the environments
+                functor->compress();
 
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
@@ -88,10 +76,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             // Here we make a temporary
             auto  initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
             auto *functor            = new ceres_direct_functor<double>(tensors, status);
-
-            if(settings::precision::use_reduced_mpo_energy and settings::precision::use_shifted_mpo_energy and not tensors.model->is_compressed_mpo_squared())
-                functor->set_shift(initial_mps.get_eigval()); // Account for the change in energy since the last energy reduction
-            functor->compress();                              // Compress the virtual bond between MPO² and the environments
+            if(settings::precision::use_compressed_mpo_squared_otf)
+                // Compress the virtual bond between MPO² and the environments
+                functor->compress();
 
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
@@ -130,6 +117,5 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
     reports::bfgs_add_entry("Direct", "opt", optimized_mps);
 
-    tools::log->trace("Returning theta from optimization mode {} space {}", optMode, optSpace);
     return optimized_mps;
 }

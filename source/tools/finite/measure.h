@@ -12,7 +12,7 @@ class MpoSite;
 class AlgorithmStatus;
 struct tensors_measure_finite;
 namespace tools::finite::measure{
-    using Scalar = std::complex<double>;
+    using cplx = std::complex<double>;
     extern void do_all_measurements(const TensorsFinite & tensors);
     extern void do_all_measurements(const StateFinite & state);
 
@@ -30,7 +30,7 @@ namespace tools::finite::measure{
 
     [[nodiscard]] extern double spin_component                              (const StateFinite & state, const Eigen::Matrix2cd &paulimatrix);
     [[nodiscard]] extern double spin_component                              (const StateFinite & state, std::string_view axis);
-    [[nodiscard]] extern Eigen::Tensor<Scalar,1> mps_wavefn                 (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps_wavefn                 (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
@@ -75,12 +75,15 @@ namespace tools::finite::measure{
     [[nodiscard]] extern double energy_normalized          (const StateFinite & state, const TensorsFinite & tensors, double energy_minimum, double energy_maximum);
 
 
-    [[nodiscard]] extern double energy_minus_energy_reduced (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy                      (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_per_site             (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<Scalar,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum);
+    [[nodiscard]] extern double energy_minus_energy_reduced (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy                      (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_per_site             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum);
+
+    [[nodiscard]] extern double grad_max_norm               (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
+
 }
 
 /* clang-format on */

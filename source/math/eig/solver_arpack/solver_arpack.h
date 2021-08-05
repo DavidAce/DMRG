@@ -40,11 +40,14 @@ namespace eig {
         template<typename Derived>
         void copy_solution(Derived &solver);
 
+        template<typename eval_t, typename evec_t, Side side>
+        void compute_residual_norms();
+
         MatrixType    &matrix;
         eig::settings &config;
         eig::solution &result;
         Scalar        *residual = nullptr;
-        solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_, Scalar *residual_);
+        solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_);
     };
 
 }

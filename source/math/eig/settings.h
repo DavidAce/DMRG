@@ -27,10 +27,14 @@ namespace eig {
         std::optional<Vecs>    compute_eigvecs = std::nullopt;
         std::optional<Dephase> remove_phase    = std::nullopt;
         std::optional<bool>    compress        = std::nullopt;
-        int                    ncv_x_factor    = 2;
-        std::vector<int>       iter_ncv_x;
-        std::vector<double>    time_tol_x10;
-        void                   clear();
+        void                  *residp          = nullptr; // Residual pointer, also used for setting an initial guess
+
+//        int                   ncv_x_factor = 2;
+//        std::vector<int>      iter_ncv_x;
+//        std::vector<double>   time_tol_x10;
+        std::string           tag; // Handy when you are using many instances
+        std::optional<double> log_time_period = std::nullopt;
+        void                  clear();
         // Sanity checks
         void                      checkRitz();
         [[nodiscard]] std::string get_ritz_string() const;

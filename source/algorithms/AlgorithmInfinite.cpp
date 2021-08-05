@@ -2,6 +2,7 @@
 #include <config/settings.h>
 #include <math/num.h>
 #include <tensors/state/StateInfinite.h>
+#include <tensors/model/ModelInfinite.h>
 #include <tid/tid.h>
 #include <tools/common/h5.h>
 #include <tools/common/log.h>
@@ -58,65 +59,60 @@ void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy)
     status.energy_variance_prec_limit = std::pow(10, -status.energy_variance_max_digits);
 }
 
-void AlgorithmInfinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
-    if(tmp_bond_limit.has_value()) {
-        status.chi_lim = tmp_bond_limit.value();
+void AlgorithmInfinite::update_bond_dimension_limit() {
+    status.chi_lim_max                 = settings::chi_lim_max(status.algo_type);
+    status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
+    if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) {
+        status.chi_lim = status.chi_lim_max;
+        return;
+    }
+    if(status.chi_lim_has_reached_chi_max) return;
+    auto tic = tid::tic_scope("chi_grow");
+
+
+    // If we got here we want to increase the bond dimension limit progressively during the simulation
+    // Only increment the bond dimension if the following are all true
+    //      * the state precision is limited by bond dimension
+    // In addition, if chi_lim_grow == ChiGrow::ON_SATURATION we add the condition
+    //      * the algorithm has got stuck
+
+    // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
+    // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
+    bool is_saturated       = status.entanglement_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
+    bool is_bond_limited    = tensors.state->is_bond_limited(status.chi_lim, 2 * settings::precision::svd_threshold);
+    bool grow_on_saturation = settings::chi_lim_grow(status.algo_type) == ChiGrow::ON_SATURATION;
+
+    if(grow_on_saturation and not is_saturated) {
+        tools::log->info("Algorithm is not saturated yet. Kept current bond dimension limit {}", status.chi_lim);
         return;
     }
 
-    try {
-        long chi_lim_now = status.chi_lim;
-        if(chi_lim_now < settings::chi_lim_init(status.algo_type)) throw std::logic_error("Chi limit should be larger than chi init");
-    } catch(std::exception &error) {
-        // If we reached this stage, either
-        // 1) chi_lim is not initialized yet
-        // 2) chi_lim is initialized, but it is smaller than the init value found in settings
-        // Either way, we should set chi_lim to be chi_lim_init, unless chi_lim_init is larger than tmp_bond_limit
-        tools::log->info("Setting initial bond dimension limit: {}", settings::chi_lim_init(status.algo_type));
-        status.chi_lim      = settings::chi_lim_init(status.algo_type);
-        status.chi_lim_init = settings::chi_lim_init(status.algo_type);
+    if(not is_bond_limited) {
+        tools::log->info("State is not limited by its bond dimension. Kept current bond dimension limit {}", status.chi_lim);
         return;
     }
 
-    status.chi_lim_has_reached_chi_max = status.chi_lim >= settings::chi_lim_max(status.algo_type);
-    if(not status.chi_lim_has_reached_chi_max) {
-        if(settings::chi_lim_grow(status.algo_type)) {
-            // Here the settings specify to grow the bond dimension limit progressively during the simulation
-            // Only do this if the simulation is stuck.
-            if(status.algorithm_has_stuck_for > 0) {
-                tools::log->debug("Truncation error : {}", tensors.state->get_truncation_error());
-                tools::log->debug("Bond dimensions  : {}", tensors.state->chiC());
-                if(tensors.state->get_truncation_error() > 0.5 * settings::precision::svd_threshold and tensors.state->chiC() >= status.chi_lim) {
-                    // Write results before updating bond dimension chi
-                    //                    backup_best_state(*state);
-                    write_to_file(StorageReason::CHI_UPDATE);
-                    long chi_new_limit = std::min(status.chi_lim_max, status.chi_lim * 2);
-                    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new_limit);
-                    status.chi_lim = chi_new_limit;
-                    clear_convergence_status();
-                    status.chi_lim_has_reached_chi_max = status.chi_lim == settings::chi_lim_max(status.algo_type);
+    // Write current results before updating bond dimension
+    write_to_file(StorageReason::CHI_UPDATE);
 
-                    copy_from_tmp();
 
-                } else {
-                    tools::log->debug("chi_lim_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond "
-                                      "dimension limit {}",
-                                      status.chi_lim);
-                }
-            } else {
-                tools::log->debug("Not stuck -> Kept current bond dimension limit {}", status.chi_lim);
-            }
-        } else {
-            // Here the settings specify to just set the limit to maximum chi directly
-            tools::log->info("Setting bond dimension limit to maximum = {}", settings::chi_lim_max(status.algo_type));
-            status.chi_lim = settings::chi_lim_max(status.algo_type);
-        }
-    } else {
-        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", settings::chi_lim_max(status.algo_type), status.chi_lim);
-    }
-    status.chi_lim = status.chi_lim;
+    // If we got to this point we will update the bond dimension by a factor
+    auto factor = settings::chi_lim_grow_factor(status.algo_type);
+    if(factor <= 1.0) throw std::logic_error(fmt::format("Error: chi_lim_grow_factor == {:.3f} | must be larger than one", factor));
+
+
+    // Update chi
+    double chi_prod = std::ceil(factor * static_cast<double>(status.chi_lim));
+    long chi_new = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
+    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
+    status.chi_lim                     = chi_new;
+    status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
+
+
+    // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
         throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
+
 }
 
 // void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
@@ -300,7 +296,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::CHI_UPDATE: {
-            if(not settings::chi_lim_grow(status.algo_type)) return;
+            if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) return;
             storage_level = settings::output::storage_level_checkpoint;
             state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own

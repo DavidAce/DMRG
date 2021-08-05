@@ -166,6 +166,13 @@ opt_mps::cplx opt_mps::get_krylov_shift() const {
         return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
+double opt_mps::get_krylov_resid() const {
+    if(krylov_resid)
+        return krylov_resid.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
 double opt_mps::get_overlap() const {
     if(overlap)
         return overlap.value();
@@ -266,6 +273,7 @@ void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
 void opt_mps::set_krylov_eigval(double krylov_eigval_) { krylov_eigval = krylov_eigval_; }
 void opt_mps::set_krylov_ritz(std::string_view krylov_ritz_) { krylov_ritz = std::string(krylov_ritz_); }
 void opt_mps::set_krylov_shift(const cplx &krylov_shift_) { krylov_shift = krylov_shift_; }
+void opt_mps::set_krylov_resid(const double &krylov_resid_) { krylov_resid = krylov_resid_; }
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data.

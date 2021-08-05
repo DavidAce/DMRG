@@ -323,7 +323,7 @@ namespace tools::finite::h5 {
             }
             case StorageReason::CHI_UPDATE: {
                 storage_level = settings::output::storage_level_checkpoint;
-                if(not settings::chi_lim_grow(status.algo_type)) storage_level = StorageLevel::NONE;
+                if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) storage_level = StorageLevel::NONE;
                 // If we have updated chi we may want to write a projection too
                 state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
                 table_prefxs = {state_prefix}; // Does not pollute common tables
@@ -380,7 +380,7 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::CHI_UPDATE: {
-                if(not settings::chi_lim_grow(status.algo_type)) storage_level = StorageLevel::NONE;
+                if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) storage_level = StorageLevel::NONE;
                 break;
             }
             case StorageReason::PROJ_STATE: {

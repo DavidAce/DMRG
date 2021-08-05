@@ -48,8 +48,9 @@ class MatVecSparse {
     void                           set_shift(std::complex<double> sigma_);
     void                           set_mode(const eig::Form form_);
     void                           set_side(const eig::Side side_);
-    [[nodiscard]] const eig::Form &get_form() const;
-    [[nodiscard]] const eig::Side &get_side() const;
+    [[nodiscard]] eig::Form get_form() const;
+    [[nodiscard]] eig::Side get_side() const;
+    [[nodiscard]] eig::Type get_type() const;
 
     [[nodiscard]] bool isReadyFactorOp() const { return readyFactorOp; }
     [[nodiscard]] bool isReadyShift() const { return readyShift; }

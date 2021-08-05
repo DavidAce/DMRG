@@ -11,7 +11,7 @@ namespace eig::view {
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
     template<typename Scalar>
-    Eigen::Map<VectorType<Scalar>> get_eigvals(eig::solution &result, bool converged_only = true) {
+    Eigen::Map<VectorType<Scalar>> get_eigvals(const eig::solution &result, bool converged_only = true) {
         if(not result.meta.eigvals_found)
             throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found));
         if constexpr(std::is_same_v<Scalar, real>)
@@ -24,12 +24,12 @@ namespace eig::view {
     }
 
     template<typename Scalar, typename integral_type = long, typename = std::enable_if<std::is_integral_v<integral_type>>>
-    Scalar get_eigval(eig::solution &result, integral_type num = 0) {
+    Scalar get_eigval(const eig::solution &result, integral_type num = 0) {
         return get_eigvals<Scalar>(result, false)(static_cast<long>(num));
     }
 
     template<typename Scalar>
-    Eigen::Map<MatrixType<Scalar>> get_eigvecs(eig::solution &result, Side side = Side::R, bool converged_only = true) {
+    Eigen::Map<MatrixType<Scalar>> get_eigvecs(const eig::solution &result, Side side = Side::R, bool converged_only = true) {
         if(side == Side::R and not result.meta.eigvecsR_found)
             throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvecs R found [{}]", result.meta.eigvecsR_found));
         else if(side == Side::L and not result.meta.eigvecsL_found)
@@ -48,13 +48,13 @@ namespace eig::view {
     }
 
     template<typename Scalar>
-    Eigen::Map<VectorType<Scalar>> get_eigvec(eig::solution &result, long num = 0, Side side = Side::R) {
+    Eigen::Map<VectorType<Scalar>> get_eigvec(const eig::solution &result, long num = 0, Side side = Side::R) {
         auto eigvecmap = get_eigvecs<Scalar>(result, side, false).col(num);
         return Eigen::Map<VectorType<Scalar>>(eigvecmap.data(), eigvecmap.size());
     }
 
     template<typename Scalar>
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(eig::solution &result, const std::array<long, 3> &dims, long num = 0, Side side = Side::R) {
+    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(const eig::solution &result, const std::array<long, 3> &dims, long num = 0, Side side = Side::R) {
         if(result.meta.rows != dims[0] * dims[1] * dims[2])
             throw std::range_error(fmt::format("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0],
                                                dims[1], dims[3], dims[0] * dims[1] * dims[2]));

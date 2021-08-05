@@ -9,6 +9,7 @@
 #include <tools/finite/h5.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/opt.h>
+#include <tools/finite/opt_meta.h>
 #include <tools/finite/opt_mps.h>
 
 fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : AlgorithmFinite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
@@ -66,12 +67,12 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
-                ritz = StateRitz::SR;
+                ritz = OptRitz::SR;
                 tensors.state->set_name("state_emin");
                 run_algorithm();
                 break;
             case fdmrg_task::FIND_HIGHEST_STATE:
-                ritz = StateRitz::LR;
+                ritz = OptRitz::LR;
                 tensors.state->set_name("state_emax");
                 run_algorithm();
                 break;
@@ -110,7 +111,7 @@ void fdmrg::run_preprocessing() {
 
 void fdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) {
-        if(ritz == StateRitz::SR)
+        if(ritz == OptRitz::SR)
             tensors.state->set_name("state_emin");
         else
             tensors.state->set_name("state_emax");
@@ -145,7 +146,9 @@ void fdmrg::single_fdmrg_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    auto t_step = tid::tic_scope("step");
+    auto    t_step = tid::tic_scope("step");
+    OptConf conf(ritz);
+
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, 2);
@@ -163,7 +166,7 @@ void fdmrg::single_fdmrg_step() {
         // Use subspace expansion if alpha_expansion was set
         if(sub_expansion_alpha) tensors.expand_subspace(sub_expansion_alpha.value(), status.chi_lim);
 
-        auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, ritz);
+        auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, conf);
         if constexpr(settings::debug)
             tools::log->debug("Variance after opt: {:.8f} | norm {:.16f}", std::log10(multisite_mps.get_variance()), multisite_mps.get_norm());
 

@@ -199,12 +199,21 @@ void MatVecDense<Scalar>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar>
-const eig::Form &MatVecDense<Scalar>::get_form() const {
+eig::Form MatVecDense<Scalar>::get_form() const {
     return form;
 }
 template<typename Scalar>
-const eig::Side &MatVecDense<Scalar>::get_side() const {
+eig::Side MatVecDense<Scalar>::get_side() const {
     return side;
+}
+template<typename Scalar>
+eig::Type MatVecDense<Scalar>::get_type() const {
+    if constexpr(std::is_same_v<Scalar, eig::real>)
+        return eig::Type::REAL;
+    else if constexpr(std::is_same_v<Scalar, eig::cplx>)
+        return eig::Type::CPLX;
+    else
+        throw std::runtime_error("Unsupported type");
 }
 
 template<typename Scalar>

@@ -66,9 +66,6 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const TensorsFinite &tensors,
     H2n_tensor.resize(dims);
     num_parameters = static_cast<int>(dims[0] * dims[1] * dims[2]);
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
-
-    tools::log->trace("- Compressing MPO² and corresponding environments");
-    //    compress();
 }
 
 template<typename Scalar>
@@ -237,10 +234,10 @@ void ceres_direct_functor<Scalar>::compress() {
     svd::settings svd_settings;
     svd_settings.use_lapacke = true;
     svd_settings.use_bdc     = false;
-    svd_settings.threshold   = 1e-18;
+    svd_settings.threshold   = 1e-12;
     svd_settings.switchsize  = 4096;
     svd::solver svd(svd_settings);
-
+    auto old_dimensions = mpo2.dimensions();
     //    Eigen::Tensor<Scalar, 4> mpo2_l2r;
     {
         // Compress left to right
@@ -257,7 +254,7 @@ void ceres_direct_functor<Scalar>::compress() {
         mpo2                               = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
     }
     readyCompress = true;
-    tools::log->trace("Compressed MPO² dimensions {}", mpo2.dimensions());
+    tools::log->debug("ceres::direct: compressed MPO² dimensions {} -> {}",old_dimensions, mpo2.dimensions());
 }
 
 template<typename Scalar>
@@ -265,7 +262,7 @@ void ceres_direct_functor<Scalar>::set_shift(double shift_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
     shift = shift_;
-    tools::log->debug("Setting shift: {:.16f}", shift_);
+    tools::log->debug("ceres::direct: setting shift: {:.16f}", shift_);
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size

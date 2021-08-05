@@ -10,12 +10,11 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         ceres_subspace_functor.cpp
         ceres_subspace_hamiltonian.cpp
         ground_state.cpp
-        krylov_energy.cpp
-        krylov_variance.cpp
-        krylov_extract_solution.cpp
+        krylov_optimization.cpp
         report.cpp
         opt.cpp
         opt_mps.cpp
+        opt_meta.cpp
         )
 
 target_link_libraries(dmrg-tools-finite-opt PUBLIC dmrg-deps dmrg-flags)

@@ -22,11 +22,12 @@ namespace settings {
     extern void load(Loader &dmrg_config);
     extern void load(std::string_view  config_filename);
 
-    extern bool   algorithm_is_on(AlgorithmType algo_type);
-    extern long   chi_lim_max(AlgorithmType algo_type);
-    extern size_t print_freq(AlgorithmType algo_type);
-    extern bool   chi_lim_grow(AlgorithmType algo_type);
-    extern long   chi_lim_init(AlgorithmType algo_type);
+    extern bool    algorithm_is_on(AlgorithmType algo_type);
+    extern long    chi_lim_max(AlgorithmType algo_type);
+    extern size_t  print_freq(AlgorithmType algo_type);
+    extern ChiGrow chi_lim_grow(AlgorithmType algo_type);
+    extern double  chi_lim_grow_factor(AlgorithmType algo_type);
+    extern long    chi_lim_init(AlgorithmType algo_type);
     extern bool   store_wave_function(AlgorithmType algo_type);
 
 
@@ -158,7 +159,6 @@ namespace settings {
         inline bool          krylov_opt_when_stuck      = true;                                   /*!< Try finding the SM eigenpair of (H-E/L)² using arpack when stuck (takes longer, but gives good results) */
         inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
-        inline double        discard_schmidt_when_stuck = 1e-6;                                   /*!< Try discarding smallest schmidt values when stuck (0 = turn off) */
         inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        expand_on_saturation       = 5 ;                                     /*!< Expand to H|psi> every nth iteration when stuck. (0 = turn off) */
         inline size_t        project_on_saturation      = 10;                                     /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
@@ -192,15 +192,13 @@ namespace settings {
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16 , good could be ~64) */
-        inline bool     use_compressed_mpo_squared      = true  ;   /*!< Use SVD to compress the bond dimension of the H² mpo */
+        inline bool     use_compressed_mpo_squared_all  = false ;   /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
+        inline bool     use_compressed_mpo_squared_otf  = true  ;   /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_reduced_mpo_energy          = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_shifted_mpo_energy          = true  ;   /*!< Some steps after reducing MPO energy by Er, we have E-Er = dE. For increased precision, this shifts the local MPOs by dE before optimization */
         inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-2  ;   /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-6  ;   /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
-        inline double   subspace_error_factor           = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
-        inline double   max_subspace_error              = 1e-8  ;   /*!< The maximum subspace error. Never do subspace variance optimization with subspace error greater than this. */
-        inline double   min_subspace_error              = 1e-12 ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
+        inline double   target_subspace_error           = 1e-10 ;   /*!< The target subspace error 1-Σ|<θ_i|θ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
         inline size_t   max_subspace_size               = 256   ;   /*!< Maximum number of candidate eigenstates to keep for a subspace-optimization step */
         inline long     max_size_full_diag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline long     max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
@@ -213,12 +211,13 @@ namespace settings {
 
     /*! \namespace settings::idmrg Settings for the infinite DMRG algorithm */
     namespace idmrg {
-        inline bool on           = false;                          /*!< Turns iDMRG simulation on/off. */
-        inline size_t max_iters  = 5000;                           /*!< Maximum number of iDMRG iterations before forced termination */
-        inline long chi_lim_max  = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool chi_lim_grow = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long chi_lim_init = 16;                             /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t print_freq = 1000;                           /*!< Print frequency for console output. In units of iterations.  (0 = off). */
+        inline bool     on                  = false;                          /*!< Turns iDMRG simulation on/off. */
+        inline size_t   max_iters           = 5000;                           /*!< Maximum number of iDMRG iterations before forced termination */
+        inline long     chi_lim_max         = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline ChiGrow  chi_lim_grow        = ChiGrow::ON_SATURATION;          /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline double   chi_lim_grow_factor = 1.25;                           /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
+        inline long     chi_lim_init        = 16;                             /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
+        inline size_t   print_freq          = 1000;                           /*!< Print frequency for console output. In units of iterations.  (0 = off). */
     }
 
 
@@ -231,21 +230,23 @@ namespace settings {
         inline double   time_step_min         = 0.00001;             /*!< (Absolute value) Minimum and final time step for iTEBD time evolution. */
         inline size_t   suzuki_order          = 1;                   /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long     chi_lim_max           = 8;                   /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_lim_grow          = true;                /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline ChiGrow  chi_lim_grow          = ChiGrow::OFF;        /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline double   chi_lim_grow_factor   = 1.25;                /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     chi_lim_init          = 16;                  /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t   print_freq            = 5000;                /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
     /*! \namespace settings::fdmrg Settings for the finite DMRG algorithm */
     namespace fdmrg {
-        inline bool     on           = false;                        /*!< Turns fdmrg simulation on/off. */
-        inline size_t   max_iters    = 10;                           /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t   min_iters    = 4;                            /*!< Min number of iterations. One iterations moves L steps. */
-        inline long     chi_lim_max  = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_lim_grow = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
-        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool     on                  = false;                        /*!< Turns fdmrg simulation on/off. */
+        inline size_t   max_iters           = 10;                           /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters           = 4;                            /*!< Min number of iterations. One iterations moves L steps. */
+        inline long     chi_lim_max         = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline ChiGrow  chi_lim_grow        = ChiGrow::ON_SATURATION;       /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline double   chi_lim_grow_factor = 1.25;                         /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
+        inline long     chi_lim_init        = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
+        inline size_t   print_freq          = 100;                          /*!< Print frequency for console output. In units of iterations. (0 = off). */
+        inline bool     store_wavefn        = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
 
@@ -255,7 +256,8 @@ namespace settings {
         inline size_t   max_iters               = 10000;                    /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                        /*!< Min number of iterations. One iterations moves L steps. */
         inline long     chi_lim_max             = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_lim_grow            = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline ChiGrow  chi_lim_grow            = ChiGrow::OFF;             /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline double   chi_lim_grow_factor     = 1.25;                     /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     chi_lim_init            = 16;                       /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline double   time_start_real         = 1e-1;                     /*!< Starting time point (real) */
         inline double   time_start_imag         = 0;                        /*!< Starting time point (imag) */
@@ -270,23 +272,24 @@ namespace settings {
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
-        inline bool     on                              = false;            /*!< Turns xDMRG simulation on/off. */
-        inline size_t   max_iters                       = 10;               /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t   min_iters                       = 4;                /*!< Min number of iterations. One iterations moves L steps. */
-        inline size_t   olap_iters                      = 2;                /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
-        inline size_t   vsub_iters                      = 2;                /*!< Number of iterations using the subspace optimization for variance, after overlap iterations */
-        inline long     chi_lim_max                     = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_lim_grow                    = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_lim_init                    = 16;               /*!< Initial chi limit. Used during iter <= 1 or when chi_grow == true, or starting from an entangled state */
-        inline long     chi_lim_olap                    = 16;               /*!< Chi limit during initial OVERLAP|SUBSPACE mode. set to <= 0 for unlimited */
-        inline long     chi_lim_vsub                    = 32;               /*!< Chi limit during initial VARIANCE|SUBSPACE mode. set to <= 0 for unlimited */
-        inline size_t   print_freq                      = 1;                /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline double   energy_density_target           = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double   energy_density_window           = 0.05;             /*!< Accept states inside of energy_tgt_per_site +- energy_dens_window. */
-        inline size_t   max_states                      = 1;                /*!< Max number of random states to find using xDMRG on a single disorder realization */
-        inline bool     store_wavefn                    = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool     finish_if_entanglm_saturated    = true;             /*!< Finish early as soon as entanglement has saturated */
-        inline bool     finish_if_variance_saturated    = false;            /*!< Finish early as soon as energy variance has saturated */
+        inline bool     on                              = false;                  /*!< Turns xDMRG simulation on/off. */
+        inline size_t   max_iters                       = 10;                     /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters                       = 4;                      /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t   olap_iters                      = 2;                      /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
+        inline size_t   vsub_iters                      = 2;                      /*!< Number of iterations using the subspace optimization for variance, after overlap iterations */
+        inline ChiGrow  chi_lim_grow                    = ChiGrow::ON_ITERATION;  /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline double   chi_lim_grow_factor             = 1.25;                   /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
+        inline long     chi_lim_max                     = 16;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline long     chi_lim_init                    = 16;                     /*!< Initial chi limit. Used during iter <= 1 or when chi_grow == true, or starting from an entangled state */
+        inline long     chi_lim_olap                    = 16;                     /*!< Chi limit during initial OVERLAP|SUBSPACE mode. set to <= 0 for unlimited */
+        inline long     chi_lim_vsub                    = 32;                     /*!< Chi limit during initial VARIANCE|SUBSPACE mode. set to <= 0 for unlimited */
+        inline size_t   print_freq                      = 1;                      /*!< Print frequency for console output. In units of iterations. (0 = off). */
+        inline double   energy_density_target           = 0.5;                    /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        inline double   energy_density_window           = 0.05;                   /*!< Accept states inside of energy_tgt_per_site +- energy_dens_window. */
+        inline size_t   max_states                      = 1;                      /*!< Max number of random states to find using xDMRG on a single disorder realization */
+        inline bool     store_wavefn                    = false;                  /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool     finish_if_entanglm_saturated    = true;                   /*!< Finish early as soon as entanglement has saturated */
+        inline bool     finish_if_variance_saturated    = false;                  /*!< Finish early as soon as energy variance has saturated */
 
     }
 }

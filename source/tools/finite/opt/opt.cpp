@@ -1,3 +1,4 @@
+#include "../opt_meta.h"
 #include "../opt_mps.h"
 #include "ceres_base.h"
 #include "ceres_direct_functor.h"
@@ -13,9 +14,7 @@
 #include <tid/tid.h>
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
-
-tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMode optMode,
-                                                                   OptSpace optSpace, OptType optType) {
+tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
     auto    t_opt = tid::tic_scope("opt");
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
                         //                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
@@ -24,15 +23,18 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());
+#pragma message "setting grad max norm in initial_mps. This is highly optional!"
+    initial_mps.set_grad_norm(tools::finite::measure::grad_max_norm(initial_mps.get_tensor(), tensors));
     t_opt.toc(); // The next call to find_excited state opens the "opt" scope again.
-    return find_excited_state(tensors, initial_mps, status, optMode, optSpace, optType);
+    return find_excited_state(tensors, initial_mps, status, meta);
 }
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
-                                                                   OptMode optMode, OptSpace optSpace, OptType optType) {
+                                                                   OptMeta &meta) {
     auto t_opt = tid::tic_scope("opt");
-    tools::log->trace("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2sv(optMode),
-                      enum2sv(optSpace), enum2sv(optType), status.position, tensors.active_sites, tensors.active_problem_dims(), tensors.active_problem_size());
+    tools::log->trace("Starting optimization: mode [{}] | space [{}] | type [{}] | position [{}] | sites {} | shape {} = {}", enum2sv(meta.optMode),
+                      enum2sv(meta.optSpace), enum2sv(meta.optType), status.position, tensors.active_sites, tensors.active_problem_dims(),
+                      tensors.active_problem_size());
 
     using namespace opt::internal;
     static bool googleLogginghasInitialized = false;
@@ -91,19 +93,31 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    ceres_default_options.function_tolerance                         = 1e-7; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-8;
+    ceres_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance                         = 1e-4;
     ceres_default_options.parameter_tolerance                        = 1e-20;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
-        ceres_default_options.function_tolerance                     = 1e-14; // Tested, 1e-6 seems to be a sweetspot
-        ceres_default_options.gradient_tolerance                     = 1e-14;
-        ceres_default_options.max_lbfgs_rank                         = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        ceres_default_options.function_tolerance                     = 1e-8; // Tested, 1e-6 seems to be a sweetspot
+        ceres_default_options.gradient_tolerance                     = 1e-10;
+        ceres_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
+        // Empirically, we observe that the gradient is still large when lbfgs has finished,
+        // and often the result is a tiny bit worse than what we started with.
+        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;
+
     }
 
-
+    /* clang-format off */
+    // Apply overrides if there are any
+    if(meta.ceres_max_num_iterations) ceres_default_options.max_num_iterations                      = meta.ceres_max_num_iterations.value();
+    if(meta.ceres_max_lbfgs_rank)     ceres_default_options.max_lbfgs_rank                          = meta.ceres_max_lbfgs_rank.value();
+    if(meta.ceres_function_tolerance) ceres_default_options.function_tolerance                      = meta.ceres_function_tolerance.value();
+    if(meta.ceres_gradient_tolerance) ceres_default_options.gradient_tolerance                      = meta.ceres_gradient_tolerance.value();
+    if(meta.ceres_eigenvalue_scaling) ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = meta.ceres_eigenvalue_scaling.value();
+    /* clang-format on */
 
     //    Progress log definitions:
     //    f is the value of the objective function.
@@ -119,26 +133,28 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         throw std::runtime_error(fmt::format("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites));
 
     opt_mps result;
-    switch(optSpace) {
+    switch(meta.optSpace) {
         /* clang-format off */
-        case OptSpace::SUBSPACE_ONLY:       result = internal::ceres_subspace_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
-        case OptSpace::SUBSPACE_AND_DIRECT: result = internal::ceres_subspace_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
-        case OptSpace::DIRECT:              result = internal::ceres_direct_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
-        case OptSpace::KRYLOV_ENERGY:       result = internal::krylov_energy_optimization(tensors, initial_mps, status, optType, optMode, optSpace); break;
-        case OptSpace::KRYLOV_VARIANCE:     result = internal::krylov_variance_optimization(tensors,initial_mps, status, optType, optMode, optSpace); break;
+        case OptSpace::SUBSPACE:   result = internal::ceres_subspace_optimization(tensors, initial_mps, status, meta); break;
+        case OptSpace::DIRECT:     result = internal::ceres_direct_optimization(tensors, initial_mps, status, meta); break;
+        case OptSpace::KRYLOV:     result = internal::krylov_optimization(tensors,initial_mps, status, meta); break;
             /* clang-format on */
     }
-    // Finish up and print reports
-    reports::print_bfgs_report();
-    reports::print_time_report();
-    result.set_optspace(optSpace);
-    result.set_optmode(optMode);
+
+    tools::finite::opt::reports::print_krylov_report();
+    tools::finite::opt::reports::print_bfgs_report();
+    tools::finite::opt::reports::print_time_report();
+
+    // Finish up
+    result.set_optspace(meta.optSpace);
+    result.set_optmode(meta.optMode);
+    result.set_optexit(meta.optExit);
     result.validate_result();
     return result;
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const AlgorithmStatus &status, StateRitz ritz) {
-    return internal::ground_state_optimization(tensors, status, ritz);
+tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &conf) {
+    return internal::ground_state_optimization(tensors, status, conf);
 }
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
@@ -204,7 +220,7 @@ template<typename FunctorType>
 tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
     if(not log) log = tools::Logger::setLogger("xDMRG");
     log->set_level(tools::log->level());
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         freq_log_iter = 1;
         freq_log_time = 0;
         init_log_time = 0;
@@ -220,13 +236,15 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                     summary.iteration >= init_log_iter;                                     // when at least init_log_iter have passed
     bool log_time = summary.cumulative_time_in_seconds - last_log_time >= freq_log_time and // log every last_log_time
                     summary.cumulative_time_in_seconds >= init_log_time;                    // when at least init_log_time have passed
-    if(not log_iter and not log_time) return ceres::SOLVER_CONTINUE;
+    if(not log_iter or not log_time) return ceres::SOLVER_CONTINUE;
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: iter {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
-               "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} evals {:>4}/{:<4} "
-               "t_step {:<} t_iter {:<} t_tot {:<} GOp/s {:<4.2f} | energy {:<18.15f} log₁₀var {:<6.6f}"),
+    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
+               "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} ops {:>4}/{:<4} "
+               "t {:<} t_op {:<} Gop/s {:>5.1f} "
+//               "| energy {:<18.15f} log₁₀var {:<6.6f}"
+               ),
                summary.iteration,
                summary.cost,
                summary.cost_change,
@@ -236,13 +254,12 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                std::abs(summary.step_size), // By line search
                functor.get_count() - last_count,
                functor.get_count(),
-               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.step_solver_time_in_seconds * 1000),
-               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.iteration_time_in_seconds * 1000),
                fmt::format(FMT_STRING("{:>5.3f} s"),summary.cumulative_time_in_seconds),
-               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9,
-               functor.get_energy_per_site(),
-               std::log10(functor.get_variance())
-    );
+               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.iteration_time_in_seconds * 1000),
+               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9
+//             ,functor.get_energy_per_site(),
+//               std::log10(functor.get_variance()
+               );
     last_count = functor.get_count();
     /* clang-format on */
     return ceres::SOLVER_CONTINUE;

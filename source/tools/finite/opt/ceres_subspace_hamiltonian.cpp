@@ -17,31 +17,30 @@ using cplx   = std::complex<double>;
 template<typename T>
 using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
-template<typename Scalar>
-void shift_mpo_energy(Eigen::Tensor<Scalar, 4> &mpo, double energy_shift) {
-    tools::log->debug("Setting shift: {:.16f}", energy_shift);
-
-    // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
-    // rank2 matrix, where each element is also a matrix with the size
-    // determined by the last 2 indices kl.
-    // When we shift an MPO, all we do is subtract a diagonal matrix from
-    // the botton left corner of the ij-matrix.
-    // Setup extents and handy objects
-    auto                                       shape = mpo.dimensions();
-    std::array<long, 4>                        offset4{shape[0] - 1, 0, 0, 0};
-    std::array<long, 4>                        extent4{1, 1, shape[2], shape[3]};
-    std::array<long, 2>                        extent2{shape[2], shape[3]};
-    MatrixType<Scalar>                         sigma_Id = energy_shift * MatrixType<Scalar>::Identity(extent2[0], extent2[1]);
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
-    mpo.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
-}
+//template<typename Scalar>
+//void shift_mpo_energy(Eigen::Tensor<Scalar, 4> &mpo, double energy_shift) {
+//    tools::log->debug("ceres::subspace: setting shift: {:.16f}", energy_shift);
+//
+//    // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
+//    // rank2 matrix, where each element is also a matrix with the size
+//    // determined by the last 2 indices kl.
+//    // When we shift an MPO, all we do is subtract a diagonal matrix from
+//    // the botton left corner of the ij-matrix.
+//    // Setup extents and handy objects
+//    auto                                       shape = mpo.dimensions();
+//    std::array<long, 4>                        offset4{shape[0] - 1, 0, 0, 0};
+//    std::array<long, 4>                        extent4{1, 1, shape[2], shape[3]};
+//    std::array<long, 2>                        extent2{shape[2], shape[3]};
+//    MatrixType<Scalar>                         sigma_Id = energy_shift * MatrixType<Scalar>::Identity(extent2[0], extent2[1]);
+//    Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
+//    mpo.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
+//}
 
 template<typename T>
-MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges, double energy_shift) {
+MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges) {
     auto        t_ham = tid::tic_scope("ham");
     const auto &env   = edges.get_multisite_ene_blk();
     auto        mpo   = model.get_multisite_mpo();
-    if(energy_shift != 0.0) shift_mpo_energy(mpo, energy_shift);
     tools::log->trace("Contracting multisite hamiltonian");
 
     long                                   dim0 = mpo.dimension(2);
@@ -78,10 +77,8 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(con
         return ham_map;
     }
 }
-template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                         double energy_shift);
-template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                         double energy_shift);
+template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges);
+template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges);
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix(const ModelFinite &model, const EdgesFinite &edges) {
@@ -129,7 +126,7 @@ template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonia
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                              const std::vector<opt_mps> &candidate_list, double energy_shift) {
+                                                                                              const std::vector<opt_mps> &candidate_list) {
     // First, make sure every candidate is actually a basis vector, otherwise this computation would turn difficult if we have to skip rows and columns
     auto t_ham = tid::tic_scope("ham²_sub");
     for(const auto &candidate : candidate_list)
@@ -139,7 +136,6 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 
     const auto &env2 = edges.get_multisite_var_blk();
     auto        mpo2 = model.get_multisite_mpo_squared();
-    if(energy_shift != 0.0 and not model.is_compressed_mpo_squared()) shift_mpo_energy(mpo2, energy_shift);
 
     tools::log->trace("Contracting subspace hamiltonian squared new");
     long dim0   = mpo2.dimension(2);
@@ -169,8 +165,6 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 
 // Explicit instantiations
 template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                                          const std::vector<opt_mps> &candidate_list,
-                                                                                                          double                      energy_shift);
+                                                                                                          const std::vector<opt_mps> &candidate_list);
 template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                                          const std::vector<opt_mps> &candidate_list,
-                                                                                                          double                      energy_shift);
+                                                                                                          const std::vector<opt_mps> &candidate_list);

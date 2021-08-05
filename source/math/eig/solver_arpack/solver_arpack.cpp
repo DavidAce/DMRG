@@ -1,14 +1,41 @@
+
+/*
+ * Eigen defines its own "extern C" blas and lapack symbols when it is configured to use BLAS/LAPACK
+ * In this translation unit Eigen is only used as a handy container, so disabling the use
+ * of BLAS/LAPACK for eigen subroutines has no impact on performance. *
+ */
+#ifdef EIGEN_USE_BLAS
+    #undef EIGEN_USE_BLAS
+#endif
+#ifdef EIGEN_USE_LAPACKE
+    #undef EIGEN_USE_LAPACKE
+#endif
+#ifdef EIGEN_USE_LAPACKE_STRICT
+    #undef EIGEN_USE_LAPACKE_STRICT
+#endif
+#ifdef EIGEN_USE_MKL_ALL
+    #undef EIGEN_USE_MKL_ALL
+#endif
+
 #include "solver_arpack.h"
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
+#include "../matvec/matvec_mpo_eigen.h"
 #include "../matvec/matvec_sparse.h"
 #include <algorithm>
+#include <arpack++/arrseig.h>
 #include <general/sfinae.h>
 #include <tid/tid.h>
+#include <unsupported/Eigen/CXX11/Tensor>
+#include <variant>
 
 #if defined(_MKL_LAPACK_H_)
     #error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+#endif
+
+#if defined(BLAS_H)
+    #error BLAS IS NOT SUPPOSED TO BE DEFINED HERE
 #endif
 
 #if defined(LAPACK_H)
@@ -46,8 +73,11 @@ namespace tc = sfinae;
 using namespace eig;
 
 template<typename MatrixType>
-eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_, Scalar *residual_)
-    : matrix(matrix_), config(config_), result(result_), residual(residual_) {
+eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
+    : matrix(matrix_), config(config_), result(result_) {
+
+    residual = static_cast<Scalar *>(config.residp);
+
     t_tot        = std::make_unique<tid::ur>("total");
     t_mul        = std::make_unique<tid::ur>("matvec");
     t_fnd        = std::make_unique<tid::ur>("find_eigenpair");
@@ -84,7 +114,6 @@ void eig::solver_arpack<MatrixType>::eigs_sym() {
         if(matrix.get_form() != Form::SYMM) throw std::runtime_error("ERROR: matrix not SYMMETRIC");
         ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
                                                config.tol.value(), static_cast<int>(config.maxIter.value()), residual);
-
         find_solution(solver, config.maxNev.value());
         copy_solution(solver);
 
@@ -133,7 +162,6 @@ void eig::solver_arpack<MatrixType>::eigs_nsym_rc() {
         //        if(nev_internal == 1) { nev_internal++; }
         ARrcNonSymStdEig<double> solver(matrix.rows(), nev_internal, config.get_ritz_string().data(), ncv_internal, config.tol.value(),
                                         static_cast<int>(config.maxIter.value()), residual, true);
-
         find_solution_rc(solver);
         copy_solution(solver);
     } else {
@@ -232,6 +260,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.counter       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
+    result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = solver.GetShift();
     result.meta.time_total    = t_tot->get_time();
@@ -293,41 +322,24 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     t_pre_token.toc();
 
     // Generate an Arnoldi basis
-    int step = 0;
-    int nops = 0;
-    int iter = 0;
+    int           step          = 0;
+    int           nops          = 0;
+    int           iter          = 0;
+    static double last_log_time = 0;
+    if(last_log_time > t_tot->get_time()) last_log_time = 0; // If this function has been run before
     while(not solver.ArnoldiBasisFound()) {
         if(step == 0) {
-            bool        iter_lim = not config.iter_ncv_x.empty() and iter >= config.iter_ncv_x.back();
-            bool        time_lim = not config.time_tol_x10.empty() and t_tot->get_time() >= config.time_tol_x10.back();
-            std::string msg;
-            if(time_lim) {
-                // Do this when the iterations are taking a really long time. Remember, the next site may be easier to optimize,
-                // and when we eventually return to this site with updated environments, it may be not be as hard to optimize anymore.
-                auto tol = solver.GetTol();
-                msg.append(fmt::format("| tol {:<.4e} -> {:<.4e}", tol, 1e1 * tol));
-                solver.ChangeTol(1e1 * tol); // Does not restart iterations
-                config.time_tol_x10.pop_back();
-            }
-            if(iter_lim) {
-                // The convergence rate/iteration is seems poor, so we increase ncv and restart the arnoldi iterations
-                auto ncv  = solver.GetNcv();
-                auto ncvx = std::clamp(config.ncv_x_factor * ncv, 2 * solver.GetNev() + 1, std::max(2 * solver.GetNev() + 1, solver.GetN() / 8));
-                msg.append(fmt::format("| ncv {:<4} -> {:<4}", ncv, ncvx));
-                if(ncv != ncvx) solver.ChangeNcv(ncvx); // This will restart the arnoldi iterations
-                config.iter_ncv_x.pop_back();
-            }
-            static double last_log_time = 0;
-            if(last_log_time > t_tot->get_time()) last_log_time = 0; // If this function has been run before
-            auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
-            auto lvl                 = spdlog::level::debug;
-            if(time_since_last_log > 10.0) lvl = spdlog::level::info;
-            if(time_since_last_log > 5.0) {
-                eig::log->log(lvl, FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op {}"), iter, nops, t_tot->get_time(),
-                              t_mul->get_last_interval() / nops * 1000, msg);
-                last_log_time = t_tot->get_time();
+            if(config.log_time_period) {
+                auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
+                if(time_since_last_log > config.log_time_period.value()) {
+                    auto level = eig::log->level();
+                    eig::log->log(level, FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops,
+                                  t_tot->get_time(), t_mul->get_last_interval() / nops * 1000);
+                    last_log_time = t_tot->get_time();
+                }
             }
         }
+
         if(config.maxTime and config.maxTime.value() <= t_tot->get_time()) break;
 
         solver.TakeStep();
@@ -350,8 +362,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         }
     }
 
-    eig::log->debug(FMT_STRING("iter {:<4} | nops {:<5} | time {:8.2f} s | dt {:8.2f} ms | actual iters {}"), iter, nops, t_tot->get_time(),
-                    t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
+    eig::log->info(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), iter, nops,
+                   t_tot->get_time(), t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
     result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
     if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
 
@@ -388,6 +400,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     result.meta.counter       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
+    result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = (config.sigma ? config.sigma.value() : result.meta.sigma); // solver.GetShift() is only for shift-invert
     result.meta.time_total    = t_tot->get_time();
@@ -478,11 +491,43 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
         }
     }
 
+    // Compute residuals
+    if(result.meta.eigvals_found){
+        if(result.meta.eigvecsR_found){
+            compute_residual_norms<eigvec_type, eigval_type, Side::R>();
+
+        }
+        else if(result.meta.eigvecsL_found){
+            compute_residual_norms<eigvec_type, eigval_type, Side::L>();
+        }
+    }
+
     tid::get("arpack") += *t_tot;
     tid::get("arpack.matvec") += *t_mul;
     tid::get("arpack.findeig") += *t_fnd;
     tid::get("arpack.prep") += *t_pre;
 }
+
+
+template<typename MatrixType>
+template<typename eval_t, typename evec_t, Side side>
+void eig::solver_arpack<MatrixType>::compute_residual_norms() {
+    using VType       = Eigen::Matrix<evec_t, Eigen::Dynamic, 1>;
+    if(matrix.get_side() != side) throw std::logic_error("Matrix has different side");
+    auto eigvalsize_t = static_cast<size_t>(result.meta.cols);
+    result.meta.residual_norms.resize(eigvalsize_t);
+    auto &eigvals = result.get_eigvals<eval_t>();
+    auto &eigvecs = result.get_eigvecs<evec_t, side>();
+    for(size_t i = 0; i < eigvalsize_t; i++) {
+        auto eigvec_i   = Eigen::Map<VType>(eigvecs.data() + i * result.meta.cols, result.meta.rows);
+        auto A_eigvec_i = VType(result.meta.rows);
+        matrix.MultAx(eigvec_i.data(), A_eigvec_i.data());
+        result.meta.residual_norms.at(i) = (A_eigvec_i - eigvec_i * eigvals.at(i)).norm();
+    }
+}
+
+
+
 
 template class eig::solver_arpack<MatVecDense<real>>;
 template class eig::solver_arpack<MatVecDense<cplx>>;
@@ -490,3 +535,5 @@ template class eig::solver_arpack<MatVecSparse<real>>;
 template class eig::solver_arpack<MatVecSparse<cplx>>;
 template class eig::solver_arpack<MatVecMPO<real>>;
 template class eig::solver_arpack<MatVecMPO<cplx>>;
+template class eig::solver_arpack<MatVecMPOEigen<real>>;
+template class eig::solver_arpack<MatVecMPOEigen<cplx>>;

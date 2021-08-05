@@ -2,13 +2,20 @@
 #include "log.h"
 #include "matvec/matvec_dense.h"
 #include "matvec/matvec_mpo.h"
+#include "matvec/matvec_mpo_eigen.h"
 #include "matvec/matvec_sparse.h"
 #include "solver_arpack/solver_arpack.h"
 #include <tid/tid.h>
 
-eig::solver::solver() { eig::setLevel(spdlog::level::info); }
+eig::solver::solver() {
+    eig::setLevel(spdlog::level::info);
+    eig::setTimeStamp();
+}
 
-eig::solver::solver(size_t logLevel) : solver() { eig::setLevel(logLevel); }
+eig::solver::solver(size_t logLevel) : solver() {
+    eig::setLevel(logLevel);
+    eig::setTimeStamp();
+}
 void eig::solver::setLogLevel(size_t level) const { eig::setLevel(level); }
 
 template<typename Scalar>
@@ -92,8 +99,9 @@ template void eig::solver::eig<eig::Form::NSYM>(const real *matrix, size_type, V
 template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, Vecs, Dephase);
 template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);
 
+template<typename Scalar>
 void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
-                            Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, Lib lib) {
+                            Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual, Lib lib) {
     eig::log->trace("eigs init");
     result.reset();
     /* clang-format off */
@@ -116,6 +124,8 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(not config.side)            config.side            = side;
     if(not config.storage)         config.storage         = storage;
     if(not config.compress)        config.compress        = false;
+
+    if(config.residp == nullptr) config.residp = residual;
     /* clang-format on */
 
     if(config.maxNev.value() < 1) config.maxNev = 1;
@@ -133,28 +143,101 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(config.shift_invert == Shinv::ON and not config.sigma) throw std::runtime_error("Sigma must be set to use shift-invert mode");
     config.checkRitz();
 
-    if(not config.iter_ncv_x.empty()) // Sort in descending order
-        std::sort(config.iter_ncv_x.begin(), config.iter_ncv_x.end(), std::greater<>());
-    if(not config.time_tol_x10.empty()) // Sort in descending order
-        std::sort(config.time_tol_x10.begin(), config.time_tol_x10.end(), std::greater<>());
+    if(not config.log_time_period) {
+        if(eig::log->level() == spdlog::level::trace) config.log_time_period = 0.0;
+        if(eig::log->level() == spdlog::level::debug) config.log_time_period = 1.0;
+        if(eig::log->level() == spdlog::level::info) config.log_time_period = 5.0;
+        if(eig::log->level() >= spdlog::level::warn) config.log_time_period = 60.0;
+    }
+
+//    if(not config.iter_ncv_x.empty()) // Sort in descending order
+//        std::sort(config.iter_ncv_x.begin(), config.iter_ncv_x.end(), std::greater<>());
+//    if(not config.time_tol_x10.empty()) // Sort in descending order
+//        std::sort(config.time_tol_x10.begin(), config.time_tol_x10.end(), std::greater<>());
 }
+template void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
+                                     Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, real *residual, Lib lib);
+template void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
+                                     Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, cplx *residual, Lib lib);
+
+template<typename MatrixProductType>
+void eig::solver::set_default_config(const MatrixProductType &matrix) {
+    eig::log->trace("eigs init");
+    /* clang-format off */
+
+    if(not config.lib) config.lib = eig::Lib::ARPACK;
+
+    // Precision settings which are overridden manually
+    if(not config.tol) config.tol = 1e-12;
+    if(not config.maxIter) config.maxIter = 2000;
+
+    // Other settings that we pass on each invocation of eigs
+    if(not config.compute_eigvecs) config.compute_eigvecs = eig::Vecs::OFF;
+    if(not config.remove_phase)    config.remove_phase    = eig::Dephase::OFF;
+    if(not config.maxNev)          config.maxNev          = 1;
+    if(not config.maxNcv)          config.maxNcv          = -1;
+    if(not config.sigma)           config.sigma           = std::nullopt;
+    if(not config.shift_invert)    config.shift_invert    = Shinv::OFF;
+    if(not config.type)            config.type            = matrix.get_type();
+    if(not config.form)            config.form            = matrix.get_form();
+    if(not config.side)            config.side            = matrix.get_side();
+    if(not config.ritz)            config.ritz            = eig::Ritz::LM;
+    if(not config.storage)         config.storage         = MatrixProductType::storage;
+    if(not config.compress)        config.compress        = false;
+
+    /* clang-format on */
+
+    if(config.maxNev.value() < 1) config.maxNev = 1;
+    if(config.form == Form::NSYM) {
+        if(config.maxNev.value() == 1) { config.maxNev = 2; }
+    }
+    // If ncv < nev we should set a new one as recommended
+    if(config.maxNcv.value() <= config.maxNev.value())
+        config.maxNcv = std::clamp<long>(2l * config.maxNev.value() + 1, config.maxNev.value() + 1, matrix.rows());
+    // Make sure ncv is valid
+    config.maxNcv = std::clamp<long>(config.maxNcv.value(), config.maxNev.value() + 1, matrix.rows());
+
+
+    if(config.maxNcv.value() > matrix.rows()) throw std::logic_error("ncv > L");
+    if(config.maxNev.value() > matrix.rows()) throw std::logic_error("nev > L");
+    if(config.maxNcv.value() <= config.maxNev.value()) throw std::logic_error("ncv <= nev");
+
+    if(config.shift_invert == Shinv::ON and not config.sigma) throw std::runtime_error("Sigma must be set to use shift-invert mode");
+    config.checkRitz();
+
+    if(not config.log_time_period) {
+        if(eig::log->level() == spdlog::level::trace) config.log_time_period = 0.0;
+        if(eig::log->level() == spdlog::level::debug) config.log_time_period = 1.0;
+        if(eig::log->level() == spdlog::level::info) config.log_time_period = 5.0;
+        if(eig::log->level() >= spdlog::level::warn) config.log_time_period = 60.0;
+    }
+
+//    if(not config.iter_ncv_x.empty()) // Sort in descending order
+//        std::sort(config.iter_ncv_x.begin(), config.iter_ncv_x.end(), std::greater<>());
+//    if(not config.time_tol_x10.empty()) // Sort in descending order
+//        std::sort(config.time_tol_x10.begin(), config.time_tol_x10.end(), std::greater<>());
+}
+
+template void eig::solver::set_default_config(const MatVecDense<eig::real> &matrix);
+template void eig::solver::set_default_config(const MatVecDense<eig::cplx> &matrix);
+template void eig::solver::set_default_config(const MatVecSparse<eig::real> &matrix);
+template void eig::solver::set_default_config(const MatVecSparse<eig::cplx> &matrix);
+template void eig::solver::set_default_config(const MatVecMPO<eig::real> &matrix);
+template void eig::solver::set_default_config(const MatVecMPO<eig::cplx> &matrix);
+template void eig::solver::set_default_config(const MatVecMPOEigen<eig::real> &matrix);
+template void eig::solver::set_default_config(const MatVecMPOEigen<eig::cplx> &matrix);
 
 template<typename Scalar, eig::Storage storage>
 void eig::solver::eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma,
                        Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual) {
-    auto t_eig   = tid::tic_scope("eig");
-    bool is_cplx = std::is_same<std::complex<double>, Scalar>::value;
-    Type type    = is_cplx ? Type::CPLX : Type::REAL;
-    eigs_init(L, nev, ncv, ritz, form, type, side, sigma, shift_invert, storage, compute_eigvecs, remove_phase);
-
+    auto t_eig = tid::tic_scope("eig");
+    static_assert(storage != Storage::TENSOR and "Can't build MatVecMPO from a pointer");
     if constexpr(storage == Storage::DENSE) {
-        auto                               matrix_dense = MatVecDense<Scalar>(matrix, L, true);
-        solver_arpack<MatVecDense<Scalar>> solver(matrix_dense, config, result, residual);
-        solver.eigs();
+        auto matrix_dense = MatVecDense<Scalar>(matrix, L, true, form, side);
+        eigs(matrix_dense, nev, ncv, ritz, form, side, sigma, shift_invert, compute_eigvecs, remove_phase, residual);
     } else if constexpr(storage == Storage::SPARSE) {
-        auto                                       matrix_sparse = MatVecSparse<Scalar, false>(matrix, L, true);
-        solver_arpack<MatVecSparse<Scalar, false>> solver(matrix_sparse, config, result, residual);
-        solver.eigs();
+        auto matrix_sparse = MatVecSparse<Scalar, false>(matrix, L, true);
+        eigs(matrix_sparse, nev, ncv, ritz, form, side, sigma, shift_invert, compute_eigvecs, remove_phase, residual);
     }
 }
 
@@ -176,10 +259,10 @@ void eig::solver::eigs(MatrixProductType &matrix, size_type nev, size_type ncv, 
         type = Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");
-    eigs_init(matrix.rows(), nev, ncv, ritz, form, type, side, sigma, shift_invert, matrix.storage, compute_eigvecs, remove_phase);
+    eigs_init(matrix.rows(), nev, ncv, ritz, form, type, side, sigma, shift_invert, matrix.storage, compute_eigvecs, remove_phase, residual);
     switch(config.lib.value()) {
         case Lib::ARPACK: {
-            solver_arpack<MatrixProductType> solver(matrix, config, result, residual);
+            solver_arpack<MatrixProductType> solver(matrix, config, result);
             solver.eigs();
             break;
         }
@@ -207,3 +290,36 @@ template void eig::solver::eigs(MatVecMPO<eig::real> &matrix, size_type nev, siz
 
 template void eig::solver::eigs(MatVecMPO<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
                                 Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
+
+template void eig::solver::eigs(MatVecMPOEigen<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
+    Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
+
+template void eig::solver::eigs(MatVecMPOEigen<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
+    Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
+
+template<typename MatrixProductType>
+void eig::solver::eigs(MatrixProductType &matrix) {
+    auto t_eig = tid::tic_scope("eig");
+    result.reset();
+    set_default_config(matrix);
+    switch(config.lib.value()) {
+        case Lib::ARPACK: {
+            solver_arpack<MatrixProductType> solver(matrix, config, result);
+            solver.eigs();
+            break;
+        }
+        case Lib::PRIMME: {
+            eigs_primme(matrix);
+            break;
+        }
+    }
+}
+
+template void eig::solver::eigs(MatVecDense<eig::real> &matrix);
+template void eig::solver::eigs(MatVecDense<eig::cplx> &matrix);
+template void eig::solver::eigs(MatVecSparse<eig::real> &matrix);
+template void eig::solver::eigs(MatVecSparse<eig::cplx> &matrix);
+template void eig::solver::eigs(MatVecMPO<eig::real> &matrix);
+template void eig::solver::eigs(MatVecMPO<eig::cplx> &matrix);
+template void eig::solver::eigs(MatVecMPOEigen<eig::real> &matrix);
+template void eig::solver::eigs(MatVecMPOEigen<eig::cplx> &matrix);

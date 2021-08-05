@@ -36,12 +36,13 @@ class MatVecMPO {
     eig::Side side = eig::Side::R;
 
     // Shift and shift-invert mode stuff
-    std::complex<double> sigma         = 0.0;   // The real part of the shift
+    std::complex<double> sigma         = 0.0;   // The shift
     bool                 readyShift    = false; // Flag to make sure the shift has occurred
     bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
     public:
+    MatVecMPO() = default;
     MatVecMPO(const Scalar_      *envL_,      /*!< The left block tensor.  */
               const Scalar_      *envR_,      /*!< The right block tensor.  */
               const Scalar_      *mpo_,       /*!< The Hamiltonian MPO's  */
@@ -66,8 +67,9 @@ class MatVecMPO {
     void set_mode(eig::Form form_);
     void set_side(eig::Side side_);
 
-    [[nodiscard]] const eig::Form &get_form() const;
-    [[nodiscard]] const eig::Side &get_side() const;
+    [[nodiscard]] eig::Form get_form() const;
+    [[nodiscard]] eig::Side get_side() const;
+    [[nodiscard]] eig::Type get_type() const;
 
     [[nodiscard]] const Scalar       *get_mpo() const { return mpo; }
     [[nodiscard]] const Scalar       *get_envL() const { return envL; }

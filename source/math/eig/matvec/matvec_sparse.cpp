@@ -285,12 +285,21 @@ void MatVecSparse<Scalar, sparseLU>::set_side(const eig::Side side_) {
     side = side_;
 }
 template<typename Scalar, bool sparseLU>
-const eig::Form &MatVecSparse<Scalar, sparseLU>::get_form() const {
+eig::Form MatVecSparse<Scalar, sparseLU>::get_form() const {
     return form;
 }
 template<typename Scalar, bool sparseLU>
-const eig::Side &MatVecSparse<Scalar, sparseLU>::get_side() const {
+eig::Side MatVecSparse<Scalar, sparseLU>::get_side() const {
     return side;
+}
+template<typename Scalar, bool sparseLU>
+eig::Type MatVecSparse<Scalar, sparseLU>::get_type() const {
+    if constexpr(std::is_same_v<Scalar, eig::real>)
+    return eig::Type::REAL;
+    else if constexpr(std::is_same_v<Scalar, eig::cplx>)
+    return eig::Type::CPLX;
+    else
+        throw std::runtime_error("Unsupported type");
 }
 
 template<typename Scalar, bool sparseLU>
