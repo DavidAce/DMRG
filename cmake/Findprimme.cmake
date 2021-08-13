@@ -1,4 +1,5 @@
-
+unset(PRIMME_LIBRARY)
+unset(PRIMME_LIBRARY CACHE)
 find_library(PRIMME_LIBRARY
         primme
         HINTS ${DMRG_DEPS_INSTALL_DIR}

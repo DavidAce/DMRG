@@ -83,13 +83,13 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         auto var_1         = 1.0 / var_offset / std::log(10);
         grad               = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
-        grad_max_norm = grad.template lpNorm<Eigen::Infinity>();
+        max_grad_norm = grad.template lpNorm<Eigen::Infinity>();
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("log₁₀ variance is invalid");
         tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
-        tools::log->warn("counter         = {}", counter);
+        tools::log->warn("matvecs         = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
@@ -99,7 +99,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         tools::log->warn("energy reduced  = {:.16f}", energy_reduced);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
+        throw std::runtime_error("Direct functor failed at matvecs = " + std::to_string(counter));
     }
 
     counter++;

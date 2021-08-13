@@ -42,7 +42,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     SVD.setSwitchSize(static_cast<int>(switchsize));
     SVD.setThreshold(threshold);
     bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize);
-    svd::log->trace("Running SVD with threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, rank_max.value());
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());

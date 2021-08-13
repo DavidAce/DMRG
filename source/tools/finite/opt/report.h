@@ -11,7 +11,7 @@ namespace tools::finite::opt::reports {
         std::string description;
         long        size, space;
         double      energy, variance, overlap, norm;
-        double      delta_f, grad_max_norm;
+        double      delta_f, max_grad_norm;
         size_t      iter, counter;
         double      time;
     };
@@ -27,7 +27,7 @@ namespace tools::finite::opt::reports {
     struct krylov_entry {
         std::string description;
         std::string ritz;
-        long        size, nev, ncv;
+        long        size, idx, nev, ncv;
         double      energy, eigval, variance, overlap, norm, tol,resid, grad;
         size_t      iter, counter;
         double      time;

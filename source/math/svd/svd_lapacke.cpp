@@ -81,7 +81,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         throw std::runtime_error("SVD error: matrix is all zeros");
     }
 
-    svd::log->trace("Starting SVD with lapacke");
+    svd::log->debug("Starting SVD with lapacke");
 
     int info   = 0;
     int rowsU  = rowsA;

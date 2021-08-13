@@ -291,7 +291,7 @@ std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteri
     auto y            = std::vector<double>(lbit_overlap_log.data(), lbit_overlap_log.data() + lbit_overlap_log.size());
     auto x            = num::range<double>(0, y.size());
     auto v            = stat::find_last_valid_point(y);
-    auto c            = std::count_if(y.begin(), y.begin() + v, [](auto &val) { return val > -12.0; });
+    auto c            = std::count_if(y.begin(), y.begin() + static_cast<long>(v), [](auto &val) { return val > -12.0; });
     auto [slope, res] = stat::slope(x, y, 0, c);
     //    tools::log->debug("lbit overlap : \n{}", linalg::tensor::to_string(lbit_overlap.real(), 6));
     //    tools::log->debug("lbit permuted: \n{}", linalg::tensor::to_string(lbit_overlap_permuted, 6));

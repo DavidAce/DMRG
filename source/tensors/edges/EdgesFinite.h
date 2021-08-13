@@ -35,14 +35,14 @@ class EdgesFinite {
 
     void initialize(size_t model_size);
 
-    [[nodiscard]] const EnvEne &get_eneL(size_t pos) const;
-    [[nodiscard]] const EnvEne &get_eneR(size_t pos) const;
-    [[nodiscard]] const EnvVar &get_varL(size_t pos) const;
-    [[nodiscard]] const EnvVar &get_varR(size_t pos) const;
-    [[nodiscard]] EnvEne       &get_eneL(size_t pos);
-    [[nodiscard]] EnvVar       &get_varR(size_t pos);
-    [[nodiscard]] EnvVar       &get_varL(size_t pos);
-    [[nodiscard]] EnvEne       &get_eneR(size_t pos);
+    [[nodiscard]] const EnvEne &get_env_eneL(size_t pos) const;
+    [[nodiscard]] const EnvEne &get_env_eneR(size_t pos) const;
+    [[nodiscard]] const EnvVar &get_env_varL(size_t pos) const;
+    [[nodiscard]] const EnvVar &get_env_varR(size_t pos) const;
+    [[nodiscard]] EnvEne       &get_env_eneL(size_t pos);
+    [[nodiscard]] EnvVar       &get_env_varR(size_t pos);
+    [[nodiscard]] EnvVar       &get_env_varL(size_t pos);
+    [[nodiscard]] EnvEne       &get_env_eneR(size_t pos);
 
     [[nodiscard]] size_t get_length() const;
     [[nodiscard]] bool   is_real() const;
@@ -57,30 +57,30 @@ class EdgesFinite {
     void eject_edges_all_var();
     void eject_edges_all();
 
-    [[nodiscard]] env_pair<const EnvEne> get_ene(size_t posL, size_t posR) const;
-    [[nodiscard]] env_pair<const EnvVar> get_var(size_t posL, size_t posR) const;
-    [[nodiscard]] env_pair<EnvEne>       get_ene(size_t posL, size_t posR);
-    [[nodiscard]] env_pair<EnvVar>       get_var(size_t posL, size_t posR);
+    [[nodiscard]] env_pair<const EnvEne> get_env_ene(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<const EnvVar> get_env_var(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<EnvEne>       get_env_ene(size_t posL, size_t posR);
+    [[nodiscard]] env_pair<EnvVar>       get_env_var(size_t posL, size_t posR);
 
-    [[nodiscard]] env_pair<const EnvEne> get_ene(size_t pos) const;
-    [[nodiscard]] env_pair<const EnvVar> get_var(size_t pos) const;
-    [[nodiscard]] env_pair<EnvEne>       get_ene(size_t pos);
-    [[nodiscard]] env_pair<EnvVar>       get_var(size_t pos);
+    [[nodiscard]] env_pair<const EnvEne> get_env_ene(size_t pos) const;
+    [[nodiscard]] env_pair<const EnvVar> get_env_var(size_t pos) const;
+    [[nodiscard]] env_pair<EnvEne>       get_env_ene(size_t pos);
+    [[nodiscard]] env_pair<EnvVar>       get_env_var(size_t pos);
 
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_ene_blk(size_t posL, size_t posR) const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_var_blk(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_env_ene_blk(size_t posL, size_t posR) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_env_var_blk(size_t posL, size_t posR) const;
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_ene_blk(size_t posL, size_t posR);
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_var_blk(size_t posL, size_t posR);
 
-    [[nodiscard]] env_pair<const EnvEne> get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<const EnvVar> get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<EnvEne>       get_multisite_ene(std::optional<std::vector<size_t>> sites = std::nullopt);
-    [[nodiscard]] env_pair<EnvVar>       get_multisite_var(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<const EnvEne> get_multisite_env_ene(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const EnvVar> get_multisite_env_var(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<EnvEne>       get_multisite_env_ene(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<EnvVar>       get_multisite_env_var(std::optional<std::vector<size_t>> sites = std::nullopt);
 
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
-    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt) const;
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
+    [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
 
     [[nodiscard]] std::pair<std::vector<size_t>, std::vector<size_t>> get_active_ids() const;
 };

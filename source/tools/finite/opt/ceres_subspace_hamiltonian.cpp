@@ -39,7 +39,7 @@ using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges) {
     auto        t_ham = tid::tic_scope("ham");
-    const auto &env   = edges.get_multisite_ene_blk();
+    const auto &env   = edges.get_multisite_env_ene_blk();
     auto        mpo   = model.get_multisite_mpo();
     tools::log->trace("Contracting multisite hamiltonian");
 
@@ -84,7 +84,7 @@ template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix(const ModelFinite &model, const EdgesFinite &edges) {
     auto        t_ham = tid::tic_scope("ham²");
     const auto &mpo2          = model.get_multisite_mpo_squared();
-    const auto &env2          = edges.get_multisite_var_blk();
+    const auto &env2          = edges.get_multisite_env_var_blk();
     tools::log->trace("Contracting multisite hamiltonian");
 
     long dim0 = mpo2.dimension(2);
@@ -134,7 +134,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
             throw std::runtime_error("One candidate is not a basis vector. When constructing a hamiltonian subspace matrix, make sure the candidates are all "
                                      "eigenvectors/basis vectors");
 
-    const auto &env2 = edges.get_multisite_var_blk();
+    const auto &env2 = edges.get_multisite_env_var_blk();
     auto        mpo2 = model.get_multisite_mpo_squared();
 
     tools::log->trace("Contracting subspace hamiltonian squared new");

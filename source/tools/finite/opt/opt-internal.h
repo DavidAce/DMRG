@@ -58,6 +58,9 @@ namespace tools::finite::opt::internal{
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
         find_subspace_iter(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
 
+        template<typename Scalar>
+        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
+        find_subspace_iter2(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>

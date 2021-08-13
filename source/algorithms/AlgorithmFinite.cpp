@@ -466,6 +466,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         if(tools::log->level() == spdlog::level::debug) {
             tools::log->debug("Energy variance slope details:");
             tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->debug(" -- threshold          = {:7.4e}", threshold.value());
             tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
             tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
             tools::log->debug(" -- converged count    = {} ", status.variance_mpo_converged_for);

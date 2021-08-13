@@ -31,24 +31,32 @@ namespace eig {
         void build_eigvals_real() const;
 
         struct Meta {
-            eig::size_type       rows           = 0;
-            eig::size_type       cols           = 0;
-            eig::size_type       iter           = 0;
-            eig::size_type       nev            = 0; // Requested eigenvectors. aka cols
-            eig::size_type       nev_converged  = 0; // Converged eigenvectors
-            eig::size_type       n              = 0; // Linear dimension of the input matrix to diagonalize, aka rows.
-            eig::size_type       ncv            = 0;
-            double               tol            = 0;
-            int                  counter        = 0;
-            double               time_total     = 0;
-            double               time_matprod   = 0;
-            double               time_prep      = 0;
-            bool                 eigvals_found  = false;
-            bool                 eigvecsR_found = false;
-            bool                 eigvecsL_found = false;
-            bool                 arnoldi_found  = false;
-            double               residual_norm  = 0;
-            std::vector<double>  residual_norms = {};
+            eig::size_type rows           = 0;
+            eig::size_type cols           = 0;
+            eig::size_type iter           = 0;
+            eig::size_type nev            = 0; // Requested eigenvectors. aka cols
+            eig::size_type nev_converged  = 0; // Converged eigenvectors
+            eig::size_type n              = 0; // Linear dimension of the input matrix to diagonalize, aka rows.
+            eig::size_type ncv            = 0;
+            double         tol            = 0;
+            int            matvecs        = 0;
+            double         time_total     = 0;
+            double         time_matprod   = 0;
+            double         time_prep      = 0;
+            bool           eigvals_found  = false;
+            bool           eigvecsR_found = false;
+            bool           eigvecsL_found = false;
+            bool           arnoldi_found  = false;
+
+            std::vector<double> residual_norms = {}; /*!< For each eigenpair, stores the norm of its residual vector (Ax - λx) */
+
+            double last_res_norm  = std::numeric_limits<double>::quiet_NaN();
+            double last_grad_max  = std::numeric_limits<double>::quiet_NaN();
+            long   last_iter_grad = 0;
+            double last_time_grad = 0;
+            long   last_iter_log  = 0;
+            double last_time_log  = 0;
+
             Form                 form;
             Type                 type;
             std::string          tag;
@@ -94,8 +102,7 @@ namespace eig {
             if constexpr(form == Form::NSYM) { return get_eigvals<cplx>(); }
         }
 
-        const std::vector<double> & get_resnorms() const;
-
+        const std::vector<double> &get_resnorms() const;
 
         void reset();
 

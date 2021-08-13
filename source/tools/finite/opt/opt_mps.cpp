@@ -110,9 +110,9 @@ double opt_mps::get_delta_f() const {
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-double opt_mps::get_grad_norm() const {
-    if(grad_norm)
-        return grad_norm.value();
+double opt_mps::get_max_grad() const {
+    if(max_grad)
+        return max_grad.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
@@ -122,6 +122,13 @@ double opt_mps::get_relchange() const {
         return relchange.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
+}
+
+long opt_mps::get_krylov_idx() const {
+    if(krylov_idx)
+        return krylov_idx.value();
+    else
+        return -1;
 }
 
 long opt_mps::get_krylov_nev() const {
@@ -265,8 +272,9 @@ void opt_mps::set_iter(size_t iter_) { iter = iter_; }
 void opt_mps::set_counter(size_t counter_) { counter = counter_; }
 void opt_mps::set_time(double time_) { time = time_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
-void opt_mps::set_grad_norm(double grad_norm_) { grad_norm = grad_norm_; }
+void opt_mps::set_max_grad(double grad_norm_) { max_grad = grad_norm_; }
 void opt_mps::set_relchange(double relative_change_) { relchange = relative_change_; }
+void opt_mps::set_krylov_idx(long idx_) { krylov_idx = idx_; }
 void opt_mps::set_krylov_nev(long nev_) { krylov_nev = nev_; }
 void opt_mps::set_krylov_ncv(long ncv_) { krylov_ncv = ncv_; }
 void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
@@ -307,7 +315,7 @@ void opt_mps::validate_candidate() const {
     if(not norm)     error_msg.append("\t norm    \n");
     if(not length)   error_msg.append("\t length  \n");
     if(not iter)     error_msg.append("\t iter    \n");
-    if(not counter)  error_msg.append("\t counter \n");
+    if(not counter)  error_msg.append("\t matvecs \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
         if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");
@@ -330,7 +338,7 @@ void opt_mps::validate_result() const {
     if(not norm)     error_msg.append("\t norm    \n");
     if(not length)   error_msg.append("\t length  \n");
     if(not iter)     error_msg.append("\t iter    \n");
-    if(not counter)  error_msg.append("\t counter \n");
+    if(not counter)  error_msg.append("\t matvecs \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
         if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");

@@ -7,7 +7,7 @@ namespace tid {
     class ur;
 }
 
-class primme_params;
+struct primme_params;
 
 template<typename Scalar_, bool sparseLU = false>
 class MatVecSparse {

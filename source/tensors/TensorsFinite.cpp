@@ -93,8 +93,12 @@ const Eigen::Tensor<TensorsFinite::Scalar, 4> &TensorsFinite::get_multisite_mpo(
 
 const Eigen::Tensor<TensorsFinite::Scalar, 4> &TensorsFinite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
 
-env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_ene_blk() const { return std::as_const(*edges).get_multisite_ene_blk(); }
-env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_var_blk() const { return std::as_const(*edges).get_multisite_var_blk(); }
+env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_env_ene_blk() const {
+    return std::as_const(*edges).get_multisite_env_ene_blk();
+}
+env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multisite_env_var_blk() const {
+    return std::as_const(*edges).get_multisite_env_var_blk();
+}
 
 StateFinite TensorsFinite::get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim,
                                                                  std::optional<svd::settings> svd_settings) {

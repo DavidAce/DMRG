@@ -12,6 +12,7 @@ class MpoSite;
 class AlgorithmStatus;
 struct tensors_measure_finite;
 namespace tools::finite::measure{
+    using real = double;
     using cplx = std::complex<double>;
     extern void do_all_measurements(const TensorsFinite & tensors);
     extern void do_all_measurements(const StateFinite & state);
@@ -82,7 +83,24 @@ namespace tools::finite::measure{
     [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors);
     [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum);
 
-    [[nodiscard]] extern double grad_max_norm               (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double max_grad_norm               (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
+
+    template<typename Scalar>
+    [[nodiscard]] extern double max_grad_norm               (const Eigen::Tensor<Scalar, 3> &mps,
+                                                             const Eigen::Tensor<Scalar, 4> &mpo1,
+                                                             const Eigen::Tensor<Scalar, 3> &en1L,
+                                                             const Eigen::Tensor<Scalar, 3> &en1R,
+                                                             const Eigen::Tensor<Scalar, 4> &mpo2,
+                                                             const Eigen::Tensor<Scalar, 3> &en2L,
+                                                             const Eigen::Tensor<Scalar, 3> &en2R);
+
+    template<typename Scalar>
+    [[nodiscard]] extern double max_grad_norm               (const Eigen::Tensor<Scalar, 3> &mps,
+                                                             const Eigen::Tensor<Scalar, 4> &mpo2,
+                                                             const Eigen::Tensor<Scalar, 3> &en2L,
+                                                             const Eigen::Tensor<Scalar, 3> &en2R);
+
+
 
 }
 

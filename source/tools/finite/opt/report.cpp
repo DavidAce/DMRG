@@ -20,7 +20,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "iter",
                       "ops",
                       "|Δf|",
-                      "|∇f|∞",
+                      "∇fₘₐₓ",
                       "time [ms]",
                       "avg [ms/op]");
     for(auto &entry : bfgs_log){
@@ -30,7 +30,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
         std::log10(entry.variance),
         entry.overlap,entry.norm,
         entry.iter, entry.counter,
-        entry.delta_f, entry.grad_max_norm,
+        entry.delta_f, entry.max_grad_norm,
         entry.time*1000,
         entry.time*1000.0/std::max(1.0,static_cast<double>(entry.counter)));
     }
@@ -100,30 +100,31 @@ void tools::finite::opt::reports::print_time_report(){
 void tools::finite::opt::reports::print_krylov_report(std::optional<size_t> max_entries){
     if (tools::log->level() > spdlog::level::debug) return;
     if (krylov_log.empty()) return;
-    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<8} {:<8} {:<8} {:<22} {:<22} {:<12} {:<18} {:<18} {:<5} {:<7} {:<12} {:<12}"),
+    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<8} {:<22} {:<22} {:<12} {:<18} {:<18} {:<5} {:<7} {:<12} {:<12}"),
                       "Optimization report",
                       "size",
                       "ritz",
+                      "idx",
                       "nev",
                       "ncv",
                       "tol",
                       "res",
-                      "|∇f|∞",
+                      "∇fₘₐₓ",
                       "energy/L",
                       "eigval",
                       "log₁₀ var", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
                       "iter",
-                      "counter",
+                      "matvecs",
                       "time [ms]",
                       "avg [ms/op]");
 
     for(const auto &[idx,entry] : iter::enumerate(krylov_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<22.15f} {:<22.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<12.1f} {:<12.3f}"),
+        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<22.15f} {:<22.15f} {:<12.8f} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<12.1f} {:<12.3f}"),
                           entry.description,
-                          entry.size, entry.ritz,entry.nev, entry.ncv, entry.tol, entry.resid, entry.grad,
+                          entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.resid, entry.grad,
                           entry.energy,entry.eigval,
                           std::log10(entry.variance),
                           entry.overlap,entry.norm,
@@ -145,7 +146,7 @@ void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::str
     if(not space) space = mps.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
     bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy_per_site(), mps.get_variance(), mps.get_overlap(),
-                                  mps.get_norm(), mps.get_delta_f(), mps.get_grad_norm(), mps.get_iter(), mps.get_counter(), mps.get_time()});
+                                  mps.get_norm(), mps.get_delta_f(), mps.get_max_grad(), mps.get_iter(), mps.get_counter(), mps.get_time()});
 }
 
 void tools::finite::opt::reports::time_add_opt_entry() {
@@ -162,8 +163,8 @@ void tools::finite::opt::reports::eigs_add_entry(long nev, double max_olap, doub
 
 void tools::finite::opt::reports::krylov_add_entry(const opt_mps &mps) {
     if(tools::log->level() > spdlog::level::debug) return;
-    std::string description = fmt::format("{:<8} {:<24}", "krylov", mps.get_name());
-    krylov_log.push_back(krylov_entry{description, std::string(mps.get_krylov_ritz()), mps.get_tensor().size(), mps.get_krylov_nev(), mps.get_krylov_ncv(),
+    std::string description = fmt::format("krylov {:<24}", mps.get_name());
+    krylov_log.push_back(krylov_entry{description, std::string(mps.get_krylov_ritz()), mps.get_tensor().size(), mps.get_krylov_idx(), mps.get_krylov_nev(), mps.get_krylov_ncv(),
                                       mps.get_energy_per_site(), mps.get_krylov_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                      mps.get_krylov_tol(), mps.get_krylov_resid(), mps.get_grad_norm(), mps.get_iter(), mps.get_counter(), mps.get_time()});
+                                      mps.get_krylov_tol(), mps.get_krylov_resid(), mps.get_max_grad(), mps.get_iter(), mps.get_counter(), mps.get_time()});
 }

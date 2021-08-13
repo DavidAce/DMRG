@@ -45,8 +45,8 @@ class TensorsFinite {
     [[nodiscard]] const Eigen::Tensor<Scalar, 3>          &get_multisite_mps() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4>          &get_multisite_mpo() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4>          &get_multisite_mpo_squared() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_var_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_var_blk() const;
 
     [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim = std::nullopt,
                                                                     std::optional<svd::settings> svd_settings = std::nullopt);

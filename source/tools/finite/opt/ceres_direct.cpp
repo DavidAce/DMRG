@@ -64,7 +64,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             // Copy the results from the functor
             optimized_mps.set_counter(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_grad_norm(functor->get_grad_max_norm());
+            optimized_mps.set_max_grad(functor->get_max_grad_norm());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
             tid::get("vH") += *functor->t_Hn;
@@ -90,7 +90,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             // Copy the results from the functor
             optimized_mps.set_counter(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_grad_norm(functor->get_grad_max_norm());
+            optimized_mps.set_max_grad(functor->get_max_grad_norm());
             optimized_mps.set_tensor_real(initial_state_real.data(), initial_mps.get_tensor().dimensions());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;

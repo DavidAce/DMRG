@@ -70,8 +70,8 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 auto  dimL_old = mpsL.dimensions();
                 auto  dimR_old = mpsR.dimensions();
                 auto &mpoL     = model.get_mpo(posL - 1);
-                auto &eneL     = edges.get_eneL(posL - 1);
-                //                auto &varL     = edges.get_varL(posL - 1);
+                auto &eneL     = edges.get_env_eneL(posL - 1);
+                //                auto &varL     = edges.get_env_varL(posL - 1);
 
                 mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
                 //                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
@@ -150,8 +150,8 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 auto  dimR_old = mpsR.dimensions();
                 auto  dimL_old = mpsL.dimensions();
                 auto &mpoR     = model.get_mpo(posR + 1);
-                auto &eneR     = edges.get_eneR(posR + 1);
-                //                auto &varR     = edges.get_varR(posR + 1);
+                auto &eneR     = edges.get_env_eneR(posR + 1);
+                //                auto &varR     = edges.get_env_varR(posR + 1);
 
                 mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
                 //                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
@@ -240,22 +240,22 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
 
     tools::log->trace("Asserting edges eneL from [{} to {}]", min_pos, posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
-        auto &ene = edges.get_eneL(pos);
+        auto &ene = edges.get_env_eneL(pos);
         if(pos == 0 and not ene.has_block()) throw std::runtime_error(fmt::format("ene L at pos {} does not have a block", pos));
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
-        auto &ene_next = edges.get_eneL(pos + 1);
+        auto &ene_next = edges.get_env_eneL(pos + 1);
         ene_next.assert_unique_id(ene, mps, mpo);
     }
     tools::log->trace("Asserting edges eneR from [{} to {}]", posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
-        auto &ene = edges.get_eneR(pos);
+        auto &ene = edges.get_env_eneR(pos);
         if(pos == state.get_length() - 1 and not ene.has_block()) throw std::runtime_error(fmt::format("ene R at pos {} does not have a block", pos));
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
-        auto &ene_prev = edges.get_eneR(pos - 1);
+        auto &ene_prev = edges.get_env_eneR(pos - 1);
         ene_prev.assert_unique_id(ene, mps, mpo);
     }
 }
@@ -275,22 +275,22 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
     }
     tools::log->trace("Asserting edges varL from [{} to {}]", min_pos, posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
-        auto &var = edges.get_varL(pos);
+        auto &var = edges.get_env_varL(pos);
         if(pos == 0 and not var.has_block()) throw std::runtime_error(fmt::format("var L at pos {} does not have a block", pos));
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
-        auto &var_next = edges.get_varL(pos + 1);
+        auto &var_next = edges.get_env_varL(pos + 1);
         var_next.assert_unique_id(var, mps, mpo);
     }
     tools::log->trace("Asserting edges varR from [{} to {}]", posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
-        auto &var = edges.get_varR(pos);
+        auto &var = edges.get_env_varR(pos);
         if(pos == state.get_length() - 1 and not var.has_block()) throw std::runtime_error(fmt::format("var R at pos {} does not have a block", pos));
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
-        auto &var_prev = edges.get_varR(pos - 1);
+        auto &var_prev = edges.get_env_varR(pos - 1);
         var_prev.assert_unique_id(var, mps, mpo);
     }
 }
@@ -323,14 +323,14 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     tools::log->trace("Inspecting edges eneL from [{} to {}]", min_pos, posL_active);
     std::vector<size_t> ene_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
-        auto &ene_curr = edges.get_eneL(pos);
+        auto &ene_curr = edges.get_env_eneL(pos);
         if(pos == 0 and not ene_curr.has_block()) {
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
             if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
-        auto &ene_next = edges.get_eneL(pos + 1);
+        auto &ene_next = edges.get_env_eneL(pos + 1);
         auto  id       = ene_next.get_unique_id();
         ene_next.refresh(ene_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != ene_next.get_unique_id()) ene_pos_log.emplace_back(ene_next.get_position());
@@ -339,22 +339,22 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     ene_pos_log.clear();
     tools::log->trace("Inspecting edges eneR from [{} to {}]", posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
-        auto &ene_curr = edges.get_eneR(pos);
+        auto &ene_curr = edges.get_env_eneR(pos);
         if(pos == state.get_length() - 1 and not ene_curr.has_block()) {
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
             if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active, 0ul)) continue;
-        auto &ene_prev = edges.get_eneR(pos - 1);
+        auto &ene_prev = edges.get_env_eneR(pos - 1);
         auto  id       = ene_prev.get_unique_id();
         ene_prev.refresh(ene_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != ene_prev.get_unique_id()) ene_pos_log.emplace_back(ene_prev.get_position());
     }
     std::reverse(ene_pos_log.begin(), ene_pos_log.end());
     if(not ene_pos_log.empty()) tools::log->trace("Rebuilt R ene edges: {}", ene_pos_log);
-    if(not edges.get_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
-    if(not edges.get_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
+    if(not edges.get_env_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
+    if(not edges.get_env_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
 }
 
 void tools::finite::env::rebuild_edges_var(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
@@ -381,14 +381,14 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     tools::log->trace("Inspecting edges varL from [{} to {}]", min_pos, posL_active);
     std::vector<size_t> var_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
-        auto &var_curr = edges.get_varL(pos);
+        auto &var_curr = edges.get_env_varL(pos);
         if(pos == 0 and not var_curr.has_block()) {
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
             if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
-        auto &var_next = edges.get_varL(pos + 1);
+        auto &var_next = edges.get_env_varL(pos + 1);
         auto  id       = var_next.get_unique_id();
         var_next.refresh(var_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != var_next.get_unique_id()) var_pos_log.emplace_back(var_next.get_position());
@@ -398,22 +398,22 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     var_pos_log.clear();
     tools::log->trace("Inspecting edges varR from [{} to {}]", posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
-        auto &var_curr = edges.get_varR(pos);
+        auto &var_curr = edges.get_env_varR(pos);
         if(pos == state.get_length() - 1 and not var_curr.has_block()) {
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
             if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active, 0ul)) continue;
-        auto &var_prev = edges.get_varR(pos - 1);
+        auto &var_prev = edges.get_env_varR(pos - 1);
         auto  id       = var_prev.get_unique_id();
         var_prev.refresh(var_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != var_prev.get_unique_id()) var_pos_log.emplace_back(var_prev.get_position());
     }
     std::reverse(var_pos_log.begin(), var_pos_log.end());
     if(not var_pos_log.empty()) tools::log->trace("Rebuilt R var edges: {}", var_pos_log);
-    if(not edges.get_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
-    if(not edges.get_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
+    if(not edges.get_env_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
+    if(not edges.get_env_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
 }
 
 void tools::finite::env::rebuild_edges(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {

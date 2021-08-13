@@ -374,75 +374,35 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
      *
      *  Second trial
      *
+     *  NOTES
+     *      1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
+     *      2) By default, the result from c1 is used as a starting point for c2.
+     *         However, if you change the number of sites, i.e. c2.max_sites,  then you need to start from scratch with the "current state"
      */
+
     OptConf c2 = c1; // Start with c1 as a baseline
     c2.label   = "c2";
-    // NOTES
-    // 1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
-    // 2)
-    //
-
+    c2.optInit = OptInit::LAST_RESULT;
     if(c1.optSpace == OptSpace::SUBSPACE and c1.optMode == OptMode::VARIANCE) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try direct optimization
         // This usually helps to fine-tune the result from subspace, which may have had low subspace quality.
+        c2.optWhen  = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
         c2.optMode  = OptMode::VARIANCE;
         c2.optSpace = OptSpace::DIRECT;
-        c2.optWhen  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED | OptWhen::PREV_FAIL_NOCHANGE;
         c2.retry    = false;
-        if(c1.max_sites != c2.max_sites or c1.alpha_expansion)
-            c2.optInit = OptInit::CURRENT_STATE;
-        else
-            c2.optInit = OptInit::LAST_RESULT;
         configs.emplace_back(c2);
-        //
-        //        c2.max_sites    = settings::strategy::multisite_mps_size_max;
-        //        c2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c2.max_problem_size, c2.max_sites, c2.min_sites);
-        //        c2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c2.chosen_sites);
-        //        c2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c2.chosen_sites);
-        //        if(c2.chosen_sites != c1.chosen_sites) configs.emplace_back(c2);
     } else if(c1.optSpace == OptSpace::DIRECT) {
-        // If we did a DIRECT optimization that terminated with gradient too high, try optimizing a bit more without eigenvalue scaling.
-        c2.optInit                  = OptInit::LAST_RESULT;
+        // If we did a DIRECT optimization that terminated with gradient too high, try KRYLOV
         c2.optWhen                  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        c2.ceres_eigenvalue_scaling = false;
-        c2.retry                    = true;
+        c2.optSpace                 = OptSpace::KRYLOV;
+        c2.retry                    = false;
         configs.emplace_back(c2);
     } else if(c1.optSpace == OptSpace::KRYLOV) {
-        c2.optInit  = OptInit::CURRENT_STATE;
-        c2.optWhen  = OptWhen::PREV_FAIL_ERROR | OptWhen::PREV_FAIL_WORSENED;
+        c2.optWhen  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         c2.optMode  = OptMode::VARIANCE;
         c2.optSpace = OptSpace::DIRECT;
-        c2.retry    = true;
+        c2.retry    = false;
         configs.emplace_back(c2);
-    }
-
-    if(not c2.retry) return configs;
-    OptConf c3 = c2; // Start with c2 as a baseline
-    c3.label   = "c3";
-
-    if(c2.optSpace == OptSpace::DIRECT) {
-        // If we did a DIRECT optimization that terminated with gradient too high, try optimizing a bit more without eigenvalue scaling.
-        c3.optInit = OptInit::LAST_RESULT;
-        c3.optWhen = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        c3.retry   = false;
-
-        if(c2.ceres_eigenvalue_scaling.has_value()) {
-            // We already tried DIRECT with modified eigenvalue scaling. Lets try krylov
-            c3.optSpace                 = OptSpace::KRYLOV;
-            c3.ceres_eigenvalue_scaling = std::nullopt;
-
-        } else {
-            // We haven't tried modifying eigenvalue scaling yet.
-            c3.ceres_eigenvalue_scaling = false;
-        }
-
-        configs.emplace_back(c3);
-    } else if(c2.optSpace == OptSpace::KRYLOV) {
-        c3.optInit  = OptInit::CURRENT_STATE;
-        c3.optWhen  = OptWhen::PREV_FAIL_ERROR | OptWhen::PREV_FAIL_WORSENED;
-        c3.optMode  = OptMode::VARIANCE;
-        c3.optSpace = OptSpace::DIRECT;
-        c3.retry    = true;
     }
 
     return configs;
@@ -524,7 +484,7 @@ void xdmrg::single_xDMRG_step() {
 
         /* clang-format off */
         conf.optExit = OptExit::SUCCESS;
-        if(results.back().get_grad_norm() > 1.000 )      conf.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_max_grad() > 1.000 )      conf.optExit |= OptExit::FAIL_GRADIENT;
         if(results.back().get_relchange() > 1.001 )      conf.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999 ) conf.optExit |= OptExit::FAIL_NOCHANGE;
         results.back().set_optexit(conf.optExit);

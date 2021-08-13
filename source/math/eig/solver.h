@@ -3,6 +3,8 @@
 #include "settings.h"
 #include "solution.h"
 
+struct primme_params;
+
 namespace eig {
 
     class solver {
@@ -11,8 +13,8 @@ namespace eig {
         eig::solution result;
 
         solver();
-        explicit solver(size_t logLevel);
-        void setLogLevel(size_t level) const;
+        explicit solver(size_t loglevel);
+        void setLogLevel(size_t loglevel);
         template<typename Scalar>
         void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev);
 
@@ -52,5 +54,15 @@ namespace eig {
 
         template<typename MatrixProductType>
         int eigs_primme(MatrixProductType &matrix);
+
+
+        private:
+        template<typename MatrixProductType>
+        static void MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
+
+        template<typename MatrixProductType>
+        static void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv,
+            struct primme_params *primme, int *ierr);
+
     };
 }

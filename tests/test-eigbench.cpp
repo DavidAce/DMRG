@@ -37,8 +37,8 @@ std::string solve(size_t ncv = 32, size_t maxIter = 30000, std::string_view meth
     solver_primme_sa.eigs(hamiltonian_squared, -1, -1, eig::Ritz::SA, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF,
                           mps.data());
 
-    auto msg = fmt::format("Result: {:<32} | Found {:<5} | iters {:<7} |  counter {:<7} | time {:<13} s | min {:.16f}", method,
-                           solver_primme_sa.result.meta.eigvecsR_found, solver_primme_sa.result.meta.iter, solver_primme_sa.result.meta.counter,
+    auto msg = fmt::format("Result: {:<32} | Found {:<5} | iters {:<7} |  matvecs {:<7} | time {:<13} s | min {:.16f}", method,
+                           solver_primme_sa.result.meta.eigvecsR_found, solver_primme_sa.result.meta.iter, solver_primme_sa.result.meta.matvecs,
                            solver_primme_sa.result.meta.time_total, solver_primme_sa.result.get_eigvals()[0]);
 
     tools::log->info("{}\n", msg);

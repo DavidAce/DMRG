@@ -37,9 +37,9 @@ size_t ceres_base_functor::get_count() const { return counter; }
 double ceres_base_functor::get_norm() const { return norm; }
 double ceres_base_functor::get_norm_offset() const { return norm_offset; }
 double ceres_base_functor::get_delta_f() const { return delta_f; }
-double ceres_base_functor::get_grad_max_norm() const { return grad_max_norm; }
+double ceres_base_functor::get_max_grad_norm() const { return max_grad_norm; }
 long   ceres_base_functor::get_ops() const { return ops; }
 int    ceres_base_functor::NumParameters() const { return num_parameters; }
 
 void ceres_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
-void ceres_base_functor::set_grad_max_norm(double grad_max_norm_) const { grad_max_norm = grad_max_norm_; }
+void ceres_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }

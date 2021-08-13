@@ -5,7 +5,7 @@
 #include <config/settings.h>
 #include <general/iter.h>
 #include <math/eig.h>
-#include <math/eig/matvec/matvec_mpo.h>
+#include <math/eig/matvec/matvec_mps.h>
 #include <tensors/TensorsFinite.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
@@ -35,12 +35,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
 
     eig::Ritz   ritz      = eig::stringToRitz(enum2sv(meta.optRitz));
     const auto &mpo       = tensors.get_multisite_mpo();
-    const auto &env       = tensors.get_multisite_ene_blk();
-    auto        shape_mps = tensors.active_problem_dims();
-    auto        shape_mpo = mpo.dimensions();
+    const auto &env       = tensors.get_multisite_env_ene_blk();
     //    int nev = std::min(4l,(long)(tensors.state->active_problem_size()/2));
     tools::log->trace("Defining Hamiltonian matrix-vector product");
-    MatVecMPO<cplx> matrix(env.L.data(), env.R.data(), mpo.data(), shape_mps, shape_mpo);
+    MatVecMps<cplx> matrix(env.L, env.R, mpo);
     tools::log->trace("Defining eigenvalue solver");
     eig::solver solver;
     auto init = initial_mps.get_tensor();
@@ -49,7 +47,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
     //        solver.config.tol = std::clamp( 1e-2 * tensors.measurements.energy_variance.value(), 1e-16 , settings::precision::eig_tolerance);
     solver.config.tol = settings::precision::eig_tolerance;
     solver.config.compress = settings::precision::use_compressed_mpo_squared_otf;
-    solver.config.residp = init.data();
+    solver.config.initial_guess.push_back({init.data(),0});
     solver.config.compute_eigvecs = eig::Vecs::ON;
     solver.config.sigma = 1.0;
     solver.config.maxNev = static_cast<eig::size_type>(1);;

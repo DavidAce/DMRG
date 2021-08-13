@@ -24,7 +24,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         1.0, // Overlap
                         tensors.get_length());
 #pragma message "setting grad max norm in initial_mps. This is highly optional!"
-    initial_mps.set_grad_norm(tools::finite::measure::grad_max_norm(initial_mps.get_tensor(), tensors));
+    initial_mps.set_max_grad(tools::finite::measure::max_grad_norm(initial_mps.get_tensor(), tensors));
     t_opt.toc(); // The next call to find_excited state opens the "opt" scope again.
     return find_excited_state(tensors, initial_mps, status, meta);
 }
@@ -79,30 +79,30 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
 
     ceres_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
-    ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
+    ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::BISECTION;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.max_num_iterations                         = 20000;
     ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
-    ceres_default_options.min_line_search_step_size                  = 1e-20;//std::numeric_limits<double>::epsilon();
+    ceres_default_options.min_line_search_step_size                  = 1e-16;//std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
     ceres_default_options.min_line_search_step_contraction           = 0.6; // 0.6
     ceres_default_options.max_line_search_step_expansion             = 10; // 10
-    ceres_default_options.max_num_line_search_step_size_iterations   = 200;
-    ceres_default_options.max_num_line_search_direction_restarts     = 80; //5
-    ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    ceres_default_options.max_num_line_search_step_size_iterations   = 80;
+    ceres_default_options.max_num_line_search_direction_restarts     = 20; //5
+    ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    ceres_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-4;
-    ceres_default_options.parameter_tolerance                        = 1e-20;
+    ceres_default_options.function_tolerance                         = 1e-10; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance                         = 1e-0;
+    ceres_default_options.parameter_tolerance                        = 1e-16;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
-        ceres_default_options.function_tolerance                     = 1e-8; // Tested, 1e-6 seems to be a sweetspot
-        ceres_default_options.gradient_tolerance                     = 1e-10;
-        ceres_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        ceres_default_options.function_tolerance                     = 1e-10; // Tested, 1e-6 seems to be a sweetspot
+        ceres_default_options.gradient_tolerance                     = 1e-1;
+        ceres_default_options.max_lbfgs_rank                         = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
         // Empirically, we observe that the gradient is still large when lbfgs has finished,
         // and often the result is a tiny bit worse than what we started with.
@@ -240,7 +240,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} |∇f|∞ {:>3.2e} "
+    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} ∇fₘₐₓ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} ops {:>4}/{:<4} "
                "t {:<} t_op {:<} Gop/s {:>5.1f} "
 //               "| energy {:<18.15f} log₁₀var {:<6.6f}"

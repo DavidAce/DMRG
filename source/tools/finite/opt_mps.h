@@ -27,8 +27,9 @@ namespace tools::finite::opt {
         std::optional<size_t>                 counter       = std::nullopt;
         std::optional<double>                 time          = std::nullopt;
         std::optional<double>                 delta_f       = std::nullopt;
-        std::optional<double>                 grad_norm     = std::nullopt;
+        std::optional<double>                 max_grad      = std::nullopt;
         std::optional<double>                 relchange     = std::nullopt;
+        std::optional<long>                   krylov_idx    = std::nullopt;
         std::optional<long>                   krylov_nev    = std::nullopt;
         std::optional<long>                   krylov_ncv    = std::nullopt;
         std::optional<double>                 krylov_tol    = std::nullopt;
@@ -73,8 +74,9 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                             get_counter() const;
         [[nodiscard]] double                             get_time() const;
         [[nodiscard]] double                             get_delta_f() const;
-        [[nodiscard]] double                             get_grad_norm() const;
+        [[nodiscard]] double                             get_max_grad() const;
         [[nodiscard]] double                             get_relchange() const;
+        [[nodiscard]] long                               get_krylov_idx() const;
         [[nodiscard]] long                               get_krylov_nev() const;
         [[nodiscard]] long                               get_krylov_ncv() const;
         [[nodiscard]] double                             get_krylov_tol() const;
@@ -104,8 +106,9 @@ namespace tools::finite::opt {
         void                                             set_counter(size_t counter_);
         void                                             set_time(double time_);
         void                                             set_delta_f(double delta_f_);
-        void                                             set_grad_norm(double grad_norm_);
+        void                                             set_max_grad(double grad_norm_);
         void                                             set_relchange(double relative_change_);
+        void                                             set_krylov_idx(long idx_);
         void                                             set_krylov_nev(long nev_);
         void                                             set_krylov_ncv(long ncv_);
         void                                             set_krylov_tol(double tol_);

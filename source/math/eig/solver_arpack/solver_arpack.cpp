@@ -20,8 +20,7 @@
 #include "solver_arpack.h"
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
-#include "../matvec/matvec_mpo.h"
-#include "../matvec/matvec_mpo_eigen.h"
+#include "../matvec/matvec_mps.h"
 #include "../matvec/matvec_sparse.h"
 #include <algorithm>
 #include <arpack++/arrseig.h>
@@ -75,8 +74,7 @@ using namespace eig;
 template<typename MatrixType>
 eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
     : matrix(matrix_), config(config_), result(result_) {
-
-    residual = static_cast<Scalar *>(config.residp);
+        if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual pointer
 
     t_tot        = std::make_unique<tid::ur>("total");
     t_mul        = std::make_unique<tid::ur>("matvec");
@@ -257,7 +255,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.ncv           = solver.GetNcv();
     result.meta.rows          = solver.GetN();
     result.meta.cols          = result.meta.nev;
-    result.meta.counter       = matrix.counter;
+    result.meta.matvecs       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
     result.meta.tag           = config.tag;
@@ -273,7 +271,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
     eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
     eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
-    eig::log->trace("- {:<30} = {}"     ,"counter",        result.meta.counter);
+    eig::log->trace("- {:<30} = {}"     ,"matvecs",        result.meta.matvecs);
     eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
     eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
     eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
@@ -329,9 +327,9 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     if(last_log_time > t_tot->get_time()) last_log_time = 0; // If this function has been run before
     while(not solver.ArnoldiBasisFound()) {
         if(step == 0) {
-            if(config.log_time_period) {
+            if(config.logTime) {
                 auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
-                if(time_since_last_log > config.log_time_period.value()) {
+                if(time_since_last_log > config.logTime.value()) {
                     auto level = eig::log->level();
                     eig::log->log(level, FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops,
                                   t_tot->get_time(), t_mul->get_last_interval() / nops * 1000);
@@ -397,7 +395,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     result.meta.tol           = solver.GetTol();
     result.meta.rows          = solver.GetN();
     result.meta.cols          = result.meta.nev;
-    result.meta.counter       = matrix.counter;
+    result.meta.matvecs       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
     result.meta.tag           = config.tag;
@@ -414,7 +412,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
     eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
     eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
-    eig::log->trace("- {:<30} = {}"     ,"counter",        result.meta.counter);
+    eig::log->trace("- {:<30} = {}"     ,"matvecs",        result.meta.matvecs);
     eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
     eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
     eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
@@ -519,7 +517,7 @@ void eig::solver_arpack<MatrixType>::compute_residual_norms() {
     auto &eigvals = result.get_eigvals<eval_t>();
     auto &eigvecs = result.get_eigvecs<evec_t, side>();
     for(size_t i = 0; i < eigvalsize_t; i++) {
-        auto eigvec_i   = Eigen::Map<VType>(eigvecs.data() + i * result.meta.cols, result.meta.rows);
+        auto eigvec_i   = Eigen::Map<VType>(eigvecs.data() + static_cast<long>(i) * result.meta.cols, result.meta.rows);
         auto A_eigvec_i = VType(result.meta.rows);
         matrix.MultAx(eigvec_i.data(), A_eigvec_i.data());
         result.meta.residual_norms.at(i) = (A_eigvec_i - eigvec_i * eigvals.at(i)).norm();
@@ -533,7 +531,5 @@ template class eig::solver_arpack<MatVecDense<real>>;
 template class eig::solver_arpack<MatVecDense<cplx>>;
 template class eig::solver_arpack<MatVecSparse<real>>;
 template class eig::solver_arpack<MatVecSparse<cplx>>;
-template class eig::solver_arpack<MatVecMPO<real>>;
-template class eig::solver_arpack<MatVecMPO<cplx>>;
-template class eig::solver_arpack<MatVecMPOEigen<real>>;
-template class eig::solver_arpack<MatVecMPOEigen<cplx>>;
+template class eig::solver_arpack<MatVecMps<real>>;
+template class eig::solver_arpack<MatVecMps<cplx>>;

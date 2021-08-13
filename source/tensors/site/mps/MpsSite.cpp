@@ -154,7 +154,7 @@ Eigen::Tensor<Scalar, 1> &MpsSite::get_L() { return const_cast<Eigen::Tensor<Sca
 Eigen::Tensor<Scalar, 1> &MpsSite::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
 double                    MpsSite::get_truncation_error() const { return truncation_error; }
 double                    MpsSite::get_truncation_error_LC() const { return truncation_error_LC; }
-std::string               MpsSite::get_label() const {
+std::string_view          MpsSite::get_label() const {
     if(label.empty()) throw std::runtime_error(fmt::format("No label found at position {}", get_position()));
     return label;
 }

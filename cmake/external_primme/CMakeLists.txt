@@ -10,11 +10,13 @@ include(ExternalProject)
 #set(cflags "-O3 -DNDEBUG -fPIC")
 set(cflags "-O3 -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
 set(cxxflags "-O3 -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+
 if(BUILD_SHARED_LIBS)
     set(type solib)
 else()
     set(type lib)
 endif()
+
 ExternalProject_Add(external_primme
         URL      https://github.com/primme/primme/archive/refs/tags/v3.2.tar.gz
         URL_MD5  b26968d0ea8aa2e6feefc89f3c863062
@@ -25,7 +27,8 @@ ExternalProject_Add(external_primme
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            make ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
+            make clean &&
+            make VERBOSE=1 ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
         INSTALL_COMMAND
             cmake -E copy_directory <SOURCE_DIR>/lib <INSTALL_DIR>/lib &&

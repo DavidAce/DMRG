@@ -30,8 +30,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const TensorsFinite &tensors,
         tools::log->trace("- Generating real-valued multisite components");
         mpo                 = tensors.get_multisite_mpo().real();
         mpo2                = tensors.get_multisite_mpo_squared().real();
-        const auto &env_ene = tensors.get_multisite_ene_blk();
-        const auto &env_var = tensors.get_multisite_var_blk();
+        const auto &env_ene = tensors.get_multisite_env_ene_blk();
+        const auto &env_var = tensors.get_multisite_env_var_blk();
         envL                = env_ene.L.real();
         envR                = env_ene.R.real();
         env2L               = env_var.L.real();
@@ -42,8 +42,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(const TensorsFinite &tensors,
         tools::log->trace("- Generating complex-valued multisite components");
         mpo                 = tensors.get_multisite_mpo();
         mpo2                = tensors.get_multisite_mpo_squared();
-        const auto &env_ene = tensors.get_multisite_ene_blk();
-        const auto &env_var = tensors.get_multisite_var_blk();
+        const auto &env_ene = tensors.get_multisite_env_ene_blk();
+        const auto &env_var = tensors.get_multisite_env_var_blk();
         envL                = env_ene.L;
         envR                = env_ene.R;
         env2L               = env_var.L;
@@ -79,7 +79,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
 
     if constexpr(settings::debug) {
-        if(v.hasNaN()) throw std::runtime_error(fmt::format("ceres_direct_functor::Evaluate: v has nan's at counter {}\n{}", counter, v));
+        if(v.hasNaN()) throw std::runtime_error(fmt::format("ceres_direct_functor::Evaluate: v has nan's at matvecs {}\n{}", counter, v));
     }
 
     VectorType n = v.normalized();
@@ -111,7 +111,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
                           "nHn  {:.16f} + {:.16f}i | "
                           "nH2n {:.16f} + {:.16f}i | "
                           "grad {:8.4e}",
-                          counter, std::real(var), std::imag(var), std::real(nHn), std::imag(nHn), std::real(nH2n), std::imag(nH2n), grad_max_norm);
+                          counter, std::real(var), std::imag(var), std::real(nHn), std::imag(nHn), std::real(nH2n), std::imag(nH2n), max_grad_norm);
 
     //    var = std::abs(var);
     //    var = std::real(var) == 0.0 ? eps : var;
@@ -136,13 +136,13 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         auto var_1         = 1.0 / var_offset / std::log(10);
         grad               = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
         if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
-        grad_max_norm = grad.template lpNorm<Eigen::Infinity>();
+        max_grad_norm = grad.template lpNorm<Eigen::Infinity>();
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("log₁₀ variance is invalid");
         tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
-        tools::log->warn("counter         = {}", counter);
+        tools::log->warn("matvecs         = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
@@ -152,7 +152,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
         tools::log->warn("energy reduced  = {:.16f}", energy_reduced);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
+        throw std::runtime_error("Direct functor failed at matvecs = " + std::to_string(counter));
     }
 
     counter++;

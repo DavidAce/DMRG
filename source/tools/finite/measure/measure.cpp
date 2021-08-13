@@ -16,6 +16,7 @@
 #include <tools/common/log.h>
 
 using cplx = tools::finite::measure::cplx;
+using real = tools::finite::measure::real;
 
 void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     tensors.measurements.length                   = measure::length(tensors);
@@ -332,7 +333,7 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
     } else {
         auto        t_msr = tid::tic_scope("measure");
         const auto &mpo   = model.get_multisite_mpo();
-        const auto &env   = edges.get_multisite_ene_blk();
+        const auto &env   = edges.get_multisite_env_ene_blk();
         if constexpr(settings::debug)
             tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
@@ -422,7 +423,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
 
         const auto &mpo = model.get_multisite_mpo_squared();
-        const auto &env = edges.get_multisite_var_blk();
+        const auto &env = edges.get_multisite_env_var_blk();
         if constexpr(settings::debug)
             tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
@@ -559,15 +560,15 @@ double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &m
     return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax);
 }
 
-extern double tools::finite::measure::grad_max_norm(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     auto v = Eigen::Map<const Eigen::VectorXcd>(mps.data(), mps.size());
 
-    auto en1 = tensors.get_multisite_ene_blk();
+    auto en1 = tensors.get_multisite_env_ene_blk();
     auto H1t = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo(), en1.L, en1.R);
     auto Hv  = Eigen::Map<const Eigen::VectorXcd>(H1t.data(), H1t.size());
     auto vHv = v.dot(Hv);
 
-    auto en2  = tensors.get_multisite_var_blk();
+    auto en2  = tensors.get_multisite_env_var_blk();
     auto H2t  = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo_squared(), en2.L, en2.R);
     auto H2v  = Eigen::Map<const Eigen::VectorXcd>(H2t.data(), H2t.size());
     auto vH2v = v.dot(H2v);
@@ -575,9 +576,57 @@ extern double tools::finite::measure::grad_max_norm(const Eigen::Tensor<cplx, 3>
     double var    = std::abs(vH2v - vHv * vHv);
     auto   var_1  = 1.0 / var / std::log(10);
     auto   norm_1 = 1.0 / v.norm();
-    auto   grad   = 2.0 * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v); // Factor 2 for complex
-
-    //    grad               = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
-
+    auto   pref   = tensors.is_real() ? 1.0 : 2.0;
+    auto   grad   = pref * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v); // Factor 2 for complex
     return grad.template lpNorm<Eigen::Infinity>();
 }
+
+template<typename Scalar>
+double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo1, const Eigen::Tensor<Scalar, 3> &en1L,
+                                             const Eigen::Tensor<Scalar, 3> &en1R, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
+                                             const Eigen::Tensor<Scalar, 3> &en2R) {
+    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    auto v           = Eigen::Map<const VectorType>(mps.data(), mps.size());
+    auto H1t         = tools::common::contraction::matrix_vector_product(mps, mpo1, en1L, en1R);
+    auto Hv          = Eigen::Map<const VectorType>(H1t.data(), H1t.size());
+    auto vHv         = v.dot(Hv);
+
+    auto H2t  = tools::common::contraction::matrix_vector_product(mps, mpo2, en2L, en2R);
+    auto H2v  = Eigen::Map<const VectorType>(H2t.data(), H2t.size());
+    auto vH2v = v.dot(H2v);
+
+    auto var    = std::abs(vH2v - vHv * vHv);
+    auto var_1  = 1.0 / var / std::log(10);
+    auto norm_1 = 1.0 / v.norm();
+    auto pref   = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0;
+    auto grad   = pref * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v); // Factor 2 for complex
+    return grad.template lpNorm<Eigen::Infinity>();
+}
+
+template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo1, const Eigen::Tensor<real, 3> &en1L,
+                                                      const Eigen::Tensor<real, 3> &en1R, const Eigen::Tensor<real, 4> &mpo2,
+                                                      const Eigen::Tensor<real, 3> &en2L, const Eigen::Tensor<real, 3> &en2R);
+template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo1, const Eigen::Tensor<cplx, 3> &en1L,
+                                                      const Eigen::Tensor<cplx, 3> &en1R, const Eigen::Tensor<cplx, 4> &mpo2,
+                                                      const Eigen::Tensor<cplx, 3> &en2L, const Eigen::Tensor<cplx, 3> &en2R);
+
+template<typename Scalar>
+double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
+                                             const Eigen::Tensor<Scalar, 3> &en2R) {
+    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    auto v           = Eigen::Map<const VectorType>(mps.data(), mps.size());
+    auto H2t         = tools::common::contraction::matrix_vector_product(mps, mpo2, en2L, en2R);
+    auto H2v         = Eigen::Map<const VectorType>(H2t.data(), H2t.size());
+    auto vH2v        = v.dot(H2v);
+
+    double var    = std::abs(vH2v);
+    auto   var_1  = 1.0 / var / std::log(10);
+    auto   norm_1 = 1.0 / v.norm();
+    auto   pref   = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0;
+    auto   grad   = pref * var_1 * norm_1 * (H2v - vH2v * v); // Factor 2 for complex
+    return grad.template lpNorm<Eigen::Infinity>();
+}
+template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo2, const Eigen::Tensor<real, 3> &en2L,
+                                                      const Eigen::Tensor<real, 3> &en2R);
+template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo2, const Eigen::Tensor<cplx, 3> &en2L,
+                                                      const Eigen::Tensor<cplx, 3> &en2R);

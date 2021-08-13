@@ -188,14 +188,14 @@ namespace settings {
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
-        inline double   eig_tolerance                   = 1e-12 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double   eig_tolerance                   = 1e-14 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
-        inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
+        inline double   svd_threshold                   = 1e-12 ;   /*!< Minimum threshold value for keeping singular values. */
         inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16 , good could be ~64) */
         inline bool     use_compressed_mpo_squared_all  = false ;   /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_squared_otf  = true  ;   /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_reduced_mpo_energy          = true  ;   /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
+        inline double   variance_convergence_threshold  = 1e-12 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-2  ;   /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-6  ;   /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
         inline double   target_subspace_error           = 1e-10 ;   /*!< The target subspace error 1-Σ|<θ_i|θ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
