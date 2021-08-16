@@ -58,6 +58,14 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
 
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     {
+        // When direction is -->
+        // The expanded bond sits between envL and the mps:
+        //      * Usually, the first active mps site is an "AC". We call this "mpsR".
+        //      * We call the inactive site which belongs in envL "mpsL"
+        //      * Then, mpsL.chiR and mpsR.chiL get updated
+        //      * The truncation error can be found in
+
+
         auto posL = state.active_sites.front();
         // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
         if(posL > 0 and posL < state.get_length<size_t>() and state.get_direction() == 1) {
@@ -88,15 +96,14 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 chi_lim = std::min(chi_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
                 auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), chi_lim);
                 mpsL.set_M(U);
+                mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
                 if(mpsL.isCenter()) {
                     // Here we expect mpsL to be "AC" and mpsR to be a "B"
                     mpsL.set_LC(S, svd.truncation_error);
-                    mpsL.stash_V(V, mpsR.get_position());
                 } else {
                     // Here we expect mpsL to be "A" and mpsR to be an "A" or "AC"
                     mpsL.stash_S(S, svd.truncation_error, mpsR.get_position());
-                    mpsL.stash_V(V, mpsR.get_position());
                 }
                 mpsR.take_stash(mpsL);
                 if constexpr(settings::debug) mpsL.assert_identity();
@@ -123,11 +130,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     }
                 }
 
-                auto mpsL_new = state.get_mps_site(posL - 1); // The site to the left
-                auto mpsR_new = state.get_mps_site(posL);     // The site to the right
-                auto chiL_new = mpsL_new.get_chiR();
-                auto dimL_new = mpsL_new.dimensions();
-                auto dimR_new = mpsR_new.dimensions();
+                const auto & mpsL_new = state.get_mps_site(posL - 1); // The site to the left
+                const auto & mpsR_new = state.get_mps_site(posL);     // The site to the right
+                const auto & chiL_new = mpsL_new.get_chiR();
+                const auto & dimL_new = mpsL_new.dimensions();
+                const auto & dimR_new = mpsR_new.dimensions();
                 tools::log->debug("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
                                   ML_PL.dimension(2), chiL_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
@@ -169,13 +176,12 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), chi_lim);
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
+                mpsR.stash_U(U, mpsL.get_position());
                 if(mpsL.isCenter()) {
                     mpsR.stash_C(S, svd.truncation_error, mpsL.get_position());
-                    mpsR.stash_U(U, mpsL.get_position());
                 } else {
                     // Here we expect mpsL to be a "B" as well
                     mpsR.stash_S(S, svd.truncation_error, mpsL.get_position());
-                    mpsR.stash_U(U, mpsL.get_position());
                 }
                 mpsL.take_stash(mpsR);
                 if constexpr(settings::debug) mpsR.assert_identity();
@@ -205,11 +211,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     }
                 }
 
-                auto mpsR_new = state.get_mps_site(posR + 1);
-                auto mpsL_new = state.get_mps_site(posR);
-                auto chiR_new = mpsR_new.get_chiL();
-                auto dimR_new = mpsR_new.dimensions();
-                auto dimL_new = mpsL_new.dimensions();
+                const auto & mpsR_new = state.get_mps_site(posR + 1);
+                const auto & mpsL_new = state.get_mps_site(posR);
+                const auto & chiR_new = mpsR_new.get_chiL();
+                const auto & dimR_new = mpsR_new.dimensions();
+                const auto & dimL_new = mpsL_new.dimensions();
 
                 tools::log->debug("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
                                   MR_PR.dimension(1), chiR_new, chi_lim);
