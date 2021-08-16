@@ -99,14 +99,14 @@ template<typename state_or_mps_type>
 double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &state, const ModelInfinite &model, const EdgesInfinite &edges) {
     // Depending on whether the mpo's are reduced or not we get different formulas.
     // If mpo's are reduced:
-    //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
-    //                                            = H2    - 2*E*E_red + E_red^2 - E^2 + 2*E*E_red - E_red^2
-    //                                            = H2    - E^2
-    //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
-    //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
+    //      Var H = <(H-E_red)²> - <(H-E_red)>² = <H²> - 2<H>E_red + E_red² - (<H> - E_red)²
+    //                                          = H²   - 2*E*E_red + E_red² - E² + 2*E*E_red - E_red²
+    //                                          = H²   - E²
+    //      so Var H = <(H-E_red)²> - energy_minus_energy_reduced² = H² - ~0
+    //      where H² is computed with reduced mpo's. Note that ~0 is not exactly zero
     //      because E_red != E necessarily (though they are supposed to be very close)
     // Else:
-    //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
+    //      Var H = <(H - 0)²> - <H - 0>² = H2 - E²
     if constexpr(std::is_same_v<state_or_mps_type, StateInfinite>) {
         return tools::infinite::measure::energy_variance_mpo(state.get_2site_mps(), model, edges);
     } else {
