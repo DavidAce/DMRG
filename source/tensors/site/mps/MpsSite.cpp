@@ -39,10 +39,10 @@ MpsSite::MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-MpsSite::~MpsSite()               = default;            // default dtor
-MpsSite::MpsSite(MpsSite &&other) = default;            // default move ctor
-MpsSite &MpsSite::operator=(MpsSite &&other) = default; // default move assign
-MpsSite::MpsSite(const MpsSite &other)       = default;
+MpsSite::~MpsSite()                        = default;            // default dtor
+MpsSite::MpsSite(MpsSite &&other) noexcept = default;            // default move ctor
+MpsSite &MpsSite::operator=(MpsSite &&other) noexcept = default; // default move assign
+MpsSite::MpsSite(const MpsSite &other)                = default;
 MpsSite &MpsSite::operator=(const MpsSite &other) = default;
 
 bool MpsSite::isCenter() const { return LC.has_value(); }
@@ -446,6 +446,7 @@ void MpsSite::take_stash(const MpsSite &other) {
         /* We get this stash when
          *      - This is the right-most last A-site and AC is further to the right: Then we get both S and V to absorb on this site.
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
+         *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
         if constexpr(settings::debug) tools::log->trace("Merging S stash from site {} into {}", other.get_position(), get_position());
         set_L(other.S_stash->data, other.S_stash->error);
@@ -455,6 +456,7 @@ void MpsSite::take_stash(const MpsSite &other) {
         /* We get this stash when
          *      - This is the right-most last A-site and supposed to become an AC: Then we get S, V and LC to absorb on this site.
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
+         *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
         if constexpr(settings::debug) tools::log->trace("Merging C stash from site {} into {}", other.get_position(), get_position());
         if(label == "B") tools::log->warn("Setting LC at pos {} with label {}", get_position(), get_label());

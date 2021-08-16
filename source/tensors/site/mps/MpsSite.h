@@ -28,11 +28,11 @@ class MpsSite {
     ~MpsSite(); // Read comment on implementation
     MpsSite(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, size_t pos, double error, std::string_view label_);
     MpsSite(const Eigen::Tensor<Scalar, 3> &M_, std::optional<Eigen::Tensor<Scalar, 1>> L_, size_t pos, double error, std::string_view label_);
-    MpsSite();                                // ctor
-    MpsSite(const MpsSite &other);            // default copy ctor
-    MpsSite(MpsSite &&other);                 // default move ctor
-    MpsSite &operator=(MpsSite &&other);      // default move assign
-    MpsSite &operator=(const MpsSite &other); // default copy assign
+    MpsSite();                                    // ctor
+    MpsSite(const MpsSite &other);                // default copy ctor
+    MpsSite(MpsSite &&other) noexcept;            // default move ctor
+    MpsSite &operator=(MpsSite &&other) noexcept; // default move assign
+    MpsSite &operator=(const MpsSite &other);     // default copy assign
 
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
