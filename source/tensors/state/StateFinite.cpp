@@ -409,17 +409,7 @@ double StateFinite::get_truncation_error_midchain() const {
 
 std::vector<double> StateFinite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 std::vector<double> StateFinite::get_truncation_errors_active() const {
-    std::vector<double> truncation_errors;
-    truncation_errors.reserve(active_sites.size());
-    for(const auto &pos : active_sites) {
-        // We are only interested in the truncation on bonds that are updated
-        // when operating on active_sites. This excludes the outer bonds.
-        if(get_mps_site(pos).isCenter()) truncation_errors.emplace_back(get_truncation_error_LC());
-        if(pos == active_sites.front()) continue;
-        if(pos == active_sites.back()) continue;
-        truncation_errors.emplace_back(get_truncation_error(pos));
-    }
-    return truncation_errors;
+    return tools::finite::measure::truncation_errors_active(*this);
 }
 
 size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
