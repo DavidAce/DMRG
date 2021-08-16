@@ -33,10 +33,10 @@ void itebd::run_simulation() {
     auto t_run = tid::tic_scope("run");
     while(status.iter < settings::itebd::max_iters and status.algorithm_converged_for == 0) {
         single_TEBD_step();
-        write_to_file();
-        copy_from_tmp();
-        print_status_update();
         check_convergence();
+        print_status_update();
+        write_to_file();
+
         status.iter++;
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();

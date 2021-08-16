@@ -25,11 +25,9 @@ void idmrg::run_simulation() {
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     while(true) {
         single_iDMRG_step();
+        check_convergence();
         print_status_update();
         write_to_file();
-        copy_from_tmp();
-        check_convergence();
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
         // It's important not to perform the last move.
         // That last state would not get optimized
@@ -63,7 +61,7 @@ void idmrg::run_simulation() {
             break;
         }
 
-        update_bond_dimension_limit();
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
         tensors.enlarge();
         status.iter++;
         status.step++;

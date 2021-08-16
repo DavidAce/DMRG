@@ -190,10 +190,10 @@ void flbit::run_algorithm() {
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
+        print_status_update();
         check_convergence();
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
-        print_status_update();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized

@@ -211,9 +211,9 @@ void xdmrg::run_algorithm() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
+        print_status_update();
         check_convergence();
         write_to_file();
-        print_status_update();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
