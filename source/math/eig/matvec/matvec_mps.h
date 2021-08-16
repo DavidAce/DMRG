@@ -50,6 +50,7 @@ class MatVecMps {
 
     void FactorOP();                                  //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
     void MultOPv(Scalar_ *mps_in_, Scalar_ *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
     void MultAx(Scalar_ *mps_in_, Scalar_ *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(Scalar_ *mps_in, Scalar_ *mps_out, Scalar_ *mpo_ptr, Scalar_ *envL_ptr, Scalar_ *envR_ptr, std::array<long, 3> shape_mps_,
                 std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.

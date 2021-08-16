@@ -87,6 +87,43 @@ void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
     counter++;
 }
 
+
+template<typename T>
+void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    if(not readyFactorOp) throw std::logic_error("FactorOp() has not been run yet.");
+    auto t_token = t_multOPv->tic_token();
+    switch(side) {
+        case eig::Side::R: {
+            for(int i = 0; i < *blockSize; i++){
+                T                             *x_in_ptr  = static_cast<T *>(x) + *ldx * i;
+                T                             *x_out_ptr = static_cast<T *>(y) + *ldy * i;
+                Eigen::Map<VectorType<Scalar>> x_in(x_in_ptr, L);
+                Eigen::Map<VectorType<Scalar>> x_out(x_out_ptr, L);
+                if constexpr(std::is_same_v<Scalar, double>) x_out.noalias() = dense_lu::lu_real.value().solve(x_in);
+                if constexpr(std::is_same_v<Scalar, std::complex<double>>) x_out.noalias() = dense_lu::lu_cplx.value().solve(x_in);
+                counter++;
+            }
+
+            break;
+        }
+        case eig::Side::L: {
+            for(int i = 0; i < *blockSize; i++) {
+                T                             *x_in_ptr  = static_cast<T *>(x) + *ldx * i;
+                T                             *x_out_ptr = static_cast<T *>(y) + *ldy * i;
+                Eigen::Map<VectorType<Scalar>> x_in(x_in_ptr, L);
+                Eigen::Map<VectorType<Scalar>> x_out(x_out_ptr, L);
+                if constexpr(std::is_same_v<Scalar, double>) x_out.noalias() = x_in * dense_lu::lu_real.value().inverse();
+                if constexpr(std::is_same_v<Scalar, std::complex<double>>) x_out.noalias() = x_in * dense_lu::lu_cplx.value().inverse();
+                counter++;
+            }
+            break;
+        }
+        case eig::Side::LR: {
+            throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+        }
+    }
+}
+
 template<typename Scalar>
 void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
     auto                                 t_token = t_multAx->tic_token();

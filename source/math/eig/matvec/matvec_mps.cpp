@@ -5,6 +5,10 @@
 #include <tid/tid.h>
 #include <tools/common/contraction.h>
 
+//template<typename Scalar_>
+//MatVecMps<Scalar_>::~MatVecMps() noexcept = default;
+
+
 template<typename Scalar_>
 template<typename T>
 MatVecMps<Scalar_>::MatVecMps(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
@@ -103,6 +107,34 @@ void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
     t_multOPv->toc();
     counter++;
 }
+
+template<typename T>
+void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err){
+    t_multOPv->tic();
+
+    switch(side) {
+        case eig::Side::R: {
+            for(int i = 0; i < *blockSize; i++){
+                T *mps_in_  = static_cast<T *>(x) + *ldx * i;
+                T *mps_out_ = static_cast<T *>(y) + *ldy * i;
+                Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
+                Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
+                tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+                counter++;
+            }
+            break;
+        }
+        case eig::Side::L: {
+            throw std::runtime_error("Left sided matrix-free MultOPv has not been implemented");
+            break;
+        }
+        case eig::Side::LR: {
+            throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+        }
+    }
+    t_multOPv->toc();
+}
+
 
 template<typename Scalar>
 void MatVecMps<Scalar>::print() const {}

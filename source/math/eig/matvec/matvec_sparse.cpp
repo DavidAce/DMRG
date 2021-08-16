@@ -94,7 +94,7 @@ void MatVecSparse<Scalar, sparseLU>::FactorOP()
 
 template<typename Scalar, bool sparseLU>
 void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
-    assert(readyFactorOp and "FactorOp() has not been run yet.");
+    if(not readyFactorOp) throw std::logic_error("FactorOp() has not been run yet.");
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     Eigen::Map<VectorType> x_in(x_in_ptr, L);
     Eigen::Map<VectorType> x_out(x_out_ptr, L);
@@ -126,6 +126,53 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr
         }
     }
     counter++;
+}
+
+template<typename Scalar, bool sparseLU>
+void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err) {
+    if(not readyFactorOp) throw std::logic_error("FactorOp() has not been run yet.");
+    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+
+    switch(side) {
+        case eig::Side::R: {
+            for(int i = 0; i < *blockSize; i++) {
+                Scalar                *x_in_ptr  = static_cast<Scalar *>(x) + *ldx * i;
+                Scalar                *x_out_ptr = static_cast<Scalar *>(y) + *ldy * i;
+                Eigen::Map<VectorType> x_in(x_in_ptr, L);
+                Eigen::Map<VectorType> x_out(x_out_ptr, L);
+                if constexpr(std::is_same_v<Scalar, double> and not sparseLU)
+                    x_out.noalias() = sparse_lu::lu_real_dense.value().solve(x_in);
+                else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
+                    x_out.noalias() = sparse_lu::lu_cplx_dense.value().solve(x_in);
+                else if constexpr(std::is_same_v<Scalar, double> and sparseLU)
+                    x_out.noalias() = sparse_lu::lu_real_sparse.value().solve(x_in);
+                else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
+                    x_out.noalias() = sparse_lu::lu_cplx_sparse.value().solve(x_in);
+                counter++;
+            }
+            break;
+        }
+        case eig::Side::L: {
+            for(int i = 0; i < *blockSize; i++) {
+                Scalar                *x_in_ptr  = static_cast<Scalar *>(x) + *ldx * i;
+                Scalar                *x_out_ptr = static_cast<Scalar *>(y) + *ldy * i;
+                Eigen::Map<VectorType> x_in(x_in_ptr, L);
+                Eigen::Map<VectorType> x_out(x_out_ptr, L);
+                if constexpr(std::is_same_v<Scalar, double> and not sparseLU)
+                    x_out.noalias() = x_in * sparse_lu::lu_real_dense.value().inverse();
+                else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
+                    x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
+                else {
+                    throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet...");
+                }
+                counter++;
+            }
+            break;
+        }
+        case eig::Side::LR: {
+            throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+        }
+    }
 }
 
 template<typename Scalar, bool sparseLU>
@@ -295,9 +342,9 @@ eig::Side MatVecSparse<Scalar, sparseLU>::get_side() const {
 template<typename Scalar, bool sparseLU>
 eig::Type MatVecSparse<Scalar, sparseLU>::get_type() const {
     if constexpr(std::is_same_v<Scalar, eig::real>)
-    return eig::Type::REAL;
+        return eig::Type::REAL;
     else if constexpr(std::is_same_v<Scalar, eig::cplx>)
-    return eig::Type::CPLX;
+        return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");
 }
