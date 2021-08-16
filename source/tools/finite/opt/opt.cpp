@@ -23,8 +23,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());
-#pragma message "setting grad max norm in initial_mps. This is highly optional!"
-    initial_mps.set_max_grad(tools::finite::measure::max_grad_norm(initial_mps.get_tensor(), tensors));
+    initial_mps.set_max_grad(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
     t_opt.toc(); // The next call to find_excited state opens the "opt" scope again.
     return find_excited_state(tensors, initial_mps, status, meta);
 }
