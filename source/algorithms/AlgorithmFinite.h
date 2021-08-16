@@ -26,9 +26,6 @@ class AlgorithmFinite : public AlgorithmBase {
     size_t                  num_perturbations    = 0;            /*!< Number of perturbation trials done */
     size_t                  max_perturbations    = 2;            /*!< Maximum number of perturbation trials allowed */
     size_t                  perturbation_steps   = 0;            /*!< Number of steps left doing perturbation of MPOs */
-    size_t                  num_expansion_iters  = 0;            /*!< Counter for number of iterations of subspace expansion */
-    double                  max_expansion_alpha  = 0.2;          /*!< Maximum value of subspace expansion factor */
-    std::optional<double>   sub_expansion_alpha  = std::nullopt; /*!< The current value of the subspace expansion factor */
     std::optional<OptMode>  last_optmode  = std::nullopt;
     std::optional<OptSpace> last_optspace = std::nullopt;
 
@@ -47,6 +44,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
+    void         update_expansion_factor_alpha();
     void         randomize_model();
     void         run() final;
     void         clear_convergence_status() override;

@@ -131,7 +131,8 @@ void fdmrg::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
         reduce_mpo_energy();
         move_center_point();
@@ -146,38 +147,38 @@ void fdmrg::single_fdmrg_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    auto    t_step = tid::tic_scope("step");
-    OptConf conf(ritz);
+    auto                  t_step = tid::tic_scope("step");
+    OptConf               conf(ritz);
+    std::optional<double> alpha_expansion = std::nullopt;
 
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz));
-    tensors.activate_sites(settings::precision::max_size_part_diag, 2);
+    tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
 
     if(tensors.active_sites.empty())
         tensors.activate_sites({0}); // Activate a site so that edge checks can happen
     else {
-        // Decide to use subspace expansion
-        if(tensors.active_sites.size() == 1 or
-           (status.algorithm_has_stuck_for > 0 and tools::finite::measure::energy_variance(tensors) > settings::precision::variance_convergence_threshold))
-            sub_expansion_alpha = std::min(0.1, status.energy_variance_lowest);
-        else
-            sub_expansion_alpha = std::nullopt;
-
-        // Use subspace expansion if alpha_expansion was set
-        if(sub_expansion_alpha) tensors.expand_subspace(sub_expansion_alpha.value(), status.chi_lim);
+        if(status.sub_expansion_alpha > 0) {
+            // If we are doing 1-site dmrg, then we better use subspace expansion
+            if(tensors.active_sites.size() == 1) alpha_expansion = status.sub_expansion_alpha;
+            // If we are stuck and enabled subspace expansion when stuck
+            if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.sub_expansion_alpha;
+            // Use subspace expansion if alpha_expansion was set
+            if(alpha_expansion) tensors.expand_subspace(alpha_expansion.value(), status.chi_lim);
+        }
 
         auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, conf);
         if constexpr(settings::debug)
-            tools::log->debug("Variance after opt: {:.8f} | norm {:.16f}", std::log10(multisite_mps.get_variance()), multisite_mps.get_norm());
+            tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", multisite_mps.get_variance(), multisite_mps.get_norm());
 
         tensors.merge_multisite_tensor(multisite_mps.get_tensor(), status.chi_lim);
         if constexpr(settings::debug)
-            tools::log->debug("Variance after svd: {:.8f} | trunc: {}", std::log10(tools::finite::measure::energy_variance(tensors)),
+            tools::log->debug("Variance after svd: {:8.2e} | trunc: {}", tools::finite::measure::energy_variance(tensors),
                               tools::finite::measure::truncation_errors_active(*tensors.state));
         // Update record holder
         if(not tensors.active_sites.empty()) {
             auto var = tools::finite::measure::energy_variance(tensors);
-            tools::log->trace("Updating variance record holder: var {} | record {}", std::log10(var), std::log10(status.energy_variance_lowest));
+            tools::log->trace("Updating variance record holder: var {:8.2e} | record {:8.2e}", var, status.energy_variance_lowest);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
     }
@@ -217,9 +218,9 @@ void fdmrg::check_convergence() {
        status.algorithm_has_stuck_for == 0)
         throw std::logic_error("Should not have zeroed");
 
-    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
+    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
                      status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
-                     status.algorithm_has_to_stop, std::log10(status.energy_variance_prec_limit));
+                     status.algorithm_has_to_stop, status.energy_variance_prec_limit);
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;

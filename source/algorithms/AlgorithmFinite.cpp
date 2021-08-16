@@ -184,8 +184,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(status.chi_lim_has_reached_chi_max) return;
     auto tic = tid::tic_scope("chi_grow");
 
-
-    if constexpr (settings::debug){
+    if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
             double truncation_threshold = 2 * settings::precision::svd_threshold;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
@@ -198,7 +197,6 @@ void AlgorithmFinite::update_bond_dimension_limit() {
             tools::log->trace("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
         }
     }
-
 
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
@@ -231,14 +229,13 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     auto factor = settings::chi_lim_grow_factor(status.algo_type);
     if(factor <= 1.0) throw std::runtime_error(fmt::format("Error: chi_lim_grow_factor == {:.3f} | must be larger than one", factor));
 
-
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
     if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
         randomize_state(ResetReason::CHI_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.chi_lim);
 
     double chi_prod = std::ceil(factor * static_cast<double>(status.chi_lim));
-    long chi_new = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
+    long   chi_new  = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
     status.chi_lim                     = chi_new;
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
@@ -246,6 +243,24 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
         throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
+}
+
+void AlgorithmFinite::update_expansion_factor_alpha() {
+    if(settings::strategy::max_expansion_alpha > 0) {
+        // Set a good initial value to start with
+        if(status.sub_expansion_alpha == 0) status.sub_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_expansion_alpha);
+
+        // Update alpha
+        double           old_expansion_alpha = status.sub_expansion_alpha;
+        constexpr double factor_up           = 5.0;
+        constexpr double factor_dn           = 0.1;
+        if(status.variance_mpo_saturated_for > 0) {
+            status.sub_expansion_alpha = std::min(status.sub_expansion_alpha * factor_up, settings::strategy::max_expansion_alpha);
+        } else {
+            status.sub_expansion_alpha = std::max(status.sub_expansion_alpha * factor_dn, status.energy_variance_lowest);
+        }
+        tools::log->debug("Updated alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+    }
 }
 
 void AlgorithmFinite::randomize_model() {
@@ -306,7 +321,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
     tools::log->info("-- Energy density           : {}",
                      tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    tools::log->info("-- Energy variance          : {}", std::log10(tools::finite::measure::energy_variance(tensors)));
+    tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
 }
 
@@ -355,8 +370,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
                 auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                tools::log->debug("Variance after projection to -{} = {:.6f}", target_sector.value(), std::log10(variance_neg));
-                tools::log->debug("Variance after projection to +{} = {:.6f}", target_sector.value(), std::log10(variance_pos));
+                tools::log->debug("Variance after projection to -{} = {:8.2e}", target_sector.value(), variance_neg);
+                tools::log->debug("Variance after projection to +{} = {:8.2e}", target_sector.value(), variance_pos);
                 if(variance_neg < variance_pos)
                     tensors = tensors_neg;
                 else
@@ -367,8 +382,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
-            tools::log->debug("Projection change: variance {:.6f} -> {:.6f}  | spin components {:.16f} -> {:.16f}", std::log10(variance_old),
-                              std::log10(variance_new), fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+            tools::log->debug("Projection change: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
+                              fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
         if(target_sector.value() == settings::strategy::target_sector) has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
@@ -386,7 +401,7 @@ void AlgorithmFinite::try_full_expansion() {
         tensors.apply_hamiltonian_on_state(status.chi_lim);
         auto variance_new = tools::finite::measure::energy_variance(tensors);
         has_expanded      = true;
-        tools::log->info("Expansion change: variance {:.6f} -> {:.6f}", std::log10(variance_old), std::log10(variance_new));
+        tools::log->info("Expansion change: variance {:8.2e} -> {:8.2e}", variance_old, variance_new);
     }
 }
 
@@ -599,11 +614,13 @@ void AlgorithmFinite::print_status_update() {
     double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
     report += fmt::format(FMT_STRING("E/L:{:<20.16f} "), energy);
 
-    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("ε:{:<6.4f} "), status.energy_dens); }
-    report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<6.4f} "), status.energy_dens); }
+    report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(),
+                          tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
-    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
-    report += fmt::format(FMT_STRING("log₁₀σ²E:{:<10.6f} [{:<10.6f}] "), variance, std::log10(status.energy_variance_lowest));
+    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
+    report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
+    report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error());
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::chi_lim_max(status.algo_type), status.chi_lim);
     size_t comma_width       = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
@@ -621,12 +638,11 @@ void AlgorithmFinite::print_status_update() {
 
     if(last_optmode and last_optspace)
         report += fmt::format(FMT_STRING("opt:[{}|{}] "), enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
-    report += fmt::format(FMT_STRING("log₁₀trnc:{:<8.4f} "), std::log10(tensors.state->get_truncation_error()));
     report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
     report += fmt::format(FMT_STRING("sat:[σ² {:<1} Sₑ {:<1}] "), status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
-                          tools::common::profile::mem_vm_in_mb());
+    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), tools::common::profile::mem_rss_in_mb(),
+                          tools::common::profile::mem_hwm_in_mb(), tools::common::profile::mem_vm_in_mb());
     tools::log->info(report);
 }
 
@@ -649,8 +665,8 @@ void AlgorithmFinite::print_status_full() {
     if(status.algo_type == AlgorithmType::xDMRG)
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                          tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : std::log10(tools::finite::measure::energy_variance(tensors));
-    tools::log->info("Energy variance log₁₀ σ²(E)        = {:<.16f}", variance);
+    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
+    tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
     tools::log->info("Bond dimension maximum χmax        = {}", settings::chi_lim_max(status.algo_type));
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
@@ -661,7 +677,7 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Number entropy   Sₙ (mid)          = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
     tools::log->info("Spin components                    = {:.5f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-    tools::log->info("Truncation Errors                  = {:.3e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
+    tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
     tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);

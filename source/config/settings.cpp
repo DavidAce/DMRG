@@ -157,7 +157,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturation_iters);
     dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturation_iters);
     dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
-    dmrg_config.load_parameter("strategy::max_expansion_iters"                , strategy::max_expansion_iters);
+    dmrg_config.load_parameter("strategy::max_expansion_alpha"                , strategy::max_expansion_alpha);
     dmrg_config.load_parameter("strategy::multisite_mps_size_def"             , strategy::multisite_mps_size_def);
     dmrg_config.load_parameter("strategy::multisite_mps_size_max"             , strategy::multisite_mps_size_max);
     dmrg_config.load_parameter("strategy::multisite_mps_step"                 , strategy::multisite_mps_step);

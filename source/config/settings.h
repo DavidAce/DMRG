@@ -169,11 +169,11 @@ namespace settings {
         inline bool          randomize_early            = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors           = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
         inline size_t        max_resets                 = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
-        inline size_t        max_stuck_iters            = 20;                                     /*!< If stuck for this many iterations -> stop. */
-        inline size_t        max_saturation_iters       = 100;                                    /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
+        inline size_t        max_stuck_iters            = 5;                                      /*!< If stuck for this many iterations -> stop. */
+        inline size_t        max_saturation_iters       = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t        min_saturation_iters       = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t        min_converged_iters        = 2;                                      /*!< Converged at least this many iterations before success */
-        inline size_t        max_expansion_iters        = 32;                                     /*!< Maximum number of iterations with subspace expansion enabled */
+        inline double        max_expansion_alpha        = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
         inline size_t        multisite_mps_size_def     = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_size_max     = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_step         = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
@@ -198,7 +198,7 @@ namespace settings {
         inline double   variance_convergence_threshold  = 1e-12 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-2  ;   /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-6  ;   /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
-        inline double   target_subspace_error           = 1e-10 ;   /*!< The target subspace error 1-Σ|<θ_i|θ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
+        inline double   target_subspace_error           = 1e-10 ;   /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
         inline size_t   max_subspace_size               = 256   ;   /*!< Maximum number of candidate eigenstates to keep for a subspace-optimization step */
         inline long     max_size_full_diag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline long     max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */

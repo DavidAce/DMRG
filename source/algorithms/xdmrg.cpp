@@ -223,7 +223,8 @@ void xdmrg::run_algorithm() {
         // Prepare for next step
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_expansion_factor_alpha(); // Will update the subspace expansion factor
         reduce_mpo_energy();
         try_bond_dimension_quench();
         try_hamiltonian_perturbation();
@@ -288,14 +289,6 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         c1.retry     = true;
     }
 
-    if(status.iter >= 8) {
-#pragma message "This is temporary"
-        c1.optMode   = OptMode::VARIANCE;
-        c1.optSpace  = OptSpace::KRYLOV;
-        c1.max_sites = settings::strategy::multisite_mps_size_def;
-        c1.retry     = true;
-    }
-
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
@@ -315,43 +308,6 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         if(c1.optSpace == OptSpace::SUBSPACE) c1.optSpace = OptSpace::DIRECT;
     }
 
-    // If we are doing 1-site dmrg, then we better use subspace expansion
-    if(c1.max_sites == 1 or settings::strategy::multisite_mps_size_def == 1)
-        c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest); // Usually a good value to start with
-
-    if(settings::strategy::expand_subspace_when_stuck and (status.algorithm_has_stuck_for > 0 or sub_expansion_alpha.has_value()) and
-       num_expansion_iters < settings::strategy::max_expansion_iters) {
-        if(sub_expansion_alpha) c1.alpha_expansion = sub_expansion_alpha;
-        if(not c1.alpha_expansion) c1.alpha_expansion = std::min(0.1, status.energy_variance_lowest);
-        // Update alpha
-        auto report = check_saturation(var_mpo_step, settings::precision::variance_saturation_sensitivity / 10);
-        tools::log->info("Determining alpha: report computed {} | saturated {} | expansion iters {} ({})", report.has_computed, report.has_saturated,
-                         num_expansion_iters, settings::strategy::max_expansion_iters);
-        if(report.has_computed) {
-            double factor_up = std::pow(5.0, 1.0 / static_cast<double>(tensors.get_length()));
-            double factor_dn = std::pow(0.1, 1.0 / static_cast<double>(tensors.get_length()));
-            if(report.has_saturated) {
-                c1.alpha_expansion = c1.alpha_expansion.value() * factor_up;
-                c1.alpha_expansion = std::min(max_expansion_alpha, c1.alpha_expansion.value());
-            } else {
-                auto alpha_dn = c1.alpha_expansion.value() * factor_dn;
-                if(alpha_dn > status.energy_variance_lowest)
-                    c1.alpha_expansion = alpha_dn;
-                else
-                    c1.alpha_expansion = std::nullopt; // Back to normal
-            }
-        } else {
-            tools::log->info("Could not enable alpha: Report wasn't computed");
-        }
-        sub_expansion_alpha = c1.alpha_expansion;
-        if(tensors.position_is_inward_edge()) num_expansion_iters++;
-    } else if(num_expansion_iters >= settings::strategy::max_expansion_iters) {
-        tools::log->info("Could not enable alpha: More than num_expansion iters ({}) >=  max_expansion_iters ({})", num_expansion_iters,
-                         settings::strategy::max_expansion_iters);
-        c1.alpha_expansion = std::nullopt; // Back to normal
-    }
-    sub_expansion_alpha = c1.alpha_expansion;
-
     // Setup the maximum problem size here
     switch(c1.optSpace) {
         case OptSpace::SUBSPACE: c1.max_problem_size = settings::precision::max_size_part_diag; break;
@@ -367,6 +323,14 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
     c1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c1.chosen_sites);
     c1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c1.chosen_sites);
+
+    if(status.sub_expansion_alpha > 0) {
+        // If we are doing 1-site dmrg, then we better use subspace expansion
+        if(c1.chosen_sites.size() == 1 and status.sub_expansion_alpha > 0) c1.alpha_expansion = status.sub_expansion_alpha;
+        // If we are stuck and enabled subspace expansion when stuck
+        if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_stuck_for > 0 and status.sub_expansion_alpha > 0)
+            c1.alpha_expansion = status.sub_expansion_alpha;
+    }
 
     configs.emplace_back(c1);
     if(not c1.retry) return configs;

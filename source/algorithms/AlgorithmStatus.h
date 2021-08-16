@@ -26,6 +26,7 @@ class AlgorithmStatus {
     double               energy_variance_lowest      = 1;
     size_t               energy_variance_max_digits  = 0;
     double               energy_variance_prec_limit  = 0;
+    double               sub_expansion_alpha         = 0;
     double               phys_time                   = 0;
     double               wall_time                   = 0;
     double               algo_time                   = 0;
