@@ -81,7 +81,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::BISECTION;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.max_num_iterations                         = 20000;
-    ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+    ceres_default_options.max_lbfgs_rank                             = 8; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-16;//std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
@@ -99,14 +99,11 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
-        ceres_default_options.function_tolerance                     = 1e-10; // Tested, 1e-6 seems to be a sweetspot
-        ceres_default_options.gradient_tolerance                     = 1e-1;
-        ceres_default_options.max_lbfgs_rank                         = 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
         // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
         // Empirically, we observe that the gradient is still large when lbfgs has finished,
         // and often the result is a tiny bit worse than what we started with.
-        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;
-
+        // When this happens, it's not worth trying to get LBFGS to converge: instead, try an eigensolver on the reduced operator H²
+        ceres_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     }
 
     /* clang-format off */
