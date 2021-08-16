@@ -224,14 +224,6 @@ CheckCXXOptional()
 target_link_libraries(DMRG++ PRIVATE dmrg-main)  # Link everything to main project
 #target_sources(DMRG++ PRIVATE $<TARGET_OBJECTS:dmrg-main>)
 
-#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "8.0.0")
-#    target_compile_options(dmrg-opt PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-eig PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-arp PRIVATE -ftime-trace)
-#    target_compile_options(dmrg-main PRIVATE -ftime-trace)
-#    target_compile_options(DMRG++ PRIVATE -ftime-trace)
-#endif()
-
 
 # Uninstall target
 if(NOT TARGET uninstall)

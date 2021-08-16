@@ -5,7 +5,7 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         ceres_direct_functor.cpp
         ceres_subspace.cpp
         ceres_subspace_find_full.cpp
-        ceres_subspace_find_iter.cpp
+        ceres_subspace_find_part.cpp
         ceres_subspace_filter.cpp
         ceres_subspace_functor.cpp
         ceres_subspace_hamiltonian.cpp
