@@ -139,7 +139,13 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFini
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
     auto t_chi = tid::tic_scope("chi_merged");
     if(state.active_sites.empty()) return {};
-    if(state.active_sites.size() <= 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+    if(state.active_sites.size() == 1) {
+        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
+        // mps, relative to the current direction.
+        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
+        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+    }
+    if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     std::vector<long> bond_dimensions;
     for(const auto &pos : state.active_sites) {
         if(&pos == &state.active_sites.front()) continue;
@@ -284,13 +290,62 @@ std::vector<double> tools::finite::measure::truncation_errors(const StateFinite 
 }
 
 std::vector<double> tools::finite::measure::truncation_errors_active(const StateFinite &state) {
+    if(state.active_sites.empty()) return {};
+    if(state.active_sites.size() == 1) {
+        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
+        // mps, relative to the current direction.
+        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error()};
+        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
+    }
+    if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     std::vector<double> truncation_errors;
+        for(const auto &pos : state.active_sites) {
+            if(&pos == &state.active_sites.front()) continue;
+            const auto &mps = state.get_mps_site(pos);
+            truncation_errors.push_back(mps.get_chiL());
+        }
+        return truncation_errors;
+
+
     for(const auto &site : state.active_sites) {
         const auto &mps = state.get_mps_site(site);
-        truncation_errors.emplace_back(mps.get_truncation_error());
         if(mps.isCenter()) truncation_errors.emplace_back(mps.get_truncation_error_LC());
+        if(mps.get_position() == state.active_sites.front()) continue;
+        if(mps.get_position() == state.active_sites.back()) continue;
+        truncation_errors.emplace_back(mps.get_truncation_error());
     }
     return truncation_errors;
+
+    // Here we calculate the bond dimensions of the bonds that were merged into the full state in the last step
+    // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
+    //    auto t_chi = tid::tic_scope("chi_merged");
+    //    if(state.active_sites.empty()) return {};
+    //    if(state.active_sites.size() == 1) {
+    //        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
+    //        // mps, relative to the current direction.
+    //        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
+    //        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+    //    }
+    //    if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+    //    std::vector<long> bond_dimensions;
+    //    for(const auto &pos : state.active_sites) {
+    //        if(&pos == &state.active_sites.front()) continue;
+    //        const auto &mps = state.get_mps_site(pos);
+    //        bond_dimensions.push_back(mps.get_chiL());
+    //    }
+    //    return bond_dimensions;
+
+    //    std::vector<double> truncation_errors;
+    //    truncation_errors.reserve(active_sites.size());
+    //    for(const auto &pos : active_sites) {
+    //        // We are only interested in the truncation on bonds that are updated
+    //        // when operating on active_sites. This excludes the outer bonds.
+    //        if(get_mps_site(pos).isCenter()) truncation_errors.emplace_back(get_truncation_error_LC());
+    //        if(pos == active_sites.front()) continue;
+    //        if(pos == active_sites.back()) continue;
+    //        truncation_errors.emplace_back(get_truncation_error(pos));
+    //    }
+    //    return truncation_errors;
 }
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {
@@ -560,7 +615,7 @@ double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &m
     return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax);
 }
 
-double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
+double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
     auto v = Eigen::Map<const Eigen::VectorXcd>(mps.data(), mps.size());
 
     auto en1 = tensors.get_multisite_env_ene_blk();
@@ -582,9 +637,9 @@ double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, 
 }
 
 template<typename Scalar>
-double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo1, const Eigen::Tensor<Scalar, 3> &en1L,
-                                             const Eigen::Tensor<Scalar, 3> &en1R, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
-                                             const Eigen::Tensor<Scalar, 3> &en2R) {
+double tools::finite::measure::max_gradient(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo1, const Eigen::Tensor<Scalar, 3> &en1L,
+                                            const Eigen::Tensor<Scalar, 3> &en1R, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
+                                            const Eigen::Tensor<Scalar, 3> &en2R) {
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     auto v           = Eigen::Map<const VectorType>(mps.data(), mps.size());
     auto H1t         = tools::common::contraction::matrix_vector_product(mps, mpo1, en1L, en1R);
@@ -603,16 +658,16 @@ double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps
     return grad.template lpNorm<Eigen::Infinity>();
 }
 
-template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo1, const Eigen::Tensor<real, 3> &en1L,
-                                                      const Eigen::Tensor<real, 3> &en1R, const Eigen::Tensor<real, 4> &mpo2,
-                                                      const Eigen::Tensor<real, 3> &en2L, const Eigen::Tensor<real, 3> &en2R);
-template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo1, const Eigen::Tensor<cplx, 3> &en1L,
-                                                      const Eigen::Tensor<cplx, 3> &en1R, const Eigen::Tensor<cplx, 4> &mpo2,
-                                                      const Eigen::Tensor<cplx, 3> &en2L, const Eigen::Tensor<cplx, 3> &en2R);
+template double tools::finite::measure::max_gradient(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo1, const Eigen::Tensor<real, 3> &en1L,
+                                                     const Eigen::Tensor<real, 3> &en1R, const Eigen::Tensor<real, 4> &mpo2, const Eigen::Tensor<real, 3> &en2L,
+                                                     const Eigen::Tensor<real, 3> &en2R);
+template double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo1, const Eigen::Tensor<cplx, 3> &en1L,
+                                                     const Eigen::Tensor<cplx, 3> &en1R, const Eigen::Tensor<cplx, 4> &mpo2, const Eigen::Tensor<cplx, 3> &en2L,
+                                                     const Eigen::Tensor<cplx, 3> &en2R);
 
 template<typename Scalar>
-double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
-                                             const Eigen::Tensor<Scalar, 3> &en2R) {
+double tools::finite::measure::max_gradient(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
+                                            const Eigen::Tensor<Scalar, 3> &en2R) {
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     auto v           = Eigen::Map<const VectorType>(mps.data(), mps.size());
     auto H2t         = tools::common::contraction::matrix_vector_product(mps, mpo2, en2L, en2R);
@@ -626,7 +681,7 @@ double tools::finite::measure::max_grad_norm(const Eigen::Tensor<Scalar, 3> &mps
     auto   grad   = pref * var_1 * norm_1 * (H2v - vH2v * v); // Factor 2 for complex
     return grad.template lpNorm<Eigen::Infinity>();
 }
-template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo2, const Eigen::Tensor<real, 3> &en2L,
-                                                      const Eigen::Tensor<real, 3> &en2R);
-template double tools::finite::measure::max_grad_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo2, const Eigen::Tensor<cplx, 3> &en2L,
-                                                      const Eigen::Tensor<cplx, 3> &en2R);
+template double tools::finite::measure::max_gradient(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo2, const Eigen::Tensor<real, 3> &en2L,
+                                                     const Eigen::Tensor<real, 3> &en2R);
+template double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo2, const Eigen::Tensor<cplx, 3> &en2L,
+                                                     const Eigen::Tensor<cplx, 3> &en2R);
