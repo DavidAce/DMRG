@@ -1,6 +1,9 @@
 set(test_lnk
     dmrg-math
-    dmrg-general
-    dmrg-tools-common-log
-    dmrg-tools-common-con
+    dmrg-tid
+ )
+
+set(test_inc
+    $<TARGET_OBJECTS:dmrg-tools-common-log>
+    $<TARGET_OBJECTS:dmrg-tools-common-contraction>
  )
