@@ -302,7 +302,7 @@ void opt_mps::set_optspace(OptSpace optSpace_) { optSpace = optSpace_; }
 void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 
-void opt_mps::validate_candidate() const {
+void opt_mps::validate_basis_vector() const {
     std::string error_msg;
     /* clang-format off */
     if(not name)     error_msg.append("\t name    \n");
@@ -369,9 +369,9 @@ bool opt_mps::operator<(const opt_mps &rhs) const {
     // If we have reched this point the overlaps, variances and eigenvalues are not defined.
     // There is probably a logical bug somewhere
     fmt::print("Checking that this opt_mps is valid\n");
-    this->validate_candidate();
+    this->validate_basis_vector();
     fmt::print("Checking that rhs opt_mps is valid\n");
-    rhs.validate_candidate();
+    rhs.validate_basis_vector();
     return true;
 }
 

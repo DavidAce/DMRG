@@ -35,7 +35,7 @@ namespace tools::finite::opt::internal{
                                 const AlgorithmStatus &status, OptMeta & meta);
 
     extern opt_mps
-    ceres_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps, const std::vector<opt_mps> & candidate_list,
+    ceres_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps, const std::vector<opt_mps> & subspace,
                             const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta & meta);
 
 
@@ -56,44 +56,40 @@ namespace tools::finite::opt::internal{
     namespace subspace{
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_iter(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
+        find_subspace_part(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & conf);
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_iter2(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
+        find_subspace_part2(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & conf);
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
         find_subspace_full(const TensorsFinite & tensors);
 
         template<typename Scalar>
-        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
+        extern std::vector<opt_mps>
         find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta & meta);
 
-        template<typename Scalar>
-        extern std::vector<opt_mps>
-        find_candidates(const TensorsFinite &tensors, double target_subspace_error, const OptMeta & meta);
-
         extern void
-        filter_candidates(std::vector<opt_mps> & candidate_list, double target_subspace_error, size_t max_accept);
+        filter_subspace(std::vector<opt_mps> & subspace, double target_subspace_error, size_t max_accept);
 
 
-        extern std::optional<size_t> get_idx_to_candidate_with_highest_overlap(const std::vector<opt_mps> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site);
-        extern std::optional<size_t> get_idx_to_candidate_with_lowest_variance(const std::vector<opt_mps> & candidate_list, double energy_llim_per_site, double energy_ulim_per_site);
-        extern std::vector<size_t> get_idx_to_candidates_with_highest_overlap(const std::vector<opt_mps> & candidate_list, size_t max_candidates, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::vector<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
 
-        extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_mps> & candidate_list);
-        extern Eigen::VectorXd get_eigvals(const std::vector<opt_mps> & candidate_list);
-        extern Eigen::VectorXd get_energies(const std::vector<opt_mps> & candidate_list);
-        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_mps> & candidate_list);
-        extern Eigen::VectorXd get_overlaps(const std::vector<opt_mps> & candidate_list);
-        extern std::vector<double> get_subspace_errors(const std::vector<opt_mps> & candidate_list);
-        extern double get_subspace_error(const std::vector<opt_mps> & candidate_list, std::optional<size_t> max_candidates = std::nullopt);
+        extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_mps> & eigvecs);
+        extern Eigen::VectorXd get_eigvals(const std::vector<opt_mps> & eigvecs);
+        extern Eigen::VectorXd get_energies(const std::vector<opt_mps> & eigvecs);
+        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_mps> & eigvecs);
+        extern Eigen::VectorXd get_overlaps(const std::vector<opt_mps> & eigvecs);
+        extern std::vector<double> get_subspace_errors(const std::vector<opt_mps> & eigvecs);
+        extern double get_subspace_error(const std::vector<opt_mps> & eigvecs, std::optional<size_t> max_eigvecs = std::nullopt);
         extern double get_subspace_error(const std::vector<double> &overlaps);
-        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & candidate_list, size_t idx);
-        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & candidate_list, const Eigen::VectorXcd & subspace_vector);
-        extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_mps> & candidate_list, const Eigen::VectorXcd & subspace_vector);
-        extern TensorType<cplx,3> get_tensor_in_fullspace(const std::vector<opt_mps> & candidate_list, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
+        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, size_t idx);
+        extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
+        extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
+        extern TensorType<cplx,3> get_tensor_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
     }
 
     template <typename T>

@@ -31,7 +31,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                                                                     const AlgorithmStatus &status, OptMeta &meta) {
     tools::log->trace("Optimizing in DIRECT mode");
     auto t_dir = tid::tic_scope("direct");
-    initial_mps.validate_candidate();
+    initial_mps.validate_basis_vector();
     if constexpr(settings::debug)
         if(initial_mps.has_nan()) throw std::runtime_error("initial_mps has nan's");
     reports::bfgs_add_entry("Direct", "init", initial_mps);

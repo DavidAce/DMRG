@@ -121,7 +121,7 @@ namespace tools::finite::opt {
         void                                             set_optspace(OptSpace optspace_);
         void                                             set_optmode(OptMode optmode_);
         void                                             set_optexit(OptExit optexit_);
-        void                                             validate_candidate() const;
+        void                                             validate_basis_vector() const;
         void                                             validate_result() const;
         bool                                             operator<(const opt_mps &rhs) const;
         bool                                             operator>(const opt_mps &rhs) const;

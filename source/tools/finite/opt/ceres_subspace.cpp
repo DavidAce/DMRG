@@ -19,7 +19,7 @@ using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
-std::vector<opt_mps> internal::subspace::find_candidates(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
+std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     tools::log->trace("Finding subspace");
@@ -45,7 +45,7 @@ std::vector<opt_mps> internal::subspace::find_candidates(const TensorsFinite &te
         } else {
             eigval_target = energy_target;
         }
-        std::tie(eigvecs, eigvals) = find_subspace_iter<Scalar>(tensors, eigval_target, target_subspace_error, meta);
+        std::tie(eigvecs, eigvals) = find_subspace_part<Scalar>(tensors, eigval_target, target_subspace_error, meta);
     }
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
     tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_reduced(),
@@ -66,53 +66,58 @@ std::vector<opt_mps> internal::subspace::find_candidates(const TensorsFinite &te
     auto            energy_reduced = model.get_energy_reduced();
     Eigen::VectorXd overlaps       = (multisite_vec.adjoint() * eigvecs).cwiseAbs().real();
 
-    double candidate_time = 0;
-    for(const auto &item : reports::eigs_log) { candidate_time += item.ham_time + item.lu_time + item.eig_time; }
+    double eigvec_time = 0;
+    for(const auto &item : reports::eigs_log) { eigvec_time += item.ham_time + item.lu_time + item.eig_time; }
 
-    std::vector<opt_mps> candidate_list;
-    candidate_list.reserve(static_cast<size_t>(eigvals.size()));
+    std::vector<opt_mps> subspace;
+    subspace.reserve(static_cast<size_t>(eigvals.size()));
     for(long idx = 0; idx < eigvals.size(); idx++) {
         // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
         auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), state.active_dimensions());
-        candidate_list.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt,
-                                    overlaps(idx), tensors.get_length());
-        candidate_list.back().set_time(candidate_time);
-        candidate_list.back().set_counter(reports::eigs_log.size());
-        candidate_list.back().set_iter(reports::eigs_log.size());
-        candidate_list.back().is_basis_vector = true;
-        candidate_list.back().validate_candidate();
+        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt, overlaps(idx),
+                              tensors.get_length());
+        subspace.back().set_time(eigvec_time);
+        subspace.back().set_counter(reports::eigs_log.size());
+        subspace.back().set_iter(reports::eigs_log.size());
+        subspace.back().is_basis_vector = true;
+
+        subspace.back().set_krylov_idx(idx);
+        subspace.back().set_krylov_eigval(eigvals(idx));
+        subspace.back().set_krylov_ritz(enum2sv(meta.optRitz));
+        subspace.back().set_optmode(meta.optMode);
+        subspace.back().set_optspace(meta.optSpace);
+
+        subspace.back().validate_basis_vector();
     }
-    return candidate_list;
+    return subspace;
 }
 
-template std::vector<opt_mps> internal::subspace::find_candidates<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> internal::subspace::find_subspace<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
 
-template std::vector<opt_mps> internal::subspace::find_candidates<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> internal::subspace::find_subspace<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
 
-opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                              const std::vector<opt_mps> &candidate_list, const Eigen::MatrixXcd &H2_subspace,
-                                                              const AlgorithmStatus &status, OptMeta &meta) {
+opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const std::vector<opt_mps> &subspace,
+                                                              const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta &meta) {
     auto t_sub = tid::tic_scope("subspace");
-    initial_mps.validate_candidate();
+    initial_mps.validate_basis_vector();
 
     // Handy references
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
 
     opt_mps optimized_mps;
-    auto    candidate_best_idx =
-        internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
-    if(candidate_best_idx)
-        optimized_mps = *std::next(candidate_list.begin(), static_cast<long>(candidate_best_idx.value()));
+    auto    eigvec_best_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim_per_site, status.energy_ulim_per_site);
+    if(eigvec_best_idx)
+        optimized_mps = *std::next(subspace.begin(), static_cast<long>(eigvec_best_idx.value()));
     else
-        optimized_mps = *candidate_list.begin();
+        optimized_mps = *subspace.begin();
     auto             fullspace_dims  = optimized_mps.get_tensor().dimensions();
-    Eigen::VectorXcd subspace_vector = internal::subspace::get_vector_in_subspace(candidate_list, optimized_mps.get_vector());
+    Eigen::VectorXcd subspace_vector = internal::subspace::get_vector_in_subspace(subspace, optimized_mps.get_vector());
 
     tools::log->debug("Optimizing with initial guess: {}", optimized_mps.get_name());
 
     // We need the eigenvalues in a convenient format as well
-    auto eigvals = internal::subspace::get_eigvals(candidate_list);
+    auto eigvals = internal::subspace::get_eigvals(subspace);
 
     /*
      *
@@ -125,7 +130,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             if(tools::log->level() == spdlog::level::trace) {
                 // Check using explicit matrix
                 auto             t_dbg               = tid::tic_scope("debug");
-                Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_mps.get_vector());
+                Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(subspace, initial_mps.get_vector());
                 real             overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
                 Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
                 Eigen::VectorXcd H2v                 = H2_subspace.template selfadjointView<Eigen::Upper>() * subspace_vector;
@@ -144,7 +149,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             if(tools::log->level() == spdlog::level::trace) {
                 // Check current tensor
                 auto             t_dbg          = tid::tic_scope("debug");
-                Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
+                Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(subspace, subspace_vector);
                 auto             theta_0_tensor = tenx::TensorMap(theta_0, state.active_dimensions());
                 real             energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                 real             variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
@@ -176,7 +181,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
             subspace_vector = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_cast.data()), subspace_vector_cast.size() / 2).normalized();
             // Copy the results from the functor
-            optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(candidate_list, subspace_vector, fullspace_dims));
+            optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(subspace, subspace_vector, fullspace_dims));
             optimized_mps.set_counter(functor->get_count());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
@@ -195,7 +200,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             tools::log->trace("Running LBFGS subspace real");
             ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
             subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
-            optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(candidate_list, subspace_vector, fullspace_dims));
+            optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(subspace, subspace_vector, fullspace_dims));
             optimized_mps.set_counter(functor->get_count());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
@@ -257,7 +262,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                                                                   OptMeta &meta) {
     tools::log->trace("Optimizing in SUBSPACE mode");
     auto t_sub = tid::tic_scope("subspace");
-    initial_mps.validate_candidate();
+    initial_mps.validate_basis_vector();
 
     /*
      * Subspace optimization
@@ -302,32 +307,32 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *
      * Step 1)
      *      - (O) If  OptMode::OVERLAP:
-     *            Find the index for the best candidate inside of the energy window:
-     *              - OA) idx >= 0: Candidate found in window. Return that candidate
-     *              - OB) idx = -1: No candidate found in window. Return old tensor
+     *            Find the index for the best eigvec inside of the energy window:
+     *              - OA) idx >= 0: eigvec found in window. Return that eigvec
+     *              - OB) idx = -1: No eigvec found in window. Return old tensor
      *       -(V) If OptMode::SUBSPACE
      *          Make sure k is as small as possible. I.e. filter out eigenvectors from [x] down
-     *          to an even smaller set of "relevant" candidates for doing subspace optimization.
-     *          Allowing a maximum of k == 64 candidates keeps ram below 2GB when the problem
+     *          to an even smaller set of "relevant" eigvecs for doing subspace optimization.
+     *          Allowing a maximum of k == 64 eigvecs keeps ram below 2GB when the problem
      *          size == 4096 (the linear size of H_local and the mps multisite_tensor).
      *          This means that we filter out
-     *              * candidates outside of the energy window (if one is enabled)
-     *              * candidates with little or no overlap to the current state.
-     *          The filtering process collects the candidate state with best overlap until
+     *              * eigvecs outside of the energy window (if one is enabled)
+     *              * eigvecs with little or no overlap to the current state.
+     *          The filtering process collects the eigvec state with best overlap until
      *          either of these two criteria is met:
-     *              * More than N=max_accept candidates have been collected
+     *              * More than N=max_accept eigvecs have been collected
      *              * The subspace error "eps" is low enough¹
-     *          The filtering returns the candidates sorted in decreasing overlap.
+     *          The filtering returns the eigvecs sorted in decreasing overlap.
      *          ¹ We define eps = 1 - Σ_i |<x_i|y>|². A value eps ~1e-10 is reasonable.
      *
      * Step 2)
-     *          Find the index for the best candidate inside of the energy window:
-     *              - VA) idx = -1: No candidate found in window. Return old tensor
-     *              - VB) We have many candidates, including the current tensor.
+     *          Find the index for the best eigvec inside of the energy window:
+     *              - VA) idx = -1: No eigvec found in window. Return old tensor
+     *              - VB) We have many eigvecs, including the current tensor.
      *                    They should be viewed as good starting guesses for LBFGS optimization.
      *                    Optimize them one by one, and keep the
      *
-     * Step 2)  Find the best overlapping state among the relevant candidates.
+     * Step 2)  Find the best overlapping state among the relevant eigvecs.
      * Step 3)  We can now make different decisions based on the overlap.
      *          A)  If best_overlap_idx == -1
      *              No state is in energy window -> discard! Return old multisite_mps_tensor.
@@ -342,15 +347,15 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *                  B2) Else, set theta_initial = multisite_mps_tensor.
      *          C)  If overlap_cat <= best_overlap and best_overlap < overlap_high
      *              This can happen for one reasons:
-     *                  1) There are a few candidate states with significant overlap (superposition)
+     *                  1) There are a few eigvec states with significant overlap (superposition)
      *              It's clear that we need to optimize, but we have to think carefully about the initial guess.
      *              Right now it makes sense to always choose best overlap theta, since that forces the algorithm to
      *              choose a particular state and not get stuck in superposition. Choosing the old theta may just entrench
      *              the algorithm into a local minima.
      *          D)  If 0 <= best_overlap and best_overlap < overlap_cat
      *              This can happen for three reasons, most often early in the simulation.
-     *                  1) There are several candidate states with significant overlap (superposition)
-     *                  2) The highest overlapping states were outside of the energy window, leaving just these candidates.
+     *                  1) There are several eigvec states with significant overlap (superposition)
+     *                  2) The highest overlapping states were outside of the energy window, leaving just these eigvecs.
      *                  3) The energy targeting of states has failed for some reason, perhaps the spectrum is particularly dense_lu.
      *              In any case, it is clear we are lost Hilbert space.
      *              Also, the subspace_error is no longer a good measure of how useful the subspace is to us, since it's only
@@ -358,7 +363,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *              we're looking for.
      *              So to address all three cases, do DIRECT optimization with best_overlap_theta as initial guess.
      *
-     * In particular, notice that we never use the candidate that happens to have the best variance.
+     * In particular, notice that we never use the eigvec that happens to have the best variance.
      */
     // Handy references
     const auto &state = *tensors.state;
@@ -367,16 +372,16 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
 
     /*
      *  Step 0) Find the subspace.
-     *  The subspace set of candidate eigenstates obtained from full or partial diagonalization
+     *  The subspace set of eigenstates obtained from full or partial diagonalization
      */
 
-    std::vector<opt_mps> candidate_list;
+    std::vector<opt_mps> subspace;
     switch(meta.optType) {
-        case OptType::CPLX: candidate_list = internal::subspace::find_candidates<cplx>(tensors, settings::precision::target_subspace_error, meta); break;
-        case OptType::REAL: candidate_list = internal::subspace::find_candidates<double>(tensors, settings::precision::target_subspace_error, meta); break;
+        case OptType::CPLX: subspace = internal::subspace::find_subspace<cplx>(tensors, settings::precision::target_subspace_error, meta); break;
+        case OptType::REAL: subspace = internal::subspace::find_subspace<double>(tensors, settings::precision::target_subspace_error, meta); break;
     }
 
-    tools::log->trace("Subspace found with {} eigenvectors", candidate_list.size());
+    tools::log->trace("Subspace found with {} eigenvectors", subspace.size());
 
     /*
      *
@@ -384,30 +389,19 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *
      */
     if(meta.optMode == OptMode::OVERLAP) {
-        auto max_overlap_idx =
-            internal::subspace::get_idx_to_candidate_with_highest_overlap(candidate_list, status.energy_llim_per_site, status.energy_ulim_per_site);
+        auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim_per_site, status.energy_ulim_per_site);
         if(max_overlap_idx) {
             // (OA)
-            //            if constexpr(settings::debug) {
-            //                for(const auto & [idx, candidate] : iter::enumerate(candidate_list)) {
-            //                    candidate.set_variance(tools::finite::measure::energy_variance(candidate.get_tensor(), tensors));
-            //                    std::string msg = fmt::format("Candidate {:10} | overlap {:<14.12f} | energy {:<+20.16f} | variance {:<+20.16f}",
-            //                    candidate.get_label(),
-            //                                                  candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()));
-            //                    if(idx == max_overlap_idx) msg.append("   <--- max overlap");
-            //                    tools::log->trace(msg);
-            //                }
-            //            }
-            auto &candidate_max_overlap = *std::next(candidate_list.begin(), static_cast<long>(max_overlap_idx.value()));
-            candidate_max_overlap.set_variance(tools::finite::measure::energy_variance(candidate_max_overlap.get_tensor(), tensors));
+            auto &eigvec_max_overlap = *std::next(subspace.begin(), static_cast<long>(max_overlap_idx.value()));
+            eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors));
             if(tools::log->level() == spdlog::level::trace) {
-                tools::log->trace("ceres_subspace_optimization: Candidate {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>20.16f}",
-                                  max_overlap_idx.value(), candidate_max_overlap.get_overlap(), candidate_max_overlap.get_energy_per_site(),
-                                  std::log10(candidate_max_overlap.get_variance()));
+                tools::log->trace("ceres_subspace_optimization: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}",
+                                  max_overlap_idx.value(), eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy_per_site(),
+                                  eigvec_max_overlap.get_variance());
             }
-            if(candidate_max_overlap.get_overlap() < 0.1)
-                tools::log->debug("ceres_subspace_optimization: Overlap fell below < 0.1: {:20.16f}", candidate_max_overlap.get_overlap());
-            return candidate_max_overlap;
+            if(eigvec_max_overlap.get_overlap() < 0.1)
+                tools::log->debug("ceres_subspace_optimization: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
+            return eigvec_max_overlap;
         } else {
             // (OB)
             tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
@@ -416,11 +410,11 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
     }
 
     /*
-     *  Step 1)  (Variance mode) Filter the candidates
+     *  Step 1)  (Variance mode) Filter the eigenvectors
      *
      */
 
-    internal::subspace::filter_candidates(candidate_list, settings::precision::target_subspace_error, settings::precision::max_subspace_size);
+    internal::subspace::filter_subspace(subspace, settings::precision::target_subspace_error, settings::precision::max_subspace_size);
 
     /*
      *
@@ -429,42 +423,41 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      */
 
     // Construct H² as a matrix (expensive operation!)
-    // Also make sure you do this before prepending the current state. All candidates here should be basis vectors
-    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<cplx>(model, edges, candidate_list);
+    // Also make sure you do this before prepending the current state. All eigenvectors here should be basis vectors
+    Eigen::MatrixXcd H2_subspace = internal::get_multisite_hamiltonian_squared_subspace_matrix<cplx>(model, edges, subspace);
     if(meta.optType == OptType::REAL) H2_subspace = H2_subspace.real();
 
-    // Find the best candidates and compute their variance
-    auto candidate_list_top_idx =
-        internal::subspace::get_idx_to_candidates_with_highest_overlap(candidate_list, 5, status.energy_llim_per_site, status.energy_ulim_per_site);
-    for(auto &idx : candidate_list_top_idx) {
-        auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
-        candidate.set_variance(tools::finite::measure::energy_variance(candidate.get_tensor(), tensors));
+    // Find the best eigenvectors and compute their variance
+    auto eigvecs_top_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, 5, status.energy_llim_per_site, status.energy_ulim_per_site);
+    for(auto &idx : eigvecs_top_idx) {
+        auto &eigvec = *std::next(subspace.begin(), static_cast<long>(idx));
+        eigvec.set_variance(tools::finite::measure::energy_variance(eigvec.get_tensor(), tensors));
     }
 
     // We need the eigenvalues in a convenient format as well
-    auto eigvals = internal::subspace::get_eigvals(candidate_list);
+    auto eigvals = internal::subspace::get_eigvals(subspace);
 
-    // All the candidates with significant overlap should be considered as initial guesses, including the current theta
-    // So we append it here to the list of candidates
-    candidate_list.emplace_back(initial_mps);
-    candidate_list_top_idx.emplace_back(candidate_list.size() - 1);
+    // All the eigenvectors with significant overlap should be considered as initial guesses, including the current theta
+    // So we append it here to the list of eigenvectors
+    subspace.emplace_back(initial_mps);
+    eigvecs_top_idx.emplace_back(subspace.size() - 1);
 
-    tools::log->debug("Optimizing with {} initial guesses", candidate_list_top_idx.size());
+    tools::log->debug("Optimizing with {} initial guesses", eigvecs_top_idx.size());
     std::vector<opt_mps> optimized_results;
-    size_t               candidate_count = 0;
-    for(auto &idx : candidate_list_top_idx) {
-        const auto &candidate = *std::next(candidate_list.begin(), static_cast<long>(idx));
-        tools::log->trace("Starting LBFGS with candidate {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>20.16f} | eigvec {}", idx,
-                          candidate.get_overlap(), candidate.get_energy_per_site(), std::log10(candidate.get_variance()), candidate.is_basis_vector);
-        Eigen::VectorXcd        subspace_vector = internal::subspace::get_vector_in_subspace(candidate_list, idx);
+    size_t               eigvec_count = 0;
+    for(auto &idx : eigvecs_top_idx) {
+        const auto &eigvec = *std::next(subspace.begin(), static_cast<long>(idx));
+        tools::log->trace("Starting LBFGS with eigvec {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>8.2e} | eigvec {}", idx,
+                          eigvec.get_overlap(), eigvec.get_energy_per_site(), eigvec.get_variance(), eigvec.is_basis_vector);
+        Eigen::VectorXcd        subspace_vector = internal::subspace::get_vector_in_subspace(subspace, idx);
         long                    subspace_size   = subspace_vector.size();
         [[maybe_unused]] double norm;
-        reports::bfgs_add_entry("Subspace", "init", candidate, subspace_size);
+        reports::bfgs_add_entry("Subspace", "init", eigvec, subspace_size);
         if constexpr(settings::debug) {
             if(tools::log->level() == spdlog::level::trace) {
                 // Check using explicit matrix
                 auto             t_dbg               = tid::tic_scope("debug");
-                Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(candidate_list, initial_mps.get_vector());
+                Eigen::VectorXcd initial_vector_sbsp = internal::subspace::get_vector_in_subspace(subspace, initial_mps.get_vector());
                 real             overlap_sbsp        = std::abs(subspace_vector.dot(initial_vector_sbsp));
                 Eigen::VectorXcd Hv                  = eigvals.asDiagonal() * subspace_vector;
                 Eigen::VectorXcd H2v                 = H2_subspace.template selfadjointView<Eigen::Upper>() * subspace_vector;
@@ -475,7 +468,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 cplx             var                 = vH2v / vv - ene * ene;
                 real             ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
                 real             var_init_san        = std::real(var) / static_cast<double>(state.get_length());
-                std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "matrix check");
+                std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", eigvec.get_name(), "matrix check");
                 reports::bfgs_add_entry(description, subspace_vector.size(), subspace_size, ene_init_san, var_init_san, overlap_sbsp,
                                         std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), subspace_vector.norm(), 1, 1,
                                         t_dbg->get_last_interval());
@@ -483,12 +476,12 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
             if(tools::log->level() == spdlog::level::trace) {
                 // Check current tensor
                 auto             t_dbg          = tid::tic_scope("debug");
-                Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(candidate_list, subspace_vector);
+                Eigen::VectorXcd theta_0        = internal::subspace::get_vector_in_fullspace(subspace, subspace_vector);
                 auto             theta_0_tensor = tenx::TensorMap(theta_0, state.active_dimensions());
                 real             energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor, tensors);
                 real             variance_0     = tools::finite::measure::energy_variance(theta_0_tensor, tensors);
                 real             overlap_0      = std::abs(initial_mps.get_vector().dot(theta_0));
-                std::string      description    = fmt::format("{:<8} {:<16} {}", "Subspace", candidate.get_name(), "fullspace check");
+                std::string      description    = fmt::format("{:<8} {:<16} {}", "Subspace", eigvec.get_name(), "fullspace check");
                 reports::bfgs_add_entry(description, theta_0.size(), subspace_size, energy_0, variance_0, overlap_0, theta_0.norm(),
                                         std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 1, 1, t_dbg->get_last_interval());
             }
@@ -504,10 +497,10 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
         auto summary = ceres::GradientProblemSolver::Summary();
         optimized_results.emplace_back(opt_mps());
         auto &optimized_mps = optimized_results.back();
-        optimized_mps.set_name(candidate.get_name());
-        optimized_mps.set_sites(candidate.get_sites());
-        optimized_mps.set_length(candidate.get_length());
-        optimized_mps.set_energy_reduced(candidate.get_energy_reduced());
+        optimized_mps.set_name(eigvec.get_name());
+        optimized_mps.set_sites(eigvec.get_sites());
+        optimized_mps.set_length(eigvec.get_length());
+        optimized_mps.set_energy_reduced(eigvec.get_energy_reduced());
         auto t_lbfgs = tid::tic_scope("lbfgs");
         switch(meta.optType) {
             case OptType::CPLX: {
@@ -522,7 +515,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 subspace_vector =
                     Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_cast.data()), subspace_vector_cast.size() / 2).normalized();
                 // Copy the results from the functor
-                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_mps.get_tensor().dimensions());
+                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
                 optimized_mps.set_counter(functor->get_count());
                 optimized_mps.set_delta_f(functor->get_delta_f());
                 optimized_mps.set_max_grad(functor->get_max_grad_norm());
@@ -543,7 +536,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 tools::log->trace("Running LBFGS subspace real");
                 ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
                 subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
-                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(candidate_list, subspace_vector), initial_mps.get_tensor().dimensions());
+                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
                 optimized_mps.set_counter(functor->get_count());
                 optimized_mps.set_delta_f(functor->get_delta_f());
                 optimized_mps.set_max_grad(functor->get_max_grad_norm());
@@ -584,7 +577,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                           summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
         if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_mps, subspace_size); }
-        candidate_count++;
+        eigvec_count++;
     }
 
     // Sort thetas in ascending order in variance
