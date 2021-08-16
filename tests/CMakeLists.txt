@@ -23,7 +23,6 @@ foreach (test ${TESTS})
     target_link_libraries(${test_tgt} PRIVATE dmrg-deps dmrg-flags)
 endforeach ()
 
-target_link_libraries(dmrg-test-eigbench PRIVATE dmrg-eig dmrg-svd dmrg-arp)
 
 add_custom_target(dmrg-test-all
         COMMENT "Building tests"
