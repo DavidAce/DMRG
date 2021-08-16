@@ -537,6 +537,7 @@ void flbit::print_status_update() {
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
     report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+    report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_midchain());
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     if(tensors.state->measurements.number_entropy_midchain) // This one is expensive
         report += fmt::format("Sₙ(L/2):{:<10.8f} ", tensors.state->measurements.number_entropy_midchain.value());
@@ -546,7 +547,6 @@ void flbit::print_status_update() {
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::chi_lim_max(status.algo_type), status.chi_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    report += fmt::format("log₁₀trnc:{:<8.4f} ", std::log10(tensors.state->get_truncation_error_midchain()));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
     report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));

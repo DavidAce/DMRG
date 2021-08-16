@@ -453,8 +453,8 @@ void xdmrg::single_xDMRG_step() {
         else if(results.back().get_relchange() > 0.999 ) conf.optExit |= OptExit::FAIL_NOCHANGE;
         results.back().set_optexit(conf.optExit);
         /* clang-format on */
-        tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:.4f} --> {:.4f} ({:.3f} %)"), enum2sv(conf.optMode), enum2sv(conf.optSpace),
-                          flag2str(conf.optExit), std::log10(variance_before_step.value()), std::log10(results.back().get_variance()),
+        tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(conf.optMode), enum2sv(conf.optSpace),
+                          flag2str(conf.optExit), variance_before_step.value(), results.back().get_variance(),
                           results.back().get_relchange() * 100);
         if(results.back().get_relchange() > 1000) throw std::runtime_error("Something is very wrong");
     }
@@ -462,12 +462,12 @@ void xdmrg::single_xDMRG_step() {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::debug)
             for(const auto &r : results)
-                tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| log₁₀σ²E {:<10.6f}| sites [{:>2}-{:<2}] | "
-                                             "alpha {:8.2e} ({} iters) | "
+                tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| σ²H {:<8.2e}| sites [{:>2}-{:<2}] | "
+                                             "alpha {:8.2e} | "
                                              "overlap {:.16f} | "
                                              "{:20} | {} | time {:.4f} ms"),
-                                  r.get_name(), r.get_energy_per_site(), std::log10(r.get_variance()), r.get_sites().front(), r.get_sites().back(),
-                                  r.get_alpha(), num_expansion_iters, r.get_overlap(),
+                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_sites().front(), r.get_sites().back(),
+                                  r.get_alpha(), r.get_overlap(),
                                   fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optspace())), flag2str(r.get_optexit()), 1000 * r.get_time());
 
         // Sort the results in order of increasing variance
@@ -492,15 +492,14 @@ void xdmrg::single_xDMRG_step() {
         tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
         if(tools::log->level() <= spdlog::level::debug) {
             auto truncation_errors = tensors.state->get_truncation_errors_active();
-            for(auto &t : truncation_errors) t = std::log10(t);
-            tools::log->debug("Truncation errors: {:.4f}", fmt::join(truncation_errors, ", "));
+            tools::log->debug("Truncation errors: {:8.2e}", fmt::join(truncation_errors, ", "));
         }
 
         if constexpr(settings::debug) {
             auto variance_before_svd = winner.get_variance();
             auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-            tools::log->debug("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
-            tools::log->debug("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+            tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
+            tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
             tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
         }
 
@@ -567,9 +566,9 @@ void xdmrg::check_convergence() {
                                      status.algorithm_saturated_for >= settings::strategy::min_saturation_iters;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
-    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:.6f}",
+    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
                      status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
-                     status.algorithm_has_to_stop, std::log10(status.energy_variance_prec_limit));
+                     status.algorithm_has_to_stop, status.energy_variance_prec_limit);
 
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed()) {

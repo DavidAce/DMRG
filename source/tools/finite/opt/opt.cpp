@@ -242,8 +242,8 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     /* clang-format off */
     log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} ∇fₘₐₓ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} ops {:>4}/{:<4} "
-               "t {:<} t_op {:<} Gop/s {:>5.1f} "
-//               "| energy {:<18.15f} log₁₀var {:<6.6f}"
+               "t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
+//               "| energy {:<18.15f} lg var {:<6.6f}"
                ),
                summary.iteration,
                summary.cost,
@@ -254,8 +254,8 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                std::abs(summary.step_size), // By line search
                functor.get_count() - last_count,
                functor.get_count(),
-               fmt::format(FMT_STRING("{:>5.3f} s"),summary.cumulative_time_in_seconds),
-               fmt::format(FMT_STRING("{:>6.0f} ms"),summary.iteration_time_in_seconds * 1000),
+               summary.cumulative_time_in_seconds,
+               summary.iteration_time_in_seconds,
                static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9
 //             ,functor.get_energy_per_site(),
 //               std::log10(functor.get_variance()

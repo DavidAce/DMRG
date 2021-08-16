@@ -223,7 +223,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
         if(std::abs(1.0 - std::abs(optimized_mps.get_energy() / energy_check)) > 1e-3)
             tools::log->warn("Energy mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_mps.get_energy(), energy_check);
         if(std::abs(1.0 - std::abs(optimized_mps.get_variance() / variance_check)) > 1e-3)
-            tools::log->warn("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", std::log10(optimized_mps.get_variance()), std::log10(variance_check));
+            tools::log->warn("Variance mismatch: Ceres: {:8.2e} | DMRG {:8.2e}", optimized_mps.get_variance(), variance_check);
     }
 
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
@@ -574,7 +574,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
             if(std::abs(1.0 - std::abs(optimized_mps.get_energy() / energy_check)) > 1e-3)
                 tools::log->warn("Energy mismatch: Ceres: {:.16f} | DMRG {:.16f}", optimized_mps.get_energy(), energy_check);
             if(std::abs(1.0 - std::abs(optimized_mps.get_variance() / variance_check)) > 1e-3)
-                tools::log->warn("Variance mismatch: Ceres: {:.16f} | DMRG {:.16f}", std::log10(optimized_mps.get_variance()), std::log10(variance_check));
+                tools::log->warn("Variance mismatch: Ceres: {:8.2e} | DMRG {:8.2e}", optimized_mps.get_variance(), variance_check);
         }
 
         int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);

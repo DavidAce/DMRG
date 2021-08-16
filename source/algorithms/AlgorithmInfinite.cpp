@@ -380,19 +380,19 @@ void AlgorithmInfinite::print_status_update() {
     switch(status.algo_type) {
         case AlgorithmType::iDMRG:
             report +=
-                fmt::format("log₁₀ σ²(E): mpo {:<10.6f} ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_mpo(tensors),
+                fmt::format("lg σ²H: mpo {:<10.6f} ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_mpo(tensors),
                             tools::infinite::measure::energy_variance_per_site_ham(tensors), tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         case AlgorithmType::iTEBD:
-            report += fmt::format("log₁₀ σ²(E): ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_ham(tensors),
+            report += fmt::format("lg σ²H: ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_ham(tensors),
                                   tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
+    report += fmt::format("ε: {:<8.2e} ", tools::infinite::measure::truncation_error(*tensors.state));
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
     report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", settings::chi_lim_max(status.algo_type), status.chi_lim,
                           tools::infinite::measure::bond_dimension(*tensors.state));
-    report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tools::infinite::measure::truncation_error(*tensors.state)));
     report += fmt::format("Sites: {:6}", tensors.get_length());
 
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
@@ -432,21 +432,20 @@ void AlgorithmInfinite::print_status_full() {
     }
     switch(status.algo_type) {
         case AlgorithmType::iDMRG:
-            tools::log->info("log₁₀ σ²(E) MPO       = {:<16.16f}", std::log10(tools::infinite::measure::energy_variance_per_site_mpo(tensors)));
-            tools::log->info("log₁₀ σ²(E) HAM       = {:<16.16f}", std::log10(tools::infinite::measure::energy_variance_per_site_ham(tensors)));
-            tools::log->info("log₁₀ σ²(E) MOM       = {:<16.16f}", std::log10(tools::infinite::measure::energy_variance_per_site_mom(tensors)));
+            tools::log->info("lg σ²H MPO         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_mpo(tensors));
+            tools::log->info("lg σ²H HAM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_ham(tensors));
+            tools::log->info("lg σ²H MOM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         case AlgorithmType::iTEBD:
-            tools::log->info("log₁₀ σ²(E) HAM       = {:<16.16f}", std::log10(tools::infinite::measure::energy_variance_per_site_ham(tensors)));
-            tools::log->info("log₁₀ σ²(E) MOM       = {:<16.16f}", std::log10(tools::infinite::measure::energy_variance_per_site_mom(tensors)));
+            tools::log->info("lg σ²H HAM         = {:<8.2e}",tools::infinite::measure::energy_variance_per_site_ham(tensors));
+            tools::log->info("lg σ²H MOM         = {:<8.2e}",tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
-
+    tools::log->info("Truncation error      = {:<8.2e}", tools::infinite::measure::truncation_error(*tensors.state));
     tools::log->info("Entanglement Entropy  = {:<16.16f}", tools::infinite::measure::entanglement_entropy(*tensors.state));
     tools::log->info("χmax                  = {:<16d}", settings::chi_lim_max(status.algo_type));
     tools::log->info("χ                     = {:<16d}", tools::infinite::measure::bond_dimension(*tensors.state));
-    tools::log->info("log₁₀ truncation:     = {:<16.16f}", log10(std::log10(tools::infinite::measure::truncation_error(*tensors.state))));
 
     switch(status.algo_type) {
         case AlgorithmType::iDMRG: break;

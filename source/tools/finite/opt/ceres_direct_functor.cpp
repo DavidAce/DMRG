@@ -140,8 +140,8 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double *v_double_double, doubl
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
-        tools::log->warn("log₁₀ variance is invalid");
-        tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
+        tools::log->warn("σ²H is invalid");
+        tools::log->warn("σ²H             = {:8.2e}", variance);
         tools::log->warn("matvecs         = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
@@ -254,7 +254,7 @@ void ceres_direct_functor<Scalar>::compress() {
         mpo2                               = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
     }
     readyCompress = true;
-    tools::log->debug("ceres::direct: compressed MPO² dimensions {} -> {}",old_dimensions, mpo2.dimensions());
+    tools::log->debug("Compressed MPO² dimensions {} -> {}",old_dimensions, mpo2.dimensions());
 }
 
 template<typename Scalar>
@@ -262,7 +262,7 @@ void ceres_direct_functor<Scalar>::set_shift(double shift_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
     shift = shift_;
-    tools::log->debug("ceres::direct: setting shift: {:.16f}", shift_);
+    tools::log->debug("Setting MPO shift <(H²-σ)> - <(H-σ)>² with σ = {:.16f}", shift_);
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size

@@ -74,7 +74,7 @@ namespace tools::finite::opt::internal {
             double          min_overlap    = overlaps.minCoeff();
             double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
             double          subspace_error = 1.0 - sq_sum_overlap;
-            reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), solver.result.meta.time_total, time_ham,
+            reports::eigs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, time_ham,
                                     t_lu.get_last_interval(), static_cast<size_t>(solver.result.meta.matvecs));
             time_ham = 0;
             if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));

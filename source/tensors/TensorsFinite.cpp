@@ -172,13 +172,13 @@ struct DebugStatus {
         std::string msg;
         msg.append(fmt::format("Energy   [{:<20}] = {:>20.16f}\n", tag, ene));
         msg.append(fmt::format("Reduce   [{:<20}] = {:>20.16f}\n", tag, red));
-        msg.append(fmt::format("log₁₀Var [{:<20}] = {:>20.16f}\n", tag, std::log10(var)));
+        msg.append(fmt::format("σ²H      [{:<20}] = {:<20.16f}\n", tag, var));
         return msg;
     }
     void print() const {
         tools::log->debug("Energy   [{:<20}] = {:>20.16f}", tag, ene);
         tools::log->debug("Reduce   [{:<20}] = {:>20.16f}", tag, red);
-        tools::log->debug("log₁₀Var [{:<20}] = {:>20.16f}", tag, std::log10(var));
+        tools::log->debug("σ²H      [{:<20}] = {:>20.16f}", tag, var);
     }
 };
 

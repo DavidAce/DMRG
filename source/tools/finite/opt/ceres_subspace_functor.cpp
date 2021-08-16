@@ -87,8 +87,8 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
-        tools::log->warn("log₁₀ variance is invalid");
-        tools::log->warn("log₁₀(var)      = {:.16f}", std::log10(variance));
+        tools::log->warn("σ²H is invalid");
+        tools::log->warn("σ²H             = {:8.2e}", variance);
         tools::log->warn("matvecs         = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
