@@ -15,19 +15,18 @@ namespace tools::finite::opt::internal {
 
     std::vector<int> generate_size_list(int shape) {
         std::vector<int> nev_list = {8};
-        if(shape <= 512) nev_list = {32, 128};
-        if(512 < shape and shape <= 1024) nev_list = {64, 128, 256};
-        if(1024 < shape and shape <= 2048) nev_list = {8, 64, 256};
-        if(2048 < shape and shape <= 3072) nev_list = {8, 64, 128};
-        if(3072 < shape and shape <= 4096) nev_list = {8, 64};
+        if(shape <= 1024) nev_list = {32, 128, 256};
+        if(1024 < shape and shape <= 2048) nev_list = {8, 64, 128};
+        if(2048 < shape and shape <= 3072) nev_list = {16, 64, 256};
+        if(3072 < shape and shape <= 4096) nev_list = {16, 128};
         return nev_list;
     }
 
     template<typename Scalar>
-    std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
+    std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
                                                                               const OptMeta &conf) {
-        tools::log->trace("Finding subspace -- iterative");
-        auto  t_iter = tid::tic_scope("iter");
+        tools::log->trace("Finding subspace -- partial");
+        auto  t_iter = tid::tic_scope("part");
         auto &t_lu   = tid::get("lu_decomp");
 
         // Generate the Hamiltonian matrix
@@ -62,7 +61,6 @@ namespace tools::finite::opt::internal {
                 for(long n = 0; n < eigvecs.cols(); n++) { config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
             }
 
-
             solver.eigs(hamiltonian);
             t_lu += *hamiltonian.t_factorOP;
 
@@ -93,17 +91,17 @@ namespace tools::finite::opt::internal {
         return {eigvecs, eigvals};
     }
 
-    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter<cplx>(const TensorsFinite &tensors, double energy_target,
+    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<cplx>(const TensorsFinite &tensors, double energy_target,
                                                                                              double target_subspace_error, const OptMeta &conf);
 
-    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter<real>(const TensorsFinite &tensors, double energy_target,
+    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<real>(const TensorsFinite &tensors, double energy_target,
                                                                                              double target_subspace_error, const OptMeta &conf);
 
     template<typename Scalar>
-    std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter2(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
+    std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part2(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
                                                                                const OptMeta &conf) {
-        tools::log->trace("Finding subspace -- iterative");
-        auto  t_iter = tid::tic_scope("iter");
+        tools::log->trace("Finding subspace -- partial");
+        auto  t_iter = tid::tic_scope("part");
         auto &t_lu   = tid::get("lu_decomp");
 
         // Generate the Hamiltonian matrix
@@ -118,17 +116,17 @@ namespace tools::finite::opt::internal {
         if constexpr(std::is_same_v<Scalar, cplx>) init = tensors.state->get_multisite_mps();
 
         eig::settings config;
-        config.lib           = eig::Lib::PRIMME;
-        config.primme_method = "PRIMME_DYNAMIC";
-        //        config.tol = settings::precision::eig_tolerance;
-        config.tol               = 1e-4;
-        config.ritz              = eig::Ritz::primme_closest_abs;
-        config.sigma             = energy_target;
-        config.compute_eigvecs   = eig::Vecs::ON;
-        config.shift_invert      = eig::Shinv::OFF;
-        config.maxIter           = 80000;
-        config.primme_projection = "primme_proj_refined";
-        config.primme_locking    = 1;
+        //        config.primme_projection = "primme_proj_refined";
+
+        config.lib                         = eig::Lib::PRIMME;
+        config.primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
+        config.primme_max_inner_iterations = -1;
+        config.tol                         = 1e2 * settings::precision::eig_tolerance;
+        config.shift_invert                = eig::Shinv::ON;
+        config.compute_eigvecs             = eig::Vecs::ON;
+        config.sigma                       = energy_target;
+        config.ritz                        = eig::Ritz::primme_largest_abs;
+        config.maxIter                     = 100000;
         config.initial_guess.push_back({init.data(), 0});
         std::string                        reason = "exhausted";
         Eigen::VectorXd                    eigvals;
@@ -138,7 +136,6 @@ namespace tools::finite::opt::internal {
             eig::solver solver;
             solver.config        = config;
             solver.config.maxNev = nev;
-            solver.config.maxNcv = std::clamp(nev * 4, nev, hamiltonian.rows());
             // Set the new initial guess if we are doing one more round
             if(eigvecs.cols() != 0) {
                 solver.config.initial_guess.clear();
@@ -148,15 +145,15 @@ namespace tools::finite::opt::internal {
             solver.eigs(hamiltonian);
             t_lu += *hamiltonian.t_factorOP;
 
-            eigvals = eig::view::get_eigvals<eig::real>(solver.result);
-            eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R);
-
+            eigvals = eig::view::get_eigvals<eig::real>(solver.result, false);
+            eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R, false);
+            if(eigvecs.size() == 0) continue;
             Eigen::VectorXd overlaps       = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
             double          max_overlap    = overlaps.maxCoeff();
             double          min_overlap    = overlaps.minCoeff();
             double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
             double          subspace_error = 1.0 - sq_sum_overlap;
-            reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), solver.result.meta.time_total, time_ham,
+            reports::eigs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, time_ham,
                                     t_lu.get_last_interval(), static_cast<size_t>(solver.result.meta.matvecs));
             time_ham = 0;
             if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
@@ -175,10 +172,10 @@ namespace tools::finite::opt::internal {
         return {eigvecs, eigvals};
     }
 
-    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter2<cplx>(const TensorsFinite &tensors, double energy_target,
+    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part2<cplx>(const TensorsFinite &tensors, double energy_target,
                                                                                               double target_subspace_error, const OptMeta &conf);
 
-    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_iter2<real>(const TensorsFinite &tensors, double energy_target,
+    template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part2<real>(const TensorsFinite &tensors, double energy_target,
                                                                                               double target_subspace_error, const OptMeta &conf);
 
 }

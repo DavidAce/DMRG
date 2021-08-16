@@ -357,9 +357,9 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         configs.emplace_back(c2);
     } else if(c1.optSpace == OptSpace::DIRECT) {
         // If we did a DIRECT optimization that terminated with gradient too high, try KRYLOV
-        c2.optWhen                  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        c2.optSpace                 = OptSpace::KRYLOV;
-        c2.retry                    = false;
+        c2.optWhen  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
+        c2.optSpace = OptSpace::KRYLOV;
+        c2.retry    = false;
         configs.emplace_back(c2);
     } else if(c1.optSpace == OptSpace::KRYLOV) {
         c2.optWhen  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
@@ -375,7 +375,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptConf &conf) {
     if(results.empty()) return true;
     bool should = conf.should_proceed(results.back().get_optexit());
-    tools::log->info("Should try again: {} | when {} | previous exit {}", should, flag2str(conf.optWhen), flag2str(results.back().get_optexit()));
+    tools::log->trace("Should try again: {} | when {} | previous exit {}", should, flag2str(conf.optWhen), flag2str(results.back().get_optexit()));
     return should;
 }
 

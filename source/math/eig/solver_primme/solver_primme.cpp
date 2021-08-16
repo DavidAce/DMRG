@@ -76,6 +76,28 @@ inline primme_preset_method stringToMethod(std::optional<std::string> methodstri
     throw std::runtime_error("Wrong method string: " + methodstring.value());
 }
 
+inline primme_preset_method MethodAdapter(std::optional<eig::PrimmeMethod> method) {
+    if(not method.has_value()) return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
+    if(method.value() == eig::PrimmeMethod::PRIMME_DEFAULT_METHOD) return primme_preset_method::PRIMME_DEFAULT_METHOD;
+    if(method.value() == eig::PrimmeMethod::PRIMME_DYNAMIC) return primme_preset_method::PRIMME_DYNAMIC;
+    if(method.value() == eig::PrimmeMethod::PRIMME_DEFAULT_MIN_TIME) return primme_preset_method::PRIMME_DEFAULT_MIN_TIME;
+    if(method.value() == eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS) return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
+    if(method.value() == eig::PrimmeMethod::PRIMME_Arnoldi) return primme_preset_method::PRIMME_Arnoldi;
+    if(method.value() == eig::PrimmeMethod::PRIMME_GD) return primme_preset_method::PRIMME_GD;
+    if(method.value() == eig::PrimmeMethod::PRIMME_GD_plusK) return primme_preset_method::PRIMME_GD_plusK;
+    if(method.value() == eig::PrimmeMethod::PRIMME_GD_Olsen_plusK) return primme_preset_method::PRIMME_GD_Olsen_plusK;
+    if(method.value() == eig::PrimmeMethod::PRIMME_JD_Olsen_plusK) return primme_preset_method::PRIMME_JD_Olsen_plusK;
+    if(method.value() == eig::PrimmeMethod::PRIMME_RQI) return primme_preset_method::PRIMME_RQI;
+    if(method.value() == eig::PrimmeMethod::PRIMME_JDQR) return primme_preset_method::PRIMME_JDQR;
+    if(method.value() == eig::PrimmeMethod::PRIMME_JDQMR) return primme_preset_method::PRIMME_JDQMR;
+    if(method.value() == eig::PrimmeMethod::PRIMME_JDQMR_ETol) return primme_preset_method::PRIMME_JDQMR_ETol;
+    if(method.value() == eig::PrimmeMethod::PRIMME_STEEPEST_DESCENT) return primme_preset_method::PRIMME_STEEPEST_DESCENT;
+    if(method.value() == eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis) return primme_preset_method::PRIMME_LOBPCG_OrthoBasis;
+    if(method.value() == eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window) return primme_preset_method::PRIMME_LOBPCG_OrthoBasis_Window;
+    return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
+}
+
+
 inline primme_projection stringToProj(std::optional<std::string> projstring) {
     if(not projstring.has_value()) return primme_projection::primme_proj_default;
     if(projstring.value() == "primme_proj_RR") return primme_projection::primme_proj_RR;
@@ -91,12 +113,14 @@ void eig::solver::MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *bloc
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
     return matrix_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
 }
-template void eig::solver::MultAx_wrapper<MatVecDense<eig::real>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-template void eig::solver::MultAx_wrapper<MatVecDense<eig::cplx>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-template void eig::solver::MultAx_wrapper<MatVecSparse<eig::real>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-template void eig::solver::MultAx_wrapper<MatVecSparse<eig::cplx>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-template void eig::solver::MultAx_wrapper<MatVecMps<eig::real>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-template void eig::solver::MultAx_wrapper<MatVecMps<eig::cplx>>(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
+
+template<typename MatrixProductType>
+void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+    if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
+    auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
+    return matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
+}
+
 
 template<typename MatrixProductType>
 void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
@@ -182,7 +206,7 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             *isconv = std::max<int>(*isconv, grad_max < grad_tol);
             *ierr   = 0;
             //            if(*isconv != 0)
-            eig::log->info(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+            eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
                            primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
         }
@@ -254,6 +278,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         if(config.sigma) {
             eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
             matrix.set_shift(config.sigma.value());
+            if constexpr(MatrixProductType::can_shift_invert) {
+                if(config.shift_invert == Shinv::ON) {
+                    eig::log->trace("Enabling shift-invert mode");
+                    matrix.FactorOP();
+                }
+            } else if(config.shift_invert == Shinv::ON)
+                throw std::runtime_error("Tried to shift-invert an incompatible matrix");
         }
     } else if(config.sigma) {
         throw std::runtime_error("Tried to apply shift on an incompatible matrix");
@@ -275,6 +306,10 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
      */
     primme.matrix       = &matrix;
     primme.matrixMatvec = eig::solver::MultAx_wrapper<MatrixProductType>;
+
+    if(matrix.isReadyFactorOp()){
+        primme.matrixMatvec = eig::solver::MultOPv_wrapper<MatrixProductType>;
+    }
 
     // Set the function which prints log output
     primme.monitorFun = monitorFun;
@@ -298,7 +333,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
     if(config.primme_locking) primme.locking = config.primme_locking.value();
     // Shifts
-    std::vector<double> tgtShifts = {0.0};
     switch(primme.target) {
         case primme_target::primme_largest:
         case primme_target::primme_smallest: {
@@ -307,19 +341,25 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         }
         case primme_target::primme_largest_abs: {
             // According to the manual, this is required when the target is primme_largest_abs
+            config.primme_target_shifts = {0.0};
             primme.numTargetShifts = 1;
-            primme.targetShifts    = tgtShifts.data();
+            primme.targetShifts    = config.primme_target_shifts.data();
             break;
         }
         case primme_target::primme_closest_geq:
         case primme_target::primme_closest_leq:
         case primme_target::primme_closest_abs: {
-            primme.numTargetShifts = 1;
-            primme.targetShifts    = tgtShifts.data();
-            if(config.sigma and not matrix.isReadyShift()) {
+            if(not config.primme_target_shifts.empty()){
+                primme.numTargetShifts = config.primme_target_shifts.size();
+                primme.targetShifts    = config.primme_target_shifts.data();
+            }else if(config.sigma and not matrix.isReadyShift()) {
                 // We handle shifts by applying them directly on the matrix is possible. Else here:
-                primme.targetShifts[0] = std::real(config.sigma.value());
-            }
+                config.primme_target_shifts = {std::real(config.sigma.value())};
+                primme.numTargetShifts = config.primme_target_shifts.size();
+                primme.targetShifts    = config.primme_target_shifts.data();
+            }else
+                throw std::runtime_error("primme_target:primme_closest_???: no target shift given");
+
             break;
         }
     }
@@ -328,7 +368,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
      * DYNAMIC uses a runtime heuristic to choose the fastest method between
      * PRIMME_DEFAULT_MIN_TIME and PRIMME_DEFAULT_MIN_MATVECS. But you can
      * set another method, such as PRIMME_LOBPCG_OrthoBasis_Window, directly */
-    primme_set_method(stringToMethod(config.primme_method), &primme);
+    primme_set_method(MethodAdapter(config.primme_method), &primme);
     // Override some parameters
     //    primme.restartingParams.maxPrevRetain = 2;
     //    primme.minRestartSize = 2;

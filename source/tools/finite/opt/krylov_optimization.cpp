@@ -16,6 +16,9 @@
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 
+// Temporary
+//#include <h5pp/h5pp.h>
+
 void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite &tensors, const opt_mps &initial_mps, const eig::solver &solver,
                                                             std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only) {
     auto dims_mps = initial_mps.get_tensor().dimensions();
@@ -37,9 +40,9 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                 mps.set_time(solver.result.meta.time_total);
                 mps.set_counter(static_cast<size_t>(solver.result.meta.matvecs));
                 mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
-                mps.set_max_grad(tools::finite::measure::max_grad_norm(eigvec_i, tensors));
+                mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
                 mps.is_basis_vector = true;
-                mps.validate_candidate();
+                mps.validate_basis_vector();
                 mps.set_krylov_idx(idx);
                 mps.set_krylov_nev(solver.result.meta.nev_converged);
                 mps.set_krylov_ncv(solver.result.meta.ncv);
@@ -90,19 +93,19 @@ namespace tools::finite::opt::internal {
         return lhs.get_overlap() > rhs.get_overlap();
     };
 
-    auto min_gradient_idx = [](const std::vector<opt_mps> &elems, long idx) {
-        double found_grad_norm = 1e20;
-        long   found_elem_idx  = -1;
-        long   elem_idx        = 0;
-        for(const auto &e : elems) {
-            if(e.get_krylov_idx() == idx and e.get_max_grad() < found_grad_norm) {
-                found_grad_norm = e.get_max_grad();
-                found_elem_idx  = elem_idx;
-            }
-            elem_idx++;
-        }
-        return found_elem_idx;
-    };
+    //    auto min_gradient_idx = [](const std::vector<opt_mps> &elems, long idx) {
+    //        double found_grad_norm = 1e20;
+    //        long   found_elem_idx  = -1;
+    //        long   elem_idx        = 0;
+    //        for(const auto &e : elems) {
+    //            if(e.get_krylov_idx() == idx and e.get_max_grad() < found_grad_norm) {
+    //                found_grad_norm = e.get_max_grad();
+    //                found_elem_idx  = elem_idx;
+    //            }
+    //            elem_idx++;
+    //        }
+    //        return found_elem_idx;
+    //    };
 
     template<typename Scalar>
     Eigen::Tensor<Scalar, 3> get_initial_guess(const opt_mps &initial_mps, const std::vector<opt_mps> &results) {
@@ -117,8 +120,8 @@ namespace tools::finite::opt::internal {
             if(it == results.end()) return get_initial_guess<Scalar>(initial_mps, {});
 
             if(it->get_max_grad() < initial_mps.get_max_grad()) {
-                tools::log->debug("Previous result is a good initial guess: {} | log₁₀ var {:.8f}  ∇fₘₐₓ {:8.2e}", it->get_name(),
-                                  std::log10(it->get_variance()), it->get_max_grad());
+                tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}  ∇fₘₐₓ {:8.2e}", it->get_name(), it->get_variance(),
+                                  it->get_max_grad());
                 return get_initial_guess<Scalar>(*it, {});
             } else
                 return get_initial_guess<Scalar>(initial_mps, {});
@@ -158,7 +161,7 @@ namespace tools::finite::opt::internal {
                 //                long min_idx = min_gradient_idx(results, n);
                 //                if(min_idx >= 0) {
                 //                    auto &res = results.at(static_cast<size_t>(min_idx));
-                //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | log₁₀ var {:.8f}  ∇fₘₐₓ {:8.2e}", n, min_idx,
+                //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | lg var {:.8f}  ∇fₘₐₓ {:8.2e}", n, min_idx,
                 //                    res.get_name(),
                 //                                      std::log10(res.get_variance()), res.get_max_grad());
                 //
@@ -246,26 +249,26 @@ namespace tools::finite::opt::internal {
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMps<Scalar> hamiltonian(env.L, env.R, mpo);
         solver.config.primme_extra = &hamiltonian;
-        //
-        //        eig::settings::primme_gradient_t<Scalar> primme_gradient;
-        //        primme_gradient.shape_mpo  = mpo.dimensions();
-        //        primme_gradient.shape_envL = env.L.dimensions();
-        //        primme_gradient.shape_envR = env.R.dimensions();
-        //        if constexpr(std::is_same_v<Scalar, real>) {
-        //            Eigen::Tensor<real, 4> mpo_real  = mpo.real();
-        //            Eigen::Tensor<real, 3> envL_real = env.L.real();
-        //            Eigen::Tensor<real, 3> envR_real = env.R.real();
-        //            primme_gradient.mpo              = std::vector<Scalar>(mpo_real.data(), mpo_real.data() + mpo_real.size());
-        //            primme_gradient.envL             = std::vector<Scalar>(envL_real.data(), envL_real.data() + envL_real.size());
-        //            primme_gradient.envR             = std::vector<Scalar>(envR_real.data(), envR_real.data() + envR_real.size());
-        //        } else {
-        //            primme_gradient.mpo  = std::vector<Scalar>(mpo.data(), mpo.data() + mpo.size());
-        //            primme_gradient.envL = std::vector<Scalar>(env.L.data(), env.L.data() + env.L.size());
-        //            primme_gradient.envR = std::vector<Scalar>(env.R.data(), env.R.data() + env.R.size());
-        //        }
-        //        solver.config.primme_gradient = &primme_gradient;
 
-        //        #pragma message "Do we really need to reset? Probably not. The timers and counters are taken from eig::solution"
+//        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
+//        long        number = 0;
+//        std::string groupname;
+//        while(true) {
+//            groupname = fmt::format("mps-{}", number++);
+//            if(not h5file.linkExists(groupname)) {
+//                h5file.writeDataset(hamiltonian.get_mpo(), groupname + "/mpo", H5D_CHUNKED);
+//                h5file.writeDataset(hamiltonian.get_envL(), groupname + "/envL", H5D_CHUNKED);
+//                h5file.writeDataset(hamiltonian.get_envR(), groupname + "/envR", H5D_CHUNKED);
+//                h5file.writeDataset(hamiltonian_squared.get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
+//                h5file.writeDataset(hamiltonian_squared.get_envL(), groupname + "/envL2", H5D_CHUNKED);
+//                h5file.writeDataset(hamiltonian_squared.get_envR(), groupname + "/envR2", H5D_CHUNKED);
+//                auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+//                for(auto &i : init) h5file.writeDataset(i.mps, fmt::format("{}/mps_init_{}", groupname, i.idx), H5D_CHUNKED);
+//                h5file.writeAttribute(tensors.active_problem_dims(), "dimensions", groupname);
+//                break;
+//            }
+//        }
+
         hamiltonian_squared.reset();
         auto size = tensors.active_problem_size();
 
@@ -290,13 +293,13 @@ namespace tools::finite::opt::internal {
                         double largest_eigval = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
                         solver.config.sigma   = largest_eigval;
                     }
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λ], with λ = {:.16f} | arpack {} | init on ...",
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | arpack {} | init on ...",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
                     solver.eigs(hamiltonian_squared);
                 } else if(solver.config.lib == eig::Lib::PRIMME) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
                     if(not solver.config.sigma) solver.config.sigma = 1.0;
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-λ], with λ = {:.16f} | primme {} | init on ...",
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | primme {} | init on ...",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
                     solver.eigs(hamiltonian_squared);
                 }
@@ -318,7 +321,7 @@ namespace tools::finite::opt::internal {
         config_primme.ritz            = eig::Ritz::SA;
         config_primme.compute_eigvecs = eig::Vecs::ON;
         config_primme.tag             = "primme";
-        config_primme.primme_method   = "PRIMME_GD_Olsen_plusK";
+        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
@@ -362,7 +365,7 @@ namespace tools::finite::opt::internal {
         config_primme.ritz            = eig::Ritz::SA;
         config_primme.compute_eigvecs = eig::Vecs::ON;
         config_primme.tag             = "primme";
-        config_primme.primme_method   = "PRIMME_GD_Olsen_plusK";
+        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
@@ -406,7 +409,7 @@ namespace tools::finite::opt::internal {
         config_primme.ritz            = eig::Ritz::SA;
         config_primme.compute_eigvecs = eig::Vecs::ON;
         config_primme.tag             = "primme";
-        config_primme.primme_method   = "PRIMME_GD_Olsen_plusK";
+        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
@@ -440,7 +443,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(co
                                                                               [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
     using namespace internal;
     using namespace settings::precision;
-    initial_mps.validate_candidate();
+    initial_mps.validate_basis_vector();
     if(not tensors.model->is_reduced()) throw std::runtime_error("krylov_optimization requires energy-reduced MPO²");
     if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_optimization requires non-compressed MPO²");
 

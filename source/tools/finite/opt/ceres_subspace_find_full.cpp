@@ -12,7 +12,7 @@
 namespace tools::finite::opt::internal {
     template<typename Scalar>
     std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const TensorsFinite &tensors) {
-        tools::log->trace("Finding subspace -- full");
+        tools::log->trace("Finding subspace -- full diag");
         auto t_full = tid::tic_scope("full");
 
         // Generate the Hamiltonian matrix
@@ -36,7 +36,7 @@ namespace tools::finite::opt::internal {
         long            nev            = eigvecs.cols();
         auto            time_eig       = tid::get("eig").get_last_interval();
         auto            time_ham       = tid::get("ham").get_last_interval();
-        reports::eigs_add_entry(nev, max_overlap, min_overlap, std::log10(subspace_error), time_eig, time_ham, 0, 1);
+        reports::eigs_add_entry(nev, max_overlap, min_overlap, subspace_error, time_eig, time_ham, 0, 1);
         return {eigvecs, eigvals};
     }
 

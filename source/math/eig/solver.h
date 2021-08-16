@@ -59,6 +59,8 @@ namespace eig {
         private:
         template<typename MatrixProductType>
         static void MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
+        template<typename MatrixProductType>
+        static void MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
 
         template<typename MatrixProductType>
         static void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv,

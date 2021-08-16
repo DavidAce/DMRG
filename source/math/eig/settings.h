@@ -38,25 +38,14 @@ namespace eig {
         std::optional<double> logTime  = std::nullopt;
 
         // Primme settings
-        std::optional<std::string> primme_method               = std::nullopt;
+        std::optional<PrimmeMethod>primme_method               = std::nullopt;
         std::optional<std::string> primme_projection           = std::nullopt;
         std::optional<int>         primme_locking              = std::nullopt;
         std::optional<int>         primme_max_inner_iterations = std::nullopt; // Strongly recommend -1 or a fixed number like 100 here.
         std::optional<double>      primme_grad_tol             = std::nullopt;
         std::optional<int32_t>     primme_grad_iter            = std::nullopt;
         std::optional<double>      primme_grad_time            = std::nullopt;
-
-        template<typename T>
-        struct primme_gradient_t {
-            std::vector<T>      mpo;
-            std::vector<T>      envL;
-            std::vector<T>      envR;
-            std::array<long, 4> shape_mpo;
-            std::array<long, 3> shape_envL;
-            std::array<long, 3> shape_envR;
-        };
-        void *primme_gradient = nullptr;
-
+        std::vector<double>        primme_target_shifts        = {};
         void *primme_extra = nullptr;
 
         void clear();

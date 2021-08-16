@@ -330,8 +330,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
             if(config.logTime) {
                 auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
                 if(time_since_last_log > config.logTime.value()) {
-                    auto level = eig::log->level();
-                    eig::log->log(level, FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops,
+                    eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops,
                                   t_tot->get_time(), t_mul->get_last_interval() / nops * 1000);
                     last_log_time = t_tot->get_time();
                 }
@@ -360,7 +359,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         }
     }
 
-    eig::log->info(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), iter, nops,
+    eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter,
                    t_tot->get_time(), t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
     result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
     if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
