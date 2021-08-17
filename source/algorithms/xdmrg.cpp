@@ -456,7 +456,7 @@ void xdmrg::single_xDMRG_step() {
         tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(conf.optMode), enum2sv(conf.optSpace),
                           flag2str(conf.optExit), variance_before_step.value(), results.back().get_variance(),
                           results.back().get_relchange() * 100);
-        if(results.back().get_relchange() > 1000) throw std::runtime_error("Something is very wrong");
+        if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
     }
 
     if(not results.empty()) {

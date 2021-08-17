@@ -254,7 +254,7 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         double           old_expansion_alpha = status.sub_expansion_alpha;
         constexpr double factor_up           = 5.0;
         constexpr double factor_dn           = 0.1;
-        if(status.variance_mpo_saturated_for > 0) {
+        if(status.algorithm_has_stuck_for > 0) {
             status.sub_expansion_alpha = std::min(status.sub_expansion_alpha * factor_up, settings::strategy::max_expansion_alpha);
         } else {
             status.sub_expansion_alpha = std::max(status.sub_expansion_alpha * factor_dn, status.energy_variance_lowest);
