@@ -151,7 +151,7 @@ if [ -n "$CONDA_PREFIX" ] ; then
 fi
 
 
-exec=../build/$build_type/$execname
+exec=$(find ../build/$build_type ../build/$build_type/bin -maxdepth 1 -type f -executable -name "$executable" -print -quit)
 if [ -f "$exec" ]; then
     echo "Found executable: $exec"
 else
