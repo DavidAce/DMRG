@@ -1,24 +1,22 @@
 /*
  * PCG Random Number Generation for C++
  *
- * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+ * Copyright 2014-2017 Melissa O'Neill <oneill@pcg-random.org>,
+ *                     and the PCG Project contributors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (provided in
+ * LICENSE-APACHE.txt and at http://www.apache.org/licenses/LICENSE-2.0)
+ * or under the MIT license (provided in LICENSE-MIT.txt and at
+ * http://opensource.org/licenses/MIT), at your option. This file may not
+ * be copied, modified, or distributed except according to those terms.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Distributed on an "AS IS" BASIS, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied.  See your chosen license for details.
  *
  * For additional information about the PCG random number generation scheme,
- * including its license and other licensing options, visit
- *
- *     http://www.pcg-random.org
+ * visit http://www.pcg-random.org/.
  */
 
 /*
@@ -62,7 +60,7 @@
 #endif
 
 /*
- * Some members of the PCG library use 128-bit num.  When compiling on 64-bit
+ * Some members of the PCG library use 128-bit math.  When compiling on 64-bit
  * platforms, both GCC and Clang provide 128-bit integer types that are ideal
  * for the job.
  *
@@ -76,17 +74,17 @@
  * direct CPU support.
  *
  */
-#if __SIZEOF_INT128__
+#if __SIZEOF_INT128__ && !PCG_FORCE_EMULATED_128BIT_MATH
 namespace pcg_extras {
     typedef __uint128_t pcg128_t;
 }
-    #define PCG_128BIT_CONSTANT(high, low) ((pcg128_t(high) << 64) + low)
+    #define PCG_128BIT_CONSTANT(high, low) ((pcg_extras::pcg128_t(high) << 64) + low)
 #else
     #include "pcg_uint128.hpp"
 namespace pcg_extras {
     typedef pcg_extras::uint_x4<uint32_t, uint64_t> pcg128_t;
 }
-    #define PCG_128BIT_CONSTANT(high, low) pcg128_t(high, low)
+    #define PCG_128BIT_CONSTANT(high, low) pcg_extras::pcg128_t(high, low)
     #define PCG_EMULATED_128BIT_MATH       1
 #endif
 
@@ -126,7 +124,7 @@ namespace pcg_extras {
             auto     desired_width = out.width();
             if(desired_width > 16) { out.width(desired_width - 16); }
             if(highpart != 0 || desired_width > 16) out << highpart;
-            CharT oldfill;
+            CharT oldfill = '\0';
             if(highpart != 0) {
                 out.width(16);
                 oldfill = out.fill('0');
@@ -146,7 +144,7 @@ namespace pcg_extras {
         do {
             auto div = value / BASE;
             auto mod = uint32_t(value - (div * BASE));
-            *(--pos) = static_cast<char>('0' + mod);
+            *(--pos) = '0' + char(mod);
             value    = div;
         } while(value != pcg128_t(0ULL));
         return out << pos;
@@ -201,7 +199,7 @@ namespace pcg_extras {
     }
 
     template<typename CharT, typename Traits>
-    std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits> &in, [[maybe_unused]] uint8_t target) {
+    std::basic_istream<CharT, Traits> &operator>>(std::basic_istream<CharT, Traits> &in, uint8_t &target) {
         uint32_t value = 0xdecea5edU;
         in >> value;
         if(!in && value == 0xdecea5edU) return in;
@@ -280,13 +278,13 @@ namespace pcg_extras {
 #endif
     }
 
-/* Unfortunately, both Clang and GCC sometimes perform poorly when it comes
- * to properly recognizing idiomatic rotate code, so for we also provide
- * assembler directives (enabled with PCG_USE_INLINE_ASM).  Boo, hiss.
- * (I hope that these compilers get better so that this code can die.)
- *
- * These overloads will be preferred over the general template code above.
- */
+    /* Unfortunately, both Clang and GCC sometimes perform poorly when it comes
+     * to properly recognizing idiomatic rotate code, so for we also provide
+     * assembler directives (enabled with PCG_USE_INLINE_ASM).  Boo, hiss.
+     * (I hope that these compilers get better so that this code can die.)
+     *
+     * These overloads will be preferred over the general template code above.
+     */
 #if PCG_USE_INLINE_ASM && __GNUC__ && (__x86_64__ || __i386__)
 
     inline uint8_t rotr(uint8_t value, bitcount_t rot) {
@@ -310,6 +308,19 @@ namespace pcg_extras {
         return value;
     }
     #endif // __x86_64__
+
+#elif defined(_MSC_VER)
+        // Use MSVC++ bit rotation intrinsics
+
+    #pragma intrinsic(_rotr, _rotr64, _rotr8, _rotr16)
+
+    inline uint8_t rotr(uint8_t value, bitcount_t rot) { return _rotr8(value, rot); }
+
+    inline uint16_t rotr(uint16_t value, bitcount_t rot) { return _rotr16(value, rot); }
+
+    inline uint32_t rotr(uint32_t value, bitcount_t rot) { return _rotr(value, rot); }
+
+    inline uint64_t rotr(uint64_t value, bitcount_t rot) { return _rotr64(value, rot); }
 
 #endif // PCG_USE_INLINE_ASM
 
@@ -351,7 +362,7 @@ namespace pcg_extras {
         constexpr bitcount_t SCALE     = SRC_SIZE / DEST_SIZE;
 
         size_t count = 0;
-        src_t  value;
+        src_t  value = 0;
 
         while(dest_first != dest_last) {
             if((count++ % SCALE) == 0)
@@ -382,7 +393,7 @@ namespace pcg_extras {
 
             for(size_t i = 0; i < SCALE; ++i) {
                 value |= dest_t(*src_first++) << shift;
-                shift += static_cast<unsigned int>(SRC_BITS);
+                shift += SRC_BITS;
             }
 
             *dest_first++ = value;
@@ -428,10 +439,10 @@ namespace pcg_extras {
             generator.generate(buffer, buffer + FROM_ELEMS);
             uneven_copy(buffer, dest, dest + size);
         } else {
-            uint32_t *buffer = (uint32_t *) malloc(GEN_SIZE * FROM_ELEMS);
+            uint32_t *buffer = static_cast<uint32_t *>(malloc(GEN_SIZE * FROM_ELEMS));
             generator.generate(buffer, buffer + FROM_ELEMS);
             uneven_copy(buffer, dest, dest + size);
-            free(buffer);
+            free(static_cast<void *>(buffer));
         }
     }
 
@@ -467,10 +478,11 @@ namespace pcg_extras {
 
     template<typename Iter, typename RandType>
     void shuffle(Iter from, Iter to, RandType &&rng) {
-        typedef typename std::iterator_traits<Iter>::difference_type delta_t;
-        auto                                                         count = to - from;
+        typedef typename std::iterator_traits<Iter>::difference_type        delta_t;
+        typedef typename std::remove_reference<RandType>::type::result_type result_t;
+        auto                                                                count = to - from;
         while(count > 1) {
-            delta_t chosen(bounded_rand(rng, count));
+            delta_t chosen = delta_t(bounded_rand(rng, result_t(count)));
             --count;
             --to;
             using std::swap;
@@ -480,7 +492,7 @@ namespace pcg_extras {
 
     /*
      * Although std::seed_seq is useful, it isn't everything.  Often we want to
-     * initialize_state a random-number generator some other way, such as from a random
+     * initialize a random-number generator some other way, such as from a random
      * device.
      *
      * Technically, it does not meet the requirements of a SeedSequence because
@@ -536,22 +548,26 @@ namespace pcg_extras {
     //
     // to print out my_foo_type_t (or its concrete type if it is a synonym)
 
+#if __cpp_rtti || __GXX_RTTI
+
     template<typename T>
     struct printable_typename {};
 
     template<typename T>
     std::ostream &operator<<(std::ostream &out, printable_typename<T>) {
         const char *implementation_typename = typeid(T).name();
-#ifdef __GNUC__
-        int         status;
-        const char *pretty_name = abi::__cxa_demangle(implementation_typename, NULL, NULL, &status);
+    #ifdef __GNUC__
+        int   status;
+        char *pretty_name = abi::__cxa_demangle(implementation_typename, nullptr, nullptr, &status);
         if(status == 0) out << pretty_name;
-        free((void *) pretty_name);
+        free(static_cast<void *>(pretty_name));
         if(status == 0) return out;
-#endif
+    #endif
         out << implementation_typename;
         return out;
     }
+
+#endif // __cpp_rtti || __GXX_RTTI
 
 } // namespace pcg_extras
 
