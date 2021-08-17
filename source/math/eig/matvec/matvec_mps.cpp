@@ -109,7 +109,7 @@ void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
 }
 
 template<typename T>
-void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err){
+void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err){
     t_multOPv->tic();
 
     switch(side) {
@@ -133,6 +133,7 @@ void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
         }
     }
     t_multOPv->toc();
+    *err = 0;
 }
 
 

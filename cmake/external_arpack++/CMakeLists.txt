@@ -10,6 +10,14 @@ ExternalProject_Add(external_ARPACK++
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         BUILD_ALWAYS TRUE
+        #Give Ninja access to the terminal.
+        USES_TERMINAL_DOWNLOAD TRUE
+        USES_TERMINAL_UPDATE TRUE
+        USES_TERMINAL_CONFIGURE TRUE
+        USES_TERMINAL_BUILD TRUE
+        USES_TERMINAL_INSTALL TRUE
+        USES_TERMINAL_TEST TRUE
+
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         BUILD_COMMAND ""

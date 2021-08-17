@@ -123,7 +123,11 @@ function(install_package pkg_name)
     set(CMAKE_POLICY_DEFAULT_CMP0074 NEW CACHE STRING "Honor <PackageName>_ROOT")
     set(CMAKE_POLICY_DEFAULT_CMP0091 NEW CACHE STRING "Use MSVC_RUNTIME_LIBRARY") # Fixes spdlog on MSVC
 
-    # Generate an init cache to propagate the current configuration
+    if(CMAKE_GENERATOR MATCHES "Ninja")
+        set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Otherwise fails with -G Ninja" FORCE)
+    endif()
+
+# Generate an init cache to propagate the current configuration
     generate_init_cache()
 
     # Configure the package

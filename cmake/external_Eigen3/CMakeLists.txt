@@ -10,6 +10,15 @@ ExternalProject_Add(external_eigen3
         PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/Eigen_3.3.7.patch
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+
+        #Give Ninja access to the terminal.
+        USES_TERMINAL_DOWNLOAD TRUE
+        USES_TERMINAL_UPDATE TRUE
+        USES_TERMINAL_CONFIGURE TRUE
+        USES_TERMINAL_BUILD TRUE
+        USES_TERMINAL_INSTALL TRUE
+        USES_TERMINAL_TEST TRUE
+
         BUILD_ALWAYS TRUE
         CMAKE_ARGS
         ${INIT_CACHE_ARG}

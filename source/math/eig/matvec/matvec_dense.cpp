@@ -87,14 +87,13 @@ void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
     counter++;
 }
 
-
 template<typename T>
-void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
     if(not readyFactorOp) throw std::logic_error("FactorOp() has not been run yet.");
     auto t_token = t_multOPv->tic_token();
     switch(side) {
         case eig::Side::R: {
-            for(int i = 0; i < *blockSize; i++){
+            for(int i = 0; i < *blockSize; i++) {
                 T                             *x_in_ptr  = static_cast<T *>(x) + *ldx * i;
                 T                             *x_out_ptr = static_cast<T *>(y) + *ldy * i;
                 Eigen::Map<VectorType<Scalar>> x_in(x_in_ptr, L);
@@ -122,6 +121,7 @@ void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSiz
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
+    *err = 0;
 }
 
 template<typename Scalar>
@@ -159,7 +159,7 @@ void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
 }
 
 template<typename T>
-void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
     auto                                 t_token = t_multAx->tic_token();
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
     switch(form) {

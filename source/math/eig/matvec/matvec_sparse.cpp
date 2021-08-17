@@ -129,7 +129,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr
 }
 
 template<typename Scalar, bool sparseLU>
-void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err) {
+void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
     if(not readyFactorOp) throw std::logic_error("FactorOp() has not been run yet.");
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
@@ -173,6 +173,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ld
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
+    *err = 0;
 }
 
 template<typename Scalar, bool sparseLU>
