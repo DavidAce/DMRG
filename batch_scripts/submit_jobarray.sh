@@ -13,7 +13,7 @@ Usage            : $PROGNAME [-option | --option ] [=]<argument>
      --cpus-per-task <int>         : Numer of cpu cores required per task (e.g. openmp threads) (default: 1)
 -d | --dry-run                     : Do not actually submit
 -e | --exclusive                   : Use nodes in exclusive node
-     --exec-name <str>             : Name of the executable to run (default = DMRG++)
+     --execname <str>             : Name of the executable to run (default = DMRG++)
 -f | --config <path or file>       : File or path to files containing simulation config files (suffixed .cfg) (default: input/ )
 -j | --job-file <path or file>     : File containing config-seed pairs. Use for resuming failed runs
 -J | --job-name <str>              : Slurm job name. (default = DMRG)
@@ -46,7 +46,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:O:p:q:r:s:t:v \
                 cpus-per-task:\
                 dry-run\
                 exclusive\
-                exec-name:\
+                execname:\
                 config:\
                 job-file:\
                 job-name:\
@@ -99,7 +99,7 @@ do
        --cpus-per-task)             cpuspertask="--cpus-per-task=$2"  ; echo " * Cpus per task            : $2"      ; shift 2 ;;
     -d|--dry-run)                   dryrun="ON"                       ; echo " * Dry run                  : ON"      ; shift   ;;
     -e|--exclusive)                 exclusive=--exclusive             ; echo " * Exclusive                : ON"      ; shift   ;;
-       --exec-name)                 execname=$2                       ; echo " * Executable name          : $2"      ; shift 2 ;;
+       --execname)                 execname=$2                        ; echo " * Executable name          : $2"      ; shift 2 ;;
     -f|--config)                    configpath=$2                     ; echo " * Configs                  : $2"      ; shift 2 ;;
     -j|--job-file)                  jobfile=$2                        ; echo " * Job file                 : $2"      ; shift 2 ;;
     -J|--job-name)                  jobname="--job-name=$2"           ; echo " * Job name                 : $2"      ; shift 2 ;;
@@ -151,11 +151,11 @@ if [ -n "$CONDA_PREFIX" ] ; then
 fi
 
 
-exec=$(find ../build/$build_type ../build/$build_type/bin -maxdepth 1 -type f -executable -name "$executable" -print -quit)
+exec=$(find ../build/$build_type ../build/$build_type/bin -maxdepth 1 -type f -executable -name "$execname" -print -quit)
 if [ -f "$exec" ]; then
-    echo "Found executable: $exec"
+    echo "Found executable $execname: $exec"
 else
-    echo "Executable does not exist: $exec"
+    echo "Executable $execname does not exist: $exec"
     #exit 1
 fi
 
