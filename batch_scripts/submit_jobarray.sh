@@ -156,7 +156,7 @@ if [ -f "$exec" ]; then
     echo "Found executable $execname: $exec"
 else
     echo "Executable $execname does not exist: $exec"
-    #exit 1
+    exit 1
 fi
 
 # Make sure the executable would find its dynamically loaded libraries
