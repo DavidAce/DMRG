@@ -22,17 +22,18 @@
 AlgorithmLauncher::AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_) : h5pp_file(std::move(h5ppFile_)) {
     tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
     // Called in reverse order
-    std::atexit(tools::common::profile::print_mem_usage);
-    std::atexit(tools::common::profile::print_profiling);
-
+//    std::atexit(tools::common::profile::print_mem_usage);
+//    std::atexit(tools::common::profile::print_profiling);
+    std::at_quick_exit(tools::common::profile::print_mem_usage);
+    std::at_quick_exit(tools::common::profile::print_profiling);
     setup_temp_path();
 }
 
 AlgorithmLauncher::AlgorithmLauncher() {
     tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::verbosity, settings::console::timestamp);
     // Called in reverse order
-    std::atexit(tools::common::profile::print_mem_usage);
-    std::atexit(tools::common::profile::print_profiling);
+//    std::atexit(tools::common::profile::print_mem_usage);
+//    std::atexit(tools::common::profile::print_profiling);
     std::at_quick_exit(tools::common::profile::print_mem_usage);
     std::at_quick_exit(tools::common::profile::print_profiling);
 
