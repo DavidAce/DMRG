@@ -59,7 +59,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
 
     input_filename = "{}/{}_L{}_l{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_l,str_d)
     settings = {
-        "output::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
+        "storage::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
         "threading::stl_threads"             : "1",
         "threading::omp_threads"             : "1",
         "console::verbosity"                 : "1",

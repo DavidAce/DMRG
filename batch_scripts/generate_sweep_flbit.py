@@ -41,7 +41,7 @@ for val_L,val_J,val_w, val_b, val_f,val_u, val_r, init, in  product(sites,J,w, b
     input_filename = "{}/{}_L{}_{}_{}_b{}_f{}_u{}_r{}.cfg".format(location,basename,str_L,str_J,str_w, str_b,str_f, str_u,str_r)
 
     settings = {
-        "output::output_filepath"            : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/r_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u,str_r, basename),
+        "storage::output_filepath"            : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/r_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u,str_r, basename),
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
