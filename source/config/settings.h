@@ -83,8 +83,7 @@ namespace settings {
         inline StorageLevel     storage_level_model      = StorageLevel::LIGHT;  /*!< Storage level for the model realization. LIGHT stores nothing. NORMAL stores the Hamiltonian parameter table, and FULL also the MPO's */
         inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume (if FULL) */
         inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements (can also be used for resume if FULL) */
-        inline StorageLevel     storage_level_good_state = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates successfully */
-        inline StorageLevel     storage_level_fail_state = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates unsuccessfully */
+        inline StorageLevel     storage_level_finished   = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates */
         inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */

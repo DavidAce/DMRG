@@ -103,8 +103,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("output::storage_level_model"                  , output::storage_level_model);
     dmrg_config.load_parameter("output::storage_level_savepoint"              , output::storage_level_savepoint);
     dmrg_config.load_parameter("output::storage_level_checkpoint"             , output::storage_level_checkpoint);
-    dmrg_config.load_parameter("output::storage_level_good_state"             , output::storage_level_good_state);
-    dmrg_config.load_parameter("output::storage_level_fail_state"             , output::storage_level_fail_state);
+    dmrg_config.load_parameter("output::storage_level_finished"               , output::storage_level_finished);
     dmrg_config.load_parameter("output::storage_level_proj_state"             , output::storage_level_proj_state);
     dmrg_config.load_parameter("output::storage_level_init_state"             , output::storage_level_init_state);
     dmrg_config.load_parameter("output::storage_level_emin_state"             , output::storage_level_emin_state);

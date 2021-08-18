@@ -287,10 +287,7 @@ namespace tools::finite::h5 {
 
         switch(storage_reason) {
             case StorageReason::FINISHED: {
-                if(status.algorithm_has_succeeded)
-                    storage_level = settings::output::storage_level_good_state;
-                else
-                    storage_level = settings::output::storage_level_fail_state;
+                storage_level = settings::output::storage_level_finished;
                 state_prefix += "/finished";
                 table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
                 break;

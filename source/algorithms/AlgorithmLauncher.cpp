@@ -42,10 +42,9 @@ AlgorithmLauncher::AlgorithmLauncher() {
 
 void AlgorithmLauncher::start_h5pp_file() {
     if(settings::output::storage_level_model == StorageLevel::NONE and settings::output::storage_level_savepoint == StorageLevel::NONE and
-       settings::output::storage_level_checkpoint == StorageLevel::NONE and settings::output::storage_level_good_state == StorageLevel::NONE and
-       settings::output::storage_level_fail_state == StorageLevel::NONE and settings::output::storage_level_proj_state == StorageLevel::NONE and
-       settings::output::storage_level_init_state == StorageLevel::NONE and settings::output::storage_level_emin_state == StorageLevel::NONE and
-       settings::output::storage_level_emax_state == StorageLevel::NONE)
+       settings::output::storage_level_checkpoint == StorageLevel::NONE and settings::output::storage_level_finished == StorageLevel::NONE and
+       settings::output::storage_level_proj_state == StorageLevel::NONE and settings::output::storage_level_init_state == StorageLevel::NONE and
+       settings::output::storage_level_emin_state == StorageLevel::NONE and settings::output::storage_level_emax_state == StorageLevel::NONE)
         return;
 
     // There are two possibilities depending on settings::output::output_filename
