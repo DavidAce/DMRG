@@ -5,7 +5,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <math/omp.h>
+#include <math/tenx.h>
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -61,7 +61,7 @@ int main(int argc, char **argv){
 #ifdef _OPENMP
     omp_set_num_threads(num_threads);
     Eigen::setNbThreads(num_threads);
-    Textra::omp::setNumThreads(num_threads);
+    tenx::omp::setNumThreads(num_threads);
 #ifdef OpenBLAS_AVAILABLE
     openblas_set_num_threads(num_threads);
     std::cout << OPENBLAS_VERSION
