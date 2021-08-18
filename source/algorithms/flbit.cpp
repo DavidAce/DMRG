@@ -202,7 +202,6 @@ void flbit::run_algorithm() {
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
         t_run->start_lap();
-        tools::common::profile::print_profiling();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
