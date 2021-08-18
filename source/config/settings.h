@@ -48,7 +48,7 @@ namespace settings {
         inline std::string config_file_contents;
     }
 
-    /*!  \namespace settings::output Settings for output-file generation
+    /*!  \namespace settings::storage Settings for output-file generation
      *
      * **NOTE: Storage levels**
      *
@@ -65,13 +65,13 @@ namespace settings {
      * The only exception is `storage_level_model == StorageLevel::NORMAL` which is enough to recreate MPOs, since they can be reconstructed from the Hamiltonian parameter table
      *
      */
-    namespace output {
-        inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
+    namespace storage {
+        inline std::string         output_filepath                 = "output/output.h5";         /*!< Name of the output HDF5 file relative to the execution point  */
         inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but chi-update savepoints can still happen */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline bool                checkpoint_keep_chi_updates     = true;                         /*!< If true, a savepoint is written to file before the bond dimension is updated */
+        inline bool                checkpoint_when_chi_updates     = true;                         /*!< If true, a checkpoint is written to file before the bond dimension is updated */
         inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints but chi-update checkpoints can still happen */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
@@ -100,7 +100,7 @@ namespace settings {
     namespace profiling {
         inline bool     on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
         inline bool     extra     = false;                         /*!< Prints more profiling */
-        inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time output. */
+        inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
     }
 
     /*! \namespace settings::console Settings for console output */

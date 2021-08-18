@@ -287,18 +287,18 @@ namespace tools::finite::h5 {
 
         switch(storage_reason) {
             case StorageReason::FINISHED: {
-                storage_level = settings::output::storage_level_finished;
+                storage_level = settings::storage::storage_level_finished;
                 state_prefix += "/finished";
                 table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
                 break;
             }
             case StorageReason::SAVEPOINT: {
-                storage_level = settings::output::storage_level_savepoint;
+                storage_level = settings::storage::storage_level_savepoint;
                 if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) storage_level = StorageLevel::NONE;
+                    if(num::mod(status.iter, settings::storage::savepoint_frequency) != 0) storage_level = StorageLevel::NONE;
                 }
                 state_prefix += "/savepoint";
-                if(settings::output::savepoint_keep_newest_only)
+                if(settings::storage::savepoint_keep_newest_only)
                     state_prefix += "/iter_last";
                 else
                     state_prefix += fmt::format("/iter_{}", status.iter);
@@ -306,12 +306,12 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::CHECKPOINT: {
-                storage_level = settings::output::storage_level_checkpoint;
+                storage_level = settings::storage::storage_level_checkpoint;
                 if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) storage_level = StorageLevel::NONE;
+                    if(num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) storage_level = StorageLevel::NONE;
                 }
                 state_prefix += "/checkpoint";
-                if(settings::output::checkpoint_keep_newest_only)
+                if(settings::storage::checkpoint_keep_newest_only)
                     state_prefix += "/iter_last";
                 else
                     state_prefix += fmt::format("/iter_{}", status.iter);
@@ -319,7 +319,8 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::CHI_UPDATE: {
-                storage_level = settings::output::storage_level_checkpoint;
+                storage_level = settings::storage::storage_level_checkpoint;
+                if(not settings::storage::checkpoint_when_chi_updates) storage_level = StorageLevel::NONE;
                 if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) storage_level = StorageLevel::NONE;
                 // If we have updated chi we may want to write a projection too
                 state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
@@ -327,27 +328,27 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::PROJ_STATE: {
-                storage_level = settings::output::storage_level_proj_state;
+                storage_level = settings::storage::storage_level_proj_state;
                 state_prefix += "/projection";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
             case StorageReason::INIT_STATE: {
-                storage_level = settings::output::storage_level_init_state;
+                storage_level = settings::storage::storage_level_init_state;
                 state_prefix += "/state_init";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
             case StorageReason::EMIN_STATE: {
-                storage_level = settings::output::storage_level_emin_state;
+                storage_level = settings::storage::storage_level_emin_state;
                 break;
             }
             case StorageReason::EMAX_STATE: {
-                storage_level = settings::output::storage_level_emax_state;
+                storage_level = settings::storage::storage_level_emax_state;
                 break;
             }
             case StorageReason::MODEL: {
-                storage_level = settings::output::storage_level_model;
+                storage_level = settings::storage::storage_level_model;
                 break;
             }
         }

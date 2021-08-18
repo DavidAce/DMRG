@@ -39,7 +39,7 @@ Usage                       : DMRG++ [-option <value>].
 -b <positive integer>       : Integer whose bitfield sets the initial product state. Negative is unused (default -1)
 -c <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
 -n <stl threads>            : Number of C++11 threads (Used by Eigen::Tensor)
--o <output filename base>   : Full or relative path to the output file (output). The seed number will be appended to this filename unless -x is passed.
+-o <output filename base>   : Full or relative path to the output file. The seed number will be appended to this filename unless -x is passed.
 -i <.cfg or .h5 filename>   : Full or relative path to a config file or hdf5 file from a previous simulation (which has a config file) (default = input.cfg)
 -s <seed>                   : Positive number that seeds the random number generator (default = 1)
 -t <omp threads>            : Number of OpenMP threads
@@ -50,11 +50,11 @@ Usage                       : DMRG++ [-option <value>].
 }
 
 void clean_up() {
-    if(not settings::output::use_temp_dir) return;
-    if(fs::exists(settings::output::tmp::hdf5_temp_path)) {
+    if(not settings::storage::use_temp_dir) return;
+    if(fs::exists(settings::storage::tmp::hdf5_temp_path)) {
         try {
-            tools::log->info("Cleaning up temporary file: [{}]", settings::output::tmp::hdf5_temp_path);
-            h5pp::hdf5::moveFile(settings::output::tmp::hdf5_temp_path, settings::output::tmp::hdf5_final_path, h5pp::FilePermission::REPLACE);
+            tools::log->info("Cleaning up temporary file: [{}]", settings::storage::tmp::hdf5_temp_path);
+            h5pp::hdf5::moveFile(settings::storage::tmp::hdf5_temp_path, settings::storage::tmp::hdf5_final_path, h5pp::FilePermission::REPLACE);
         } catch(const std::exception &err) { tools::log->info("Cleaning not needed: {}", err.what()); }
     }
     H5garbage_collect();
@@ -178,14 +178,14 @@ int main(int argc, char *argv[]) {
     if(bitfield >= 0) settings::input::bitfield = bitfield;
     if(stl_threads >= 0) settings::threading::stl_threads = static_cast<int>(stl_threads);
     if(omp_threads >= 0) settings::threading::omp_threads = static_cast<int>(omp_threads);
-    if(not output.empty()) settings::output::output_filepath = output;
+    if(not output.empty()) settings::storage::output_filepath = output;
     if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
 
     // C: Generate the correct output filename based on given seeds
     if(append_seed) {
-        settings::output::output_filepath = filename_append_number(settings::output::output_filepath, settings::input::seed);
-        settings::output::output_filepath = filename_append_number(settings::output::output_filepath, settings::input::bitfield);
+        settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::seed);
+        settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::bitfield);
     }
 
     // Seed with random::device initially (This also takes care of srand used by Eigen)

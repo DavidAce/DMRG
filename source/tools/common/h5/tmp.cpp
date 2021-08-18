@@ -24,8 +24,8 @@ std::string replace_substr(std::string text, std::string_view search, std::strin
 }
 
 std::string tools::common::h5::tmp::internal::get_tmp_dir() {
-    if(fs::exists(settings::output::temp_dir))
-        return settings::output::temp_dir;
+    if(fs::exists(settings::storage::temp_dir))
+        return settings::storage::temp_dir;
     else if(fs::exists("/dev/shm"))
         return "/dev/shm";
     else if(fs::exists("/scratch/local"))
@@ -122,7 +122,7 @@ void tools::common::h5::tmp::create_directory(std::string_view path) {
 
 void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5ppfile, StorageReason storage_reason,
                                            std::optional<CopyPolicy> copy_policy) {
-    if(not settings::output::use_temp_dir) return;
+    if(not settings::storage::use_temp_dir) return;
     if(not copy_policy) return copy_from_tmp(status, h5ppfile, storage_reason, CopyPolicy::TRY);
     if(copy_policy == CopyPolicy::OFF) return;
 
@@ -135,7 +135,7 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
         switch(storage_reason) {
             case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT:
-                if(status.iter % settings::output::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given
+                if(status.iter % settings::storage::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given
             case StorageReason::FINISHED:
             case StorageReason::CHI_UPDATE:
             case StorageReason::PROJ_STATE:

@@ -265,16 +265,16 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
 
     switch(storage_reason) {
         case StorageReason::FINISHED: {
-            storage_level = settings::output::storage_level_finished;
+            storage_level = settings::storage::storage_level_finished;
             state_prefix += "/finished";
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
         case StorageReason::SAVEPOINT: {
-            if(num::mod(status.iter, settings::output::savepoint_frequency) != 0) return;
+            if(num::mod(status.iter, settings::storage::savepoint_frequency) != 0) return;
             state_prefix += "/savepoint";
-            storage_level = settings::output::storage_level_savepoint;
-            if(settings::output::savepoint_keep_newest_only)
+            storage_level = settings::storage::storage_level_savepoint;
+            if(settings::storage::savepoint_keep_newest_only)
                 state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
@@ -282,10 +282,10 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::CHECKPOINT: {
-            if(num::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
+            if(num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) return;
             state_prefix += "/checkpoint";
-            storage_level = settings::output::storage_level_checkpoint;
-            if(settings::output::checkpoint_keep_newest_only)
+            storage_level = settings::storage::storage_level_checkpoint;
+            if(settings::storage::checkpoint_keep_newest_only)
                 state_prefix += "/iter_last";
             else
                 state_prefix += fmt::format("/iter_{}", status.iter);
@@ -294,37 +294,37 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
         }
         case StorageReason::CHI_UPDATE: {
             if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) return;
-            storage_level = settings::output::storage_level_checkpoint;
+            storage_level = settings::storage::storage_level_checkpoint;
             state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::PROJ_STATE: {
-            storage_level = settings::output::storage_level_proj_state;
+            storage_level = settings::storage::storage_level_proj_state;
             state_prefix += "/projection";
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::INIT_STATE: {
-            storage_level = settings::output::storage_level_init_state;
+            storage_level = settings::storage::storage_level_init_state;
             state_prefix += "/state_init";
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMIN_STATE: {
-            storage_level = settings::output::storage_level_emin_state;
+            storage_level = settings::storage::storage_level_emin_state;
             state_prefix  = fmt::format("{}/state_emin", status.algo_type_sv());
             table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::EMAX_STATE: {
-            storage_level = settings::output::storage_level_emax_state;
+            storage_level = settings::storage::storage_level_emax_state;
             state_prefix  = fmt::format("{}/state_emax", status.algo_type_sv());
             table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::MODEL: {
-            storage_level = settings::output::storage_level_model;
+            storage_level = settings::storage::storage_level_model;
             tools::infinite::h5::save::model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
             tools::infinite::h5::save::mpo(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
             copy_from_tmp(storage_reason, CopyPolicy::TRY);

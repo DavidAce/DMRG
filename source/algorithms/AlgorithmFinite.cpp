@@ -37,7 +37,7 @@ void AlgorithmFinite::run()
 /*!
  * \brief Dispatches finite DMRG stages.
  * This function manages the stages of simulation differently depending on whether
- * the data already existed in hdf5 storage or not.
+ * the data already existed in the hdf5 output file or not.
  *
  * We start by searching the HDF5 group tree looking for
  *
@@ -49,7 +49,7 @@ void AlgorithmFinite::run()
  *      d) a converged MPS                               -- not much to do... run postprocessing
  * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
 
-        D1: output file exists: check option in settings::output::create_mode:
+        D1: output file exists: check option in settings::storage::create_mode:
             - case OPEN:        Load config and simulation state -> continue simulation
             - case RENAME:      Rename output file -> go to D2
             - case TRUNCATE:    Delete output file -> go to D2
@@ -65,7 +65,7 @@ void AlgorithmFinite::run()
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     // We may want to resume this simulation.
     if(h5pp_file->linkExists("common/storage_level") and
-       (settings::output::file_collision_policy == FileCollisionPolicy::RESUME or settings::output::file_collision_policy == FileCollisionPolicy::REVIVE)) {
+       (settings::storage::file_collision_policy == FileCollisionPolicy::RESUME or settings::storage::file_collision_policy == FileCollisionPolicy::REVIVE)) {
         try {
             resume();
         } catch(const except::state_error &ex) {
