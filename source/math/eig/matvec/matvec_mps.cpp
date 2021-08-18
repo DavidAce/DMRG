@@ -77,18 +77,23 @@ void MatVecMps<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *env
 
 template<typename T>
 void MatVecMps<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    auto                token       = t_multAx->tic_token();
+    #pragma omp parallel for schedule(dynamic)
     for(int i = 0; i < *blockSize; i++) {
-        T *mps_in  = static_cast<T *>(x) + *ldx * i;
-        T *mps_out = static_cast<T *>(y) + *ldy * i;
-        MultAx(mps_in, mps_out);
-        counter++;
+        T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
+        T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
+        Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_ptr, shape_mps);
+        Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_ptr, shape_mps);
+        tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
     }
+
+    counter+= *blockSize;
     *err = 0;
 }
 
 template<typename T>
 void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
-    t_multOPv->tic();
+    auto token = t_multOPv->tic_token();
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
     switch(side) {
@@ -104,14 +109,12 @@ void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    t_multOPv->toc();
     counter++;
 }
 
 template<typename T>
 void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err){
-    t_multOPv->tic();
-
+    auto token = t_multOPv->tic_token();
     switch(side) {
         case eig::Side::R: {
             for(int i = 0; i < *blockSize; i++){
@@ -132,7 +135,6 @@ void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    t_multOPv->toc();
     *err = 0;
 }
 
