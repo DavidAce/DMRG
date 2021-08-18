@@ -30,17 +30,17 @@ std::optional<size_t> tools::common::h5::resume::extract_state_number(std::strin
     }
 }
 
-std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5ppFile, AlgorithmType algo_type, std::string_view search) {
+std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5file, AlgorithmType algo_type, std::string_view search) {
     std::string_view         algo_name = enum2sv(algo_type);
     std::vector<std::string> state_prefix_candidates;
 
     if(search.empty())
-        tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5ppFile.getFilePath());
+        tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5file.getFilePath());
     else
-        tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5ppFile.getFilePath());
+        tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5file.getFilePath());
 
-    for(const auto &candidate : h5ppFile.getAttributeNames("common/storage_level")) {
-        if(candidate.find(algo_name) != std::string::npos and h5ppFile.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
+    for(const auto &candidate : h5file.getAttributeNames("common/storage_level")) {
+        if(candidate.find(algo_name) != std::string::npos and h5file.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
             state_prefix_candidates.push_back(candidate);
     }
 
@@ -91,7 +91,7 @@ std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5
     // By now we have narrowed it down such that we need to compare the step numbers of each candidate
     std::vector<std::pair<size_t, std::string>> step_sorted_candidates;
     for(const auto &candidate : state_prefix_candidates) {
-        auto steps = h5ppFile.readAttribute<size_t>(candidate, "common/step");
+        auto steps = h5file.readAttribute<size_t>(candidate, "common/step");
         step_sorted_candidates.emplace_back(std::make_pair(steps, candidate));
     }
 

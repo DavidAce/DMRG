@@ -30,14 +30,14 @@ namespace tools::finite::h5 {
             return H5D_CHUNKED;
     }
 
-    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5ppFile,
+    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
                                   const std::vector<std::string_view> &links) {
         if(save_log.empty()) {
             try {
                 for(auto &link : links) {
-                    if(h5ppFile.linkExists(link)) {
-                        auto step                   = h5ppFile.readAttribute<uint64_t>("step", link);
-                        auto iter                   = h5ppFile.readAttribute<uint64_t>("iteration", link);
+                    if(h5file.linkExists(link)) {
+                        auto step                   = h5file.readAttribute<uint64_t>("step", link);
+                        auto iter                   = h5file.readAttribute<uint64_t>("iteration", link);
                         save_log[std::string(link)] = std::make_pair(iter, step);
                     }
                 }
@@ -45,25 +45,25 @@ namespace tools::finite::h5 {
         }
     }
 
-    void tools::finite::h5::save::measurements(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level,
+    void tools::finite::h5::save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level,
                                                const TensorsFinite &tensors, const AlgorithmStatus &status) {
-        save::measurements(h5ppFile, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status);
+        save::measurements(h5file, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status);
     }
 
-    void save::measurements(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+    void save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                             const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
         std::string                                                           table_path = fmt::format("{}/measurements", table_prefix);
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5ppFile, {table_path});
+        bootstrap_save_log(save_log, h5file, {table_path});
         auto save_point = std::make_pair(status.iter, status.step);
         if(save_log[table_path] == save_point) return;
 
         log->trace("Appending to table: {}", table_path);
         auto t_hdf = tid::tic_scope("measurements");
         h5pp_table_measurements_finite::register_table_type();
-        if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
+        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
         h5pp_table_measurements_finite::table measurement_entry{};
         measurement_entry.step            = static_cast<uint64_t>(status.step);
@@ -96,13 +96,13 @@ namespace tools::finite::h5 {
         measurement_entry.algorithm_time   = status.algo_time;
         measurement_entry.physical_time    = status.phys_time;
 
-        h5ppFile.appendTableRecords(measurement_entry, table_path);
-        h5ppFile.writeAttribute(status.iter, "iteration", table_path);
-        h5ppFile.writeAttribute(status.step, "step", table_path);
+        h5file.appendTableRecords(measurement_entry, table_path);
+        h5file.writeAttribute(status.iter, "iteration", table_path);
+        h5file.writeAttribute(status.step, "step", table_path);
         save_log[table_path] = save_point;
     }
 
-    void save::state(h5pp::File &h5ppFile, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+    void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                      const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         auto t_hdf            = tid::tic_scope("state");
@@ -111,7 +111,7 @@ namespace tools::finite::h5 {
         // Checks if the current entry has already been saved
         // If it is empty because we are resuming, check if there is a log entry on file already
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5ppFile, {dsetname_schmidt, mps_prefix});
+        bootstrap_save_log(save_log, h5file, {dsetname_schmidt, mps_prefix});
 
         auto save_point = std::make_pair(status.iter, status.step);
 
@@ -120,13 +120,13 @@ namespace tools::finite::h5 {
         if(save_log[dsetname_schmidt] != save_point) {
             /*! Writes down the center "Lambda" bond matrix (singular values). */
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
-            h5ppFile.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
-            h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
-            h5ppFile.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
-            h5ppFile.writeAttribute(status.iter, "iteration", dsetname_schmidt);
-            h5ppFile.writeAttribute(status.step, "step", dsetname_schmidt);
-            h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetname_schmidt);
-            h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_schmidt);
+            h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
+            h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
+            h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
+            h5file.writeAttribute(status.iter, "iteration", dsetname_schmidt);
+            h5file.writeAttribute(status.step, "step", dsetname_schmidt);
+            h5file.writeAttribute(status.chi_lim, "chi_lim", dsetname_schmidt);
+            h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_schmidt);
             save_log[dsetname_schmidt] = save_point;
         }
 
@@ -140,25 +140,25 @@ namespace tools::finite::h5 {
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
                 if(save_log[dsetName] == save_point) continue;
-                h5ppFile.writeDataset(mps->get_L(), dsetName, layout);
-                h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                h5ppFile.writeAttribute(mps->get_L().dimensions(), "dimensions", dsetName);
-                h5ppFile.writeAttribute(mps->get_truncation_error(), "truncation_error", dsetName);
+                h5file.writeDataset(mps->get_L(), dsetName, layout);
+                h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
+                h5file.writeAttribute(mps->get_L().dimensions(), "dimensions", dsetName);
+                h5file.writeAttribute(mps->get_truncation_error(), "truncation_error", dsetName);
                 if(mps->isCenter()) {
                     dsetName = fmt::format("{}/L_C", mps_prefix);
-                    h5ppFile.writeDataset(mps->get_LC(), dsetName, layout);
-                    h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                    h5ppFile.writeAttribute(mps->get_LC().dimensions(), "dimensions", dsetName);
-                    h5ppFile.writeAttribute(mps->get_truncation_error_LC(), "truncation_error", dsetName);
+                    h5file.writeDataset(mps->get_LC(), dsetName, layout);
+                    h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
+                    h5file.writeAttribute(mps->get_LC().dimensions(), "dimensions", dsetName);
+                    h5file.writeAttribute(mps->get_truncation_error_LC(), "truncation_error", dsetName);
                 }
                 save_log[dsetName] = save_point;
             }
-            h5ppFile.writeAttribute(state.get_length(), "model_size", mps_prefix);
-            h5ppFile.writeAttribute(state.get_position<long>(), "position", mps_prefix);
-            h5ppFile.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
-            h5ppFile.writeAttribute(state.get_labels(), "labels", mps_prefix);
-            h5ppFile.writeAttribute(status.iter, "iteration", mps_prefix);
-            h5ppFile.writeAttribute(status.step, "step", mps_prefix);
+            h5file.writeAttribute(state.get_length(), "model_size", mps_prefix);
+            h5file.writeAttribute(state.get_position<long>(), "position", mps_prefix);
+            h5file.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
+            h5file.writeAttribute(state.get_labels(), "labels", mps_prefix);
+            h5file.writeAttribute(status.iter, "iteration", mps_prefix);
+            h5file.writeAttribute(status.step, "step", mps_prefix);
         }
 
         /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
@@ -172,11 +172,11 @@ namespace tools::finite::h5 {
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
                 if(save_log[dsetName] == save_point) continue;
-                h5ppFile.writeDataset(mps->get_M_bare(), dsetName, layout); // Important to write bare matrices!!
-                h5ppFile.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                h5ppFile.writeAttribute(mps->get_M_bare().dimensions(), "dimensions", dsetName);
-                h5ppFile.writeAttribute(mps->get_label(), "label", dsetName);
-                h5ppFile.writeAttribute(mps->get_unique_id(), "unique_id", dsetName);
+                h5file.writeDataset(mps->get_M_bare(), dsetName, layout); // Important to write bare matrices!!
+                h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
+                h5file.writeAttribute(mps->get_M_bare().dimensions(), "dimensions", dsetName);
+                h5file.writeAttribute(mps->get_label(), "label", dsetName);
+                h5file.writeAttribute(mps->get_unique_id(), "unique_id", dsetName);
                 save_log[dsetName] = save_point;
             }
             save_log[mps_prefix] = save_point;
@@ -184,33 +184,33 @@ namespace tools::finite::h5 {
     }
 
     /*! Write down the Hamiltonian model type and site info as attributes */
-    void save::model(h5pp::File &h5ppFile, std::string_view table_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
+    void save::model(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
         if(storage_level == StorageLevel::NONE) return;
         std::string table_path = fmt::format("{}/hamiltonian", table_prefix);
-        if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
+        if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
         tools::log->trace("Storing table: [{}]", table_path);
         auto t_hdf = tid::tic_scope("model");
-        for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5ppFile, table_path);
-        h5ppFile.writeAttribute(enum2sv(settings::model::model_type), "model_type", table_path);
-        h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
+        for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5file, table_path);
+        h5file.writeAttribute(enum2sv(settings::model::model_type), "model_type", table_path);
+        h5file.writeAttribute(settings::model::model_size, "model_size", table_path);
     }
 
     /*! Write all the MPO's with site info in attributes */
-    void tools::finite::h5::save::mpo(h5pp::File &h5ppFile, std::string_view model_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
+    void tools::finite::h5::save::mpo(h5pp::File &h5file, std::string_view model_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
         if(storage_level < StorageLevel::FULL) return;
         std::string mpo_prefix = fmt::format("{}/mpo", model_prefix);
         // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
-        if(h5ppFile.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
+        if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
         auto t_hdf = tid::tic_scope("mpo");
         tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(storage_level));
-        for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5ppFile, mpo_prefix); }
-        h5ppFile.writeAttribute(settings::model::model_size, "model_size", mpo_prefix);
-        h5ppFile.writeAttribute(enum2sv(settings::model::model_type), "model_type", mpo_prefix);
+        for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
+        h5file.writeAttribute(settings::model::model_size, "model_size", mpo_prefix);
+        h5file.writeAttribute(enum2sv(settings::model::model_type), "model_type", mpo_prefix);
     }
 
     /*! Write down measurements that can't fit in a table */
-    void save::entgm(h5pp::File &h5ppFile, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+    void save::entgm(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                      const AlgorithmStatus &status) {
         if(storage_level < StorageLevel::NORMAL) return;
         auto t_hdf          = tid::tic_scope("entanglement");
@@ -221,22 +221,22 @@ namespace tools::finite::h5 {
         auto dsetname_numen = fmt::format("{}/number_entropies", state_prefix);
 
         tools::log->trace("Storing [{: ^6}]: bond dimensions", enum2sv(storage_level));
-        h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), dsetname_bond);
-        h5ppFile.writeAttribute(status.chi_lim, "chi_lim", dsetname_bond);
-        h5ppFile.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_bond);
+        h5file.writeDataset(tools::finite::measure::bond_dimensions(state), dsetname_bond);
+        h5file.writeAttribute(status.chi_lim, "chi_lim", dsetname_bond);
+        h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_bond);
 
         tools::log->trace("Storing [{: ^6}]: entanglement entropies", enum2sv(storage_level));
-        h5ppFile.writeDataset(tools::finite::measure::entanglement_entropies(state), dsetname_enten);
-        h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 2), dsetname_renyi + "_2");
-        h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 3), dsetname_renyi + "_3");
-        h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 4), dsetname_renyi + "_4");
-        h5ppFile.writeDataset(tools::finite::measure::renyi_entropies(state, 100), dsetname_renyi + "_100");
-        h5ppFile.writeDataset(tools::finite::measure::truncation_errors(state), dsetname_trunc);
-        if(status.algo_type == AlgorithmType::fLBIT) h5ppFile.writeDataset(tools::finite::measure::number_entropies(state), dsetname_numen);
+        h5file.writeDataset(tools::finite::measure::entanglement_entropies(state), dsetname_enten);
+        h5file.writeDataset(tools::finite::measure::renyi_entropies(state, 2), dsetname_renyi + "_2");
+        h5file.writeDataset(tools::finite::measure::renyi_entropies(state, 3), dsetname_renyi + "_3");
+        h5file.writeDataset(tools::finite::measure::renyi_entropies(state, 4), dsetname_renyi + "_4");
+        h5file.writeDataset(tools::finite::measure::renyi_entropies(state, 100), dsetname_renyi + "_100");
+        h5file.writeDataset(tools::finite::measure::truncation_errors(state), dsetname_trunc);
+        if(status.algo_type == AlgorithmType::fLBIT) h5file.writeDataset(tools::finite::measure::number_entropies(state), dsetname_numen);
     }
 
     template<typename T>
-    void save::data(h5pp::File &h5ppFile, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status,
+    void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status,
                     StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
         // Setup this save
         auto                     t_h5     = tid::tic_scope("h5");
@@ -262,19 +262,19 @@ namespace tools::finite::h5 {
         // Checks if the current entry has already been saved
         // If it is empty because we are resuming, check if there is a log entry on file already
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5ppFile, {data_path});
+        bootstrap_save_log(save_log, h5file, {data_path});
         auto save_point = std::make_pair(status.iter, status.step);
         if(save_log[data_path] != save_point or status.step == 0) {
             auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
-            h5ppFile.writeDataset(data, data_path, layout);
-            h5ppFile.writeAttribute(status.iter, "iteration", data_path);
-            h5ppFile.writeAttribute(status.step, "step", data_path);
+            h5file.writeDataset(data, data_path, layout);
+            h5file.writeAttribute(status.iter, "iteration", data_path);
+            h5file.writeAttribute(status.step, "step", data_path);
             save_log[data_path] = save_point;
-            tools::common::h5::tmp::copy_from_tmp(status, h5ppFile, storage_reason, copy_policy);
+            tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
         }
     }
 
-    template void save::data(h5pp::File &h5ppFile, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name, std::string_view state_name,
+    template void save::data(h5pp::File &h5file, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name, std::string_view state_name,
                              const AlgorithmStatus &status, StorageReason storage_reason, std::optional<CopyPolicy> copy_policy);
 
     void save::setup_prefix(const AlgorithmStatus &status, const StorageReason &storage_reason, StorageLevel &storage_level, std::string_view state_name,
@@ -354,12 +354,12 @@ namespace tools::finite::h5 {
         }
     }
 
-    void save::simulation(h5pp::File &h5ppfile, const TensorsFinite &tensors, const AlgorithmStatus &status, const StorageReason &storage_reason,
+    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, const StorageReason &storage_reason,
                           std::optional<CopyPolicy> copy_policy) {
-        save::simulation(h5ppfile, *tensors.state, *tensors.model, *tensors.edges, status, storage_reason, copy_policy);
+        save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, storage_reason, copy_policy);
     }
 
-    void save::simulation(h5pp::File &h5ppfile, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
+    void save::simulation(h5pp::File &h5file, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
                           const StorageReason &storage_reason, std::optional<CopyPolicy> copy_policy) {
         auto                     t_h5     = tid::tic_scope("h5");
         auto                     t_sim    = tid::tic_scope("sim");
@@ -372,13 +372,10 @@ namespace tools::finite::h5 {
         // Additional constraints
         switch(storage_reason) {
             case StorageReason::FINISHED: break;
+            case StorageReason::CHI_UPDATE: break;
             case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT: {
                 if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
-                break;
-            }
-            case StorageReason::CHI_UPDATE: {
-                if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) storage_level = StorageLevel::NONE;
                 break;
             }
             case StorageReason::PROJ_STATE: {
@@ -386,7 +383,7 @@ namespace tools::finite::h5 {
                 if(std::abs(abs_spin_component - 1.0) > 1e-6) {
                     auto state_projected =
                         tools::finite::ops::get_normalized_projection_to_nearest_sector(state, settings::strategy::target_sector, status.chi_lim);
-                    return save::simulation(h5ppfile, state_projected, model, edges, status, storage_reason, copy_policy);
+                    return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
                 }
                 break;
             }
@@ -402,31 +399,31 @@ namespace tools::finite::h5 {
                          state_prefix, model_prefix);
 
         // The file cam be kept open during writes
-        h5ppfile.setKeepFileOpened();
+        h5file.setKeepFileOpened();
 
         // Start saving tensors and metadata
         if(storage_reason == StorageReason::MODEL) {
-            tools::finite::h5::save::model(h5ppfile, model_prefix, storage_level, model);
-            tools::finite::h5::save::mpo(h5ppfile, model_prefix, storage_level, model);
+            tools::finite::h5::save::model(h5file, model_prefix, storage_level, model);
+            tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
         } else {
-            tools::finite::h5::save::state(h5ppfile, state_prefix, storage_level, state, status);
-            tools::finite::h5::save::entgm(h5ppfile, state_prefix, storage_level, state, status);
-            tools::common::h5::save::timer(h5ppfile, state_prefix, storage_level, status);
+            tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
+            tools::finite::h5::save::entgm(h5file, state_prefix, storage_level, state, status);
+            tools::common::h5::save::timer(h5file, state_prefix, storage_level, status);
         }
 
-        tools::common::h5::save::meta(h5ppfile, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
+        tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
                                       state_prefix, model_prefix, status);
 
         // The main results have now been written. Next we append data to tables
         for(const auto &table_prefix : table_prefxs) {
             if(storage_reason == StorageReason::MODEL) break;
-            tools::common::h5::save::status(h5ppfile, table_prefix, storage_level, status);
-            tools::common::h5::save::mem(h5ppfile, table_prefix, storage_level, status);
-            tools::finite::h5::save::measurements(h5ppfile, table_prefix, storage_level, state, model, edges, status);
+            tools::common::h5::save::status(h5file, table_prefix, storage_level, status);
+            tools::common::h5::save::mem(h5file, table_prefix, storage_level, status);
+            tools::finite::h5::save::measurements(h5file, table_prefix, storage_level, state, model, edges, status);
         }
-        h5ppfile.setKeepFileClosed();
+        h5file.setKeepFileClosed();
 
         // Copy from temporary location to destination depending on given policy
-        tools::common::h5::tmp::copy_from_tmp(status, h5ppfile, storage_reason, copy_policy);
+        tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
     }
 }

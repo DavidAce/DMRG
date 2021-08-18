@@ -120,10 +120,10 @@ void tools::common::h5::tmp::create_directory(std::string_view path) {
     } catch(std::exception &ex) { throw std::runtime_error("Failed to create directory: " + std::string(ex.what())); }
 }
 
-void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5ppfile, StorageReason storage_reason,
+void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5file, StorageReason storage_reason,
                                            std::optional<CopyPolicy> copy_policy) {
     if(not settings::storage::use_temp_dir) return;
-    if(not copy_policy) return copy_from_tmp(status, h5ppfile, storage_reason, CopyPolicy::TRY);
+    if(not copy_policy) return copy_from_tmp(status, h5file, storage_reason, CopyPolicy::TRY);
     if(copy_policy == CopyPolicy::OFF) return;
 
     // Check if we already copied the file this iteration and step
@@ -131,7 +131,7 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
     auto                                                                  save_point = std::make_pair(status.iter, status.step);
 
     if(copy_policy == CopyPolicy::TRY) {
-        if(save_log[h5ppfile.getFilePath()] == save_point) return;
+        if(save_log[h5file.getFilePath()] == save_point) return;
         switch(storage_reason) {
             case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT:
@@ -144,11 +144,11 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
             case StorageReason::EMAX_STATE:
             case StorageReason::MODEL: break;
         }
-        tools::common::h5::tmp::copy_from_tmp(h5ppfile.getFilePath());
+        tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());
     } else if(copy_policy == CopyPolicy::FORCE)
-        tools::common::h5::tmp::copy_from_tmp(h5ppfile.getFilePath());
+        tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());
 
-    save_log[h5ppfile.getFilePath()] = save_point;
+    save_log[h5file.getFilePath()] = save_point;
 }
 
 void tools::common::h5::tmp::copy_from_tmp(std::string_view filepath) {
