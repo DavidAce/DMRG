@@ -37,29 +37,33 @@ void xdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto state_prefix = tools::common::h5::resume::find_resumable_state(*h5pp_file, status.algo_type);
-    if(state_prefix.empty()) throw except::state_error("no valid state candidates found for resume");
-    tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type);
+    if(resumable_states.empty()) throw except::state_error("no valid state candidates found for resume");
 
-    // Our first task is to decide on a state name for the newly loaded state
-    // The simplest is to infer it from the state prefix itself
-    auto name   = tools::common::h5::resume::extract_state_name(state_prefix);
-    auto number = tools::common::h5::resume::extract_state_number(state_prefix);
-    if(number) {
-        excited_state_number = number.value();
-        tensors.state->set_name(fmt::format("state_{}", excited_state_number));
-    } else if(not name.empty())
-        tensors.state->set_name(name);
+    for(const auto &state_prefix : resumable_states) {
+        tools::log->info("Resuming state [{}]", state_prefix);
+        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
 
-    // Initialize a custom task list
-    std::deque<xdmrg_task> task_list;
+        // Our first task is to decide on a state name for the newly loaded state
+        // The simplest is to infer it from the state prefix itself
+        auto name   = tools::common::h5::resume::extract_state_name(state_prefix);
+        auto number = tools::common::h5::resume::extract_state_number(state_prefix);
+        if(number) {
+            excited_state_number = number.value();
+            tensors.state->set_name(fmt::format("state_{}", excited_state_number));
+        } else if(not name.empty())
+            tensors.state->set_name(name);
 
-    if(status.algorithm_has_succeeded)
-        task_list = {xdmrg_task::POST_PRINT_RESULT};
-    else
-        task_list = {xdmrg_task::INIT_CLEAR_CONVERGENCE, xdmrg_task::FIND_EXCITED_STATE,
-                     xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
+        // Initialize a custom task list
+        std::deque<xdmrg_task> task_list;
+
+        if(status.algorithm_has_succeeded)
+            task_list = {xdmrg_task::POST_PRINT_RESULT};
+        else
+            task_list = {xdmrg_task::INIT_CLEAR_CONVERGENCE, xdmrg_task::FIND_EXCITED_STATE,
+                         xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
+        run_task_list(task_list);
+    }
 
     // If we reached this point the current state has finished for one reason or another.
     // We may still have some more things to do, e.g. the config may be asking for more states
@@ -73,8 +77,11 @@ void xdmrg::resume() {
     //      excited_state_number = 1
     //      excited_states = excited_state_number + 1 = 2  <-- Due to counting from 0
     //      missing_states = max_states - excited_states  = 0
-    auto excited_states = excited_state_number + 1;
-    auto missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
+
+    // Initialize another custom task list
+    std::deque<xdmrg_task> task_list;
+    auto                   excited_states = excited_state_number + 1;
+    auto                   missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
     for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
         task_list.emplace_back(xdmrg_task::PROF_RESET);
         switch(settings::strategy::secondary_states) {
@@ -635,10 +642,10 @@ void xdmrg::find_energy_range() {
 
     std::deque<fdmrg_task> gs_tasks = {
         fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_WRITE_MODEL,    fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-        fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
+        fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
 
     std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS,  fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT,    fdmrg_task::POST_PRINT_PROFILING};
+                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
     // Find lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");

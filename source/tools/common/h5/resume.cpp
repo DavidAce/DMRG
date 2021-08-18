@@ -30,7 +30,7 @@ std::optional<size_t> tools::common::h5::resume::extract_state_number(std::strin
     }
 }
 
-std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5file, AlgorithmType algo_type, std::string_view search) {
+std::vector<std::string> tools::common::h5::resume::find_resumable_states(const h5pp::File &h5file, AlgorithmType algo_type, std::string_view search) {
     std::string_view         algo_name = enum2sv(algo_type);
     std::vector<std::string> state_prefix_candidates;
 
@@ -57,65 +57,58 @@ std::string tools::common::h5::resume::find_resumable_state(const h5pp::File &h5
     }
 
     // Return the results if done
-    if(state_prefix_candidates.empty()) return "";
-    if(state_prefix_candidates.size() == 1) return state_prefix_candidates[0];
+    if(state_prefix_candidates.empty()) return {};
+    if(state_prefix_candidates.size() == 1) return {state_prefix_candidates[0]};
 
-    // We have a number of possible candidates coming from results, journal or projection. The most suitable one follows from a list of priorities,
-    //  - Latest state: I.e. compare number in state_0, state_1....etc and take the latest
-    //  - Latest step: I.e. compare the step-number in all the candidates (step number may be reset between states)
+    // We have a number of possible candidates from various states, like state_0, state_1, etc.
+    // In each state_#, take the one with latest step: I.e. compare the step-number in all the candidates (step number is reset between states)
 
     // Here we collect the state numbers
-    std::vector<std::string> state_nums;
+//    std::vector<std::string> state_nums;
+//    for(const auto &candidate : state_prefix_candidates) {
+//        // E.g. "/xDMRG/state_0/..." would extract "0"
+//        auto num = extract_state_number(candidate);
+//        if(num) state_nums.emplace_back(std::to_string(num.value()));
+//    }
+
+    //Here we collect unique state names
+    std::vector<std::string> state_names;
     for(const auto &candidate : state_prefix_candidates) {
-        // E.g. "/xDMRG/state_0/..." would extract "0"
-        auto num = extract_state_number(candidate);
-        if(num) state_nums.emplace_back(std::to_string(num.value()));
+        // E.g. "/xDMRG/state_0/..." would extract "state_0"
+        auto name = extract_state_name(candidate);
+        if(not name.empty()){
+            if(std::find(state_names.begin(), state_names.end(), name) == state_names.end()){
+                state_names.emplace_back(name);
+            }
+        }
     }
+    // Sort state names in ascending order
+    std::sort(state_names.begin(), state_names.end(), std::less<>());
 
-    // Here we sort the state numbers, then erase all but the latest state from the candidate list
-    if(not state_nums.empty()) {
-        std::sort(state_nums.begin(), state_nums.end());
-        auto state_filter = [state_nums](std::string_view x) {
-            return x.find(state_nums.back()) == std::string::npos;
-        };
-        state_prefix_candidates.erase(std::remove_if(state_prefix_candidates.begin(), state_prefix_candidates.end(), state_filter),
-                                      state_prefix_candidates.end());
+
+    // For each state name, we find the one with highest step number
+    std::vector<std::string> state_candidates_latest;
+    for(const auto & name : state_names){
+        // Collect the candidates that have the current state name and their step
+        std::vector<std::pair<size_t, std::string>> matching_candidates;
+        for(const auto & candidate : state_prefix_candidates){
+            if(candidate.find(name) == std::string::npos) continue;
+            auto steps = h5file.readAttribute<size_t>(candidate, "common/step");
+            matching_candidates.emplace_back(std::make_pair(steps, candidate));
+        }
+
+        // Sort according to step number in decreasing order
+        std::sort(matching_candidates.begin(), matching_candidates.end(), [](auto &lhs, auto &rhs) {
+            if(lhs.first != rhs.first) return lhs.first > rhs.first;
+            // Take care of cases with repeated step numbers
+            else if(lhs.second.find("finished") != std::string::npos and rhs.second.find("finished") == std::string::npos) return true;
+            else if(lhs.second.find("iter") != std::string::npos and rhs.second.find("iter") == std::string::npos) return true;
+            return false;
+        });
+        for(const auto &candidate : matching_candidates) tools::log->info("Candidate step {} : [{}]", candidate.first, candidate.second);
+
+        // Add the front candidate
+        state_candidates_latest.emplace_back(matching_candidates.front().second);
     }
-
-    tools::log->info("Highest state number candidates: {}", state_prefix_candidates);
-
-    // Return the results if done
-    if(state_prefix_candidates.empty()) return "";
-    if(state_prefix_candidates.size() == 1) return state_prefix_candidates[0];
-
-    // By now we have narrowed it down such that we need to compare the step numbers of each candidate
-    std::vector<std::pair<size_t, std::string>> step_sorted_candidates;
-    for(const auto &candidate : state_prefix_candidates) {
-        auto steps = h5file.readAttribute<size_t>(candidate, "common/step");
-        step_sorted_candidates.emplace_back(std::make_pair(steps, candidate));
-    }
-
-    // Sort according to step number in decreasing order
-    std::sort(step_sorted_candidates.begin(), step_sorted_candidates.end(), [](auto &left, auto &right) { return left.first > right.first; });
-    for(const auto &candidate : step_sorted_candidates) tools::log->info("Candidate step {} : [{}]", candidate.first, candidate.second);
-
-    // Remove all candidates that have a lower step than the latest ones
-    auto latest_step = step_sorted_candidates.front().first;
-    step_sorted_candidates.erase(std::remove_if(step_sorted_candidates.begin(), step_sorted_candidates.end(),
-                                                [latest_step](const std::pair<size_t, std::string> &candidate) { return candidate.first < latest_step; }),
-                                 step_sorted_candidates.end());
-
-    // We may now have repeated step numbers.
-    // For instance if the state has actually finished we expect to find a state in "finished", "savepoint/iter_..." or "projection" in the path
-
-    // First, if any candidate has "finished" in its path, return it
-    for(const auto &candidate : step_sorted_candidates)
-        if(candidate.second.find("finished") != std::string::npos) return candidate.second;
-
-    // Next, if any candidate has "iter" in its path, return that
-    for(const auto &candidate : step_sorted_candidates)
-        if(candidate.second.find("iter") != std::string::npos) return candidate.second;
-
-    // Otherwise just return whatever is first the first element, which should contain the latest possible state
-    return step_sorted_candidates.front().second;
+    return state_candidates_latest;
 }

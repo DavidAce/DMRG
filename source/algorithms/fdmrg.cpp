@@ -26,32 +26,35 @@ void fdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto state_prefix = tools::common::h5::resume::find_resumable_state(*h5pp_file, status.algo_type);
-    if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
-    tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
-    // Our first task is to decide on a state name for the newly loaded state
-    // The simplest is to inferr it from the state prefix itself
-    auto name = tools::common::h5::resume::extract_state_name(state_prefix);
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type);
+    if(resumable_states.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
+    for(const auto & state_prefix : resumable_states ){
+        tools::log->info("Resuming state [{}]", state_prefix);
+        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+        // Our first task is to decide on a state name for the newly loaded state
+        // The simplest is to inferr it from the state prefix itself
+        auto name = tools::common::h5::resume::extract_state_name(state_prefix);
 
-    // Initialize a custom task list
-    std::deque<fdmrg_task> task_list;
+        // Initialize a custom task list
+        std::deque<fdmrg_task> task_list;
 
-    if(status.algorithm_has_succeeded)
-        task_list = {fdmrg_task::POST_PRINT_RESULT};
-    else {
-        task_list.emplace_back(fdmrg_task::INIT_CLEAR_CONVERGENCE);
-        // This could be a savepoint state
-        // Simply "continue" the algorithm until convergence
-        if(name.find("emax") != std::string::npos)
-            task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
-        else if(name.find("emin") != std::string::npos)
-            task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
-        else
-            throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]", name));
-        task_list.emplace_back(fdmrg_task::POST_DEFAULT);
+        if(status.algorithm_has_succeeded)
+            task_list = {fdmrg_task::POST_PRINT_RESULT};
+        else {
+            task_list.emplace_back(fdmrg_task::INIT_CLEAR_CONVERGENCE);
+            // This could be a savepoint state
+            // Simply "continue" the algorithm until convergence
+            if(name.find("emax") != std::string::npos)
+                task_list.emplace_back(fdmrg_task::FIND_HIGHEST_STATE);
+            else if(name.find("emin") != std::string::npos)
+                task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
+            else
+                throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]", name));
+            task_list.emplace_back(fdmrg_task::POST_DEFAULT);
+        }
+        run_task_list(task_list);
     }
-    run_task_list(task_list);
+
 }
 
 void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {

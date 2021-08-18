@@ -29,7 +29,7 @@ namespace tools::common::h5 {
                 fmt::format("Could not find table [profiling] in file [{}] at prefix [{}] at path [{}]", h5file.getFilePath(), state_prefix, table_path));
         for(const auto &dset : h5file.findDatasets("", table_path)) {
             auto &t_ur = tid::get(dset);
-            tools::log->info("Loading {}", dset);
+            tools::log->trace("Loading {}", dset);
             auto data = h5file.readDataset<h5pp_ur::item>(fmt::format("{}/{}", table_path, dset));
             t_ur.set_time(data.time);
             t_ur.set_count(data.count);

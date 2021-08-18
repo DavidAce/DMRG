@@ -37,57 +37,60 @@ void flbit::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto state_prefix = tools::common::h5::resume::find_resumable_state(*h5pp_file, status.algo_type, "state_real");
-    if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
-    tools::log->info("Resuming state [{}]", state_prefix);
-    tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type, "state_real");
+    for(const auto & state_prefix : resumable_states){
+        if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
+        tools::log->info("Resuming state [{}]", state_prefix);
+        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
 
-    // Load the unitaries
-    unitary_gates_2site_layers.clear();
-    std::string grouppath = "/fLBIT/model/unitary_gates";
-    if(not h5pp_file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
-    auto num_layers = h5pp_file->readAttribute<size_t>("num_layers", grouppath);
-    if(num_layers != settings::model::lbit::u_layer)
-        throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer));
-    unitary_gates_2site_layers.resize(num_layers);
-    for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
-        std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
-        auto        num_gates = h5pp_file->readAttribute<size_t>("num_gates", layerpath);
-        layer.resize(num_gates);
-        for(auto &&[idx_gate, u] : iter::enumerate(layer)) {
-            std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
-            auto        op       = h5pp_file->readDataset<Eigen::Tensor<Scalar, 2>>(gatepath);
-            auto        pos      = h5pp_file->readAttribute<std::vector<size_t>>("pos", gatepath);
-            auto        dim      = h5pp_file->readAttribute<std::vector<long>>("dim", gatepath);
-            u                    = qm::Gate(op, pos, dim);
+        // Load the unitaries
+        unitary_gates_2site_layers.clear();
+        std::string grouppath = "/fLBIT/model/unitary_gates";
+        if(not h5pp_file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
+        auto num_layers = h5pp_file->readAttribute<size_t>("num_layers", grouppath);
+        if(num_layers != settings::model::lbit::u_layer)
+            throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer));
+        unitary_gates_2site_layers.resize(num_layers);
+        for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
+            std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
+            auto        num_gates = h5pp_file->readAttribute<size_t>("num_gates", layerpath);
+            layer.resize(num_gates);
+            for(auto &&[idx_gate, u] : iter::enumerate(layer)) {
+                std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
+                auto        op       = h5pp_file->readDataset<Eigen::Tensor<Scalar, 2>>(gatepath);
+                auto        pos      = h5pp_file->readAttribute<std::vector<size_t>>("pos", gatepath);
+                auto        dim      = h5pp_file->readAttribute<std::vector<long>>("dim", gatepath);
+                u                    = qm::Gate(op, pos, dim);
+            }
         }
+        clear_convergence_status();
+        tensors.move_center_point_to_edge(status.chi_lim);
+        tensors.rebuild_edges();
+
+        // Our first task is to decide on a state name for the newly loaded state
+        // The simplest is to inferr it from the state prefix itself
+        auto name = tools::common::h5::resume::extract_state_name(state_prefix);
+
+        // Initialize a custom task list
+        std::deque<flbit_task> task_list;
+
+        if(status.algorithm_has_finished) {
+            task_list.emplace_back(flbit_task::POST_PRINT_RESULT);
+        } else {
+            // This could be a savepoint state
+            // Simply "continue" the algorithm until convergence
+            if(name.find("real") != std::string::npos) {
+                task_list.emplace_back(flbit_task::INIT_TIME);
+                task_list.emplace_back(flbit_task::INIT_GATES);
+                task_list.emplace_back(flbit_task::TRANSFORM_TO_LBIT);
+                task_list.emplace_back(flbit_task::TIME_EVOLVE);
+            } else
+                throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
+            task_list.emplace_back(flbit_task::POST_DEFAULT);
+        }
+        run_task_list(task_list);
     }
-    clear_convergence_status();
-    tensors.move_center_point_to_edge(status.chi_lim);
-    tensors.rebuild_edges();
 
-    // Our first task is to decide on a state name for the newly loaded state
-    // The simplest is to inferr it from the state prefix itself
-    auto name = tools::common::h5::resume::extract_state_name(state_prefix);
-
-    // Initialize a custom task list
-    std::deque<flbit_task> task_list;
-
-    if(status.algorithm_has_finished) {
-        task_list.emplace_back(flbit_task::POST_PRINT_RESULT);
-    } else {
-        // This could be a savepoint state
-        // Simply "continue" the algorithm until convergence
-        if(name.find("real") != std::string::npos) {
-            task_list.emplace_back(flbit_task::INIT_TIME);
-            task_list.emplace_back(flbit_task::INIT_GATES);
-            task_list.emplace_back(flbit_task::TRANSFORM_TO_LBIT);
-            task_list.emplace_back(flbit_task::TIME_EVOLVE);
-        } else
-            throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
-        task_list.emplace_back(flbit_task::POST_DEFAULT);
-    }
-    run_task_list(task_list);
     // If we reached this point the current state has finished for one reason or another.
     // TODO: We may still have some more things to do, e.g. the config may be asking for more states
 }
