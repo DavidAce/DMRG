@@ -108,10 +108,10 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
     /* clang-format off */
     // Apply overrides if there are any
+    if(meta.max_grad_tolerance)       ceres_default_options.gradient_tolerance                      = meta.max_grad_tolerance.value();
     if(meta.ceres_max_num_iterations) ceres_default_options.max_num_iterations                      = meta.ceres_max_num_iterations.value();
     if(meta.ceres_max_lbfgs_rank)     ceres_default_options.max_lbfgs_rank                          = meta.ceres_max_lbfgs_rank.value();
     if(meta.ceres_function_tolerance) ceres_default_options.function_tolerance                      = meta.ceres_function_tolerance.value();
-    if(meta.ceres_gradient_tolerance) ceres_default_options.gradient_tolerance                      = meta.ceres_gradient_tolerance.value();
     if(meta.ceres_eigenvalue_scaling) ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = meta.ceres_eigenvalue_scaling.value();
     /* clang-format on */
 

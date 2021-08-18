@@ -176,7 +176,7 @@ namespace tools::finite::opt::internal {
         return init;
     }
 
-    bool try_harder(const std::vector<opt_mps> &results) {
+    bool try_harder(const std::vector<opt_mps> &results, const OptMeta &meta) {
         if(results.empty()) {
             tools::log->debug("Try harder: true | first run");
             return true;
@@ -203,19 +203,10 @@ namespace tools::finite::opt::internal {
             return true;
         }
         const auto &result_eig0_min_grad_norm = results_eig0_min_it->get();
-        bool        tryharder                 = result_eig0_min_grad_norm.get_max_grad() >= 1e0;
-        tools::log->debug("Try harder: {} | grad norm {:8.2e} threshold = 1", tryharder, result_eig0_min_grad_norm.get_max_grad());
+        double      grad_tol                  = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e0;
+        bool        tryharder                 = result_eig0_min_grad_norm.get_max_grad() >= grad_tol;
+        tools::log->debug("Try harder: {} | grad norm {:8.2e} threshold = {:<8.2e}", tryharder, result_eig0_min_grad_norm.get_max_grad(), grad_tol);
         return tryharder;
-        //        if(result_eig0_min_grad_norm.get_max_grad() >= 1e0) {
-        //            return true; // Very large gradient, just try harder
-        //        }
-        //        if(result_eig0_min_grad_norm.get_max_grad() < 1e0) {
-        //            tools::log->debug("Try harder: false | grad norm {:8.2e} < 1", result_eig0_min_grad_norm.get_max_grad());
-        //            return false; // We rarely make progress once grad max norm is smaller than one
-        //        }
-        //        tools::log->debug("Try harder: {} | last resort: check if lowest grad norm {:8.2e} > 1", result_eig0_min_grad_norm.get_max_grad() > 1e-0,
-        //                          result_eig0_min_grad_norm.get_max_grad());
-        //        return result_eig0_min_grad_norm.get_max_grad() > 1e-0; // We rarely improve variance once grad max norm is smaller than one
     }
 
     template<typename Scalar>
@@ -250,24 +241,24 @@ namespace tools::finite::opt::internal {
         MatVecMps<Scalar> hamiltonian(env.L, env.R, mpo);
         solver.config.primme_extra = &hamiltonian;
 
-//        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
-//        long        number = 0;
-//        std::string groupname;
-//        while(true) {
-//            groupname = fmt::format("mps-{}", number++);
-//            if(not h5file.linkExists(groupname)) {
-//                h5file.writeDataset(hamiltonian.get_mpo(), groupname + "/mpo", H5D_CHUNKED);
-//                h5file.writeDataset(hamiltonian.get_envL(), groupname + "/envL", H5D_CHUNKED);
-//                h5file.writeDataset(hamiltonian.get_envR(), groupname + "/envR", H5D_CHUNKED);
-//                h5file.writeDataset(hamiltonian_squared.get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
-//                h5file.writeDataset(hamiltonian_squared.get_envL(), groupname + "/envL2", H5D_CHUNKED);
-//                h5file.writeDataset(hamiltonian_squared.get_envR(), groupname + "/envR2", H5D_CHUNKED);
-//                auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
-//                for(auto &i : init) h5file.writeDataset(i.mps, fmt::format("{}/mps_init_{}", groupname, i.idx), H5D_CHUNKED);
-//                h5file.writeAttribute(tensors.active_problem_dims(), "dimensions", groupname);
-//                break;
-//            }
-//        }
+        //        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
+        //        long        number = 0;
+        //        std::string groupname;
+        //        while(true) {
+        //            groupname = fmt::format("mps-{}", number++);
+        //            if(not h5file.linkExists(groupname)) {
+        //                h5file.writeDataset(hamiltonian.get_mpo(), groupname + "/mpo", H5D_CHUNKED);
+        //                h5file.writeDataset(hamiltonian.get_envL(), groupname + "/envL", H5D_CHUNKED);
+        //                h5file.writeDataset(hamiltonian.get_envR(), groupname + "/envR", H5D_CHUNKED);
+        //                h5file.writeDataset(hamiltonian_squared.get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
+        //                h5file.writeDataset(hamiltonian_squared.get_envL(), groupname + "/envL2", H5D_CHUNKED);
+        //                h5file.writeDataset(hamiltonian_squared.get_envR(), groupname + "/envR2", H5D_CHUNKED);
+        //                auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this
+        //                scope for(auto &i : init) h5file.writeDataset(i.mps, fmt::format("{}/mps_init_{}", groupname, i.idx), H5D_CHUNKED);
+        //                h5file.writeAttribute(tensors.active_problem_dims(), "dimensions", groupname);
+        //                break;
+        //            }
+        //        }
 
         hamiltonian_squared.reset();
         auto size = tensors.active_problem_size();
@@ -325,7 +316,7 @@ namespace tools::finite::opt::internal {
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
-        config_primme.primme_grad_tol  = 1e0;
+        config_primme.primme_grad_tol  = meta.max_grad_tolerance;
         config_primme.primme_grad_iter = 100;
         config_primme.primme_grad_time = 5;
 
@@ -347,7 +338,7 @@ namespace tools::finite::opt::internal {
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
 
-            if(not try_harder(results)) break;
+            if(not try_harder(results, meta)) break;
             //            if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
         }
     }
@@ -369,7 +360,7 @@ namespace tools::finite::opt::internal {
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
-        config_primme.primme_grad_tol  = 1e0;
+        config_primme.primme_grad_tol  = meta.max_grad_tolerance;
         config_primme.primme_grad_iter = 0;
         config_primme.primme_grad_time = 0;
 
@@ -391,7 +382,7 @@ namespace tools::finite::opt::internal {
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
 
-            if(not try_harder(results)) break;
+            if(not try_harder(results, meta)) break;
             if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
         }
     }
@@ -413,7 +404,7 @@ namespace tools::finite::opt::internal {
         config_primme.loglevel        = 2;
         std::vector<eig::settings> configs(2);
 
-        config_primme.primme_grad_tol          = 1e0;
+        config_primme.primme_grad_tol          = meta.max_grad_tolerance;
         config_primme.primme_grad_iter         = 10;
         config_primme.primme_grad_time         = 1;
         configs[0]                             = config_primme;
@@ -433,7 +424,7 @@ namespace tools::finite::opt::internal {
             solver.config = config;
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-            if(not try_harder(results)) break;
+            if(not try_harder(results, meta)) break;
             if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
         }
     }

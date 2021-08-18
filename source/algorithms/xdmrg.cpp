@@ -256,6 +256,12 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
+    // Set the default gradient precision
+    c1.max_grad_tolerance = settings::precision::max_grad_tolerance;
+
+    // When stuck we can require better accuracy on the gradient
+    if(status.algorithm_has_stuck_for > 0) c1.max_grad_tolerance = 1e-2 * settings::precision::max_grad_tolerance;
+
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
@@ -389,14 +395,14 @@ void xdmrg::single_xDMRG_step() {
     variance_before_step                             = std::nullopt;
     tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
                       confList.size());
-    for(const auto &[idx_conf, conf] : iter::enumerate(confList)) {
-        if(conf.optMode == OptMode::OVERLAP and conf.optSpace != OptSpace::SUBSPACE)
-            throw std::logic_error(fmt::format("[OVERLAP] mode can only run in [SUBSPACE]. Got: [{}|{}]", enum2sv(conf.optMode), enum2sv(conf.optSpace)));
+    for(const auto &[idx_conf, meta] : iter::enumerate(confList)) {
+        if(meta.optMode == OptMode::OVERLAP and meta.optSpace != OptSpace::SUBSPACE)
+            throw std::logic_error(fmt::format("[OVERLAP] mode can only run in [SUBSPACE]. Got: [{}|{}]", enum2sv(meta.optMode), enum2sv(meta.optSpace)));
 
-        if(not try_again(results, conf)) break;
+        if(not try_again(results, meta)) break;
 
         // Try activating the sites asked for;
-        tensors.activate_sites(conf.chosen_sites);
+        tensors.activate_sites(meta.chosen_sites);
         if(tensors.active_sites.empty()) continue;
 
         // Hold the variance before the optimization step for comparison
@@ -404,40 +410,40 @@ void xdmrg::single_xDMRG_step() {
 
         // Use subspace expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
-        if(conf.alpha_expansion) {
+        if(meta.alpha_expansion) {
             auto pos_expanded = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_subspace(conf.alpha_expansion, status.chi_lim);
+            tensors.expand_subspace(meta.alpha_expansion, status.chi_lim);
         }
 
         // Announce the current configuration for optimization
-        tools::log->debug("Running conf {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
-                          confList.size(), conf.label, enum2sv(conf.optInit), enum2sv(conf.optMode), enum2sv(conf.optSpace), enum2sv(conf.optType),
-                          conf.chosen_sites, conf.problem_dims, conf.problem_size,
-                          (conf.alpha_expansion ? conf.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
+        tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
+                          confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optMode), enum2sv(meta.optSpace), enum2sv(meta.optType),
+                          meta.chosen_sites, meta.problem_dims, meta.problem_size,
+                          (meta.alpha_expansion ? meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         // Run the optimization
-        switch(conf.optInit) {
+        switch(meta.optInit) {
             case OptInit::CURRENT_STATE: {
-                results.emplace_back(opt::find_excited_state(tensors, status, conf));
+                results.emplace_back(opt::find_excited_state(tensors, status, meta));
                 break;
             }
             case OptInit::LAST_RESULT: {
                 if(results.empty()) throw std::logic_error("There are no previous results to select an initial state");
-                results.emplace_back(opt::find_excited_state(tensors, results.back(), status, conf));
+                results.emplace_back(opt::find_excited_state(tensors, results.back(), status, meta));
                 break;
             }
         }
 
         // Save the neighboring mps that this result is compatible with,
         // so that we may use them if this result turns out to be the winner
-        if(conf.alpha_expansion) {
-            results.back().set_alpha(conf.alpha_expansion);
+        if(meta.alpha_expansion) {
+            results.back().set_alpha(meta.alpha_expansion);
             auto pos_expanded         = tensors.expand_subspace(std::nullopt, status.chi_lim); // nullopt implies a pos query
             results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);            // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
-        // This is so that the next conf starts with unchanged mps as neighbors
+        // This is so that the next meta starts with unchanged mps as neighbors
         if(mps_original) {
             tensors.state->set_mps_sites(mps_original.value());
             tensors.rebuild_edges(); // Make sure the edges are up to date
@@ -447,15 +453,16 @@ void xdmrg::single_xDMRG_step() {
         results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
 
         /* clang-format off */
-        conf.optExit = OptExit::SUCCESS;
-        if(results.back().get_max_grad() > 1.000 )      conf.optExit |= OptExit::FAIL_GRADIENT;
-        if(results.back().get_relchange() > 1.001 )      conf.optExit |= OptExit::FAIL_WORSENED;
-        else if(results.back().get_relchange() > 0.999 ) conf.optExit |= OptExit::FAIL_NOCHANGE;
-        results.back().set_optexit(conf.optExit);
+        meta.optExit = OptExit::SUCCESS;
+        double grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e0;
+        if(results.back().get_max_grad()       > grad_tol               ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
+        else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
+        results.back().set_optexit(meta.optExit);
         /* clang-format on */
-        tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(conf.optMode), enum2sv(conf.optSpace),
-                          flag2str(conf.optExit), variance_before_step.value(), results.back().get_variance(),
-                          results.back().get_relchange() * 100);
+
+        tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optMode), enum2sv(meta.optSpace),
+                          flag2str(meta.optExit), variance_before_step.value(), results.back().get_variance(), results.back().get_relchange() * 100);
         if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
     }
 
@@ -466,9 +473,9 @@ void xdmrg::single_xDMRG_step() {
                                              "alpha {:8.2e} | "
                                              "overlap {:.16f} | "
                                              "{:20} | {} | time {:.4f} ms"),
-                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_sites().front(), r.get_sites().back(),
-                                  r.get_alpha(), r.get_overlap(),
-                                  fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optspace())), flag2str(r.get_optexit()), 1000 * r.get_time());
+                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_sites().front(), r.get_sites().back(), r.get_alpha(),
+                                  r.get_overlap(), fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optspace())), flag2str(r.get_optexit()),
+                                  1000 * r.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {

@@ -170,6 +170,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eig_default_ncv"                   , precision::eig_default_ncv);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_switchsize"                    , precision::svd_switchsize);
+    dmrg_config.load_parameter("precision::max_grad_tolerance"                , precision::max_grad_tolerance);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);
     dmrg_config.load_parameter("precision::use_reduced_mpo_energy"            , precision::use_reduced_mpo_energy);
