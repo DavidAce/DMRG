@@ -206,8 +206,8 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             *isconv = std::max<int>(*isconv, grad_max < grad_tol);
             *ierr   = 0;
             //            if(*isconv != 0)
-            eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
-                           primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
+            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+                           H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
         }
     }
@@ -369,11 +369,12 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
      * PRIMME_DEFAULT_MIN_TIME and PRIMME_DEFAULT_MIN_MATVECS. But you can
      * set another method, such as PRIMME_LOBPCG_OrthoBasis_Window, directly */
     primme_set_method(MethodAdapter(config.primme_method), &primme);
+
     // Override some parameters
+    if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
     //    primme.restartingParams.maxPrevRetain = 2;
     //    primme.minRestartSize = 2;
-    //    primme.maxBlockSize = 32;
-    if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
+    //    primme.maxBlockSize = 1;
 
     // Allocate space
     auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
@@ -445,7 +446,8 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.ncv            = primme.maxBasisSize;
     result.meta.tol            = primme.eps;
     result.meta.iter           = primme.stats.numOuterIterations;
-    result.meta.matvecs        = primme.stats.numMatvecs;
+    result.meta.num_mv         = matrix.counter;
+    result.meta.num_op         = primme.stats.numMatvecs;
     result.meta.n              = primme.n;
     result.meta.tag            = config.tag;
     result.meta.ritz           = TargetToString(primme.target);

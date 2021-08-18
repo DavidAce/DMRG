@@ -62,7 +62,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             tools::log->trace("Running LBFGS direct cplx");
             ceres::Solve(options, problem, optimized_mps.get_vector_cplx_as_2xreal().data(), &summary);
             // Copy the results from the functor
-            optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_max_grad(functor->get_max_grad_norm());
             tid::get("vH2") += *functor->t_H2n;
@@ -88,7 +88,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                 if(initial_state_real.hasNaN()) throw std::runtime_error("initial_state_real has nan's");
             ceres::Solve(options, problem, initial_state_real.data(), &summary);
             // Copy the results from the functor
-            optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_max_grad(functor->get_max_grad_norm());
             optimized_mps.set_tensor_real(initial_state_real.data(), initial_mps.get_tensor().dimensions());

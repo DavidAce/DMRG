@@ -162,7 +162,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             bicg.setTolerance(tolerance);
             res = bicg.solve(mps);
 //            std::cout << "BiCGSTAB: #iterations: " << bicg.iterations()
-//                << ", #count: " << matRepl.matvecs
+//                << ", #count: " << matRepl.counter
 //                << ", estimated error: " << bicg.error()
 //                << std::endl;
 
@@ -173,7 +173,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
 //            cg.compute(matRepl);
 //            res = cg.solve(mps);
 //            std::cout << "CG      : #iterations: " << cg.iterations()
-//                      << ", #count: " << matRepl.matvecs
+//                      << ", #count: " << matRepl.counter
 //                      << ", estimated error: " << cg.error()
 //                      << std::endl;
 //        }
@@ -184,7 +184,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             minres.compute(matRepl);
             res = minres.solve(mps);
 //            std::cout << "MINRES:   #iterations: " << minres.iterations()
-//                      << ", #count: " << matRepl.matvecs
+//                      << ", #count: " << matRepl.counter
 //                      << ", norm: " << res.norm()
 //                      << ", estimated error: " << minres.error()
 //                      << std::endl;
@@ -197,7 +197,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
 //            cg.compute(matRepl);
 //            res = cg.solve(mps);
 //            std::cout << "CG      : #iterations: " << cg.iterations()
-//                      << ", #count: " << matRepl.matvecs
+//                      << ", #count: " << matRepl.counter
 //                      << ", estimated error: " << cg.error()
 //                      << std::endl;
 //        }

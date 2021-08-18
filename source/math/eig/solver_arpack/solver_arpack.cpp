@@ -248,6 +248,8 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
 
     result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
+    result.meta.num_mv        = matrix.counter;
+    result.meta.num_op        = matrix.counter;
     result.meta.iter          = solver.GetIter();
     result.meta.n             = solver.GetN();
     result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
@@ -255,14 +257,13 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.ncv           = solver.GetNcv();
     result.meta.rows          = solver.GetN();
     result.meta.cols          = result.meta.nev;
-    result.meta.matvecs       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
     result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = solver.GetShift();
     result.meta.time_total    = t_tot->get_time();
-    result.meta.time_matprod  = t_mul->get_time() + t_fnd->get_time();
+    result.meta.time_matvec   = t_mul->get_time() + t_fnd->get_time();
     result.meta.time_prep     = t_pre->get_time();
 
     /* clang-format off */
@@ -271,7 +272,8 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
     eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
     eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
-    eig::log->trace("- {:<30} = {}"     ,"matvecs",        result.meta.matvecs);
+    eig::log->trace("- {:<30} = {}"     ,"mv",             result.meta.num_mv);
+    eig::log->trace("- {:<30} = {}"     ,"op",             result.meta.num_op);
     eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
     eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
     eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
@@ -281,7 +283,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
     eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
-    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matprod);
+    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matvec);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);
     /* clang-format on */
 
@@ -386,6 +388,9 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     else
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
     result.meta.eigvals_found = solver.EigenvaluesFound();       // BOOL!
+
+    result.meta.num_mv        = matrix.counter;
+    result.meta.num_op        = nops;
     result.meta.iter          = solver.GetIter();
     result.meta.n             = solver.GetN();
     result.meta.nev           = solver.GetNev();
@@ -394,14 +399,13 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     result.meta.tol           = solver.GetTol();
     result.meta.rows          = solver.GetN();
     result.meta.cols          = result.meta.nev;
-    result.meta.matvecs       = matrix.counter;
     result.meta.form          = config.form.value();
     result.meta.type          = config.type.value();
     result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = (config.sigma ? config.sigma.value() : result.meta.sigma); // solver.GetShift() is only for shift-invert
     result.meta.time_total    = t_tot->get_time();
-    result.meta.time_matprod  = t_mul->get_time() + t_fnd->get_time();
+    result.meta.time_matvec   = t_mul->get_time() + t_fnd->get_time();
     result.meta.time_prep     = t_pre->get_time();
 
     /* clang-format off */
@@ -411,7 +415,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     eig::log->trace("- {:<30} = {}"     ,"eigvecsR_found", result.meta.eigvecsR_found);
     eig::log->trace("- {:<30} = {}"     ,"eigvecsL_found", result.meta.eigvecsL_found);
     eig::log->trace("- {:<30} = {}"     ,"iter",           result.meta.iter);
-    eig::log->trace("- {:<30} = {}"     ,"matvecs",        result.meta.matvecs);
+    eig::log->trace("- {:<30} = {}"     ,"num_mv",         result.meta.num_mv);
+    eig::log->trace("- {:<30} = {}"     ,"num_op",         result.meta.num_op);
     eig::log->trace("- {:<30} = {}"     ,"rows",           result.meta.rows);
     eig::log->trace("- {:<30} = {}"     ,"cols",           result.meta.cols);
     eig::log->trace("- {:<30} = {}"     ,"n",              result.meta.n);
@@ -421,7 +426,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
     eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
-    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matprod);
+    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matvec);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);
 
     /* clang-format on */

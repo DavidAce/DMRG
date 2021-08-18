@@ -9,13 +9,13 @@ opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, 
       overlap(overlap_), length(length_) {
     norm    = get_vector().norm();
     iter    = 0;
-    counter = 0;
+    num_mv  = 0;
     time    = 0;
 }
 
 opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                  double overlap_, size_t length_, size_t iter_, size_t counter_, size_t time_)
-    : name(name_), tensor(tensor_), sites(sites_), energy(energy_), variance(variance_), overlap(overlap_), length(length_), iter(iter_), counter(counter_),
+    : name(name_), tensor(tensor_), sites(sites_), energy(energy_), variance(variance_), overlap(overlap_), length(length_), iter(iter_), num_mv(counter_),
       time(time_) {
     norm = get_vector().norm();
 }
@@ -89,9 +89,9 @@ size_t opt_mps::get_iter() const {
     else
         return 0.0;
 }
-size_t opt_mps::get_counter() const {
-    if(counter)
-        return counter.value();
+size_t opt_mps::get_mv() const {
+    if(num_mv)
+        return num_mv.value();
     else
         return 0.0;
 }
@@ -269,7 +269,8 @@ void opt_mps::set_overlap(double overlap_) { overlap = overlap_; }
 void opt_mps::set_alpha(std::optional<double> alpha_) { alpha = alpha_; }
 void opt_mps::set_length(size_t length_) { length = length_; }
 void opt_mps::set_iter(size_t iter_) { iter = iter_; }
-void opt_mps::set_counter(size_t counter_) { counter = counter_; }
+void opt_mps::set_op(size_t op_) { num_op = op_; }
+void opt_mps::set_mv(size_t mv_) { num_mv = mv_; }
 void opt_mps::set_time(double time_) { time = time_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
 void opt_mps::set_max_grad(double grad_norm_) { max_grad = grad_norm_; }
@@ -315,7 +316,7 @@ void opt_mps::validate_basis_vector() const {
     if(not norm)     error_msg.append("\t norm    \n");
     if(not length)   error_msg.append("\t length  \n");
     if(not iter)     error_msg.append("\t iter    \n");
-    if(not counter)  error_msg.append("\t matvecs \n");
+    if(not num_mv)   error_msg.append("\t num_mv \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
         if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");
@@ -338,7 +339,7 @@ void opt_mps::validate_result() const {
     if(not norm)     error_msg.append("\t norm    \n");
     if(not length)   error_msg.append("\t length  \n");
     if(not iter)     error_msg.append("\t iter    \n");
-    if(not counter)  error_msg.append("\t matvecs \n");
+    if(not num_mv)   error_msg.append("\t num_mv \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
         if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");

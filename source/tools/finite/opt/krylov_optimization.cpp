@@ -38,7 +38,7 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                                      initial_mps.get_energy_reduced(), variance, overlap, tensors.get_length());
                 auto &mps = results.back();
                 mps.set_time(solver.result.meta.time_total);
-                mps.set_counter(static_cast<size_t>(solver.result.meta.matvecs));
+                mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
                 mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
                 mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
                 mps.is_basis_vector = true;

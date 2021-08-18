@@ -117,7 +117,7 @@ void tools::finite::opt::reports::print_krylov_report(std::optional<size_t> max_
                       "overlap",
                       "norm",
                       "iter",
-                      "matvecs",
+                      "mv",
                       "time [s]",
                       "avg [s/op]");
 
@@ -147,7 +147,7 @@ void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::str
     if(not space) space = mps.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
     bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy_per_site(), mps.get_variance(), mps.get_overlap(),
-                                  mps.get_norm(), mps.get_delta_f(), mps.get_max_grad(), mps.get_iter(), mps.get_counter(), mps.get_time()});
+                                  mps.get_norm(), mps.get_delta_f(), mps.get_max_grad(), mps.get_iter(), mps.get_mv(), mps.get_time()});
 }
 
 void tools::finite::opt::reports::time_add_opt_entry() {
@@ -167,5 +167,5 @@ void tools::finite::opt::reports::krylov_add_entry(const opt_mps &mps) {
     std::string description = fmt::format("krylov {:<24}", mps.get_name());
     krylov_log.push_back(krylov_entry{description, std::string(mps.get_krylov_ritz()), mps.get_tensor().size(), mps.get_krylov_idx(), mps.get_krylov_nev(), mps.get_krylov_ncv(),
                                       mps.get_energy_per_site(), mps.get_krylov_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                      mps.get_krylov_tol(), mps.get_krylov_resid(), mps.get_max_grad(), mps.get_iter(), mps.get_counter(), mps.get_time()});
+                                      mps.get_krylov_tol(), mps.get_krylov_resid(), mps.get_max_grad(), mps.get_iter(), mps.get_mv(), mps.get_time()});
 }

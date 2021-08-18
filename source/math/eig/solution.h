@@ -33,15 +33,16 @@ namespace eig {
         struct Meta {
             eig::size_type rows           = 0;
             eig::size_type cols           = 0;
-            eig::size_type iter           = 0;
+            eig::size_type iter           = 0; // Number of iterations reported by solver
             eig::size_type nev            = 0; // Requested eigenvectors. aka cols
             eig::size_type nev_converged  = 0; // Converged eigenvectors
             eig::size_type n              = 0; // Linear dimension of the input matrix to diagonalize, aka rows.
             eig::size_type ncv            = 0;
             double         tol            = 0;
-            int            matvecs        = 0;
+            long           num_mv         = 0; // Number of matrix-vector multiplications counted
+            long           num_op         = 0; // Number of operations, for instance in primme if maxblocksize > 1
             double         time_total     = 0;
-            double         time_matprod   = 0;
+            double         time_matvec    = 0;
             double         time_prep      = 0;
             bool           eigvals_found  = false;
             bool           eigvecsR_found = false;

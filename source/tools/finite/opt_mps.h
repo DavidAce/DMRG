@@ -24,7 +24,8 @@ namespace tools::finite::opt {
         std::optional<double>                 norm          = std::nullopt;
         std::optional<size_t>                 length        = std::nullopt;
         std::optional<size_t>                 iter          = std::nullopt;
-        std::optional<size_t>                 counter       = std::nullopt;
+        std::optional<size_t>                 num_op        = std::nullopt;
+        std::optional<size_t>                 num_mv        = std::nullopt;
         std::optional<double>                 time          = std::nullopt;
         std::optional<double>                 delta_f       = std::nullopt;
         std::optional<double>                 max_grad      = std::nullopt;
@@ -71,7 +72,8 @@ namespace tools::finite::opt {
         [[nodiscard]] double                             get_norm() const;
         [[nodiscard]] size_t                             get_length() const;
         [[nodiscard]] size_t                             get_iter() const;
-        [[nodiscard]] size_t                             get_counter() const;
+        [[nodiscard]] size_t                             get_op() const;
+        [[nodiscard]] size_t                             get_mv() const;
         [[nodiscard]] double                             get_time() const;
         [[nodiscard]] double                             get_delta_f() const;
         [[nodiscard]] double                             get_max_grad() const;
@@ -103,7 +105,8 @@ namespace tools::finite::opt {
         void                                             set_alpha(std::optional<double> alpha_);
         void                                             set_length(size_t length);
         void                                             set_iter(size_t iter_);
-        void                                             set_counter(size_t counter_);
+        void                                             set_op(size_t op_);
+        void                                             set_mv(size_t mv_);
         void                                             set_time(double time_);
         void                                             set_delta_f(double delta_f_);
         void                                             set_max_grad(double grad_norm_);

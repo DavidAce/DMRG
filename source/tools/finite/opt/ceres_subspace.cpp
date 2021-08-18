@@ -77,7 +77,7 @@ std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tens
         subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt, overlaps(idx),
                               tensors.get_length());
         subspace.back().set_time(eigvec_time);
-        subspace.back().set_counter(reports::eigs_log.size());
+        subspace.back().set_mv(reports::eigs_log.size());
         subspace.back().set_iter(reports::eigs_log.size());
         subspace.back().is_basis_vector = true;
 
@@ -182,7 +182,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             subspace_vector = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_cast.data()), subspace_vector_cast.size() / 2).normalized();
             // Copy the results from the functor
             optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(subspace, subspace_vector, fullspace_dims));
-            optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_mv(functor->get_count());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
             tid::get("vH") += *functor->t_Hn;
@@ -201,7 +201,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
             subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
             optimized_mps.set_tensor(subspace::get_tensor_in_fullspace(subspace, subspace_vector, fullspace_dims));
-            optimized_mps.set_counter(functor->get_count());
+            optimized_mps.set_mv(functor->get_count());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
             tid::get("vH") += *functor->t_Hn;
@@ -516,7 +516,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                     Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_cast.data()), subspace_vector_cast.size() / 2).normalized();
                 // Copy the results from the functor
                 optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
-                optimized_mps.set_counter(functor->get_count());
+                optimized_mps.set_mv(functor->get_count());
                 optimized_mps.set_delta_f(functor->get_delta_f());
                 optimized_mps.set_max_grad(functor->get_max_grad_norm());
                 tid::get("vH2") += *functor->t_H2n;
@@ -537,7 +537,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
                 subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
                 optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
-                optimized_mps.set_counter(functor->get_count());
+                optimized_mps.set_mv(functor->get_count());
                 optimized_mps.set_delta_f(functor->get_delta_f());
                 optimized_mps.set_max_grad(functor->get_max_grad_norm());
                 tid::get("vH2") += *functor->t_H2n;
