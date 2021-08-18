@@ -97,12 +97,11 @@ namespace tenx {
     }
 
     // Evaluates expressions if needed
-    template<typename T>
-    auto asEval(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr) {
-        using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Eigen::DefaultDevice>;
-        // Evaluate the expression if needed
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto asEval(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        using Evaluator                         = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Device>;
         Eigen::TensorForcedEvalOp<const T> eval = expr.eval();
-        Evaluator                          tensor(eval, Eigen::DefaultDevice());
+        Evaluator                          tensor(eval, device);
         tensor.evalSubExprsIfNeeded(nullptr);
         return tensor;
     }
@@ -142,14 +141,14 @@ namespace tenx {
         return asDiagonalInversed(extractDiagonal(tensor));
     }
 
-    template<typename T>
-    double norm(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr) {
-        return asEval(expr.square().sum().sqrt().abs()).coeff(0);
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    double norm(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        return asEval(expr.square().sum().sqrt().abs(), device).coeff(0);
     }
 
-    template<typename T>
-    auto asNormalized(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr) {
-        auto tensor                          = tenx::asEval(expr);
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto asNormalized(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        auto tensor                          = tenx::asEval(expr, device);
         using Scalar                         = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
         using DimType                        = typename decltype(tensor)::Dimensions::Base;
         constexpr auto rank                  = DimType{}.size(); // Because T::Dimensions is sometimes wrong
@@ -252,7 +251,7 @@ namespace tenx {
     template<typename Derived, typename... Dims>
     auto TensorCast(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
         static_assert(sizeof...(Dims) > 0, "TensorCast: sizeof... (Dims) must be larger than 0");
-        return TensorCast(matrix, array<sizeof...(Dims)>{dims...});
+        return TensorCast(matrix, std::array<Eigen::Index, sizeof...(Dims)>{dims...});
     }
 
     template<typename Derived>
@@ -289,16 +288,16 @@ namespace tenx {
     //    //****************************//
     //
 
-    template<typename T, typename sizeType>
-    auto MatrixCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const sizeType rows, const sizeType cols) {
-        auto tensor  = asEval(expr);
+    template<typename T, typename sizeType, typename Device = Eigen::DefaultDevice>
+    auto MatrixCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const sizeType rows, const sizeType cols, const Device &device = Device()) {
+        auto tensor  = asEval(expr, device);
         using Scalar = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
         return static_cast<MatrixType<Scalar>>(Eigen::Map<const MatrixType<Scalar>>(tensor.data(), rows, cols));
     }
 
-    template<typename T>
-    auto VectorCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr) {
-        auto tensor  = asEval(expr);
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto VectorCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        auto tensor  = asEval(expr, device);
         auto size    = Eigen::internal::array_prod(tensor.dimensions());
         using Scalar = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
         return static_cast<VectorType<Scalar>>(Eigen::Map<const VectorType<Scalar>>(tensor.data(), size));
