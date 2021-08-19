@@ -28,7 +28,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
 tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization(const opt_mps &initial_mps, const TensorsFinite &tensors,
                                                                                     [[maybe_unused]] const AlgorithmStatus &status,
                                                                                     OptMeta &meta) {
-    tools::log->debug("Ground state optimization with ritz {} ...", enum2sv(meta.optRitz));
+    tools::log->debug("Ground state optimization with ritz {}", enum2sv(meta.optRitz));
     using namespace internal;
     using namespace settings::precision;
     auto t_gs = tid::tic_scope("gs");

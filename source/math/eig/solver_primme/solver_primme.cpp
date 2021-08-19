@@ -206,7 +206,7 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             *isconv = std::max<int>(*isconv, grad_max < grad_tol);
             *ierr   = 0;
             //            if(*isconv != 0)
-            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
                            H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
         }
@@ -253,7 +253,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
 
     if(time_since_last_log > primme_log_time or *event == primme_event_converged) {
         auto level = (config.logTime and time_since_last_log > 60) ? spdlog::level::info : spdlog::level::debug;
-        eig::log->log(level, FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fₘₐₓ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op {} {} | {}"),
+        eig::log->log(level, FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op {} {} | {}"),
                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, result.meta.last_grad_max,
                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, basisMsg, blockMsg,
                       event_msg);

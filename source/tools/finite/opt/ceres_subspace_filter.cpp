@@ -18,11 +18,6 @@ void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps
     double subspace_error_initial = subspace_errors.back();
     while(true) {
         if(subspace.size() <= max_accept) break;
-//        if(subspace.size() <= max_accept) {
-//            if(subspace.size() <= min_accept) break;
-//            // Check what the subspace error would be if the last eigvec was removed
-//            if(subspace_errors.rbegin()[1] >= target_subspace_error) break;
-//        }
         if(subspace.back().is_basis_vector) subspace_errors.pop_back();
         subspace.pop_back();
     }
@@ -40,8 +35,7 @@ void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps
 }
 
 std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs,
-                                                                                                        double                      energy_llim_per_site,
-                                                                                                        double                      energy_ulim_per_site) {
+                                                                                                     double energy_llim_per_site, double energy_ulim_per_site) {
     if(eigvecs.empty()) return std::nullopt;
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
@@ -62,8 +56,7 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_
 }
 
 std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> &eigvecs,
-                                                                                                        double                      energy_llim_per_site,
-                                                                                                        double                      energy_ulim_per_site) {
+                                                                                                     double energy_llim_per_site, double energy_ulim_per_site) {
     if(eigvecs.empty()) return std::nullopt;
     auto   var = std::numeric_limits<double>::infinity();
     size_t idx = 0;
@@ -78,9 +71,8 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_
     return idx;
 }
 
-std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs,
-                                                                                                       size_t max_eigvecs, double energy_llim_per_site,
-                                                                                                       double energy_ulim_per_site) {
+std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, size_t max_eigvecs,
+                                                                                                   double energy_llim_per_site, double energy_ulim_per_site) {
     if(eigvecs.empty()) return std::vector<size_t>();
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
@@ -165,7 +157,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(co
 }
 
 double tools::finite::opt::internal::subspace::get_subspace_error(const std::vector<opt_mps> &eigvecs, std::optional<size_t> max_eigvecs) {
-    double eps            = 0;
+    double eps         = 0;
     size_t num_eigvecs = 0;
     if(not max_eigvecs) max_eigvecs = eigvecs.size();
     for(const auto &eigvec : eigvecs) {
@@ -230,8 +222,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_mps> &eigvecs,
-                                                                                const Eigen::VectorXcd     &fullspace_vector) {
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_mps> &eigvecs, const Eigen::VectorXcd &fullspace_vector) {
     // In this function we project a vector to the subspace spanned by a small set of eigenvectors
     // Essentially this old computation
     //      Eigen::VectorXcd subspace_vector = (eigvecs.adjoint() * fullspace_vector).normalized();
@@ -246,8 +237,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     return subspace_vector.normalized();
 }
 
-Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace(const std::vector<opt_mps> &eigvecs,
-                                                                                 const Eigen::VectorXcd     &subspace_vector) {
+Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace(const std::vector<opt_mps> &eigvecs, const Eigen::VectorXcd &subspace_vector) {
     // In this function we project a subspace vector back to the full space
     // Essentially this old computation
     //     Eigen::VectorXcd fullspace_vector = (eigvecs * subspace_vector.asDiagonal()).rowwise().sum().normalized();

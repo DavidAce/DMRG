@@ -120,7 +120,7 @@ namespace tools::finite::opt::internal {
             if(it == results.end()) return get_initial_guess<Scalar>(initial_mps, {});
 
             if(it->get_max_grad() < initial_mps.get_max_grad()) {
-                tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}  ∇fₘₐₓ {:8.2e}", it->get_name(), it->get_variance(),
+                tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}  ∇fᵐᵃˣ {:8.2e}", it->get_name(), it->get_variance(),
                                   it->get_max_grad());
                 return get_initial_guess<Scalar>(*it, {});
             } else
@@ -161,7 +161,7 @@ namespace tools::finite::opt::internal {
                 //                long min_idx = min_gradient_idx(results, n);
                 //                if(min_idx >= 0) {
                 //                    auto &res = results.at(static_cast<size_t>(min_idx));
-                //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | lg var {:.8f}  ∇fₘₐₓ {:8.2e}", n, min_idx,
+                //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | lg var {:.8f}  ∇fᵐᵃˣ {:8.2e}", n, min_idx,
                 //                    res.get_name(),
                 //                                      std::log10(res.get_variance()), res.get_max_grad());
                 //
@@ -284,13 +284,13 @@ namespace tools::finite::opt::internal {
                         double largest_eigval = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
                         solver.config.sigma   = largest_eigval;
                     }
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | arpack {} | init on ...",
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | arpack {} | init on",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
                     solver.eigs(hamiltonian_squared);
                 } else if(solver.config.lib == eig::Lib::PRIMME) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
                     if(not solver.config.sigma) solver.config.sigma = 1.0;
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | primme {} | init on ...",
+                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | primme {} | init on",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
                     solver.eigs(hamiltonian_squared);
                 }

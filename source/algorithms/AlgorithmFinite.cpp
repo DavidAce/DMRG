@@ -272,7 +272,7 @@ void AlgorithmFinite::randomize_model() {
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
                                       std::optional<long> chi_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ...", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}]", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
     auto t_rnd = tid::tic_scope("init.rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -313,7 +313,6 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] ... OK!", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));

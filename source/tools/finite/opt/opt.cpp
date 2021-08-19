@@ -236,7 +236,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} ∇fₘₐₓ {:>3.2e} "
+    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} ∇fᵐᵃˣ {:>3.2e} "
                "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} ops {:>4}/{:<4} "
                "t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
 //               "| energy {:<18.15f} lg var {:<6.6f}"

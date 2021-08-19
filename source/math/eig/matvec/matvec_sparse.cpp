@@ -117,7 +117,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr
             else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                 x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
             else {
-                throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet...");
+                throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet");
             }
             break;
         }
@@ -163,7 +163,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ld
                 else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                     x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
                 else {
-                    throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet...");
+                    throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet");
                 }
                 counter++;
             }

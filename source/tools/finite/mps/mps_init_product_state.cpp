@@ -107,7 +107,7 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
     int  sign = get_sign(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     Eigen::Tensor<Scalar, 3> spinor = tenx::TensorCast(get_spinor(axis, sign).normalized(), 2, 1, 1);
-    tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites...", sign, axis);
+    tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites", sign, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
@@ -120,7 +120,6 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites... OK", sign, axis);
 }
 
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view sector) {
@@ -130,7 +129,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     std::array<Eigen::Tensor<Scalar, 3>, 2> spinors = {tenx::TensorCast(get_spinor(axis, +1).normalized(), 2, 1, 1),
                                                        tenx::TensorCast(get_spinor(axis, -1).normalized(), 2, 1, 1)};
-    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites...", axis, axis);
+    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axis, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
@@ -144,11 +143,10 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites... OK", axis, axis);
 }
 
 void tools::finite::mps::init::set_random_product_state_with_random_spinors(StateFinite &state, StateInitType type) {
-    tools::log->info("Setting random product state with spinors in C²...");
+    tools::log->info("Setting random product state with spinors in C²");
     Eigen::Tensor<Scalar, 1> L(1);
     L.setConstant(1.0);
     std::string label = "A";
@@ -166,12 +164,11 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->debug("Setting random product state with spinors in C²... OK");
 }
 
 void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view sector, long bitfield) {
     auto axis = get_axis(sector);
-    tools::log->info("Setting random product state using the bitset of number {} to select eigenspinors of σ{}...", bitfield, axis);
+    tools::log->info("Setting random product state using the bitset of number {} to select eigenspinors of σ{}", bitfield, axis);
 
     if(bitfield < 0) throw std::runtime_error(fmt::format("Can't set product state from bitfield of negative number: {}", bitfield));
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
@@ -199,8 +196,6 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
             label = "B";
         }
     }
-    tools::log->debug("Setting random product state using the bitset of number {} to select eigenspinors of σ{} in sector {}... OK: {}", bitfield, axis,
-                      carry_sign, axis, ud_vec);
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -213,7 +208,7 @@ void tools::finite::mps::init::set_random_product_state_in_sector_using_eigenspi
     int  sign      = get_sign(sector);
     int  last_sign = 1;
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
-    tools::log->info("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
+    tools::log->info("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}", sector, axis);
     std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps = *mps_ptr;
@@ -231,8 +226,6 @@ void tools::finite::mps::init::set_random_product_state_in_sector_using_eigenspi
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
-    tools::log->debug("Setting random product state in sector {} using eigenspinors of the pauli matrix σ{}... global spin component {}: OK", sector, axis,
-                      spin_component);
     if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
     state.clear_measurements();
     state.clear_cache();

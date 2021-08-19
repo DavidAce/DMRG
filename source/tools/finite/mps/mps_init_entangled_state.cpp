@@ -36,7 +36,7 @@ void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateI
 }
 
 void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long chi_lim) {
-    tools::log->info("Setting random entangled state with random unit spinors...");
+    tools::log->info("Setting random entangled state with random unit spinors");
     const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     bool        pastCenter      = false;
@@ -69,7 +69,6 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
             label      = "B";
         }
     }
-    tools::log->info("Setting random entangled state with random unit spinors... OK");
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -81,7 +80,7 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
     auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, chi_lim);
     auto       axis            = init::get_axis(sector);
     auto       sign            = init::get_sign(sector);
-    tools::log->info("Setting random entangled state in sector {} using eigenspinors of the pauli matrix σ{}...", sector, axis);
+    tools::log->info("Setting random entangled state in sector {} using eigenspinors of the pauli matrix σ{}", sector, axis);
     tools::log->info("Target bond dimensions: {}", bond_dimensions);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     bool        past_center = false;

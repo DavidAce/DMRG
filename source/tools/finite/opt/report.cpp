@@ -20,7 +20,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "iter",
                       "ops",
                       "|Δf|",
-                      "∇fₘₐₓ",
+                      "∇fᵐᵃˣ",
                       "time [s]",
                       "avg [s/op]");
     for(auto &entry : bfgs_log){
@@ -110,7 +110,7 @@ void tools::finite::opt::reports::print_krylov_report(std::optional<size_t> max_
                       "ncv",
                       "tol",
                       "res",
-                      "∇fₘₐₓ",
+                      "∇fᵐᵃˣ",
                       "E/L",
                       "λ",
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
