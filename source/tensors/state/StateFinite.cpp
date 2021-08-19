@@ -56,8 +56,12 @@ StateFinite &StateFinite::operator=(const StateFinite &other) {
     return *this;
 }
 
-void StateFinite::initialize(ModelType model_type, size_t model_size, size_t position) {
-    tools::log->info("Initializing state with {} sites at position {}", model_size, position);
+StateFinite::StateFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
+    initialize(algo_type, model_type, model_size, position);
+}
+
+void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
+    tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size, position);
     if(model_size < 2) throw std::logic_error("Tried to initialize state with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
     if(position >= model_size) throw std::logic_error("Tried to initialize state at a position larger than the number of sites");
@@ -408,9 +412,7 @@ double StateFinite::get_truncation_error_midchain() const {
 }
 
 std::vector<double> StateFinite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
-std::vector<double> StateFinite::get_truncation_errors_active() const {
-    return tools::finite::measure::truncation_errors_active(*this);
-}
+std::vector<double> StateFinite::get_truncation_errors_active() const { return tools::finite::measure::truncation_errors_active(*this); }
 
 size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();

@@ -20,8 +20,7 @@
 
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
-    tensors.initialize(settings::model::model_type, settings::model::model_size, 0);
-    tensors.state->set_algorithm(algo_type);
+    tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
     entropy_iter.resize(tensors.get_length() + 1);
 }
 
@@ -64,16 +63,16 @@ void AlgorithmFinite::run()
     auto t_tot  = tid::get_unscoped("t_tot").tic_token();
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     // We may want to resume this simulation.
-    if(h5pp_file->linkExists("common/storage_level") and
+    if(h5file->linkExists("common/storage_level") and
        (settings::storage::file_collision_policy == FileCollisionPolicy::RESUME or settings::storage::file_collision_policy == FileCollisionPolicy::REVIVE)) {
         try {
             resume();
         } catch(const except::state_error &ex) {
-            throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
+            throw except::resume_error(fmt::format("Failed to resume state from file [{}]: {}", h5file->getFilePath(), ex.what()));
         } catch(const except::load_error &ex) {
-            throw except::resume_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
+            throw except::resume_error(fmt::format("Failed to load simulation from file [{}]: {}", h5file->getFilePath(), ex.what()));
         } catch(const std::exception &ex) {
-            throw std::runtime_error(fmt::format("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what()));
+            throw std::runtime_error(fmt::format("Failed to resume from file [{}]: {}", h5file->getFilePath(), ex.what()));
         }
     } else {
         run_default_task_list();
@@ -574,17 +573,17 @@ void AlgorithmFinite::clear_convergence_status() {
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
-    tools::finite::h5::save::simulation(*h5pp_file, tensors, status, storage_reason, copy_policy);
+    tools::finite::h5::save::simulation(*h5file, tensors, status, storage_reason, copy_policy);
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                     std::optional<CopyPolicy> copy_policy) {
-    tools::finite::h5::save::simulation(*h5pp_file, state, model, edges, status, storage_reason, copy_policy);
+    tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_reason, copy_policy);
 }
 
 template<typename T>
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy) {
-    tools::finite::h5::save::data(*h5pp_file, data, name, tensors.state->get_name(), status, storage_reason, copy_policy);
+    tools::finite::h5::save::data(*h5file, data, name, tensors.state->get_name(), status, storage_reason, copy_policy);
 }
 
 template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name,

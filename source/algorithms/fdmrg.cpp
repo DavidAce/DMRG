@@ -12,7 +12,7 @@
 #include <tools/finite/opt_meta.h>
 #include <tools/finite/opt_mps.h>
 
-fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5pp_file_) : AlgorithmFinite(std::move(h5pp_file_), AlgorithmType::fDMRG) {
+fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) {
     tools::log->trace("Constructing class_fdmrg");
 }
 
@@ -26,11 +26,11 @@ void fdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type);
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type);
     if(resumable_states.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
     for(const auto & state_prefix : resumable_states ){
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);

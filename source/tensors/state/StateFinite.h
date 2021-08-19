@@ -54,8 +54,8 @@ class StateFinite {
     StateFinite &operator=(StateFinite &&other) noexcept; // default move assign
     StateFinite(const StateFinite &other);                // copy ctor
     StateFinite &operator=(const StateFinite &other);     // copy assign
-
-    void initialize(ModelType modeltype, size_t model_size, size_t position = 0);
+    StateFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
+    void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
 
     void                           set_name(std::string_view statename);
     [[nodiscard]] std::string_view get_name() const;

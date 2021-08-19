@@ -7,11 +7,11 @@ namespace h5pp {
 
 class AlgorithmLauncher {
     public:
-    std::shared_ptr<h5pp::File> h5pp_file;
+    std::shared_ptr<h5pp::File> h5file;
 
     explicit AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_);
     AlgorithmLauncher();
-    void start_h5pp_file();
+    void start_h5file();
     void setup_temp_path();
 
     void run_algorithms();

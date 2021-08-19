@@ -325,8 +325,8 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
         }
         case StorageReason::MODEL: {
             storage_level = settings::storage::storage_level_model;
-            tools::infinite::h5::save::model(*h5pp_file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
-            tools::infinite::h5::save::mpo(*h5pp_file, model_prefix + "/mpo", storage_level, *tensors.model);
+            tools::infinite::h5::save::model(*h5file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
+            tools::infinite::h5::save::mpo(*h5file, model_prefix + "/mpo", storage_level, *tensors.model);
             copy_from_tmp(storage_reason, CopyPolicy::TRY);
             return;
         }
@@ -335,19 +335,19 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
     tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
     // Start saving tensors and metadata
-    tools::infinite::h5::save::state(*h5pp_file, state_prefix, storage_level, *tensors.state, status);
-    tools::infinite::h5::save::edges(*h5pp_file, state_prefix, storage_level, *tensors.edges);
-    tools::common::h5::save::meta(*h5pp_file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size,
+    tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
+    tools::infinite::h5::save::edges(*h5file, state_prefix, storage_level, *tensors.edges);
+    tools::common::h5::save::meta(*h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size,
                                   tensors.state->get_name(), state_prefix, model_prefix, status);
     // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;
 
     // The main results have now been written. Next we append data to tables
     for(const auto &table_prefix : table_prefxs) {
-        tools::infinite::h5::save::measurements(*h5pp_file, table_prefix, storage_level, tensors, status);
-        tools::common::h5::save::status(*h5pp_file, table_prefix, storage_level, status);
-        tools::common::h5::save::timer(*h5pp_file, table_prefix, storage_level, status);
-        tools::common::h5::save::mem(*h5pp_file, table_prefix, storage_level, status);
+        tools::infinite::h5::save::measurements(*h5file, table_prefix, storage_level, tensors, status);
+        tools::common::h5::save::status(*h5file, table_prefix, storage_level, status);
+        tools::common::h5::save::timer(*h5file, table_prefix, storage_level, status);
+        tools::common::h5::save::mem(*h5file, table_prefix, storage_level, status);
     }
     // Copy from temporary location to destination depending on given policy
     copy_from_tmp(storage_reason, copy_policy);

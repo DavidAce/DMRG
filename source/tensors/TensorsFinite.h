@@ -35,8 +35,9 @@ class TensorsFinite {
     TensorsFinite &operator=(TensorsFinite &&other);      // default move assign
     TensorsFinite(const TensorsFinite &other);            // copy ctor
     TensorsFinite &operator=(const TensorsFinite &other); // copy assign
+    TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
 
-    void initialize(ModelType model_type, size_t model_size, size_t position);
+    void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
     void randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
                          std::optional<StateInitType> state_type = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);

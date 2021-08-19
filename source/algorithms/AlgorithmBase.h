@@ -20,7 +20,7 @@ class AlgorithmBase {
     using Scalar    = std::complex<double>;
     AlgorithmBase() = default;
     AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_);
-    std::shared_ptr<h5pp::File> h5pp_file;
+    std::shared_ptr<h5pp::File> h5file;
     AlgorithmStatus             status;
     static constexpr double     quietNaN = std::numeric_limits<double>::quiet_NaN();
 

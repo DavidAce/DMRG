@@ -20,7 +20,7 @@ class flbit : public AlgorithmFinite {
     Eigen::Tensor<Scalar, 1>           Upsi_ed;
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;
-    explicit flbit(std::shared_ptr<h5pp::File> h5pp_file_);
+    explicit flbit(std::shared_ptr<h5pp::File> h5file_);
     void single_flbit_step();
     void update_time_step();
     void resume() final;

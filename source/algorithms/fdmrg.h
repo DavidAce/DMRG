@@ -15,7 +15,7 @@ class fdmrg : public AlgorithmFinite {
     using OptConf = tools::finite::opt::OptMeta;
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;
-    explicit fdmrg(std::shared_ptr<h5pp::File> h5pp_file_);
+    explicit fdmrg(std::shared_ptr<h5pp::File> h5file_);
     OptRitz   ritz = OptRitz::SR;
     void      single_fdmrg_step();
     void      resume() final;

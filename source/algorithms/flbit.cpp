@@ -22,7 +22,7 @@
 #include <tools/finite/print.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
-flbit::flbit(std::shared_ptr<h5pp::File> h5pp_file_) : AlgorithmFinite(std::move(h5pp_file_), AlgorithmType::fLBIT) {
+flbit::flbit(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
     tensors.state->set_name("state_real");
 }
@@ -37,29 +37,29 @@ void flbit::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type, "state_real");
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, "state_real");
     for(const auto & state_prefix : resumable_states){
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
 
         // Load the unitaries
         unitary_gates_2site_layers.clear();
         std::string grouppath = "/fLBIT/model/unitary_gates";
-        if(not h5pp_file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
-        auto num_layers = h5pp_file->readAttribute<size_t>("num_layers", grouppath);
+        if(not h5file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
+        auto num_layers = h5file->readAttribute<size_t>("num_layers", grouppath);
         if(num_layers != settings::model::lbit::u_layer)
             throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer));
         unitary_gates_2site_layers.resize(num_layers);
         for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
             std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
-            auto        num_gates = h5pp_file->readAttribute<size_t>("num_gates", layerpath);
+            auto        num_gates = h5file->readAttribute<size_t>("num_gates", layerpath);
             layer.resize(num_gates);
             for(auto &&[idx_gate, u] : iter::enumerate(layer)) {
                 std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
-                auto        op       = h5pp_file->readDataset<Eigen::Tensor<Scalar, 2>>(gatepath);
-                auto        pos      = h5pp_file->readAttribute<std::vector<size_t>>("pos", gatepath);
-                auto        dim      = h5pp_file->readAttribute<std::vector<long>>("dim", gatepath);
+                auto        op       = h5file->readDataset<Eigen::Tensor<Scalar, 2>>(gatepath);
+                auto        pos      = h5file->readAttribute<std::vector<size_t>>("pos", gatepath);
+                auto        dim      = h5file->readAttribute<std::vector<long>>("dim", gatepath);
                 u                    = qm::Gate(op, pos, dim);
             }
         }
@@ -469,19 +469,19 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         auto        t_model   = tid::tic_scope("MODEL");
         auto        t_gates   = tid::tic_scope("gates");
         std::string grouppath = "/fLBIT/model/unitary_gates";
-        if(h5pp_file->linkExists(grouppath)) return;
+        if(h5file->linkExists(grouppath)) return;
         for(const auto &[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
             std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
             for(const auto &[idx_gate, u] : iter::enumerate(layer)) {
                 std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
-                h5pp_file->writeDataset(u.op, gatepath);
-                h5pp_file->writeAttribute(u.dim, "dim", gatepath);
-                h5pp_file->writeAttribute(u.pos, "pos", gatepath);
+                h5file->writeDataset(u.op, gatepath);
+                h5file->writeAttribute(u.dim, "dim", gatepath);
+                h5file->writeAttribute(u.pos, "pos", gatepath);
             }
-            h5pp_file->writeAttribute(static_cast<size_t>(idx_layer), "idx_layer", layerpath);
-            h5pp_file->writeAttribute(layer.size(), "num_gates", layerpath);
+            h5file->writeAttribute(static_cast<size_t>(idx_layer), "idx_layer", layerpath);
+            h5file->writeAttribute(layer.size(), "num_gates", layerpath);
         }
-        h5pp_file->writeAttribute(unitary_gates_2site_layers.size(), "num_layers", grouppath);
+        h5file->writeAttribute(unitary_gates_2site_layers.size(), "num_layers", grouppath);
     }
 
     // Save the lbit analysis once
@@ -489,7 +489,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         auto t_h5       = tid::tic_scope("h5");
         auto t_model    = tid::tic_scope("MODEL");
         auto t_analysis = tid::tic_scope("analysis");
-        if(h5pp_file->linkExists("/fLBIT/analysis")) return;
+        if(h5file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;
         size_t              sample = 1;
@@ -503,22 +503,22 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         }
         if(not urange.empty() and not frange.empty()) {
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
-            h5pp_file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeDataset(decay, "/fLBIT/analysis/decay");
-            h5pp_file->writeDataset(lioms, "/fLBIT/analysis/lioms");
-            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/decay");
-            h5pp_file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/lioms");
-            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/decay");
-            h5pp_file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/lioms");
-            h5pp_file->writeAttribute(sample, "samples", "/fLBIT/analysis/cls_avg");
-            h5pp_file->writeAttribute(sample, "samples", "/fLBIT/analysis/sse_avg");
-            h5pp_file->writeAttribute(sample, "samples", "/fLBIT/analysis/decay");
-            h5pp_file->writeAttribute(sample, "samples", "/fLBIT/analysis/lioms");
+            h5file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
+            h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
+            h5file->writeDataset(decay, "/fLBIT/analysis/decay");
+            h5file->writeDataset(lioms, "/fLBIT/analysis/lioms");
+            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/cls_avg");
+            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/sse_avg");
+            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/decay");
+            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/lioms");
+            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/cls_avg");
+            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/sse_avg");
+            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/decay");
+            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/lioms");
+            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/cls_avg");
+            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/sse_avg");
+            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/decay");
+            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/lioms");
         }
     }
 }

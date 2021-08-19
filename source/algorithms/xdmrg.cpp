@@ -37,12 +37,12 @@ void xdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5pp_file, status.algo_type);
-    if(resumable_states.empty()) throw except::state_error("no valid state candidates found for resume");
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type);
+    if(resumable_states.empty()) throw except::state_error("no resumable states were found");
 
     for(const auto &state_prefix : resumable_states) {
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5pp_file, state_prefix, tensors, status, status.algo_type);
+        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to infer it from the state prefix itself
@@ -649,7 +649,7 @@ void xdmrg::find_energy_range() {
     // Find lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");
-        fdmrg fdmrg_gs(h5pp_file);
+        fdmrg fdmrg_gs(h5file);
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::verbosity, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
@@ -659,7 +659,7 @@ void xdmrg::find_energy_range() {
     // Find highest energy state
     {
         auto  t_hs = tid::tic_scope("fDMRG");
-        fdmrg fdmrg_hs(h5pp_file);
+        fdmrg fdmrg_hs(h5file);
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::verbosity, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);

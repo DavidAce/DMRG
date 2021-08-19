@@ -10,7 +10,7 @@
 
 using Scalar = AlgorithmBase::Scalar;
 
-AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_) : h5pp_file(std::move(h5ppFile_)) {
+AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_) : h5file(std::move(h5ppFile_)) {
     status.algo_type = algo_type_;
     tools::log->set_error_handler([](const std::string & msg) { throw std::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::verbosity, settings::console::timestamp);
@@ -18,7 +18,7 @@ AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmTyp
 }
 
 void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
-    if(h5pp_file) tools::common::h5::tmp::copy_from_tmp(status, *h5pp_file, storage_reason, copy_policy);
+    if(h5file) tools::common::h5::tmp::copy_from_tmp(status, *h5file, storage_reason, copy_policy);
 }
 
 void AlgorithmBase::init_bond_dimension_limits() {

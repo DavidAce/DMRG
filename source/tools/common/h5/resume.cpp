@@ -60,28 +60,18 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
     if(state_prefix_candidates.empty()) return {};
     if(state_prefix_candidates.size() == 1) return {state_prefix_candidates[0]};
 
-    // We have a number of possible candidates from various states, like state_0, state_1, etc.
-    // In each state_#, take the one with latest step: I.e. compare the step-number in all the candidates (step number is reset between states)
-
-    // Here we collect the state numbers
-//    std::vector<std::string> state_nums;
-//    for(const auto &candidate : state_prefix_candidates) {
-//        // E.g. "/xDMRG/state_0/..." would extract "0"
-//        auto num = extract_state_number(candidate);
-//        if(num) state_nums.emplace_back(std::to_string(num.value()));
-//    }
 
     //Here we collect unique state names
     std::vector<std::string> state_names;
-    for(const auto &candidate : state_prefix_candidates) {
-        // E.g. "/xDMRG/state_0/..." would extract "state_0"
-        auto name = extract_state_name(candidate);
+    for(const auto & pfx : state_prefix_candidates){
+        auto name = h5file.readAttribute<std::string>(pfx, "common/state_name");
         if(not name.empty()){
             if(std::find(state_names.begin(), state_names.end(), name) == state_names.end()){
                 state_names.emplace_back(name);
             }
         }
     }
+
     // Sort state names in ascending order
     std::sort(state_names.begin(), state_names.end(), std::less<>());
 
