@@ -176,6 +176,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
 
     # Make aliases
+    add_library(cxxopts::cxxopts    ALIAS CONAN_PKG::cxxopts)
     add_library(Eigen3::Eigen       ALIAS CONAN_PKG::eigen)
     add_library(h5pp::h5pp          ALIAS CONAN_PKG::h5pp)
     add_library(fmt::fmt            ALIAS CONAN_PKG::fmt)

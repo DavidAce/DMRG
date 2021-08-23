@@ -61,6 +61,9 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     # Lapacke is needed by arpack++, included in MKL or OpenBLAS
     find_package(Lapacke REQUIRED)
 
+    # cxxopts for parsing cli arguments
+    install_package(cxxopts VERSION 2.2.0)
+
     # Eigen3 numerical library (needed by ceres and h5pp)
     install_package(Eigen3 VERSION 3.4)
     # h5pp for writing to file binary in format
@@ -101,12 +104,12 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 
 
-        if(MKL_FOUND)
+        if(TARGET mkl::mkl)
             message(STATUS "Eigen3 will use MKL")
             target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_MKL_ALL)
             target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
             target_link_libraries         (Eigen3::Eigen INTERFACE mkl::mkl)
-        elseif(OpenBLAS_FOUND)
+        elseif(TARGET OpenBLAS::OpenBLAS)
             message(STATUS "Eigen3 will use OpenBLAS")
             target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_BLAS)
             target_compile_definitions    (Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)

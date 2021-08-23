@@ -35,6 +35,7 @@ endif()
 
 add_library(dmrg-deps INTERFACE)
 target_link_libraries(dmrg-deps INTERFACE
+        cxxopts::cxxopts
         h5pp::h5pp
         arpack::arpack++
         primme::primme

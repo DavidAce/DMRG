@@ -12,6 +12,7 @@ arpack++/2.3.0@davidace/dev
 libunwind/1.5.0@
 # Temporarily fix fmt version since 7.1.2 broke ostreams
 fmt/7.1.3@
+cxxopts/2.2.1@
 
 [generators]
 cmake

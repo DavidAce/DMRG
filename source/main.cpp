@@ -19,8 +19,8 @@
     #include <mkl.h>
     #include <mkl_service.h>
 #endif
-
 #include <config/loader.h>
+#include <cxxopts.hpp>
 #include <debug/stacktrace.h>
 #include <getopt.h>
 #include <gitversion.h>
@@ -99,91 +99,46 @@ int main(int argc, char *argv[]) {
     tools::log->info("    commit hash : {}", GIT::COMMIT_HASH);
     tools::log->info("    revision    : {}", GIT::REVISION);
 
-    // Here we use getopt to parse CLI input
-    // Note that CLI input always override config-file values
-    // wherever they are found (config file, h5 file)
+    cxxopts::Options options("DMRG++", "An MPS-based algorithm to find 1D quantum-states");
+    /* clang-format off */
+    options.add_options()
+    ("b,bitfield",    "Integer whose bitfield sets the initial product state. Negative is unused", cxxopts::value<long>()->default_value("-1")->implicit_value("-1"))
+    ("c,config",      "Path to a .cfg or .h5 file from a previous simulation",                     cxxopts::value<std::string>()->default_value("input/input.cfg"))
+    ("n,stlthreads",  "Number of C++11 threads (Used by Eigen::Tensor)",                           cxxopts::value<int>()->default_value("-1")->implicit_value("-1"))
+    ("o,outfile",     "Path to the output file. The seed number gets appended by default (see -x)",cxxopts::value<std::string>()->default_value("output/output.h5"))
+    ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>()->default_value("-1")->implicit_value("-1"))
+    ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>()->default_value("-1")->implicit_value("-1"))
+    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<long>()->default_value("-1")->implicit_value("1"))
+    ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>()->default_value("false")->implicit_value("true"));
 
-    bool        append_seed = true;
-    std::string config;
-    std::string output;
-    long        verbosity   = -1;
-    long        seed        = -1;
-    long        bitfield    = -1;
-    long        omp_threads = -1;
-    long        stl_threads = -1;
+    auto in = options.parse(argc, argv);
 
-    while(true) {
-        char opt = static_cast<char>(getopt(argc, argv, "hb:c:i:n:o:s:t:vx"));
-        if(opt == EOF) break;
-        if(optarg == nullptr)
-            tools::log->info("Parsing input argument: -{}", opt);
-        else
-            tools::log->info("Parsing input argument: -{} {}", opt, optarg);
-        switch(opt) {
-            case 'b': bitfield = std::strtol(optarg, nullptr, 10); continue;
-            case 'c':
-            case 'i': config = std::string(optarg); continue;
-            case 'n': stl_threads = std::strtol(optarg, nullptr, 10); continue;
-            case 'o': output = std::string(optarg); continue;
-            case 's': seed = std::strtol(optarg, nullptr, 10); continue;
-            case 't': omp_threads = std::strtol(optarg, nullptr, 10); continue;
-            case 'v': verbosity = 0; continue;
-            case 'x': append_seed = false; continue;
-            case ':': tools::log->error("Option -{} needs a value", opt); break;
-            case 'h':
-            case '?':
-            default: print_usage(); exit(0);
-            case -1: break;
-        }
-        break;
-    }
-    /*
-     There may be multiple config files to consider:
-         1) Given from CLI (.config/.h5)
-         2) Inside the output file "<output>_<seed>.h5" if it already exists.
+    if(in["config"].count() > 0)    settings::input::config_filename = in["config"].as<std::string>();
 
-     What should one do?
-     Simplest solution: Always ignore case 2)!
-     Taking 2) into account leads to very confusing policies.
+    //  Try loading the given config file.
+    //  Note that there is a default "input/input.config" if none was given
+    Loader dmrg_config(settings::input::config_filename);
+    if(dmrg_config.file_exists) {
+        dmrg_config.load();
+        settings::load(dmrg_config); // B2
+    } else
+        throw std::runtime_error(fmt::format("Could not find config file: {}", settings::input::config_filename)); // Invalid file
 
-     What are the implications?
-        - If CLI passes a .config file we have to override some of its settings:
-            - output
+    // Override the other settings
+    bool        noseedname = false;
+    if(in["bitfield"].count() > 0)  settings::input::bitfield           = in["bitfield"].as<long>();
+    if(in["stlthreads"].count() > 0)  settings::input::bitfield         = in["bitfield"].as<int>();
+    if(in["outfile"].count() > 0)  settings::storage::output_filepath   = in["outfile"].as<std::string>();
+    if(in["seed"].count() > 0)  settings::input::seed                   = in["seed"].as<long>();
+    if(in["ompthreads"].count() > 0)  settings::threading::omp_threads  = in["ompthreads"].as<int>();
+    if(in["verbose"].count() > 0)  settings::console::verbosity         = in["verbose"].as<long>();
+    if(in["noseedname"].count() > 0)  noseedname                        = in["noseedname"].as<bool>();
 
-    */
-
-    /*! It's important that we do things in this order:
-        A1: config file not given:  use the default input/input.config
-        A2: config file given with .config/h5 extension: load given config
-
-        B: Override settings with parameters given through CLI
-
-        C: generate output filename. If the seed is already on the filename, it is not appended again.
-    */
-
-    // B: Try loading given config file.
-    //   Note that there is a default "input/input.config" if none was given
-    if(not config.empty()) {
-        Loader dmrg_config(config);
-        if(dmrg_config.file_exists) {
-            dmrg_config.load();
-            settings::load(dmrg_config); // B2
-        } else
-            throw std::runtime_error(fmt::format("Could not find config file: {}", config)); // Invalid file given
-        settings::input::config_filename = config;
-    } // else use default config
-
-    // B: Override settings
-    if(seed >= 0) settings::input::seed = seed;
-    if(bitfield >= 0) settings::input::bitfield = bitfield;
-    if(stl_threads >= 0) settings::threading::stl_threads = static_cast<int>(stl_threads);
-    if(omp_threads >= 0) settings::threading::omp_threads = static_cast<int>(omp_threads);
-    if(not output.empty()) settings::storage::output_filepath = output;
-    if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
+    /* clang-format on */
 
     // C: Generate the correct output filename based on given seeds
-    if(append_seed) {
+    if(not noseedname) {
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::seed);
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::bitfield);
     }
