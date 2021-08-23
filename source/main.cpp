@@ -9,14 +9,14 @@
 #include <tools/common/log.h>
 
 #if defined(OPENBLAS_AVAILABLE)
-    #include <cblas.h>
-    #include <openblas_config.h>
+    #include <openblas/cblas.h>
+    #include <openblas/openblas_config.h>
 #endif
 
 #if defined(MKL_AVAILABLE)
     #define MKL_Complex8  std::complex<float>
     #define MKL_Complex16 std::complex<double>
-//    #include <mkl.h>
+    #include <mkl.h>
     #include <mkl_service.h>
 #endif
 

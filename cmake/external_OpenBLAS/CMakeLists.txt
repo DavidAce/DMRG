@@ -14,8 +14,8 @@ endif()
 
 
 ExternalProject_Add(external_OpenBLAS
-        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.15.tar.gz
-        URL_MD5  183dbd71895f2018d297be271cb31128
+        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.17.tar.gz
+        URL_MD5  5429954163bcbaccaa13e11fe30ca5b6
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         #Give Ninja access to the terminal.
