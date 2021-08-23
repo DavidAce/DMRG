@@ -378,7 +378,7 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             extent3                            = {1, 1, static_cast<long>(y.size())};
             offset4                            = {static_cast<long>(fidx), static_cast<long>(uidx), 0, 0};
             extent4                            = {1, 1, lbit_overlap_avg.dimension(0), lbit_overlap_avg.dimension(1)};
-            lbit_decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 1>>(y.data(), y.size());
+            lbit_decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 3>>(y.data(), extent3);
             lbit_lioms.slice(offset4, extent4) = lbit_overlap_avg.real().reshape(extent4);
         }
     }
