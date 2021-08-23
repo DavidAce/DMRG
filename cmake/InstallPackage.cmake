@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 include(cmake/CheckCompile.cmake)
 
-# Dumps cached variables to DMRG_INIT_CACHE_FILE so that we can propagate
+# Dumps cached variables to PKG_INIT_CACHE_FILE so that we can propagate
 # the current build configuration to dependencies
 function(generate_init_cache)
-    set(DMRG_INIT_CACHE_FILE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/init-cache.cmake)
-    set(DMRG_INIT_CACHE_FILE ${DMRG_INIT_CACHE_FILE} PARENT_SCOPE)
-    file(WRITE  ${DMRG_INIT_CACHE_FILE} "# These variables will initialize the CMake cache for subprocesses.\n")
+    set(PKG_INIT_CACHE_FILE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/init-cache.cmake)
+    set(PKG_INIT_CACHE_FILE ${PKG_INIT_CACHE_FILE} PARENT_SCOPE)
+    file(WRITE  ${PKG_INIT_CACHE_FILE} "# These variables will initialize the CMake cache for subprocesses.\n")
     get_cmake_property(vars CACHE_VARIABLES)
     foreach(var ${vars})
         if(var MATCHES "CMAKE_CACHE|CMAKE_HOME|CMAKE_EXTRA|CMAKE_PROJECT|MACRO")
@@ -17,50 +17,40 @@ function(generate_init_cache)
         string(REPLACE "\\" "/" ${var} "${${var}}") # Fix windows backslash paths
         string(REPLACE "\"" "\\\"" help "${help}") #Fix quotes on some cuda-related descriptions
         string(REPLACE "\"" "\\\"" ${var} "${${var}}") #Fix quotes
-        file(APPEND ${DMRG_INIT_CACHE_FILE} "set(${var} \"${${var}}\" CACHE ${type} \"${help}\" FORCE)\n")
+        file(APPEND ${PKG_INIT_CACHE_FILE} "set(${var} \"${${var}}\" CACHE ${type} \"${help}\" FORCE)\n")
     endforeach()
 endfunction()
-
-function(pkg_check_compile pkg_name target_name)
-    check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
-    if(NOT check_compile_${pkg_name} AND DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
-        file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
-        message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
-    endif()
-endfunction()
-
 
 
 # This function will configure, build and install a package at configure-time
 # by running cmake in a subprocess. The current CMake configuration is transmitted
 # by setting the flags manually.
 function(install_package pkg_name)
-    set(options REQUIRED CONFIG MODULE CHECK)
-    set(oneValueArgs VERSION INSTALL_DIR BUILD_DIR TARGET_NAME)
+    file(LOCK $ENV{HOME} DIRECTORY GUARD FUNCTION TIMEOUT 600)
+
+    set(options CONFIG MODULE CHECK DEBUG)
+    set(oneValueArgs VERSION INSTALL_DIR BUILD_DIR TARGET_NAME PREFIX_PKGNAME)
     set(multiValueArgs HINTS PATHS PATH_SUFFIXES COMPONENTS DEPENDS CMAKE_ARGS)
     cmake_parse_arguments(PARSE_ARGV 1 PKG "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
+    # Set defaults
+    if(NOT PKG_BUILD_DIR)
+        set(PKG_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)
+    endif()
+    if(NOT PKG_INSTALL_DIR)
+        set(PKG_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+    endif()
+
     # Further parsing
-    set(build_dir ${DMRG_DEPS_BUILD_DIR}/${pkg_name})
-    set(install_dir ${DMRG_DEPS_INSTALL_DIR})
+    set(build_dir ${PKG_BUILD_DIR}/${pkg_name})
+    set(install_dir ${PKG_INSTALL_DIR})
     set(target_name ${pkg_name}::${pkg_name})
 
-    if(PKG_BUILD_DIR)
-        set(build_dir ${PKG_BUILD_DIR})
-    endif()
-
-    if(PKG_INSTALL_DIR)
-        set(install_dir ${PKG_INSTALL_DIR})
-    endif()
-    if (DMRG_PREFIX_ADD_PKGNAME)
+    if(PKG_PREFIX_PKGNAME)
         set(install_dir ${install_dir}/${pkg_name})
     endif()
     if(PKG_TARGET_NAME)
         set(target_name ${PKG_TARGET_NAME})
-    endif()
-
-    if(PKG_REQUIRED)
-        set(REQUIRED REQUIRED)
     endif()
     if(PKG_CONFIG)
         set(CONFIG CONFIG)
@@ -79,7 +69,7 @@ function(install_package pkg_name)
     endif()
 
     # We set variables here that allows us to find packages with CMAKE_PREFIX_PATH
-    list(APPEND CMAKE_PREFIX_PATH ${install_dir} $ENV{CMAKE_PREFIX_PATH} ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
+    list(APPEND CMAKE_PREFIX_PATH ${install_dir} $ENV{CMAKE_PREFIX_PATH} ${PKG_INSTALL_DIR} ${install_dir} ${CMAKE_INSTALL_PREFIX})
     list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE STRING "" FORCE)
     set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
@@ -92,7 +82,6 @@ function(install_package pkg_name)
                 PATHS ${PKG_PATHS}
                 PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
                 ${COMPONENTS} ${PKG_COMPONENTS}
-                ${REQUIRED}
                 ${CONFIG}
                 # These lets us ignore system packages when pkg manager matches "cmake"
                 NO_SYSTEM_ENVIRONMENT_PATH #5
@@ -108,8 +97,13 @@ function(install_package pkg_name)
             target_link_libraries(${target_name} INTERFACE ${PKG_DEPENDS})
         endif()
         if(PKG_CHECK)
-            pkg_check_compile(${pkg_name} ${target_name})
+            check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
+            if(PKG_DEBUG AND NOT check_compile_${pkg_name} AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+                file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+                message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+            endif()
         endif()
+        message(STATUS "Found ${pkg_name}")
         return()
     endif()
 
@@ -136,8 +130,8 @@ function(install_package pkg_name)
     execute_process(
             COMMAND
             ${CMAKE_COMMAND}
-            -C ${DMRG_INIT_CACHE_FILE}                # For the subproject in external_<libname>
-            -DINIT_CACHE_FILE=${DMRG_INIT_CACHE_FILE} # For externalproject_add inside the subproject
+            -C ${PKG_INIT_CACHE_FILE}                # For the subproject in external_<libname>
+            -DINIT_CACHE_FILE=${PKG_INIT_CACHE_FILE} # For externalproject_add inside the subproject
             -DCMAKE_INSTALL_PREFIX:PATH=${install_dir}
             ${PKG_CMAKE_ARGS}
             ${PROJECT_SOURCE_DIR}/cmake/external_${pkg_name}
@@ -216,9 +210,12 @@ function(install_package pkg_name)
     if(PKG_DEPENDS)
         target_link_libraries(${target_name} INTERFACE ${PKG_DEPENDS})
     endif()
-
     if(PKG_CHECK)
-        pkg_check_compile(${pkg_name} ${target_name})
+        check_compile(${pkg_name} ${target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
+        if(PKG_DEBUG AND NOT check_compile_${pkg_name} AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+            file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+            message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+        endif()
     endif()
 endfunction()
 

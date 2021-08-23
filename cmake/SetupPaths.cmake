@@ -15,7 +15,7 @@ endif()
 
 # Setup build and install directories for dependencies
 if(NOT DMRG_DEPS_BUILD_DIR)
-    set(DMRG_DEPS_BUILD_DIR ${CMAKE_BINARY_DIR}/dmrg-deps-build)
+    set(DMRG_DEPS_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)
 endif()
 
 # Install dependencies to the same location as the main project by default
@@ -23,10 +23,10 @@ if(NOT DMRG_DEPS_INSTALL_DIR)
     set(DMRG_DEPS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 endif()
 
-if(DMRG_PREFIX_ADD_PKGNAME)
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/dmrg CACHE STRING
-            "The option DMRG_PREFIX_ADD_PKGNAME=ON sets the install directory: <CMAKE_INSTALL_PREFIX>/dmrg" FORCE)
-endif()
+set(PKG_INSTALL_DIR ${DMRG_DEPS_INSTALL_DIR})
+set(PKG_BUILD_DIR ${DMRG_DEPS_BUILD_DIR})
+
+
 
 
 # Add search directories and flags for the CMake find_* tools
