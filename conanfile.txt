@@ -6,7 +6,7 @@
 ceres-solver/2.0.0@
 glog/0.5.0@
 h5pp/1.9.0@davidace/dev
-eigen/3.3.8@davidace/patched
+eigen/3.4.0@
 # arpack++/2.3.0@davidace/stable
 arpack++/2.3.0@davidace/dev
 libunwind/1.5.0@

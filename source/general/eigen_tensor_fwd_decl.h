@@ -39,9 +39,13 @@
 //
 #include <complex>
 //
+#include <array>
+//
 #include <Eigen/src/Core/util/Macros.h>
 //
 #include <Eigen/src/Core/util/Constants.h>
+//
+#include <Eigen/src/Core/util/ConfigureVectorization.h>
 //
 #include <Eigen/src/Core/util/Meta.h>
 //

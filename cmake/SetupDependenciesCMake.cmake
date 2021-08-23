@@ -62,7 +62,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     find_package(Lapacke REQUIRED)
 
     # Eigen3 numerical library (needed by ceres and h5pp)
-    install_package(Eigen3 VERSION 3.3)
+    install_package(Eigen3 VERSION 3.4)
     # h5pp for writing to file binary in format
     install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_ARGS})
     # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.

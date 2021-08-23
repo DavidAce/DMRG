@@ -5,9 +5,8 @@ if(INIT_CACHE_FILE)
 endif()
 include(ExternalProject)
 ExternalProject_Add(external_eigen3
-        URL  https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
-        URL_MD5 9e30f67e8531477de4117506fe44669b
-        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/Eigen_3.3.7.patch
+        URL  https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+        URL_MD5 4c527a9171d71a72a9d4186e65bea559
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
