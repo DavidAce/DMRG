@@ -3,10 +3,12 @@
 #include "num.h"
 #include <cmath>
 #include <complex>
+#include <general/iter.h>
 #include <iterator>
 #include <numeric>
 #include <optional>
 #include <vector>
+
 /*!
  *  \namespace stat
  *  \brief Small convenience-type statistical functions, mean and slope

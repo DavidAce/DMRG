@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <complex>
+#include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
