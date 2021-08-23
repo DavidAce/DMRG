@@ -29,15 +29,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 )
     endif()
 
-#    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-#        list(APPEND DMRG_CONAN_OPTIONS OPTIONS ceres-solver:use_glog=False)
-#    endif()
-    if(BUILD_SHARED_LIBS)
-        list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=True")
-    else()
-        list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=False")
-    endif()
-
     unset(CONAN_BUILD_INFO)
     unset(CONAN_BUILD_INFO CACHE)
     find_file(CONAN_BUILD_INFO
@@ -63,7 +54,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         ###    h5pp/1.8.5@davidace/stable                              ###
         ###    eigen/3.3.9@davidace/patched                            ###
         ##################################################################
-
+        unset(CONAN_COMMAND CACHE)
         find_program (
                 CONAN_COMMAND
                 conan
@@ -89,6 +80,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.16.1/conan.cmake"
                     "${CMAKE_BINARY_DIR}/conan.cmake")
         endif()
+
+        if(BUILD_SHARED_LIBS)
+            list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=True")
+        else()
+            list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=False")
+        endif()
+
 
         include(${CMAKE_BINARY_DIR}/conan.cmake)
         conan_add_remote(NAME conan-dmrg URL http://thinkstation.duckdns.org:8081/artifactory/api/conan/conan-dmrg)

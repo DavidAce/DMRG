@@ -19,7 +19,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
 -h | --help                     : Help. Shows this text.
 -i | --install-prefix   [=path] : Install directory of DMRG (default = CMAKE_INSTALL_PREFIX)
-   | --install-pkg-dir [=path] : Install directory of dependencies (default = CMAKE_INSTALL_PREFIX)
+   | --install-pkg-dir [=path]  : Install directory of dependencies (default = CMAKE_INSTALL_PREFIX)
 -j | --make-threads [=num]      : Number of threads used by Make build (default = 8)
 -l | --clear-libs [=args]       : Clear libraries in comma separated list 'lib1,lib2...'. "all" deletes all.
 -s | --enable-shared            : Enable shared library linking (default is static)
