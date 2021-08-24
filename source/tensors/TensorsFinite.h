@@ -5,7 +5,7 @@
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <math/svd/settings.h>
-#include <measure/tensors_measure_finite.h>
+#include <measure/MeasurementsTensorsFinite.h>
 #include <memory>
 #include <tensors/site/env/EnvPair.h>
 class StateFinite;
@@ -20,7 +20,7 @@ class TensorsFinite {
     std::unique_ptr<EdgesFinite> edges;
 
     std::vector<size_t>            active_sites;
-    mutable tensors_measure_finite measurements;
+    mutable MeasurementsTensorsFinite measurements;
 
     // This class should have these responsibilities:
     //  - Initialize/randomize the tensors

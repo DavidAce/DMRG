@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-struct tensors_measure_finite {
+struct MeasurementsTensorsFinite {
     std::optional<size_t> length                      = std::nullopt;
     std::optional<double> energy                      = std::nullopt;
     std::optional<double> energy_per_site             = std::nullopt;

@@ -2,7 +2,7 @@
 
 #include <complex>
 #include <config/enums.h>
-#include <measure/state_measure_finite.h>
+#include <measure/MeasurementsStateFinite.h>
 #include <memory>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -45,7 +45,7 @@ class StateFinite {
     public:
     std::vector<std::unique_ptr<MpsSite>> mps_sites;
     std::vector<size_t>                   active_sites;
-    mutable state_measure_finite          measurements;
+    mutable MeasurementsStateFinite       measurements;
 
     public:
     StateFinite();

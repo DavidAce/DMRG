@@ -14,6 +14,9 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 
+//
+#include <math/linalg/tensor.h>
+
 void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
                                    const Eigen::Tensor<Scalar, 3> &Redge) {
     std::vector<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
@@ -71,7 +74,6 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         tools::log->debug("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
     }
     state.clear_measurements();
-
     for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
 
     // Take care of the edges. Apply the left and right MPO-edges on A's and B's

@@ -46,7 +46,8 @@ struct Amplitude {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() <= tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
-//                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
+                        //                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(),
+                        //                        bits_index.to_ulong());
                         site = c.site;
                         ampl = c.ampl;
                     }
@@ -109,7 +110,8 @@ struct Amplitude {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() > tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
-//                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(), bits_index.to_ulong());
+                        //                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(),
+                        //                        bits_index.to_ulong());
                         site = c.site;
                         ampl = c.ampl;
                     }
@@ -196,8 +198,9 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
                 auto n  = a.bits.count();
                 auto sq = s * s;
                 probability[n] += sq;
-//                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f} *", tgt_pos, a.bits.count(), a.to_string(), i, cutoff,
-//                                  ampl_sqr);
+                //                tools::log->trace("site {} | n {} | bits {}  | i {} | c {:22.20f} | ampl_sqr = {:22.20f} *", tgt_pos, a.bits.count(),
+                //                a.to_string(), i, cutoff,
+                //                                  ampl_sqr);
                 break;
             }
             //            else {
@@ -247,12 +250,9 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
 std::vector<double> tools::finite::measure::number_entropies(const StateFinite &state) {
     if(state.measurements.number_entropies) return state.measurements.number_entropies.value();
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
-        throw std::runtime_error(fmt::format("Called number_entropies(StateFinite) from algorithm [{}]",enum2sv(state.get_algorithm())));
         // Only fLBIT has particle-number conservation
-        state.measurements.number_entropy_current  = std::nullopt;
-        state.measurements.number_entropy_midchain = std::nullopt;
-        state.measurements.number_entropies        = std::nullopt;
-        return {};
+        throw std::logic_error(
+            fmt::format("Called number_entropies(StateFinite) from algorithm [{}]. Only [fLBIT] is allowed.", enum2sv(state.get_algorithm())));
     }
     auto t_num      = tid::tic_scope("number_entropy");
     auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state

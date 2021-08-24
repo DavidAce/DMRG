@@ -155,7 +155,7 @@ void TensorsFinite::apply_hamiltonian_on_state(std::optional<long> chi_lim, std:
 }
 
 void TensorsFinite::perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-    measurements = tensors_measure_finite(); // State measurements can remain
+    measurements = MeasurementsTensorsFinite(); // State measurements can remain
     model->clear_cache();
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
     model->reset_mpo_squared();
@@ -188,7 +188,7 @@ struct DebugStatus {
 std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view tag) {
     if constexpr(not settings::debug) return std::nullopt;
     tensors.model->clear_cache();
-    tensors.measurements = tensors_measure_finite();
+    tensors.measurements = MeasurementsTensorsFinite();
     DebugStatus deb;
     deb.ene     = tools::finite::measure::energy(tensors);
     deb.red     = tools::finite::measure::energy_reduced(tensors);
@@ -204,7 +204,7 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
     debs.emplace_back(get_status(*this, "Before reduce"));
 
     if(not energy_reduce_per_site) energy_reduce_per_site = tools::finite::measure::energy_per_site(*this);
-    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
+    measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
     tools::log->trace("Reducing MPO energy (all edges should be rebuilt after this)");
@@ -259,7 +259,7 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
 }
 
 void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optional<svd::settings> svd_settings) {
-    measurements = tensors_measure_finite(); // Resets model-related measurements but not state measurements, which can remain
+    measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
     if(not compress) compress = settings::precision::use_compressed_mpo_squared_all;
     if(compress.value())
@@ -397,7 +397,7 @@ void TensorsFinite::rebuild_edges_ene() { tools::finite::env::rebuild_edges_ene(
 void TensorsFinite::rebuild_edges_var() { tools::finite::env::rebuild_edges_var(*state, *model, *edges); }
 void TensorsFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void TensorsFinite::clear_measurements() const {
-    measurements = tensors_measure_finite();
+    measurements = MeasurementsTensorsFinite();
     state->clear_measurements();
 }
 

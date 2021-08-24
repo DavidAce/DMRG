@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-struct tensors_measure_infinite {
+struct MeasurementsTensorsInfinite {
     std::optional<size_t> length                       = std::nullopt;
     std::optional<double> energy_mpo                   = std::nullopt;
     std::optional<double> energy_per_site_mpo          = std::nullopt;

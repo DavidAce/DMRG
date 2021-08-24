@@ -102,7 +102,7 @@ void TensorsInfinite::do_all_measurements() const {
 
 void TensorsInfinite::clear_measurements() const {
     state->clear_measurements();
-    measurements = tensors_measure_infinite();
+    measurements = MeasurementsTensorsInfinite();
 }
 
 void TensorsInfinite::clear_cache() const {

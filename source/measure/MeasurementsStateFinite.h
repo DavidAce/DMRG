@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-struct state_measure_finite {
+struct MeasurementsStateFinite {
     std::optional<size_t>                length                        = std::nullopt;
     std::optional<long>                  bond_dimension_midchain       = std::nullopt;
     std::optional<long>                  bond_dimension_current        = std::nullopt;

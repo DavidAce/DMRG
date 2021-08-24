@@ -2,7 +2,7 @@
 
 #include <config/settings.h>
 #include <math/svd/settings.h>
-#include <measure/state_measure_infinite.h>
+#include <measure/MeasurementsStateInfinite.h>
 #include <memory>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -40,7 +40,7 @@ class StateInfinite {
     AlgorithmType            algo = AlgorithmType::ANY;
 
     public:
-    mutable state_measure_infinite measurements;
+    mutable MeasurementsStateInfinite measurements;
     mutable double                 lowest_recorded_variance = 1.0;
 
     public:

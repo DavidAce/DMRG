@@ -3,7 +3,7 @@
 #include <config/enums.h>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <math/svd/settings.h>
-#include <measure/tensors_measure_infinite.h>
+#include <measure/MeasurementsTensorsInfinite.h>
 #include <memory>
 
 class StateInfinite;
@@ -16,7 +16,7 @@ class TensorsInfinite {
     std::unique_ptr<StateInfinite>   state;
     std::unique_ptr<ModelInfinite>   model;
     std::unique_ptr<EdgesInfinite>   edges;
-    mutable tensors_measure_infinite measurements;
+    mutable MeasurementsTensorsInfinite measurements;
 
     // This class should have these responsibilities:
     //  - Initialize the tensors

@@ -21,7 +21,6 @@
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
-    entropy_iter.resize(tensors.get_length() + 1);
 }
 
 // We need to make a destructor manually for the enclosing class "ModelFinite"
@@ -71,9 +70,7 @@ void AlgorithmFinite::run()
             throw except::resume_error(fmt::format("Failed to resume state from file [{}]: {}", h5file->getFilePath(), ex.what()));
         } catch(const except::load_error &ex) {
             throw except::resume_error(fmt::format("Failed to load simulation from file [{}]: {}", h5file->getFilePath(), ex.what()));
-        } catch(const std::exception &ex) {
-            throw std::runtime_error(fmt::format("Failed to resume from file [{}]: {}", h5file->getFilePath(), ex.what()));
-        }
+        } catch(const std::exception &ex) { throw std::runtime_error(fmt::format("Failed to resume from file [{}]: {}", h5file->getFilePath(), ex.what())); }
     } else {
         run_default_task_list();
     }
@@ -383,6 +380,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             tools::log->debug("Projection change: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
                               fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
+        check_convergence(); // Recheck convergence, since this operation can get the algorithm unstuck
         if(target_sector.value() == settings::strategy::target_sector) has_projected = true;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
     }
@@ -469,11 +467,28 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
     tools::log->trace("Checking convergence of variance mpo");
     if(not threshold) threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
-    var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
+    tools::finite::measure::do_all_measurements(tensors);
+    tools::finite::measure::do_all_measurements(*tensors.state);
+    if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
+        algorithm_history.emplace_back(log_entry{status, tensors.measurements, tensors.state->measurements});
+    else
+        algorithm_history.back() = log_entry{status, tensors.measurements, tensors.state->measurements};
+
+    // Gather the variance history
+    std::vector<double> var_mpo_iter;
+    std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(var_mpo_iter), [](const log_entry &h) -> double {
+        if(not h.msm_tensor.energy_variance.has_value()) throw std::runtime_error("Energy variance is missing from tensor measurements");
+        return h.msm_tensor.energy_variance.value();
+    });
+
+    //    var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
     auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value());
     if(report.has_computed) {
-        status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value(), report.saturated_point);
-        status.variance_mpo_saturated_for = report.saturated_count;
+        status.variance_mpo_converged_for                          = count_convergence(var_mpo_iter, threshold.value(), report.saturated_point);
+        status.variance_mpo_saturated_for                          = report.saturated_count;
+        algorithm_history.back().status.variance_mpo_converged_for = status.variance_mpo_converged_for;
+        algorithm_history.back().status.variance_mpo_saturated_for = status.variance_mpo_saturated_for;
+
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
         if(tools::log->level() == spdlog::level::debug) {
@@ -496,11 +511,30 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of entanglement");
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::entropy_saturation_sensitivity;
-    auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
-    std::vector<SaturationReport> reports(entropies.size());
+    //    auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
 
-    for(size_t site = 0; site < entropies.size(); site++) {
-        entropy_iter[site].emplace_back(entropies[site]);
+    tools::finite::measure::do_all_measurements(tensors);
+    tools::finite::measure::do_all_measurements(*tensors.state);
+    if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
+        algorithm_history.emplace_back(log_entry{status, tensors.measurements, tensors.state->measurements});
+    else
+        algorithm_history.back() = log_entry{status, tensors.measurements, tensors.state->measurements};
+
+    // Gather the entropy history
+    size_t                           entropies_size = tensors.get_length() + 1;
+    std::vector<SaturationReport>    reports(entropies_size);
+    std::vector<std::vector<double>> entropy_iter(entropies_size);
+
+    for(size_t site = 0; site < entropies_size; site++) {
+        std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(entropy_iter[site]),
+                       [entropies_size, site](const log_entry &h) -> double {
+                           if(not h.msm_state.entanglement_entropies.has_value())
+                               throw std::runtime_error("Entanglement entropies are missing from state measurements");
+                           if(h.msm_state.entanglement_entropies->size() != entropies_size)
+                               throw std::runtime_error(fmt::format("Entanglement entropies have the wrong size {} != {}",
+                                                                    h.msm_state.entanglement_entropies->size(), entropies_size));
+                           return h.msm_state.entanglement_entropies.value()[site];
+                       });
         reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());
     }
 
@@ -533,6 +567,11 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
         }
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
+
+    algorithm_history.back().status.entanglement_converged_for = status.entanglement_converged_for;
+    algorithm_history.back().status.entanglement_saturated_for = status.entanglement_saturated_for;
+
+
 }
 
 void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
@@ -552,10 +591,7 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
 
 void AlgorithmFinite::clear_convergence_status() {
     tools::log->trace("Clearing convergence status");
-    for(auto &e : entropy_iter) { e.clear(); }
-    var_mpo_iter.clear();
-    var_mpo_step.clear();
-
+    algorithm_history.clear();
     status.algorithm_has_finished      = false;
     status.algorithm_has_succeeded     = false;
     status.algorithm_has_to_stop       = false;

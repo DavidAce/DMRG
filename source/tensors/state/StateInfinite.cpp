@@ -338,7 +338,7 @@ bool StateInfinite::is_bond_limited(long chi_lim, double truncation_threshold) c
 void StateInfinite::clear_cache() const { cache = Cache(); }
 
 void StateInfinite::clear_measurements() const {
-    measurements                              = state_measure_infinite();
+    measurements                              = MeasurementsStateInfinite();
     tools::common::views::components_computed = false;
 }
 

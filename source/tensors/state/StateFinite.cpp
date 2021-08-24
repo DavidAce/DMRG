@@ -62,6 +62,7 @@ StateFinite::StateFinite(AlgorithmType algo_type, ModelType model_type, size_t m
 
 void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
     tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size, position);
+    set_algorithm(algo_type);
     if(model_size < 2) throw std::logic_error("Tried to initialize state with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
     if(position >= model_size) throw std::logic_error("Tried to initialize state at a position larger than the number of sites");
@@ -433,7 +434,7 @@ bool StateFinite::is_bond_limited(long chi_lim, double truncation_threshold) con
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {
     if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state measurements");
-    measurements = state_measure_finite();
+    measurements = MeasurementsStateFinite();
 }
 
 void StateFinite::clear_cache(LogPolicy logPolicy) const {

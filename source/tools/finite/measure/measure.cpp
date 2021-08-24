@@ -36,14 +36,17 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
     state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
     state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
     state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
-    state.measurements.number_entropy_current        = measure::number_entropy_current(state);
-    state.measurements.number_entropy_midchain       = measure::number_entropy_midchain(state);
-    state.measurements.number_entropies              = measure::number_entropies(state);
-    state.measurements.renyi_2                       = measure::renyi_entropies(state, 2);
-    state.measurements.renyi_3                       = measure::renyi_entropies(state, 3);
-    state.measurements.renyi_4                       = measure::renyi_entropies(state, 4);
-    state.measurements.renyi_100                     = measure::renyi_entropies(state, 100);
-    state.measurements.spin_components               = measure::spin_components(state);
+    if(state.get_algorithm() == AlgorithmType::fLBIT) {
+        state.measurements.number_entropy_current  = measure::number_entropy_current(state);
+        state.measurements.number_entropy_midchain = measure::number_entropy_midchain(state);
+        state.measurements.number_entropies        = measure::number_entropies(state);
+    }
+
+    state.measurements.renyi_2         = measure::renyi_entropies(state, 2);
+    state.measurements.renyi_3         = measure::renyi_entropies(state, 3);
+    state.measurements.renyi_4         = measure::renyi_entropies(state, 4);
+    state.measurements.renyi_100       = measure::renyi_entropies(state, 100);
+    state.measurements.spin_components = measure::spin_components(state);
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -299,53 +302,13 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     std::vector<double> truncation_errors;
-        for(const auto &pos : state.active_sites) {
-            if(&pos == &state.active_sites.front()) continue;
-            const auto &mps = state.get_mps_site(pos);
-            truncation_errors.push_back(mps.get_chiL());
-        }
-        return truncation_errors;
-
-
-    for(const auto &site : state.active_sites) {
-        const auto &mps = state.get_mps_site(site);
-        if(mps.isCenter()) truncation_errors.emplace_back(mps.get_truncation_error_LC());
-        if(mps.get_position() == state.active_sites.front()) continue;
-        if(mps.get_position() == state.active_sites.back()) continue;
-        truncation_errors.emplace_back(mps.get_truncation_error());
+    for(const auto &pos : state.active_sites) {
+        if(&pos == &state.active_sites.front()) continue;
+        const auto &mps = state.get_mps_site(pos);
+        truncation_errors.push_back(mps.get_truncation_error());
     }
     return truncation_errors;
 
-    // Here we calculate the bond dimensions of the bonds that were merged into the full state in the last step
-    // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
-    //    auto t_chi = tid::tic_scope("chi_merged");
-    //    if(state.active_sites.empty()) return {};
-    //    if(state.active_sites.size() == 1) {
-    //        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
-    //        // mps, relative to the current direction.
-    //        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
-    //        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
-    //    }
-    //    if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
-    //    std::vector<long> bond_dimensions;
-    //    for(const auto &pos : state.active_sites) {
-    //        if(&pos == &state.active_sites.front()) continue;
-    //        const auto &mps = state.get_mps_site(pos);
-    //        bond_dimensions.push_back(mps.get_chiL());
-    //    }
-    //    return bond_dimensions;
-
-    //    std::vector<double> truncation_errors;
-    //    truncation_errors.reserve(active_sites.size());
-    //    for(const auto &pos : active_sites) {
-    //        // We are only interested in the truncation on bonds that are updated
-    //        // when operating on active_sites. This excludes the outer bonds.
-    //        if(get_mps_site(pos).isCenter()) truncation_errors.emplace_back(get_truncation_error_LC());
-    //        if(pos == active_sites.front()) continue;
-    //        if(pos == active_sites.back()) continue;
-    //        truncation_errors.emplace_back(get_truncation_error(pos));
-    //    }
-    //    return truncation_errors;
 }
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {
@@ -378,7 +341,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &sta
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                                           tensors_measure_finite *measurements) {
+                                                           MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_reduced) return measurements->energy_minus_energy_reduced.value();
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -400,13 +363,13 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
 }
 
 template double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                    tensors_measure_finite *measurements);
+                                                                    MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                    tensors_measure_finite *measurements);
+                                                                    MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                      tensors_measure_finite *measurements) {
+                                      MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy) return measurements->energy.value();
     // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
     // If they are reduced, then
@@ -423,26 +386,27 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const Mode
     return energy;
 }
 
-template double tools::finite::measure::energy(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges, tensors_measure_finite *measurements);
+template double tools::finite::measure::energy(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
+                                               MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                               tensors_measure_finite *measurements);
+                                               MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_per_site(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                               tensors_measure_finite *measurements) {
+                                               MeasurementsTensorsFinite *measurements) {
     double energy_per_site = tools::finite::measure::energy(state, model, edges, measurements) / static_cast<double>(model.get_length());
     if(measurements != nullptr) measurements->energy_per_site = energy_per_site;
     return energy_per_site;
 }
 
 template double tools::finite::measure::energy_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        tensors_measure_finite *measurements);
+                                                        MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        tensors_measure_finite *measurements);
+                                                        MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_variance(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                               tensors_measure_finite *measurements) {
+                                               MeasurementsTensorsFinite *measurements) {
     // Here we show that the variance calculated with reduced-energy mpo's is equivalent to the usual way.
     // If mpo's are reduced:
     //      Var H = <(H-E_red)²> - <H-E_red>²     = <H²>  - 2<H>E_red + E_red² - (<H> - E_red)²
@@ -495,33 +459,33 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
 }
 
 template double tools::finite::measure::energy_variance(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        tensors_measure_finite *measurements);
+                                                        MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        tensors_measure_finite *measurements);
+                                                        MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_variance_per_site(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                                        tensors_measure_finite *measurements) {
+                                                        MeasurementsTensorsFinite *measurements) {
     double energy_variance_per_site = tools::finite::measure::energy_variance(state, model, edges, measurements) / static_cast<double>(model.get_length());
     if(measurements != nullptr) measurements->energy_variance_per_site = energy_variance_per_site;
     return energy_variance_per_site;
 }
 
 template double tools::finite::measure::energy_variance_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                 tensors_measure_finite *measurements);
+                                                                 MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                 tensors_measure_finite *measurements);
+                                                                 MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_normalized(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges, double energy_min_per_site,
-                                                 double energy_max_per_site, tensors_measure_finite *measurements) {
+                                                 double energy_max_per_site, MeasurementsTensorsFinite *measurements) {
     return (tools::finite::measure::energy_per_site(state, model, edges, measurements) - energy_min_per_site) / (energy_max_per_site - energy_min_per_site);
 }
 
 template double tools::finite::measure::energy_normalized(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges, double, double,
-                                                          tensors_measure_finite *measurements);
+                                                          MeasurementsTensorsFinite *measurements);
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
-                                                          tensors_measure_finite *measurements);
+                                                          MeasurementsTensorsFinite *measurements);
 
 extern double tools::finite::measure::energy_reduced(const TensorsFinite &tensors) { return tensors.model->get_energy_reduced(); }
 extern double tools::finite::measure::energy_per_site_reduced(const TensorsFinite &tensors) { return tensors.model->get_energy_per_site_reduced(); }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithms/AlgorithmBase.h>
+#include <measure/MeasurementsStateFinite.h>
 #include <tensors/TensorsFinite.h>
 class StateFinite;
 class ModelFinite;
@@ -63,7 +64,15 @@ class AlgorithmFinite : public AlgorithmBase {
                        std::optional<CopyPolicy> copy_policy = std::nullopt);
     template<typename T>
     void write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy = std::nullopt);
+
+    struct log_entry{
+        AlgorithmStatus status;
+        MeasurementsTensorsFinite msm_tensor;
+        MeasurementsStateFinite msm_state;
+    };
+
+    std::vector<log_entry> algorithm_history;
     std::vector<double>              var_mpo_step; // History of energy variances (from mpo) at each step
-    std::vector<double>              var_mpo_iter; // History of energy variances (from mpo) at each iteration
-    std::vector<std::vector<double>> entropy_iter; // History of entanglement entropies at each iteration
+//    std::vector<double>              var_mpo_iter; // History of energy variances (from mpo) at each iteration
+//    std::vector<std::vector<double>> entropy_iter; // History of entanglement entropies at each iteration
 };
