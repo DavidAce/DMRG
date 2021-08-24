@@ -102,17 +102,21 @@ int main(int argc, char *argv[]) {
     cxxopts::Options options("DMRG++", "An MPS-based algorithm to find 1D quantum-states");
     /* clang-format off */
     options.add_options()
-    ("b,bitfield",    "Integer whose bitfield sets the initial product state. Negative is unused", cxxopts::value<long>()->default_value("-1")->implicit_value("-1"))
+    ("h,help",     "Show help")
+    ("b,bitfield",    "Integer whose bitfield sets the initial product state. Negative is unused", cxxopts::value<long>())
     ("c,config",      "Path to a .cfg or .h5 file from a previous simulation",                     cxxopts::value<std::string>()->default_value("input/input.cfg"))
-    ("n,stlthreads",  "Number of C++11 threads (Used by Eigen::Tensor)",                           cxxopts::value<int>()->default_value("-1")->implicit_value("-1"))
+    ("n,stlthreads",  "Number of C++11 threads (Used by Eigen::Tensor)",                           cxxopts::value<int>())
     ("o,outfile",     "Path to the output file. The seed number gets appended by default (see -x)",cxxopts::value<std::string>()->default_value("output/output.h5"))
-    ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>()->default_value("-1")->implicit_value("-1"))
-    ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>()->default_value("-1")->implicit_value("-1"))
-    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<long>()->default_value("-1")->implicit_value("1"))
-    ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>()->default_value("false")->implicit_value("true"));
+    ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>())
+    ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>())
+    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<long>())
+    ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>());
 
     auto in = options.parse(argc, argv);
-
+    if(in["help"].count() > 0) {
+        fmt::print(options.help());
+        exit(0);
+    }
     if(in["config"].count() > 0)    settings::input::config_filename = in["config"].as<std::string>();
 
     //  Try loading the given config file.
@@ -126,13 +130,13 @@ int main(int argc, char *argv[]) {
 
     // Override the other settings
     bool        noseedname = false;
-    if(in["bitfield"].count() > 0)  settings::input::bitfield           = in["bitfield"].as<long>();
-    if(in["stlthreads"].count() > 0)  settings::input::bitfield         = in["bitfield"].as<int>();
-    if(in["outfile"].count() > 0)  settings::storage::output_filepath   = in["outfile"].as<std::string>();
-    if(in["seed"].count() > 0)  settings::input::seed                   = in["seed"].as<long>();
-    if(in["ompthreads"].count() > 0)  settings::threading::omp_threads  = in["ompthreads"].as<int>();
-    if(in["verbose"].count() > 0)  settings::console::verbosity         = in["verbose"].as<long>();
-    if(in["noseedname"].count() > 0)  noseedname                        = in["noseedname"].as<bool>();
+    if(in["bitfield"].count() > 0)      settings::input::bitfield           = in["bitfield"].as<long>();
+    if(in["stlthreads"].count() > 0)    settings::threading::stl_threads    = in["stlthreads"].as<int>();
+    if(in["outfile"].count() > 0)       settings::storage::output_filepath  = in["outfile"].as<std::string>();
+    if(in["seed"].count() > 0)          settings::input::seed               = in["seed"].as<long>();
+    if(in["ompthreads"].count() > 0)    settings::threading::omp_threads    = in["ompthreads"].as<int>();
+    if(in["verbose"].count() > 0)       settings::console::verbosity        = in["verbose"].as<long>();
+    if(in["noseedname"].count() > 0)    noseedname                          = in["noseedname"].as<bool>();
 
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
     /* clang-format on */
