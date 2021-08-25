@@ -2,6 +2,7 @@ from generate_inputs.src.generate_inputs import *
 import numpy as np
 from fractions import Fraction
 from itertools import product
+import platform
 
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
@@ -11,15 +12,19 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [6,8,10,12,14,16]
+sites               = [6,8,10,12,14,16,18]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 1.000, 0.100]]
-f                   = [0.20, 0.30, 0.40, 0.50]
-u                   = [2,3]
+f                   = [0.30, 0.40]
+u                   = [3]
 b                   = [4,8]
-r                   = [2,4,8]
+r                   = [8]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
+tmp_storage = "/tmp"
+if "lith" in  platform.node():
+    tmp_storage = "/scratch/local"
+
 
 num_total = 0
 settings = []
@@ -41,7 +46,8 @@ for val_L,val_J,val_w, val_b, val_f,val_u, val_r, init, in  product(sites,J,w, b
     input_filename = "{}/{}_L{}_{}_{}_b{}_f{}_u{}_r{}.cfg".format(location,basename,str_L,str_J,str_w, str_b,str_f, str_u,str_r)
 
     settings = {
-        "storage::output_filepath"            : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/r_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u,str_r, basename),
+        "storage::output_filepath"           : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/r_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u,str_r, basename),
+        "storage::temp_dir"                  : tmp_storage
         "console::verbosity"                 : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
