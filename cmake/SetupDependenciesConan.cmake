@@ -43,7 +43,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         ##################################################################
         message(STATUS "Detected Conan build info: ${CONAN_BUILD_INFO}")
         include(${CONAN_BUILD_INFO})
-        conan_basic_setup(KEEP_RPATHS TARGETS)
+        conan_basic_setup(TARGETS KEEP_RPATHS NO_OUTPUT_DIRS)
     else()
 
         ##################################################################
@@ -104,6 +104,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 PROFILE_AUTO ALL
                 ${DMRG_CONAN_OPTIONS}
                 KEEP_RPATHS
+                NO_OUTPUT_DIRS
                 BUILD missing
         )
 
