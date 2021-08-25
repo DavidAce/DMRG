@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
     ("o,outfile",     "Path to the output file. The seed number gets appended by default (see -x)",cxxopts::value<std::string>()->default_value("output/output.h5"))
     ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>())
     ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>())
-    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<long>())
+    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<size_t>())
     ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>());
 
     auto in = options.parse(argc, argv);
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
     if(in["outfile"].count() > 0)       settings::storage::output_filepath  = in["outfile"].as<std::string>();
     if(in["seed"].count() > 0)          settings::input::seed               = in["seed"].as<long>();
     if(in["ompthreads"].count() > 0)    settings::threading::omp_threads    = in["ompthreads"].as<int>();
-    if(in["verbose"].count() > 0)       settings::console::verbosity        = in["verbose"].as<long>();
+    if(in["verbose"].count() > 0)       settings::console::verbosity        = in["verbose"].as<size_t>();
     if(in["noseedname"].count() > 0)    noseedname                          = in["noseedname"].as<bool>();
 
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);

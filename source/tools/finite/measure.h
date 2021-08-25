@@ -31,7 +31,7 @@ namespace tools::finite::measure{
 
     [[nodiscard]] extern double spin_component                              (const StateFinite & state, const Eigen::Matrix2cd &paulimatrix);
     [[nodiscard]] extern double spin_component                              (const StateFinite & state, std::string_view axis);
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps_wavefn                 (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps_wavefn                   (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
