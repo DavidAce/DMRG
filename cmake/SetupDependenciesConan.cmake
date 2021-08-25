@@ -105,7 +105,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 ${DMRG_CONAN_OPTIONS}
                 KEEP_RPATHS
                 BUILD missing
-                BUILD openblas # This builds openblas everytime on github actions
         )
 
     endif()
