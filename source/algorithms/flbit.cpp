@@ -160,7 +160,7 @@ void flbit::run_preprocessing() {
     tools::finite::print::model(*tensors.model);
     create_time_points();
     update_time_step();
-    if(settings::model::model_size <= 10) {
+    if(settings::model::model_size <= 6) {
         // Create a copy of the state as a full state vector for ED comparison
         auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
         Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
@@ -226,17 +226,20 @@ void flbit::single_flbit_step() {
     t_evo.toc();
     transform_to_real_basis();
 
-    if(settings::model::model_size <= 10 and settings::debug) {
-        Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
-        Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, tenx::idx({1}, {0}));
-        Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
-        Upsi_mps                          = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0, -1));
-        Eigen::Tensor<Scalar, 0> overlap  = Upsi_ed.conjugate().contract(Upsi_mps, tenx::idx({0}, {0}));
-        tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
-        tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}", tenx::VectorMap(Upsi_mps).norm());
-        tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i", std::real(overlap(0)), std::imag(overlap(0)));
+    if constexpr(settings::debug){
+        if(settings::model::model_size <= 10) {
+            Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
+            Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, tenx::idx({1}, {0}));
+            Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
+            Upsi_mps                          = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0, -1));
+            Eigen::Tensor<Scalar, 0> overlap  = Upsi_ed.conjugate().contract(Upsi_mps, tenx::idx({0}, {0}));
+            tools::log->info("<UΨ_tmp|UΨ_tmp> : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
+            tools::log->info("<UΨ_ed|UΨ_ed>   : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
+            tools::log->info("<UΨ_mps|UΨ_mps> : {:.16f}", tenx::VectorMap(Upsi_mps).norm());
+            tools::log->info("<UΨ_ed|UΨ_mps>  : {:.16f}{:+.16f}i", std::real(overlap(0)), std::imag(overlap(0)));
+        }
     }
+
     tensors.clear_measurements();
     tensors.clear_cache();
     tensors.rebuild_edges_ene();
