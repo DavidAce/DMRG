@@ -66,7 +66,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
-        throw std::runtime_error(fmt::format(FMT_COMPILE("Eigen SVD error \n"
+        throw std::runtime_error(fmt::format(FMT_STRING("Eigen SVD error \n"
                                                          "  svd_threshold    = {:.4e}\n"
                                                          "  Truncation Error = {:.4e}\n"
                                                          "  Rank             = {}\n"
