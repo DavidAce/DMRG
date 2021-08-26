@@ -1,10 +1,10 @@
 function(copy_target target_old target_new)
     if(NOT TARGET ${target_old})
-        message(STATUS "There is no target named '${target_old}'")
+        message(DEBUG "There is no target named '${target_old}'")
         return()
     endif()
     if(TARGET ${target_new})
-        message(STATUS "There is already a target named '${target_new}'")
+        message(DEBUG "There is already a target named '${target_new}'")
         return()
     endif()
 

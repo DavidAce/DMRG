@@ -1,9 +1,3 @@
-function(arpackpp_message TYPE MSG)
-    if(NOT arpack++_FIND_QUIETLY)
-        message(${TYPE} ${MSG})
-    endif()
-endfunction()
-
 
 function(find_Arpackpp)
     if (NOT TARGET ARPACK::ARPACK)
@@ -26,7 +20,7 @@ function(find_Arpackpp)
         unset(ARPACKPP_LIBRARY CACHE)
         unset(ARPACKPP_INCLUDE_DIR)
         unset(ARPACKPP_INCLUDE_DIR CACHE)
-        arpackpp_message(STATUS "Looking for arpack++")
+        message(DEBUG "Looking for arpack++")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
                 ${NO_DEFAULT_PATH}
@@ -53,7 +47,7 @@ function(find_Arpackpp)
         endif()
 
         if(ARPACKPP_INCLUDE_DIR AND EXISTS ${ARPACKPP_INCLUDE_DIR})
-            arpackpp_message(STATUS "Looking for arpack++ - found: ${ARPACKPP_INCLUDE_DIR}")
+            message(DEBUG "Looking for arpack++ - found: ${ARPACKPP_INCLUDE_DIR}")
             if(ARPACKPP_LIBRARY)
                 add_library(arpack::arpack++ INTERFACE IMPORTED)
                 set_target_properties(arpack::arpack++ PROPERTIES IMPORTED_LOCATION ${ARPACKPP_LIBRARY})
@@ -63,7 +57,7 @@ function(find_Arpackpp)
             target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${ARPACKPP_INCLUDE_DIR})
             target_link_libraries(arpack::arpack++ INTERFACE lapacke::lapacke ARPACK::ARPACK)
         else()
-            arpackpp_message(STATUS "Looking for arpack++ - not found")
+            message(DEBUG "Looking for arpack++ - not found")
         endif()
     endif()
 endfunction()

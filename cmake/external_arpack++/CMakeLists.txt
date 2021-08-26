@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(external-arpack++)
 if(INIT_CACHE_FILE)
-    message(STATUS "arpack++ build ignoring cache file")
+    message(DEBUG "arpack++ build ignoring cache file")
 endif()
 include(ExternalProject)
 ExternalProject_Add(external_ARPACK++

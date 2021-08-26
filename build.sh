@@ -110,7 +110,7 @@ make_threads=8
 print_cmake_error="OFF"
 verbose="OFF"
 verbose_make="OFF"
-verbose_cmake="OFF"
+verbose_cmake="STATUS"
 generator="Ninja"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
@@ -138,7 +138,6 @@ do
                                     enable_ccache="ON"              ; echo " * Ccache                   : $enable_ccache"  ;
                                     make_threads=16                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
-                                    verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
                                     shift ;;
        --default-kraken)
                                     march="haswell"                 ; echo " * Architecture             : $march"          ;
@@ -153,7 +152,6 @@ do
                                     enable_ccache="ON"              ; echo " * Ccache                   : $enable_ccache"  ;
                                     make_threads=32                 ; echo " * MAKE threads             : $make_threads"   ;
                                     target="all"                    ; echo " * CMake Build target       : $target"         ;
-                                    verbose_cmake="ON"              ; echo " * Verbose cmake            : $verbose_cmake"  ;
                                     shift ;;
     -i|--install-prefix)            install_prefix=$2               ; echo " * Install Prefix           : $2"      ; shift 2 ;;
        --install-pkg-dir)           install_pkg_dir=$2              ; echo " * Install Pkg dir          : $2"      ; shift 2 ;;
@@ -178,7 +176,7 @@ do
        --print-cmake-error)         print_cmake_error="ON"          ; echo " * Print CMakeError.log     : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose cmake & make     : ON"      ; shift   ;;
        --verbose-make)              verbose_make="ON"               ; echo " * Verbose make             : ON"      ; shift   ;;
-       --verbose-cmake)             verbose_cmake="ON"              ; echo " * Verbose cmake            : ON"      ; shift   ;;
+       --verbose-cmake)             verbose_cmake="DEBUG"           ; echo " * Verbose cmake            : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -351,8 +349,6 @@ cat << EOF >&2
           -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix
           -DDMRG_DEPS_INSTALL_DIR:PATH=$install_pkg_dir
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make
-          -DDMRG_PRINT_INFO=$verbose_cmake
-          -DDMRG_PRINT_CHECKS=$verbose_cmake
           -DDMRG_PACKAGE_MANAGER=$package_manager
           -DDMRG_MICROARCH=$march
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
@@ -365,6 +361,7 @@ cat << EOF >&2
           -DDMRG_ENABLE_CCACHE:BOOL=$enable_ccache
           $extra_flags
            -G $generator
+           --loglevel=$verbose_cmake
            ../../
     cmake --build . --target $target --parallel $make_threads
 EOF
@@ -377,8 +374,6 @@ if [ -z "$dry_run" ] ;then
           -DCMAKE_INSTALL_PREFIX:PATH=$install_prefix \
           -DDMRG_DEPS_INSTALL_DIR:PATH=$install_pkg_dir \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose_make \
-          -DDMRG_PRINT_INFO=$verbose_cmake \
-          -DDMRG_PRINT_CHECKS=$verbose_cmake \
           -DDMRG_PACKAGE_MANAGER=$package_manager \
           -DDMRG_MICROARCH=$march \
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
@@ -391,6 +386,8 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_CCACHE:BOOL=$enable_ccache \
           $extra_flags \
            -G "$generator" \
+           --loglevel=$verbose_cmake \
+
            ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then

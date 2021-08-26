@@ -20,8 +20,6 @@ option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" ON)
 option(DMRG_ENABLE_COVERAGE "Enable test coverage" OFF)
 option(DMRG_PROFILE_BUILD "Enable build-time profiling with -ftime-trace (study results with ClangBuildAnalyzer)" OFF)
 option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
-option(DMRG_PRINT_INFO "Print information during cmake configure" OFF)
-option(DMRG_PRINT_CHECKS "Print more information during cmake configure" OFF)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 option(DMRG_ENABLE_DOCS "Build documentation" OFF)
 
@@ -239,17 +237,15 @@ endif()
 
 
 # Print summary of CMake configuration
-if (DMRG_PRINT_INFO)
-    include(cmake/PrintTargetInfo.cmake)
-    include(cmake/getExpandedTarget.cmake)
-    message(STATUS "| DMRG TARGET SUMMARY")
-    message(STATUS "|--------------------")
-    print_compiler_info("| ")
-    expand_target_all_targets(DMRG++ DMRG_TARGET_EXPANDED)
-    foreach (tgt ${DMRG_TARGET_EXPANDED})
-        print_target_info(${tgt} "| ")
-    endforeach ()
-endif ()
+include(cmake/PrintTargetInfo.cmake)
+include(cmake/getExpandedTarget.cmake)
+message(DEBUG "| DMRG TARGET SUMMARY")
+message(DEBUG "|-----------------------------")
+print_compiler_info("| ")
+expand_target_all_targets(DMRG++ DMRG_TARGET_EXPANDED)
+foreach (tgt ${DMRG_TARGET_EXPANDED})
+    print_target_info(${tgt} "| ")
+endforeach ()
 
 
 ###################

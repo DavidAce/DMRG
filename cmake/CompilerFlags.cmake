@@ -1,7 +1,7 @@
 
-message(STATUS "C compiler ${CMAKE_C_COMPILER}")
-message(STATUS "FC compiler ${CMAKE_Fortran_COMPILER}")
-message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
+message(DEBUG "C compiler ${CMAKE_C_COMPILER}")
+message(DEBUG "FC compiler ${CMAKE_Fortran_COMPILER}")
+message(DEBUG "CXX compiler ${CMAKE_CXX_COMPILER}")
 
 #####################################################
 ### Set the  microarchitecture for OpenBLAS       ###
@@ -69,7 +69,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
-message(STATUS "Using ${MARCH} ${MTUNE}")
+message(DEBUG "Using ${MARCH} ${MTUNE}")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${MARCH} ${MTUNE}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -fno-strict-aliasing -Wall -Wextra -Wpedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer") #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
