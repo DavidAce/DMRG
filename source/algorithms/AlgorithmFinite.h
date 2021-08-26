@@ -67,8 +67,9 @@ class AlgorithmFinite : public AlgorithmBase {
 
     struct log_entry{
         AlgorithmStatus status;
-        MeasurementsTensorsFinite msm_tensor;
-        MeasurementsStateFinite msm_state;
+        double variance;
+        std::vector<double> entropies;
+        log_entry(const AlgorithmStatus & s, const TensorsFinite &t);
     };
 
     std::vector<log_entry> algorithm_history;

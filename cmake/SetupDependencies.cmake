@@ -1,17 +1,13 @@
 
-#################################################################
+##################################################################
 ### Preempt Threads::Threads                                   ###
 ### It's looked for in dependencies, so we make it right       ###
 ### before it's done wrong, i.e. with pthread instead of       ###
-### -lpthread.                                                 ###
-### Here we specify the linking twice                          ###
-### 1) As string to make sure -lpthread gets sandwiched by     ###
+### -lpthread which causes link errors downstream with         ###
 ###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
-###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
-### 2) As usual to make sure that if somebody links            ###
-###    Threads::Threads, then any repeated pthread appended    ###
-###    to the end (the wrong order causes linking errors)      ###
 ##################################################################
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 target_link_libraries(Threads::Threads INTERFACE rt dl)

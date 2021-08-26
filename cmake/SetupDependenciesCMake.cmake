@@ -90,7 +90,8 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
             TARGET_NAME Ceres::ceres
             DEPENDS gflags glog::glog
             CMAKE_ARGS ${Ceres_ARGS}
-            CHECK)
+            CHECK
+            QUIET)
 
 
     # Configure Eigen

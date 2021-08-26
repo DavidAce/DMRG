@@ -462,6 +462,9 @@ void AlgorithmFinite::try_hamiltonian_perturbation() {
     }
 }
 
+AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
+    : status(s), variance(tools::finite::measure::energy_variance(t)), entropies(tools::finite::measure::entanglement_entropies(*t.state)) {}
+
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of variance mpo");
@@ -470,16 +473,14 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
     tools::finite::measure::do_all_measurements(tensors);
     tools::finite::measure::do_all_measurements(*tensors.state);
     if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
-        algorithm_history.emplace_back(log_entry{status, tensors.measurements, tensors.state->measurements});
+        algorithm_history.emplace_back(status, tensors);
     else
-        algorithm_history.back() = log_entry{status, tensors.measurements, tensors.state->measurements};
+        algorithm_history.back() = log_entry(status, tensors);
 
     // Gather the variance history
     std::vector<double> var_mpo_iter;
-    std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(var_mpo_iter), [](const log_entry &h) -> double {
-        if(not h.msm_tensor.energy_variance.has_value()) throw std::runtime_error("Energy variance is missing from tensor measurements");
-        return h.msm_tensor.energy_variance.value();
-    });
+    std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(var_mpo_iter),
+                   [](const log_entry &h) -> double { return h.variance; });
 
     //    var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
     auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value());
@@ -511,14 +512,11 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of entanglement");
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::entropy_saturation_sensitivity;
-    //    auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
 
-    tools::finite::measure::do_all_measurements(tensors);
-    tools::finite::measure::do_all_measurements(*tensors.state);
     if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
-        algorithm_history.emplace_back(log_entry{status, tensors.measurements, tensors.state->measurements});
+        algorithm_history.emplace_back(status, tensors);
     else
-        algorithm_history.back() = log_entry{status, tensors.measurements, tensors.state->measurements};
+        algorithm_history.back() = log_entry(status, tensors);
 
     // Gather the entropy history
     size_t                           entropies_size = tensors.get_length() + 1;
@@ -528,12 +526,10 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     for(size_t site = 0; site < entropies_size; site++) {
         std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(entropy_iter[site]),
                        [entropies_size, site](const log_entry &h) -> double {
-                           if(not h.msm_state.entanglement_entropies.has_value())
-                               throw std::runtime_error("Entanglement entropies are missing from state measurements");
-                           if(h.msm_state.entanglement_entropies->size() != entropies_size)
-                               throw std::runtime_error(fmt::format("Entanglement entropies have the wrong size {} != {}",
-                                                                    h.msm_state.entanglement_entropies->size(), entropies_size));
-                           return h.msm_state.entanglement_entropies.value()[site];
+                           if(not h.entropies.empty()) throw std::runtime_error("Entanglement entropies are missing from algorithm history entry");
+                           if(h.entropies.size() != entropies_size)
+                               throw std::runtime_error(fmt::format("Entanglement entropies have the wrong size {} != {}", h.entropies.size(), entropies_size));
+                           return h.entropies[site];
                        });
         reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());
     }
@@ -570,8 +566,6 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
 
     algorithm_history.back().status.entanglement_converged_for = status.entanglement_converged_for;
     algorithm_history.back().status.entanglement_saturated_for = status.entanglement_saturated_for;
-
-
 }
 
 void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
