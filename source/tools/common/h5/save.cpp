@@ -51,7 +51,7 @@ namespace tools::common::h5 {
         // Check if the current entry has already been appended
         // Status is special, flags can be updated without changing iter or step
         std::string                                                           table_path = fmt::format("{}/status", table_prefix);
-        auto                                                                  t_hdf      = tid::tic_scope("status");
+        auto                                                                  t_hdf      = tid::tic_scope("status", tid::level::pedant);
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_save_log(save_log, h5file, table_path);
         auto save_point = std::make_pair(status.iter, status.step);
@@ -79,7 +79,7 @@ namespace tools::common::h5 {
         auto save_point = std::make_pair(status.iter, status.step);
         if(save_log[table_path] == save_point) return;
         log->trace("Appending to table: {}", table_path);
-        auto t_mem = tid::tic_scope("mem");
+        auto t_mem = tid::tic_scope("mem", tid::level::pedant);
         h5pp_table_memory_usage::register_table_type();
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_memory_usage::h5_type, table_path, "memory usage");
 
@@ -117,7 +117,7 @@ namespace tools::common::h5 {
         // -- position       | state_prefix -> position of the mps
 
         // Checks if the current entries have already been written
-        auto                                                                  t_meta = tid::tic_scope("meta");
+        auto                                                                  t_meta = tid::tic_scope("meta", tid::level::pedant);
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
 
@@ -150,28 +150,28 @@ namespace tools::common::h5 {
         save_log[std::string(state_prefix)] = save_point;
     }
 
-    void save::timer(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
+    void save::timer(h5pp::File &h5file, std::string_view timer_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
         if(not settings::profiling::on) return;
+        if(not settings::storage::save_profiling) return;
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, state_prefix);
+        bootstrap_save_log(save_log, h5file, timer_prefix);
         auto save_point = std::make_pair(status.iter, status.step);
-        auto prof_prefix = fmt::format("{}/profiling", state_prefix);
-        if(save_log[prof_prefix] == save_point) return;
+        if(save_log[std::string(timer_prefix)] == save_point) return;
 
-        tools::log->trace("Appending profiling to: {}", prof_prefix);
-        auto t_prof = tid::tic_token("prof");
+        tools::log->trace("Appending profiling to: {}", timer_prefix);
+        auto t_prof = tid::tic_token("prof", tid::level::pedant);
 
         h5pp_ur::register_table_type();
         h5file.setKeepFileOpened();
         for(const auto &t : tid::search(status.algo_type_sv())) {
-            auto dsetname = fmt::format("{}/{}", prof_prefix, t.key);
+            auto dsetname = fmt::format("{}/{}", timer_prefix, t.key);
             auto dsetdata = h5pp_ur::item{t->get_time(), t->get_time_avg(), t->get_tic_count()};
             h5file.writeDataset(dsetdata, dsetname, h5pp_ur::h5_type);
         }
         h5file.setKeepFileClosed();
-        save_log[prof_prefix] = save_point;
+        save_log[std::string(timer_prefix)] = save_point;
     }
 
 }

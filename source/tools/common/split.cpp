@@ -105,7 +105,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         throw std::runtime_error(fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                              spin_dims, positions));
     if(chi_limit <= 0) throw std::runtime_error(fmt::format("Invalid bond dimension limit:  chi_limit = {}", chi_limit));
-    auto t_split = tid::tic_scope("split");
+    auto t_split = tid::tic_scope("split", tid::level::detail);
     // Setup the svd settings if not given explicitly
     if(not svd_settings) svd_settings = svd::settings();
     if(not svd_settings->threshold) svd_settings->threshold = settings::precision::svd_threshold;

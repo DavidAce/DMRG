@@ -463,15 +463,15 @@ void AlgorithmFinite::try_hamiltonian_perturbation() {
 }
 
 AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
-    : status(s), variance(tools::finite::measure::energy_variance(t)), entropies(tools::finite::measure::entanglement_entropies(*t.state)) {}
+    : status(s), variance(status.algo_type == AlgorithmType::fLBIT ? 0.0 : tools::finite::measure::energy_variance(t)),
+      entropies(tools::finite::measure::entanglement_entropies(*t.state)) {}
 
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of variance mpo");
     if(not threshold) threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
-    tools::finite::measure::do_all_measurements(tensors);
-    tools::finite::measure::do_all_measurements(*tensors.state);
+
     if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
         algorithm_history.emplace_back(status, tensors);
     else
@@ -526,7 +526,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     for(size_t site = 0; site < entropies_size; site++) {
         std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(entropy_iter[site]),
                        [entropies_size, site](const log_entry &h) -> double {
-                           if(not h.entropies.empty()) throw std::runtime_error("Entanglement entropies are missing from algorithm history entry");
+                           if(h.entropies.empty()) throw std::runtime_error("Entanglement entropies are missing from algorithm history entry");
                            if(h.entropies.size() != entropies_size)
                                throw std::runtime_error(fmt::format("Entanglement entropies have the wrong size {} != {}", h.entropies.size(), entropies_size));
                            return h.entropies[site];

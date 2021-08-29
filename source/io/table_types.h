@@ -568,6 +568,52 @@ class h5pp_table_memory_usage {
     }
 };
 
+template<typename T>
+class h5pp_table_data {
+    private:
+
+    struct meta{
+        size_t      type_size;
+        size_t      data_size;
+        std::string fieldname;
+//        bool operator == (const meta & rhs) const = default;
+        bool operator == (const meta & rhs) const {
+            return type_size == rhs.type_size and data_size == rhs.data_size and fieldname == rhs.fieldname;
+        }
+    };
+    struct metaHasher {
+        auto operator()(const meta &m) const { return std::hash<std::string>{}(fmt::format("{}|{}|{}", m.type_size,m.data_size, m.fieldname)); }
+    };
+
+    public:
+    static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
+
+    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, const T * data, size_t data_size) {
+        size_t total_size = 2 * sizeof(uint64_t) + data_size * sizeof(T);
+        std::vector<std::byte> entry(total_size);
+        std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
+        std::memcpy(entry.data() + 1 * sizeof(uint64_t), &step, sizeof(uint64_t));
+        std::memcpy(entry.data() + 2 * sizeof(uint64_t), data,  data_size * sizeof(T));
+        return entry;
+    }
+
+    [[nodiscard]] static h5pp::hid::h5t& register_table_type(size_t data_size, std::string_view fieldname) {
+        size_t total_size = 2 * sizeof(uint64_t) + data_size * sizeof(T);
+        meta m = {sizeof(T), data_size, std::string(fieldname)};
+        if(h5_types.find(m) == h5_types.end()){
+            h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
+            H5Tinsert(h5_type, "iter", 0*sizeof(uint64_t), H5T_NATIVE_UINT64);
+            H5Tinsert(h5_type, "step", 1*sizeof(uint64_t), H5T_NATIVE_UINT64);
+            auto h5type = h5pp::util::getH5Type<T>();
+            for(size_t elem = 0; elem < data_size; elem++) {
+                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), 2*sizeof(uint64_t) + elem * sizeof(T), h5type);
+            }
+            h5_types[m] = h5_type;
+        }
+        return h5_types[m];
+    }
+};
+
 class h5pp_ur {
     public:
     static inline h5pp::hid::h5t h5_type;

@@ -42,7 +42,8 @@ namespace tools::finite::h5 {
     namespace save {
         void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, const std::vector<std::string_view> &links);
 //        void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
-
+        template<typename T>
+        void save_data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status,const std::vector<T> & payload, std::string_view table_name, std::string_view table_title, std::string_view fieldname);
         extern int decide_layout(std::string_view prefix_path);
         template<typename T>
         extern void data      (h5pp::File & h5file, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status, StorageReason storage_reason, std::optional<CopyPolicy> copy_policy);
@@ -53,8 +54,9 @@ namespace tools::finite::h5 {
         extern void entgm  (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void measurements   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const TensorsFinite & tensors, const AlgorithmStatus & status);
         extern void measurements   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, const AlgorithmStatus & status);
+        extern void entanglement   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void setup_prefix(const AlgorithmStatus &status, const StorageReason &storage_reason, StorageLevel &storage_level,
-                                 std::string_view state_name, std::string &state_prefix, std::string &model_prefix, std::vector<std::string> &table_prefxs);
+                                 std::string_view state_name, std::string &state_prefix, std::string &model_prefix, std::string & timer_prefix, std::vector<std::string> &table_prefxs);
         extern void simulation(h5pp::File &h5file,
                                  const TensorsFinite & tensors,
                                  const AlgorithmStatus &status,

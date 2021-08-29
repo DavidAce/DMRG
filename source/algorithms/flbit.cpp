@@ -462,8 +462,6 @@ void flbit::transform_to_lbit_basis() {
 }
 
 void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
-    tensors.clear_cache();
-    tensors.clear_measurements();
     AlgorithmFinite::write_to_file(storage_reason, *tensors.state, *tensors.model, *tensors.edges, copy_file);
 
     // Save the unitaries once

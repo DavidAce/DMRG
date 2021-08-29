@@ -66,7 +66,7 @@ namespace settings {
      *
      */
     namespace storage {
-        inline std::string         output_filepath                 = "output/output.h5";         /*!< Name of the output HDF5 file relative to the execution point  */
+        inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
         inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but chi-update savepoints can still happen */
