@@ -387,8 +387,8 @@ if [ -z "$dry_run" ] ;then
           $extra_flags \
            -G "$generator" \
            --loglevel=$verbose_cmake \
-
            ../../
+
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
             echo ""
