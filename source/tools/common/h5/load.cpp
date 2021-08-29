@@ -8,7 +8,7 @@
 namespace tools::common::h5 {
 
     void load::status(const h5pp::File &h5file, std::string_view state_prefix, AlgorithmStatus &status) {
-        auto        tic        = tid::tic_scope("status");
+        auto        tic        = tid::tic_scope("status", tid::level::pedant);
         std::string table_path = fmt::format("{}/status", state_prefix);
         if(h5file.linkExists(table_path)) {
             tools::log->info("Loading status from table: [{}]", table_path);

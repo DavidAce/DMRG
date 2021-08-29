@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 namespace tid {
-    ur::ur(std::string_view label_) noexcept : label(label_) {}
+    ur::ur(std::string_view label_, level l) noexcept : label(label_), lvl(l) {}
     void ur::tic() noexcept {
         if constexpr(tid::enable) {
             if(is_measuring) fprintf(stderr, "tid: error in tid::ur [%s]: called tic() twice: this timer is already active", label.c_str());
@@ -44,6 +44,9 @@ namespace tid {
             lap_time      = hresclock::duration::zero();
             lap_timepoint = hresclock::now();
         }
+    }
+    void ur::set_level(level l) noexcept {
+        lvl = l;
     }
 
     std::string ur::get_label() const noexcept { return label; }
@@ -104,6 +107,8 @@ namespace tid {
             return 0.0;
     }
 
+    level ur::get_level() const {return lvl;}
+
     void ur::reset() {
         if(tid::enable) {
             measured_time   = hresclock::duration::zero();
@@ -159,6 +164,18 @@ namespace tid {
 
     ur &ur::operator[](std::string_view label_) {
         if(label_.find('.') != std::string_view::npos) { throw std::runtime_error("ur error [" + std::string(label_) + "]: label cannot have '.'"); }
-        return *ur_under.insert(std::make_pair(label_, std::make_shared<tid::ur>(label_))).first->second;
+        auto result = ur_under.insert(std::make_pair(label_, std::make_shared<tid::ur>(label_)));
+        auto &ur_sub = *result.first->second;
+        if(result.second) ur_sub.set_level(get_level());
+        return ur_sub;
     }
+
+    ur& ur::insert(std::string_view label_, level l) {
+        if(label_.find('.') != std::string_view::npos) { throw std::runtime_error("ur error [" + std::string(label_) + "]: label cannot have '.'"); }
+        auto result = ur_under.insert(std::make_pair(label_, std::make_shared<tid::ur>(label_)));
+        auto & ur_sub = *result.first->second;
+        if(result.second) ur_sub.set_level(l == level::parent ? get_level() : l);
+        return ur_sub;
+    }
+
 }

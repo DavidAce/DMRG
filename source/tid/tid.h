@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
 namespace tid {
 
 #if defined(TID_DISABLE)
@@ -15,9 +16,26 @@ namespace tid {
 #endif
 
     class ur;
+    using ur_umap_t = std::unordered_map<std::string, std::shared_ptr<tid::ur>> ;
     namespace internal {
         class ur_node_t;
     }
+    enum level : int{
+        parent = -1,
+        normal = 0,
+        detail = 1,
+        pedant = 2,
+    };
+
+    constexpr std::string_view level2sv(level l) noexcept{
+        switch (l){
+            case normal : return "normal";
+            case detail : return "detail";
+            case pedant : return "pedant";
+            case parent : return "parent";
+        }
+    }
+
 
     /*! \brief RAII-style token for tid::ur
      *
@@ -55,10 +73,11 @@ namespace tid {
         size_t                count         = 0;
         bool                  is_measuring  = false;
         std::string           label;
+        level                 lvl = level::normal;
 
         public:
         ur() = default;
-        explicit ur(std::string_view label) noexcept; // Constructor
+        explicit ur(std::string_view label, level l = level::normal) noexcept; // Constructor
         void tic() noexcept;
         void toc() noexcept;
 
@@ -66,7 +85,9 @@ namespace tid {
         void                      set_label(std::string_view label) noexcept;
         void                      set_time(double other_time_in_seconds) noexcept;
         void                      set_count(size_t count) noexcept;
+        void                      set_level(level l) noexcept;
         void                      start_lap() noexcept;
+
         [[nodiscard]] std::string get_label() const noexcept;
         [[nodiscard]] double      get_age() const;
         [[nodiscard]] double      get_time() const;
@@ -75,6 +96,7 @@ namespace tid {
         [[nodiscard]] double      get_last_interval() const;
         [[nodiscard]] double      restart_lap();
         [[nodiscard]] double      get_lap() const;
+        [[nodiscard]] level       get_level() const;
 
         ur &operator=(double other_time_in_seconds) noexcept;
         ur &operator+=(double other_time_in_seconds) noexcept;
@@ -88,19 +110,20 @@ namespace tid {
         friend class token;
         friend class internal::ur_node_t;
 
-        ur &operator[](std::string_view label);
-
-        std::unordered_map<std::string, std::shared_ptr<tid::ur>> ur_under; // For making a tree of ur-objects
+        using ur_umap_t = std::unordered_map<std::string, std::shared_ptr<tid::ur>>;
+        ur_umap_t ur_under; // For making a tree of ur-objects
+        ur & operator[](std::string_view label); // For adding leafs to the tree
+        ur & insert(std::string_view label, level l); // For adding leafs to the tree
     };
 
-    [[nodiscard]] extern ur   &get(std::string_view key);
-    [[nodiscard]] extern ur   &get_unscoped(std::string_view key);
-    [[nodiscard]] extern token tic_token(std::string_view key);
-    [[nodiscard]] extern token tic_scope(std::string_view key);
+    [[nodiscard]] extern ur   &get(std::string_view key, level l = level::parent);
+    [[nodiscard]] extern ur   &get_unscoped(std::string_view key, level l = level::parent);
+    [[nodiscard]] extern token tic_token(std::string_view key, level l = level::parent);
+    [[nodiscard]] extern token tic_scope(std::string_view key, level l = level::parent);
 
     extern void add(std::string_view key, std::string_view label = "");
-    extern void tic(std::string_view key);
-    extern void toc(std::string_view key);
+    extern void tic(std::string_view key, level l = level::parent);
+    extern void toc(std::string_view key, level l = level::parent);
     extern void reset(const std::vector<std::string> &excl = {});
     extern void reset(std::string_view expr);
     extern void set_prefix(std::string_view);

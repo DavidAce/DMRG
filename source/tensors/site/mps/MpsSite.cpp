@@ -258,7 +258,7 @@ void MpsSite::unset_L() {
 }
 
 void MpsSite::fuse_mps(const MpsSite &other) {
-    auto t_fuse = tid::tic_scope("fuse");
+    auto t_fuse = tid::tic_scope("fuse", tid::level::pedant);
     // This operation is done when merging mps after an svd split, for instance
     if(get_position() != other.get_position())
         throw std::runtime_error(
@@ -374,7 +374,7 @@ void MpsSite::drop_stash() const {
 }
 
 void MpsSite::take_stash(const MpsSite &other) {
-    auto t_stash = tid::tic_token("take_stash");
+    auto t_stash = tid::tic_token("take_stash", tid::level::pedant);
     if(other.V_stash and other.V_stash->pos_dst == get_position()) {
         /* Left-to-right move.
          * In this case there is a "V" in "other" that should be absorbed into this site from the left.

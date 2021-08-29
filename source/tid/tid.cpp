@@ -8,8 +8,8 @@ namespace tid {
         const ur *ur_ref_t::operator->() const { return &ref.get(); }
 
         [[nodiscard]] std::string ur_ref_t::str() const {
-            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | count {6}", key, tree_max_key_size,
-                               ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), ref.get().get_tic_count());
+            return fmt::format(FMT_STRING("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | count {6} | level {7}"), key, tree_max_key_size,
+                               ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), ref.get().get_tic_count(), level2sv(ref.get().get_level()));
         }
 
         template<typename T>
@@ -32,13 +32,13 @@ namespace tid {
         template std::deque<std::string_view>  split(std::string_view strv, std::string_view delims);
     }
 
-    ur &get(std::deque<std::string_view> &keys, ur &u) {
+    ur &get(std::deque<std::string_view> &keys, level l, ur &u) {
         if(keys.empty()) return u;
-        auto &u_sub = u[keys[0]];
+        auto &u_sub = u.insert(keys[0], l);
         keys.pop_front();
-        return get(keys, u_sub);
+        return get(keys,l, u_sub);
     }
-    ur &get(std::string_view key) {
+    ur &get(std::string_view key, level l) {
         std::string parsed_key(key);
         std::string prefix_key = internal::ur_prefix;
         // Use prepended '.' to go to parent scope
@@ -59,23 +59,28 @@ namespace tid {
         // If the element does not exist we insert it here
         if(prefix_key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", prefix_key));
         auto  sp       = tid::internal::split<std::deque<std::string_view>>(prefix_key, ".");
-        auto &ur_found = tid::internal::tid_db.insert(std::make_pair(sp[0], tid::ur(sp[0]))).first->second;
+        auto result = tid::internal::tid_db.insert(std::make_pair(sp[0], tid::ur(sp[0])));
+        auto &ur_found = result.first->second;
+        if(result.second and l != level::parent) ur_found.set_level(l);
         sp.pop_front();
-        return get(sp, ur_found);
+        return get(sp,l, ur_found);
     }
 
-    ur &get_unscoped(std::string_view key) {
+    ur &get_unscoped(std::string_view key, level l) {
         if(key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", key));
-        return internal::tid_db.insert(std::make_pair(key, tid::ur(key))).first->second;
+        auto result = internal::tid_db.insert(std::make_pair(key, tid::ur(key)));
+        auto & ur = result.first->second;
+        if(result.second and l != level::parent)  ur.set_level(l); // Set the level on creation only
+        return ur;
     }
 
-    token tic_token(std::string_view key) { return tid::get(key).tic_token(); }
+    token tic_token(std::string_view key, level l) { return tid::get(key, l).tic_token(); }
 
-    token tic_scope(std::string_view key) { return tid::get(key).tic_token(key); }
+    token tic_scope(std::string_view key, level l) { return tid::get(key, l).tic_token(key); }
 
-    void tic(std::string_view key) { get(key).tic(); }
+    void tic(std::string_view key, level l) { get(key, l).tic(); }
 
-    void toc(std::string_view key) { get(key).toc(); }
+    void toc(std::string_view key, level l) { get(key, l).toc(); }
 
     void reset(std::string_view expr) {
         for(auto &[key, ur] : tid::internal::tid_db) {
@@ -104,7 +109,6 @@ namespace tid {
         std::vector<internal::ur_ref_t> tree = {internal::ur_ref_t{key, u, 0.0, 1.0}};
         for(const auto &un : u.ur_under) {
             tree.front().sum += un.second->get_time(); // Add up times under
-
             for(const auto &t : get_tree(*un.second, key)) {
 //                if(un.second->get_time() == 0) {
 //                    // If the intermediate node did not measure time, add the times under it instead

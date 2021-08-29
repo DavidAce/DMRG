@@ -14,8 +14,9 @@ void tools::common::profile::print_profiling(const AlgorithmStatus &status) {
         auto          t_tot           = tid::get_unscoped("t_tot");
         if(std::abs(t_tot.get_time() - last_print_time) < 5.0) return; // Do not print if there's already been a print within the last 5 seconds
 
-        for(const auto &t : tid::get_tree(status.algo_type_sv())) tools::log->info("{}", t.str());
-
+        for(const auto &t : tid::get_tree(status.algo_type_sv())) {
+            if(t->get_level() <= tid::level::normal) tools::log->info("{}", t.str());
+        }
         last_print_time = t_tot.get_time();
     }
 }
@@ -26,7 +27,8 @@ void tools::common::profile::print_profiling() {
         auto          t_tot           = tid::get_unscoped("t_tot");
         if(std::abs(t_tot.get_time() - last_print_time) < 5.0) return; // Do not print if there's already been a print within the last 5 seconds
 
-        for(const auto &t : tid::get_tree()) tools::log->info("{}", t.str());
+        for(const auto &t : tid::get_tree())
+            if(t->get_level() <= tid::level::normal) tools::log->info("{}", t.str());
 
         last_print_time = t_tot.get_time();
     }
