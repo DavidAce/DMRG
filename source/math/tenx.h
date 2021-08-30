@@ -121,9 +121,16 @@ namespace tenx {
         return diagonals;
     }
 
-    template<typename Scalar>
-    Eigen::Tensor<Scalar, 2> asDiagonal(const Eigen::Tensor<Scalar, 1> &tensor) {
-        return tensor.inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto asDiagonal(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        auto tensor         = tenx::asEval(expr, device);
+        using Scalar        = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
+        using DimType       = typename decltype(tensor)::Dimensions::Base;
+        constexpr auto rank = DimType{}.size(); // Because T::Dimensions is sometimes wrong
+        using TensorType    = typename Eigen::Tensor<Scalar, rank>;
+        auto tensorMap      = Eigen::TensorMap<TensorType>(tensor.data(), tensor.dimensions());
+        auto size           = tensorMap.size();
+        return static_cast<Eigen::Tensor<Scalar,2>>(tensorMap.inflate(array1{size + 1}).reshape(array2{size, size}));
     }
 
     template<typename Scalar>
@@ -364,31 +371,31 @@ namespace tenx {
     //******************************************************//
 
     template<typename Derived>
-    bool isReal(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] std::string_view name = "", double threshold = 1e-14) {
+    bool isReal(const Eigen::EigenBase<Derived> &obj, double threshold = 1e-14) {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
-            return imag_sum < threshold;
+            return imag_sum < threshold * obj.derived().size();
         } else {
             return true;
         }
     }
 
     template<typename Scalar, auto rank>
-    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, std::string_view name = "", double threshold = 1e-14) {
+    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = 1e-14) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
-        return isReal(vector, name, threshold);
+        return isReal(vector, threshold);
     }
 
     template<typename Derived>
-    bool hasNaN(const Eigen::EigenBase<Derived> &obj, [[maybe_unused]] std::string_view name = "") {
+    bool hasNaN(const Eigen::EigenBase<Derived> &obj) {
         return obj.derived().hasNaN();
     }
 
     template<typename Scalar, auto rank>
-    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor, std::string_view name = "") {
+    bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
-        return hasNaN(vector, name);
+        return hasNaN(vector);
     }
 
     template<typename Derived>
