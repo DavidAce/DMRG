@@ -75,14 +75,14 @@ Eigen::Tensor<Scalar, 4> MpoSite::MPO2_nbody_view(const std::vector<size_t> &nbo
     return mpo1.contract(mpo1, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{dim0, dim1, dim2, dim3});
 }
 
-bool MpoSite::is_real() const { return tenx::isReal(MPO(), "MPO"); }
+bool MpoSite::is_real() const { return tenx::isReal(MPO()); }
 
 bool MpoSite::has_nan() const {
     for(auto &param : get_parameters()) {
         if(param.second.type() == typeid(double))
             if(std::isnan(std::any_cast<double>(param.second))) { return true; }
     }
-    return (tenx::hasNaN(mpo_internal, "MPO"));
+    return (tenx::hasNaN(mpo_internal));
 }
 
 void MpoSite::assert_validity() const {
@@ -93,11 +93,11 @@ void MpoSite::assert_validity() const {
                 print_parameter_values();
                 throw std::runtime_error(fmt::format("Param [{}] = {}", param.first, std::any_cast<double>(param.second)));
             }
-    if(tenx::hasNaN(mpo_internal, "MPO")) throw std::runtime_error(fmt::format("MPO has NAN on position {}", get_position()));
-    if(not tenx::isReal(mpo_internal, "MPO")) throw std::runtime_error(fmt::format("MPO has IMAG on position {}", get_position()));
+    if(tenx::hasNaN(mpo_internal)) throw std::runtime_error(fmt::format("MPO has NAN on position {}", get_position()));
+    if(not tenx::isReal(mpo_internal)) throw std::runtime_error(fmt::format("MPO has IMAG on position {}", get_position()));
     if(mpo_squared) {
-        if(tenx::hasNaN(mpo_squared.value(), "MPO2")) throw std::runtime_error(fmt::format("MPO2 squared has NAN on position {}", get_position()));
-        if(not tenx::isReal(mpo_squared.value(), "MPO2")) throw std::runtime_error(fmt::format("MPO2 squared has IMAG on position {}", get_position()));
+        if(tenx::hasNaN(mpo_squared.value())) throw std::runtime_error(fmt::format("MPO2 squared has NAN on position {}", get_position()));
+        if(not tenx::isReal(mpo_squared.value())) throw std::runtime_error(fmt::format("MPO2 squared has IMAG on position {}", get_position()));
     }
 }
 

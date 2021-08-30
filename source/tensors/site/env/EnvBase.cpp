@@ -189,7 +189,7 @@ bool EnvBase::has_block() const { return block != nullptr and block->size() != 0
 
 void EnvBase::assert_validity() const {
     assert_block();
-    if(tenx::hasNaN(*block, fmt::format("env {} {}", tag, side))) {
+    if(tenx::hasNaN(*block)) {
         throw std::runtime_error(fmt::format("Environment {} side {} at position {} has NAN's", tag, side, get_position()));
     }
 }
@@ -214,12 +214,12 @@ void EnvBase::assert_unique_id(const EnvBase &env, const MpsSite &mps, const Mpo
 
 bool EnvBase::is_real() const {
     assert_block();
-    return tenx::isReal(*block, fmt::format("env {} {}", tag, side));
+    return tenx::isReal(*block);
 }
 
 bool EnvBase::has_nan() const {
     assert_block();
-    return tenx::hasNaN(*block, fmt::format("env {} {}", tag, side));
+    return tenx::hasNaN(*block);
 }
 
 size_t EnvBase::get_position() const {
