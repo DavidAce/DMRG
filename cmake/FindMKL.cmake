@@ -421,7 +421,7 @@ list(LENGTH MKL_TARGETS MKL_TARGETS_NUM)
 if(MKL_TARGETS_NUM EQUAL 1)
     add_library(mkl::mkl INTERFACE IMPORTED)
     target_link_libraries(mkl::mkl INTERFACE ${MKL_TARGETS})
-
+    target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE)
     if(blas IN_LIST MKL_FIND_COMPONENTS)
         add_library(BLAS::BLAS INTERFACE IMPORTED)
         target_link_libraries(BLAS::BLAS INTERFACE ${MKL_TARGETS})
