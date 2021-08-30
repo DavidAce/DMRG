@@ -6,11 +6,11 @@
 #include <qm/qm.h>
 
 using namespace qm;
-using Scalar = std::complex<double>;
+using cplx = std::complex<double>;
 
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
-Eigen::Tensor<Scalar, 4> MpoSite::get_non_compressed_mpo_squared() const {
+Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
@@ -29,7 +29,7 @@ void MpoSite::build_mpo_squared() {
     }
 }
 
-void MpoSite::set_mpo_squared(const Eigen::Tensor<Scalar, 4> &mpo_sq) {
+void MpoSite::set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq) {
     mpo_squared  = mpo_sq;
     unique_id_sq = std::nullopt;
 }
@@ -41,7 +41,7 @@ void MpoSite::clear_mpo_squared() {
 
 bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
-const Eigen::Tensor<Scalar, 4> &MpoSite::MPO() const {
+const Eigen::Tensor<cplx, 4> &MpoSite::MPO() const {
     if(all_mpo_parameters_have_been_set) {
         return mpo_internal;
     } else {
@@ -49,14 +49,14 @@ const Eigen::Tensor<Scalar, 4> &MpoSite::MPO() const {
     }
 }
 
-const Eigen::Tensor<Scalar, 4> &MpoSite::MPO2() const {
+const Eigen::Tensor<cplx, 4> &MpoSite::MPO2() const {
     if(mpo_squared and all_mpo_parameters_have_been_set)
         return mpo_squared.value();
     else
         throw std::runtime_error("MPO squared has not been set.");
 }
 
-Eigen::Tensor<Scalar, 4> &MpoSite::MPO2() {
+Eigen::Tensor<cplx, 4> &MpoSite::MPO2() {
     if(mpo_squared and all_mpo_parameters_have_been_set)
         return mpo_squared.value();
     else {
@@ -65,7 +65,7 @@ Eigen::Tensor<Scalar, 4> &MpoSite::MPO2() {
     }
 }
 
-Eigen::Tensor<Scalar, 4> MpoSite::MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const {
+Eigen::Tensor<cplx, 4> MpoSite::MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const {
     if(nbody_terms.empty()) return MPO2();
     auto mpo1 = MPO_nbody_view(nbody_terms);
     auto dim0 = mpo1.dimension(0) * mpo1.dimension(0);
@@ -218,7 +218,7 @@ void MpoSite::load_mpo(const h5pp::File &file, std::string_view mpo_prefix) {
         }
         set_parameters(map);
         build_mpo();
-        if(tenx::VectorMap(MPO()) != tenx::VectorCast(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
+        if(tenx::VectorMap(MPO()) != tenx::VectorCast(file.readDataset<Eigen::Tensor<cplx, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     } else {
         throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));
