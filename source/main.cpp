@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
 #if defined(EIGEN_USE_THREADS)
     if(settings::threading::stl_threads <= 0) { settings::threading::stl_threads = (int) std::thread::hardware_concurrency(); }
     tenx::omp::setNumThreads(settings::threading::stl_threads);
-    tools::log->info("Using Eigen Tensor with {} C++11 threads", tenx::omp::num_threads);
+    tools::log->info("Eigen3 Tensor | stl threads {}", tenx::omp::num_threads);
 #else
     if(settings::threading::stl_threads > 1)
         tools::log->warn("EIGEN_USE_THREADS is not defined: "
@@ -166,9 +166,9 @@ int main(int argc, char *argv[]) {
 #if defined(_OPENMP)
     if(settings::threading::omp_threads <= 0) { settings::threading::omp_threads = (int) std::thread::hardware_concurrency(); }
     omp_set_num_threads(settings::threading::omp_threads); // Should only need this. Both Eigen (non-Tensor) and MKL listen to this
-                                                           //    omp_set_max_active_levels(1);
-    tools::log->info("Using OpenMP with {} threads and {} active levels", omp_get_max_threads(), omp_get_max_active_levels());
+    tools::log->info("OpenMP | threads {} | max active levels {}", omp_get_max_threads(), omp_get_max_active_levels());
 #endif
+
 #if defined(OPENBLAS_AVAILABLE)
     auto        openblas_parallel_mode = openblas_get_parallel();
     std::string openblas_parallel_str;
@@ -176,11 +176,20 @@ int main(int argc, char *argv[]) {
     if(openblas_parallel_mode == 1) openblas_parallel_str = "threads";
     if(openblas_parallel_mode == 2) openblas_parallel_str = "openmp";
     if(openblas_parallel_mode == 1) openblas_set_num_threads(settings::threading::omp_threads); // Use the omp_threads level for blas-related threading
-    tools::log->info("{} compiled with parallel mode [{}] for target {} with config {} | multithread threshold {} | running with {} threads", OPENBLAS_VERSION,
-                     openblas_parallel_str, openblas_get_corename(), openblas_get_config(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, openblas_get_num_threads());
+    tools::log->info("{} threads {} | parallel mode [{}:{}] | core type {} | config {} | multithread threshold {}", OPENBLAS_VERSION,
+                     openblas_get_num_threads(), openblas_parallel_mode, openblas_parallel_str, openblas_get_corename(), openblas_get_config(),
+                     OPENBLAS_GEMM_MULTITHREAD_THRESHOLD);
 #endif
 #if defined(MKL_AVAILABLE)
-    tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
+    tools::log->info("Intel MKL | threads {}", mkl_get_max_threads());
+#endif
+
+#if defined(EIGEN_USE_MKL_ALL)
+    tools::log->info("Eigen3 | threads {} | EIGEN_USE_MKL_ALL", Eigen::nbThreads());
+#elif defined(EIGEN_USE_BLAS)
+    tools::log->info("Eigen3 | threads {} | EIGEN_USE_BLAS", Eigen::nbThreads());
+#else
+    tools::log->info("Eigen3 | threads {} | No BLAS backend", Eigen::nbThreads());
 #endif
 
     // Initialize the algorithm class
