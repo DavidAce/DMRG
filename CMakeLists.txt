@@ -78,7 +78,8 @@ target_include_directories(dmrg-flags INTERFACE source)
 target_compile_options(dmrg-flags INTERFACE -fdiagnostics-color=always)
 target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g ${MARCH} ${MTUNE}>)
-target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion -fstandalone-debug >)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)
 ##############################
@@ -89,7 +90,7 @@ target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 ################################
 ###  Enable build profiling  ###
 ################################
-if (DMRG_PROFILE_BUILD)
+if (DMRG_PROFILE_BUILD AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(dmrg-flags INTERFACE -ftime-trace)
 endif ()
 
