@@ -1,5 +1,7 @@
 #pragma once
 #include <fmt/core.h>
+#include <optional>
+#include <string>
 namespace svd {
     struct settings {
         std::optional<double> threshold   = std::nullopt;
