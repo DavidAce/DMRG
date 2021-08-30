@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <optional>
 
 namespace tid {
 
@@ -33,6 +34,7 @@ namespace tid {
             case detail : return "detail";
             case pedant : return "pedant";
             case parent : return "parent";
+            default: return "unknown";
         }
     }
 
@@ -116,7 +118,7 @@ namespace tid {
         ur & insert(std::string_view label, level l); // For adding leafs to the tree
     };
 
-    [[nodiscard]] extern ur   &get(std::string_view key, level l = level::parent);
+    [[nodiscard]] extern ur   &get(std::string_view key, level l = level::parent, std::optional<std::string_view> prefix = std::nullopt);
     [[nodiscard]] extern ur   &get_unscoped(std::string_view key, level l = level::parent);
     [[nodiscard]] extern token tic_token(std::string_view key, level l = level::parent);
     [[nodiscard]] extern token tic_scope(std::string_view key, level l = level::parent);

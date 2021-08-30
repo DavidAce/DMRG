@@ -38,9 +38,13 @@ namespace tid {
         keys.pop_front();
         return get(keys,l, u_sub);
     }
-    ur &get(std::string_view key, level l) {
+    ur &get(std::string_view key, level l, std::optional<std::string_view> prefix) {
         std::string parsed_key(key);
-        std::string prefix_key = internal::ur_prefix;
+        std::string prefix_key;
+        if (prefix) prefix_key = std::string(prefix.value());
+        else  prefix_key = internal::ur_prefix;
+
+
         // Use prepended '.' to go to parent scope
         while(true) {
             auto pos_dd = parsed_key.rfind('.', 0);
@@ -67,11 +71,14 @@ namespace tid {
     }
 
     ur &get_unscoped(std::string_view key, level l) {
-        if(key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", key));
-        auto result = internal::tid_db.insert(std::make_pair(key, tid::ur(key)));
-        auto & ur = result.first->second;
-        if(result.second and l != level::parent)  ur.set_level(l); // Set the level on creation only
-        return ur;
+        return get(key,l,"");
+
+//        if(key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", key));
+//        auto result = internal::tid_db.insert(std::make_pair(key, tid::ur(key)));
+//        auto & ur = result.first->second;
+//        if(result.second and l != level::parent)  ur.set_level(l); // Set the level on creation only
+//        return ur;
+
     }
 
     token tic_token(std::string_view key, level l) { return tid::get(key, l).tic_token(); }
