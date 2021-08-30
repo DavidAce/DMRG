@@ -27,6 +27,10 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                 OPTIONS arpack-ng:blas_libraries=${BLAS_LIBRARIES}
                 OPTIONS arpack-ng:lapack_libraries=${BLAS_LIBRARIES}
                 )
+    else()
+        if(NOT OPENBLAS_DYNAMIC_ARCH)
+            list(APPEND DMRG_CONAN_OPTIONS OPTIONS openblas:dynamic_arch=False)
+        endif()
     endif()
 
     unset(CONAN_BUILD_INFO)
@@ -183,6 +187,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     add_library(Ceres::ceres        ALIAS CONAN_PKG::ceres-solver)
     add_library(unwind::unwind      ALIAS CONAN_PKG::libunwind)
     if(TARGET CONAN_PKG::openblas)
+        target_compile_definitions(CONAN_PKG::openblas INTERFACE OPENBLAS_AVAILABLE)
         add_library(OpenBLAS::OpenBLAS  ALIAS CONAN_PKG::openblas)
         #For convenience, define these targes
         add_library(BLAS::BLAS ALIAS CONAN_PKG::openblas)

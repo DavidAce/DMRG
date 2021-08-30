@@ -5,7 +5,7 @@
 [requires]
 ceres-solver/2.0.0@
 glog/0.5.0@
-h5pp/1.9.0@davidace/dev
+h5pp/1.9.1@davidace/dev
 fmt/8.0.1@
 spdlog/1.9.2@
 eigen/3.4.0@
@@ -19,7 +19,7 @@ cmake
 [options]
 arpack-ng:openblas_version=0.3.17
 openblas:build_lapack=True
-openblas:dynamic_arch=False
+openblas:dynamic_arch=True
 ceres-solver:use_glog=True
 ceres-solver:use_gflags=True
 

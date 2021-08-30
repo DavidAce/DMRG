@@ -5,12 +5,12 @@ if(INIT_CACHE_FILE)
 endif()
 include(GNUInstallDirs)
 include(ExternalProject)
-if(NOT TARGET)
-    set(TARGET GENERIC)
+
+if(NOT DEFINED TARGET)
+    set(TARGET HASWELL)
 endif()
-if(NOT DEFINED DYNAMIC_ARCH)
-    set(DYNAMIC_ARCH OFF)
-endif()
+
+option(DYNAMIC_ARCH "" ON)
 
 
 ExternalProject_Add(external_OpenBLAS
