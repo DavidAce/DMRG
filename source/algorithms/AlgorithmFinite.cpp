@@ -310,14 +310,14 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
+    tools::log->info("-- State labels             : {}", tensors.state->get_labels());
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
     tools::log->info("-- Energy density           : {}",
                      tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
-    tools::log->info("-- State labels             : {}", tensors.state->get_labels());
+    if(status.algo_type != AlgorithmType::fLBIT) tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
 }
 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
@@ -681,9 +681,9 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");
 
-    tools::log->info("Mem RSS                            = {:<.1f} MB",  tools::common::profile::mem_rss_in_mb());
-    tools::log->info("Mem Peak                           = {:<.1f} MB",  tools::common::profile::mem_hwm_in_mb());
-    tools::log->info("Mem VM                             = {:<.1f} MB",  tools::common::profile::mem_vm_in_mb());
+    tools::log->info("Mem RSS                            = {:<.1f} MB", tools::common::profile::mem_rss_in_mb());
+    tools::log->info("Mem Peak                           = {:<.1f} MB", tools::common::profile::mem_hwm_in_mb());
+    tools::log->info("Mem VM                             = {:<.1f} MB", tools::common::profile::mem_vm_in_mb());
     tools::log->info("Stop reason                        = {}", status.algo_stop_sv());
     tools::log->info("Sites                              = {}", tensors.get_length());
     tools::log->info("Position                           = {}", status.position);
@@ -697,8 +697,10 @@ void AlgorithmFinite::print_status_full() {
     if(status.algo_type == AlgorithmType::xDMRG)
         tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                          tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
-    tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
+    if (status.algo_type != AlgorithmType::fLBIT) {
+        double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
+        tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
+    }
     tools::log->info("Bond dimension maximum χmax        = {}", settings::chi_lim_max(status.algo_type));
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
@@ -715,8 +717,10 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);
     tools::log->info("Algorithm has converged for        = {:<}", status.algorithm_converged_for);
 
-    tools::log->info("σ²                                 = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for,
-                     status.variance_mpo_saturated_for);
+    if(status.algo_type != AlgorithmType::fLBIT){
+        tools::log->info("σ²                                 = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for,
+                         status.variance_mpo_saturated_for);
+    }
     tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
                      status.entanglement_saturated_for);
     tools::log->info("{:=^60}", "");

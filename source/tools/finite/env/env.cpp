@@ -267,6 +267,8 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
 }
 
 void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+    if(state.get_algorithm() == AlgorithmType::fLBIT)
+        throw std::logic_error(fmt::format("assert_edges_var: fLBIT algorithm should never assert variance edges!"));
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
@@ -303,6 +305,7 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
 
 void tools::finite::env::assert_edges(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
     assert_edges_ene(state, model, edges);
+    if(state.get_algorithm() == AlgorithmType::fLBIT) return;
     assert_edges_var(state, model, edges);
 }
 

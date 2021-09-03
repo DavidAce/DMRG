@@ -480,7 +480,6 @@ class h5pp_table_algorithm_status {
             H5Tenum_insert(h5_algo_type, "iTEBD", (val = 3, &val));
             H5Tenum_insert(h5_algo_type, "flBIT", (val = 4, &val));
             H5Tenum_insert(h5_algo_type, "ANY", (val = 5, &val));
-            H5Tlock(h5_algo_type);
         }
         if(not h5_algo_stop.valid()) {
             h5_algo_stop = H5Tcreate(H5T_ENUM, sizeof(AlgorithmStop));
@@ -491,7 +490,6 @@ class h5pp_table_algorithm_status {
             H5Tenum_insert(h5_algo_stop, "MAX_RESET", (val = 3, &val));
             H5Tenum_insert(h5_algo_stop, "RANDOMIZE", (val = 4, &val));
             H5Tenum_insert(h5_algo_stop, "NONE", (val = 5, &val));
-            H5Tlock(h5_algo_stop);
         }
 
         /* clang-format off */
@@ -539,7 +537,6 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max),H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
-        H5Tlock(h5_type);
         /* clang-format on */
     }
 };

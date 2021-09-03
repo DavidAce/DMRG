@@ -463,7 +463,6 @@ void flbit::transform_to_lbit_basis() {
 
 void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
     AlgorithmFinite::write_to_file(storage_reason, *tensors.state, *tensors.model, *tensors.edges, copy_file);
-
     // Save the unitaries once
     if(storage_reason == StorageReason::MODEL) {
         auto        t_h5      = tid::tic_scope("h5");
