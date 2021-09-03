@@ -680,6 +680,10 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");
+
+    tools::log->info("Mem RSS                            = {:<.1f} MB",  tools::common::profile::mem_rss_in_mb());
+    tools::log->info("Mem Peak                           = {:<.1f} MB",  tools::common::profile::mem_hwm_in_mb());
+    tools::log->info("Mem VM                             = {:<.1f} MB",  tools::common::profile::mem_vm_in_mb());
     tools::log->info("Stop reason                        = {}", status.algo_stop_sv());
     tools::log->info("Sites                              = {}", tensors.get_length());
     tools::log->info("Position                           = {}", status.position);
