@@ -63,6 +63,10 @@ class MpsSite {
     template<typename T = size_t>
     [[nodiscard]] T get_position() const;
 
+    template<typename T>
+    [[nodiscard]] bool is_at_position(T pos) const;
+
+
     void set_M(const Eigen::Tensor<cplx, 3> &M_);
     void set_L(const Eigen::Tensor<cplx, 1> &L_, double error = 0);
     void set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error);

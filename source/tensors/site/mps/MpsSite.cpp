@@ -3,6 +3,7 @@
 #include "MpsSite.h"
 #include <config/debug.h>
 #include <math/hash.h>
+#include <math/num.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
 #include <utility>
@@ -176,8 +177,20 @@ T MpsSite::get_position() const {
         throw std::runtime_error("MpsSite::get_position(): Position hasn't been set on mps site.");
     }
 }
+
 template size_t MpsSite::get_position<size_t>() const;
 template long   MpsSite::get_position<long>() const;
+
+template<typename T>
+[[nodiscard]] bool MpsSite::is_at_position(T pos) const {
+    return num::cmp_equal(get_position(), pos);
+}
+
+template bool MpsSite::is_at_position(size_t pos) const;
+template bool MpsSite::is_at_position(unsigned pos) const;
+template bool MpsSite::is_at_position(long pos) const;
+template bool MpsSite::is_at_position(int pos) const;
+
 
 void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, double error, std::string_view label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.

@@ -7,8 +7,6 @@
 #include <optional>
 #include <tensors/site/mps/MpsSite.h>
 #include <tid/tid.h>
-//
-#include <h5pp/h5pp.h>
 
 template<typename Scalar>
 std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
@@ -102,7 +100,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      */
     if constexpr(std::is_same_v<Scalar, cplx>) {
         if(tenx::isReal(multisite_tensor)) {
-            tools::log->info("Converting to real!");
+            tools::log->debug("Converting to real!");
             return split_mps<real>(multisite_tensor.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
         }
     }
@@ -114,21 +112,6 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         throw std::runtime_error(fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                              spin_dims, positions));
     if(chi_limit <= 0) throw std::runtime_error(fmt::format("Invalid bond dimension limit:  chi_limit = {}", chi_limit));
-
-    h5pp::File  h5file("../output/svd-benchmark.h5", h5pp::FilePermission::READWRITE);
-    size_t      multisite_tensor_count = 0;
-    std::string multisite_tensor_name;
-
-    while(true){
-        multisite_tensor_name = fmt::format("multisite_tensor_{}", multisite_tensor_count);
-        if(not h5file.linkExists(multisite_tensor_name)) break;
-        multisite_tensor_count++;
-    }
-    h5file.writeDataset(multisite_tensor, multisite_tensor_name, H5D_CHUNKED );
-    h5file.writeAttribute(spin_dims, "spin_dims", multisite_tensor_name);
-    h5file.writeAttribute(positions, "positions", multisite_tensor_name);
-    h5file.writeAttribute(center_position, "center_position", multisite_tensor_name);
-    h5file.writeAttribute(chi_limit, "chi_limit", multisite_tensor_name);
 
     auto t_split = tid::tic_scope("split", tid::level::detail);
     // Setup the svd settings if not given explicitly
@@ -149,7 +132,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     auto pos_it = positions.begin();
     auto dim_it = spin_dims.begin();
     while(pos_it != positions.end() and dim_it != spin_dims.end()) {
-        if(static_cast<long>(*pos_it) <= center_position) {
+        if(num::cmp_less_equal(*pos_it, center_position)) {
             positions_left.emplace_back(*pos_it);
             spin_dims_left.emplace_back(*dim_it);
             dL *= *dim_it;
@@ -274,17 +257,37 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     // Move the right side onto the left side (This is equivalent to std::list::splice)
     mps_sites_As.insert(mps_sites_As.end(), std::make_move_iterator(mps_sites_Bs.begin()), std::make_move_iterator(mps_sites_Bs.end()));
 
-    for(const auto &[idx, mps] : iter::enumerate(mps_sites_As)) {
+    for(const auto &&[idx, mps] : iter::enumerate(mps_sites_As)) {
         auto pos = positions[idx];
-        if(pos != mps.get_position())
+        if(not mps.is_at_position(pos)) {
             throw std::runtime_error(fmt::format("Could not split multisite tensor: Position mismatch: expected site {} != mps pos {} | positions to merge {}",
                                                  pos, mps.get_position(), positions));
-        if(mps.get_position<long>() == center_position and not mps.isCenter())
+        }
+        if(mps.is_at_position(center_position) and not mps.isCenter()) {
             throw std::runtime_error(
-                fmt::format("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position<long>()));
+                fmt::format("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position()));
+        }
     }
 
-    h5file.writeAttribute(t_split->get_last_interval(), "t_split", multisite_tensor_name);
+    //    if constexpr(std::is_same_v<Scalar,cplx>){
+    //        if(multisite_tensor.size() > 131072){
+    //            h5pp::File  h5file("../output/svd-benchmark.h5", h5pp::FilePermission::READWRITE);
+    //            size_t      multisite_tensor_count = 0;
+    //            std::string multisite_tensor_name;
+    //
+    //            while(true){
+    //                multisite_tensor_name = fmt::format("multisite_tensor_{}", multisite_tensor_count);
+    //                if(not h5file.linkExists(multisite_tensor_name)) break;
+    //                multisite_tensor_count++;
+    //            }
+    //            h5file.writeDataset(multisite_tensor, multisite_tensor_name, H5D_CHUNKED );
+    //            h5file.writeAttribute(spin_dims, "spin_dims", multisite_tensor_name);
+    //            h5file.writeAttribute(positions, "positions", multisite_tensor_name);
+    //            h5file.writeAttribute(center_position, "center_position", multisite_tensor_name);
+    //            h5file.writeAttribute(chi_limit, "chi_limit", multisite_tensor_name);
+    //            h5file.writeAttribute(t_split->get_last_interval(), "t_split", multisite_tensor_name);
+    //        }
+    //    }
 
     // Return the all the positions including the bond matrix
     return mps_sites_As;

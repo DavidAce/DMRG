@@ -13,6 +13,83 @@
  */
 
 namespace num {
+#if defined(NDEBUG)
+    static constexpr bool ndebug = true;
+#else
+    static constexpr bool ndebug = false;
+#endif
+    namespace internal {
+        template<typename T>
+        struct is_reference_wrapper : std::false_type {};
+
+        template<typename T>
+        struct is_reference_wrapper<std::reference_wrapper<T>> : std::true_type {};
+
+        template<typename T>
+        inline constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
+    }
+
+    // Safe integer comparison functions from C++20
+
+    template<class T, class U>
+    constexpr bool cmp_equal(T t, U u) noexcept {
+        if constexpr(internal::is_reference_wrapper_v<T>)
+            return cmp_equal(t.get(), u);
+        else if constexpr(internal::is_reference_wrapper_v<U>)
+            return cmp_equal(t, u.get());
+        else if constexpr(std::is_floating_point_v<T> or std::is_floating_point_v<U>)
+            return t == u;
+        else {
+            using UT = std::make_unsigned_t<T>;
+            using UU = std::make_unsigned_t<U>;
+            if constexpr(std::is_signed_v<T> == std::is_signed_v<U>)
+                return t == u;
+            else if constexpr(std::is_signed_v<T>)
+                return t < 0 ? false : UT(t) == u;
+            else
+                return u < 0 ? false : t == UU(u);
+        }
+    }
+
+    template<class T, class U>
+    constexpr bool cmp_not_equal(T t, U u) noexcept {
+        return !cmp_equal(t, u);
+    }
+
+    template<class T, class U>
+    constexpr bool cmp_less(T t, U u) noexcept {
+        if constexpr(internal::is_reference_wrapper_v<T>)
+            return cmp_less(t.get(), u);
+        else if constexpr(internal::is_reference_wrapper_v<U>)
+            return cmp_less(t, u.get());
+        else if constexpr(std::is_floating_point_v<T> or std::is_floating_point_v<U>)
+            return t < u;
+        else {
+            using UT = std::make_unsigned_t<T>;
+            using UU = std::make_unsigned_t<U>;
+            if constexpr(std::is_signed_v<T> == std::is_signed_v<U>)
+                return t < u;
+            else if constexpr(std::is_signed_v<T>)
+                return t < 0 ? true : UT(t) < u;
+            else
+                return u < 0 ? false : t < UU(u);
+        }
+    }
+
+    template<class T, class U>
+    constexpr bool cmp_greater(T t, U u) noexcept {
+        return cmp_less(u, t);
+    }
+
+    template<class T, class U>
+    constexpr bool cmp_less_equal(T t, U u) noexcept {
+        return !cmp_greater(t, u);
+    }
+
+    template<class T, class U>
+    constexpr bool cmp_greater_equal(T t, U u) noexcept {
+        return !cmp_less(t, u);
+    }
 
     /*! \brief MatLab-style modulo operator
      *   \param x first number
@@ -22,7 +99,8 @@ namespace num {
      */
     template<typename T>
     inline T mod(const T x, const T y) {
-        if(y == 0) throw std::runtime_error("num::mod(x,y): divisor y == 0");
+        if constexpr(!ndebug)
+            if(y == 0) throw("num::mod(x,y): divisor y == 0");
         if constexpr(std::is_integral_v<T>)
             return (x % y + y) % y;
         else
@@ -30,7 +108,7 @@ namespace num {
     }
 
     template<typename T>
-    bool between(const T &value, const T &low, const T &high) {
+    bool between(const T &value, const T &low, const T &high) noexcept {
         return value >= low and value <= high;
     }
 
@@ -46,13 +124,13 @@ namespace num {
     std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
         if constexpr(std::is_signed_v<T3>) {
-            if(static_cast<T3>(first) > static_cast<T3>(last) and step > 0) return range<T>(first, last, -step);
-            if(static_cast<T3>(first) < static_cast<T3>(last) and step < 0) return range<T>(first, last, -step);
+            if(cmp_greater(first, last) and step > 0) return range<T>(first, last, -step);
+            if(cmp_less(first, last) and step < 0) return range<T>(first, last, -step);
         } else {
-            if(static_cast<T3>(first) > static_cast<T3>(last)) throw std::runtime_error("Range of unsigned step type cannot have first > last");
+            if(cmp_greater(first, last)) throw std::runtime_error("Range of unsigned step type cannot have first > last");
         }
-        if(static_cast<T3>(first) == static_cast<T3>(last)) return {};
-        if(static_cast<T3>(first) + step == static_cast<T3>(last)) return std::vector<T>{static_cast<T>(first)};
+        if(cmp_equal(first, last)) return {};
+        if(cmp_equal(static_cast<T3>(first) + step, last)) return std::vector<T>{static_cast<T>(first)};
 
         auto num_steps = static_cast<size_t>(
             std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
@@ -60,7 +138,7 @@ namespace num {
 
         std::vector<T> vec;
         vec.reserve(num_steps);
-        for(T3 current = static_cast<T3>(first); current < static_cast<T3>(last); current += step) vec.emplace_back(current);
+        for(T3 current = static_cast<T3>(first); cmp_less(current, last); current += step) vec.emplace_back(current);
         return vec;
     }
 
@@ -113,7 +191,7 @@ namespace num {
      *   \return bool, true if all args are equal
      */
     template<typename First, typename... T>
-    bool all_equal(First &&first, T &&...t) {
+    bool all_equal(First &&first, T &&...t) noexcept {
         return ((first == t) && ...);
     }
 
@@ -121,5 +199,4 @@ namespace num {
     R next_power_of_two(T val) {
         return static_cast<R>(std::pow<long>(2, static_cast<long>(std::ceil(std::log2(std::real(val))))));
     }
-
 }

@@ -4,6 +4,7 @@
 #include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
+#include <math/num.h>
 #include <math/tenx.h>
 #include <tensors/model/ModelFinite.h>
 #include <tensors/site/mpo/MpoSite.h>
@@ -104,9 +105,9 @@ namespace tools::finite::h5 {
                 mps->set_mps(M, L, error, label);
                 tools::log->trace("Loaded mps: {}({})", mps->get_label(), mps->get_position());
                 // Sanity checks
-                if(static_cast<long>(pos) == position and not mps->isCenter())
+                if(num::cmp_equal(pos, position) and not mps->isCenter())
                     throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
-                if(static_cast<long>(pos) != position and mps->isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
+                if(num::cmp_not_equal(pos, position) and mps->isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
                 //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
             }
         } catch(const std::exception &ex) { throw std::runtime_error(fmt::format("state error: {}", ex.what())); }
