@@ -79,8 +79,8 @@ void AlgorithmFinite::run()
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
-    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);
-    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
+    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::TRY);
+    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::TRY);
     write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);
     print_status_full();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
