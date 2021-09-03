@@ -30,7 +30,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd_settings.threshold  = 1e-8;
         svd_settings.loglevel   = 2;
         svd_settings.use_bdc    = true;
-        svd_settings.switchsize = 32;
+        svd_settings.switchsize = 16;
 
         h5pp::File h5file(fmt::format("{}/svd-benchmark.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY, 2);
         double     t_split_sum = 0;
@@ -57,8 +57,10 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 auto t_eig               = tid::tic_scope("lpk");
                 auto mps_list_lpk        = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
             }
-            tools::log->info("eig {:8.2e} | lpk {:8.2e} | original {:8.2e} | {:<32} | dims {}", tid::get_unscoped("eig.split").get_last_interval(),
-                             tid::get_unscoped("lpk.split").get_last_interval(), t_split, multisite_tensor_name, dims);
+            tools::log->info("eig +{:8.2e} {:8.2e} | lpk +{:8.2e} {:8.2e} | original +{:8.2e} {:8.2e} | {:<32} | dims {}",
+                             tid::get_unscoped("eig.split").get_last_interval(), tid::get_unscoped("eig.split").get_time(),
+                             tid::get_unscoped("lpk.split").get_last_interval(), tid::get_unscoped("lpk.split").get_time(), t_split, t_split_sum,
+                             multisite_tensor_name, dims);
         }
         tools::log->info("eig {:8.2e} | lpk {:8.2e} | original {:8.2e} | TOTAL", tid::get_unscoped("eig.split").get_time(),
                          tid::get_unscoped("lpk.split").get_time(), t_split_sum);
