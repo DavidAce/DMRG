@@ -2,21 +2,10 @@
 if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     include(cmake/InstallPackage.cmake)
 
-    # Set CMake build options
-    if(OPENBLAS_TARGET)
-        list(APPEND OpenBLAS_ARGS -DTARGET:STRING=${OPENBLAS_TARGET})
-    endif()
-    if(OPENBLAS_DYNAMIC_ARCH)
-        list(APPEND OpenBLAS_ARGS -DDYNAMIC_ARCH:BOOL=${OPENBLAS_DYNAMIC_ARCH})
-    endif()
-    list(APPEND OpenBLAS_ARGS -DUSE_THREAD:BOOL=ON)
-    list(APPEND OpenBLAS_ARGS -DBUILD_RELAPACK:BOOL=OFF)
-
     list(APPEND h5pp_ARGS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
     list(APPEND h5pp_ARGS -DH5PP_PACKAGE_MANAGER:STRING=cmake)
     list(APPEND h5pp_ARGS -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE})
 
-    list(APPEND glog_ARGS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
 
     list(APPEND Ceres_ARGS -DEigen3_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
     list(APPEND Ceres_ARGS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR})
@@ -38,9 +27,20 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     if (NOT MKL_FOUND)
         # If MKL is not on openblas will be used instead. Includes blas, lapack and lapacke
-        install_package(OpenBLAS VERSION 0.3.8
-                CMAKE_ARGS ${OpenBLAS_ARGS}
-                DEPENDS gfortran::gfortran Threads::Threads)
+        if(NOT DEFINED OPENBLAS_DYNAMIC_ARCH)
+            set(OPENBLAS_DYNAMIC_ARCH ON)
+        endif()
+        if(NOT DEFINED OPENBLAS_TARGET)
+            set(OPENBLAS_TARGET HASWELL)
+        endif()
+        install_package(OpenBLAS VERSION 0.3.17
+                DEPENDS gfortran::gfortran Threads::Threads
+                CMAKE_ARGS
+                -DDYNAMIC_ARCH:BOOL=${OPENBLAS_DYNAMIC_ARCH}
+                -DTARGET:BOOL=${OPENBLAS_TARGET}
+                -DUSE_THREAD:BOOL=ON
+                -DBUILD_RELAPACK:BOOL=OFF
+                )
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
         # Fix for OpenBLAS 0.3.9, which otherwise includes <complex> inside of an extern "C" scope.
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
@@ -83,7 +83,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     install_package(gflags VERSION 2.2.2 COMPONENTS ${GFLAGS_COMPONENTS} ${GFLAGS_ITEMS})
 
     # Google logging library needed by ceres-solver
-    install_package(glog VERSION 0.4 CMAKE_ARGS ${glog_ARGS} CHECK)
+    install_package(glog VERSION 0.5 CMAKE_ARGS -Dgflags_ROOT:PATH=${DMRG_DEPS_INSTALL_DIR} CHECK)
 
     # ceres-solver (for L-BFGS routine)
     install_package(Ceres VERSION 2.0

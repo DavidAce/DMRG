@@ -36,6 +36,7 @@ target_link_libraries(dmrg-deps INTERFACE
         arpack::arpack++
         primme::primme
         Ceres::ceres
+        BLAS::BLAS
         )
 if(TARGET unwind::unwind)
     target_link_libraries(dmrg-deps INTERFACE unwind::unwind)
