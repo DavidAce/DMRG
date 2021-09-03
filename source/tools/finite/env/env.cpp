@@ -364,12 +364,14 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
 }
 
 void tools::finite::env::rebuild_edges_var(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
+    if(state.get_algorithm() == AlgorithmType::fLBIT)
+        throw std::logic_error(fmt::format("rebuild_edges_var: fLBIT algorithm should never rebuild variance edges!"));
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw std::runtime_error(
-            fmt::format("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
+            fmt::format("rebuild_edges_var: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw std::runtime_error(
-            fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
+            fmt::format("rebuild_edges_var: All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
     auto t_reb = tid::tic_scope("rebuild_edges");
 
     size_t min_pos = 0;
@@ -424,5 +426,6 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
 
 void tools::finite::env::rebuild_edges(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
     rebuild_edges_ene(state, model, edges);
+    if(state.get_algorithm() == AlgorithmType::fLBIT) return;
     rebuild_edges_var(state, model, edges);
 }
