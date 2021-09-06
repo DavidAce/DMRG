@@ -460,14 +460,19 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     for(const auto &[idx, pos] : iter::enumerate(pos_sequence)) {
         auto &gate = gates[pos];
         if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
-
         move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
+
         auto multisite_mps = state.get_multisite_mps(gate.pos);
-        gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        if(reverse)
-            gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
-        else
-            gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+
+        {
+            auto t_apply = tid::tic_token("apply_gate");
+            gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+            if(reverse)
+                gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+            else
+                gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+        }
+
         long min_position = static_cast<long>(gate.pos.front()) - 1;
         long max_position = static_cast<long>(gate.pos.back());
         long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);

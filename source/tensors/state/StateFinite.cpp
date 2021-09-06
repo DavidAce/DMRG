@@ -310,7 +310,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
     if constexpr(settings::debug) tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
-    auto                     t_mps = tid::tic_scope("mps");
+    auto                     t_mps = tid::tic_scope("gen_mps");
     Eigen::Tensor<Scalar, 3> multisite_mps;
     constexpr auto           shuffle_idx  = tenx::array4{0, 2, 1, 3};
     constexpr auto           contract_idx = tenx::idx({2}, {1});

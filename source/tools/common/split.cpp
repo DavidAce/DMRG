@@ -377,6 +377,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
          */
 
         if(S_prev) {
+            auto t_sv = tid::tic_token("contract_sv");
             // Let V absorb S from the previous SVD (see note below)
             SV_temp.resize(V.dimensions());
             if constexpr(std::is_same_v<Scalar, real>)
@@ -493,6 +494,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
          */
 
         if(S_prev) {
+            auto t_sv = tid::tic_token("contract_us");
             // Let V absorb S from the previous SVD (see note below)
             US_temp.resize(U.dimensions());
             US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));

@@ -278,15 +278,16 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(const std::vector<size_t> &nbody_t
     double J1 = 0;
     double J2 = 0;
     double J3 = 0;
+    // Toggle on requested nbody terms
     for(const auto &n : nbody_terms) {
         if(n == 1) J1 = 1;
         if(n == 2) J2 = 1;
         if(n == 3) J3 = 1;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                   = MPO();
-    Eigen::Tensor<Scalar, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                           = tenx::TensorMap(id);
-    MPO_nbody.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * (h5tb.param.J1_rand * n) - e_reduced * i;
+    Eigen::Tensor<Scalar, 4> MPO_nbody                                   = MPO(); // Start with the full mpo
+    Eigen::Tensor<Scalar, 2> n                                           = tenx::TensorCast(0.5 * (id + sz)); // Number operator
+    Eigen::Tensor<Scalar, 2> i                                           = tenx::TensorMap(id); // identity
+    MPO_nbody.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * (h5tb.param.J1_rand * n) - e_reduced * i; // Onsite terms
     for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
         if(r == 0) continue;
         if(r > h5tb.param.J2_span) break;

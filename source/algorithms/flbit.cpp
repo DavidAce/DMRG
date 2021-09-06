@@ -214,12 +214,13 @@ void flbit::single_flbit_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->trace("Starting single flbit time-step");
+    tools::log->debug("Starting fLBIT iter {}", status.iter);
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
 
     // Time evolve here
     auto t_step = tid::tic_scope("step");
     auto t_evo  = tid::tic_scope("time_evo");
+    tools::log->debug("Applying time evolution gates", status.iter);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
