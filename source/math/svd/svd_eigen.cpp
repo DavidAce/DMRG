@@ -29,7 +29,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}", rows));
     if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}", cols));
 
-#ifndef NDEBUG
+#if !defined(NDEBUG)
     // These are more expensive debugging operations
     if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");

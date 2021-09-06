@@ -72,14 +72,19 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
 
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
-    if(not A.allFinite()) {
-        print_matrix_lapacke(mat_ptr, rows, cols);
-        throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    }
-    if(A.isZero(1e-12)) {
-        print_matrix_lapacke(mat_ptr, rows, cols, 16);
-        throw std::runtime_error("SVD error: matrix is all zeros");
-    }
+
+#if !defined(NDEBUG)
+        tid::tic_scope("debug");
+        if(not A.allFinite()) {
+            print_matrix_lapacke(mat_ptr, rows, cols);
+            throw std::runtime_error("SVD error: matrix has inf's or nan's");
+        }
+        if(A.isZero(1e-12)) {
+            print_matrix_lapacke(mat_ptr, rows, cols, 16);
+            throw std::runtime_error("SVD error: matrix is all zeros");
+        }
+   }
+#endif
 
     svd::log->trace("Starting SVD with lapacke");
 
