@@ -231,6 +231,8 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
 }
 
 void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+    if(state.get_algorithm() == AlgorithmType::fLBIT)
+        throw std::logic_error(fmt::format("assert_edges_var: fLBIT algorithm should never assert energy edges!"));
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
@@ -304,12 +306,14 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
 }
 
 void tools::finite::env::assert_edges(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
-    assert_edges_ene(state, model, edges);
     if(state.get_algorithm() == AlgorithmType::fLBIT) return;
+    assert_edges_ene(state, model, edges);
     assert_edges_var(state, model, edges);
 }
 
 void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
+    if(state.get_algorithm() == AlgorithmType::fLBIT)
+        throw std::logic_error(fmt::format("rebuild_edges_ene: fLBIT algorithm should never rebuild energy edges!"));
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw std::runtime_error(
             fmt::format("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
@@ -428,7 +432,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
 }
 
 void tools::finite::env::rebuild_edges(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
-    rebuild_edges_ene(state, model, edges);
     if(state.get_algorithm() == AlgorithmType::fLBIT) return;
+    rebuild_edges_ene(state, model, edges);
     rebuild_edges_var(state, model, edges);
 }

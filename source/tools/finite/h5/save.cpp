@@ -69,9 +69,9 @@ namespace tools::finite::h5 {
         measurement_entry.position        = static_cast<long>(status.position);
         measurement_entry.length          = static_cast<uint64_t>(tools::finite::measure::length(state));
         measurement_entry.norm            = tools::finite::measure::norm(state);
-        measurement_entry.energy          = tools::finite::measure::energy(state, model, edges);
-        measurement_entry.energy_per_site = tools::finite::measure::energy_per_site(state, model, edges);
         if(status.algo_type != AlgorithmType::fLBIT) {
+            measurement_entry.energy          = tools::finite::measure::energy(state, model, edges);
+            measurement_entry.energy_per_site = tools::finite::measure::energy_per_site(state, model, edges);
             measurement_entry.energy_variance                 = tools::finite::measure::energy_variance(state, model, edges);
             measurement_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(state, model, edges);
             measurement_entry.energy_variance_lowest          = status.energy_variance_lowest;

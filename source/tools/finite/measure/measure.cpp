@@ -20,12 +20,12 @@ using real = tools::finite::measure::real;
 
 void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     tensors.measurements.length                   = measure::length(tensors);
-    tensors.measurements.energy                   = measure::energy(tensors); // This number is needed for variance calculation!
-    tensors.measurements.energy_per_site          = measure::energy_per_site(tensors);
 
-    // No need for variance in fLBIT simulations. In fact, we don't update the var environments,
+    // No need for energy or variance in fLBIT simulations. In fact, we don't update the ene and var environments,
     // so this operation would give an error
     if(tensors.state->get_algorithm() == AlgorithmType::fLBIT) return;
+    tensors.measurements.energy                   = measure::energy(tensors); // This number is needed for variance calculation!
+    tensors.measurements.energy_per_site          = measure::energy_per_site(tensors);
     tensors.measurements.energy_variance          = measure::energy_variance(tensors);
     tensors.measurements.energy_variance_per_site = measure::energy_variance_per_site(tensors);
 }

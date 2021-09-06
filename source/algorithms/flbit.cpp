@@ -65,7 +65,7 @@ void flbit::resume() {
         }
         clear_convergence_status();
         tensors.move_center_point_to_edge(status.chi_lim);
-        tensors.rebuild_edges();
+//        tensors.rebuild_edges();
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
@@ -242,7 +242,7 @@ void flbit::single_flbit_step() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    tensors.rebuild_edges_ene();
+//    tensors.rebuild_edges_ene();
     status.iter += 1;
     status.step += settings::model::model_size;
     status.position  = tensors.get_position<long>();
@@ -538,7 +538,7 @@ void flbit::print_status_update() {
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
-    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+//    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_midchain());
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     if(tensors.state->measurements.number_entropy_midchain) // This one is expensive

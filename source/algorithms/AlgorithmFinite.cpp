@@ -314,10 +314,12 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
     tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
-    tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-    tools::log->info("-- Energy density           : {}",
-                     tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
-    if(status.algo_type != AlgorithmType::fLBIT) tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
+
+    if(status.algo_type != AlgorithmType::fLBIT) {
+        tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
+        tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
+        tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
+    }
 }
 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
@@ -692,12 +694,13 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Steps (moves along the chain)      = {}", status.step);
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tid::get_unscoped("t_tot").get_time(),
                      tid::get_unscoped("t_tot").get_time() / 60);
-    double energy_per_site = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
-    tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site);
-    if(status.algo_type == AlgorithmType::xDMRG)
-        tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
-                         tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
+
     if (status.algo_type != AlgorithmType::fLBIT) {
+        double energy_per_site = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
+        tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site);
+        if(status.algo_type == AlgorithmType::xDMRG)
+            tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
+                             tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
         double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
         tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
     }
