@@ -40,12 +40,14 @@ struct Amplitude {
 
             if(tgt_pos > 0 and not cache.empty()) {
                 // There is a chance to continue building an existing amplitude
+                auto t_check = tid::tic_scope("cache_check");
                 std::bitset<64> bits_index = 0;
                 for(size_t i = 0; i < static_cast<size_t>(tgt_pos); i++) bits_index[i] = bits[i];
                 if(cache.size() > bits_index.to_ulong()) {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() <= tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
+                        auto t_hit = tid::tic_scope("cache_hit");
                         //                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(),
                         //                        bits_index.to_ulong());
                         site = c.site;
@@ -104,12 +106,14 @@ struct Amplitude {
 
             if(tgt_pos < state_len - 1 and not cache.empty()) {
                 // There is a chance to continue building an existing amplitude
+                auto t_check = tid::tic_scope("cache_check");
                 std::bitset<64> bits_index = 0;
                 for(size_t i = 0; i < static_cast<size_t>(mps_rsite); i++) bits_index[i] = bits[i];
                 if(cache.size() > bits_index.to_ulong()) {
                     const auto &c = cache.at(bits_index.to_ulong()); // A cache item
                     if(c.site and c.site.value() > tgt_pos) {
                         // Cache hit! No need to compute the amplitude from scratch
+                        auto t_hit = tid::tic_scope("cache_hit");
                         //                        tools::log->trace("Cached site {} | bits [{}] at idx {}", c.site.value(), c.to_string(),
                         //                        bits_index.to_ulong());
                         site = c.site;
