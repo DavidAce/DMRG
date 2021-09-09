@@ -42,7 +42,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
             if(posC > pos) tools::log->info("Moving {} -> {}", pos, posC);
         if constexpr(settings::debug_moves)
             if(posC < pos) tools::log->info("Moving {} <- {}", posC, pos);
-        Eigen::Tensor<Scalar, 1> LC(1);
+        Eigen::Tensor<cplx, 1> LC(1);
         LC.setConstant(1); // Store the LC bond in a temporary. It will become a regular "L" bond later
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
@@ -51,7 +51,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
             auto &mpsC    = state.get_mps_site(posC);                                                        // This becomes the new center position AC
             long  chi_new = std::min(chi_lim, mpsC.spin_dim() * std::min(mpsC.get_chiL(), mpsC.get_chiR())); // Bond dimensions growth limit
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
-            Eigen::Tensor<Scalar, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction
+            Eigen::Tensor<cplx, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction
             onesite_tensor.device(tenx::omp::getDevice()) = tenx::asDiagonal(LC).contract(mpsC.get_M(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
             tools::finite::mps::merge_multisite_tensor(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         } else if(state.get_direction() == -1) {
@@ -86,9 +86,9 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, long chi_lim, s
         long  chiR = mpsR.get_chiR();
         // Store the special LC bond in a temporary. It needs to be put back afterwards
         // Do the same with its truncation error
-        Eigen::Tensor<Scalar, 1> LC                  = mps.get_LC();
-        double                   truncation_error_LC = mps.get_truncation_error_LC();
-        Eigen::Tensor<Scalar, 3> twosite_tensor(tenx::array3{dL * dR, chiL, chiR});
+        Eigen::Tensor<cplx, 1> LC                  = mps.get_LC();
+        double                 truncation_error_LC = mps.get_truncation_error_LC();
+        Eigen::Tensor<cplx, 3> twosite_tensor(tenx::array3{dL * dR, chiL, chiR});
         if(state.get_direction() == 1) {
             // Here both M_bare are B's
             // i.e. mpsL.get_M() = GB * LB
@@ -154,7 +154,7 @@ size_t tools::finite::mps::move_center_point_to_middle(StateFinite &state, long 
     return moves;
 }
 
-size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<size_t> &positions,
+size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eigen::Tensor<cplx, 3> &multisite_tensor, const std::vector<size_t> &positions,
                                                   long center_position, long chi_lim, std::optional<svd::settings> svd_settings,
                                                   std::optional<LogPolicy> logPolicy) {
     auto   t_merge          = tid::tic_scope("merge");
@@ -175,12 +175,12 @@ size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eige
     if constexpr(settings::debug_merge) {
         // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
         auto norm = tenx::VectorCast(multisite_tensor).norm();
-        if(std::abs(norm - 1) > 1e-8) tools::log->debug("Multisite mps for positions {} has norm far from unity: {:.16f}", positions, norm);
+        if(std::abs(norm - 1) > 1e-8) tools::log->debug("Multisite tensor for positions {} has norm far from unity: {:.16f}", positions, norm);
     }
 
     // Can't merge sites too far away: we would end up with interleaved A's and B sites
-    if(current_position < static_cast<long>(positions.front()) - 1 or current_position > static_cast<long>(positions.back()) + 1)
-        throw std::runtime_error(fmt::format("Attempting to merge sites {} too far from the current position {}", positions, current_position));
+//    if(current_position < static_cast<long>(positions.front()) - 1 or current_position > static_cast<long>(positions.back()) + 1)
+//        throw std::runtime_error(fmt::format("Failed to merge multisite tensor {}: too far from the current position {}", positions, current_position));
 
     long              spin_prod = 1;
     std::vector<long> spin_dims;
@@ -191,10 +191,10 @@ size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eige
     }
     if(spin_prod != multisite_tensor.dimension(0))
         throw std::runtime_error(
-            fmt::format("Could not merge multisite mps into state: multisite_tensor dim0 {} != spin_prod {}", multisite_tensor.dimension(0), spin_prod));
+            fmt::format("Could not merge multisite mps into state: multisite tensor dim0 {} != spin_prod {}", multisite_tensor.dimension(0), spin_prod));
 
     // Hold LC if moving. This should be placed in an L-slot later
-    std::optional<stash<Eigen::Tensor<Scalar, 1>>> lc_hold = std::nullopt;
+    std::optional<stash<Eigen::Tensor<cplx, 1>>> lc_hold = std::nullopt;
 
     if(current_position >= 0 and current_position != center_position) {
         auto &mps      = state.get_mps_site(current_position); // Guaranteed to have LC since that is the definition of current_position
@@ -206,14 +206,14 @@ size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eige
             if(center_position < pos_frnt or center_position > pos_back)   // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} into a center position {} that is not in positions {}", current_position,
                                                    center_position, positions));
-            lc_hold = stash<Eigen::Tensor<Scalar, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), positions.front()};
+            lc_hold = stash<Eigen::Tensor<cplx, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), positions.front()};
         }
         // Detect left-move
         if(current_position > center_position and positions.size() == 1) {        // This AC position will become a B (AC moves to the left)
             if(center_position < pos_frnt - 1 or current_position > pos_back + 1) // Make sure the jump isn't too long
                 throw std::logic_error(fmt::format("Cannot right-move from position {} to a center position {} in a non-neighboring group of positions {}",
                                                    current_position, center_position, positions));
-            lc_hold = stash<Eigen::Tensor<Scalar, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
+            lc_hold = stash<Eigen::Tensor<cplx, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
         }
         // Note that one of the positions on the split may contain a new center, so we need to unset
         // the center in our current state so we don't get duplicate centers
@@ -366,8 +366,8 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] StateFinite &state
     throw std::runtime_error("Truncate next sites needs an implementation");
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<Scalar, 2>> &nsite_tensors, size_t gate_size, bool reverse,
-                                     long chi_lim, std::optional<svd::settings> svd_settings) {
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool reverse, long chi_lim,
+                                     std::optional<svd::settings> svd_settings) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
@@ -456,11 +456,11 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         tools::log->trace("current pos {} dir {} | pos_sequence {}", state.get_position<long>(), state.get_direction(), pos_sequence);
 
     state.clear_cache(LogPolicy::QUIET);
-    Eigen::Tensor<Scalar, 3> gate_mps;
+    Eigen::Tensor<cplx, 3> gate_mps;
     for(const auto &[idx, pos] : iter::enumerate(pos_sequence)) {
         auto &gate = gates[pos];
         if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
-        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
+//        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
 
         auto multisite_mps = state.get_multisite_mps(gate.pos);
 
@@ -481,7 +481,8 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         if constexpr(settings::debug_gates)
             tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(),
                               new_position, state.get_labels());
-        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
+//        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
+        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
     }
 
     if constexpr(settings::debug_gates) {
@@ -535,4 +536,194 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         tid::get("ANY::t_svd_svd").reset();
         num_old = svd::solver::count.value();
     }
+}
+
+void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR, std::vector<size_t> &order, std::optional<svd::settings> svd_settings) {
+    /* The swap operation takes two neighboring sites
+     *
+     * (1)chiL---[ mpsL ]---chiC(2)    chiC(1)---[ mpsR ]---(2)chiR
+     *              |                               |
+     *           (0)dL                            (0)dR
+     *
+     *
+     * and joins them in multisite standard form, i.e., with order
+     *
+     * 1) physical indices di (any number of them, contracted from left to right)
+     * 2) left bond index chiL
+     * 4) right bond index chiR
+     *
+     * (1)chiL ---[tensor]--- (2)chiR
+     *               |
+     *          (0)d*d*d...
+     *
+     * For the swap operation, we reshape this into a rank-4, splitting up the physical dimensions
+     *
+     * (2)chiL---[  tensor  ]---(3)chiR
+     *            |        |
+     *        (0)dL      (1)dR
+     *
+     * Then the swap operator is applied
+     *
+     * (2)chiL---[  tensor  ]---(3)chiR
+     *            |        |
+     *             \      /
+     *               \  /
+     *                /\      <---- Swap
+     *              /    \
+     *            /        \
+     *            |        |
+     *         (0)dR     (1)dL
+     *
+     *
+     * For a schmidt decomposition we need to shuffle this object into standard form for schmidt decomposition
+     *
+     *   (1)chiL---[  tensor  ]---(3)chiR
+     *              |        |
+     *          (0)dL      (2)dR
+     *
+     * Then a schmidt decomposition returns
+
+     * (1)chiL---[  U  ]---chiC(2) chiC(0)---[S]---chiC(1)  chiC(1)---[ V ]---(2)chiR
+     *              |                                                   |
+     *           (0)dR                                                (0)dL
+     *
+     *
+     * In practice the swap operation can be performed as a reshape + shuffle
+     *
+     * (1)chiL ---[tensor]--- (2)chiR     reshape      (2)chiL---[  tensor  ]---(3)chiR    shuffle          (1)chiL---[  tensor  ]---(3)chiR
+     *               |                      ---->                 |        |               ----->                      |        |
+     *          (0)d*d*d...                                    (0)dL      (1)dR                                      (0)dR      (2)dL
+     */
+
+    if(posR != posL + 1) throw std::logic_error(fmt::format("Expected posR == posL+1. Got posL {} and posR {}", posL, posR));
+    if(posR != std::clamp(posR, 0ul, state.get_length<size_t>()))
+        throw std::logic_error(fmt::format("Expected posR in [0,{}]. Got {}", state.get_length(), posR));
+    if(posL != std::clamp(posL, 0ul, state.get_length<size_t>()))
+        throw std::logic_error(fmt::format("Expected posL in [0,{}]. Got {}", state.get_length(), posL));
+
+    auto dimL    = state.get_mps_site(posL).dimensions();
+    auto dimR    = state.get_mps_site(posR).dimensions();
+    auto dL      = dimL[0];
+    auto dR      = dimR[0];
+    auto chiL    = dimL[1];
+    auto chiR    = dimR[2];
+    auto chi_lim = std::min(dL * chiL, dR * chiL);
+    auto multisite_mps =  state.get_multisite_mps({posL, posR});
+    Eigen::Tensor<cplx, 3> swapped_mps = state.get_multisite_mps({posL, posR})
+                                             .reshape(tenx::array4{dL, dR, chiL, chiR})
+                                             .shuffle(tenx::array4{1, 0, 2, 3})  // swap
+                                             .reshape(tenx::array3{dR*dL, chiL, chiR}); // prepare for merge
+
+    merge_multisite_tensor(state, swapped_mps, {posL, posR}, state.get_position<long>(), chi_lim, svd_settings);
+    std::swap(order[posL], order[posR]);
+}
+
+void tools::finite::mps::apply_swap_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
+                                          std::optional<svd::settings> svd_settings) {
+    //    if(gates.empty()) return;
+
+    auto order         = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    auto site_sequence = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    auto swap_sequence = num::range<size_t>(0ul, state.get_length<size_t>() - 1, 1ul);
+    tools::log->info("Sₑ   = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(state), ", "));
+    for(const auto &site : site_sequence) {    // Iterate through all sites
+        for(const auto &pos : swap_sequence) { // Swap current site all the way to the right edge
+            swap_sites(state, pos, pos + 1, order, svd_settings);
+            tools::log->info("order: {}", order);
+            tools::log->info("label: {}", state.get_labels());
+            tools::log->info("Sₑ   = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(state), ", "));
+
+        }
+    }
+
+    //
+    //
+    //    auto pos_sequence = generate_pos_sequence(state, gates, reverse);
+    //    if constexpr(settings::debug_gates)
+    //        tools::log->trace("current pos {} dir {} | pos_sequence {}", state.get_position<long>(), state.get_direction(), pos_sequence);
+    //
+    //    state.clear_cache(LogPolicy::QUIET);
+    //    Eigen::Tensor<cplx, 3> gate_mps;
+    //    for(const auto &[idx, pos] : iter::enumerate(pos_sequence)) {
+    //        auto &gate = gates[pos];
+    //        if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
+    //        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
+    //
+    //        auto multisite_mps = state.get_multisite_mps(gate.pos);
+    //
+    //        {
+    //            auto t_apply = tid::tic_token("apply_gate");
+    //            gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+    //            if(reverse)
+    //                gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+    //            else
+    //                gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+    //        }
+    //
+    //        long min_position = static_cast<long>(gate.pos.front()) - 1;
+    //        long max_position = static_cast<long>(gate.pos.back());
+    //        long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
+    //        long new_position = std::clamp<long>(tgt_position, min_position, max_position);
+    //        tools::log->trace("Merging gate sites {} dims {}", gate.pos, multisite_mps.dimensions());
+    //        if constexpr(settings::debug_gates)
+    //            tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(),
+    //                              new_position, state.get_labels());
+    //        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
+    //    }
+    //
+    //    if constexpr(settings::debug_gates) {
+    //        if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
+    //            auto t_dbg = tid::tic_scope("debug");
+    //            //            tools::log->trace("After applying gates");
+    //            //            for(const auto &mps : state.mps_sites)
+    //            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," <<
+    //            mps->get_chiR() <<
+    //            //                "]:\n"
+    //            //                          << tenx::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
+    //            std::endl;
+    //        }
+    //    }
+
+    move_center_point_to_edge(state, chi_lim, svd_settings);
+
+    //    auto has_normalized = tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
+    //    if constexpr(settings::debug_gates)
+    //        if(has_normalized and tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
+    //            auto t_dbg = tid::tic_scope("debug");
+    //            //            tools::log->trace("After normalization");
+    //            //            for(const auto &mps : state.mps_sites)
+    //            //                std::cout << "M(" << mps->get_position() << ") dims [" << mps->spin_dim() << "," << mps->get_chiL() << "," <<
+    //            mps->get_chiR() <<
+    //            //                "]:\n"
+    //            //                          << tenx::MatrixMap(mps->get_M_bare(), mps->spin_dim(), mps->get_chiL() * mps->get_chiR()).format(CleanFmt) <<
+    //            std::endl;
+    //        }
+    //
+    //    if(settings::profiling::extra) {
+    //        static long long num_old = 0;
+    //        tools::log->info(
+    //            "Finished step: move {:.4f} | apply {:.4f} | merge {:.4f} | split {:.4f} | merge {:.4f} | svdm {:.4f} | svda {:.4f} | svdb {:.4f} | "
+    //            "svdA {:.4f} | svdB {:.4f} | wrk {:.4f} | adj {:.4f} | jac {:.4f} | svd {:.4f} | num {} (+{})",
+    //            1000 * tid::get("ANY::t_gate_move").get_time(), 1000 * tid::get("ANY::t_gate_apply").get_time(), 1000 *
+    //            tid::get("ANY::t_gate_merge").get_time(), 1000 * tid::get("ANY::t_merge_split").get_time(), 1000 * tid::get("ANY::t_merge_merge").get_time(),
+    //            1000 * tid::get("ANY::t_split_svdm").get_time(), 1000 * tid::get("ANY::t_split_svda").get_time(), 1000 *
+    //            tid::get("ANY::t_split_svdb").get_time(), 1000 * tid::get("ANY::t_splitA_svd").get_time(), 1000 * tid::get("ANY::t_splitB_svd").get_time(),
+    //            1000 * tid::get("ANY::t_svd_wrk").get_time(), 1000 * tid::get("ANY::t_svd_adj").get_time(), 1000 * tid::get("ANY::t_svd_jac").get_time(), 1000
+    //            * tid::get("ANY::t_svd_svd").get_time(), svd::solver::count.value(), svd::solver::count.value() - num_old);
+    //        tid::get("ANY::t_gate_move").reset();
+    //        tid::get("ANY::t_gate_apply").reset();
+    //        tid::get("ANY::t_gate_merge").reset();
+    //        tid::get("ANY::t_merge_split").reset();
+    //        tid::get("ANY::t_merge_merge").reset();
+    //        tid::get("ANY::t_split_svdm").reset();
+    //        tid::get("ANY::t_split_svda").reset();
+    //        tid::get("ANY::t_split_svdb").reset();
+    //        tid::get("ANY::t_splitA_svd").reset();
+    //        tid::get("ANY::t_splitB_svd").reset();
+    //        tid::get("ANY::t_svd_wrk").reset();
+    //        tid::get("ANY::t_svd_adj").reset();
+    //        tid::get("ANY::t_svd_jac").reset();
+    //        tid::get("ANY::t_svd_svd").reset();
+    //        num_old = svd::solver::count.value();
+    //    }
 }

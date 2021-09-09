@@ -9,7 +9,7 @@
 class StateFinite;
 class flbit : public AlgorithmFinite {
     public:
-    std::unique_ptr<StateFinite>       state_lbit;
+    std::unique_ptr<StateFinite>       state_lbit, state_lbit_init;
     std::vector<qm::Gate>              ham_gates_1body, time_gates_1site;
     std::vector<qm::Gate>              ham_gates_2body, time_gates_2site;
     std::vector<qm::Gate>              ham_gates_3body, time_gates_3site;

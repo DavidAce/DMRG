@@ -38,7 +38,7 @@ void flbit::resume() {
     // To guide the behavior, we check the setting ResumePolicy.
 
     auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, "state_real");
-    for(const auto & state_prefix : resumable_states){
+    for(const auto &state_prefix : resumable_states) {
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
         tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
@@ -65,7 +65,7 @@ void flbit::resume() {
         }
         clear_convergence_status();
         tensors.move_center_point_to_edge(status.chi_lim);
-//        tensors.rebuild_edges();
+        //        tensors.rebuild_edges();
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
@@ -177,7 +177,6 @@ void flbit::run_preprocessing() {
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
-
     write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -216,18 +215,21 @@ void flbit::single_flbit_step() {
      */
     tools::log->debug("Starting fLBIT iter {}", status.iter);
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
-
-    // Time evolve here
+    if(not state_lbit_init) state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
+    *state_lbit = *state_lbit_init;
+    // Time evolve from 0 to time_point[iter] here
     auto t_step = tid::tic_scope("step");
     auto t_evo  = tid::tic_scope("time_evo");
     tools::log->debug("Applying time evolution gates", status.iter);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
     tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
+
+
     t_evo.toc();
     transform_to_real_basis();
 
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         if(settings::model::model_size <= 10) {
             Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
             Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, tenx::idx({1}, {0}));
@@ -243,28 +245,39 @@ void flbit::single_flbit_step() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-//    tensors.rebuild_edges_ene();
+    //    tensors.rebuild_edges_ene();
     status.iter += 1;
     status.step += settings::model::model_size;
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
     status.phys_time += std::abs(status.delta_t);
+
+//    tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
+    tools::finite::mps::apply_swap_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
+//    tensors.clear_measurements();
+//    tensors.clear_cache();
+//    tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
+//    exit(0);
+
 }
 
 void flbit::update_time_step() {
     tools::log->trace("Updating time step");
     auto t_updtstep = tid::tic_scope("update_time_step");
     if(time_points.empty()) create_time_points();
-    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size() - 1);
-    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
-    if(time_point_idx0 == time_point_idx1) {
+//    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size() - 1);
+//    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
+    auto time_point_idx  = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
+    if(time_point_idx >= settings::flbit::time_num_steps) {
         status.algo_stop = AlgorithmStop::SUCCEEDED;
         return;
     }
-    if(time_point_idx0 > time_point_idx1) throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
-    if(std::abs(std::abs(time_points[time_point_idx0]) - status.phys_time) > 1e-10)
-        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}", status.phys_time, std::abs(time_points[time_point_idx0]));
-    status.delta_t = time_points[time_point_idx1] - time_points[time_point_idx0];
+//    if(time_point_idx0 > time_point_idx1) throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
+//    if(std::abs(std::abs(time_points[time_point_idx0]) - status.phys_time) > 1e-10)
+//        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}", status.phys_time, std::abs(time_points[time_point_idx0]));
+//#pragma message "Set delta_t to full time point"
+    //    status.delta_t = time_points[time_point_idx1] - time_points[time_point_idx0];
+    status.delta_t = time_points[time_point_idx];
     tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
     if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
@@ -394,6 +407,7 @@ void flbit::create_hamiltonian_gates() {
     //    for(const auto &ham : ham_gates_3body)
     //        if(tenx::MatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
 }
+
 void flbit::create_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
@@ -539,7 +553,7 @@ void flbit::print_status_update() {
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
     else if(tensors.state->get_direction() < 0)
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
-//    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
+    //    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_midchain());
     report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     if(tensors.state->measurements.number_entropy_midchain) // This one is expensive
