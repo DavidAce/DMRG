@@ -9,8 +9,6 @@
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 
-using Scalar = tools::finite::mps::Scalar;
-
 std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long chi_lim) {
     // Construct a valid set of bond dimensions
     std::vector<long> bond_dimensions(sizeplusone, chi_lim);
@@ -49,21 +47,21 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
         auto            smdt = pastCenter ? chiR : chiL;
         Eigen::VectorXd Ltmp = Eigen::VectorXd(smdt).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_01(); });
         std::sort(Ltmp.data(), Ltmp.data() + Ltmp.size(), std::greater<double>());
-        Eigen::Tensor<Scalar, 1> L = tenx::TensorCast(Ltmp.normalized()).cast<Scalar>();
-        Eigen::Tensor<Scalar, 3> G(spin_dim, chiL, chiR);
+        Eigen::Tensor<cplx, 1> L = tenx::TensorCast(Ltmp.normalized()).cast<cplx>();
+        Eigen::Tensor<cplx, 3> G(spin_dim, chiL, chiR);
         if(type == StateInitType::REAL) {
             Eigen::VectorXd Gtmp = Eigen::VectorXd(size).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_box(-1.0, 1.0); });
-            G                    = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+            G                    = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cplx>();
         } else if(type == StateInitType::CPLX) {
             Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_complex_in_unit_circle(); });
-            G                     = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<Scalar>();
+            G                     = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cplx>();
         }
 
         mps.set_mps(G, L, 0, label);
         if(mps.isCenter()) {
             Ltmp = Eigen::VectorXd(chiR).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_01(); });
             std::sort(Ltmp.data(), Ltmp.data() + Ltmp.size(), std::greater<double>());
-            Eigen::Tensor<Scalar, 1> LC = tenx::TensorCast(Ltmp.normalized()).cast<Scalar>();
+            Eigen::Tensor<cplx, 1> LC = tenx::TensorCast(Ltmp.normalized()).cast<cplx>();
             mps.set_LC(LC);
             pastCenter = true;
             label      = "B";
@@ -86,14 +84,14 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
     bool        past_center = false;
     std::string label       = "A";
     for(auto &mps_ptr : state.mps_sites) {
-        auto                                                             &mps  = *mps_ptr;
-        auto                                                              chiL = bond_dimensions[mps.get_position()];
-        auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
-        auto                                                              rows = past_center ? chiL : chiL * spin_dim;
-        auto                                                              cols = past_center ? chiR * spin_dim : chiR;
-        Eigen::Tensor<Scalar, 1>                                          L    = tenx::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<Scalar>();
-        Eigen::Tensor<Scalar, 3>                                          G(spin_dim, chiL, chiR);
-        Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
+        auto                                                           &mps  = *mps_ptr;
+        auto                                                            chiL = bond_dimensions[mps.get_position()];
+        auto                                                            chiR = bond_dimensions[mps.get_position() + 1];
+        auto                                                            rows = past_center ? chiL : chiL * spin_dim;
+        auto                                                            cols = past_center ? chiR * spin_dim : chiR;
+        Eigen::Tensor<cplx, 1>                                          L    = tenx::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<cplx>();
+        Eigen::Tensor<cplx, 3>                                          G(spin_dim, chiL, chiR);
+        Eigen::Map<Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         // Here we construct the set of spinors for each site using randomly selected eigenspinors
         std::array<long, 3> offset3;
         std::array<long, 3> extent3{spin_dim, 1, 1};
@@ -112,7 +110,7 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
         //        G = tenx::TensorMap(tenx::VectorCast(G).normalized(), spin_dim, chiL, chiR);
         mps.set_mps(G, L, 0, label);
         if(mps.isCenter()) {
-            Eigen::Tensor<Scalar, 1> LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized()).cast<Scalar>();
+            Eigen::Tensor<cplx, 1> LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized()).cast<cplx>();
             mps.set_LC(LC);
             past_center = true;
             label       = "B";
@@ -123,24 +121,24 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
     // spin if necessary
     auto spin_component = tools::finite::measure::spin_component(state, axis);
     if(spin_component * sign < 0) {
-        auto                                                             &mps  = *state.mps_sites.back();
-        auto                                                              chiL = bond_dimensions[mps.get_position()];
-        auto                                                              chiR = bond_dimensions[mps.get_position() + 1];
-        auto                                                              rows = past_center ? chiL : chiL * spin_dim;
-        auto                                                              cols = past_center ? chiR * spin_dim : chiR;
-        std::array<long, 3>                                               offset3;
-        std::array<long, 3>                                               extent3{spin_dim, 1, 1};
-        std::array<long, 1>                                               extent1{spin_dim};
-        Eigen::Tensor<Scalar, 3>                                          G(spin_dim, chiL, chiR);
-        Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
+        auto                                                           &mps  = *state.mps_sites.back();
+        auto                                                            chiL = bond_dimensions[mps.get_position()];
+        auto                                                            chiR = bond_dimensions[mps.get_position() + 1];
+        auto                                                            rows = past_center ? chiL : chiL * spin_dim;
+        auto                                                            cols = past_center ? chiR * spin_dim : chiR;
+        std::array<long, 3>                                             offset3;
+        std::array<long, 3>                                             extent3{spin_dim, 1, 1};
+        std::array<long, 1>                                             extent1{spin_dim};
+        Eigen::Tensor<cplx, 3>                                          G(spin_dim, chiL, chiR);
+        Eigen::Map<Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         for(long col = 0; col < chiR; col++) {
             for(long row = 0; row < chiL; row++) {
                 offset3                                    = {0, row, col};
-                Eigen::Tensor<Scalar, 1> old_spinor_tensor = mps.get_M().slice(offset3, extent3).reshape(extent1);
-                Eigen::VectorXcd         old_spinor_vector = tenx::VectorCast(old_spinor_tensor);
-                Scalar                   old_spinor_expval = old_spinor_vector.dot(init::get_pauli(axis) * old_spinor_vector);
-                int                      old_spinor_sign   = std::real(old_spinor_expval) > 0 ? 1 : -1;
-                auto                     new_spinor_vector = get_spinor(axis, -old_spinor_sign);
+                Eigen::Tensor<cplx, 1> old_spinor_tensor   = mps.get_M().slice(offset3, extent3).reshape(extent1);
+                Eigen::VectorXcd       old_spinor_vector   = tenx::VectorCast(old_spinor_tensor);
+                cplx                   old_spinor_expval   = old_spinor_vector.dot(init::get_pauli(axis) * old_spinor_vector);
+                int                    old_spinor_sign     = std::real(old_spinor_expval) > 0 ? 1 : -1;
+                auto                   new_spinor_vector   = get_spinor(axis, -old_spinor_sign);
                 G.slice(offset3, extent3).reshape(extent1) = tenx::TensorMap(new_spinor_vector);
             }
         }

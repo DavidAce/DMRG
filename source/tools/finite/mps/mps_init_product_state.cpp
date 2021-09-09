@@ -10,7 +10,6 @@
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 
-using Scalar = tools::finite::mps::Scalar;
 
 int tools::finite::mps::init::get_sign(std::string_view sector) {
     if(sector.at(0) == '+')
@@ -101,12 +100,12 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
 }
 
 void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, StateInitType type, std::string_view sector) {
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axis = get_axis(sector);
     int  sign = get_sign(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
-    Eigen::Tensor<Scalar, 3> spinor = tenx::TensorCast(get_spinor(axis, sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<cplx, 3> spinor = tenx::TensorCast(get_spinor(axis, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites", sign, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
@@ -123,11 +122,11 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
 }
 
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view sector) {
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axis = get_axis(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
-    std::array<Eigen::Tensor<Scalar, 3>, 2> spinors = {tenx::TensorCast(get_spinor(axis, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(get_spinor(axis, +1).normalized(), 2, 1, 1),
                                                        tenx::TensorCast(get_spinor(axis, -1).normalized(), 2, 1, 1)};
     tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axis, axis);
     std::string label = "A";
@@ -147,7 +146,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
 
 void tools::finite::mps::init::set_random_product_state_with_random_spinors(StateFinite &state, StateInitType type) {
     tools::log->info("Setting random product state with spinors in C²");
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
@@ -155,7 +154,7 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
         if(type == StateInitType::CPLX)
             mps.set_mps(tenx::TensorCast(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L, 0, label);
         else if(type == StateInitType::REAL)
-            mps.set_mps(tenx::TensorCast(Eigen::VectorXd::Random(2).normalized().cast<Scalar>(), 2, 1, 1), L, 0, label);
+            mps.set_mps(tenx::TensorCast(Eigen::VectorXd::Random(2).normalized().cast<cplx>(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
@@ -180,7 +179,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
     std::vector<std::string> ud_vec;
     for(size_t i = 0; i < state.get_length(); i++) bs_vec.emplace_back(bs[i]);
 
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     int         carry_sign = 1;
     std::string label      = "A";
@@ -202,7 +201,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
 }
 
 void tools::finite::mps::init::set_random_product_state_in_sector_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view sector) {
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axis      = get_axis(sector);
     int  sign      = get_sign(sector);
@@ -233,7 +232,7 @@ void tools::finite::mps::init::set_random_product_state_in_sector_using_eigenspi
 }
 
 void tools::finite::mps::init::set_random_product_state_on_axis(StateFinite &state, StateInitType type, std::string_view sector) {
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axis = get_axis(sector);
     tools::log->info("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}", axis, axis);
