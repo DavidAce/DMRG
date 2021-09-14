@@ -15,6 +15,7 @@ namespace Eigen {
 }
 
 namespace qm {
+
     /* clang-format off */
     class Gate;
     [[nodiscard]] std::vector<std::vector<size_t>> get_gate_sequence(const std::vector<qm::Gate> & layer);
@@ -34,9 +35,10 @@ namespace qm {
     [[nodiscard]] qm::Gate trace(const qm::Gate & gate , const std::array<Eigen::IndexPair<Eigen::Index>, N>  & idxpair);
 
     class Gate {
-        private:
+        protected:
         Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cplx alpha) const;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
+        mutable bool used = false;
         public:
         Eigen::Tensor<cplx,2> op;
         std::vector<size_t> pos;
@@ -46,6 +48,8 @@ namespace qm {
         Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
         Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
         void exp_inplace(cplx alpha);
+        void mark_as_used() const;
+        bool was_used() const;
         [[nodiscard]] Gate exp(cplx alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
         [[nodiscard]] Eigen::Tensor<cplx,2>& adjoint() const;
@@ -67,9 +71,27 @@ namespace qm {
         [[nodiscard]] std::vector<size_t> idx_up(const std::vector<size_t> &pos_) const;
         [[nodiscard]] std::vector<size_t> idx_dn(const std::vector<size_t> &pos_) const;
     };
-
-
-
-
+    /* clang-format on */
+    struct Rwap;
+    struct Swap {
+        size_t posL, posR;
+        Swap(size_t posL, size_t posR);
+        bool operator == (const Rwap & rwap) const;
+    };
+    struct Rwap {
+        size_t posL, posR;
+        Rwap(size_t posL, size_t posR);
+        bool operator == (const Swap & swap) const;
+    };
+    class SwapGate : public Gate {
+        using Gate::Gate;
+        public:
+        std::deque<Swap> swaps;
+        std::deque<Rwap> rwaps; // swaps sequence and reverse swap sequence
+        [[nodiscard]] SwapGate exp(cplx alpha) const;
+        void generate_swap_sequences();
+        void cancel_swaps(std::deque<Rwap> & other_rwaps);
+        void cancel_rwaps(std::deque<Swap> & other_swaps);
+    };
 
 }

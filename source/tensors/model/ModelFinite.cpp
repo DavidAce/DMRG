@@ -3,6 +3,7 @@
 #include "ModelFinite.h"
 #include <config/settings.h>
 #include <general/iter.h>
+#include <math/linalg/tensor.h>
 #include <math/svd.h>
 #include <tensors/site/mpo/MpoFactory.h>
 #include <tid/tid.h>
@@ -263,47 +264,137 @@ bool ModelFinite::is_perturbed() const {
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody) const {
+Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+    // Observe that nbody empty/nullopt have very different meanings
+    //      - empty means that no interactions should be taken into account, effectively setting all J(i,j...) = 0
+    //      - nullopt means that we want the default mpo with (everything on)
+    //      - otherwise nbody with values like {1,2} would imply we want 1 and 2-body interactions turned on
+    //      - if nbody has a 0 value in it, it means we want to make an attempt to account for double-counting in multisite mpos.
+
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
-    if(sites == active_sites and cache.multisite_mpo and nbody.empty()) return cache.multisite_mpo.value();
-    if(nbody.empty())
+    if(sites == active_sites and cache.multisite_mpo and not nbody) return cache.multisite_mpo.value();
+    if(not nbody)
         tools::log->trace("Contracting multisite mpo tensor with sites {}", sites);
     else
-        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody);
+        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
 
-    auto                     t_mpo = tid::tic_scope("mpo");
-    Eigen::Tensor<Scalar, 4> multisite_mpo, temp;
-    constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
-    constexpr auto           contract_idx = tenx::idx({1}, {0});
-    for(const auto &site : sites) {
+    auto                               t_mpo = tid::tic_scope("mpo");
+    Eigen::Tensor<Scalar, 4>           multisite_mpo, temp;
+    constexpr auto                     shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
+    constexpr auto                     contract_idx = tenx::idx({1}, {0});
+    auto                               positions    = num::range<size_t>(sites.front(), sites.back() + 1);
+    std::optional<std::vector<size_t>> skip;
+    if(sites != positions) {
+        skip = std::vector<size_t>{};
+        for(const auto &pos : positions) {
+            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip->emplace_back(pos);
+        }
+    }
+
+    for(const auto &pos : positions) {
+        // sites needs to be sorted, but may skip sites.
+        // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
+        // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
+        // the physical dimension doesn't grow.
         if(multisite_mpo.size() == 0) {
-            if(nbody.empty())
-                multisite_mpo = get_mpo(site).MPO();
+            if(nbody or skip)
+                multisite_mpo = get_mpo(pos).MPO_nbody_view(nbody, skip);
             else
-                multisite_mpo = get_mpo(site).MPO_nbody_view(nbody);
+                multisite_mpo = get_mpo(pos).MPO();
             continue;
         }
-        const auto         &mpo      = get_mpo(site);
+        const auto         &mpo      = get_mpo(pos);
         long                dim0     = multisite_mpo.dimension(0);
         long                dim1     = mpo.MPO().dimension(1);
         long                dim2     = multisite_mpo.dimension(2) * mpo.MPO().dimension(2);
         long                dim3     = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
+        auto                md       = mpo.MPO().dimensions();
+
         temp.resize(new_dims);
-        if(nbody.empty()) // Avoids creating a temporary
+        if(nbody or skip)
+            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody,skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        else {// Avoids creating a temporary
             temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        else
-            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mpo = temp;
+        }
+
+        bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
+
+        if(do_trace) {
+            /*! We just got handed a multisite-mpo created as
+             *
+             *       2   3                      2
+             *       |   |                      |
+             *  0 --[ mpo ]-- 1  --->    0 --[ mpo ]-- 1
+             *       |   |                      |
+             *       4   5                      3
+             *
+             *
+             * In this step, a reshape brings back the 6 indices, and index 3 and 5 should be traced over.
+             *
+             * Clarification:
+             *
+             * Let's say L == 4, and we want to build an operator for sites {0,2}.
+             *
+             * To skip it site 1, we set the interactions in mpo[1] to zero by setting nbody = {} (empty set disables all J(i,j,k..) in the mpo )
+             *
+             * Note that we still multiply mpos for sites {0,1,2}, but mpo[1] will only contribute an identity when generating
+             * the terms of the hamiltonian.
+             *
+             * For example,  if the Hamiltonian is H = Σ J[i,j] o[i] * o[j]
+             * then the term describing the interaction betwen sites {0,2} is
+             *
+             *  H[0,2] = J[0,2] o[0] * o[2] = J[0,2] * o ⊗ I ⊗ o
+             *
+             *  where I is a 2x2 identity matrix and o is typically some pauli matrix.
+             *  Since sites.size() == 2 we actually want a 2-site operator, not 3-site,
+             *  so therefore we must eliminate the middle I.
+             *
+             *  Multiplying mpos for sites {0,1,2} would give
+             *
+             *  H[0,1] + H[0,2] + H[1,2] = J[0,1] * o ⊗ o ⊗ I + J[0,2] * o ⊗ I ⊗ o + J[1,2] * I ⊗ o ⊗ o
+             *
+             * so we see that to eliminate the first and last term we have to
+             *
+             * 1) Set J[0,1] = J[1,2] = 0
+             *      - J[0,1] is contributed by mpo[0]
+             *      - J[1,2] is contributed by mpo[1]
+             * 2) Remove the middle I by tracing over it.
+             * 3) Divide by tr(I) = 2
+             *
+             */
+
+            tools::log->info("get_multisite_mpo: sites {} skipping pos {}", sites, pos);
+
+            long d0 = dim0;
+            long d1 = dim1;
+            long d2 = multisite_mpo.dimension(2);
+            long d3 = mpo.MPO().dimension(2);
+            long d4 = multisite_mpo.dimension(3);
+            long d5 = mpo.MPO().dimension(3);
+
+            Eigen::Tensor<Scalar, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5});
+            Eigen::Tensor<Scalar, 4> temp3 = linalg::tensor::trace(temp2, tenx::idx({3}, {5}));
+            multisite_mpo = temp3 * temp3.constant(0.5);
+        } else {
+            multisite_mpo = temp;
+        }
     }
+
+    // Print the lower left corner
+//    auto                d      = multisite_mpo.dimensions();
+//    std::array<long, 4> offset = {d[0] - 1, 0, 0, 0};
+//    std::array<long, 4> extent = {1, 1, d[2], d[3]};
+//    std::array<long, 2> shape2 = {d[2], d[3]};
+//    tools::log->info("mpo sites {}\n{}", sites, linalg::tensor::to_string(multisite_mpo.real().slice(offset, extent).reshape(shape2), 6, 8));
     return multisite_mpo;
 }
 
-Eigen::Tensor<ModelFinite::Scalar, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms) const {
+Eigen::Tensor<ModelFinite::Scalar, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
-    if(sites == active_sites and cache.multisite_ham and nbody_terms.empty()) return cache.multisite_ham.value();
+    if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto multisite_mpo = get_multisite_mpo(sites, nbody_terms);
+    auto multisite_mpo = get_multisite_mpo(sites, nbody);
     auto edgeL         = get_mpo(sites.front()).get_MPO_edge_left();
     auto edgeR         = get_mpo(sites.back()).get_MPO_edge_right();
     return multisite_mpo.contract(edgeL, tenx::idx({0}, {0}))
@@ -362,49 +453,86 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared_red
 
 std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tools::finite::multisite::get_dimensions_squared(*this); }
 
-Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody) const {
+Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo squared tensor");
-    if(sites == active_sites and cache.multisite_mpo_squared) return cache.multisite_mpo_squared.value();
+    if(sites == active_sites and cache.multisite_mpo_squared and not nbody) return cache.multisite_mpo_squared.value();
     tools::log->trace("Contracting multisite mpo squared tensor with {} sites", sites.size());
-    auto                     t_mpo = tid::tic_scope("mpo");
+    auto                     t_mpo     = tid::tic_scope("mpo");
+    auto                     positions = num::range<size_t>(sites.front(), sites.back() + 1);
     Eigen::Tensor<Scalar, 4> multisite_mpo_squared;
     constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = tenx::idx({1}, {0});
     tenx::array4             new_dims;
     Eigen::Tensor<Scalar, 4> temp;
     bool                     first = true;
-    for(const auto &site : sites) {
+    for(const auto &pos : positions) {
+        // sites needs to be sorted, but may skip sites.
+        // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
+        // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
+        // the physical dimension doesn't grow.
+
+        auto nbody_local = nbody;
+        bool skip        = std::find(sites.begin(), sites.end(), pos) == sites.end();
+        if(skip) nbody_local = std::vector<size_t>{};
+
         if(first) {
-            if(nbody.empty())
-                multisite_mpo_squared = get_mpo(site).MPO2();
+            if(nbody_local)
+                multisite_mpo_squared = get_mpo(pos).MPO2_nbody_view(nbody_local);
             else
-                multisite_mpo_squared = get_mpo(site).MPO2_nbody_view(nbody);
+                multisite_mpo_squared = get_mpo(pos).MPO2();
             first = false;
             continue;
         }
 
-        const auto &mpo  = get_mpo(site);
+        const auto &mpo  = get_mpo(pos);
         long        dim0 = multisite_mpo_squared.dimension(0);
         long        dim1 = mpo.MPO2().dimension(1);
         long        dim2 = multisite_mpo_squared.dimension(2) * mpo.MPO2().dimension(2);
         long        dim3 = multisite_mpo_squared.dimension(3) * mpo.MPO2().dimension(3);
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        if(nbody.empty()) // Avoids creating a temporary
-            temp.device(tenx::omp::getDevice()) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        else
+        if(nbody_local) // Avoids creating a temporary
             temp.device(tenx::omp::getDevice()) =
-                multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mpo_squared = temp;
+                multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody_local), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        else
+            temp.device(tenx::omp::getDevice()) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+
+        if(skip) {
+            /*! We just got handed a multisite-mpo created as
+             *
+             *       2   3                      2
+             *       |   |                      |
+             *  0 --[ mpo ]-- 1  --->    0 --[ mpo ]-- 1
+             *       |   |                      |
+             *       4   5                      3
+             *
+             *
+             * In this step, a reshape brings back the 6 indices, and index 3 and 5 should be traced over.
+             *
+             */
+            tools::log->info("get_multisite_mpo_squared: sites {} skipping pos {}", sites, pos);
+
+            long d0 = dim0;
+            long d1 = dim1;
+            long d2 = multisite_mpo_squared.dimension(2);
+            long d3 = mpo.MPO().dimension(2);
+            long d4 = multisite_mpo_squared.dimension(3);
+            long d5 = mpo.MPO().dimension(3);
+
+            Eigen::Tensor<Scalar, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5});
+            multisite_mpo_squared          = linalg::tensor::trace(temp2, tenx::idx({3}, {5}));
+        } else {
+            multisite_mpo_squared = temp;
+        }
     }
     return multisite_mpo_squared;
 }
 
-Eigen::Tensor<ModelFinite::Scalar, 2> ModelFinite::get_multisite_ham_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms) const {
+Eigen::Tensor<ModelFinite::Scalar, 2> ModelFinite::get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
-    if(sites == active_sites and cache.multisite_ham and nbody_terms.empty()) return cache.multisite_ham.value();
+    if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto multisite_mpo_squared = get_multisite_mpo_squared(sites, nbody_terms);
+    auto multisite_mpo_squared = get_multisite_mpo_squared(sites, nbody);
     auto edgeL                 = get_mpo(sites.front()).get_MPO2_edge_left();
     auto edgeR                 = get_mpo(sites.back()).get_MPO2_edge_right();
     return multisite_mpo_squared.contract(edgeL, tenx::idx({0}, {0}))

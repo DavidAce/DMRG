@@ -47,7 +47,8 @@ class MpoSite {
     [[nodiscard]] const Eigen::Tensor<cplx, 4> &MPO() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4> &MPO2() const;
     [[nodiscard]] Eigen::Tensor<cplx, 4>       &MPO2();
-    [[nodiscard]] Eigen::Tensor<cplx, 4>        MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>        MPO2_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                                std::optional<std::vector<size_t>> skip = std::nullopt) const;
     [[nodiscard]] size_t                        get_position() const;
     [[nodiscard]] std::vector<std::string>      get_parameter_names() const;
     [[nodiscard]] std::vector<std::any>         get_parameter_values() const;
@@ -57,17 +58,18 @@ class MpoSite {
     [[nodiscard]] bool                          is_compressed_mpo_squared() const;
     [[nodiscard]] double                        get_reduced_energy() const;
 
-    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                                = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(const std::vector<size_t> &nbody_terms) const = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view() const                                     = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view(double single_site_energy) const            = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_left() const                                    = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_right() const                                   = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_left() const                                   = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_right() const                                  = 0;
-    [[nodiscard]] virtual long                     get_spin_dimension() const                                   = 0;
-    [[nodiscard]] virtual TableMap                 get_parameters() const                                       = 0;
-    [[nodiscard]] virtual bool                     is_perturbed() const                                         = 0;
+    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                                                = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                                  std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view() const                                                     = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view(double single_site_energy) const                            = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_left() const                                                    = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_right() const                                                   = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_left() const                                                   = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_right() const                                                  = 0;
+    [[nodiscard]] virtual long                     get_spin_dimension() const                                                   = 0;
+    [[nodiscard]] virtual TableMap                 get_parameters() const                                                       = 0;
+    [[nodiscard]] virtual bool                     is_perturbed() const                                                         = 0;
 
     virtual void print_parameter_names() const                                                                   = 0;
     virtual void print_parameter_values() const                                                                  = 0;

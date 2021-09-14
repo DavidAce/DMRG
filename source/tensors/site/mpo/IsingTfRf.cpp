@@ -173,12 +173,13 @@ void IsingTfRf::set_perturbation(double coupling_ptb, double field_ptb, PerturbM
 
 bool IsingTfRf::is_perturbed() const { return h5tb.param.h_pert != 0.0; }
 
-Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
+Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                   [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
-    if(nbody_terms.empty()) return MPO();
-    double J1 = 0, J2 = 0;
-    for(const auto &n : nbody_terms) {
+    if(not nbody) return MPO();
+    double J1 = 0, J2 = 0.0;
+    for(const auto &n : nbody.value()) {
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }

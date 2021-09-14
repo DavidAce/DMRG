@@ -166,11 +166,11 @@ size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eige
                               multisite_tensor.dimensions(), current_position, center_position);
     // Some sanity checks
     if(multisite_tensor.dimension(1) != state.get_mps_site(positions.front()).get_chiL())
-        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL on left-most site {}",
+        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim1 {} != chiL {} on left-most site",
                                              multisite_tensor.dimension(1), state.get_mps_site(positions.front()).get_chiL(), positions.front()));
 
     if(multisite_tensor.dimension(2) != state.get_mps_site(positions.back()).get_chiR())
-        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR on right-most site {}",
+        throw std::runtime_error(fmt::format("Could not merge multisite mps into state: mps dim2 {} != chiR {} on right-most site",
                                              multisite_tensor.dimension(2), state.get_mps_site(positions.back()).get_chiR(), positions.back()));
     if constexpr(settings::debug_merge) {
         // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
@@ -179,8 +179,8 @@ size_t tools::finite::mps::merge_multisite_tensor(StateFinite &state, const Eige
     }
 
     // Can't merge sites too far away: we would end up with interleaved A's and B sites
-//    if(current_position < static_cast<long>(positions.front()) - 1 or current_position > static_cast<long>(positions.back()) + 1)
-//        throw std::runtime_error(fmt::format("Failed to merge multisite tensor {}: too far from the current position {}", positions, current_position));
+    //    if(current_position < static_cast<long>(positions.front()) - 1 or current_position > static_cast<long>(positions.back()) + 1)
+    //        throw std::runtime_error(fmt::format("Failed to merge multisite tensor {}: too far from the current position {}", positions, current_position));
 
     long              spin_prod = 1;
     std::vector<long> spin_dims;
@@ -366,6 +366,24 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] StateFinite &state
     throw std::runtime_error("Truncate next sites needs an implementation");
 }
 
+void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long chi_lim,
+                                    std::optional<svd::settings> svd_settings) {
+    if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate is out of bounds: {}", gate.pos));
+    auto multisite_mps = state.get_multisite_mps(gate.pos);
+    {
+        auto t_apply = tid::tic_token("apply");
+        temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        if(reverse)
+            temp.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+        else
+            temp.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+    }
+
+    tools::log->trace("Merging gate sites {} dims {}", gate.pos, multisite_mps.dimensions());
+    if constexpr(settings::debug_gates) tools::log->trace("pos {} | cnt {} | labels {}", gate.pos, state.get_position<long>(), state.get_labels());
+    tools::finite::mps::merge_multisite_tensor(state, temp, gate.pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
+}
+
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool reverse, long chi_lim,
                                      std::optional<svd::settings> svd_settings) {
     // Pack the two-site operators into a vector of qm::Gates
@@ -379,7 +397,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
     apply_gates(state, gates, reverse, chi_lim, svd_settings);
 }
 
-std::vector<size_t> generate_pos_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse) {
+std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse) {
     // Generate a list of staggered indices
     // If 2-site gates,
     //      * Apply gates on [0-1],[2-3]... and then [1-2],[3-4]..., i.e. even sites first, then odd sites,
@@ -396,35 +414,33 @@ std::vector<size_t> generate_pos_sequence(const StateFinite &state, const std::v
     // to the original position.
     //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
     //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
+    auto t_gen = tid::tic_scope("gen_gate_seq");
 
     auto                             state_len = state.get_length<long>();
     auto                             state_pos = state.get_position<long>();
     std::vector<std::vector<size_t>> layers;
-    std::vector<std::vector<size_t>> pos_list(gates.size());
-    for(const auto &[i, g] : iter::enumerate(gates)) pos_list[i] = g.pos;
-    while(not pos_list.empty()) {
-        // Find a gate where pos[0] == at
+    std::vector<size_t>              idx = num::range<size_t>(0, gates.size());
+    while(not idx.empty()) {
         std::vector<size_t> layer;
-        std::vector<size_t> used;
-        size_t              at = pos_list.front().front();
-        for(auto &&[i, pos] : iter::enumerate(pos_list)) {
-            if(at == pos.front()) {
-                layer.emplace_back(at);
-                used.emplace_back(i);
-                at = pos.back() + 1;
+        size_t              at = gates.at(idx.front()).pos.front();
+        // Collect gates that do not overlap
+        for(const auto &i : idx) {
+            if(gates.at(i).pos.front() >= at) {
+                layer.emplace_back(i);
+                at = gates.at(i).pos.back() + 1;
             }
         }
         // Append the layer
         layers.emplace_back(layer);
 
-        // Remove the used elements from gates_pos
-        for(const auto &i : iter::reverse(used)) pos_list.erase(pos_list.begin() + static_cast<long>(i));
+        // Remove the used elements from idx by value
+        for(const auto &i : iter::reverse(layer)) idx.erase(std::remove(idx.begin(), idx.end(), i), idx.end());
     }
 
     // Reverse every other layer to get a zigzag pattern
     // If the state is past the middle, reverse layers 0,2,4... otherwise 1,3,5...
     size_t past_middle = state_pos > state_len / 2 ? 0 : 1;
-    for(auto &&[i, l] : iter::enumerate(layers)) {
+    for(const auto &[i, l] : iter::enumerate(layers)) {
         if(num::mod<size_t>(i, 2) == past_middle) std::reverse(l.begin(), l.end());
     }
     // Move the layers into a long sequence of positions
@@ -433,11 +449,70 @@ std::vector<size_t> generate_pos_sequence(const StateFinite &state, const std::v
 
     // To apply inverse layers we reverse the whole sequence
     if(reverse) std::reverse(pos_sequence.begin(), pos_sequence.end());
+    if(pos_sequence.size() != gates.size())
+        throw std::logic_error(fmt::format("Expected pos_sequence.size() {} == gates.size() {}", pos_sequence.size(), gates.size()));
+    return pos_sequence;
+}
+
+std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, bool reverse) {
+    // Generate a list of staggered indices
+    // If 2-site gates,
+    //      * Apply gates on [0-1],[2-3]... and then [1-2],[3-4]..., i.e. even sites first, then odd sites,
+    //      * The corresponing list is [0,2,3,4,6....1,3,5,7,9...]
+    // If 3-site gates,
+    //      * Apply gates on [0-1-2], [3-4-5]... then on [1-2-3], [4-5-6]..., then on [2-3-4],[5-6-7], and so on.
+    //      * The corresponing list is [0,3,6,9...1,4,7,10...2,5,8,11...]
+    // So the list contains the index to the "first" or left-most" leg of the unitary.
+    // When applying the inverse operation, all the indices are reversed.
+    //
+    // Performance note:
+    // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
+    // to be done before even starting. Additionally, if unlucky, we have to move L-1 times again to return
+    // to the original position.
+    //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
+    //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
+    auto t_gen = tid::tic_scope("gen_gate_seq");
+    auto                             state_len = state.get_length<long>();
+    auto                             state_pos = state.get_position<long>();
+    std::vector<std::vector<size_t>> layers;
+    std::vector<size_t>              idx = num::range<size_t>(0, gates.size());
+    while(not idx.empty()) {
+        std::vector<size_t> layer;
+        size_t              at = gates.at(idx.front()).pos.front();
+        // Collect gates that do not overlap
+        for(const auto &i : idx) {
+            if(gates.at(i).pos.front() >= at) {
+                layer.emplace_back(i);
+                at = gates.at(i).pos.back() + 1;
+            }
+        }
+        // Append the layer
+        layers.emplace_back(layer);
+
+        // Remove the used elements from idx by value
+        for(const auto &i : iter::reverse(layer)) idx.erase(std::remove(idx.begin(), idx.end(), i), idx.end());
+    }
+
+    // Reverse every other layer to get a zigzag pattern
+    // If the state is past the middle, reverse layers 0,2,4... otherwise 1,3,5...
+    size_t past_middle = state_pos > state_len / 2 ? 0 : 1;
+    for(const auto &[i, l] : iter::enumerate(layers)) {
+        if(num::mod<size_t>(i, 2) == past_middle) std::reverse(l.begin(), l.end());
+    }
+    // Move the layers into a long sequence of positions
+    std::vector<size_t> pos_sequence;
+    for(auto &l : layers) pos_sequence.insert(pos_sequence.end(), std::make_move_iterator(l.begin()), std::make_move_iterator(l.end()));
+
+    // To apply inverse layers we reverse the whole sequence
+    if(reverse) std::reverse(pos_sequence.begin(), pos_sequence.end());
+    if(pos_sequence.size() != gates.size())
+        throw std::logic_error(fmt::format("Expected pos_sequence.size() {} == gates.size() {}", pos_sequence.size(), gates.size()));
     return pos_sequence;
 }
 
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
                                      std::optional<svd::settings> svd_settings) {
+    auto t_apply_gates = tid::tic_scope("apply_gates");
     Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "  [", "]");
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
@@ -451,39 +526,14 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     }
 
     if(gates.empty()) return;
-    auto pos_sequence = generate_pos_sequence(state, gates, reverse);
+    auto gate_sequence = generate_gate_sequence(state, gates, reverse);
     if constexpr(settings::debug_gates)
-        tools::log->trace("current pos {} dir {} | pos_sequence {}", state.get_position<long>(), state.get_direction(), pos_sequence);
+        tools::log->trace("current pos {} dir {} | pos_sequence {}", state.get_position<long>(), state.get_direction(), gate_sequence);
 
     state.clear_cache(LogPolicy::QUIET);
     Eigen::Tensor<cplx, 3> gate_mps;
-    for(const auto &[idx, pos] : iter::enumerate(pos_sequence)) {
-        auto &gate = gates[pos];
-        if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
-//        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
-
-        auto multisite_mps = state.get_multisite_mps(gate.pos);
-
-        {
-            auto t_apply = tid::tic_token("apply_gate");
-            gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-            if(reverse)
-                gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
-            else
-                gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
-        }
-
-        long min_position = static_cast<long>(gate.pos.front()) - 1;
-        long max_position = static_cast<long>(gate.pos.back());
-        long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
-        long new_position = std::clamp<long>(tgt_position, min_position, max_position);
-        tools::log->trace("Merging gate sites {} dims {}", gate.pos, multisite_mps.dimensions());
-        if constexpr(settings::debug_gates)
-            tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(),
-                              new_position, state.get_labels());
-//        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
-        tools::finite::mps::merge_multisite_tensor(state, gate_mps, gate.pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
-    }
+    for(const auto &idx : gate_sequence) { apply_gate(state, gates.at(idx), gate_mps, reverse, chi_lim, svd_settings); }
+    //    for(const auto & gate : gates) { apply_gate(state, gate, gate_mps, reverse, chi_lim, svd_settings); }
 
     if constexpr(settings::debug_gates) {
         if(tools::log->level() == spdlog::level::trace and state.get_length() <= 6) {
@@ -594,47 +644,120 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
      *               |                      ---->                 |        |               ----->                      |        |
      *          (0)d*d*d...                                    (0)dL      (1)dR                                      (0)dR      (2)dL
      */
-
+    auto t_swap = tid::tic_scope("swap");
     if(posR != posL + 1) throw std::logic_error(fmt::format("Expected posR == posL+1. Got posL {} and posR {}", posL, posR));
-    if(posR != std::clamp(posR, 0ul, state.get_length<size_t>()))
-        throw std::logic_error(fmt::format("Expected posR in [0,{}]. Got {}", state.get_length(), posR));
-    if(posL != std::clamp(posL, 0ul, state.get_length<size_t>()))
-        throw std::logic_error(fmt::format("Expected posL in [0,{}]. Got {}", state.get_length(), posL));
-
-    auto dimL    = state.get_mps_site(posL).dimensions();
-    auto dimR    = state.get_mps_site(posR).dimensions();
-    auto dL      = dimL[0];
-    auto dR      = dimR[0];
-    auto chiL    = dimL[1];
-    auto chiR    = dimR[2];
-    auto chi_lim = std::min(dL * chiL, dR * chiL);
-    auto multisite_mps =  state.get_multisite_mps({posL, posR});
-    Eigen::Tensor<cplx, 3> swapped_mps = state.get_multisite_mps({posL, posR})
+    if(posR != std::clamp(posR, 0ul, state.get_length<size_t>() - 1ul))
+        throw std::logic_error(fmt::format("Expected posR in [0,{}]. Got {}", state.get_length() - 1, posR));
+    if(posL != std::clamp(posL, 0ul, state.get_length<size_t>() - 1ul))
+        throw std::logic_error(fmt::format("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL));
+    tools::log->trace("Swapping sites ({}, {})", posL, posR);
+    auto                   dimL          = state.get_mps_site(posL).dimensions();
+    auto                   dimR          = state.get_mps_site(posR).dimensions();
+    auto                   dL            = dimL[0];
+    auto                   dR            = dimR[0];
+    auto                   chiL          = dimL[1];
+    auto                   chiR          = dimR[2];
+    auto                   chi_lim       = std::min(dL * chiL, dR * chiL);
+    auto                   multisite_mps = state.get_multisite_mps({posL, posR});
+    Eigen::Tensor<cplx, 3> swapped_mps   = state.get_multisite_mps({posL, posR})
                                              .reshape(tenx::array4{dL, dR, chiL, chiR})
-                                             .shuffle(tenx::array4{1, 0, 2, 3})  // swap
-                                             .reshape(tenx::array3{dR*dL, chiL, chiR}); // prepare for merge
+                                             .shuffle(tenx::array4{1, 0, 2, 3})           // swap
+                                             .reshape(tenx::array3{dR * dL, chiL, chiR}); // prepare for merge
 
     merge_multisite_tensor(state, swapped_mps, {posL, posR}, state.get_position<long>(), chi_lim, svd_settings);
     std::swap(order[posL], order[posR]);
 }
 
-void tools::finite::mps::apply_swap_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
-                                          std::optional<svd::settings> svd_settings) {
-    //    if(gates.empty()) return;
+void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long chi_lim,
+                                         std::vector<size_t> &order, std::optional<svd::settings> svd_settings) {
+    if(gate.was_used()) return;
+    if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate is out of bounds: {}", gate.pos));
 
-    auto order         = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
-    auto site_sequence = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
-    auto swap_sequence = num::range<size_t>(0ul, state.get_length<size_t>() - 1, 1ul);
-    tools::log->info("Sₑ   = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(state), ", "));
-    for(const auto &site : site_sequence) {    // Iterate through all sites
-        for(const auto &pos : swap_sequence) { // Swap current site all the way to the right edge
-            swap_sites(state, pos, pos + 1, order, svd_settings);
-            tools::log->info("order: {}", order);
-            tools::log->info("label: {}", state.get_labels());
-            tools::log->info("Sₑ   = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(state), ", "));
+    // with i<j, start by applying all the swap operators S(i,j), which move site i to j-1
+    for(const auto &s : gate.swaps) swap_sites(state, s.posL, s.posR, order, svd_settings);
 
+    // First find the actual positions given the current order after having swapped a lot.
+    std::vector<size_t> pos = gate.pos;
+    if(not order.empty()) {
+        for(auto &p : pos) {
+            auto p_it = std::find(order.begin(), order.end(), p);
+            if(p_it == order.end()) throw std::logic_error(fmt::format("State position of gate pos {} not found in {}", p, order));
+            p = static_cast<size_t>(std::distance(order.begin(), p_it));
+        }
+        // Now pos has the positions on the state which correspond to the gate positions.
+        // Example:
+        //      order    == [2,3,1,4,5,0]
+        //      gate.pos == [1,4]
+        //      pos      == [2,3] <--- valid
+        // Note that the point of swap-gates is to apply gates on nearest neighbors. Therefore, "pos" should always
+        // be a vector with increments by 1 for the gate to be applicable. For instance, gate.pos == [1,5] would yield
+        // an invalid pos == [2,4].
+
+        // Check that pos is valid
+        if(pos.size() >= 2) {
+            for(size_t idx = 1; idx < pos.size(); idx++) {
+                if(pos[idx] != pos[idx - 1] + 1) throw std::logic_error(fmt::format("Tried to apply invalid swap pos {}", pos));
+            }
         }
     }
+
+    auto multisite_mps = state.get_multisite_mps(pos);
+    {
+        auto t_apply = tid::tic_token("apply");
+        temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        if(reverse)
+            temp.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+        else
+            temp.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+
+    }
+
+    gate.mark_as_used();
+    tools::log->trace("Merging applied gate | pos {} | swapped pos {} | order {}", gate.pos, pos, order);
+    tools::finite::mps::merge_multisite_tensor(state, temp, pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
+
+    // Now swap site j-1 in reverse back to i
+    for(const auto &r : gate.rwaps) swap_sites(state, r.posL, r.posR, order, svd_settings);
+}
+
+void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, bool reverse, long chi_lim,
+                                          std::optional<svd::settings> svd_settings) {
+    auto t_swapgate = tid::tic_scope("apply_swap_gates");
+    //    if(gates.empty()) return;
+
+    auto order = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    //    auto site_sequence = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    //    auto swap_sequence = num::range<size_t>(0ul, state.get_length<size_t>() - 1, 1ul);
+    //    auto pos_sequance  = generate_pos_sequence(state, gates, reverse);
+
+    Eigen::Tensor<cplx, 3> temp;
+    //    auto gate_sequence = generate_gate_sequence(state,gates, reverse);
+    //    for(const auto & [i, gate_idx] : iter::enumerate(gate_sequence)) {
+    //        auto & gate = gates.at(gate_idx);
+    //        tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
+    //        if(i + 1 < gate_sequence.size()) gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
+    //        apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
+    //    }
+    for(auto &&[idx, gate] : iter::enumerate(gates)) {
+        tools::log->trace("Applying swap gate {} | pos {}", idx, gate.pos);
+        if(idx + 1 < gates.size()) gate.cancel_rwaps(gates[idx + 1].swaps);
+        apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
+    }
+
+    //
+    //    for(const auto &site : site_sequence) { // Iterate through all the gates
+    //        for(const auto &swap : swap_sequence) { // Swap current site all the way to the right edge
+    //            for (const auto & gate : gates){
+    //                apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
+    //            }
+    //
+    //            swap_sites(state, swap, swap + 1, order, svd_settings);
+    //
+    //            tools::log->info("order: {}", order);
+    //            tools::log->info("label: {}", state.get_labels());
+    //            tools::log->info("Sₑ   = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(state), ", "));
+    //        }
+    //    }
 
     //
     //

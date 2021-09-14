@@ -11,6 +11,7 @@
 
 namespace qm {
     class Gate;
+    class SwapGate;
 }
 
 /* clang-format off */
@@ -34,10 +35,12 @@ namespace tools::finite::mps {
     extern void truncate_next_sites                  (StateFinite & state, long chi_lim, size_t num_sites = 4, std::optional<svd::settings> svd_settings = std::nullopt);
 //    extern void apply_twosite_gates                  (StateFinite & state, const std::vector<qm::Gate> & twosite_gates, bool inverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
 //    extern void apply_twosite_gates                  (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & twosite_gates, bool inverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, long chi_lim, std::vector<size_t> & order, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & order, std::optional<svd::settings> svd_settings = std::nullopt);
-    extern void apply_swap_gates                     (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     namespace init{
         inline std::set<long> used_bitfields;
         extern bool bitfield_is_valid (std::optional<long> bitfield);

@@ -23,7 +23,8 @@ class IsingSdual : public MpoSite {
     void set_realization_averages(double J_avrg_, double h_avrg_);
     // Functions that override the base
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_nbody_view(const std::vector<size_t> &nbody_terms) const override;
+    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                          std::optional<std::vector<size_t>> skip = std::nullopt) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view() const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left() const override;

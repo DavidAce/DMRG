@@ -8,6 +8,7 @@
 
 namespace qm::lbit {
     extern Eigen::Tensor<cplx, 2>              get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<cplx, 2> &hamiltonian);
+    extern std::vector<qm::SwapGate>           get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite);
     extern std::vector<qm::Gate>               get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite);
     extern std::vector<qm::Gate>               get_unitary_2gate_layer(size_t sites, double fmix);
     extern std::vector<Eigen::Tensor<cplx, 2>> get_time_evolution_operators_2site(size_t sites, cplx delta_t,

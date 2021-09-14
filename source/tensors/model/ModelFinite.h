@@ -62,8 +62,8 @@ class ModelFinite {
 
     // For multisite
     std::array<long, 4>             active_dimensions() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
 
@@ -71,8 +71,8 @@ class ModelFinite {
     Eigen::Tensor<Scalar, 4> get_multisite_mpo_squared_reduced_view(double energy_per_site) const;
 
     std::array<long, 4>             active_dimensions_squared() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody = {}) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, const std::vector<size_t> &nbody_terms = {}) const;
+    Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<Scalar, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham_squared() const;
     void                            clear_cache() const;

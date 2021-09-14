@@ -145,21 +145,12 @@ void LBit::build_mpo()
     mpo_internal.slice(tenx::array4{8, 7, 0, 0}, extent4).reshape(extent2)  = i;
     mpo_internal.slice(tenx::array4{9, 1, 0, 0}, extent4).reshape(extent2)  = n;
     mpo_internal.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
-    for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
+    for(const auto &[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
         if(r == 0) continue;
         if(r > h5tb.param.J2_span) break;
         long rl                                                                  = static_cast<long>(r);
         mpo_internal.slice(tenx::array4{10, rl, 0, 0}, extent4).reshape(extent2) = J2r * n;
     }
-
-    mpo_internal.slice(tenx::array4{10, 1, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[1] * n;
-    mpo_internal.slice(tenx::array4{10, 2, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[2] * n;
-    mpo_internal.slice(tenx::array4{10, 3, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[3] * n;
-    mpo_internal.slice(tenx::array4{10, 4, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[4] * n;
-    mpo_internal.slice(tenx::array4{10, 5, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[5] * n;
-    mpo_internal.slice(tenx::array4{10, 6, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[6] * n;
-    mpo_internal.slice(tenx::array4{10, 7, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[7] * n;
-    mpo_internal.slice(tenx::array4{10, 8, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J2_rand[8] * n;
     mpo_internal.slice(tenx::array4{10, 9, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J3_rand * n;
     mpo_internal.slice(tenx::array4{10, 10, 0, 0}, extent4).reshape(extent2) = i;
     if(tenx::hasNaN(mpo_internal)) {
@@ -202,7 +193,7 @@ Eigen::Tensor<Scalar, 1> LBit::get_MPO2_edge_right() const {
 void LBit::randomize_hamiltonian() {
     // J2(i,j) = J2_base^-|i-j| * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
     using namespace settings::model::lbit;
-    for(auto &&[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -static_cast<double>(j)); // J2_base^-|i-j|
+    for(const auto &[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -static_cast<double>(j)); // J2_base^-|i-j|
 
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
@@ -271,30 +262,106 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
 
 bool LBit::is_perturbed() const { return h5tb.param.J1_pert != 0.0 or h5tb.param.J2_pert != 0.0 or h5tb.param.J3_pert != 0.0; }
 
-Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(const std::vector<size_t> &nbody_terms) const {
+Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
-    // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
-    if(nbody_terms.empty()) return MPO();
-    double J1 = 0;
-    double J2 = 0;
-    double J3 = 0;
+    // For instance, if nbody_terms == {2,3}, this would include 2-body and 3-body but exclude 1-body on-site terms.
+
+    // Meanwhile, skip is a list of mpo positions that we should ignore. This lets us disable interactions with certain sites.
+    // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
+
+    if(not nbody) return MPO();
+    size_t pos                        = get_position();
+    double J1_on                      = 0.0;
+    double J2_on                      = 0.0;
+    double J3_on                      = 0.0;
+    bool   adjust_for_double_counting = false;
     // Toggle on requested nbody terms
-    for(const auto &n : nbody_terms) {
-        if(n == 1) J1 = 1;
-        if(n == 2) J2 = 1;
-        if(n == 3) J3 = 1;
+    for(const auto &n : nbody.value()) {
+        if(n == 0) adjust_for_double_counting = true;
+        if(n == 1) J1_on = 1.0;
+        if(n == 2) J2_on = 1.0;
+        if(n == 3) J3_on = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                   = MPO(); // Start with the full mpo
-    Eigen::Tensor<Scalar, 2> n                                           = tenx::TensorCast(0.5 * (id + sz)); // Number operator
-    Eigen::Tensor<Scalar, 2> i                                           = tenx::TensorMap(id); // identity
-    MPO_nbody.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1 * (h5tb.param.J1_rand * n) - e_reduced * i; // Onsite terms
-    for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
+
+    // Decide whether to skip interactions. All the J2 values are taken later
+    double J1_rand = h5tb.param.J1_rand;
+    double J3_rand = h5tb.param.J3_rand;
+    auto   J2_rand = h5tb.param.J2_rand;
+    if(skip) {
+        for(const auto &s : skip.value()) {
+            if(pos == s) {
+                // This site is skipped. No interactions should be contributed from here
+                J1_rand = 0.0;
+                J3_rand = 0.0;
+                for(auto &J2r : J2_rand) J2r = 0;
+            } else {
+                // This site is not skipped, but we need to make sure not to interact with the one that is skipped.
+                for(auto &&[r, J2r] : iter::enumerate(J2_rand))
+                    if(pos + r == s) J2r = 0;
+
+                if(s == std::clamp<size_t>(s, pos, pos + 3)) J3_rand = 0;
+            }
+        }
+    }
+
+    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();                             // Start with the full mpo
+    Eigen::Tensor<Scalar, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
+    Eigen::Tensor<Scalar, 2> i         = tenx::TensorMap(id);               // identity
+
+    auto J2_count = J2_rand;
+    for(auto &&[r, J2c] : iter::enumerate(J2_count)) {
+        J2c = 1.0;
+        if(r == 0) continue;
+        if(adjust_for_double_counting) {
+            // Calculate double counting compensation
+            // An interaction between sites i,j could be included multiple times in different multisite mpos.
+            // Here we compensate for that so time evolution operators evolve the right amount
+            // Example:
+            //      Let L == 8 and J2_span <= 3 and pos == 2
+            //
+            //      L               :  0,1,2,3,4,5,6,7
+            //      multisite mpo[0]: [0,1,2,3]
+            //      multisite mpo[1]:   [1,2,3,4]
+            //      multisite mpo[2]:     [2,3,4,5]
+            //      multisite mpo[3]:       [3,4,5,6]
+            //      multisite mpo[4]:         [4,5,6,7]
+            //
+            //      Interaction counts for J[i,j], with i = posL and j = posL+r
+            //      [posL,posL+1]   [posL,posL+2]  [posL,posL+3]
+            //      [0,1]: 1        [0,2]: 1       [0,3]: 1
+            //      [1,2]: 2        [1,3]: 2       [1,4]: 1
+            //      [2,3]: 3        [2,4]: 2       [2,5]: 1
+            //      [3,4]: 3        [3,5]: 2       [3,6]: 1
+            //      [4,5]: 3        [4,6]: 2       [4,7]: 1
+            //      [5,6]: 2        [5,7]: 1
+            //      [6,7]: 1
+            //
+            //      Since in this example, pos == 2, we should compute the counts for [2,3], [2,4] and [2,5] in this function.
+            //      If r == 2 in this loop, we should compute [2,4]: 2, because this mpo contributes J[2,4] twice as seen above.
+
+            J2c         = 0.0;     // For this particular r, for interaction from posL to posL+r
+            size_t posI = pos;     // "i" in the interaction J(i,j)
+            size_t posJ = pos + r; // "j" in the interaction J(i,j)
+            for(size_t mpoL = 0; mpoL < settings::model::model_size - 1ul; mpoL++) {
+                // posI and posJ are the left and right positions of a single 2-body interaction J(i,j).
+                // mpoL and mpoR are the left and right edges of the multisite mpo
+                size_t mpoR = mpoL + h5tb.param.J2_span;
+                if(mpoR >= settings::model::model_size) break;
+                if(posI >= mpoL and posJ <= mpoR) J2c += 1.0; // Count if the interaction is in the multisite mpo
+            }
+            J2c = std::max(J2c, 1.0); // Avoid dividing by zero!
+//            tools::log->info("pos {:>2} J[{:>2}][{:>2}] count {}", get_position(), posI, posJ, J2c);
+        }
+        J2_rand[r] /= J2c;
+    }
+
+    MPO_nbody.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_reduced * i);
+    for(const auto &[r, J2r] : iter::enumerate(J2_rand)) {
         if(r == 0) continue;
         if(r > h5tb.param.J2_span) break;
-        long rl                                                               = static_cast<long>(r);
-        MPO_nbody.slice(tenx::array4{10, rl, 0, 0}, extent4).reshape(extent2) = J2 * J2r * n;
+        MPO_nbody.slice(tenx::array4{10, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2r * n;
     }
-    MPO_nbody.slice(tenx::array4{10, 9, 0, 0}, extent4).reshape(extent2) = J3 * h5tb.param.J3_rand * n;
+    MPO_nbody.slice(tenx::array4{10, 9, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
     return MPO_nbody;
 }
 

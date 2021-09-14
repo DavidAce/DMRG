@@ -5,6 +5,8 @@
 #include <math/tenx.h>
 #include <qm/qm.h>
 
+#include <utility>
+
 using namespace qm;
 using cplx = std::complex<double>;
 
@@ -65,9 +67,10 @@ Eigen::Tensor<cplx, 4> &MpoSite::MPO2() {
     }
 }
 
-Eigen::Tensor<cplx, 4> MpoSite::MPO2_nbody_view(const std::vector<size_t> &nbody_terms) const {
-    if(nbody_terms.empty()) return MPO2();
-    auto mpo1 = MPO_nbody_view(nbody_terms);
+Eigen::Tensor<cplx, 4> MpoSite::MPO2_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                std::optional<std::vector<size_t>> skip) const {
+    if(not nbody) return MPO2();
+    auto mpo1 = MPO_nbody_view(nbody,std::move(skip));
     auto dim0 = mpo1.dimension(0) * mpo1.dimension(0);
     auto dim1 = mpo1.dimension(1) * mpo1.dimension(1);
     auto dim2 = mpo1.dimension(2);

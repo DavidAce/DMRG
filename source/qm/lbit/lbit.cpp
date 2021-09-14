@@ -101,6 +101,23 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     return time_evolution_gates;
 }
 
+std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite) {
+    std::vector<SwapGate> time_evolution_swap_gates;
+    time_evolution_swap_gates.reserve(hams_nsite.size());
+    for(auto &h : hams_nsite){
+        time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
+        time_evolution_swap_gates.back().generate_swap_sequences();
+    }
+    if constexpr (settings::debug){
+        for(auto &t : time_evolution_swap_gates)
+            if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+                throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+            }
+    }
+
+    return time_evolution_swap_gates;
+}
+
 std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx delta_t,
                                                                                  const std::vector<Eigen::Tensor<cplx, 2>> &hams_2site) {
     // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
