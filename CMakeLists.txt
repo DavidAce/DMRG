@@ -76,9 +76,9 @@ target_include_directories(dmrg-flags INTERFACE source)
 ##################################################
 # -fsanitize=leak -fsanitize=undefined -fsanitize=alignment  -fsanitize=leak -fsanitize=undefined -fsanitize=alignment
 target_compile_options(dmrg-flags INTERFACE -fdiagnostics-color=always)
-target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall>)
+target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wpedantic -Wextra -Wconversion -Wunused>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:-g ${MARCH} ${MTUNE}>)
-target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>: -Wpedantic -Wextra -Wconversion>)
+target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:MINSIZEREL>>:>)

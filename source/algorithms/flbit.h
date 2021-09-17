@@ -14,6 +14,9 @@ class flbit : public AlgorithmFinite {
     std::vector<qm::Gate>              ham_gates_2body, time_gates_2site;
     std::vector<qm::Gate>              ham_gates_3body, time_gates_3site;
     std::vector<qm::Gate>              ham_gates_Lsite, time_gates_Lsite;
+    std::vector<qm::SwapGate>          ham_swap_gates_1body, time_swap_gates_1site;
+    std::vector<qm::SwapGate>          ham_swap_gates_2body, time_swap_gates_2site;
+    std::vector<qm::SwapGate>          ham_swap_gates_3body, time_swap_gates_3site;
     std::vector<std::vector<qm::Gate>> unitary_gates_2site_layers;
     std::vector<std::complex<double>>  time_points;
     Eigen::Tensor<Scalar, 2>           lbit_overlap; // The real-space support of the l-bits
@@ -31,7 +34,9 @@ class flbit : public AlgorithmFinite {
     void check_convergence() final;
     void create_time_points();
     void create_hamiltonian_gates();
-    void create_time_evolution_gates();
+    void create_hamiltonian_swap_gates();
+    void update_time_evolution_gates();
+    void update_time_evolution_swap_gates();
     void create_lbit_transform_gates();
     void transform_to_real_basis();
     void transform_to_lbit_basis();

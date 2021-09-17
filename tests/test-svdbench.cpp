@@ -34,7 +34,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
 
         h5pp::File h5file(fmt::format("{}/svd-benchmark.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY, 2);
         double     t_split_sum = 0;
-        for(const auto &multisite_tensor_name : h5file.findDatasets("multisite_tensor", "/", -1)) {
+        for(const auto &multisite_tensor_name : h5file.findDatasets("multisite_tensor_cplx")) {
             auto dims = h5file.getDatasetDimensions(multisite_tensor_name);
             auto size = dims[0] * dims[1] * dims[2];
             if(size < 131072) continue;
@@ -48,22 +48,57 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
             auto t_split         = h5file.readAttribute<double>("t_split", multisite_tensor_name);
             t_split_sum += t_split;
             {
-                svd_settings.use_lapacke = false;
-                auto t_eig               = tid::tic_scope("eig");
-                auto mps_list_eig        = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                svd_settings.svd_lib = SVDLib::rsvd;
+                auto t_eig           = tid::tic_scope("eig");
+                auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
             }
             {
-                svd_settings.use_lapacke = true;
-                auto t_eig               = tid::tic_scope("lpk");
-                auto mps_list_lpk        = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                svd_settings.svd_lib = SVDLib::lapacke;
+                auto t_eig           = tid::tic_scope("lpk");
+                auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
             }
-            tools::log->info("eig +{:8.2e} {:8.2e} | lpk +{:8.2e} {:8.2e} | original +{:8.2e} {:8.2e} | {:<32} | dims {}",
+
+            // Test what happens if center_position is now the same as positions.front()
+            center_position = static_cast<long>(positions.front());
+            {
+                svd_settings.svd_lib = SVDLib::rsvd;
+                auto t_eig           = tid::tic_scope("eigA");
+                auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+            }
+            {
+                svd_settings.svd_lib = SVDLib::lapacke;
+                auto t_eig           = tid::tic_scope("lpkA");
+                auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+            }
+
+            // Test what happens if center_position is now the same as positions.back()
+            center_position = static_cast<long>(positions.back());
+            {
+                svd_settings.svd_lib = SVDLib::rsvd;
+                auto t_eig           = tid::tic_scope("eigB");
+                auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+            }
+            {
+                svd_settings.svd_lib = SVDLib::lapacke;
+                auto t_eig           = tid::tic_scope("lpkB");
+                auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+            }
+
+            tools::log->info("eig +{:8.2e} {:8.2e} | lpk +{:8.2e} {:8.2e} | eigA +{:8.2e} {:8.2e} | lpkA +{:8.2e} {:8.2e} | eigB +{:8.2e} {:8.2e} | lpkB "
+                             "+{:8.2e} {:8.2e} | original +{:8.2e} {:8.2e} | {:<32} | dims {}",
                              tid::get_unscoped("eig.split").get_last_interval(), tid::get_unscoped("eig.split").get_time(),
-                             tid::get_unscoped("lpk.split").get_last_interval(), tid::get_unscoped("lpk.split").get_time(), t_split, t_split_sum,
+                             tid::get_unscoped("lpk.split").get_last_interval(), tid::get_unscoped("lpk.split").get_time(),
+                             tid::get_unscoped("eigA.split").get_last_interval(), tid::get_unscoped("eigA.split").get_time(),
+                             tid::get_unscoped("lpkA.split").get_last_interval(), tid::get_unscoped("lpkA.split").get_time(),
+                             tid::get_unscoped("eigB.split").get_last_interval(), tid::get_unscoped("eigB.split").get_time(),
+                             tid::get_unscoped("lpkB.split").get_last_interval(), tid::get_unscoped("lpkB.split").get_time(), t_split, t_split_sum,
                              multisite_tensor_name, dims);
         }
-        tools::log->info("eig {:8.2e} | lpk {:8.2e} | original {:8.2e} | TOTAL", tid::get_unscoped("eig.split").get_time(),
-                         tid::get_unscoped("lpk.split").get_time(), t_split_sum);
+        tools::log->info("eig {:8.2e} | lpk {:8.2e} | eigA {:8.2e} | lpkA {:8.2e} | eigB {:8.2e} | lpkB {:8.2e} | original {:8.2e} | TOTAL",
+                         tid::get_unscoped("eig.split").get_time(), tid::get_unscoped("lpk.split").get_time(), tid::get_unscoped("eigA.split").get_time(),
+                         tid::get_unscoped("lpkA.split").get_time(), tid::get_unscoped("eigB.split").get_time(), tid::get_unscoped("lpkB.split").get_time(),
+
+                         t_split_sum);
         for(const auto &t : tid::get_tree()) tools::log->info("{}", t.str());
     }
 }

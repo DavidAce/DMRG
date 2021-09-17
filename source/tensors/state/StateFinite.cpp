@@ -268,6 +268,21 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
     if(mps_ptr->get_position<T>() != pos)
         throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
     return *mps_ptr;
+
+//    if(algo == AlgorithmType::fLBIT){
+//        // During fLBIT we can't assume the mps positions are in order since we could have swap operators.
+//        for(const auto & mps_ptr :  mps_sites ){
+//            if(mps_ptr->get_position<T>() == pos) return *mps_ptr;
+//        }
+//        throw std::runtime_error(fmt::format("get_mps_site(pos): pos {} not found", pos));
+//    }else{
+//        // There shouldn't be any swap operator, we can safely assume the mps positions are sorted
+//        const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
+//        if(mps_ptr->get_position<T>() != pos)
+//            throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
+//        return *mps_ptr;
+//    }
+
 }
 template const MpsSite &StateFinite::get_mps_site(size_t pos) const;
 template const MpsSite &StateFinite::get_mps_site(long pos) const;
@@ -316,11 +331,9 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
     constexpr auto           contract_idx = tenx::idx({2}, {1});
     tenx::array3             new_dims;
     Eigen::Tensor<Scalar, 3> temp;
-    bool                     first = true;
     for(auto &site : sites) {
-        if(first) {
+        if(&site == &sites.front()) { // First site
             multisite_mps = get_mps_site(site).get_M();
-            first         = false;
             continue;
         }
         const auto &M    = get_mps_site(site).get_M();
@@ -356,12 +369,8 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         // Check the norm of the tensor on debug builds
         auto   t_dbg = tid::tic_scope("debug");
         double norm  = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+        tools::log->trace("multisite_mps {} norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-            for(const auto &site : sites) {
-                auto &mps = get_mps_site(site);
-                auto &M   = mps.get_M();
-                tools::log->critical("{}({}) norm: {:.16f}", mps.get_label(), site, tenx::VectorMap(M).norm());
-            }
             if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
                 // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
                 auto &mps_left = get_mps_site(sites.front() - 1);
@@ -371,8 +380,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
                 norm           = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
                 tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
             }
-
-            throw std::runtime_error(fmt::format("Multisite mps for sites {} is not normalized. Norm = {:.16f}", sites, norm));
+            throw std::runtime_error(fmt::format("Multisite mps for sites {} is not normalized. Norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));
         }
     }
     return multisite_mps;

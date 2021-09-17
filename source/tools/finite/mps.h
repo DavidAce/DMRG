@@ -25,7 +25,7 @@ namespace tools::finite::mps {
     extern size_t move_center_point_to_pos_dir       (StateFinite & state, long pos, int dir, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern size_t move_center_point_to_edge          (StateFinite & state, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern size_t move_center_point_to_middle        (StateFinite & state, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-    extern size_t merge_multisite_tensor             (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_tensor, const std::vector<size_t> & positions, long center_position, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
+    extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
     extern bool normalize_state                      (StateFinite & state, std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void randomize_state                      (StateFinite & state, StateInit state_type, StateInitType type, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt);
     extern void apply_random_paulis                  (StateFinite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);
@@ -39,6 +39,7 @@ namespace tools::finite::mps {
     extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, long chi_lim, std::vector<size_t> & order, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    extern void apply_gates_old                      (StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & order, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool reverse, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     namespace init{

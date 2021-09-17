@@ -139,9 +139,9 @@ double tools::infinite::measure::energy_variance_per_site_ham(const TensorsInfin
                                                              (transfer_matrix_odd - fixpoint_odd).reshape(tenx::array2{sizeLA * sizeLA, sizeLB * sizeLB});
 
     svd::solver svd;
-    svd.use_lapacke = true;
-    svd.threshold   = settings::precision::svd_threshold;
-    svd.switchsize  = settings::precision::svd_switchsize;
+    svd.svd_lib    = SVDLib::lapacke;
+    svd.threshold  = settings::precision::svd_threshold;
+    svd.switchsize = settings::precision::svd_switchsize;
 
     Eigen::Tensor<Scalar, 4> E_evn_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(tenx::array4{sizeLB, sizeLB, sizeLA, sizeLA});
     Eigen::Tensor<Scalar, 4> E_odd_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(tenx::array4{sizeLA, sizeLA, sizeLB, sizeLB});

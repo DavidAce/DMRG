@@ -690,13 +690,25 @@ void xdmrg::create_hamiltonian_gates() {
     //    ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2},
     //    tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
     //
-    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos}, tensors.state->get_spin_dims({pos})));
-    for(auto pos : list_2site)
-        ham_gates_2body.emplace_back(
-            qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1}, {2}), {pos, pos + 1}, tensors.state->get_spin_dims({pos, pos + 1})));
-    for(auto pos : list_3site)
-        ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2},
-                                              tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
+
+    for(auto pos : list_1site){
+        auto sites = num::range<size_t>(pos, pos+1);
+        auto nbody = {1ul};
+        auto spins = tensors.state->get_spin_dims(sites);
+        ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
+    for(auto pos : list_2site){
+        auto sites = num::range<size_t>(pos, pos+2);
+        auto nbody = {2ul};
+        auto spins = tensors.state->get_spin_dims(sites);
+        ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
+    for(auto pos : list_3site){
+        auto sites = num::range<size_t>(pos, pos+3);
+        auto nbody = {3ul};
+        auto spins = tensors.state->get_spin_dims(sites);
+        ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
 }
 
 void xdmrg::create_time_evolution_gates() {

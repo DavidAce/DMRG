@@ -56,11 +56,11 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const StateFinite &state) { return state.get_length(); }
 
-double tools::finite::measure::norm(const StateFinite &state) {
+double tools::finite::measure::norm(const StateFinite &state, bool full) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
     auto   t_chi = tid::tic_scope("norm");
-    if(state.is_normalized_on_all_sites()) {
+    if(not full and state.is_normalized_on_all_sites()) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
         const auto &mps = state.get_mps_site(pos);
@@ -68,7 +68,7 @@ double tools::finite::measure::norm(const StateFinite &state) {
         Eigen::Tensor<cplx, 0> MM = mps.get_M().contract(mps.get_M().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
         norm                      = std::real(MM(0));
 
-    } else if(state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
+    } else if(not full and state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
         tools::log->trace("Measuring norm using active sites {}", state.active_sites);
         Eigen::Tensor<cplx, 2> chain;
         Eigen::Tensor<cplx, 2> temp;

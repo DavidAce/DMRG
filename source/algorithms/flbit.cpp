@@ -113,8 +113,13 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 break;
             }
             case flbit_task::INIT_GATES: {
-                create_hamiltonian_gates();
-                create_time_evolution_gates();
+                if(settings::flbit::use_swap_gates) {
+                    create_hamiltonian_swap_gates();
+                    update_time_evolution_swap_gates();
+                } else {
+                    create_hamiltonian_gates();
+                    update_time_evolution_gates();
+                }
                 create_lbit_transform_gates();
                 break;
             }
@@ -165,12 +170,23 @@ void flbit::run_preprocessing() {
         auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
         Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
         tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
-        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, {1, 2, 3}), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));
+        auto nbody = std::vector<size_t>{1, 2, 3};
+        ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, nbody), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));
         time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
     }
 
-    create_hamiltonian_gates();
-    create_time_evolution_gates();
+    if(settings::flbit::use_swap_gates) {
+        create_hamiltonian_swap_gates();
+        update_time_evolution_swap_gates();
+#pragma message "do not create the following gates"
+        create_hamiltonian_gates();
+        update_time_evolution_gates();
+
+    } else {
+        create_hamiltonian_gates();
+        update_time_evolution_gates();
+    }
+
     create_lbit_transform_gates();
 
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
@@ -200,7 +216,14 @@ void flbit::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
-        update_time_step();
+        if(settings::flbit::use_swap_gates) {
+            update_time_evolution_swap_gates();
+#pragma message "no need to update the normal gates"
+            update_time_evolution_gates();
+
+        } else
+            update_time_evolution_gates();
+
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
         t_run->start_lap();
@@ -215,19 +238,54 @@ void flbit::single_flbit_step() {
      */
     tools::log->debug("Starting fLBIT iter {}", status.iter);
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
-    if(not state_lbit_init) state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
+    if(not state_lbit_init) {
+        state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
+        tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
+
+        tools::finite::mps::move_center_point_to_middle(*state_lbit_init, status.chi_lim);
+        // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, tensors.get_length<long>()-1, -1, status.chi_lim);
+        // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, 0, 1, status.chi_lim);
+    }
     *state_lbit = *state_lbit_init;
     // Time evolve from 0 to time_point[iter] here
     auto t_step = tid::tic_scope("step");
     auto t_evo  = tid::tic_scope("time_evo");
-    tools::log->debug("Applying time evolution gates", status.iter);
-    tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
-    tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
+    //    tools::finite::mps::move_center_point_to_middle(*state_lbit, status.chi_lim);
+    //    tools::finite::mps::move_center_point_to_pos_dir(*state_lbit, 0, 1, status.chi_lim);
 
+    if(settings::flbit::use_swap_gates) {
+        tools::log->debug("Applying time evolution swap gates", status.iter);
+        //        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim);
+        //        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
+
+        state_lbit->clear_measurements();
+        state_lbit->clear_cache();
+
+        tools::log->debug("Applying time evolution gates", status.iter);
+        StateFinite state_test = *state_lbit_init;
+        //        tools::finite::mps::move_center_point_to_middle(state_test, status.chi_lim);
+
+        //        tools::finite::mps::apply_gates(state_test, time_gates_1site, false, status.chi_lim);
+        tools::finite::mps::apply_gates(state_test, time_gates_2site, false, status.chi_lim);
+        //        tools::finite::mps::apply_gates(state_test, time_gates_3site, false, status.chi_lim);
+        state_test.clear_measurements();
+        state_test.clear_cache();
+        tools::log->info("Sₑ state_lbit time {:>8.2e}s = {:.5f}", tid::get("apply_swap_gates").restart_lap(),
+                         fmt::join(tools::finite::measure::entanglement_entropies(*state_lbit), ", "));
+        tools::log->info("Sₑ state_test time {:>8.2e}s = {:.5f}", tid::get("apply_gates").restart_lap(),
+                         fmt::join(tools::finite::measure::entanglement_entropies(state_test), ", "));
+
+    } else {
+        tools::log->debug("Applying time evolution gates", status.iter);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
+    }
 
     t_evo.toc();
     transform_to_real_basis();
+    tools::finite::mps::move_center_point_to_pos_dir(*state_lbit, 0, 1, status.chi_lim);
 
     if constexpr(settings::debug) {
         if(settings::model::model_size <= 10) {
@@ -251,40 +309,20 @@ void flbit::single_flbit_step() {
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
     status.phys_time += std::abs(status.delta_t);
-
-//    tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
-    tools::finite::mps::apply_swap_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
-//    tensors.clear_measurements();
-//    tensors.clear_cache();
-//    tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
-//    exit(0);
-
 }
 
 void flbit::update_time_step() {
     tools::log->trace("Updating time step");
     auto t_updtstep = tid::tic_scope("update_time_step");
     if(time_points.empty()) create_time_points();
-//    auto time_point_idx0 = std::clamp(status.iter + 0, 0ul, time_points.size() - 1);
-//    auto time_point_idx1 = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
-    auto time_point_idx  = std::clamp(status.iter + 1, 0ul, time_points.size() - 1);
-    if(time_point_idx >= settings::flbit::time_num_steps) {
+    if(status.iter >= time_points.size()) {
+        status.delta_t   = time_points.back();
         status.algo_stop = AlgorithmStop::SUCCEEDED;
         return;
     }
-//    if(time_point_idx0 > time_point_idx1) throw std::logic_error(fmt::format("Time order error: idx0 ({}) > idx1 ({})", time_point_idx0, time_point_idx1));
-//    if(std::abs(std::abs(time_points[time_point_idx0]) - status.phys_time) > 1e-10)
-//        tools::log->warn("Physical time is currently {:.8e} | should be {:.8e}", status.phys_time, std::abs(time_points[time_point_idx0]));
-//#pragma message "Set delta_t to full time point"
-    //    status.delta_t = time_points[time_point_idx1] - time_points[time_point_idx0];
-    status.delta_t = time_points[time_point_idx];
-    tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
+    status.delta_t = time_points[status.iter];
     if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
-    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
-    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
-    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
-    if constexpr(settings::debug)
-        if(settings::model::model_size <= 10) time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
+    tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
 }
 
 void flbit::check_convergence() {
@@ -348,6 +386,10 @@ void flbit::create_time_points() {
     status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
     tools::log->trace("Created time points: {}", time_points);
     tools::log->trace("Current physical time {:.8e}", status.phys_time);
+    // Sanity check
+    if(time_points.size() != settings::flbit::time_num_steps)
+        throw std::logic_error(
+            fmt::format("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps));
 }
 
 void flbit::create_hamiltonian_gates() {
@@ -356,67 +398,138 @@ void flbit::create_hamiltonian_gates() {
     ham_gates_1body.clear();
     ham_gates_2body.clear();
     ham_gates_3body.clear();
+
     // Create the hamiltonian gates with n-site terms
-    auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
-    auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
-    auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
+    //
+    // Note for 2-body terms
+    // We want MPO's with only 2-body terms of the Hamiltonian, for distances |i-j| <= J2_span sites.
+    // Let's assume we have L==8 and J2_span == 3, then we apply time-evolution mpo's
+    // L     :  0,1,2,3,4,5,6,7
+    // mpo[0]: [0,1,2,3]
+    // mpo[1]:   [1,2,3,4]
+    // mpo[2]:     [2,3,4,5]
+    // mpo[3]:       [3,4,5,6]
+    // mpo[4]:         [4,5,6,7]
+    // Note that the interaction on sites {1,2} gets applied twice, and {3,4} thrice.
+    // To compensate for this, pass a "0" to nbody, which tells the mpo-generator to divide J[i,j] by
+    // the number of times it is applied. This ensures that each interaction is time-evolved correctly.
+
+    auto L          = settings::model::model_size;
+    auto list_1site = num::range<size_t>(0, L - 0, 1);
+    auto list_2site = num::range<size_t>(0, L - 1, 1);
+    auto list_3site = num::range<size_t>(0, L - 2, 1);
     for(auto pos : list_1site) {
-        auto range = 1ul;                                  // Number of site indices
-        auto sites = num::range<size_t>(pos, pos + range); // A list of site indices
-        auto nbody = std::vector<size_t>{1};               // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
-        auto spins = tensors.state->get_spin_dims(sites);  // A list of spin dimensions for each site (should all be 2 for two-level systems)
+        auto sites = std::vector<size_t>{pos};            // A list of site indices
+        auto nbody = std::vector<size_t>{1};              // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
+        auto spins = tensors.state->get_spin_dims(sites); // A list of spin dimensions for each site (should all be 2 for two-level systems)
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
     }
-    for(auto pos : list_2site) {
-        auto range = settings::model::lbit::J2_span; // Max distance |i-j| to the furthest interacting site
-        auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, settings::model::model_size)); // +1 to include last site
-        auto nbody = std::vector<size_t>{2};
+    for(auto posL : list_2site) {
+        auto range = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
+        auto posR  = posL + range;
+        if(range == 0) break;
+        if(posR >= L) break;
+        auto sites = num::range<size_t>(posL, posR + 1); // +1 to include last site, which is otherwise not included in range
+        auto nbody = std::vector<size_t>{0, 2};          // zero is a flag to enable compensation for double-counting
         auto spins = tensors.state->get_spin_dims(sites);
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
-    for(auto pos : list_3site) {
+    for(auto posL : list_3site) {
         auto range = 2ul; // Distance to next-nearest neighbor when 3 sites interact
-        auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, settings::model::model_size)); // +1 to include last site
+        auto posR  = posL + range;
+        if(posR >= L) break;
+        auto sites = num::range<size_t>(posL, posR + 1); // +1 to include last site
         auto nbody = std::vector<size_t>{3};
         auto spins = tensors.state->get_spin_dims(sites);
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body)) {
-        if(tenx::MatrixMap(ham.op).isZero()) {
-            throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx));
-            tools::log->warn("Ham1 is all zeros");
-        }
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_gates_2body)) {
-        if(tenx::MatrixMap(ham.op).isZero()) {
-            throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx));
-            tools::log->warn("Ham2 is all zeros");
-        }
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx)); }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_gates_3body)) {
-        if(tenx::MatrixMap(ham.op).isZero()) {
-            throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx));
-            tools::log->warn("Ham3 is all zeros");
-        }
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
     }
-    //    for(const auto &ham : ham_gates_2body)
-    //        if(tenx::MatrixMap(ham.op).isZero()) tools::log->warn("Ham2 is all zeros");
-    //    for(const auto &ham : ham_gates_3body)
-    //        if(tenx::MatrixMap(ham.op).isZero()) tools::log->warn("Ham3 is all zeros");
 }
 
-void flbit::create_time_evolution_gates() {
+void flbit::create_hamiltonian_swap_gates() {
+    tools::log->info("Creating Hamiltonian swap gates");
+    auto t_swaphamgates = tid::tic_scope("swaphamgates");
+    ham_swap_gates_1body.clear();
+    ham_swap_gates_2body.clear();
+    ham_swap_gates_3body.clear();
+
+    // Create the hamiltonian 2-site swap gates with n-site range
+    auto L          = settings::model::model_size;
+    auto list_1site = num::range<size_t>(0, L - 0, 1);
+    auto list_2site = num::range<size_t>(0, L - 1, 1);
+    auto list_3site = num::range<size_t>(0, L - 2, 1);
+    for(auto pos : list_1site) {
+        auto range = 0ul;                                      // Number of site indices
+        auto sites = num::range<size_t>(pos, pos + range + 1); // A list of site indices. +1 to include last site (in this case the only site)
+        auto nbody = std::vector<size_t>{1};                   // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
+        auto spins = tensors.state->get_spin_dims(sites);      // A list of spin dimensions for each site (should all be 2 for two-level systems)
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
+        ham_swap_gates_1body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
+    }
+    for(auto posL : list_2site) {
+        auto maxR = std::min<size_t>(posL + settings::model::lbit::J2_span, L - 1);
+        if(maxR == posL) continue;
+        for(auto posR : num::range<size_t>(posL, maxR + 1)) { // maxR+1 to include the last site in range
+            if(posL == posR) continue;
+            if(posL >= L) throw std::logic_error(fmt::format("posL {} >= L {}", posL, L));
+            if(posR >= L) throw std::logic_error(fmt::format("posR {} >= L {}", posR, L));
+            auto sites = std::vector<size_t>{posL, posR}; // +1 to include last site
+            auto nbody = std::vector<size_t>{2};
+            auto spins = tensors.state->get_spin_dims(sites);
+            tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
+            ham_swap_gates_2body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+        }
+    }
+    for(auto pos : list_3site) {
+        auto range = 2ul;                                                                  // Distance to next-nearest neighbor when 3 sites interact
+        auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, L)); // +1 to include last site
+        auto nbody = std::vector<size_t>{3};
+        auto spins = tensors.state->get_spin_dims(sites);
+        tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
+        ham_swap_gates_3body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+    }
+    for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_1body)) {
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
+    }
+    for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx)); }
+    }
+    for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body)) {
+        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
+    }
+}
+
+void flbit::update_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
     if(ham_gates_1body.empty() or ham_gates_2body.empty() or ham_gates_3body.empty()) create_hamiltonian_gates();
-    if(std::abs(status.delta_t) == 0) update_time_step();
-    tools::log->info("Creating time evolution gates");
+    update_time_step();
+    tools::log->debug("Updating time evolution gates");
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+}
+
+void flbit::update_time_evolution_swap_gates() {
+    // Create the time evolution operators
+    if(time_points.empty()) create_time_points();
+    if(ham_swap_gates_1body.empty() or ham_swap_gates_2body.empty() or ham_swap_gates_3body.empty()) create_hamiltonian_swap_gates();
+    update_time_step();
+    tools::log->debug("Updating time evolution swap gates");
+    time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body);
+    time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body);
+    time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body);
 }
 
 void flbit::create_lbit_transform_gates() {
@@ -437,7 +550,7 @@ void flbit::transform_to_real_basis() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);
     status.position                      = tensors.get_position<long>();
     status.direction                     = tensors.state->get_direction();
 
@@ -465,10 +578,11 @@ void flbit::transform_to_lbit_basis() {
     for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);
     if constexpr(settings::debug) {
-        //        auto t_dbg = tid::tic_scope("debug");
-        // Double check the transform operation
-        // Check that the transform backwards is equal to to the original state
+        auto t_dbg = tid::tic_scope("debug_swap");
+        // Double check the that transform operation backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
+        for(auto &layer : unitary_gates_2site_layers)
+            for(auto &g : layer) g.unmark_as_used();
         for(auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);

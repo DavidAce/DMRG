@@ -81,13 +81,13 @@ void MpsSite::assert_identity() const {
     auto t_dbg = tid::tic_token("assert_identity");
     if(get_label() == "B") {
         Eigen::Tensor<cplx, 2> id = get_M_bare().contract(get_M_bare().conjugate(), tenx::idx({0, 2}, {0, 2}));
-        if(not tenx::MatrixMap(id).isIdentity(1e-10)) {
-            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
+        if(not tenx::isIdentity(id, 1e-10)) {
+            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
         }
     } else {
         Eigen::Tensor<cplx, 2> id = get_M_bare().contract(get_M_bare().conjugate(), tenx::idx({0, 1}, {0, 1}));
-        if(not tenx::MatrixMap(id).isIdentity(1e-10)) {
-            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), get_M_bare()));
+        if(not tenx::isIdentity(id, 1e-10)) {
+            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
         }
     }
     if(isCenter() or get_label() == "AC") {
@@ -159,6 +159,8 @@ std::string_view        MpsSite::get_label() const {
     if(label.empty()) throw std::runtime_error(fmt::format("No label found at position {}", get_position()));
     return label;
 }
+std::string MpsSite::get_tag() const { return fmt::format("{}[{}]", get_label(), get_position()); }
+
 std::tuple<long, long, long> MpsSite::get_dims() const { return {spin_dim(), get_chiL(), get_chiR()}; }
 long                         MpsSite::spin_dim() const { return get_M_bare().dimension(0); }
 long                         MpsSite::get_chiL() const { return get_M_bare().dimension(1); }
@@ -190,7 +192,6 @@ template bool MpsSite::is_at_position(size_t pos) const;
 template bool MpsSite::is_at_position(unsigned pos) const;
 template bool MpsSite::is_at_position(long pos) const;
 template bool MpsSite::is_at_position(int pos) const;
-
 
 void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, double error, std::string_view label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
@@ -273,16 +274,17 @@ void MpsSite::unset_L() {
 void MpsSite::fuse_mps(const MpsSite &other) {
     auto t_fuse = tid::tic_scope("fuse", tid::level::pedant);
     // This operation is done when merging mps after an svd split, for instance
-    if(get_position() != other.get_position())
-        throw std::runtime_error(
-            fmt::format("MpsSite::fuse_mps(const MpsSite &): position mismatch: this pos {} != other pos {}", get_position(), other.get_position()));
+    auto tag  = get_tag();       // tag, (example: A[3])
+    auto otag = other.get_tag(); // other tag, (example: AC[3])
 
-    if(not other.has_M()) throw std::runtime_error("MpsSite::fuse_mps(const MpsSite &): Got mps site with undefined M");
+    if(get_position() != other.get_position()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: position mismatch {}"), tag, otag));
+
+    if(not other.has_M()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} with undefined M"), tag, otag));
     if constexpr(settings::debug) {
         if(other.has_L())
-            tools::log->trace("Merging {}[{}] | M dims {} | L dim {}", other.get_label(), other.get_position(), other.dimensions(), other.get_L().dimensions());
+            tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L {}"), tag, otag, other.dimensions(), other.get_L().dimensions());
         else
-            tools::log->trace("{}[{}] | M dims {}", other.get_label(), other.get_position(), other.dimensions());
+            tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L nullopt"), tag, otag, other.dimensions());
     }
 
     // We have to copy the bare "M", i.e. not MC, which would include LC.
@@ -310,29 +312,29 @@ void MpsSite::fuse_mps(const MpsSite &other) {
         // For edge-sites this is simple: then the mps has edge-dimension == 1, so the only
         // way to have a normalized L is to set it to 1. Otherwise, this is a failure.
         auto one = Eigen::Tensor<cplx, 1>(1).setConstant(1.0);
-        if((label != "B" and get_chiL() == 1) or (label == "B" and get_chiR() == 1))
+        if((other.get_label() != "B" and get_chiL() == 1) or (other.get_label() == "B" and get_chiR() == 1))
             set_L(one);
         else
-            throw std::runtime_error(fmt::format("MpsSite::fuse_mps(const MpsSite &): position {} | label {} | "
-                                                 "Got other mps without an L, and there is no preexisting L",
-                                                 get_position(), get_label()));
+            throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} without an L, and there is no preexisting L"), tag, otag));
     }
 
     // Copy the center LC if it's in other
     if(other.isCenter()) {
+        if(get_M_bare().dimension(2) != other.get_LC().dimension(0))
+            throw std::runtime_error(fmt::format(
+                FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} with center of wrong dimension. M dims {} are not compatible with its LC dim {}"), tag,
+                otag, get_M_bare().dimensions(), other.get_LC().dimensions()));
         set_LC(other.get_LC(), other.get_truncation_error_LC());
-        if(get_M_bare().dimension(2) != get_LC().dimension(0))
-            throw std::runtime_error(
-                fmt::format("Got center of wrong dimension. M dims {} are not compatible with LC dims {}", get_M_bare().dimensions(), get_LC().dimensions()));
     }
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     auto t_mpo = tid::tic_token("apply_mpo");
-    tools::log->trace("Applying mpo (dims {}) at position {} | isCenter: {}", mpo.dimensions(), get_position(), isCenter());
+    tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {}) | isCenter: {}", get_tag(), mpo.dimensions(), get_position(), isCenter());
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
-    if(mpoDimL != mpoDimR) throw std::logic_error("Can't apply mpo's with different L/R dims: not implemented yet");
+    if(mpoDimL != mpoDimR)
+        throw std::logic_error(fmt::format("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag()));
 
     if(isCenter()) {
         Eigen::Tensor<cplx, 1> LC_temp = get_LC().broadcast(tenx::array1{mpoDimR});
@@ -375,10 +377,10 @@ std::optional<stash<Eigen::Tensor<cplx, 3>>> &MpsSite::get_V_stash() const { ret
 
 void MpsSite::drop_stash() const {
     if constexpr(settings::debug) {
-        if(U_stash) tools::log->trace("Dropping U_stash");
-        if(S_stash) tools::log->trace("Dropping S_stash");
-        if(C_stash) tools::log->trace("Dropping C_stash");
-        if(V_stash) tools::log->trace("Dropping V_stash");
+        if(U_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping U_stash", get_tag());
+        if(S_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping S_stash", get_tag());
+        if(C_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping C_stash", get_tag());
+        if(V_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping V_stash", get_tag());
     }
     U_stash = std::nullopt;
     S_stash = std::nullopt;
@@ -400,21 +402,21 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-        if constexpr(settings::debug) tools::log->trace("Merging V stash from site {} into {}", other.get_position(), get_position());
+        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking V stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() + 1)
-            throw std::logic_error(fmt::format("Found V stash at the wrong position: This {} | Other {} | Stash destination {}", get_position(),
-                                               other.get_position(), other.V_stash->pos_dst));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found V stash with destination {} the wrong position {}"), get_tag(),
+                                               other.V_stash->pos_dst, other.get_tag()));
 
         auto &V = other.V_stash->data;
         if(V.dimension(0) != 1)
-            throw std::logic_error(fmt::format("Failed to take stash from left site {} into {}: "
-                                               "V has invalid dimensions {}. Dim at idx 0 should be == 1",
-                                               other.get_position(), get_position(), V.dimensions()));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                                          "V has invalid dimensions {}. Dim at idx 0 should be == 1"),
+                                               get_tag(), other.get_tag(), V.dimensions()));
         if(V.dimension(2) != get_chiL())
-            throw std::logic_error(fmt::format("Failed to take stash from left site {} into {}: "
-                                               "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)",
-                                               other.get_position(), get_position(), V.dimensions(), dimensions()));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                                          "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)"),
+                                               get_tag(), other.get_tag(), V.dimensions(), dimensions()));
         tenx::array3           dims = {spin_dim(), V.dimension(1), get_chiR()};
         Eigen::Tensor<cplx, 3> VM(dims);
         VM.device(tenx::omp::getDevice()) = V.contract(get_M_bare(), tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(dims);
@@ -433,22 +435,23 @@ void MpsSite::take_stash(const MpsSite &other) {
          *
          */
 
-        if constexpr(settings::debug) tools::log->trace("Merging U stash from site {} into {}", other.get_position(), get_position());
+        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking U stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() - 1)
-            throw std::logic_error(fmt::format("Found V stash at the wrong position: This {} | Other {} | Stash destination {}", get_position(),
-                                               other.get_position(), other.U_stash->pos_dst));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found U stash with destination {} the wrong position {}"), get_tag(),
+                                               other.U_stash->pos_dst, other.get_tag()));
 
         auto &U = other.U_stash->data;
         if(U.dimension(0) != 1)
-            throw std::logic_error(fmt::format("Failed to take stash from right site {} into {}: "
-                                               "U has invalid dimensions {}. Dim at idx 0 should be == 1",
-                                               other.get_position(), get_position(), U.dimensions()));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take U stash from {}: "
+                                                          "U has invalid dimensions {}. Dim at idx 0 should be == 1"),
+                                               get_tag(), other.get_tag(), U.dimensions()));
 
         if(U.dimension(1) != get_chiR())
-            throw std::logic_error(fmt::format("Failed to take stash from right site {} into {}: "
-                                               "M dimensions {} | U dimensions {} | Expected M(2) == U(1)",
-                                               other.get_position(), get_position(), dimensions(), U.dimensions()));
+            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                                          "M dimensions {} | U dimensions {} |  Expected M(2) == U(1)"),
+                                               get_tag(), other.get_tag(), dimensions(), U.dimensions()));
+
         tenx::array3           dims = {spin_dim(), get_chiL(), U.dimension(2)};
         Eigen::Tensor<cplx, 3> MU(dims);
         MU.device(tenx::omp::getDevice()) = get_M_bare().contract(U, tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(dims);
@@ -461,7 +464,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-        if constexpr(settings::debug) tools::log->trace("Merging S stash from site {} into {}", other.get_position(), get_position());
+        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking S stash from {}"), get_tag(), other.get_tag());
         set_L(other.S_stash->data, other.S_stash->error);
         other.S_stash = std::nullopt;
     }
@@ -471,8 +474,8 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-        if constexpr(settings::debug) tools::log->trace("Merging C stash from site {} into {}", other.get_position(), get_position());
-        if(label == "B") tools::log->warn("Setting LC at pos {} with label {}", get_position(), get_label());
+        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking C stash from {}"), get_tag(), other.get_tag());
+        if(label == "B") tools::log->warn(FMT_STRING("MpsSite({})::take_stash: Taking C_stash to set LC on B-site"), get_tag());
         set_LC(other.C_stash->data, other.C_stash->error);
         other.C_stash = std::nullopt;
     }

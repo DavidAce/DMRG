@@ -172,9 +172,9 @@ std::vector<Eigen::Tensor<ModelFinite::Scalar, 4>> ModelFinite::get_compressed_m
     if(not svd_settings) svd_settings = svd::settings();
     if(not svd_settings->threshold) svd_settings->threshold = std::numeric_limits<double>::epsilon();
     if(not svd_settings->switchsize) svd_settings->switchsize = 4096;
-    if(not svd_settings->use_lapacke) svd_settings->use_lapacke = true;
     if(not svd_settings->use_bdc) svd_settings->use_bdc = false;
     if(not svd_settings->loglevel) svd_settings->loglevel = 2;
+    if(not svd_settings->svd_lib) svd_settings->svd_lib = SVDLib::lapacke;
 
     svd::solver svd(svd_settings);
 
@@ -309,12 +309,11 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo(const std::
         long                dim2     = multisite_mpo.dimension(2) * mpo.MPO().dimension(2);
         long                dim3     = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
-        auto                md       = mpo.MPO().dimensions();
 
         temp.resize(new_dims);
         if(nbody or skip)
-            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody,skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        else {// Avoids creating a temporary
+            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody, skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        else { // Avoids creating a temporary
             temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         }
 
@@ -364,8 +363,6 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo(const std::
              *
              */
 
-            tools::log->info("get_multisite_mpo: sites {} skipping pos {}", sites, pos);
-
             long d0 = dim0;
             long d1 = dim1;
             long d2 = multisite_mpo.dimension(2);
@@ -375,18 +372,18 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo(const std::
 
             Eigen::Tensor<Scalar, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5});
             Eigen::Tensor<Scalar, 4> temp3 = linalg::tensor::trace(temp2, tenx::idx({3}, {5}));
-            multisite_mpo = temp3 * temp3.constant(0.5);
+            multisite_mpo                  = temp3 * temp3.constant(0.5);
         } else {
             multisite_mpo = temp;
         }
     }
 
     // Print the lower left corner
-//    auto                d      = multisite_mpo.dimensions();
-//    std::array<long, 4> offset = {d[0] - 1, 0, 0, 0};
-//    std::array<long, 4> extent = {1, 1, d[2], d[3]};
-//    std::array<long, 2> shape2 = {d[2], d[3]};
-//    tools::log->info("mpo sites {}\n{}", sites, linalg::tensor::to_string(multisite_mpo.real().slice(offset, extent).reshape(shape2), 6, 8));
+    //    auto                d      = multisite_mpo.dimensions();
+    //    std::array<long, 4> offset = {d[0] - 1, 0, 0, 0};
+    //    std::array<long, 4> extent = {1, 1, d[2], d[3]};
+    //    std::array<long, 2> shape2 = {d[2], d[3]};
+    //    tools::log->info("mpo sites {}\n{}", sites, linalg::tensor::to_string(multisite_mpo.real().slice(offset, extent).reshape(shape2), 6, 8));
     return multisite_mpo;
 }
 
@@ -510,8 +507,6 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared(con
              * In this step, a reshape brings back the 6 indices, and index 3 and 5 should be traced over.
              *
              */
-            tools::log->info("get_multisite_mpo_squared: sites {} skipping pos {}", sites, pos);
-
             long d0 = dim0;
             long d1 = dim1;
             long d2 = multisite_mpo_squared.dimension(2);

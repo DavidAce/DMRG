@@ -3,6 +3,8 @@
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
+#include <math/linalg/tensor.h>
+#include <math/num.h>
 #include <math/rnd.h>
 #include <math/tenx.h>
 #include <qm/spin.h>
@@ -22,18 +24,17 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.f_mixer  = settings::model::lbit::f_mixer;
     h5tb.param.u_layer  = settings::model::lbit::u_layer;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
-    if(h5tb.param.J2_span > 8) throw std::runtime_error(fmt::format("Maximum J2_span supported is 8 | Got: {}", h5tb.param.J2_span));
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     h5tb_lbit::register_table_type();
     all_mpo_parameters_have_been_set =
-        false; // There are no full lattice parameters but we set it to false so we remember to call randomize on all sites in every model type
+        false; // There are no full lattice parameters on lbit, but we set it to false so we remember to call randomize on all sites in every model type
 }
 
 // double LBit::get_field() const { return h5tb.param.J1_rand; }
 // double LBit::get_coupling() const { return h5tb.param.J2_rand + h5tb.param.J3_rand; }
-void LBit::print_parameter_names() const { h5tb_lbit::print_parameter_names(); }
+void LBit::print_parameter_names() const { h5tb.print_parameter_names(); }
 void LBit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void LBit::set_parameters(TableMap &parameters) {
@@ -79,19 +80,20 @@ void LBit::build_mpo()
           + Σ_ij J2(i,j) * n_{i} * n_{i+j}
           + Σ_i  J3(i)   * n_{i} * n_{i+1} * n_{i+2}
 
-      MPO:
 
-            2            |    I     .     .     .     .     .     .     .     .    .    . |
-            |            |    n     .     .     .     .     .     .     .     .    .    . |
-        0---M---1    =   |    .     I     .     .     .     .     .     .     .    .    . |
-            |            |    .     .     I     .     .     .     .     .     .    .    . |
-            3            |    .     .     .     I     .     .     .     .     .    .    . |
-                         |    .     .     .     .     I     .     .     .     .    .    . |
-                         |    .     .     .     .     .     I     .     .     .    .    . |
-                         |    .     .     .     .     .     .     I     .     .    .    . |
-                         |    .     .     .     .     .     .     .     I     .    .    . |
-                         |    .     n     .     .     .     .     .     .     .    .    . |
-                         | J1*n J21*n J22*n J23*n J24*n J25*n J26*n J27*n J28*n J3*n    I |
+      MPO example with F = 10,  R = 8:
+                             0     1     2     3     4     5     6     7     8    9    F
+           2            |    I     .     .     .     .     .     .     .     .    .    . | 0
+           |            |    n     .     .     .     .     .     .     .     .    .    . | 1
+       0---M---1    =   |    .     I     .     .     .     .     .     .     .    .    . | 2
+           |            |    .     .     I     .     .     .     .     .     .    .    . | 3
+           3            |    .     .     .     I     .     .     .     .     .    .    . | 4
+                        |    .     .     .     .     I     .     .     .     .    .    . | 5
+                        |    .     .     .     .     .     I     .     .     .    .    . | 6
+                        |    .     .     .     .     .     .     I     .     .    .    . | 7
+                        |    .     .     .     .     .     .     .     I     .    .    . | 8
+                        |    .     n     .     .     .     .     .     .     .    .    . | 9
+                        | J1*n J21*n J22*n J23*n J24*n J25*n J26*n J27*n J28*n J3*n    I | F
 
        where
         *	i,j are site indices
@@ -105,54 +107,77 @@ void LBit::build_mpo()
                 * w is the box width of the uniform distribution
                 * m=mean is a constant offset of the distribution
 
-       Built from the following finite-state-machine ([k] are matrix indices)
+       The MPO is built from the following finite-state-machine ([k] are matrix indices and the machine gives us an adjacency matrix)
 
-       I==[0]-------------J1*n(i)--------------[10]==I
+       I==[0]-------------J1*n(i)--------------[F]==I
            |                                    |
-           |---n(i)---[1]----J21*n(i+1)---------|
-                       | \                      |
-                       |  I--[2]---J22*n(i+2)---|
-                       |      I                 |
-                       |     [3]---J23*n(i+3)---|
-                       |      I                 |
-                       |     [4]---J24*n(i+4)---|
-                       |      I                 |
-                       |     [5]---J25*n(i+5)---|
-                       |      I                 |
-                       |     [6]---J26*n(i+6)---|
-                       |      I                 |
-                       |     [7]---J27*n(i+7)---|
-                       |      I                 |
-                       |     [8]---J28*n(i+8)---|
+           |---n(i)---[1]----------J21*n(i+1)---| if R >= 1
                        |                        |
-                       |-n(i+1)--[9]--J3*n(i+2)-|
+                       |-n(i+1)-[F-1]-J3*n(i+2)-|
+                       |                        |
+                       |--I--[2]---J22*n(i+2)---| if R >= 2
+                              I                 |
+                             [3]---J23*n(i+3)---| if R >= 3
+                              I                 |
+                             [4]---J24*n(i+4)---| ...
+                              I                 |
+                             [5]---J25*n(i+5)---|
+                              I                 |
+                             [6]---J26*n(i+6)---|
+                              I                 |
+                             [7]---J27*n(i+7)---|
+                              I                 |
+                             [8]---J28*n(i+8)---|
+                             .
+                             .
+                             .
+
+       The final step of the state machine, "F" depends on the longest pairwise range "R = max|i-j|" that we have in the system
+            F = 1(for 1-body) + 1(for 3-body) + R (for all the 2-body)
+
+
+        We see that
+        - dims(M) = {F+1,F+1}
+        - dims(J2) = {R+1}
+        - nonzero elements are:
+            - M[0,0] = M[F,F] = I
+            - M[1,0] = n
+            - M[i,i-1] = I for i in range(2,R+1) <--- "range" excludes the last element
+            - M[F-1,1] = n
+            - M[F,0] =  J1*n
+            - M[F,i] = J2[i] for i in range(1,R+1) <--- "range" excludes the last element
+            - M[F,F-1] = J3*n
+
   */
 
 {
     if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    if(h5tb.param.J2_span >= h5tb.param.J2_rand.size())
+        throw std::logic_error(fmt::format("expected J2_span ({}) < J2_rand.size()({})", h5tb.param.J2_span, h5tb.param.J2_rand.size()));
+
     Eigen::Tensor<Scalar, 2> n = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i = tenx::TensorMap(id);
-    mpo_internal.resize(11, 11, h5tb.param.spin_dim, h5tb.param.spin_dim);
+    Eigen::Tensor<Scalar, 2> I = tenx::TensorMap(id);
+    long                     R = static_cast<long>(h5tb.param.J2_span);
+    long                     F = R + 2l;
+    mpo_internal.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    mpo_internal.slice(tenx::array4{0, 0, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{1, 0, 0, 0}, extent4).reshape(extent2)  = n;
-    mpo_internal.slice(tenx::array4{2, 1, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{3, 2, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{4, 3, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{5, 4, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{6, 5, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{7, 6, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{8, 7, 0, 0}, extent4).reshape(extent2)  = i;
-    mpo_internal.slice(tenx::array4{9, 1, 0, 0}, extent4).reshape(extent2)  = n;
-    mpo_internal.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
-    for(const auto &[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
-        if(r == 0) continue;
-        if(r > h5tb.param.J2_span) break;
-        long rl                                                                  = static_cast<long>(r);
-        mpo_internal.slice(tenx::array4{10, rl, 0, 0}, extent4).reshape(extent2) = J2r * n;
-    }
-    mpo_internal.slice(tenx::array4{10, 9, 0, 0}, extent4).reshape(extent2)  = h5tb.param.J3_rand * n;
-    mpo_internal.slice(tenx::array4{10, 10, 0, 0}, extent4).reshape(extent2) = i;
+
+    mpo_internal.slice(tenx::array4{0, 0, 0, 0}, extent4).reshape(extent2) = I;
+    mpo_internal.slice(tenx::array4{F, F, 0, 0}, extent4).reshape(extent2) = I;
+    mpo_internal.slice(tenx::array4{1, 0, 0, 0}, extent4).reshape(extent2) = n;
+
+    if(R >= 2)
+        for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
+
+    mpo_internal.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = n;
+    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * n - e_reduced * I;
+
+    if(R >= 1)
+        for(const auto &i : num::range<long>(1, R + 1)) {
+            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[static_cast<size_t>(i)] * n;
+        }
+    mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * n;
+
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
@@ -193,7 +218,10 @@ Eigen::Tensor<Scalar, 1> LBit::get_MPO2_edge_right() const {
 void LBit::randomize_hamiltonian() {
     // J2(i,j) = J2_base^-|i-j| * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
     using namespace settings::model::lbit;
-    for(const auto &[j, J2] : iter::enumerate(h5tb.param.J2_rand)) J2 = std::pow(J2_base, -static_cast<double>(j)); // J2_base^-|i-j|
+    for(const auto &[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) {
+        if(r > h5tb.param.J2_span) break;
+        J2r = std::pow(J2_base, -static_cast<double>(r)); // J2_base^-r, where r = |i-j|
+    }
 
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
@@ -246,12 +274,10 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        // double LBit::get_field() const { return h5tb.param.J1_rand; }
-        // double LBit::get_coupling() const { return h5tb.param.J2_rand + h5tb.param.J3_rand; }
-
         Eigen::Tensor<Scalar, 2> n                                             = tenx::TensorCast(0.5 * (id + sz));
-        Eigen::Tensor<Scalar, 2> i                                             = tenx::TensorMap(id);
-        mpo_internal.slice(tenx::array4{3, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * i;
+        Eigen::Tensor<Scalar, 2> I                                             = tenx::TensorMap(id);
+        long                     F                                             = mpo_internal.dimension(0) - 1;
+        mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * I;
         mpo_squared                                                            = std::nullopt;
         unique_id                                                              = std::nullopt;
         unique_id_sq                                                           = std::nullopt;
@@ -270,7 +296,10 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO();
+    long   R                          = static_cast<long>(h5tb.param.J2_span); // Range
+    long   F                          = R + 2l;                                // Final index of mpo
     size_t pos                        = get_position();
+    auto   J2_range                   = num::range<size_t>(1, R + 1);
     double J1_on                      = 0.0;
     double J2_on                      = 0.0;
     double J3_on                      = 0.0;
@@ -296,8 +325,9 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
                 for(auto &J2r : J2_rand) J2r = 0;
             } else {
                 // This site is not skipped, but we need to make sure not to interact with the one that is skipped.
-                for(auto &&[r, J2r] : iter::enumerate(J2_rand))
-                    if(pos + r == s) J2r = 0;
+                for(const auto &r : J2_range) {
+                    if(pos + r == s) J2_rand[r] = 0;
+                }
 
                 if(s == std::clamp<size_t>(s, pos, pos + 3)) J3_rand = 0;
             }
@@ -306,12 +336,11 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
 
     Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();                             // Start with the full mpo
     Eigen::Tensor<Scalar, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
-    Eigen::Tensor<Scalar, 2> i         = tenx::TensorMap(id);               // identity
+    Eigen::Tensor<Scalar, 2> I         = tenx::TensorMap(id);               // identity
 
     auto J2_count = J2_rand;
-    for(auto &&[r, J2c] : iter::enumerate(J2_count)) {
-        J2c = 1.0;
-        if(r == 0) continue;
+    for(const auto &r : J2_range) {
+        J2_count[r] = 1.0;
         if(adjust_for_double_counting) {
             // Calculate double counting compensation
             // An interaction between sites i,j could be included multiple times in different multisite mpos.
@@ -339,29 +368,28 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
             //      Since in this example, pos == 2, we should compute the counts for [2,3], [2,4] and [2,5] in this function.
             //      If r == 2 in this loop, we should compute [2,4]: 2, because this mpo contributes J[2,4] twice as seen above.
 
-            J2c         = 0.0;     // For this particular r, for interaction from posL to posL+r
+            J2_count[r] = 0.0;     // For this particular r, for interaction from posL to posL+r
             size_t posI = pos;     // "i" in the interaction J(i,j)
             size_t posJ = pos + r; // "j" in the interaction J(i,j)
-            for(size_t mpoL = 0; mpoL < settings::model::model_size - 1ul; mpoL++) {
+            for(size_t posL = 0; posL < settings::model::model_size - 1ul; posL++) {
                 // posI and posJ are the left and right positions of a single 2-body interaction J(i,j).
-                // mpoL and mpoR are the left and right edges of the multisite mpo
-                size_t mpoR = mpoL + h5tb.param.J2_span;
-                if(mpoR >= settings::model::model_size) break;
-                if(posI >= mpoL and posJ <= mpoR) J2c += 1.0; // Count if the interaction is in the multisite mpo
+                // posL and posR are the left and right edges of the multisite mpo
+                size_t posR = posL + h5tb.param.J2_span;
+                if(posR >= settings::model::model_size) break;
+                if(posI >= posL and posJ <= posR) J2_count[r] += 1.0; // Count if the interaction is in the multisite mpo
             }
-            J2c = std::max(J2c, 1.0); // Avoid dividing by zero!
-//            tools::log->info("pos {:>2} J[{:>2}][{:>2}] count {}", get_position(), posI, posJ, J2c);
+            J2_count[r] = std::max(J2_count[r], 1.0); // Avoid dividing by zero!
         }
-        J2_rand[r] /= J2c;
+        J2_rand[r] /= J2_count[r];
     }
 
-    MPO_nbody.slice(tenx::array4{10, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_reduced * i);
-    for(const auto &[r, J2r] : iter::enumerate(J2_rand)) {
-        if(r == 0) continue;
-        if(r > h5tb.param.J2_span) break;
-        MPO_nbody.slice(tenx::array4{10, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2r * n;
-    }
-    MPO_nbody.slice(tenx::array4{10, 9, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
+    MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_reduced * I);
+
+    if(R >= 1)
+        for(const auto &r : J2_range) { MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * n; }
+
+    MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
+
     return MPO_nbody;
 }
 

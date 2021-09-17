@@ -376,7 +376,7 @@ void TensorsFinite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multi
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements();
-    tools::finite::mps::merge_multisite_tensor(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_settings, log_policy);
+    tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_settings, log_policy);
     normalize_state(chi_lim, svd_settings, NormPolicy::IFNEEDED);
     rebuild_edges();
 }

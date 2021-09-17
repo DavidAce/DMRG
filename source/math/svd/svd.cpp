@@ -13,7 +13,7 @@ void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.switchsize) switchsize = svd_settings.switchsize.value();
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
-    if(svd_settings.use_lapacke) use_lapacke = svd_settings.use_lapacke.value();
+    if(svd_settings.svd_lib) svd_lib = svd_settings.svd_lib.value();
 }
 
 svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
@@ -45,21 +45,49 @@ template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
     auto t_svd = tid::tic_scope("svd");
-    if(use_lapacke) {
-        try {
-            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
-        } catch(const std::exception &ex) {
-            svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
-            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+    switch(svd_lib){
+        case SVDLib::lapacke:{
+            try {
+                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+            } catch(const std::exception &ex) {
+                svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
+                return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+            }
+         break;
         }
-    } else {
-        try {
-            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
-        } catch(const std::exception &ex) {
-            svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
-            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+        case SVDLib::eigen:{
+            try {
+                return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+            } catch(const std::exception &ex) {
+                svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
+                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+            }
+            break;
+        }case SVDLib::rsvd:{
+            try {
+                return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+            } catch(const std::exception &ex) {
+                svd::log->warn("Rsvd failed to perform SVD: {} | Trying Lapacke", ex.what());
+                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+            }
         }
     }
+//
+//    if(use_lapacke) {
+//        try {
+//            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+//        } catch(const std::exception &ex) {
+//            svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
+//            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+//        }
+//    } else {
+//        try {
+//            return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+//        } catch(const std::exception &ex) {
+//            svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
+//            return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+//        }
+//    }
 }
 
 //! \relates svd::class_SVD

@@ -375,7 +375,7 @@ namespace tenx {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
-            return imag_sum < threshold * obj.derived().size();
+            return imag_sum < threshold * static_cast<double>(obj.derived().size());
         } else {
             return true;
         }
@@ -385,6 +385,18 @@ namespace tenx {
     bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = 1e-14) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return isReal(vector, threshold);
+    }
+
+    template<typename Scalar, auto rank>
+    bool isZero(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = 1e-14) {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
+        return vector.isZero(threshold);
+    }
+
+    template<typename Scalar>
+    bool isIdentity(const Eigen::Tensor<Scalar, 2> &tensor, double threshold = 1e-14) {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> matrix(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+        return matrix.isIdentity(threshold);
     }
 
     template<typename Derived>

@@ -2,9 +2,13 @@
 #include <complex>
 #include <optional>
 #include <vector>
+#include "rnd/pcg_random.hpp"
 
 namespace rnd {
-
+    namespace internal {
+        // The random number engine
+        inline pcg64 rng;
+    }
     // Random functions
     void                        seed(std::optional<long> n = std::nullopt);
     extern int                  uniform_integer_01();

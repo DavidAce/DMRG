@@ -49,6 +49,7 @@ namespace qm {
         Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
         void exp_inplace(cplx alpha);
         void mark_as_used() const;
+        void unmark_as_used() const;
         bool was_used() const;
         [[nodiscard]] Gate exp(cplx alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;

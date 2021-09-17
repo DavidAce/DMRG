@@ -3,13 +3,15 @@
 #include <config/settings.h>
 #include <deque>
 #include <general/iter.h>
+#include <h5pp/h5pp.h>
+#include <math/linalg/tensor.h>
 #include <math/svd.h>
 #include <optional>
 #include <tensors/site/mps/MpsSite.h>
 #include <tid/tid.h>
 
 template<typename Scalar>
-std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                      const std::vector<size_t> &positions, long center_position, long chi_limit,
                                                      std::optional<svd::settings> svd_settings) {
     /*  Here we split an mps containing multiple sites into its consituent sites.
@@ -99,14 +101,14 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      *
      */
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        if(tenx::isReal(multisite_tensor)) {
+        if(tenx::isReal(multisite_mps)) {
             tools::log->debug("Converting to real!");
-            return split_mps<real>(multisite_tensor.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
+            return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
         }
     }
 
     if(positions.empty()) throw std::runtime_error("Could not split multisite tensor: positions list is empty");
-    if(multisite_tensor.size() == 0) throw std::runtime_error("Could not split multisite tensor: tensor is empty");
+    if(multisite_mps.size() == 0) throw std::runtime_error("Could not split multisite tensor: tensor is empty");
     if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor: spin_dims list is empty");
     if(spin_dims.size() != positions.size())
         throw std::runtime_error(fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
@@ -124,8 +126,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     std::vector<long>   spin_dims_left, spin_dims_right;
 
     // Define dimensions and positions after the desired split
-    long chiL = multisite_tensor.dimension(1);
-    long chiR = multisite_tensor.dimension(2);
+    long chiL = multisite_mps.dimension(1);
+    long chiR = multisite_mps.dimension(2);
     long dL   = 1;
     long dR   = 1;
 
@@ -165,7 +167,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     if(positions.size() == positions_left.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 1");
         auto t_o1    = tid::tic_scope("o1");
-        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
+        mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, chi_limit, svd_settings);
         // Remnant stash
         auto &mps     = mps_sites_As.back();
         auto &S_stash = mps.get_S_stash();
@@ -174,10 +176,19 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             mps.set_LC(S_stash->data, S_stash->error);
             S_stash.reset();
         }
+        auto &V_stash = mps.get_V_stash();
+        if(V_stash) {
+            auto vdim = V_stash->data.dimensions();
+            if(vdim[0] * vdim[1] != vdim[2]) {
+                auto V2 = V_stash->data.reshape(std::array<long, 2>{vdim[0] * vdim[1], vdim[2]});
+                throw std::runtime_error(fmt::format("V_stash with dimensions {} for pos {} is not a diagonal matrix:\n{}", vdim, V_stash->pos_dst,
+                                                     linalg::tensor::to_string(V2, 6, 8)));
+            }
+        }
     } else if(positions.size() == positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 2 - sites {} become B's", positions);
         auto t_o2    = tid::tic_scope("o2");
-        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, chi_limit, svd_settings);
         // Take care of stash
         auto &mps     = mps_sites_Bs.front();
         auto &S_stash = mps.get_S_stash();
@@ -186,12 +197,22 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
             S_stash.reset();
         }
+        auto &U_stash = mps.get_U_stash();
+        if(U_stash) {
+            auto udim = U_stash->data.dimensions();
+            if(udim[1] != udim[0] * udim[2]) {
+                auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
+                throw std::runtime_error(fmt::format("U_stash with dimensions {} for pos {} is not a diagonal matrix:\n{}", udim, U_stash->pos_dst,
+                                                     linalg::tensor::to_string(U2, 6, 8)));
+            }
+        }
+
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {
         if constexpr(settings::debug_split) tools::log->trace("Option 3");
         auto t_o3 = tid::tic_scope("o3");
         // Set up the SVD
         svd::solver svd(svd_settings);
-        std::tie(U, S, V) = svd.schmidt_multisite(multisite_tensor, dL, dR, chiL, chiR, chi_limit);
+        std::tie(U, S, V) = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR, chi_limit);
         mps_sites_As.emplace_back(U.template cast<cplx>(), std::nullopt, positions.front(), 0, "AC");
         mps_sites_As.back().set_LC(S.template cast<cplx>(), svd.truncation_error);
         mps_sites_Bs.emplace_back(V.template cast<cplx>(), std::nullopt, positions.back(), 0, "B");
@@ -199,7 +220,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     } else if(positions_left.size() >= positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 4");
         auto t_o4    = tid::tic_scope("o4");
-        mps_sites_As = internal::split_mps_into_As(multisite_tensor, spin_dims_left, positions_left, chi_limit, svd_settings);
+        mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, chi_limit, svd_settings);
         // We expect stashed S and V. Merge these and send onward to B's
         auto &V_stash = mps_sites_As.back().get_V_stash();
         auto &S_stash = mps_sites_As.back().get_S_stash();
@@ -222,7 +243,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     } else if(positions_left.size() < positions_right.size()) {
         if constexpr(settings::debug) tools::log->trace("Option 5");
         auto t_o5    = tid::tic_scope("o5");
-        mps_sites_Bs = internal::split_mps_into_Bs(multisite_tensor, spin_dims_right, positions_right, chi_limit, svd_settings);
+        mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, chi_limit, svd_settings);
         // We expect stashed U and S. Merge these and send onward to A's
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
@@ -269,34 +290,30 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
     }
 
-    //    if constexpr(std::is_same_v<Scalar,cplx>){
-    //        if(multisite_tensor.size() > 131072){
-    //            h5pp::File  h5file("../output/svd-benchmark.h5", h5pp::FilePermission::READWRITE);
-    //            size_t      multisite_tensor_count = 0;
-    //            std::string multisite_tensor_name;
-    //
-    //            while(true){
-    //                multisite_tensor_name = fmt::format("multisite_tensor_{}", multisite_tensor_count);
-    //                if(not h5file.linkExists(multisite_tensor_name)) break;
-    //                multisite_tensor_count++;
-    //            }
-    //            h5file.writeDataset(multisite_tensor, multisite_tensor_name, H5D_CHUNKED );
-    //            h5file.writeAttribute(spin_dims, "spin_dims", multisite_tensor_name);
-    //            h5file.writeAttribute(positions, "positions", multisite_tensor_name);
-    //            h5file.writeAttribute(center_position, "center_position", multisite_tensor_name);
-    //            h5file.writeAttribute(chi_limit, "chi_limit", multisite_tensor_name);
-    //            h5file.writeAttribute(t_split->get_last_interval(), "t_split", multisite_tensor_name);
-    //        }
+    //    if(chiL > 500 and chiR > 500){
+    //        auto file = h5pp::File("../output/svd-benchmark.h5", h5pp::FilePermission::READWRITE);
+    //        std::string dsetbase = "multisite_tensor";
+    //        if constexpr (std::is_same_v<Scalar,real>) dsetbase.append("_real");
+    //        if constexpr (std::is_same_v<Scalar,cplx>) dsetbase.append("_cplx");
+    //        static size_t count = 0;
+    //        auto dsetname = fmt::format("{}_{}",dsetbase,count++);
+    //        file.writeDataset(multisite_tensor, dsetname, H5D_CHUNKED);
+    //        file.writeAttribute(tid::get("split").get_last_interval(), "t_split", dsetname);
+    //        file.writeAttribute(spin_dims, "spin_dims", dsetname);
+    //        file.writeAttribute(positions, "positions", dsetname);
+    //        file.writeAttribute(center_position, "center_position", dsetname);
+    //        file.writeAttribute(chi_limit, "chi_limit", dsetname);
+    //        file.writeAttribute(t_split->get_last_interval(), "t_split", dsetname);
     //    }
 
     // Return the all the positions including the bond matrix
     return mps_sites_As;
 }
 
-template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<real, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<real, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                               const std::vector<size_t> &positions, long center_position, long chi_limit,
                                                               std::optional<svd::settings> svd_settings);
-template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                               const std::vector<size_t> &positions, long center_position, long chi_limit,
                                                               std::optional<svd::settings> svd_settings);
 

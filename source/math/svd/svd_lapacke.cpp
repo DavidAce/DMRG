@@ -74,7 +74,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
 
 #if !defined(NDEBUG)
-        tid::tic_scope("debug");
+    {
+        auto t_debug = tid::tic_scope("debug");
         if(not A.allFinite()) {
             print_matrix_lapacke(mat_ptr, rows, cols);
             throw std::runtime_error("SVD error: matrix has inf's or nan's");

@@ -1,5 +1,4 @@
 #include "../rnd.h"
-#include "pcg_random.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <random>
@@ -9,8 +8,7 @@ namespace rnd {
 
     namespace internal {
         // Make a random number engine
-        //    std::mt19937 rng;
-        inline pcg64 rng;
+//        inline pcg64 rng;
         // Commonly used distributions
         inline std::uniform_int_distribution<int>     rand_int_01(0, 1);
         inline std::uniform_real_distribution<double> rand_double_01(0.0, 1.0);

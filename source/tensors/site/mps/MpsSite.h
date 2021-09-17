@@ -55,6 +55,7 @@ class MpsSite {
     [[nodiscard]] double                        get_truncation_error() const;
     [[nodiscard]] double                        get_truncation_error_LC() const;
     [[nodiscard]] std::string_view              get_label() const;
+    [[nodiscard]] std::string                   get_tag() const;
     [[nodiscard]] std::tuple<long, long, long>  get_dims() const;
     [[nodiscard]] long                          spin_dim() const;
     [[nodiscard]] long                          get_chiL() const;

@@ -10,6 +10,7 @@
 #include <tools/common/log.h>
 #include <tools/finite/mps.h>
 #include <utility>
+#include <math/num.h>
 
 struct Amplitude {
     long                                  state_size;          // System size
@@ -33,8 +34,8 @@ struct Amplitude {
     [[nodiscard]] std::string to_rstring(const std::bitset<64> &b, long num) const {
         if constexpr(on) {
             if(tools::log->level() > spdlog::level::trace) return {};
-            assert(num > 0 and num < 64 and "num should be in range [0,64]");
-            auto bs = b.to_string().substr(b.size() - num);
+            if(num < 0l or num::cmp_greater_equal(num,b.size())) throw std::logic_error(fmt::format("num should be in range [0,{}]", b.size()));
+            auto bs = b.to_string().substr(b.size() - static_cast<size_t>(num));
             return fmt::format(FMT_STRING("{1:<{0}}"), state_size, std::string{bs.rbegin(), bs.rend()});
         } else
             return {};
@@ -306,7 +307,7 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
 
     std::vector<Amplitude> amplitudes;
     amplitudes.reserve(static_cast<size_t>(num_bitseqs));
-    for(long count = 0; count < num_bitseqs; count++) amplitudes.emplace_back(Amplitude{state_len, std::bitset<64>(count), std::nullopt, {}});
+    for(long count = 0; count < num_bitseqs; count++) amplitudes.emplace_back(Amplitude{state_len, std::bitset<64>(static_cast<unsigned long long int>(count)), std::nullopt, {}});
     return amplitudes;
 }
 

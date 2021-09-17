@@ -232,12 +232,12 @@ void ceres_direct_functor<Scalar>::compress() {
     if(readyCompress) return;
 
     svd::settings svd_settings;
-    svd_settings.use_lapacke = true;
-    svd_settings.use_bdc     = false;
-    svd_settings.threshold   = 1e-12;
-    svd_settings.switchsize  = 4096;
+    svd_settings.svd_lib    = SVDLib::lapacke;
+    svd_settings.use_bdc    = false;
+    svd_settings.threshold  = 1e-12;
+    svd_settings.switchsize = 4096;
     svd::solver svd(svd_settings);
-    auto old_dimensions = mpo2.dimensions();
+    auto        old_dimensions = mpo2.dimensions();
     //    Eigen::Tensor<Scalar, 4> mpo2_l2r;
     {
         // Compress left to right
@@ -254,7 +254,7 @@ void ceres_direct_functor<Scalar>::compress() {
         mpo2                               = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
     }
     readyCompress = true;
-    tools::log->debug("Compressed MPO² dimensions {} -> {}",old_dimensions, mpo2.dimensions());
+    tools::log->debug("Compressed MPO² dimensions {} -> {}", old_dimensions, mpo2.dimensions());
 }
 
 template<typename Scalar>

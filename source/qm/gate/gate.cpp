@@ -186,6 +186,7 @@ qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std:
 }
 
 void                        qm::Gate::mark_as_used() const { used = true; }
+void                        qm::Gate::unmark_as_used() const { used = false; }
 bool                        qm::Gate::was_used() const { return used; }
 void                        qm::Gate::exp_inplace(cplx alpha) { op = exp_internal(op, alpha); }
 qm::Gate                    qm::Gate::exp(cplx alpha) const { return Gate(op, pos, dim, alpha); }

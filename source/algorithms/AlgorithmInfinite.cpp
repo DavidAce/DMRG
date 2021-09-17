@@ -1,8 +1,8 @@
 #include "AlgorithmInfinite.h"
 #include <config/settings.h>
 #include <math/num.h>
-#include <tensors/state/StateInfinite.h>
 #include <tensors/model/ModelInfinite.h>
+#include <tensors/state/StateInfinite.h>
 #include <tid/tid.h>
 #include <tools/common/h5.h>
 #include <tools/common/log.h>
@@ -69,7 +69,6 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     if(status.chi_lim_has_reached_chi_max) return;
     auto tic = tid::tic_scope("chi_grow");
 
-
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
@@ -95,24 +94,20 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     // Write current results before updating bond dimension
     write_to_file(StorageReason::CHI_UPDATE);
 
-
     // If we got to this point we will update the bond dimension by a factor
     auto factor = settings::chi_lim_grow_factor(status.algo_type);
     if(factor <= 1.0) throw std::logic_error(fmt::format("Error: chi_lim_grow_factor == {:.3f} | must be larger than one", factor));
 
-
     // Update chi
     double chi_prod = std::ceil(factor * static_cast<double>(status.chi_lim));
-    long chi_new = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
+    long   chi_new  = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
     tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
     status.chi_lim                     = chi_new;
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
 
-
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
         throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
-
 }
 
 // void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
@@ -271,7 +266,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::SAVEPOINT: {
-            if(num::mod(status.iter, settings::storage::savepoint_frequency) != 0) return;
+            if(settings::storage::savepoint_frequency == 0 or num::mod(status.iter, settings::storage::savepoint_frequency) != 0) return;
             state_prefix += "/savepoint";
             storage_level = settings::storage::storage_level_savepoint;
             if(settings::storage::savepoint_keep_newest_only)
@@ -282,7 +277,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::CHECKPOINT: {
-            if(num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) return;
+            if(settings::storage::checkpoint_frequency == 0 or num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) return;
             state_prefix += "/checkpoint";
             storage_level = settings::storage::storage_level_checkpoint;
             if(settings::storage::checkpoint_keep_newest_only)
@@ -337,8 +332,8 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     // Start saving tensors and metadata
     tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::h5::save::edges(*h5file, state_prefix, storage_level, *tensors.edges);
-    tools::common::h5::save::meta(*h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size,
-                                  tensors.state->get_name(), state_prefix, model_prefix, status);
+    tools::common::h5::save::meta(*h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, tensors.state->get_name(),
+                                  state_prefix, model_prefix, status);
     // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;
 
@@ -434,8 +429,8 @@ void AlgorithmInfinite::print_status_full() {
             tools::log->info("lg σ²H MOM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         case AlgorithmType::iTEBD:
-            tools::log->info("lg σ²H HAM         = {:<8.2e}",tools::infinite::measure::energy_variance_per_site_ham(tensors));
-            tools::log->info("lg σ²H MOM         = {:<8.2e}",tools::infinite::measure::energy_variance_per_site_mom(tensors));
+            tools::log->info("lg σ²H HAM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_ham(tensors));
+            tools::log->info("lg σ²H MOM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }

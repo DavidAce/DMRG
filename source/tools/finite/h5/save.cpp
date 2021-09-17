@@ -64,14 +64,14 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
         h5pp_table_measurements_finite::table measurement_entry{};
-        measurement_entry.step            = static_cast<uint64_t>(status.step);
-        measurement_entry.iter            = static_cast<uint64_t>(status.iter);
-        measurement_entry.position        = static_cast<long>(status.position);
-        measurement_entry.length          = static_cast<uint64_t>(tools::finite::measure::length(state));
-        measurement_entry.norm            = tools::finite::measure::norm(state);
+        measurement_entry.step     = static_cast<uint64_t>(status.step);
+        measurement_entry.iter     = static_cast<uint64_t>(status.iter);
+        measurement_entry.position = static_cast<long>(status.position);
+        measurement_entry.length   = static_cast<uint64_t>(tools::finite::measure::length(state));
+        measurement_entry.norm     = tools::finite::measure::norm(state);
         if(status.algo_type != AlgorithmType::fLBIT) {
-            measurement_entry.energy          = tools::finite::measure::energy(state, model, edges);
-            measurement_entry.energy_per_site = tools::finite::measure::energy_per_site(state, model, edges);
+            measurement_entry.energy                          = tools::finite::measure::energy(state, model, edges);
+            measurement_entry.energy_per_site                 = tools::finite::measure::energy_per_site(state, model, edges);
             measurement_entry.energy_variance                 = tools::finite::measure::energy_variance(state, model, edges);
             measurement_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(state, model, edges);
             measurement_entry.energy_variance_lowest          = status.energy_variance_lowest;
@@ -103,7 +103,6 @@ namespace tools::finite::h5 {
     template<typename T>
     void save::save_data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const std::vector<T> &payload,
                                   std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
-
         auto table_path = fmt::format("{}/{}", table_prefix, table_name);
         tools::log->trace("Appending to table: {}", table_path);
         // Check if the current entry has already been appended
@@ -117,8 +116,8 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        auto entry = h5pp_table_data<T>::make_entry(status.iter,status.step, payload.data(), payload.size());
-        auto info = h5file.getTableInfo(table_path);
+        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, payload.data(), payload.size());
+        auto info  = h5file.getTableInfo(table_path);
         h5pp::hdf5::appendTableRecords(entry, info, 1);
         save_log[table_path] = save_point;
     }
@@ -338,7 +337,8 @@ namespace tools::finite::h5 {
             case StorageReason::SAVEPOINT: {
                 storage_level = settings::storage::storage_level_savepoint;
                 if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(num::mod(status.iter, settings::storage::savepoint_frequency) != 0) storage_level = StorageLevel::NONE;
+                    if(settings::storage::savepoint_frequency == 0 or num::mod(status.iter, settings::storage::savepoint_frequency) != 0)
+                        storage_level = StorageLevel::NONE;
                 }
                 table_prefxs = {fmt::format("{}/tables", state_prefix)}; // Appends only to the common tables
                 state_prefix += "/savepoint";
@@ -351,7 +351,8 @@ namespace tools::finite::h5 {
             case StorageReason::CHECKPOINT: {
                 storage_level = settings::storage::storage_level_checkpoint;
                 if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) storage_level = StorageLevel::NONE;
+                    if(settings::storage::checkpoint_frequency == 0 or num::mod(status.iter, settings::storage::checkpoint_frequency) != 0)
+                        storage_level = StorageLevel::NONE;
                 }
                 table_prefxs = {fmt::format("{}/tables", state_prefix)}; // Appends only to the common tables
                 state_prefix += "/checkpoint";
@@ -451,7 +452,7 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
         } else {
             tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
-//            tools::finite::h5::save::entgm(h5file, state_prefix, storage_level, state, status);
+            //            tools::finite::h5::save::entgm(h5file, state_prefix, storage_level, state, status);
             tools::common::h5::save::timer(h5file, timer_prefix, storage_level, status);
         }
 

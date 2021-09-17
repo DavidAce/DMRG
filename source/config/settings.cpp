@@ -202,6 +202,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::on"                      , flbit::on);
     dmrg_config.load_parameter("flbit::max_iters"               , flbit::max_iters);
     dmrg_config.load_parameter("flbit::min_iters"               , flbit::min_iters);
+    dmrg_config.load_parameter("flbit::use_swap_gates"          , flbit::use_swap_gates);
     dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
     dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
     dmrg_config.load_parameter("flbit::chi_lim_grow_factor"     , flbit::chi_lim_grow_factor);

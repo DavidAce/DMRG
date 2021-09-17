@@ -7,7 +7,7 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
-enum class SVDMode { EIGEN, LAPACKE };
+enum class SVDMode { EIGEN, LAPACKE, RSVD };
 enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class EdgeStatus { STALE, FRESH };
@@ -185,12 +185,13 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == MultisiteMove::MAX)                                  return "MAX";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
-        if(item == OptRitz::SR)                                       return "SR";
-        if(item == OptRitz::LR)                                       return "LR";
+        if(item == OptRitz::SR)                                         return "SR";
+        if(item == OptRitz::LR)                                         return "LR";
     }
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == SVDMode::EIGEN)                                      return "EIGEN";
         if(item == SVDMode::LAPACKE)                                    return "LAPACKE";
+        if(item == SVDMode::RSVD)                                       return "RSVD";
     }
     if constexpr(std::is_same_v<T, ChiGrow>) {
         if(item == ChiGrow::OFF)                                        return "OFF";
@@ -435,6 +436,7 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == "EIGEN")                                 return SVDMode::EIGEN;
         if(item == "LAPACKE")                               return SVDMode::LAPACKE;
+        if(item == "RSVD")                                  return SVDMode::RSVD;
     }
     if constexpr(std::is_same_v<T, ChiGrow>) {
         if(item == "OFF")                                   return ChiGrow::OFF;

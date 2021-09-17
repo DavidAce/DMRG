@@ -70,15 +70,16 @@ class h5tb_ising_sdual {
         return {"J_mean", "J_stdv", "J_rand", "J_avrg", "J_pert", "h_mean",   "h_stdv",
                 "h_rand", "h_avrg", "h_pert", "lambda", "delta",  "spin_dim", "distribution"};
     }
-    static void print_parameter_names() {
+    void print_parameter_names() const {
         auto name = get_parameter_names();
-        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3], name[4],
-                         name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
+        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3],
+                         name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
     }
     void print_parameter_values() const {
-        tools::log->info(FMT_STRING("{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8}"),
-                         param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg,
-                         param.h_pert, param.lambda, param.delta, param.spin_dim, param.distribution);
+        tools::log->info(
+            FMT_STRING("{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} {:<8}"),
+            param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg, param.h_pert,
+            param.lambda, param.delta, param.spin_dim, param.distribution);
     }
 };
 
@@ -125,20 +126,20 @@ class h5tb_ising_tf_rf {
     static std::vector<std::string> get_parameter_names() {
         return {"J1_rand", "J2_rand", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"};
     }
-    static void print_parameter_names() {
+    void print_parameter_names() const {
         auto name = get_parameter_names();
-        tools::log->info("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}", name[0], name[1], name[2], name[3], name[4], name[5], name[6], name[7],
-                         name[8]);
+        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3], name[4], name[5], name[6],
+                         name[7], name[8]);
     }
     void print_parameter_values() const {
-        tools::log->info("{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+12} {:<8}", param.J1, param.J2, param.h_tran, param.h_mean,
-                         param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
+        tools::log->info(FMT_STRING("{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+12} {:<8}"), param.J1, param.J2, param.h_tran,
+                         param.h_mean, param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
     }
 };
 
 class h5tb_lbit {
     private:
-    static constexpr size_t                 J2_size = 9;
+    static constexpr size_t                 J2_size = 64;
     static constexpr std::array<hsize_t, 1> J2_dims = {J2_size};
 
     public:
@@ -202,23 +203,25 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
-    [[nodiscard]] std::string J2_str() const { return fmt::format("[{:<+8.4f}]", fmt::join(param.J2_rand, " ")); }
+    [[nodiscard]] std::string J2_str() const {
+        return fmt::format(FMT_STRING("[{:<+8.6f}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));
+    }
 
     static std::vector<std::string> get_parameter_names() {
         return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth",  "J3_wdth",
                 "J2_base", "J2_span", "J1_pert", "J2_pert", "J3_pert", "f_mixer", "u_layer", "spin_dim", "distribution"};
     }
 
-    static void print_parameter_names() {
+    void print_parameter_names() const {
         auto name = get_parameter_names();
-        tools::log->info("{:<8} {:<82} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}", name[0], name[1],
-                         name[2], name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13], name[14], name[15],
-                         name[16], name[17]);
+        tools::log->info(FMT_STRING("{:<8} {:<{}} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0],
+                         name[1], J2_str().size(), name[2], name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12],
+                         name[13], name[14], name[15], name[16], name[17]);
     }
 
     void print_parameter_values() const {
-        tools::log->info("{:<+8.4f} {:<} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} "
-                         "{:<+8.4f} {:<+8.4f} {:<+8.4f} {:<+8.4f} {:<8} {:<8} {:<8}",
+        tools::log->info(FMT_STRING("{:<+8.6f} {:<} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} "
+                                    "{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} {:<8} {:<8}"),
                          param.J1_rand, J2_str(), param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth,
                          param.J2_base, param.J2_span, param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim,
                          param.distribution);

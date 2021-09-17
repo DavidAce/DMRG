@@ -255,6 +255,7 @@ namespace settings {
         inline bool     on                      = false;                    /*!< Turns flbit simulation on/off. */
         inline size_t   max_iters               = 10000;                    /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                        /*!< Min number of iterations. One iterations moves L steps. */
+        inline bool     use_swap_gates          = true;                     /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
         inline long     chi_lim_max             = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline ChiGrow  chi_lim_grow            = ChiGrow::OFF;             /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
         inline double   chi_lim_grow_factor     = 1.25;                     /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
@@ -263,7 +264,7 @@ namespace settings {
         inline double   time_start_imag         = 0;                        /*!< Starting time point (imag) */
         inline double   time_final_real         = 1e6;                      /*!< Finishing time point (real) */
         inline double   time_final_imag         = 0;                        /*!< Finishing time point (imag) */
-        inline size_t   time_num_steps          = 500;                      /*!< Number of steps from start to finish */
+        inline size_t   time_num_steps          = 500;                      /*!< Number of steps from start to finish. Start and final times are included */
         inline size_t   print_freq              = 1;                        /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     compute_lbit_length     = false;                    /*!< Calculate the characteristic length-scale of lbits */
         inline bool     compute_lbit_stats      = false;                    /*!< Calculate the statistics of characteristic length-scale for various u and f parameters */

@@ -5,9 +5,8 @@
 #include <tid/tid.h>
 #include <tools/common/contraction.h>
 
-//template<typename Scalar_>
-//MatVecMps<Scalar_>::~MatVecMps() noexcept = default;
-
+// template<typename Scalar_>
+// MatVecMps<Scalar_>::~MatVecMps() noexcept = default;
 
 template<typename Scalar_>
 template<typename T>
@@ -77,23 +76,23 @@ void MatVecMps<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *env
 
 template<typename T>
 void MatVecMps<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    auto                token       = t_multAx->tic_token();
-    #pragma omp parallel for schedule(dynamic)
+    auto token = t_multAx->tic_token();
+#pragma omp parallel for schedule(dynamic)
     for(int i = 0; i < *blockSize; i++) {
-        T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
-        T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
+        T                                         *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
+        T                                         *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
         Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_ptr, shape_mps);
         Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_ptr, shape_mps);
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
     }
 
-    counter+= *blockSize;
+    counter += *blockSize;
     *err = 0;
 }
 
 template<typename T>
 void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
-    auto token = t_multOPv->tic_token();
+    auto                                       token = t_multOPv->tic_token();
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
     switch(side) {
@@ -113,13 +112,13 @@ void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
 }
 
 template<typename T>
-void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err){
+void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
     auto token = t_multOPv->tic_token();
     switch(side) {
         case eig::Side::R: {
-            for(int i = 0; i < *blockSize; i++){
-                T *mps_in_  = static_cast<T *>(x) + *ldx * i;
-                T *mps_out_ = static_cast<T *>(y) + *ldy * i;
+            for(int i = 0; i < *blockSize; i++) {
+                T                                         *mps_in_  = static_cast<T *>(x) + *ldx * i;
+                T                                         *mps_out_ = static_cast<T *>(y) + *ldy * i;
                 Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
                 Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
                 tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
@@ -137,7 +136,6 @@ void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
     }
     *err = 0;
 }
-
 
 template<typename Scalar>
 void MatVecMps<Scalar>::print() const {}
@@ -189,10 +187,10 @@ template<typename T>
 void MatVecMps<T>::compress() {
     if(readyCompress) return;
     svd::settings svd_settings;
-    svd_settings.use_lapacke = true;
-    svd_settings.use_bdc     = false;
-    svd_settings.threshold   = 1e-12;
-    svd_settings.switchsize  = 4096;
+    svd_settings.svd_lib    = SVDLib::lapacke;
+    svd_settings.use_bdc    = false;
+    svd_settings.threshold  = 1e-12;
+    svd_settings.switchsize = 4096;
     svd::solver svd(svd_settings);
 
     Eigen::Tensor<T, 4> mpo_tmp = mpo;
@@ -235,17 +233,18 @@ void MatVecMps<Scalar>::set_side(const eig::Side side_) {
 template<typename Scalar>
 template<typename T>
 T MatVecMps<Scalar>::get_shift() const {
-    if constexpr(std::is_same_v<T, eig::cplx>) return sigma;
-    else if constexpr(std::is_floating_point_v<T>) return std::real(sigma);
-    else return static_cast<T>(sigma);
+    if constexpr(std::is_same_v<T, eig::cplx>)
+        return sigma;
+    else if constexpr(std::is_floating_point_v<T>)
+        return std::real(sigma);
+    else
+        return static_cast<T>(sigma);
 }
-
 
 template eig::real MatVecMps<eig::real>::get_shift<eig::real>() const;
 template eig::real MatVecMps<eig::cplx>::get_shift<eig::real>() const;
 template eig::cplx MatVecMps<eig::real>::get_shift<eig::cplx>() const;
 template eig::cplx MatVecMps<eig::cplx>::get_shift<eig::cplx>() const;
-
 
 template<typename Scalar>
 eig::Form MatVecMps<Scalar>::get_form() const {

@@ -1,5 +1,5 @@
 add_library(dmrg-qm-gate OBJECT)
-target_sources(dmrg-qm-gate PRIVATE gate.cpp)
+target_sources(dmrg-qm-gate PRIVATE gate.cpp swap.cpp)
 target_link_libraries(dmrg-qm-gate PUBLIC dmrg-deps dmrg-flags)
 if (DMRG_ENABLE_PCH)
     target_precompile_headers(dmrg-qm-gate REUSE_FROM dmrg-pch)

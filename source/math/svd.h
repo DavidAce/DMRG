@@ -29,6 +29,10 @@ namespace svd {
                                                                                                   std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
+        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_rsvd(const Scalar *mat_ptr, long rows, long cols,
+                                                                                                  std::optional<long> rank_max = std::nullopt);
+
+        template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd(const Scalar *mat_ptr, long rows, long cols,
                                                                                             std::optional<long> rank_max = std::nullopt);
 
@@ -42,10 +46,10 @@ namespace svd {
         solver();
         solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
-        double threshold   = 1e-12;
-        size_t switchsize  = 16;
-        bool   use_lapacke = true;
-        bool   use_bdc     = true;
+        double threshold  = 1e-12;
+        size_t switchsize = 16;
+        SVDLib svd_lib    = SVDLib::lapacke;
+        bool   use_bdc    = true;
 
         static std::optional<long long> count;
         double                          truncation_error = 0;
