@@ -12,13 +12,13 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [6,8,10,12,14,16,18]
+sites               = [6,8,10,12,14]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 1.000, 0.100]]
-f                   = [0.30, 0.40]
-u                   = [3]
-b                   = [4,8]
-r                   = [8]
+f                   = [0.20, 0.30, 0.40]
+u                   = [2,3]
+b                   = [2,4,8]
+r                   = [8,16]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 tmp_storage = "/tmp"
@@ -65,7 +65,7 @@ for val_L,val_J,val_w, val_b, val_f,val_u, val_r, init, in  product(sites,J,w, b
         "flbit::chi_lim_max"                 : "1024",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e8",
+        "flbit::time_final_real"             : "1e10",
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "100",
     }
