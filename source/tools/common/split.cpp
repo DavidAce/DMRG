@@ -177,16 +177,21 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         if(pos == center_position and S_stash) { // Steal LC from stash
             mps.set_LC(S_stash->data, S_stash->error);
             S_stash.reset();
-        }
-        auto &V_stash = mps.get_V_stash();
-        if(V_stash) {
-            auto vdim = V_stash->data.dimensions();
-            if(vdim[0] * vdim[1] != vdim[2]) {
-                auto V2 = V_stash->data.reshape(std::array<long, 2>{vdim[0] * vdim[1], vdim[2]});
-                throw std::runtime_error(fmt::format("V_stash with dimensions {} for pos {} is not a diagonal matrix:\n{}", vdim, V_stash->pos_dst,
-                                                     linalg::tensor::to_string(V2, 6, 8)));
+        } else {
+            auto &V_stash = mps.get_V_stash();
+            if(V_stash) {
+                auto vdim = V_stash->data.dimensions();
+                if(vdim[0] * vdim[1] != vdim[2]) {
+                    auto V2 = V_stash->data.reshape(std::array<long, 2>{vdim[0] * vdim[1], vdim[2]});
+                    throw std::runtime_error(fmt::format(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"
+                                                                    "\nV_stash:\n{}"
+                                                                    "\nS_stash:\n{}"),
+                                                         vdim, V_stash->pos_dst, linalg::tensor::to_string(V2, 6, 8),
+                                                         linalg::tensor::to_string(S_stash->data, 16, 18)));
+                }
             }
         }
+
     } else if(positions.size() == positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("Option 2 - sites {} become B's", positions);
         auto t_o2    = tid::tic_scope("o2");
@@ -198,14 +203,18 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         if(pos == center_position + 1 and S_stash) { // The stash in S becomes the LC for the site on the left
             mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
             S_stash.reset();
-        }
-        auto &U_stash = mps.get_U_stash();
-        if(U_stash) {
-            auto udim = U_stash->data.dimensions();
-            if(udim[1] != udim[0] * udim[2]) {
-                auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
-                throw std::runtime_error(fmt::format("U_stash with dimensions {} for pos {} is not a diagonal matrix:\n{}", udim, U_stash->pos_dst,
-                                                     linalg::tensor::to_string(U2, 6, 8)));
+        } else {
+            auto &U_stash = mps.get_U_stash();
+            if(U_stash) {
+                auto udim = U_stash->data.dimensions();
+                if(udim[1] != udim[0] * udim[2]) {
+                    auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
+                    throw std::runtime_error(fmt::format(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
+                                                                    "\nU_stash:\n{}"
+                                                                    "\nS_stash:\n{}"),
+                                                         udim, U_stash->pos_dst, linalg::tensor::to_string(U2, 6, 8),
+                                                         linalg::tensor::to_string(S_stash->data, 6, 8)));
+                }
             }
         }
 
