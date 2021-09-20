@@ -101,7 +101,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      *
      */
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        if(tenx::isReal(multisite_mps)) {
+        auto chiL = multisite_mps.dimension(1);
+        auto chiR = multisite_mps.dimension(2);
+        if(chiL * chiR > 128*128 and tenx::isReal(multisite_mps) ) {
             tools::log->debug("Converting to real!");
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
         }
