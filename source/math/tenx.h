@@ -371,7 +371,7 @@ namespace tenx {
     //******************************************************//
 
     template<typename Derived>
-    bool isReal(const Eigen::EigenBase<Derived> &obj, double threshold = 1e-14) {
+    bool isReal(const Eigen::EigenBase<Derived> &obj, double threshold = std::numeric_limits<double>::epsilon()) {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
@@ -382,19 +382,19 @@ namespace tenx {
     }
 
     template<typename Scalar, auto rank>
-    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = 1e-14) {
+    bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = std::numeric_limits<double>::epsilon()) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return isReal(vector, threshold);
     }
 
     template<typename Scalar, auto rank>
-    bool isZero(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = 1e-14) {
+    bool isZero(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = std::numeric_limits<double>::epsilon()) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return vector.isZero(threshold);
     }
 
     template<typename Scalar>
-    bool isIdentity(const Eigen::Tensor<Scalar, 2> &tensor, double threshold = 1e-14) {
+    bool isIdentity(const Eigen::Tensor<Scalar, 2> &tensor, double threshold = std::numeric_limits<double>::epsilon()) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> matrix(tensor.data(), tensor.dimension(0), tensor.dimension(1));
         return matrix.isIdentity(threshold);
     }
