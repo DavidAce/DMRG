@@ -183,11 +183,11 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
                 auto vdim = V_stash->data.dimensions();
                 if(vdim[0] * vdim[1] != vdim[2]) {
                     auto V2 = V_stash->data.reshape(std::array<long, 2>{vdim[0] * vdim[1], vdim[2]});
-                    throw std::runtime_error(fmt::format(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"
+                    tools::log->error(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"
                                                                     "\nV_stash:\n{}"
                                                                     "\nS_stash:\n{}"),
                                                          vdim, V_stash->pos_dst, linalg::tensor::to_string(V2, 6, 8),
-                                                         linalg::tensor::to_string(S_stash->data, 16, 18)));
+                                                         linalg::tensor::to_string(S_stash->data, 16, 18));
                 }
             }
         }
@@ -209,11 +209,11 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
                 auto udim = U_stash->data.dimensions();
                 if(udim[1] != udim[0] * udim[2]) {
                     auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
-                    throw std::runtime_error(fmt::format(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
+                    tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
                                                                     "\nU_stash:\n{}"
                                                                     "\nS_stash:\n{}"),
                                                          udim, U_stash->pos_dst, linalg::tensor::to_string(U2, 6, 8),
-                                                         linalg::tensor::to_string(S_stash->data, 6, 8)));
+                                                         linalg::tensor::to_string(S_stash->data, 6, 8));
                 }
             }
         }
