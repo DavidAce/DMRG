@@ -415,6 +415,13 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
                 SV_temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(S_prev.value()).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
             V = SV_temp;
         }
+
+        if (&spin_dim == & spin_dims.back()){
+            // In the last SVD, it's important that we don't truncate by threshold.
+            // If we do, we risk making the V non-diagonal, which would truncate whatever site is on the right, later on.
+            svd.threshold = std::numeric_limits<double>::epsilon();
+        }
+
         std::tie(U, S, V) = svd.schmidt_into_left_normalized(V, spin_dim, chi_limit);
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
@@ -528,6 +535,13 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
             US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
             U                                      = US_temp;
         }
+
+        if (&spin_dim == & spin_dims.front()){
+            // In the last SVD, it's important that we don't truncate by threshold.
+            // If we do, we risk making the U non-diagonal, which would truncate whatever site is on the left, later on.
+            svd.threshold = std::numeric_limits<double>::epsilon();
+        }
+
         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, chi_limit);
         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
