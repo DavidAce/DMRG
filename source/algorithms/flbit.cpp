@@ -178,9 +178,9 @@ void flbit::run_preprocessing() {
     if(settings::flbit::use_swap_gates) {
         create_hamiltonian_swap_gates();
         update_time_evolution_swap_gates();
-#pragma message "do not create the following gates"
-        create_hamiltonian_gates();
-        update_time_evolution_gates();
+        //#pragma message "do not create the following gates"
+        //        create_hamiltonian_gates();
+        //        update_time_evolution_gates();
 
     } else {
         create_hamiltonian_gates();
@@ -218,8 +218,8 @@ void flbit::run_algorithm() {
         if(status.algo_stop != AlgorithmStop::NONE) break;
         if(settings::flbit::use_swap_gates) {
             update_time_evolution_swap_gates();
-#pragma message "no need to update the normal gates"
-            update_time_evolution_gates();
+            //#pragma message "no need to update the normal gates"
+            //            update_time_evolution_gates();
 
         } else
             update_time_evolution_gates();
@@ -240,9 +240,9 @@ void flbit::single_flbit_step() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
-        tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
+        //        tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
 
-        tools::finite::mps::move_center_point_to_middle(*state_lbit_init, status.chi_lim);
+        //        tools::finite::mps::move_center_point_to_middle(*state_lbit_init, status.chi_lim);
         // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, tensors.get_length<long>()-1, -1, status.chi_lim);
         // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, 0, 1, status.chi_lim);
     }
@@ -255,26 +255,26 @@ void flbit::single_flbit_step() {
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates", status.iter);
-        //        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim);
-        //        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
-
-        state_lbit->clear_measurements();
-        state_lbit->clear_cache();
-
-        tools::log->debug("Applying time evolution gates", status.iter);
-        StateFinite state_test = *state_lbit_init;
-        //        tools::finite::mps::move_center_point_to_middle(state_test, status.chi_lim);
-
-        //        tools::finite::mps::apply_gates(state_test, time_gates_1site, false, status.chi_lim);
-        tools::finite::mps::apply_gates(state_test, time_gates_2site, false, status.chi_lim);
-        //        tools::finite::mps::apply_gates(state_test, time_gates_3site, false, status.chi_lim);
-        state_test.clear_measurements();
-        state_test.clear_cache();
-        tools::log->info("Sₑ state_lbit time {:>8.2e}s = {:.5f}", tid::get("apply_swap_gates").restart_lap(),
-                         fmt::join(tools::finite::measure::entanglement_entropies(*state_lbit), ", "));
-        tools::log->info("Sₑ state_test time {:>8.2e}s = {:.5f}", tid::get("apply_gates").restart_lap(),
-                         fmt::join(tools::finite::measure::entanglement_entropies(state_test), ", "));
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
+        //
+        //        state_lbit->clear_measurements();
+        //        state_lbit->clear_cache();
+        //
+        //        tools::log->debug("Applying time evolution gates", status.iter);
+        //        StateFinite state_test = *state_lbit_init;
+        //        //        tools::finite::mps::move_center_point_to_middle(state_test, status.chi_lim);
+        //
+        //        //        tools::finite::mps::apply_gates(state_test, time_gates_1site, false, status.chi_lim);
+        //        tools::finite::mps::apply_gates(state_test, time_gates_2site, false, status.chi_lim);
+        //        //        tools::finite::mps::apply_gates(state_test, time_gates_3site, false, status.chi_lim);
+        //        state_test.clear_measurements();
+        //        state_test.clear_cache();
+        //        tools::log->info("Sₑ state_lbit time {:>8.2e}s = {:.5f}", tid::get("apply_swap_gates").restart_lap(),
+        //                         fmt::join(tools::finite::measure::entanglement_entropies(*state_lbit), ", "));
+        //        tools::log->info("Sₑ state_test time {:>8.2e}s = {:.5f}", tid::get("apply_gates").restart_lap(),
+        //                         fmt::join(tools::finite::measure::entanglement_entropies(state_test), ", "));
 
     } else {
         tools::log->debug("Applying time evolution gates", status.iter);
@@ -285,7 +285,6 @@ void flbit::single_flbit_step() {
 
     t_evo.toc();
     transform_to_real_basis();
-    tools::finite::mps::move_center_point_to_pos_dir(*state_lbit, 0, 1, status.chi_lim);
 
     if constexpr(settings::debug) {
         if(settings::model::model_size <= 10) {
@@ -308,7 +307,8 @@ void flbit::single_flbit_step() {
     status.step += settings::model::model_size;
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-    status.phys_time += std::abs(status.delta_t);
+    status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
+
 }
 
 void flbit::update_time_step() {
@@ -350,8 +350,6 @@ void flbit::check_convergence() {
         if(status.iter >= settings::flbit::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) status.algo_stop = AlgorithmStop::SUCCEEDED;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
-        if(status.phys_time >= std::abs(std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag)))
-            status.algo_stop = AlgorithmStop::SUCCEEDED;
         if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
     }
 }
@@ -384,7 +382,7 @@ void flbit::create_time_points() {
             time_points.emplace_back(std::complex<double>(0, t));
         }
     status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
-    tools::log->trace("Created time points: {}", time_points);
+    tools::log->trace(FMT_STRING("Created {} time points:\n{}"), time_points.size(), time_points);
     tools::log->trace("Current physical time {:.8e}", status.phys_time);
     // Sanity check
     if(time_points.size() != settings::flbit::time_num_steps)
@@ -503,7 +501,20 @@ void flbit::create_hamiltonian_swap_gates() {
         if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx)); }
+        if(tenx::isZero(ham.op)) {
+            tools::log->error("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
+            tools::log->error("     This can happen if r = settings::model::lbit::J2_span = {} is too large.", settings::model::lbit::J2_span);
+            tools::log->error("     With the current settings:");
+            tools::log->error("        b = settings::model::lbit::J2_base = {}", settings::model::lbit::J2_base);
+            tools::log->error("        m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
+            tools::log->error("        w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
+            tools::log->error("     Values of this matrix are expected to be smaller than b^(-r) * (m+w/2) = {:8.2e}",
+                              std::pow(settings::model::lbit::J2_base, -settings::model::lbit::J2_span) *
+                                  (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
+            tools::log->error("     For these settings it is recommended to set r > {:.2f}",
+                              -std::log(std::numeric_limits<double>::epsilon() / (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0)) /
+                                  std::log(settings::model::lbit::J2_base));
+        }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body)) {
         if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
@@ -551,8 +562,8 @@ void flbit::transform_to_real_basis() {
     tensors.clear_measurements();
     tensors.clear_cache();
     tools::finite::mps::normalize_state(*tensors.state, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);
-    status.position                      = tensors.get_position<long>();
-    status.direction                     = tensors.state->get_direction();
+    status.position  = tensors.get_position<long>();
+    status.direction = tensors.state->get_direction();
 
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
