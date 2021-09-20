@@ -583,7 +583,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
         throw std::logic_error(fmt::format("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL));
 
     auto center_position = state.get_position<long>();
-    tools::log->debug("Swapping sites ({}, {}) -- new center {}", posL, posR, center_position);
+    if constexpr (settings::debug_gates) tools::log->trace("Swapping sites ({}, {}) -- new center {}", posL, posR, center_position);
 
     auto                   dimL        = state.get_mps_site(posL).dimensions();
     auto                   dimR        = state.get_mps_site(posR).dimensions();
@@ -601,7 +601,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     std::swap(order[posL], order[posR]);
 
     // Sanity check
-    if constexpr(settings::debug){
+    if constexpr(settings::debug_gates){
         state.clear_cache(LogPolicy::QUIET);
         auto norm = tools::finite::measure::norm(state, true);
         tools::log->info("labl after swapping   {}: {}", std::vector<size_t>{posL, posR}, state.get_labels());
