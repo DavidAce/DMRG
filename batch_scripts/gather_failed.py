@@ -72,20 +72,13 @@ for file in os.listdir(args.logdir):
     # Found a logfile that contains at least one failed simulation
     with open(filepath, "r") as log:
         for line in log:
-            key = line.split(" ",1)[0]
-            if key == "FAILED":
-                # We extract the config file and seed from this line
-                words = line.split()
-                idx_cfg = words.index("-c") +1
-                idx_seed = words.index("-s")+1
-                print("Found failed sim: ",words[idx_cfg],words[idx_seed])
-                sims.append((words[idx_cfg], words[idx_seed]))
-
+            keyval = line.replace(' ','').split(":")
+            if keyval[0] == 'CONFIG LINE' or keyval[0] == 'JOB FILE LINE(S)':
+                cfgline = keyval[1]
+            if keyval[0] == "EXIT CODE" and keyval[1] != "0":
+                print("Found failed sim | exit {:>3} | {}".format(keyval[1],cfgline))
+                sims.append(cfgline)
 
 with open("{}/{}".format(args.outdir,args.resfile), "w") as resfile:
-    for cfg,seed in sims:
-        resfile.write("{} {}\n".format(cfg,seed))
-
-
-
-
+    for cfgline in sims:
+        resfile.write("{}\n".format(cfgline))

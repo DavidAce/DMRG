@@ -57,7 +57,7 @@ start_id=$SLURM_ARRAY_TASK_ID
 end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 
-echo "TASK ID SEQUENCE         : $(seq $start_id $end_id)"
+echo "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 
 for id in $(seq $start_id $end_id); do
   arg_line=$(tail -n+$id $jobfile | head -1)
@@ -70,36 +70,29 @@ for id in $(seq $start_id $end_id); do
   model_seed=$(echo "$arg_line" | cut -d " " -f2)
   logdir=logs/$config_dir/$config_base
   mkdir -p $logdir
-  echo "JOB FILE LINE(S)         : $arg_line"
-  echo "CONFIG FILE              : $config_file"
-  echo "SEED                     : $model_seed"
-  echo "ID                       : $id"
+  echo "JOB ID                   : $id"
   echo "TIME                     : $(/bin/date)"
+  echo "CONFIG LINE              : $arg_line"
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
       if [ -z  "$dryrun" ];then
         $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out
         exit_code=$?
-        if [ "$exit_code" == "0" ]; then
-          echo "SUCCESS                  : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
-        else
-          echo "EXIT CODE                : $exit_code"
-          echo "FAILED                   : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.out"
+        echo "EXIT CODE                : $exit_code"
+        if [ "$exit_code" != "0" ]; then
           exit_code_save=$exit_code
           continue
         fi
       fi
   elif [ "$num_cols" -eq 3 ]; then
       bit_field=$(echo $arg_line | cut -d " " -f3)
+      echo "BITFIELD                 : $bit_field"
       echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
       if [ -z  "$dryrun" ];then
         $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out
         exit_code=$?
-        if [ "$exit_code" == "0" ]; then
-          echo "SUCCESS           : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
-        else
-          echo "EXIT CODE         : $exit_code"
-          echo "FAILED            : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.out"
+        echo "EXIT CODE         : $exit_code"
+        if [ "$exit_code" != "0" ]; then
           exit_code_save=$exit_code
           continue
         fi
