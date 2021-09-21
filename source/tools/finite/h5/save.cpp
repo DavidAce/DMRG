@@ -415,11 +415,13 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::PROJ_STATE: {
-                auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
-                if(std::abs(abs_spin_component - 1.0) > 1e-6) {
-                    auto state_projected =
-                        tools::finite::ops::get_normalized_projection_to_nearest_sector(state, settings::strategy::target_sector, status.chi_lim);
-                    return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
+                if(storage_level != StorageLevel::NONE){
+                    auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
+                    if(std::abs(abs_spin_component - 1.0) > 1e-6) {
+                        auto state_projected =
+                            tools::finite::ops::get_normalized_projection_to_nearest_sector(state, settings::strategy::target_sector, status.chi_lim);
+                        return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
+                    }
                 }
                 break;
             }
