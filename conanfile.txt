@@ -1,5 +1,5 @@
 # Here you can specify desired software packages to be downloaded by conan.
-# To activate reading this file from CMakeLists.txt, enable the setting -DDMRG_DOWNLOAD_METHOD=conan
+# To activate reading this file from CMakeLists.txt, enable the setting -DDMRG_PACKAGE_MANAGER=conan
 
 
 [requires]
