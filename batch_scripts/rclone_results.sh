@@ -22,7 +22,7 @@ default_pfx="/mnt/Barracuda/Projects/mbl_transition"
 default_src="."
 default_tgt="tmp"
 default_usr="david"
-max_threads=4
+max_threads=8
 dry_run=""
 follow_sym=""
 while getopts a:dhn:p:s:t:u:L o; do
