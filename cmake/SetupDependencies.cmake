@@ -7,8 +7,6 @@
 ###    -Wl,--whole-archive.... -Wl,--no-whole-archive          ###
 ##################################################################
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 target_link_libraries(Threads::Threads INTERFACE rt dl)
 
