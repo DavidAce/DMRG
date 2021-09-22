@@ -208,10 +208,10 @@ void flbit::run_algorithm() {
     if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
-        print_status_update();
         check_convergence();
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
+        print_status_update();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
@@ -240,11 +240,7 @@ void flbit::single_flbit_step() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
-        //        tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
-
-        //        tools::finite::mps::move_center_point_to_middle(*state_lbit_init, status.chi_lim);
-        // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, tensors.get_length<long>()-1, -1, status.chi_lim);
-        // tools::finite::mps::move_center_point_to_pos_dir(*state_lbit_init, 0, 1, status.chi_lim);
+        tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
     }
     *state_lbit = *state_lbit_init;
     // Time evolve from 0 to time_point[iter] here
@@ -258,24 +254,6 @@ void flbit::single_flbit_step() {
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
-        //
-        //        state_lbit->clear_measurements();
-        //        state_lbit->clear_cache();
-        //
-        //        tools::log->debug("Applying time evolution gates", status.iter);
-        //        StateFinite state_test = *state_lbit_init;
-        //        //        tools::finite::mps::move_center_point_to_middle(state_test, status.chi_lim);
-        //
-        //        //        tools::finite::mps::apply_gates(state_test, time_gates_1site, false, status.chi_lim);
-        //        tools::finite::mps::apply_gates(state_test, time_gates_2site, false, status.chi_lim);
-        //        //        tools::finite::mps::apply_gates(state_test, time_gates_3site, false, status.chi_lim);
-        //        state_test.clear_measurements();
-        //        state_test.clear_cache();
-        //        tools::log->info("Sₑ state_lbit time {:>8.2e}s = {:.5f}", tid::get("apply_swap_gates").restart_lap(),
-        //                         fmt::join(tools::finite::measure::entanglement_entropies(*state_lbit), ", "));
-        //        tools::log->info("Sₑ state_test time {:>8.2e}s = {:.5f}", tid::get("apply_gates").restart_lap(),
-        //                         fmt::join(tools::finite::measure::entanglement_entropies(state_test), ", "));
-
     } else {
         tools::log->debug("Applying time evolution gates", status.iter);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
