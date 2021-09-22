@@ -57,28 +57,33 @@ with open("{}/{}".format(args.outdir, args.failfile), "r") as output:
         jobids.append(line.split(' ',1)[0])
 
 
-
-sims = []
-
+with open("{}/{}".format(args.outdir,args.resfile), "w") as resfile:
+    print('Creating resume file:', resfile)
+count = 0
 for file in os.listdir(args.logdir):
     filepath = "{}/{}".format(args.logdir,file)
-    if not os.path.isfile(filepath):
-        continue
     if not ".out" in file:
+        continue
+    if not os.path.isfile(filepath):
         continue
     if not any("{}.out".format(id) in file for id in jobids):
         continue
 
     # Found a logfile that contains at least one failed simulation
-    with open(filepath, "r") as log:
+    with open(filepath, "r") as log, open("{}/{}".format(args.outdir,args.resfile), "a") as resfile:
+        cfgline = ''
         for line in log:
-            keyval = line.replace(' ','').split(":")
+            if not line.startswith(('CONFIG', 'JOB', 'EXIT')):
+                continue
+            keyval = [item.strip() for item in line.split(':',1)]
             if keyval[0] == 'CONFIG LINE' or keyval[0] == 'JOB FILE LINE(S)':
                 cfgline = keyval[1]
             if keyval[0] == "EXIT CODE" and keyval[1] != "0":
-                print("Found failed sim | exit {:>3} | {}".format(keyval[1],cfgline))
-                sims.append(cfgline)
+                if len(cfgline) == 0:
+                    raise Exception('cfgline is empty')
+                print("Found failed simulation | exit {:>3} | {}".format(keyval[1],cfgline))
+                resfile.write("{}\n".format(cfgline))
+                count = count + 1
 
-with open("{}/{}".format(args.outdir,args.resfile), "w") as resfile:
-    for cfgline in sims:
-        resfile.write("{}\n".format(cfgline))
+print('Found {} jobids with failures'.format(len(jobids)))
+print('Found {} failed simulations'.format(count))
