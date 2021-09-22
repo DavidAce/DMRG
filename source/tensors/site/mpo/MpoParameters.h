@@ -204,8 +204,32 @@ class h5tb_lbit {
     }
 
     [[nodiscard]] std::string J2_str() const {
-        return fmt::format(FMT_STRING("[{:<+8.6f}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));
+        return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));
     }
+    [[nodiscard]] std::string fmt_value(std::string_view p) const {
+        /* clang-format off */
+        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"),param.J1_rand);
+        if(p == "J2_rand")     return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));;
+        if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand);
+        if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
+        if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
+        if(p == "J3_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_mean);
+        if(p == "J1_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J1_wdth);
+        if(p == "J2_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_wdth);
+        if(p == "J3_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J3_wdth);
+        if(p == "J2_base")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_base);
+        if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span);
+        if(p == "J1_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J1_pert);
+        if(p == "J2_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J2_pert);
+        if(p == "J3_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J3_pert);
+        if(p == "f_mixer")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.f_mixer);
+        if(p == "u_layer")     return fmt::format(FMT_STRING("{:>7}"),     param.u_layer);
+        if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
+        if(p == "distribution")return fmt::format(FMT_STRING("{:<12}")    ,param.distribution);
+        /* clang-format on */
+        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+    }
+
 
     static std::vector<std::string> get_parameter_names() {
         return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth",  "J3_wdth",
@@ -213,17 +237,18 @@ class h5tb_lbit {
     }
 
     void print_parameter_names() const {
-        auto name = get_parameter_names();
-        tools::log->info(FMT_STRING("{:<8} {:<{}} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0],
-                         name[1], J2_str().size(), name[2], name[3], name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12],
-                         name[13], name[14], name[15], name[16], name[17]);
+        std::string name_line;
+        for(const auto & name : get_parameter_names()){
+            name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+        }
+        tools::log->info(name_line);
     }
 
     void print_parameter_values() const {
-        tools::log->info(FMT_STRING("{:<+8.6f} {:<} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} "
-                                    "{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} {:<8} {:<8}"),
-                         param.J1_rand, J2_str(), param.J3_rand, param.J1_mean, param.J2_mean, param.J3_mean, param.J1_wdth, param.J2_wdth, param.J3_wdth,
-                         param.J2_base, param.J2_span, param.J1_pert, param.J2_pert, param.J3_pert, param.f_mixer, param.u_layer, param.spin_dim,
-                         param.distribution);
+        std::string value_line;
+        for(const auto & name : get_parameter_names()){
+            value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+        }
+        tools::log->info(value_line);
     }
 };
