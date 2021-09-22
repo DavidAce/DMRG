@@ -47,7 +47,7 @@ EOF
 
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:s:t:v \
+PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:i:j:s:t:v \
                 --long "\
                 help\
                 arch:\
