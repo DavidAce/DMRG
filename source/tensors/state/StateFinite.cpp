@@ -324,7 +324,7 @@ std::vector<long> StateFinite::get_spin_dims() const { return get_spin_dims(acti
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    if constexpr(settings::debug) tools::log->trace("Contracting multisite mps tensor with sites {}", sites);
+    if constexpr(settings::debug) tools::log->trace("get_multisite_mps: sites {}", sites);
     auto                     t_mps = tid::tic_scope("gen_mps");
     Eigen::Tensor<Scalar, 3> multisite_mps;
     constexpr auto           shuffle_idx  = tenx::array4{0, 2, 1, 3};
@@ -350,7 +350,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         auto &mps_left = get_mps_site(sites.front() - 1);
         auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
         if(L_left.dimension(0) != multisite_mps.dimension(1))
-            throw std::logic_error(fmt::format("Mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
+            throw std::logic_error(fmt::format("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
         temp.resize(multisite_mps.dimension(0), L_left.dimension(0), multisite_mps.dimension(2));
         temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(L_left).contract(multisite_mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
         multisite_mps                       = temp;
@@ -359,7 +359,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         auto &mps_right = get_mps_site(sites.back() + 1);
         auto &L_right   = mps_right.get_L();
         if(L_right.dimension(0) != multisite_mps.dimension(2))
-            throw std::logic_error(fmt::format("Mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
+            throw std::logic_error(fmt::format("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
         temp.resize(multisite_mps.dimension(0), multisite_mps.dimension(1), L_right.dimension(0));
         temp.device(tenx::omp::getDevice()) = multisite_mps.contract(tenx::asDiagonal(L_right), tenx::idx({2}, {1}));
         multisite_mps                       = temp;
@@ -369,7 +369,6 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         // Check the norm of the tensor on debug builds
         auto   t_dbg = tid::tic_scope("debug");
         double norm  = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
-        tools::log->trace("multisite_mps {} norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
                 // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
@@ -380,7 +379,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
                 norm           = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
                 tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
             }
-            throw std::runtime_error(fmt::format("Multisite mps for sites {} is not normalized. Norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));
+            throw std::runtime_error(fmt::format("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));
         }
     }
     return multisite_mps;

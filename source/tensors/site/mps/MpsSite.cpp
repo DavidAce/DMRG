@@ -280,7 +280,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     if(get_position() != other.get_position()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: position mismatch {}"), tag, otag));
 
     if(not other.has_M()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} with undefined M"), tag, otag));
-    if constexpr(settings::debug) {
+    if constexpr(settings::debug_merge) {
         if(other.has_L())
             tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L {}"), tag, otag, other.dimensions(), other.get_L().dimensions());
         else
@@ -402,7 +402,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking V stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking V stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() + 1)
             throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found V stash with destination {} the wrong position {}"), get_tag(),
@@ -435,7 +435,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *
          */
 
-        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking U stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking U stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() - 1)
             throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found U stash with destination {} the wrong position {}"), get_tag(),
@@ -464,7 +464,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking S stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking S stash from {}"), get_tag(), other.get_tag());
         set_L(other.S_stash->data, other.S_stash->error);
         other.S_stash = std::nullopt;
     }
@@ -474,7 +474,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-        if constexpr(settings::debug) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking C stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking C stash from {}"), get_tag(), other.get_tag());
         if(label == "B") tools::log->warn(FMT_STRING("MpsSite({})::take_stash: Taking C_stash to set LC on B-site"), get_tag());
         set_LC(other.C_stash->data, other.C_stash->error);
         other.C_stash = std::nullopt;

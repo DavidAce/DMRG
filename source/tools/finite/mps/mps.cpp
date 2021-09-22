@@ -55,13 +55,13 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
             Eigen::Tensor<cplx, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction
             onesite_tensor.device(tenx::omp::getDevice()) = tenx::asDiagonal(LC).contract(mpsC.get_M(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_settings, LogPolicy::NORMAL);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         } else if(state.get_direction() == -1) {
             auto  pos_ul         = static_cast<size_t>(pos);                                                     // Cast to unsigned
             auto &mps            = state.get_mps_site(pos);                                                      // This AC becomes the new B
             long  chi_new        = std::min(chi_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Bond dimensions growth limit
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, chi_new, svd_settings, LogPolicy::NORMAL);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         }
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
@@ -407,7 +407,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     tools::log->trace("Merging gate sites {} dims {}", gate.pos, multisite_mps.dimensions());
     gate.mark_as_used();
     if constexpr(settings::debug_gates) tools::log->trace("pos {} | cnt {} | labels {}", gate.pos, state.get_position<long>(), state.get_labels());
-    tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
+    tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::QUIET);
 }
 
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool reverse, long chi_lim,
@@ -597,7 +597,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
                                              .shuffle(tenx::array4{1, 0, 2, 3})           // swap
                                              .reshape(tenx::array3{dR * dL, chiL, chiR}); // prepare for merge
 
-    merge_multisite_mps(state, swapped_mps, {posL, posR}, center_position, chi_lim, svd_settings, LogPolicy::NORMAL);
+    merge_multisite_mps(state, swapped_mps, {posL, posR}, center_position, chi_lim, svd_settings, LogPolicy::QUIET);
     std::swap(order[posL], order[posR]);
 
     // Sanity check
@@ -670,8 +670,8 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     }
 
     gate.mark_as_used();
-    tools::log->trace("Merging applied gate | pos {} | swapped pos {} | order {}", gate.pos, pos, order);
-    tools::finite::mps::merge_multisite_mps(state, temp, pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::NORMAL);
+    if constexpr(settings::debug_gates) tools::log->trace("Merging applied gate | pos {} | swapped pos {} | order {}", gate.pos, pos, order);
+    tools::finite::mps::merge_multisite_mps(state, temp, pos, state.get_position<long>(), chi_lim, svd_settings, LogPolicy::QUIET);
 
     // Now swap site j-1 in reverse back to i
     for(const auto &r : gate.rwaps) swap_sites(state, r.posL, r.posR, order, svd_settings);
@@ -718,7 +718,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     auto gate_sequence = generate_gate_sequence(state,gates, reverse);
     for(const auto & [i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto & gate = gates.at(gate_idx);
-        tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
+        if constexpr(settings::debug_gates) tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
         if(i + 1 < gate_sequence.size()) gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
         apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
     }
@@ -824,7 +824,7 @@ void tools::finite::mps::apply_gates_old(StateFinite &state, const std::vector<q
         if constexpr(settings::debug_gates)
             tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(),
                               new_position, state.get_labels());
-        tools::finite::mps::merge_multisite_mps(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::NORMAL);
+        tools::finite::mps::merge_multisite_mps(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::QUIET);
     }
 
     move_center_point_to_edge(state, chi_lim, svd_settings);

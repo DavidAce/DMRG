@@ -2,6 +2,7 @@
 // Created by david on 2021-09-10.
 //
 #include "../gate.h"
+#include <config/debug.h>
 #include <general/iter.h>
 #include <math/num.h>
 #include <tools/common/log.h>
@@ -45,7 +46,7 @@ void qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
         if(other_rwaps.empty()) return;
         if(swaps.empty()) return;
         if(other_rwaps.back() == swaps.front()) {
-            tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
+            if constexpr(settings::debug_gates) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
             other_rwaps.pop_back();
             swaps.pop_front();
         } else {
@@ -59,7 +60,7 @@ void qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
         if(other_swaps.empty()) return;
         if(rwaps.empty()) return;
         if(other_swaps.front() == rwaps.back()) {
-            tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
+            if constexpr(settings::debug_gates) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
             other_swaps.pop_front();
             rwaps.pop_back();
         } else {
