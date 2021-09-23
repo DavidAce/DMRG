@@ -254,7 +254,7 @@ fi
 
 
 
-if [[ "$HOSTNAME" == *"tetralith"* ]];then
+if [[ "$USER" == "x_davac" ]];then
     echo "Running on tetralith"
     if [ -z "$no_module" ]; then
         module load foss/2020b
@@ -280,7 +280,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
 
     enable_ccache
     cmake --version
-elif [[ "$HOSTNAME" == *"raken"* ]];then
+elif [[ "$USER" == "x_aceituno" ]];then
     if [ -z "$no_module" ]; then
         module load CMake
         if [ "$enable_mkl" = "ON" ] ; then
