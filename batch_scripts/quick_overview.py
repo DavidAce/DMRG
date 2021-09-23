@@ -257,7 +257,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 if args.save:
     file.close()
 print ("Total number of files:", count)
-print ("Total file size      : {} ({} bytes)".format(naturalsize(fsize), fsize)
+print ("Total file size      : {} ({} bytes)".format(naturalsize(fsize), fsize))
 print("Legend:")
 print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
 print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
