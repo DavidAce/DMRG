@@ -494,18 +494,18 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
 
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
-        if(tools::log->level() == spdlog::level::debug) {
-            tools::log->debug("Energy variance slope details:");
-            tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->debug(" -- threshold          = {:7.4e}", threshold.value());
-            tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->debug(" -- converged count    = {} ", status.variance_mpo_converged_for);
-            tools::log->debug(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->debug(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-            tools::log->debug(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->debug(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
-            tools::log->debug(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
+        if(tools::log->level() == spdlog::level::trace) {
+            tools::log->trace("Energy variance slope details:");
+            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->trace(" -- threshold          = {:7.4e}", threshold.value());
+            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->trace(" -- converged count    = {} ", status.variance_mpo_converged_for);
+            tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+            tools::log->trace(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
         }
     }
 }
@@ -552,16 +552,16 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
                               report.saturated_point);
-        if(tools::log->level() == spdlog::level::debug) {
-            tools::log->debug("Entanglement slope details:");
-            tools::log->debug(" -- site               = {}", last_saturated_site);
-            tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->debug(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->debug(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-            tools::log->debug(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->debug(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
+        if(tools::log->level() == spdlog::level::trace) {
+            tools::log->trace("Entanglement slope details:");
+            tools::log->trace(" -- site               = {}", last_saturated_site);
+            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
         }
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
