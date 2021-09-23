@@ -12,7 +12,7 @@ from humanize import naturalsize
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-a', '--algorithms',action='append', type=str, help='Consider these algorithms', default=[])
 parser.add_argument('-c', '--count', action='store_true', help='Count files only')
-parser.add_argument('-m', '--maxdepth', type=int, help='Print file count up to this maximum depth', default='-1')
+parser.add_argument('-m', '--maxdepth', type=int, help='Print file count up to this maximum depth. Set -1 for infinite', default='1')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-p', '--projection', action='store_true', help='Include projection')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
@@ -126,11 +126,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             print("Could not read [common/state_root]. Reason: ", er)
             continue
 
-        if args.finished:
-            if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
+        if args.algo in h5file:
+            if args.finished:
+                if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
+                    append_stats(stats, dirRel, 1, os.path.getsize(filepath))
+            else:
                 append_stats(stats, dirRel, 1, os.path.getsize(filepath))
-        else:
-            append_stats(stats, dirRel, 1, os.path.getsize(filepath))
 
 
         if args.count:
@@ -273,21 +274,16 @@ if args.save:
 # Find the longest key in stats
 statskeymaxlen = 0
 for key in stats.keys():
-    if args.depth > 0 and key.count('/') > args.depth:
+    if args.maxdepth > 0 and key.count('/') > args.maxdepth:
         continue
     statskeymaxlen = max([statskeymaxlen, len(key)])
 
 # Print stats
 for key, stat in stats.items():
     # count the depth, i.e. number of "/"
-    if args.depth > 0 and key.count('/') > args.depth:
+    if args.maxdepth > 0 and key.count('/') > args.maxdepth:
         continue
-    print("{:<{}} : {:<16} {}".format(statskeymaxlen, key, naturalsize(stat['bytes']), stat['count']))
-
-
-
-print("Total count:", count)
-print("Total size : {} ({} bytes)".format(naturalsize(bytes), bytes))
+    print("{:<{}} : {:<16} {}".format(key,statskeymaxlen, naturalsize(stat['bytes']), stat['count']))
 
 if not args.summary and not args.count:
     print("Legend:")
