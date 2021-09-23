@@ -89,7 +89,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
 
-    if not args.summary:
+    if not args.summary and not args.count:
         header = "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Algorithm", "State" ,"Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
@@ -115,7 +115,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         if args.finished:
-            if "common/finished_all" in h5file["common/finished_all"] and  h5file["common/finished_all"][()] == True:
+            if "common/finished_all" in h5file and h5file["common/finished_all"] == True:
                 count = count + 1
                 fsize = fsize + os.path.getsize(filepath)
         else:
@@ -124,6 +124,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
         if args.count:
             continue
+
 
         try:
             state_keys = []
@@ -195,7 +196,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
                     style = colored.fg("green_4")
 
-                if not args.summary:
+                if not args.summary and not args.count:
                     entry.append(
                         "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                             algorithm[-1],
@@ -228,36 +229,36 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     if len(chainlen) == 0:
         continue
-
-    header = "{:<23} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("","Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
-                                                                                                              "Resets","Stk", "Sat", "Con",
-                                                                                                              "Suc", "Fin")
-    entry = "{:<23} {:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format( "",
-        np.nanmax(chainlen),
-        len(seed),
-        np.nanmean(iter),
-        np.nanmean(step),
-        np.nanmean(energy),
-        np.nanmean(np.log10(variance)),
-        np.nanmean(np.log10(variancel)),
-        np.nanmean(ententrp),
-        np.nanmean(walltime) / 60,
-        np.sum(resets),
-        np.count_nonzero(got_stuck),
-        np.count_nonzero(saturated),
-        np.count_nonzero(converged),
-        np.sum(succeeded),
-        np.sum(finished))
-    print("="*len(header))
-    print(header)
-    print(entry)
-    if args.save:
-        file.write(header + '\n')
-        file.write(entry + '\n')
+    if not args.count:
+        header = "{:<23} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("","Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
+                                                                                                                  "Resets","Stk", "Sat", "Con",
+                                                                                                                  "Suc", "Fin")
+        entry = "{:<23} {:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format( "",
+            np.nanmax(chainlen),
+            len(seed),
+            np.nanmean(iter),
+            np.nanmean(step),
+            np.nanmean(energy),
+            np.nanmean(np.log10(variance)),
+            np.nanmean(np.log10(variancel)),
+            np.nanmean(ententrp),
+            np.nanmean(walltime) / 60,
+            np.sum(resets),
+            np.count_nonzero(got_stuck),
+            np.count_nonzero(saturated),
+            np.count_nonzero(converged),
+            np.sum(succeeded),
+            np.sum(finished))
+        print("="*len(header))
+        print(header)
+        print(entry)
+        if args.save:
+            file.write(header + '\n')
+            file.write(entry + '\n')
 if args.save:
     file.close()
-print ("Total number of files:", count)
-print ("Total file size      : {} ({} bytes)".format(naturalsize(fsize), fsize))
+print ("Total file count:", count)
+print ("Total file size : {} ({} bytes)".format(naturalsize(fsize), fsize))
 print("Legend:")
 print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
 print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
