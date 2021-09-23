@@ -8,8 +8,8 @@ namespace tid {
         const ur *ur_ref_t::operator->() const { return &ref.get(); }
 
         [[nodiscard]] std::string ur_ref_t::str() const {
-            return fmt::format(FMT_STRING("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | count {6} | level {7}"), key, tree_max_key_size,
-                               ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), ref.get().get_tic_count(), level2sv(ref.get().get_level()));
+            return fmt::format(FMT_STRING("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | level {6} | count {7}"), key, tree_max_key_size,
+                               ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), level2sv(ref.get().get_level()), ref.get().get_tic_count());
         }
 
         template<typename T>
