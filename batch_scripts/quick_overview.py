@@ -12,6 +12,7 @@ from humanize import naturalsize
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-a', '--algorithms',action='append', type=str, help='Consider these algorithms', default=[])
 parser.add_argument('-c', '--count', action='store_true', help='Count files only')
+parser.add_argument('-m', '--maxdepth', type=int, help='Print file count up to this maximum depth', default='-1')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-p', '--projection', action='store_true', help='Include projection')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
@@ -30,6 +31,16 @@ def get_data(h5obj,name,idx=-1):
         return h5obj[name][idx]
     except Exception as er:
         return 0
+
+def append_stats(stats, dir, count, bytes):
+    dirSplit = dir.split('/')
+    for i, d in enumerate(dirSplit):
+        dirSum = '/'.join(dirSplit[:i+1])
+        if not dirSum in stats:
+            stats[dirSum] = {'count' : 0, 'bytes' : 0}
+        stats[dirSum]['count'] += count
+        stats[dirSum]['bytes'] += bytes
+
 
 if args.timestamp:
     args.filename = args.filename + '-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
@@ -57,16 +68,18 @@ if not args.algorithms:
 if args.algorithms:
     print("Checking algorithms: ", args.algorithms)
 
-count = 0
-bytes = 0
+stats = {}
+
+
 for dirName, subdirList, fileList in os.walk(args.directory):
     if subdirList:
         subdirList.sort()
     if not fileList:
         continue
 
-    if not args.length in dirName:
+    if len(args.length) > 0 and not "L_{}".format(args.length) in dirName:
         continue
+    dirRel = dirName[dirName.find(args.directory):]
 
     fileList.sort()
     algorithm = []
@@ -86,7 +99,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     converged = []
     succeeded = []
     finished  = []
-
 
 
     if not args.summary and not args.count:
@@ -116,11 +128,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
         if args.finished:
             if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
-                count = count + 1
-                bytes = bytes + os.path.getsize(filepath)
+                append_stats(stats, dirRel, 1, os.path.getsize(filepath))
         else:
-            count = count + 1
-            bytes = bytes + os.path.getsize(filepath)
+            append_stats(stats, dirRel, 1, os.path.getsize(filepath))
+
 
         if args.count:
             continue
@@ -259,8 +270,24 @@ if args.save:
     file.close()
 
 
-print ("Total count:", count)
-print ("Total size : {} ({} bytes)".format(naturalsize(bytes), bytes))
+# Find the longest key in stats
+statskeymaxlen = 0
+for key in stats.keys():
+    if args.depth > 0 and key.count('/') > args.depth:
+        continue
+    statskeymaxlen = max([statskeymaxlen, len(key)])
+
+# Print stats
+for key, stat in stats.items():
+    # count the depth, i.e. number of "/"
+    if args.depth > 0 and key.count('/') > args.depth:
+        continue
+    print("{:<{}} : {:<16} {}".format(statskeymaxlen, key, naturalsize(stat['bytes']), stat['count']))
+
+
+
+print("Total count:", count)
+print("Total size : {} ({} bytes)".format(naturalsize(bytes), bytes))
 
 if not args.summary and not args.count:
     print("Legend:")
