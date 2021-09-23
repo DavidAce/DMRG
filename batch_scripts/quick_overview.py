@@ -126,7 +126,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             print("Could not read [common/state_root]. Reason: ", er)
             continue
 
-        if args.algo in h5file:
+        if any(a in h5file for a in args.algorithms):
             if args.finished:
                 if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
                     append_stats(stats, dirRel, 1, os.path.getsize(filepath))
