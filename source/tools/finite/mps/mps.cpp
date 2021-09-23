@@ -393,7 +393,7 @@ void tools::finite::mps::truncate_next_sites([[maybe_unused]] StateFinite &state
 void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long chi_lim,
                                     std::optional<svd::settings> svd_settings) {
     if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate is out of bounds: {}", gate.pos));
-    if(gate.was_used()) return;
+    if(gate.was_used()) throw std::runtime_error(fmt::format("gate was already used: pos {} ", gate.pos));
     auto multisite_mps = state.get_multisite_mps(gate.pos);
     {
         auto t_apply = tid::tic_token("apply");

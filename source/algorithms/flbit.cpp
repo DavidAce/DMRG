@@ -236,26 +236,25 @@ void flbit::single_flbit_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->debug("Starting fLBIT iter {}", status.iter);
+    tools::log->debug("Starting fLBIT: iter {} | Δt = {}", status.iter, status.delta_t);
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
         tools::finite::mps::normalize_state(*state_lbit_init, status.chi_lim, std::nullopt, NormPolicy::ALWAYS);
     }
     *state_lbit = *state_lbit_init;
+
     // Time evolve from 0 to time_point[iter] here
     auto t_step = tid::tic_scope("step");
     auto t_evo  = tid::tic_scope("time_evo");
-    //    tools::finite::mps::move_center_point_to_middle(*state_lbit, status.chi_lim);
-    //    tools::finite::mps::move_center_point_to_pos_dir(*state_lbit, 0, 1, status.chi_lim);
 
     if(settings::flbit::use_swap_gates) {
-        tools::log->debug("Applying time evolution swap gates", status.iter);
+        tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
     } else {
-        tools::log->debug("Applying time evolution gates", status.iter);
+        tools::log->debug("Applying time evolution gates Δt = {}", status.delta_t);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.chi_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.chi_lim);
@@ -281,18 +280,18 @@ void flbit::single_flbit_step() {
     tensors.clear_measurements();
     tensors.clear_cache();
     //    tensors.rebuild_edges_ene();
+    status.phys_time = std::abs(time_points[std::min(status.iter, time_points.size() - 1)]);
+
     status.iter += 1;
     status.step += settings::model::model_size;
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-    status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
-
 }
 
 void flbit::update_time_step() {
+    if(time_points.empty()) create_time_points();
     tools::log->trace("Updating time step");
     auto t_updtstep = tid::tic_scope("update_time_step");
-    if(time_points.empty()) create_time_points();
     if(status.iter >= time_points.size()) {
         status.delta_t   = time_points.back();
         status.algo_stop = AlgorithmStop::SUCCEEDED;
@@ -300,7 +299,7 @@ void flbit::update_time_step() {
     }
     status.delta_t = time_points[status.iter];
     if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
-    tools::log->trace("Time step iter {} = {:.8e}", status.iter, std::abs(status.delta_t));
+    tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t, status.phys_time);
 }
 
 void flbit::check_convergence() {
@@ -359,9 +358,7 @@ void flbit::create_time_points() {
             if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
             time_points.emplace_back(std::complex<double>(0, t));
         }
-    status.phys_time = std::abs(time_points[std::min(time_points.size() - 1, status.iter)]);
     tools::log->trace(FMT_STRING("Created {} time points:\n{}"), time_points.size(), time_points);
-    tools::log->trace("Current physical time {:.8e}", status.phys_time);
     // Sanity check
     if(time_points.size() != settings::flbit::time_num_steps)
         throw std::logic_error(
@@ -504,7 +501,7 @@ void flbit::update_time_evolution_gates() {
     if(time_points.empty()) create_time_points();
     if(ham_gates_1body.empty() or ham_gates_2body.empty() or ham_gates_3body.empty()) create_hamiltonian_gates();
     update_time_step();
-    tools::log->debug("Updating time evolution gates");
+    tools::log->debug("Updating time evolution gates to iter {} | Δt = {}",status.iter, status.delta_t);
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
@@ -515,7 +512,7 @@ void flbit::update_time_evolution_swap_gates() {
     if(time_points.empty()) create_time_points();
     if(ham_swap_gates_1body.empty() or ham_swap_gates_2body.empty() or ham_swap_gates_3body.empty()) create_hamiltonian_swap_gates();
     update_time_step();
-    tools::log->debug("Updating time evolution swap gates");
+    tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}",status.iter, status.delta_t);
     time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body);
     time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body);
     time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body);
@@ -536,6 +533,8 @@ void flbit::transform_to_real_basis() {
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
     for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
+    for(const auto &layer : unitary_gates_2site_layers)
+        for(const auto &u : layer) u.unmark_as_used();
 
     tensors.clear_measurements();
     tensors.clear_cache();
@@ -548,7 +547,9 @@ void flbit::transform_to_real_basis() {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
-        for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.chi_lim);
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.chi_lim);
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+            for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
@@ -564,7 +565,9 @@ void flbit::transform_to_lbit_basis() {
     tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    for(auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
+    for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
+    for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+        for(const auto &u : layer) u.unmark_as_used();
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug_swap");
@@ -572,7 +575,9 @@ void flbit::transform_to_lbit_basis() {
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
-        for(auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
+        for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.chi_lim);
+        for(const auto &layer : unitary_gates_2site_layers)
+            for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap));
