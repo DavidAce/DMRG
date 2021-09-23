@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-#mkdir empty_dir
-empty_dir=$( mktemp -d )
-rsync -a -L --delete --progress $empty_dir/ logs/
-rsync -a -L --delete --progress $empty_dir/ output/
-rm core*
-rmdir $empty_dir
+rclone delete logs/    --multi-thread-streams=16
+rclone delete output/  --multi-thread-streams=16
+
+rclone purge logs/
+rclone purge output/
+
+mkdir logs
+mkdir output
+
