@@ -257,16 +257,20 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             file.write(entry + '\n')
 if args.save:
     file.close()
+
+
 print ("Total count:", count)
 print ("Total size : {} ({} bytes)".format(naturalsize(bytes), bytes))
-print("Legend:")
-print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
-print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
-print(stylize("Finished : mediocre run   (variance < 1e-8)"                                         , colored.bg("dark_orange")))
-print(stylize("Finished : failed         (variance > 1e-8)"                                         , colored.bg("red_3b")))
-print(stylize("Finished : meeting criteria for success but not successfully (probably logic error)" , colored.bg("hot_pink_2")))
-print(stylize("Running  : reached success"                                                          , colored.fg("green_4")))
-print(stylize("Running  : almost success  (variance < 1e-10)"                                       , colored.fg("dark_green_sea")))
-print(stylize("Running  : currently stuck"                                                          , colored.fg("dark_orange")))
-print(        "Running  : just running")
+
+if not args.summary and not args.count:
+    print("Legend:")
+    print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
+    print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
+    print(stylize("Finished : mediocre run   (variance < 1e-8)"                                         , colored.bg("dark_orange")))
+    print(stylize("Finished : failed         (variance > 1e-8)"                                         , colored.bg("red_3b")))
+    print(stylize("Finished : meeting criteria for success but not successfully (probably logic error)" , colored.bg("hot_pink_2")))
+    print(stylize("Running  : reached success"                                                          , colored.fg("green_4")))
+    print(stylize("Running  : almost success  (variance < 1e-10)"                                       , colored.fg("dark_green_sea")))
+    print(stylize("Running  : currently stuck"                                                          , colored.fg("dark_orange")))
+    print(        "Running  : just running")
 
