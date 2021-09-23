@@ -8,8 +8,10 @@ import argparse
 import subprocess
 import colored
 from colored import stylize
+from humanize import naturalsize
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-a', '--algorithms',action='append', type=str, help='Consider these algorithms', default=[])
+parser.add_argument('-c', '--count', action='store_true', help='Count files only')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-p', '--projection', action='store_true', help='Include projection')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
@@ -55,6 +57,8 @@ if not args.algorithms:
 if args.algorithms:
     print("Checking algorithms: ", args.algorithms)
 
+count = 0
+fsize = 0.
 for dirName, subdirList, fileList in os.walk(args.directory):
     if subdirList:
         subdirList.sort()
@@ -94,14 +98,14 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             file.write(header + '\n')
     for h5path in fileList:
         # print("Filepath: ", h5path)
+        filepath = dirName + '/' + h5path
         try:
-            h5file = h5py.File(dirName + '/' + h5path, 'r', swmr=True)
+            h5file = h5py.File(filepath, 'r', swmr=True)
             if not isinstance(h5file, h5py.File):
                 raise IOError("File not readable")
         except Exception as er:
             print("Could not open file [", h5path, "] Reason: ", er)
             continue
-
         # Collect the number of states present.
         try:
             if not "common/state_root" in h5file:
@@ -109,8 +113,19 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read [common/state_root]. Reason: ", er)
             continue
+
+        if args.finished:
+            if "common/finished_all" in h5file["common/finished_all"] and  h5file["common/finished_all"][()] == True:
+                count = count + 1
+                fsize = fsize + os.path.getsize(filepath)
+        else:
+            count = count + 1
+            fsize = fsize + os.path.getsize(filepath)
+
+        if args.count:
+            continue
+
         try:
-            state_keys = [x for x in h5file["common/state_root"].attrs.keys() if any(algo in x for algo in args.algorithms)]
             state_keys = []
             for candidate in h5file["common/finished"].attrs.keys():
                 if args.finished and h5file["common/finished"].attrs[candidate] == 0:
@@ -241,7 +256,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         file.write(entry + '\n')
 if args.save:
     file.close()
-
+print ("Total number of files:", count)
+print ("Total file size      : {} ({} bytes)".format(naturalsize(fsize), fsize)
 print("Legend:")
 print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
 print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
