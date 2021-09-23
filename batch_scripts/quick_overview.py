@@ -115,7 +115,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         if args.finished:
-            if "common/finished_all" in h5file and h5file["common/finished_all"] == True:
+            if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
                 count = count + 1
                 fsize = fsize + os.path.getsize(filepath)
         else:
