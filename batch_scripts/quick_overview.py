@@ -58,7 +58,7 @@ if args.algorithms:
     print("Checking algorithms: ", args.algorithms)
 
 count = 0
-fsize = 0.
+bytes = 0
 for dirName, subdirList, fileList in os.walk(args.directory):
     if subdirList:
         subdirList.sort()
@@ -117,10 +117,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         if args.finished:
             if "common/finished_all" in h5file and h5file["common/finished_all"][()] == True:
                 count = count + 1
-                fsize = fsize + os.path.getsize(filepath)
+                bytes = bytes + os.path.getsize(filepath)
         else:
             count = count + 1
-            fsize = fsize + os.path.getsize(filepath)
+            bytes = bytes + os.path.getsize(filepath)
 
         if args.count:
             continue
@@ -257,8 +257,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             file.write(entry + '\n')
 if args.save:
     file.close()
-print ("Total file count:", count)
-print ("Total file size : {} ({} bytes)".format(naturalsize(fsize), fsize))
+print ("Total count:", count)
+print ("Total size : {} ({} bytes)".format(naturalsize(bytes), bytes))
 print("Legend:")
 print(stylize("Finished : success        (variance < 1e-12)"                                        , colored.bg("green_4")))
 print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
