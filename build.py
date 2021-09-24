@@ -193,8 +193,9 @@ def generate_cmake_commands(project_name, args):
         print(' '.join(cmake_env))
     return cmake_cfg, cmake_bld, cmake_tst, cmake_env
 
-def run(cmd,env):
-    print("Running command: ", ' '.join(cmd))
+def run(cmd,env, args):
+    if args.debug:
+        print("Running command: ", ' '.join(cmd))
     with subprocess.Popen(cmd,bufsize=1, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8',env=env) as p:
         for line in p.stdout:
             print(line, end='')  # process line here
@@ -210,9 +211,9 @@ def main():
     args = parse(project_name=project_name)
     cmake_cfg_cmd, cmake_bld_cmd, cmake_tst_cmd, cmake_env = generate_cmake_commands(project_name=project_name,
                                                                                      args=args)
-    run(cmake_cfg_cmd, cmake_env)
-    run(cmake_bld_cmd, cmake_env)
-    run(cmake_tst_cmd, cmake_env)
+    run(cmd=cmake_cfg_cmd, env=cmake_env, args=args)
+    run(cmd=cmake_bld_cmd, env=cmake_env, args=args)
+    run(cmd=cmake_tst_cmd, env=cmake_env, args=args)
 
 
 
