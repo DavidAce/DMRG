@@ -2,6 +2,7 @@
 #include "qm.h"
 #include <array>
 #include <complex>
+#include <deque>
 #include <general/eigen_tensor_fwd_decl.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
@@ -77,22 +78,23 @@ namespace qm {
     struct Swap {
         size_t posL, posR;
         Swap(size_t posL, size_t posR);
-        bool operator == (const Rwap & rwap) const;
+        bool operator==(const Rwap &rwap) const;
     };
     struct Rwap {
         size_t posL, posR;
         Rwap(size_t posL, size_t posR);
-        bool operator == (const Swap & swap) const;
+        bool operator==(const Swap &swap) const;
     };
     class SwapGate : public Gate {
         using Gate::Gate;
+
         public:
-        std::deque<Swap> swaps;
-        std::deque<Rwap> rwaps; // swaps sequence and reverse swap sequence
+        std::deque<Swap>       swaps;
+        std::deque<Rwap>       rwaps; // swaps sequence and reverse swap sequence
         [[nodiscard]] SwapGate exp(cplx alpha) const;
-        void generate_swap_sequences();
-        void cancel_swaps(std::deque<Rwap> & other_rwaps);
-        void cancel_rwaps(std::deque<Swap> & other_swaps);
+        void                   generate_swap_sequences();
+        void                   cancel_swaps(std::deque<Rwap> &other_rwaps);
+        void                   cancel_rwaps(std::deque<Swap> &other_swaps);
     };
 
 }
