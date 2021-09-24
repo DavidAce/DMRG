@@ -8,7 +8,7 @@ add_subdirectory(tid)
 add_subdirectory(tools)
 add_library(dmrg-main OBJECT)
 target_sources(dmrg-main PRIVATE main.cpp)
-target_link_libraries(dmrg-main PUBLIC dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-main PUBLIC deps flags)
 target_link_libraries(dmrg-main INTERFACE
         dmrg-algorithms
         dmrg-config
@@ -20,6 +20,4 @@ target_link_libraries(dmrg-main INTERFACE
         dmrg-tools
         )
 
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-main REUSE_FROM dmrg-pch)
-endif ()
+target_link_precompiled_headers(dmrg-main)

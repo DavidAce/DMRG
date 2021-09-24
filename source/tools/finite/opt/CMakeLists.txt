@@ -17,7 +17,5 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         opt_meta.cpp
         )
 
-target_link_libraries(dmrg-tools-finite-opt PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tools-finite-opt REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tools-finite-opt PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tools-finite-opt)

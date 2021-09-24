@@ -14,4 +14,4 @@ target_link_libraries(dmrg-tools-infinite INTERFACE
         $<TARGET_OBJECTS:dmrg-tools-infinite-mps>
         $<TARGET_OBJECTS:dmrg-tools-infinite-print>
         )
-target_link_libraries(dmrg-tools-infinite INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-tools-infinite INTERFACE deps flags)

@@ -1,6 +1,4 @@
 add_library(dmrg-tensors-env OBJECT)
 target_sources(dmrg-tensors-env PRIVATE EnvPair.cpp EnvBase.cpp EnvEne.cpp EnvVar.cpp)
-target_link_libraries(dmrg-tensors-env PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tensors-env REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tensors-env PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tensors-env)

@@ -20,7 +20,7 @@ foreach (test ${TESTS})
         target_link_options(${test_tgt} PRIVATE --coverage)
     endif ()
     list(APPEND test_tgt_list ${test_tgt})
-    target_link_libraries(${test_tgt} PRIVATE dmrg-deps dmrg-flags)
+    target_link_libraries(${test_tgt} PRIVATE dmrg-deps flags)
 endforeach ()
 
 

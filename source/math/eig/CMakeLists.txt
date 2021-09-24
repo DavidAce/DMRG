@@ -7,10 +7,9 @@ target_sources(dmrg-math-eig PRIVATE
         solution.cpp
         )
 
-target_link_libraries(dmrg-math-eig PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-math-eig REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-math-eig PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-math-eig)
+
 
 add_subdirectory(solver_arpack)
 add_subdirectory(solver_primme)

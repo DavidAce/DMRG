@@ -12,11 +12,8 @@ target_sources(dmrg-algorithms-o PRIVATE
         flbit.cpp
         )
 
-target_link_libraries(dmrg-algorithms-o PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-algorithms-o REUSE_FROM dmrg-pch)
-endif ()
-
+target_link_libraries(dmrg-algorithms-o PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-algorithms-o)
 add_library(dmrg-algorithms INTERFACE)
 target_link_libraries(dmrg-algorithms INTERFACE $<TARGET_OBJECTS:dmrg-algorithms-o>)
-target_link_libraries(dmrg-algorithms INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-algorithms INTERFACE deps flags)

@@ -15,4 +15,4 @@ target_link_libraries(dmrg-qm INTERFACE
         $<TARGET_OBJECTS:dmrg-qm-spin>
         )
 
-target_link_libraries(dmrg-qm INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-qm INTERFACE deps flags)

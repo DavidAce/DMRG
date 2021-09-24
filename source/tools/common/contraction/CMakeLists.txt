@@ -1,6 +1,4 @@
 add_library(dmrg-tools-common-contraction OBJECT)
 target_sources(dmrg-tools-common-contraction PRIVATE expectation_value.cpp matrix_inverse_vector_product.cpp matrix_vector_product.cpp)
-target_link_libraries(dmrg-tools-common-contraction PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tools-common-contraction REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tools-common-contraction PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tools-common-contraction)

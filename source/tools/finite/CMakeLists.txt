@@ -1,13 +1,11 @@
 add_library(dmrg-tools-finite-ops OBJECT ops.cpp)
 add_library(dmrg-tools-finite-print OBJECT print.cpp)
 
-target_link_libraries(dmrg-tools-finite-ops PUBLIC dmrg-deps dmrg-flags)
-target_link_libraries(dmrg-tools-finite-print PUBLIC dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-tools-finite-ops PUBLIC deps flags)
+target_link_libraries(dmrg-tools-finite-print PUBLIC deps flags)
 
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tools-finite-ops REUSE_FROM dmrg-pch)
-    target_precompile_headers(dmrg-tools-finite-print REUSE_FROM dmrg-pch)
-endif ()
+target_link_precompiled_headers(dmrg-tools-finite-ops)
+target_link_precompiled_headers(dmrg-tools-finite-print)
 
 add_subdirectory(h5)
 add_subdirectory(measure)
@@ -27,4 +25,4 @@ target_link_libraries(dmrg-tools-finite INTERFACE
         $<TARGET_OBJECTS:dmrg-tools-finite-h5>
         $<TARGET_OBJECTS:dmrg-tools-finite-measure>
         )
-target_link_libraries(dmrg-tools-finite INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(dmrg-tools-finite INTERFACE deps flags)

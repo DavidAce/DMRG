@@ -1,6 +1,4 @@
 add_library(dmrg-math-rnd OBJECT)
 target_sources(dmrg-math-rnd PRIVATE rnd.cpp)
-target_link_libraries(dmrg-math-rnd PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-math-rnd REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-math-rnd PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-math-rnd)

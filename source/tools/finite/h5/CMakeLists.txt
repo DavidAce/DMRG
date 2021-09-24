@@ -1,6 +1,4 @@
 add_library(dmrg-tools-finite-h5 OBJECT)
 target_sources(dmrg-tools-finite-h5 PRIVATE load.cpp save.cpp)
-target_link_libraries(dmrg-tools-finite-h5 PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tools-finite-h5 REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tools-finite-h5 PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tools-finite-h5)

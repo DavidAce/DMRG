@@ -1,9 +1,7 @@
 add_library(dmrg-tensors-tensors OBJECT)
 target_sources(dmrg-tensors-tensors PRIVATE TensorsFinite.cpp TensorsInfinite.cpp)
-target_link_libraries(dmrg-tensors-tensors PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tensors-tensors REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tensors-tensors PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tensors-tensors)
 
 
 add_subdirectory(site)

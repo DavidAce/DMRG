@@ -22,13 +22,15 @@ install_package(primme MODULE)
 ### Link all the things!                                       ###
 ##################################################################
 if(TARGET OpenMP::OpenMP_CXX)
-    target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
+    target_link_libraries(flags INTERFACE OpenMP::OpenMP_CXX)
 else()
-    target_compile_options(dmrg-flags INTERFACE -Wno-unknown-pragmas)
+    target_compile_options(flags INTERFACE -Wno-unknown-pragmas)
 endif()
 
-add_library(dmrg-deps INTERFACE)
-target_link_libraries(dmrg-deps INTERFACE
+if(NOT TARGET deps)
+    add_library(deps INTERFACE)
+endif()
+target_link_libraries(deps INTERFACE
         cxxopts::cxxopts
         h5pp::h5pp
         arpack::arpack++
@@ -37,6 +39,6 @@ target_link_libraries(dmrg-deps INTERFACE
         BLAS::BLAS
         )
 if(TARGET unwind::unwind)
-    target_link_libraries(dmrg-deps INTERFACE unwind::unwind)
-    target_compile_definitions(dmrg-deps INTERFACE DMRG_HAS_UNWIND=1)
+    target_link_libraries(deps INTERFACE unwind::unwind)
+    target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
 endif()

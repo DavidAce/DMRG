@@ -5,7 +5,5 @@ target_sources(dmrg-math-eig-lapacke PRIVATE
         solver_dsyevd.cpp
         solver_zgeev.cpp
         solver_zheevd.cpp)
-target_link_libraries(dmrg-math-eig-lapacke PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-math-eig-lapacke REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-math-eig-lapacke PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-math-eig-lapacke)

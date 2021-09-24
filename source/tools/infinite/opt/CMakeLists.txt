@@ -1,6 +1,4 @@
 add_library(dmrg-tools-infinite-opt OBJECT)
 target_sources(dmrg-tools-infinite-opt PRIVATE opt.cpp)
-target_link_libraries(dmrg-tools-infinite-opt PUBLIC dmrg-deps dmrg-flags)
-if (DMRG_ENABLE_PCH)
-    target_precompile_headers(dmrg-tools-infinite-opt REUSE_FROM dmrg-pch)
-endif ()
+target_link_libraries(dmrg-tools-infinite-opt PUBLIC deps flags)
+target_link_precompiled_headers(dmrg-tools-infinite-opt)

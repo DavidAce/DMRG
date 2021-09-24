@@ -23,28 +23,13 @@ if(NOT DMRG_DEPS_INSTALL_DIR)
     set(DMRG_DEPS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 endif()
 
-set(PKG_INSTALL_DIR ${DMRG_DEPS_INSTALL_DIR})
-set(PKG_BUILD_DIR ${DMRG_DEPS_BUILD_DIR})
+set(PKG_INSTALL_DIR_DEFAULT ${DMRG_DEPS_INSTALL_DIR} CACHE STRING "" FORCE )
+set(PKG_BUILD_DIR_DEFAULT   ${DMRG_DEPS_BUILD_DIR}   CACHE STRING "" FORCE )
 
-
-
-
-# Add search directories and flags for the CMake find_* tools
-list(APPEND CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH} ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PKG_INSTALL_DIR_DEFAULT} ${CMAKE_INSTALL_PREFIX})
 list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE STRING "" FORCE)
+set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
 
-
-
-# Make sure find_library prefers static/shared library depending on BUILD_SHARED_LIBS
-# This is important when finding dependencies such as zlib which provides both shared and static libraries.
-# Note that we do not force this cache variable, so users can override it
-#if(BUILD_SHARED_LIBS)
-#    # This is order is the default
-#    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX};${CMAKE_STATIC_LIBRARY_SUFFIX} CACHE STRING "Prefer finding shared libraries")
-#else()
-#    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX};${CMAKE_SHARED_LIBRARY_SUFFIX} CACHE STRING "Prefer finding static libraries")
-#endif()
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8 OR CMAKE_GENERATOR MATCHES "64")
     set(FIND_LIBRARY_USE_LIB64_PATHS ON)

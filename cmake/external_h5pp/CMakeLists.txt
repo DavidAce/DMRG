@@ -9,7 +9,6 @@ option(BUILD_SHARED_LIBS               "Builds shared libraries"                
 option(H5PP_BUILD_EXAMPLES             "Builds examples"                                             OFF)
 option(H5PP_ENABLE_TESTS               "Enable testing"                                              OFF)
 option(H5PP_PREFIX_ADD_PKGNAME         "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"    OFF)
-option(H5PP_PRINT_INFO                 "Print info during cmake configuration"                       ON)
 option(H5PP_ENABLE_EIGEN3              "Enables Eigen3 linear algebra library"                       ON)
 option(H5PP_ENABLE_FMT                 "Enables the {fmt} formatting library"                        ON)
 option(H5PP_ENABLE_SPDLOG              "Enables Spdlog for logging h5pp internal info to stdout"     ON)
