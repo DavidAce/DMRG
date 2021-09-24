@@ -101,9 +101,9 @@ print_project_summary(DMRG++)
 ### INFORMATION ###
 ###################
 
-message("")
-message("=============================================================================")
-message("")
+message(STATUS "")
+message(STATUS "=============================================================================")
+message(STATUS "")
 if (OPENBLAS_DYNAMIC_ARCH AND NOT TARGET mkl::mkl)
     # Using OpenBLAS
     message(STATUS "   OpenBLAS DYNAMIC_ARCH: Remember to set architecture before launch:")
