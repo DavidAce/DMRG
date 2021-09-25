@@ -1,3 +1,2 @@
-set(test_inc
-$<TARGET_OBJECTS:dmrg-tools-common-log>
-)
+set(test_inc $<TARGET_OBJECTS:dmrg-tools-common-log>)
+set(test_lnk)

@@ -20,7 +20,9 @@ foreach (test ${TESTS})
         target_link_options(${test_tgt} PRIVATE --coverage)
     endif ()
     list(APPEND test_tgt_list ${test_tgt})
-    target_link_libraries(${test_tgt} PRIVATE dmrg-deps flags)
+    target_link_libraries(${test_tgt} PRIVATE deps flags)
+    # Speed up compilation with precompiled headers
+    target_link_precompiled_headers(${test_tgt})
 endforeach ()
 
 
@@ -28,21 +30,6 @@ add_custom_target(dmrg-test-all
         COMMENT "Building tests"
         DEPENDS ${test_tgt_list}
         )
-
-
-# Speed up compilation with precompiled headers
-if (DMRG_ENABLE_PCH)
-    if (COMMAND target_precompile_headers)
-        foreach (tgt ${test_tgt_list})
-            if (NOT TARGET ${first_tgt})
-                target_precompile_headers(${tgt} PRIVATE <string> <vector> <array> <list> <set> <complex> <map> <optional> <memory>)
-                set(first_tgt ${tgt})
-            else ()
-                target_precompile_headers(${tgt} REUSE_FROM ${first_tgt})
-            endif()
-        endforeach()
-    endif()
-endif()
 
 # Speed up compilation with ccache
 if(DMRG_ENABLE_CCACHE)

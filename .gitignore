@@ -5,6 +5,7 @@ cmake-build*/
 output/
 build/
 tmp/
+Testing/
 libs/
 libs*/
 doxygen_log.txt

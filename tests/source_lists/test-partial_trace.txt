@@ -4,3 +4,4 @@ $<TARGET_OBJECTS:dmrg-math-linalg>
 $<TARGET_OBJECTS:dmrg-qm-spin>
 )
 
+set(test_lnk)

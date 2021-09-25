@@ -31,7 +31,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd::settings svd_settings;
         svd_settings.threshold = 1e-8;
         svd_settings.loglevel  = 0;
-        svd_settings.use_lapacke = false;
+        svd_settings.svd_lib = SVDLib::eigen;
         svd::solver svd(svd_settings);
 
         [[maybe_unused]] Eigen::MatrixXcd U1,V1,U2,V2;
@@ -42,9 +42,9 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
             size_t     logLevel = 2;
             h5pp::File file(item.path().string(), h5pp::FilePermission::READONLY, logLevel);
             auto       matrix = file.readDataset<Eigen::MatrixXcd>("svdmatrix");
-            svd.use_lapacke   = false;
+            svd_settings.svd_lib = SVDLib::eigen;
             std::tie(U1, S1, V1) = svd.decompose(matrix);
-            svd.use_lapacke   = true;
+            svd_settings.svd_lib = SVDLib::lapacke;
             std::tie(U2, S2, V2) = svd.decompose(matrix);
             double differenceS = std::log10((S2.array() - S1.array()).cwiseAbs().sum());
             fmt::print("S {:<32} diff {:.24f}\n", item.path().filename().string(), differenceS);
