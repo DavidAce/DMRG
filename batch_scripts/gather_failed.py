@@ -46,7 +46,7 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     if args.end:
         sacct_command.extend(["-E", args.end])
 
-    sacct = subprocess.Popen(sacct_command, stdout=subprocess.PIPE)
+    sacct = subprocess.Popen(sacct_command, shell=False, stdout=subprocess.PIPE, encoding='utf-8')
 
     out, _ = sacct.communicate()
     sacct.stdout.close()
