@@ -2,15 +2,16 @@ import argparse
 import subprocess
 import os
 from pathlib import Path
-
+from copy import deepcopy
 parser = argparse.ArgumentParser(description='Gathers failed simulations')
 parser.add_argument('-l', '--logdir', type=str, help='Search for log files in directory', default='logs')
 parser.add_argument('-o', '--outdir', type=str, help='Save results in directory', default='failed')
 parser.add_argument('-J', '--jobname', type=str, help='Filter by jobname', default=None)
 parser.add_argument('-S', '--start', type=str, help='Consider jobs started after this date', default=None)
 parser.add_argument('-E', '--end', type=str, help='Consider jobs that ended before this date', default=None)
-parser.add_argument('-f', '--failfile', type=str, help='Save failed job list to this filename', default='failed_jobs.txt')
-parser.add_argument('-r', '--resfile', type=str, help='Save resumable job list to this filename', default='resume.job')
+parser.add_argument('-L', '--logscan', type=str, help='Scan through logs instead of using sacct', default=None)
+parser.add_argument('-f', '--failfile', type=str, help='Save list of jobids with failed simulations to this file', default='failed_jobs.txt')
+parser.add_argument('-r', '--resfile', type=str, help='Save results, i.e. a list of cfg-seed pairs, to this file', default='resume.job')
 parser.add_argument('-u', '--user', type=str, help='Call sacct for this user', default=os.getlogin())
 
 
@@ -20,11 +21,23 @@ args = parser.parse_args()
 if args.outdir:
     Path(args.outdir).mkdir(parents=True, exist_ok=True)
 
-
+# Gather job-id's that may contain failed jobs. Remember, 1 job-id can correspond to a job-array
+# which may contain many simulations (seeds)
+joblist = []
+jobitem = {
+    'jobid': None,
+    'jobidraw': None,
+    'jobname' : None,
+    'exitcode': None,
+    'outfile' : None,
+}
 
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
-    env=dict(os.environ, SACCT_FORMAT="jobid%16,jobname%16,user,state%14,maxrss%10,exitcode%10,account%20,cluster%20")
-    sacct_command = ["sacct","-X"]
+    env=dict(os.environ, SACCT_FORMAT="jobid,jobidraw,jobname,exitcode,state")
+    sacct_command = ["sacct","-X", "--parsable2", "--noheader"]
+    if not args.deepscan:
+        sacct_command = sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
+
     sacct_command.extend(["-u", args.user])
     if args.jobname:
         sacct_command.extend(['--name',args.jobname])
@@ -33,44 +46,30 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     if args.end:
         sacct_command.extend(["-E", args.end])
 
-
-    col_command = ['column', '-t']
-    tr_command = ['tr', '-s', ' ']
-    egrep_command = ['egrep', 'OUT|FAI|CAN']
-
     sacct = subprocess.Popen(sacct_command, stdout=subprocess.PIPE)
-    col = subprocess.Popen(col_command, stdin=sacct.stdout, stdout=subprocess.PIPE, shell=False, encoding='utf-8')
-    tr = subprocess.Popen(tr_command, stdin=col.stdout, stdout=subprocess.PIPE, shell=False, encoding='utf-8')
-    egrep = subprocess.Popen(egrep_command, stdin=tr.stdout, stdout=subprocess.PIPE, shell=False, encoding='utf-8')
 
+    out, _ = sacct.communicate()
     sacct.stdout.close()
-    col.stdout.close()
-    tr.stdout.close()
-    out, _ = egrep.communicate()
     output.write(out)
 
-# Gather job-id's that contain failed jobs. Remember, 1 job-id corresponds to a job-array
-# which may contain many simulations (seeds)
-jobids = []
-with open("{}/{}".format(args.outdir, args.failfile), "r") as output:
-    for line in output:
-        jobids.append(line.split(' ',1)[0])
+    joblist.append(deepcopy(jobitem))
+    line = out.split('|')
+    joblist[-1]['jobid']    = line[0]
+    joblist[-1]['jobidraw'] = line[1]
+    joblist[-1]['jobname'] = line[2]
+    joblist[-1]['exitcode'] = line[3]
+    joblist[-1]['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
 
 
 with open("{}/{}".format(args.outdir,args.resfile), "w") as resfile:
     print('Creating resume file:', resfile)
 count = 0
-for file in os.listdir(args.logdir):
-    filepath = "{}/{}".format(args.logdir,file)
-    if not ".out" in file:
-        continue
-    if not os.path.isfile(filepath):
-        continue
-    if not any("{}.out".format(id) in file for id in jobids):
-        continue
+for jobitem in joblist:
+    if not os.path.isfile(jobitem['outfile']):
+        raise FileNotFoundError("File does not exist: {}".format(jobitem['outfile']))
 
-    # Found a logfile that contains at least one failed simulation
-    with open(filepath, "r") as log, open("{}/{}".format(args.outdir,args.resfile), "a") as resfile:
+    # Found a logfile that may contain a failed simulation (or not, if doing deepscan)
+    with open(jobitem['outfile'], "r") as log, open("{}/{}".format(args.outdir,args.resfile), "a") as resfile:
         cfgline = ''
         for line in log:
             if not line.startswith(('CONFIG', 'JOB', 'EXIT')):
@@ -85,5 +84,5 @@ for file in os.listdir(args.logdir):
                 resfile.write("{}\n".format(cfgline))
                 count = count + 1
 
-print('Found {} jobids with failures'.format(len(jobids)))
+print('Found {} jobids'.format(len(joblist)))
 print('Found {} failed simulations'.format(count))
