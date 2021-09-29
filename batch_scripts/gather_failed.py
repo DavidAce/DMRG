@@ -46,22 +46,24 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
         sacct_command.extend(["-E", args.end])
 
     sacct = subprocess.Popen(sacct_command, shell=False, stdout=subprocess.PIPE, encoding='utf-8')
-    out, err = sacct.communicate()
-    if err:
-        print(err)
-        raise Error(err)
-    if out and not out.isspace():
-        print(out)
-        output.write(out)
-        sacct.stdout.close()
-        line = out.split('|')
-        item = {}
-        item['jobid']    = line[0]
-        item['jobidraw'] = line[1]
-        item['jobname'] = line[2]
-        item['exitcode'] = line[3]
-        item['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
-        joblist.append(item)
+
+    with subprocess.Popen(sacct_command,bufsize=1, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8') as p:
+        for out in p.stdout:
+            print(out, end='')  # process line here
+            if out and not out.isspace():
+                output.write(out)
+                line = out.split('|')
+                item = {}
+                item['jobid']    = line[0]
+                item['jobidraw'] = line[1]
+                item['jobname'] = line[2]
+                item['exitcode'] = line[3]
+                item['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
+                joblist.append(item)
+
+
+        if p.returncode != 0:
+            raise subprocess.CalledProcessError(p.returncode, ' '.join(p.args))
 
 
 
