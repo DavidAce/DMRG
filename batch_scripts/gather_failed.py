@@ -34,7 +34,9 @@ jobitem = {
 
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format=jobid,jobidraw,jobname,exitcode,state']
-    if not args.logscan:
+    if args.logscan:
+        sacct_command.append("--state=completed,running,failed,timeout,resizing,deadline,node_fail")
+    else:
         sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
     sacct_command.extend(["-u", args.user])
@@ -62,7 +64,7 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
                 joblist.append(item)
 
 
-        if p.returncode != 0:
+        if p.returncode != 0 and p.returncode != None:
             raise subprocess.CalledProcessError(p.returncode, ' '.join(p.args))
 
 
