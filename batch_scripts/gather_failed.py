@@ -36,7 +36,7 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     env=dict(os.environ, SACCT_FORMAT="jobid,jobidraw,jobname,exitcode,state")
     sacct_command = ["sacct","-X", "--parsable2", "--noheader"]
     if not args.logscan:
-        sacct_command = sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
+        sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
     sacct_command.extend(["-u", args.user])
     if args.jobname:
