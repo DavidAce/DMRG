@@ -33,7 +33,7 @@ jobitem = {
 }
 
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
-    sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format="jobid,jobidraw,jobname,exitcode,state"']
+    sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format=jobid,jobidraw,jobname,exitcode,state']
     if not args.logscan:
         sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
