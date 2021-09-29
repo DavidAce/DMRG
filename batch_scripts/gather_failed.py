@@ -9,7 +9,7 @@ parser.add_argument('-o', '--outdir', type=str, help='Save results in directory'
 parser.add_argument('-J', '--jobname', type=str, help='Filter by jobname', default=None)
 parser.add_argument('-S', '--start', type=str, help='Consider jobs started after this date', default=None)
 parser.add_argument('-E', '--end', type=str, help='Consider jobs that ended before this date', default=None)
-parser.add_argument('-L', '--logscan', type=str, help='Scan through logs instead of using sacct', default=None)
+parser.add_argument('-L', '--logscan', action='store_true', help='Scan through logs instead of using sacct')
 parser.add_argument('-f', '--failfile', type=str, help='Save list of jobids with failed simulations to this file', default='failed_jobs.txt')
 parser.add_argument('-r', '--resfile', type=str, help='Save results, i.e. a list of cfg-seed pairs, to this file', default='resume.job')
 parser.add_argument('-u', '--user', type=str, help='Call sacct for this user', default=os.getlogin())
@@ -33,8 +33,7 @@ jobitem = {
 }
 
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
-    env=dict(os.environ, SACCT_FORMAT="jobid,jobidraw,jobname,exitcode,state")
-    sacct_command = ["sacct","-X", "--parsable2", "--noheader"]
+    sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format="jobid,jobidraw,jobname,exitcode,state"']
     if not args.logscan:
         sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
@@ -51,7 +50,8 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     if err:
         print(err)
         raise Error(err)
-    if not out.isspace():
+    if out and not out.isspace():
+        print(out)
         output.write(out)
         sacct.stdout.close()
         line = out.split('|')
