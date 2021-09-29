@@ -47,18 +47,22 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
         sacct_command.extend(["-E", args.end])
 
     sacct = subprocess.Popen(sacct_command, shell=False, stdout=subprocess.PIPE, encoding='utf-8')
+    out, err = sacct.communicate()
+    if err:
+        print(err)
+        raise Error(err)
+    if not out.isspace():
+        output.write(out)
+        sacct.stdout.close()
+        line = out.split('|')
+        item = {}
+        item['jobid']    = line[0]
+        item['jobidraw'] = line[1]
+        item['jobname'] = line[2]
+        item['exitcode'] = line[3]
+        item['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
+        joblist.append(item)
 
-    out, _ = sacct.communicate()
-    sacct.stdout.close()
-    output.write(out)
-
-    joblist.append(deepcopy(jobitem))
-    line = out.split('|')
-    joblist[-1]['jobid']    = line[0]
-    joblist[-1]['jobidraw'] = line[1]
-    joblist[-1]['jobname'] = line[2]
-    joblist[-1]['exitcode'] = line[3]
-    joblist[-1]['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
 
 
 with open("{}/{}".format(args.outdir,args.resfile), "w") as resfile:
