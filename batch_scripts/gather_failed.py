@@ -35,7 +35,7 @@ jobitem = {
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     env=dict(os.environ, SACCT_FORMAT="jobid,jobidraw,jobname,exitcode,state")
     sacct_command = ["sacct","-X", "--parsable2", "--noheader"]
-    if not args.deepscan:
+    if not args.logscan:
         sacct_command = sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
     sacct_command.extend(["-u", args.user])
@@ -68,7 +68,7 @@ for jobitem in joblist:
     if not os.path.isfile(jobitem['outfile']):
         raise FileNotFoundError("File does not exist: {}".format(jobitem['outfile']))
 
-    # Found a logfile that may contain a failed simulation (or not, if doing deepscan)
+    # Found a logfile that may contain a failed simulation (or not, if doing logscan)
     with open(jobitem['outfile'], "r") as log, open("{}/{}".format(args.outdir,args.resfile), "a") as resfile:
         cfgline = ''
         for line in log:
