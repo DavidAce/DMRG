@@ -106,8 +106,8 @@ for jobitem in joblist:
         # We can now extract the config lines that should have executed
         cfglines = getlines(open(jobfile,"r"), failed)
         for cfgline in cfglines:
-            print("Found failed simulation | exit {:>3} | {}".format(keyval[1],cfgline))
-            resfile.write("{}\n".format(cfgline))
+            print("Found failed simulation | exit {:>3} | {}".format(keyval[1],cfgline), end='')
+            resfile.write("{}".format(cfgline))
             count = count + 1
 #
 #             if keyval[0] == 'CONFIG LINE' or keyval[0] == 'JOB FILE LINE(S)':
