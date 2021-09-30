@@ -3,12 +3,13 @@ import subprocess
 import os
 from pathlib import Path
 from copy import deepcopy
+import time
 parser = argparse.ArgumentParser(description='Gathers failed simulations')
 parser.add_argument('-l', '--logdir', type=str, help='Search for log files in directory', default='logs')
 parser.add_argument('-o', '--outdir', type=str, help='Save results in directory', default='failed')
 parser.add_argument('-J', '--jobname', type=str, help='Filter by jobname', default=None)
 parser.add_argument('-S', '--start', type=str, help='Consider jobs started after this date', default=None)
-parser.add_argument('-E', '--end', type=str, help='Consider jobs that ended before this date', default=None)
+parser.add_argument('-E', '--end', type=str, help='Consider jobs that ended before this date', default=time.strftime('%Y-%m-%dT%H:%M:%S'))
 parser.add_argument('-L', '--logscan', action='store_true', help='Scan through logs instead of using sacct')
 parser.add_argument('-f', '--failfile', type=str, help='Save list of jobids with failed simulations to this file', default='failed_jobs.txt')
 parser.add_argument('-r', '--resfile', type=str, help='Save results, i.e. a list of cfg-seed pairs, to this file', default='resume.job')
