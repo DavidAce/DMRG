@@ -93,7 +93,7 @@ for jobitem in joblist:
             if keyval[0] == 'JOB FILE':
                 jobfile = keyval[1] # Contains the array jobarray chunk file.
             if keyval[0] == 'TASK ID SEQUENCE':
-                sequence = set(map(int,keyval[1].split(' '))
+                sequence = set(map(int,keyval[1].split(' ')))
             if keyval[0] == 'JOB ID':
                 jobid = int(keyval[1])
             if keyval[0] == "EXIT CODE" and keyval[1] == "0":
