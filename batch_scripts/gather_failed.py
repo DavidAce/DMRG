@@ -35,7 +35,7 @@ jobitem = {
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format=jobid,jobidraw,jobname,exitcode,state']
     if args.logscan:
-        sacct_command.append("--state=completed,running,failed,timeout,resizing,deadline,node_fail")
+        sacct_command.append("--state=completed,running,failed,timeout,deadline,node_fail")
     else:
         sacct_command.append("--state=failed,timeout,resizing,deadline,node_fail")
 
@@ -46,8 +46,6 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
         sacct_command.extend(["-S", args.start])
     if args.end:
         sacct_command.extend(["-E", args.end])
-
-    sacct = subprocess.Popen(sacct_command, shell=False, stdout=subprocess.PIPE, encoding='utf-8')
 
     with subprocess.Popen(sacct_command,bufsize=1, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8') as p:
         for out in p.stdout:
@@ -63,7 +61,7 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
                 item['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
                 joblist.append(item)
 
-
+        print("Command:", ' '.join(p.args))
         if p.returncode != 0 and p.returncode != None:
             raise subprocess.CalledProcessError(p.returncode, ' '.join(p.args))
 
