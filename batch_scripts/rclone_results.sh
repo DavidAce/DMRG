@@ -45,4 +45,4 @@ done
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
-rclone copy $default_src ThinkStation:${default_pfx}/${default_tgt} $follow_sym $dry_run --progress --update --multi-thread-streams=$max_threads
+rclone copy $default_src ThinkStation:${default_pfx}/${default_tgt} $follow_sym $dry_run --progress --update --multi-thread-streams=$max_threads --transfers=$max_threads
