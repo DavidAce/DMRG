@@ -340,7 +340,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
 
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value());
+            tensors.project_to_nearest_sector(target_sector.value(), status.chi_lim);
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -354,28 +354,36 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
             tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.5) {
-                // Here we deem the spin component undecided enough to warrant a safe projection
+                // Here we deem the spin component undecided enough to make a safe projection to both sides for comparison
                 auto tensors_neg = tensors;
                 auto tensors_pos = tensors;
-                try {
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), std::nullopt);
-                } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
+                auto variance_neg = std::numeric_limits<double>::quiet_NaN();
+                auto variance_pos = std::numeric_limits<double>::quiet_NaN();
 
                 try {
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), std::nullopt);
-                } catch(const std::exception &ex) { tools::log->warn("Projection to -x failed: ", ex.what()); }
+                    tools::log->debug("Trying projection to -{}", target_sector.value());
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.chi_lim);
+                    variance_neg = tools::finite::measure::energy_variance(tensors_neg);
+                } catch(const std::exception &ex) { tools::log->warn("Projection to -{} failed: {}",target_sector.value(), ex.what()); }
 
-                auto variance_neg = tools::finite::measure::energy_variance(tensors_neg);
-                auto variance_pos = tools::finite::measure::energy_variance(tensors_pos);
+                try {
+                    tools::log->debug("Trying projection to +{}", target_sector.value());
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.chi_lim);
+                    variance_pos = tools::finite::measure::energy_variance(tensors_pos);
+                } catch(const std::exception &ex) { tools::log->warn("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
+
                 tools::log->debug("Variance after projection to -{} = {:8.2e}", target_sector.value(), variance_neg);
                 tools::log->debug("Variance after projection to +{} = {:8.2e}", target_sector.value(), variance_pos);
-                if(variance_neg < variance_pos)
+                if(std::isnan(variance_neg) and std::isnan(variance_pos))
+                    tools::log->warn("Both -{0} and +{0} projections failed to yield a valid variance", target_sector.value());
+
+                if(not std::isnan(variance_neg) and variance_neg < variance_pos)
                     tensors = tensors_neg;
-                else
+                else if (not std::isnan(variance_pos))
                     tensors = tensors_pos;
             } else {
                 // Here the spin component is close to one sector. We just project to the nearest sector
-                tensors.project_to_nearest_sector(target_sector.value(), std::nullopt);
+                tensors.project_to_nearest_sector(target_sector.value(),  status.chi_lim);
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);

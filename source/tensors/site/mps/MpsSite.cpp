@@ -330,7 +330,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     auto t_mpo = tid::tic_token("apply_mpo");
-    tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {}) | isCenter: {}", get_tag(), mpo.dimensions(), get_position(), isCenter());
+    tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {})", get_tag(), mpo.dimensions());
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
     if(mpoDimL != mpoDimR)
