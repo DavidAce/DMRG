@@ -19,16 +19,11 @@
     #include <mkl.h>
     #include <mkl_service.h>
 #endif
+#include <CLI/CLI.hpp>
 #include <config/loader.h>
-#include <cxxopts.hpp>
 #include <debug/stacktrace.h>
-#include <getopt.h>
-#include <gitversion.h>
+#include <env/environment.h>
 #include <thread>
-
-#if __has_include(<unistd.h>)
-    #include <unistd.h>
-#endif
 
 void print_usage() {
     std::printf(
@@ -88,36 +83,57 @@ int main(int argc, char *argv[]) {
     tools::log = tools::Logger::setLogger("DMRG++ main", 0, true);
     using namespace tools;
 
-#if __has_include(<unistd.h>)
-    char name[HOST_NAME_MAX];
-    auto err = gethostname(name, HOST_NAME_MAX);
-    if(err == 0) tools::log->info("Hostname        : {}", name);
-#endif
+    tools::log->info("Hostname        : {}", env::hostname);
 
     // print current Git status
-    tools::log->info("Git branch      : {}", GIT::BRANCH);
-    tools::log->info("    commit hash : {}", GIT::COMMIT_HASH);
-    tools::log->info("    revision    : {}", GIT::REVISION);
+    tools::log->info("Git branch      : {}", git::branch);
+    tools::log->info("    commit hash : {}", git::commit_hash);
+    tools::log->info("    revision    : {}", git::revision);
+    bool noseedname = false;
 
-    cxxopts::Options options("DMRG++", "An MPS-based algorithm to find 1D quantum-states");
-    /* clang-format off */
-    options.add_options()
-    ("h,help",     "Show help")
-    ("b,bitfield",    "Integer whose bitfield sets the initial product state. Negative is unused", cxxopts::value<long>())
-    ("c,config",      "Path to a .cfg or .h5 file from a previous simulation",                     cxxopts::value<std::string>()->default_value("input/input.cfg"))
-    ("n,stlthreads",  "Number of C++11 threads (Used by Eigen::Tensor)",                           cxxopts::value<int>())
-    ("o,outfile",     "Path to the output file. The seed number gets appended by default (see -x)",cxxopts::value<std::string>()->default_value("output/output.h5"))
-    ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>())
-    ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>())
-    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<size_t>())
-    ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>());
+    {
+        using namespace settings;
+        CLI::App app{"DMRG++"};
+        app.description("An MPS-based algorithm to find 1D quantum-states");
+        app.get_formatter()->column_width(60);
+        /* clang-format off*/
+        app.option_defaults()->always_capture_default();
+        app.add_option("-b,--bitfield", input::bitfield, "Integer whose bitfield sets the initial product state. Negative is unused")
+            ->default_val(input::bitfield);
+        app.add_option("-c,--config", input::config_filename, "Path to a .cfg or .h5 file from a previous simulation")->default_val(input::config_filename);
+        app.add_option("-n,--stlthreads", threading::stl_threads, "Number of C++11 threads (Used by Eigen::Tensor)")->default_val(threading::stl_threads);
+        app.add_option("-o,--outfile", storage::output_filepath, "Path to the output file. The seed number gets appended by default (see -x)");
+        app.add_option("-s,--seed", input::seed, "Positive number seeds the random number generator");
+        app.add_option("-t,--ompthreads", threading::omp_threads, "Number of OpenMP threads");
+        app.add_option("-v,--verbose", console::verbosity, "Sets verbosity level");
+        app.add_flag("-x,--noseedname", noseedname, "Do not append seed to the output filename");
 
-    auto in = options.parse(argc, argv);
-    if(in["help"].count() > 0) {
-        fmt::print(options.help());
-        exit(0);
+        /* clang-format on */
+        CLI11_PARSE(app, argc, argv);
+        fmt::format("exe: {}", h5pp::fs::read_symlink("/proc/self/exe"));
     }
-    if(in["config"].count() > 0)    settings::input::config_filename = in["config"].as<std::string>();
+    exit(0);
+
+    //    cxxopts::Options options("DMRG++", "An MPS-based algorithm to find 1D quantum-states");
+    //    /* clang-format off */
+    //    options.add_options()
+    //    ("h,help",        "Show help")
+    //    ("b,bitfield",    "Integer whose bitfield sets the initial product state. Negative is unused", cxxopts::value<long>())
+    //    ("c,config",      "Path to a .cfg or .h5 file from a previous simulation", cxxopts::value<std::string>()->default_value("input/input.cfg"))
+    //    ("n,stlthreads",  "Number of C++11 threads (Used by Eigen::Tensor)",                           cxxopts::value<int>())
+    //    ("o,outfile",     "Path to the output file. The seed number gets appended by default (see
+    //    -x)",cxxopts::value<std::string>()->default_value("output/output.h5"))
+    //    ("s,seed",        "Positive number seeds the random number generator",                         cxxopts::value<long>())
+    //    ("t,ompthreads",  "Number of OpenMP threads",                                                  cxxopts::value<int>())
+    //    ("v,verbose",     "Sets verbosity level",                                                      cxxopts::value<size_t>())
+    //    ("x,noseedname",  "Do not append seed to the output filename",                                 cxxopts::value<bool>());
+
+    //    auto in = options.parse(argc, argv);
+    //    if(in["help"].count() > 0) {
+    //        fmt::print(options.help());
+    //        exit(0);
+    //    }
+    //    if(in["config"].count() > 0)    settings::input::config_filename = in["config"].as<std::string>();
 
     //  Try loading the given config file.
     //  Note that there is a default "input/input.config" if none was given
@@ -127,16 +143,16 @@ int main(int argc, char *argv[]) {
         settings::load(dmrg_config); // B2
     } else
         throw std::runtime_error(fmt::format("Could not find config file: {}", settings::input::config_filename)); // Invalid file
-
-    // Override the other settings
-    bool        noseedname = false;
-    if(in["bitfield"].count() > 0)      settings::input::bitfield           = in["bitfield"].as<long>();
-    if(in["stlthreads"].count() > 0)    settings::threading::stl_threads    = in["stlthreads"].as<int>();
-    if(in["outfile"].count() > 0)       settings::storage::output_filepath  = in["outfile"].as<std::string>();
-    if(in["seed"].count() > 0)          settings::input::seed               = in["seed"].as<long>();
-    if(in["ompthreads"].count() > 0)    settings::threading::omp_threads    = in["ompthreads"].as<int>();
-    if(in["verbose"].count() > 0)       settings::console::verbosity        = in["verbose"].as<size_t>();
-    if(in["noseedname"].count() > 0)    noseedname                          = in["noseedname"].as<bool>();
+                                                                                                                   //
+                                                                                                                   //    // Override the other settings
+                                                                                                                   //    bool        noseedname = false;
+    //    if(in["bitfield"].count() > 0)      settings::input::bitfield           = in["bitfield"].as<long>();
+    //    if(in["stlthreads"].count() > 0)    settings::threading::stl_threads    = in["stlthreads"].as<int>();
+    //    if(in["outfile"].count() > 0)       settings::storage::output_filepath  = in["outfile"].as<std::string>();
+    //    if(in["seed"].count() > 0)          settings::input::seed               = in["seed"].as<long>();
+    //    if(in["ompthreads"].count() > 0)    settings::threading::omp_threads    = in["ompthreads"].as<int>();
+    //    if(in["verbose"].count() > 0)       settings::console::verbosity        = in["verbose"].as<size_t>();
+    //    if(in["noseedname"].count() > 0)    noseedname                          = in["noseedname"].as<bool>();
 
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::verbosity, settings::console::timestamp);
     /* clang-format on */

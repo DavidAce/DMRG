@@ -31,7 +31,7 @@ if(NOT TARGET deps)
     add_library(deps INTERFACE)
 endif()
 target_link_libraries(deps INTERFACE
-        cxxopts::cxxopts
+        CLI11::CLI11
         h5pp::h5pp
         arpack::arpack++
         primme::primme

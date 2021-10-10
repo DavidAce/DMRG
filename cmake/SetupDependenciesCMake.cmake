@@ -61,8 +61,8 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     # Lapacke is needed by arpack++, included in MKL or OpenBLAS
     find_package(Lapacke REQUIRED)
 
-    # cxxopts for parsing cli arguments
-    install_package(cxxopts VERSION 2.2.0)
+    # cli11 for parsing cli arguments
+    install_package(cli11 VERSION 2.1.1 TARGET_NAME CLI11::CLI11 FIND_NAME CLI11)
 
     # Eigen3 numerical library (needed by ceres and h5pp)
     install_package(Eigen3 VERSION 3.4 TARGET_NAME Eigen3::Eigen)

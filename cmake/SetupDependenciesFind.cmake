@@ -29,7 +29,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     find_package(gflags 2.2.2 ${GFLAGS_COMPONENTS} ${GFLAGS_ITEMS} REQUIRED)      # Google Flags library needed by ceres-solver
     find_package(glog 0.4 REQUIRED)          # Google logging library needed by ceres-solver
     find_package(Ceres 2.0 PATH_SUFFIXES ceres ceres/lib REQUIRED)      # ceres-solver (for L-BFGS routine)
-
+    find_package(CLI11 2.1.1 REQUIRED)
 
     if(TARGET Eigen3::Eigen AND DMRG_ENABLE_THREADS)
         target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)

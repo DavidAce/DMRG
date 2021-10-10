@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
-project(external-cxxopts)
+project(external-cli11)
 if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
 endif()
 include(ExternalProject)
-ExternalProject_Add(external_cxxopts
-        GIT_REPOSITORY  https://github.com/jarro2783/cxxopts.git
-        GIT_TAG 5eca8a30012b69b76316b71fa391a89fe09256cb
-        GIT_SHALLOW TRUE
+ExternalProject_Add(external_cli11
+        URL  https://github.com/CLIUtils/CLI11/archive/refs/tags/v2.1.1.tar.gz
+        URL_MD5 86607d04f99045d8596be0376b27fc18
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
@@ -24,6 +23,8 @@ ExternalProject_Add(external_cxxopts
         ${INIT_CACHE_ARG}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_INSTALL_MESSAGE=NEVER
-        # cxxopts flags
-
+        # cli11 flags
+        -DCLI11_BUILD_EXAMPLES:BOOL=OFF
+        -DCLI11_BUILD_TESTS:BOOL=OFF
+        -DCLI11_BUILD_DOC:BOOL=OFF
         )

@@ -39,13 +39,16 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             conanbuildinfo.cmake
             HINTS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}
             NO_DEFAULT_PATH)
+    find_file(CONANFILE
+            conanfile.txt
+            HINTS ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR}
+            NO_DEFAULT_PATH)
 
-    if(CONAN_BUILD_INFO)
+    if(CONAN_BUILD_INFO AND CONANFILE AND ${CONAN_BUILD_INFO} IS_NEWER_THAN ${CONANFILE})
         ##################################################################
         ### Use pre-existing conanbuildinfo.cmake                      ###
         ### This avoids having to run conan again                      ###
         ##################################################################
-        message(STATUS "Detected Conan build info: ${CONAN_BUILD_INFO}")
         include(${CONAN_BUILD_INFO})
         conan_basic_setup(TARGETS KEEP_RPATHS NO_OUTPUT_DIRS)
     else()
@@ -96,7 +99,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         conan_add_remote(NAME conan-dmrg URL http://thinkstation.duckdns.org:8081/artifactory/api/conan/conan-dmrg)
 
         conan_cmake_run(
-                CONANFILE conanfile.txt
+                CONANFILE ${CONANFILE}
                 CONAN_COMMAND ${CONAN_COMMAND}
                 BUILD_TYPE ${CMAKE_BUILD_TYPE}
                 BASIC_SETUP CMAKE_TARGETS
@@ -178,7 +181,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
 
     # Make aliases
-    add_library(cxxopts::cxxopts    ALIAS CONAN_PKG::cxxopts)
+    add_library(CLI11::CLI11        ALIAS CONAN_PKG::cli11)
     add_library(Eigen3::Eigen       ALIAS CONAN_PKG::eigen)
     add_library(h5pp::h5pp          ALIAS CONAN_PKG::h5pp)
     add_library(fmt::fmt            ALIAS CONAN_PKG::fmt)
