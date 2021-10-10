@@ -117,8 +117,7 @@ namespace tools::finite::h5 {
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, payload.data(), payload.size());
-        auto info  = h5file.getTableInfo(table_path);
-        h5pp::hdf5::appendTableRecords(entry, info, 1);
+        h5file.appendTableRecords(entry, table_path);
         save_log[table_path] = save_point;
     }
 
