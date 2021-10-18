@@ -3,7 +3,10 @@
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
+#include <string>
 #include <vector>
+#include <array>
+
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
@@ -414,8 +417,49 @@ std::string flag2str(const T &item) {
 }
 
 
+template<class T, class... Ts>
+struct is_any : std::disjunction<std::is_same<T, Ts>...> {};
+template<class T, class... Ts>
+inline constexpr bool is_any_v = is_any<T, Ts...>::value;
+
+
+
 template<typename T>
 constexpr auto sv2enum(std::string_view item) {
+    static_assert(is_any_v<T,
+        AlgorithmType,
+        AlgorithmStop,
+        MultisiteMove,
+        SVDMode,
+        ChiGrow,
+        ModelType,
+        EdgeStatus,
+        StorageLevel,
+        StorageReason,
+        CopyPolicy,
+        ResetReason,
+        NormPolicy,
+        FileCollisionPolicy,
+        FileResumePolicy,
+        LogPolicy,
+        RandomizerMode,
+        OptType,
+        OptMode,
+        OptSpace,
+        OptRitz,
+        OptWhen,
+        OptExit,
+        OptMark,
+        OptInit,
+        StateInitType,
+        StateInit,
+        PerturbMode,
+        fdmrg_task,
+        xdmrg_task,
+        flbit_task>);
+
+
+
     if constexpr(std::is_same_v<T, AlgorithmType>) {
         if(item == "iDMRG")                                 return AlgorithmType::iDMRG;
         if(item == "fDMRG")                                 return AlgorithmType::fDMRG;
@@ -630,3 +674,26 @@ constexpr auto sv2enum(std::string_view item) {
     throw std::runtime_error("sv2enum given invalid string item: " + std::string(item));
 }
 /* clang-format on */
+
+template<typename T, auto num>
+using enumarray_t = std::array<std::pair<std::string, T>, num>;
+
+template<typename T, typename... Args>
+constexpr auto mapStr2Enum(Args... names) {
+    constexpr auto num     = sizeof...(names);
+    auto           pairgen = [](const std::string &name) -> std::pair<std::string, T> {
+        return {name, sv2enum<T>(name)};
+    };
+    return enumarray_t<T, num>{pairgen(names)...};
+}
+
+template<typename T, typename... Args>
+constexpr auto mapEnum2Str(Args... enums) {
+    constexpr auto num     = sizeof...(enums);
+    auto           pairgen = [](const T &e) -> std::pair<std::string, T> {
+        return {std::string(enum2sv(e)), e};
+    };
+    return enumarray_t<T, num>{pairgen(enums)...};
+}
+
+inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::lbit);

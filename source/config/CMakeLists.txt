@@ -1,5 +1,5 @@
 add_library(dmrg-config-o OBJECT)
-target_sources(dmrg-config-o PUBLIC loader.cpp settings.cpp)
+target_sources(dmrg-config-o PUBLIC loader.cpp settings.cpp parse.cpp)
 target_link_libraries(dmrg-config-o PUBLIC deps flags)
 target_link_precompiled_headers(dmrg-config-o)
 
