@@ -3,6 +3,7 @@
 #include "../mps.h"
 #include <config/enums.h>
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <general/iter.h>
 #include <math/linalg/tensor.h>
 #include <math/num.h>
@@ -186,6 +187,25 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw std::runtime_error(fmt::format("merge_multisite_mps: mps dim2 {} != chiR {} on right-most site", multisite_mps.dimension(2),
                                              state.get_mps_site(sites.back()).get_chiR(), sites.back()));
     if constexpr(settings::debug_merge) {
+        // Never allow nan's in the multisite_mps
+        if(tenx::hasNaN(multisite_mps))
+            throw except::runtime_error("merge_multisite_mps: multisite_mps has nan's:\n"
+                                        "sites            :{}\n"
+                                        "center_position  :{}\n"
+                                        "current_position :{}\n"
+                                        "chi_lim          :{}\n"
+                                        "multisite_mps    :\n{}",
+                                        sites, center_position, current_position, chi_lim, linalg::tensor::to_string(multisite_mps, 3, 6));
+
+        if(state.has_nan())
+            throw except::runtime_error("merge_multisite_mps: state has nan's:\n"
+                                        "sites            :{}\n"
+                                        "center_position  :{}\n"
+                                        "current_position :{}\n"
+                                        "chi_lim          :{}\n"
+                                        "multisite_mps    :\n{}",
+                                        sites, center_position, current_position, chi_lim, linalg::tensor::to_string(multisite_mps, 3, 6));
+
         // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
         auto norm = tenx::VectorCast(multisite_mps).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->debug("Multisite mps for positions {} has norm far from unity: {:.16f}", sites, norm);

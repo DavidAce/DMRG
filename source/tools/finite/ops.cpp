@@ -15,6 +15,7 @@
 #include <tools/finite/ops.h>
 
 //
+#include <debug/exceptions.h>
 #include <math/linalg/tensor.h>
 
 namespace settings {

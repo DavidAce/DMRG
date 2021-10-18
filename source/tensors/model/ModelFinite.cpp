@@ -2,6 +2,7 @@
 // -- (textra first)
 #include "ModelFinite.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <general/iter.h>
 #include <math/linalg/tensor.h>
 #include <math/svd.h>
@@ -90,6 +91,10 @@ bool ModelFinite::has_nan() const {
 
 void ModelFinite::assert_validity() const {
     for(const auto &mpo : MPO) mpo->assert_validity();
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        for(const auto &mpo : MPO)
+            if(not mpo->is_real()) throw except::runtime_error("model has imaginary part at mpo position {}", mpo->get_position());
+    }
 }
 
 // For reduced energy MPO's
