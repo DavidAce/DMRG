@@ -17,6 +17,12 @@
 #include <tools/finite/measure.h>
 #include <tools/finite/ops.h>
 
+namespace settings {
+    inline constexpr bool debug_merge = false;
+    inline constexpr bool debug_gates = false;
+    inline constexpr bool debug_moves = false;
+}
+
 bool tools::finite::mps::init::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and init::used_bitfields.count(bitfield.value()) == 0;
 }

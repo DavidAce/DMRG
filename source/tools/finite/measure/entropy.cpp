@@ -12,6 +12,10 @@
 #include <tools/finite/mps.h>
 #include <utility>
 
+namespace settings{
+    inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT
+}
+
 struct Amplitude {
     long                                  state_size;          // System size
     std::bitset<64>                       bits;                // Bits that select spins on each MPS site

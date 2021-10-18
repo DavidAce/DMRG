@@ -17,6 +17,10 @@
 //
 #include <math/linalg/tensor.h>
 
+namespace settings {
+    inline constexpr bool debug_projection = false;
+}
+
 void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
                                    const Eigen::Tensor<Scalar, 3> &Redge) {
     std::vector<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);

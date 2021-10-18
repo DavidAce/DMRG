@@ -7,6 +7,11 @@
 #include <math/num.h>
 #include <tools/common/log.h>
 
+namespace settings {
+    inline constexpr bool debug_swap = false;
+}
+
+
 qm::Swap::Swap(size_t posL, size_t posR) : posL(posL), posR(posR) {
     if(posL + 1 != posR) throw std::logic_error(fmt::format("Swap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR));
 }
@@ -46,7 +51,7 @@ void qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
         if(other_rwaps.empty()) return;
         if(swaps.empty()) return;
         if(other_rwaps.back() == swaps.front()) {
-            if constexpr(settings::debug_gates) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
+            if constexpr(settings::debug_swap) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
             other_rwaps.pop_back();
             swaps.pop_front();
         } else {
@@ -60,7 +65,7 @@ void qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
         if(other_swaps.empty()) return;
         if(rwaps.empty()) return;
         if(other_swaps.front() == rwaps.back()) {
-            if constexpr(settings::debug_gates) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
+            if constexpr(settings::debug_swap) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
             other_swaps.pop_front();
             rwaps.pop_back();
         } else {

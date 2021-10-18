@@ -12,6 +12,10 @@
 #include <tools/common/log.h>
 #include <tools/finite/mps.h>
 
+namespace settings{
+    inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT
+}
+
 struct Amplitude {
     std::bitset<64>                       bits;                // Bits that select spins on each MPS site
     std::optional<long>                   site = std::nullopt; // MPS site (not Schmidt site!)

@@ -10,6 +10,10 @@
 #include <tensors/site/mps/MpsSite.h>
 #include <tid/tid.h>
 
+namespace settings {
+    inline constexpr bool debug_split = false;
+}
+
 template<typename Scalar>
 std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                      const std::vector<size_t> &positions, long center_position, long chi_limit,
