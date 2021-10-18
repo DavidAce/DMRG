@@ -75,7 +75,7 @@ class ModelFinite {
     Eigen::Tensor<Scalar, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
     const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
     const Eigen::Tensor<Scalar, 2> &get_multisite_ham_squared() const;
-    void                            clear_cache() const;
+    void                            clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
 
     std::vector<size_t> get_active_ids() const;
 };

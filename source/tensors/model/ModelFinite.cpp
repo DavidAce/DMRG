@@ -552,8 +552,8 @@ const Eigen::Tensor<ModelFinite::Scalar, 2> &ModelFinite::get_multisite_ham_squa
     return cache.multisite_ham_squared.value();
 }
 
-void ModelFinite::clear_cache() const {
-    tools::log->trace("Clearing model cache");
+void ModelFinite::clear_cache(LogPolicy logPolicy) const {
+    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing model cache");
     cache = Cache();
 }
 

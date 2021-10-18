@@ -104,6 +104,6 @@ class TensorsFinite {
     void                rebuild_edges();
     void                rebuild_edges_ene();
     void                rebuild_edges_var();
-    void                clear_measurements() const;
-    void                clear_cache() const;
+    void                clear_measurements(LogPolicy logPolicy = LogPolicy::QUIET) const;
+    void                clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
 };
