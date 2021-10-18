@@ -71,12 +71,15 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     tools::log->trace("Applying MPO's");
     if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
 
-    if constexpr(settings::debug) {
+    if constexpr(settings::debug or settings::debug_projection) {
         state.clear_measurements();
+        tools::log->debug("Num mpos             before applying mpos: {}", mpos.size());
         tools::log->debug("Norm                 before applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      before applying mpos: {}", tools::finite::measure::spin_components(state));
         tools::log->debug("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
         tools::log->debug("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+        if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state)))
+            throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
     }
     state.clear_measurements();
     for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
@@ -164,23 +167,26 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         }
     }
 
-    if constexpr(settings::debug) {
+    if constexpr(settings::debug or settings::debug_projection) {
         state.clear_measurements();
         state.clear_cache();
         state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+        tools::log->debug("Num mpos             after  applying mpos: {}", mpos.size());
         tools::log->debug("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
         tools::log->debug("Bond dimensions      after  applying mpos: {}", tools::finite::measure::bond_dimensions(state));
         tools::log->debug("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
+        if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state)))
+            throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
     }
 
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    state.assert_validity();
 }
 
-void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim,
+                                           std::optional<svd::settings> svd_settings) {
     // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
     // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
     // This operation leaves the global norm unchanged (thanks to the 0.5 factor) but locally each MPS loses its
@@ -190,7 +196,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
 
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::log->debug("Projecting state to sector with sign {}", sign);
-    auto t_prj           = tid::tic_scope("projection");
+    auto t_prj = tid::tic_scope("projection");
     tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
 
     auto spin_components = tools::finite::measure::spin_components(state);
@@ -200,10 +206,10 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     // Do the projection
     const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
     apply_mpos(state, mpos, L, R);
-
     tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
     spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    if constexpr(settings::debug) state.assert_validity();
 }
 
 std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFinite &state, std::string_view sector) {
@@ -216,7 +222,8 @@ std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFini
         return std::nullopt;
 }
 
-void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> chi_lim,
+                                                   std::optional<svd::settings> svd_settings) {
     /*
      * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
      *
@@ -232,8 +239,8 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
     auto t_prj                    = tid::tic_scope("proj");
     auto spin_component_in_sector = get_spin_component_in_sector(state, sector);
     if(spin_component_in_sector.has_value()) {
-        auto sector_sign = mps::init::get_sign(sector);
-        auto paulimatrix = mps::init::get_pauli(sector);
+        auto sector_sign    = mps::init::get_sign(sector);
+        auto paulimatrix    = mps::init::get_pauli(sector);
         auto spin_alignment = sector_sign * spin_component_in_sector.value();
         // Now we have to check that the intended projection is safe
         tools::log->debug("Spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
@@ -271,13 +278,15 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
         throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
 }
 
-StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim,
+                                                         std::optional<svd::settings> svd_settings) {
     auto state_projected = state;
     project_to_sector(state_projected, paulimatrix, sign, chi_lim, svd_settings);
     return state_projected;
 }
 
-StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> chi_lim,
+                                                                 std::optional<svd::settings> svd_settings) {
     auto state_projected = state;
     project_to_nearest_sector(state_projected, sector, chi_lim, svd_settings);
     return state_projected;
