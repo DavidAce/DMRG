@@ -3,6 +3,7 @@
 // -- (textra first)
 #include "StateFinite.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <general/iter.h>
 #include <tensors/site/mps/MpsSite.h>
 #include <tid/tid.h>
@@ -61,7 +62,8 @@ StateFinite::StateFinite(AlgorithmType algo_type, ModelType model_type, size_t m
 }
 
 void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
-    tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size, position);
+    tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
+                      position);
     set_algorithm(algo_type);
     if(model_size < 2) throw std::logic_error("Tried to initialize state with less than 2 sites");
     if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
@@ -123,7 +125,7 @@ T StateFinite::get_position() const {
     std::optional<T> pos;
     for(const auto &mps : mps_sites)
         if(mps->isCenter()) {
-            if(pos) throw std::logic_error(fmt::format("Found multiple centers: first center at {} and another at {}", pos.value(), mps->get_position()));
+            if(pos) throw except::logic_error("Found multiple centers: first center at {} and another at {}", pos.value(), mps->get_position());
             pos = mps->get_position<T>();
         }
     // If no center position was found then all sites are "B" sites. In that case, return -1 if T is signed, otherwise throw.
@@ -131,7 +133,8 @@ T StateFinite::get_position() const {
         if constexpr(std::is_signed_v<T>)
             return -1;
         else
-            throw std::runtime_error(fmt::format("Could not find center position in current state: {}", get_labels()));
+            throw except::runtime_error("could not find center position in current state: {}\n"
+                                                 "hint: Call get_position<long>() to get -1", get_labels());
     } else
         return pos.value();
 }
@@ -246,7 +249,12 @@ void StateFinite::assert_validity() const {
             throw std::runtime_error(fmt::format("State is corrupted: position mismatch: expected position {} != mps position {}", pos, mps->get_position()));
         pos++;
     }
+
     for(const auto &mps : mps_sites) mps->assert_validity();
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        for(const auto &mps : mps_sites)
+            if(not mps->is_real()) throw except::runtime_error("state has imaginary part at mps position {}", mps->get_position());
+    }
 }
 
 const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::midchain_bond() const {
@@ -269,20 +277,19 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
         throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
     return *mps_ptr;
 
-//    if(algo == AlgorithmType::fLBIT){
-//        // During fLBIT we can't assume the mps positions are in order since we could have swap operators.
-//        for(const auto & mps_ptr :  mps_sites ){
-//            if(mps_ptr->get_position<T>() == pos) return *mps_ptr;
-//        }
-//        throw std::runtime_error(fmt::format("get_mps_site(pos): pos {} not found", pos));
-//    }else{
-//        // There shouldn't be any swap operator, we can safely assume the mps positions are sorted
-//        const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
-//        if(mps_ptr->get_position<T>() != pos)
-//            throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
-//        return *mps_ptr;
-//    }
-
+    //    if(algo == AlgorithmType::fLBIT){
+    //        // During fLBIT we can't assume the mps positions are in order since we could have swap operators.
+    //        for(const auto & mps_ptr :  mps_sites ){
+    //            if(mps_ptr->get_position<T>() == pos) return *mps_ptr;
+    //        }
+    //        throw std::runtime_error(fmt::format("get_mps_site(pos): pos {} not found", pos));
+    //    }else{
+    //        // There shouldn't be any swap operator, we can safely assume the mps positions are sorted
+    //        const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
+    //        if(mps_ptr->get_position<T>() != pos)
+    //            throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
+    //        return *mps_ptr;
+    //    }
 }
 template const MpsSite &StateFinite::get_mps_site(size_t pos) const;
 template const MpsSite &StateFinite::get_mps_site(long pos) const;
@@ -350,7 +357,8 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         auto &mps_left = get_mps_site(sites.front() - 1);
         auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
         if(L_left.dimension(0) != multisite_mps.dimension(1))
-            throw std::logic_error(fmt::format("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
+            throw std::logic_error(
+                fmt::format("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
         temp.resize(multisite_mps.dimension(0), L_left.dimension(0), multisite_mps.dimension(2));
         temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(L_left).contract(multisite_mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
         multisite_mps                       = temp;
@@ -359,7 +367,8 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         auto &mps_right = get_mps_site(sites.back() + 1);
         auto &L_right   = mps_right.get_L();
         if(L_right.dimension(0) != multisite_mps.dimension(2))
-            throw std::logic_error(fmt::format("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
+            throw std::logic_error(
+                fmt::format("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
         temp.resize(multisite_mps.dimension(0), multisite_mps.dimension(1), L_right.dimension(0));
         temp.device(tenx::omp::getDevice()) = multisite_mps.contract(tenx::asDiagonal(L_right), tenx::idx({2}, {1}));
         multisite_mps                       = temp;
