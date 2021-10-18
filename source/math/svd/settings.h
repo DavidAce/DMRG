@@ -22,13 +22,13 @@ namespace svd {
         std::optional<SVDLib> svd_lib     = std::nullopt;
         /* clang-format off */
         std::string to_string(){
-            std::string msg = "svd";
+            std::string msg;
             if(threshold   ) msg.append(fmt::format(" | threshold {:.2e}", threshold.value()));
             if(switchsize  ) msg.append(fmt::format(" | switchsize {}", switchsize.value()));
             if(loglevel    ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
             if(use_bdc     ) msg.append(fmt::format(" | use_bdc {}", use_bdc.value()));
             if(svd_lib     ) msg.append(fmt::format(" | svd_lib {}", enum2sv(svd_lib.value())));
-            return msg;
+            return msg.empty() ? msg : "svd settings" + msg;
         }
         /* clang-format on */
     };
