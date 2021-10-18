@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 if(NOT WIN32)
-    if($ENV{CLICOLOR} OR $ENV{CLICOLOR_FORCE})
+    if("$ENV{CLICOLOR}" OR "$ENV{CLICOLOR_FORCE}")
         string(ASCII 27 Esc)
         set(ColourReset "${Esc}[m")
         set(ColourBold  "${Esc}[1m")
