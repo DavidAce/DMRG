@@ -12,9 +12,9 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([16,20])
+sites               = np.array([8,10,12,14,16])
 lambdas             = [0.000, 0.003]
-deltas              = [0.000]
+deltas              = [-0.02, -0.01, 0.00, 0.01, 0.02]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
@@ -67,7 +67,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "storage::temp_dir"                  : tmp_storage,
         "threading::stl_threads"             : "1",
         "threading::omp_threads"             : "1",
-        "console::verbosity"                 : "1",
+        "console::loglevel"                  : "2",
         "model::model_size"                  : str_L,
         "model::ising_sdual::delta"          : str_d,
         "model::ising_sdual::lambda"         : str_l,
