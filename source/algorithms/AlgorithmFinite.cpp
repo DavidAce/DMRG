@@ -92,18 +92,30 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         if(tensors.active_sites.empty())
             num_moves = 1;
         else {
-            long num_sites = static_cast<long>(tensors.active_sites.size());
-            if((tensors.state->get_direction() == 1 and tensors.active_sites.back() == tensors.get_length() - 1) or
-               (tensors.state->get_direction() == -1 and tensors.active_sites.front() == 0)) {
+            long posL_edge = 0;
+            long posR_edge = tensors.get_length<long>() - 1;
+            long posL_active = static_cast<long>(tensors.active_sites.front());
+            long posR_active = static_cast<long>(tensors.active_sites.back());
+            long num_active = static_cast<long>(tensors.active_sites.size());
+            bool reached_edgeR = tensors.state->get_direction() == 1 and posR_edge == posR_active;
+            bool reached_edgeL = tensors.state->get_direction() == -1 and posL_edge == posL_active;
+
+            if(reached_edgeL or reached_edgeR){
                 // In this case we have just updated from here to the edge. No point in updating
-                // closer and closer to the edge. Just move until reaching the edge without flip
-                num_moves = std::max<long>(1, num_sites - 1); // to the edge without flipping
+                // closer and closer to the edge. Just move until reaching the edge without flip,
+                // then once more to flip, then once more to move the center position back from negative.
+                //
+                // Reminder: moving to the outward edge means reaching pos == -1 and dir == -1, so all sites are "B".
+                // Moving again only flips the sign of dir. We move once more to get pos == 0, dir == 1.
+                // On the other edge this is not necessary!
+                num_moves = std::max<long>(1, num_active - 1) + 1; // to the edge without flipping, +1 to flip
+                if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
             } else if(settings::strategy::multisite_mps_step == MultisiteMove::ONE)
                 num_moves = 1ul;
             else if(settings::strategy::multisite_mps_step == MultisiteMove::MID) {
-                num_moves = std::max<long>(1, num_sites / 2);
+                num_moves = std::max<long>(1, num_active / 2);
             } else if(settings::strategy::multisite_mps_step == MultisiteMove::MAX) {
-                num_moves = std::max<long>(1, num_sites - 1); // Move so that the center point moves out of the active region
+                num_moves = std::max<long>(1, num_active - 1); // Move so that the center point moves out of the active region
             } else
                 throw std::logic_error("Could not determine how many sites to move");
         }
@@ -118,19 +130,16 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(chi_quench_steps > 0) chi_quench_steps--;
             if(tensors.position_is_outward_edge()) status.iter++;
-            tools::log->trace("Moving center position step {}", status.step);
+            tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
             status.step += tensors.move_center_point(status.chi_lim);
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
         }
-        tensors.active_sites.clear();
-        tensors.state->active_sites.clear();
-        tensors.model->active_sites.clear();
-        tensors.edges->active_sites.clear();
+        tensors.clear_active_sites();
     } catch(std::exception &e) {
         tools::finite::print::dimensions(tensors);
-        throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
+        throw except::runtime_error("Failed to move center point: {}", e.what());
     }
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
@@ -142,10 +151,13 @@ void AlgorithmFinite::reduce_mpo_energy() {
     if(not settings::precision::use_reduced_mpo_energy) return;
     // Reduce mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
-    // which is tough for Lanczos/Arnoldi iterations to handle
+    // which is tough for Lanczos/Arnoldi iterations to handle in fdmrg.
+    // We solve that problem by shifting.
     tensors.reduce_mpo_energy(std::nullopt);
     // The reduction clears our squared mpo's. So we have to rebuild.
     rebuild_mpo_squared();
+    tensors.rebuild_edges();
+    if constexpr (settings::debug) tensors.assert_validity();
 }
 
 void AlgorithmFinite::rebuild_mpo_squared() {
@@ -359,18 +371,21 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto tensors_pos = tensors;
                 auto variance_neg = std::numeric_limits<double>::quiet_NaN();
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
-
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
                     tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.chi_lim);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
-                } catch(const std::exception &ex) { tools::log->warn("Projection to -{} failed: {}",target_sector.value(), ex.what()); }
+                } catch(const std::exception &ex) {
+                     throw except::runtime_error("Projection to -{} failed: {}",target_sector.value(), ex.what());
+                }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
                     tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.chi_lim);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                } catch(const std::exception &ex) { tools::log->warn("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
+                } catch(const std::exception &ex) {
+                    throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what());
+                }
 
                 tools::log->debug("Variance after projection to -{} = {:8.2e}", target_sector.value(), variance_neg);
                 tools::log->debug("Variance after projection to +{} = {:8.2e}", target_sector.value(), variance_pos);
@@ -631,7 +646,6 @@ template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const
 void AlgorithmFinite::print_status_update() {
     if(num::mod(status.step, settings::print_freq(status.algo_type)) != 0) return;
     if(settings::print_freq(status.algo_type) == 0) return;
-    if(tensors.state->position_is_outward_edge()) return;
 
     std::string report;
     //    report += fmt::format("{:<} ", status.algo_type_sv());
@@ -640,9 +654,16 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("step:{:<5} "), status.step);
     report += fmt::format(FMT_STRING("L:{} "), tensors.get_length());
     std::string site_str;
-    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^5}"), "?");
-    if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^5}"), tensors.active_sites.front());
-    if(tensors.active_sites.size() >= 2) site_str = fmt::format(FMT_STRING("{:>2} {:>2}"), tensors.active_sites.front(), tensors.active_sites.back());
+    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^6}"),tensors.state->get_position<long>());
+    if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.active_sites.front());
+    if(tensors.active_sites.size() >= 2){
+        if(tensors.position_is_at(static_cast<long>(tensors.active_sites.front())))
+            site_str = fmt::format(FMT_STRING("{:>2}.{:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
+        else if (tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
+            site_str = fmt::format(FMT_STRING("{:>2} {:>2}."), tensors.active_sites.front(), tensors.active_sites.back());
+        else
+            site_str = fmt::format(FMT_STRING("{:>2} {:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
+    }
     if(tensors.state->get_direction() > 0) {
         report += fmt::format("l:|{}⟩ ", site_str);
     } else if(tensors.state->get_direction() < 0) {
@@ -685,7 +706,6 @@ void AlgorithmFinite::print_status_update() {
 }
 
 void AlgorithmFinite::print_status_full() {
-    tensors.rebuild_edges();
     tensors.do_all_measurements();
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
