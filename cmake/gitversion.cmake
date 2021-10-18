@@ -31,8 +31,8 @@ execute_process(
 
 configure_file(
 ${CMAKE_SOURCE_DIR}/cmake/gitversion.h.in
-${CMAKE_BINARY_DIR}/gitversion/gitversion.h
+${CMAKE_BINARY_DIR}/gitversion/include/git/gitversion.h
 )
 
-include_directories(${CMAKE_BINARY_DIR}/gitversion)
+include_directories(${CMAKE_BINARY_DIR}/gitversion/include)
 

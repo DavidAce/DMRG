@@ -37,12 +37,11 @@ CheckCXXOptional()
 
 
 ################################################################
-### Get git version number                                   ###
-### Generates a header gitversion/gitversion.h               ###
-### Include it using #include <gitversion.h>                 ###
-### Gives a namespace GIT:: with several git version numbers.###
+### Get environment, host and git details                    ###
+### Generates a header env/environment.h                     ###
+### Include it using #include <env/environment.h>            ###
 ################################################################
-include(cmake/gitversion.cmake)
+include(cmake/environment.cmake)
 
 
 ### Print extra info during CMake configure

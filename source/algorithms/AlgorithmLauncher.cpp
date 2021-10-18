@@ -6,7 +6,7 @@
 #include <algorithms/xdmrg.h>
 #include <config/settings.h>
 #include <debug/exceptions.h>
-#include <gitversion.h>
+#include <env/environment.h>
 #include <h5pp/h5pp.h>
 #include <memory>
 #include <tensors/state/StateFinite.h>
@@ -113,9 +113,9 @@ void AlgorithmLauncher::start_h5file() {
     h5file->setCompressionLevel(settings::storage::compression_level);
     if(not h5file->linkExists("git/DMRG++")) {
         // Put git metadata in file
-        h5file->writeDataset(GIT::BRANCH, "git/DMRG++/branch");
-        h5file->writeDataset(GIT::COMMIT_HASH, "git/DMRG++/commit");
-        h5file->writeDataset(GIT::REVISION, "git/DMRG++/revision");
+        h5file->writeDataset(git::branch, "git/DMRG++/branch");
+        h5file->writeDataset(git::commit_hash, "git/DMRG++/commit");
+        h5file->writeDataset(git::revision, "git/DMRG++/revision");
     }
 
     if(not h5file->linkExists("common")) {
