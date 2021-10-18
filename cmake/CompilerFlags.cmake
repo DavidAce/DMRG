@@ -116,7 +116,9 @@ target_compile_options(flags INTERFACE -g -fno-strict-aliasing -fdiagnostics-col
 target_compile_options(flags INTERFACE $<$<CONFIG:RELEASE>:${MARCH} ${MTUNE}>)
 target_compile_options(flags INTERFACE $<$<CONFIG:DEBUG>: -fno-omit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2>)
 target_compile_options(flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
-target_compile_options(flags INTERFACE $<$<CONFIG:RELWITHDEBINFO>:-fno-omit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2>)
+target_compile_options(flags INTERFACE $<$<CONFIG:RELWITHDEBINFO>:-O3 ${MARCH} ${MTUNE}>)
+target_compile_options(flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
+
 target_compile_options(flags INTERFACE $<$<CONFIG:MINSIZEREL>:>)
 
 ###  Enable c++17 support
@@ -136,8 +138,8 @@ if (${PROJECT_UNAME}_ENABLE_ASAN)
     #    endif()
 endif ()
 if (${PROJECT_UNAME}_ENABLE_USAN)
-    target_compile_options(flags INTERFACE -fsanitize=undefined -fno-omit-frame-pointer)
-    target_link_libraries(flags INTERFACE -fsanitize=undefined)
+    target_compile_options(flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fno-omit-frame-pointer)
+    target_link_libraries(flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds)
 endif ()
 
 

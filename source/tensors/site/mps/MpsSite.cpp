@@ -3,10 +3,16 @@
 #include "MpsSite.h"
 #include <config/debug.h>
 #include <math/hash.h>
+#include <math/linalg/tensor.h>
 #include <math/num.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
 #include <utility>
+
+namespace settings {
+    inline constexpr bool debug_merge     = false;
+    inline constexpr bool debug_apply_mpo = false;
+}
 
 using cplx = MpsSite::cplx;
 
@@ -58,6 +64,7 @@ bool MpsSite::is_real() const { return tenx::isReal(get_M_bare()) and tenx::isRe
 bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) and tenx::hasNaN(get_L()); }
 void MpsSite::assert_validity() const {
     if(has_nan()) throw std::runtime_error(fmt::format("MpsSite::assert_validity(): MPS (M or L) at position {} has NaN's", get_position()));
+    assert_dimensions();
 }
 
 void MpsSite::assert_dimensions() const {
@@ -331,13 +338,31 @@ void MpsSite::fuse_mps(const MpsSite &other) {
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     auto t_mpo = tid::tic_token("apply_mpo");
     tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {})", get_tag(), mpo.dimensions());
+    if constexpr(settings::debug_apply_mpo) {
+        tools::log->trace("L({}):\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 16, 18));
+        tools::log->trace("M({}):\n{}\n", get_position(), linalg::tensor::to_string(get_M_bare(), 4, 6));
+        tools::log->trace("mpo({}):\n{}\n", get_position(), linalg::tensor::to_string(mpo, 4, 6));
+    }
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
     if(mpoDimL != mpoDimR)
         throw std::logic_error(fmt::format("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag()));
 
+    Eigen::Tensor<cplx, 1> L_temp = tenx::broadcast(get_L(), {mpoDimL});
+    tenx::normalize(L_temp);
+
+    // Sanity check to make sure we are not running into this bug:
+    //      https://gitlab.com/libeigen/eigen/-/issues/2351
+    if(tenx::hasNaN(L_temp)) throw std::runtime_error("L_temp has nan");
+    if(mpoDimL >= 2 and get_L().size() == 1 and L_temp.size() > 1 and std::abs(L_temp[0] - 1.0) < 1e-10){
+        for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n",L_temp[i].real(), L_temp[i].imag());
+        throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
+
+    }
+
+
     if(isCenter()) {
-        Eigen::Tensor<cplx, 1> LC_temp = get_LC().broadcast(tenx::array1{mpoDimR});
+        Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
         tenx::normalize(LC_temp);
         set_LC(LC_temp);
     }
@@ -346,10 +371,14 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
                                                      .contract(mpo, tenx::idx({0}, {2}))
                                                      .shuffle(tenx::array5{4, 0, 2, 1, 3})
                                                      .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
-    Eigen::Tensor<cplx, 1> L_temp = get_L().broadcast(tenx::array1{mpoDimL});
-    tenx::normalize(L_temp);
+
     set_L(L_temp);
     set_M(M_bare_temp);
+    if constexpr(settings::debug_apply_mpo) {
+        tools::log->trace("L({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 4, 6));
+        tools::log->trace("M({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_M_bare(), 4, 6));
+        tools::log->trace("mpo({}) after:\n{}\n", get_position(), linalg::tensor::to_string(mpo, 4, 6));
+    }
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo) {

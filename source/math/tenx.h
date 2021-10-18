@@ -97,14 +97,46 @@ namespace tenx {
         return pairlistOut;
     }
 
+    template<typename Derived, typename Device = Eigen::DefaultDevice>
+    class selfCleaningEvaluator {
+        private:
+        using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const Derived>, Device>;
+        Evaluator m_eval;
+
+        public:
+        selfCleaningEvaluator(const Evaluator &eval) : m_eval(eval) {}
+        selfCleaningEvaluator(const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device())
+            : m_eval(Evaluator(expr.eval(), device)) {
+            m_eval.evalSubExprsIfNeeded(nullptr);
+        }
+
+        ~selfCleaningEvaluator() {
+            // This whole point of this object is to call cleanup automatically on destruct.
+            // If there are pending operations to evaluate, m_eval will allocate a buffer to hold a result,
+            // which needs to be deallocated.
+            m_eval.cleanup();
+        }
+
+        constexpr auto rank() {
+            using DimType = typename decltype(m_eval)::Dimensions::Base;
+            return DimType{}.size(); // Because Derived::Dimensions is sometimes wrong
+        }
+        const Evaluator *operator->() const { return &m_eval; }
+        Evaluator       *operator->() { return &m_eval; }
+        constexpr auto   map() {
+            // We inspect m_eval to get the type, rank and dimensions, because it has the resulting tensor,
+            // whereas Derived is the tensor type _before_ whatever operation is pending (if any).
+            using DimType       = typename decltype(m_eval)::Dimensions::Base;
+            constexpr auto rank = DimType{}.size();
+            using Scalar        = typename Eigen::internal::remove_const<typename decltype(m_eval)::Scalar>::type;
+            return Eigen::TensorMap<Eigen::Tensor<Scalar, rank>>(m_eval.data(), m_eval.dimensions());
+        }
+    };
+
     // Evaluates expressions if needed
     template<typename T, typename Device = Eigen::DefaultDevice>
     auto asEval(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        using Evaluator                         = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Device>;
-        Eigen::TensorForcedEvalOp<const T> eval = expr.eval();
-        Evaluator                          tensor(eval, device);
-        tensor.evalSubExprsIfNeeded(nullptr);
-        return tensor;
+        return selfCleaningEvaluator(expr, device);
     }
 
     //
@@ -123,14 +155,11 @@ namespace tenx {
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     auto asDiagonal(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        auto tensor         = tenx::asEval(expr, device);
-        using Scalar        = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
-        using DimType       = typename decltype(tensor)::Dimensions::Base;
-        constexpr auto rank = DimType{}.size(); // Because T::Dimensions is sometimes wrong
-        using TensorType    = typename Eigen::Tensor<Scalar, rank>;
-        auto tensorMap      = Eigen::TensorMap<TensorType>(tensor.data(), tensor.dimensions());
-        auto size           = tensorMap.size();
-        return static_cast<Eigen::Tensor<Scalar,2>>(tensorMap.inflate(array1{size + 1}).reshape(array2{size, size}));
+        auto tensor    = tenx::asEval(expr, device);
+        auto tensorMap = tensor.map();
+        auto size      = tensorMap.size();
+        using Scalar   = typename decltype(tensorMap)::Scalar;
+        return static_cast<Eigen::Tensor<Scalar, 2>>(tensorMap.inflate(array1{size + 1}).reshape(array2{size, size}));
     }
 
     template<typename Scalar>
@@ -151,17 +180,26 @@ namespace tenx {
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     double norm(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        return asEval(expr.square().sum().sqrt().abs(), device).coeff(0);
+        return asEval(expr.square().sum().sqrt().abs(), device)->coeff(0);
+    }
+
+    inline Eigen::Tensor<std::complex<double>, 1> broadcast(Eigen::Tensor<std::complex<double>, 1> &tensor, const std::array<long, 1> &bcast) {
+        // Use this function to avoid a bug in Eigen when broadcasting complex tensors of rank 1, with compiler option -mfma
+        // See more here https://gitlab.com/libeigen/eigen/-/issues/2351
+        std::array<long, 2> bcast2 = {bcast[0], 1};
+        std::array<long, 2> shape2 = {tensor.size(), 1};
+        std::array<long, 1> shape1 = {tensor.size() * bcast[0]};
+        return tensor.reshape(shape2).broadcast(bcast2).reshape(shape1);
     }
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     auto asNormalized(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        auto tensor                          = tenx::asEval(expr, device);
-        using Scalar                         = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
-        using DimType                        = typename decltype(tensor)::Dimensions::Base;
-        constexpr auto rank                  = DimType{}.size(); // Because T::Dimensions is sometimes wrong
-        using TensorType                     = typename Eigen::Tensor<Scalar, rank>;
-        auto                     tensorMap   = Eigen::TensorMap<TensorType>(tensor.data(), tensor.dimensions());
+        auto           tensor    = tenx::asEval(expr, device);
+        auto           tensorMap = tensor.map();
+        constexpr auto rank      = tensor.rank();
+        using Scalar             = typename decltype(tensorMap)::Scalar;
+        using TensorType         = typename Eigen::Tensor<Scalar, rank>;
+
         Eigen::Tensor<double, 0> normInverse = tensorMap.square().sum().sqrt().abs().inverse();
         return static_cast<TensorType>(tensorMap * tensorMap.constant(normInverse.coeff(0)));
     }
@@ -298,17 +336,19 @@ namespace tenx {
 
     template<typename T, typename sizeType, typename Device = Eigen::DefaultDevice>
     auto MatrixCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const sizeType rows, const sizeType cols, const Device &device = Device()) {
-        auto tensor  = asEval(expr, device);
-        using Scalar = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
-        return static_cast<MatrixType<Scalar>>(Eigen::Map<const MatrixType<Scalar>>(tensor.data(), rows, cols));
+        auto tensor    = asEval(expr, device);
+        auto tensorMap = tensor.map();
+        using Scalar   = typename decltype(tensorMap)::Scalar;
+        return static_cast<MatrixType<Scalar>>(Eigen::Map<const MatrixType<Scalar>>(tensorMap.data(), rows, cols));
     }
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     auto VectorCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        auto tensor  = asEval(expr, device);
-        auto size    = Eigen::internal::array_prod(tensor.dimensions());
-        using Scalar = typename Eigen::internal::remove_const<typename decltype(tensor)::Scalar>::type;
-        return static_cast<VectorType<Scalar>>(Eigen::Map<const VectorType<Scalar>>(tensor.data(), size));
+        auto tensor    = asEval(expr, device);
+        auto tensorMap = tensor.map();
+        auto size      = Eigen::internal::array_prod(tensorMap.dimensions());
+        using Scalar   = typename decltype(tensorMap)::Scalar;
+        return static_cast<VectorType<Scalar>>(Eigen::Map<const VectorType<Scalar>>(tensorMap.data(), size));
     }
 
     template<typename Scalar, auto rank, typename sizeType>
@@ -375,7 +415,10 @@ namespace tenx {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
-            return imag_sum < threshold * static_cast<double>(obj.derived().size());
+            threshold *= std::max<double>(1.0, static_cast<double>(obj.derived().size()));
+            if(imag_sum >= threshold) { std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold); }
+            return imag_sum < threshold;
+
         } else {
             return true;
         }
@@ -407,6 +450,12 @@ namespace tenx {
     template<typename Scalar, auto rank>
     bool hasNaN(const Eigen::Tensor<Scalar, rank> &tensor) {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
+        return hasNaN(vector);
+    }
+
+    template<typename Scalar>
+    bool hasNaN(const std::vector<Scalar> &vec) {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(vec.data(), static_cast<long>(vec.size()));
         return hasNaN(vector);
     }
 
