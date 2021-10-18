@@ -48,7 +48,7 @@ for val_L,val_J,val_w, val_b, val_f,val_u, val_r, init, in  product(sites,J,w, b
     settings = {
         "storage::output_filepath"           : "{}/L_{}/{}/{}/b_{}/f_{}/u_{}/r_{}/{}.h5".format(output_prefix,str_L,str_J,str_w,str_b, str_f, str_u,str_r, basename),
         "storage::temp_dir"                  : tmp_storage,
-        "console::verbosity"                 : "2",
+        "console::loglevel"                  : "2",
         "strategy::initial_state"            : str(init),
         "model::model_size"                  : str_L,
         "model::lbit::J1_mean"               : str_J1,

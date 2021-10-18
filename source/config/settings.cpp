@@ -265,7 +265,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("profiling::precision" , profiling::precision );
     dmrg_config.load_parameter("profiling::extra"     , profiling::extra     );
     //Console settings
-    dmrg_config.load_parameter("console::verbosity"   , console::verbosity);
+    dmrg_config.load_parameter("console::loglevel"    , console::loglevel);
+    dmrg_config.load_parameter("console::logh5pp"     , console::logh5pp);
     dmrg_config.load_parameter("console::timestamp"   , console::timestamp);
     /* clang-format off */
 }

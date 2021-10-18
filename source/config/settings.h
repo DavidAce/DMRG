@@ -28,7 +28,7 @@ namespace settings {
     extern ChiGrow chi_lim_grow(AlgorithmType algo_type);
     extern double  chi_lim_grow_factor(AlgorithmType algo_type);
     extern long    chi_lim_init(AlgorithmType algo_type);
-    extern bool   store_wave_function(AlgorithmType algo_type);
+    extern bool    store_wave_function(AlgorithmType algo_type);
 
 
 
@@ -105,9 +105,11 @@ namespace settings {
 
     /*! \namespace settings::console Settings for console output */
     namespace console {
-        inline size_t verbosity  = 2;                              /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
-        inline bool   timestamp  = false;                          /*!< Whether to put a timestamp on console outputs */
-    }
+//        inline size_t verbosity     = 2;                            /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
+        inline bool   timestamp     = false;                          /*!< Whether to put a timestamp on console outputs */
+        inline size_t loglevel      = 2;                              /*!< Verbosity [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
+        inline size_t logh5pp       = 2;                              /*!< Verbosity of h5pp library [0-6] Level 2 or 3 is recommended for normal use */
+}
 
     /*! \namespace settings::model Settings for the Hamiltonian spin-model */
     namespace model {
