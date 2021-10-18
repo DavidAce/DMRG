@@ -13,7 +13,7 @@ using Scalar = AlgorithmBase::Scalar;
 AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_) : h5file(std::move(h5ppFile_)) {
     status.algo_type = algo_type_;
     tools::log->set_error_handler([](const std::string & msg) { throw std::runtime_error(msg); });
-    tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::verbosity, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
 }
 

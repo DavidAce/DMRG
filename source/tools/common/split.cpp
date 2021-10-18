@@ -107,7 +107,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     if constexpr(std::is_same_v<Scalar, cplx>) {
         auto chiL = multisite_mps.dimension(1);
         auto chiR = multisite_mps.dimension(2);
-        if(chiL * chiR > 128*128 and tenx::isReal(multisite_mps) ) {
+        if(chiL * chiR > 128 * 128 and tenx::isReal(multisite_mps)) {
             tools::log->debug("Converting to real!");
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
         }
@@ -188,10 +188,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
                 if(vdim[0] * vdim[1] != vdim[2]) {
                     auto V2 = V_stash->data.reshape(std::array<long, 2>{vdim[0] * vdim[1], vdim[2]});
                     tools::log->error(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"
-                                                                    "\nV_stash:\n{}"
-                                                                    "\nS_stash:\n{}"),
-                                                         vdim, V_stash->pos_dst, linalg::tensor::to_string(V2, 6, 8),
-                                                         linalg::tensor::to_string(S_stash->data, 16, 18));
+                                                 "\nV_stash:\n{}"
+                                                 "\nS_stash:\n{}"),
+                                      vdim, V_stash->pos_dst, linalg::tensor::to_string(V2, 6, 8), linalg::tensor::to_string(S_stash->data, 16, 18));
                 }
             }
         }
@@ -214,10 +213,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
                 if(udim[1] != udim[0] * udim[2]) {
                     auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
                     tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
-                                                                    "\nU_stash:\n{}"
-                                                                    "\nS_stash:\n{}"),
-                                                         udim, U_stash->pos_dst, linalg::tensor::to_string(U2, 6, 8),
-                                                         linalg::tensor::to_string(S_stash->data, 6, 8));
+                                                 "\nU_stash:\n{}"
+                                                 "\nS_stash:\n{}"),
+                                      udim, U_stash->pos_dst, linalg::tensor::to_string(U2, 6, 8), linalg::tensor::to_string(S_stash->data, 6, 8));
                 }
             }
         }
@@ -420,7 +418,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
             V = SV_temp;
         }
 
-        if (&spin_dim == & spin_dims.back()){
+        if(&spin_dim == &spin_dims.back()) {
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the V non-diagonal, which would truncate whatever site is on the right, later on.
             svd.threshold = std::numeric_limits<double>::epsilon();
@@ -540,7 +538,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
             U                                      = US_temp;
         }
 
-        if (&spin_dim == & spin_dims.front()){
+        if(&spin_dim == &spin_dims.front()) {
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the U non-diagonal, which would truncate whatever site is on the left, later on.
             svd.threshold = std::numeric_limits<double>::epsilon();
