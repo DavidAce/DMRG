@@ -1,5 +1,6 @@
 #include "EnvBase.h"
 #include <config/debug.h>
+#include <debug/exceptions.h>
 #include <math/hash.h>
 #include <math/num.h>
 #include <math/tenx.h>
@@ -189,27 +190,31 @@ bool EnvBase::has_block() const { return block != nullptr and block->size() != 0
 
 void EnvBase::assert_validity() const {
     assert_block();
-    if(tenx::hasNaN(*block)) {
-        throw std::runtime_error(fmt::format("Environment {} side {} at position {} has NAN's", tag, side, get_position()));
-    }
+    if(tenx::hasNaN(*block)) { throw std::runtime_error(fmt::format("Environment {} side {} at position {} has NAN's", tag, side, get_position())); }
 }
 
 void EnvBase::assert_unique_id(const EnvBase &env, const MpsSite &mps, const MpoSite &mpo) const {
-    std::string msg;
-    if(env.get_unique_id() != unique_id_env) {
-        msg.append(fmt::format("| env({}) {} !=", env.get_position(), env.get_unique_id()));
-        if(unique_id_env) msg.append(fmt::format(" {} ", unique_id_env.value()));
+    std::vector<std::string> msg;
+    if(unique_id_env and env.get_unique_id() != unique_id_env.value())
+        msg.emplace_back(fmt::format("env({}): new {} | old {}", env.get_position(), env.get_unique_id(), unique_id_env.value()));
+    if(unique_id_mps and mps.get_unique_id() != unique_id_mps.value())
+        msg.emplace_back(fmt::format("mps({}): new {} | old {}", mps.get_position(), mps.get_unique_id(), unique_id_mps.value()));
+
+    // mpo is special:
+    // if this is an energy env we check the normal mpo, but
+    // if this is a variance env we need to check the squared mpo
+    if(tag == "ene") {
+        if(unique_id_mpo and mpo.get_unique_id() != unique_id_mpo.value())
+            msg.emplace_back(fmt::format("mpo({}): new {} | old {}", mpo.get_position(), mpo.get_unique_id(), unique_id_mpo.value()));
+    } else if(tag == "var") {
+        if(unique_id_mpo and mpo.get_unique_id_sq() != unique_id_mpo.value())
+            msg.emplace_back(fmt::format("mpo_sq({}): new {} | old {}", mpo.get_position(), mpo.get_unique_id_sq(), unique_id_mpo.value()));
+    } else {
+        msg.emplace_back(fmt::format("Unrecognized tag: [{}]", tag));
     }
-    if(mps.get_unique_id() != unique_id_mps) {
-        msg.append(fmt::format("| mps({}) {} !=", mps.get_position(), mps.get_unique_id()));
-        if(unique_id_mps) msg.append(fmt::format(" {} ", unique_id_mps.value()));
-    }
-    auto mpo_unique_id = tag == "ene" ? mpo.get_unique_id() : mpo.get_unique_id_sq();
-    if(mpo_unique_id != unique_id_mpo) {
-        msg.append(fmt::format("| mpo({}) {} !=", mpo.get_position(), mpo_unique_id));
-        if(unique_id_mpo) msg.append(fmt::format(" {} ", unique_id_mpo.value()));
-    }
-    if(not msg.empty()) throw std::runtime_error(fmt::format("Environment {} side {}: unique id mismatch: {}", tag, side, msg));
+    if(not msg.empty()) throw except::runtime_error("assert_unique_id: {}{}({}): unique id mismatch:\n{}\n"
+                                                    "Hint: remember to rebuild edges after operations that may modify them, "
+                                                    "like 1-site merge, move, normalization, projection, etc\n", tag, side,get_position(), fmt::join(msg, "\n"));
 }
 
 bool EnvBase::is_real() const {

@@ -8,13 +8,12 @@
 EnvVar::EnvVar(std::string side_, const MpsSite &mps, const MpoSite &mpo) : EnvBase(std::move(side_), "var", mps, mpo) { set_edge_dims(mps, mpo); }
 
 EnvVar EnvVar::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
+    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})", tag, side, get_position());
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
-    if constexpr(settings::debug) {
-        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})", tag, side, get_position());
+    if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}): All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
-    }
 
     EnvVar env = *this;
 
@@ -39,18 +38,22 @@ EnvVar EnvVar::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
     env.unique_id_mpo = mpo.get_unique_id_sq();
+    if constexpr (settings::debug){
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_env: {}", tag, side, get_position(), env.unique_id_env.value());
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_mps: {}", tag, side, get_position(), env.unique_id_mps.value());
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_mpo: {}", tag, side, get_position(), env.unique_id_mpo.value());
+    }
     return env;
 }
 
 void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) {
     // If side == L, env,mps and mpo are all corresponding to the neighbor on the left
     // If side == R, env,mps and mpo are all corresponding to the neighbor on the right
-    if constexpr(settings::debug) {
-        tools::log->trace("class_env_{}::refresh(env,mps,mpo): side({}), pos({})", tag, side, get_position());
+    if constexpr(settings::debug)
         if(not num::all_equal(env.get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
-    }
+
 
     if(side == "L" and get_position() != mps.get_position() + 1)
         throw std::logic_error(
@@ -94,6 +97,7 @@ void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) 
             if(unique_id_mpo) reason.append(fmt::format("!= old {} ", unique_id_mpo.value()));
         }
     }
+
     if(refresh) {
         [[maybe_unused]] size_t unique_id_bef;
         if constexpr(settings::debug) {

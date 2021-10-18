@@ -215,12 +215,13 @@ void xdmrg::run_algorithm() {
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
+    
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-        single_xDMRG_step();
-        print_status_update();
-        check_convergence();
-        write_to_file();
+        single_xDMRG_step();   
+        print_status_update(); 
+        check_convergence();   
+        write_to_file();       
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -232,11 +233,11 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
-        reduce_mpo_energy();
-        try_bond_dimension_quench();
-        try_hamiltonian_perturbation();
-        try_projection();
-        try_full_expansion();
+        reduce_mpo_energy();         
+        try_bond_dimension_quench(); 
+        try_hamiltonian_perturbation(); 
+        try_projection(); 
+        try_full_expansion(); 
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -259,7 +260,8 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) c1.optType = OptType::REAL;
-
+    if(c1.optType == OptType::CPLX)
+        throw std::runtime_error("");
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
@@ -503,7 +505,8 @@ void xdmrg::single_xDMRG_step() {
         }
 
         // Do the truncation with SVD
-        tensors.merge_multisite_tensor(winner.get_tensor(), status.chi_lim);
+        tensors.merge_multisite_mps(winner.get_tensor(), status.chi_lim);
+        tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if(tools::log->level() <= spdlog::level::debug) {
             auto truncation_errors = tensors.state->get_truncation_errors_active();
             tools::log->debug("Truncation errors: {:8.2e}", fmt::join(truncation_errors, ", "));
@@ -527,6 +530,7 @@ void xdmrg::single_xDMRG_step() {
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
             var_mpo_step.emplace_back(var);
         }
+        if constexpr (settings::debug) tensors.assert_validity();
     }
 }
 
@@ -651,7 +655,7 @@ void xdmrg::find_energy_range() {
         auto  t_gs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_gs(h5file);
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
-        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::verbosity, settings::console::timestamp);
+        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg_gs.tensors);
     }
@@ -661,7 +665,7 @@ void xdmrg::find_energy_range() {
         auto  t_hs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_hs(h5file);
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
-        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::verbosity, settings::console::timestamp);
+        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg_hs.tensors);
     }

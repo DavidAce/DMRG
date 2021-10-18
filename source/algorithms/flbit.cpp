@@ -65,7 +65,6 @@ void flbit::resume() {
         }
         clear_convergence_status();
         tensors.move_center_point_to_edge(status.chi_lim);
-        //        tensors.rebuild_edges();
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
@@ -279,7 +278,6 @@ void flbit::single_flbit_step() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    //    tensors.rebuild_edges_ene();
     status.phys_time = std::abs(time_points[std::min(status.iter, time_points.size() - 1)]);
 
     status.iter += 1;

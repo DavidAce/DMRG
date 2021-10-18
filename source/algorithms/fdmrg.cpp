@@ -123,7 +123,6 @@ void fdmrg::run_algorithm() {
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
-
     while(true) {
         single_fdmrg_step();
         print_status_update();
@@ -134,8 +133,8 @@ void fdmrg::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
-        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
-        update_expansion_factor_alpha(); // Will update the subspace expansion factor
+        update_bond_dimension_limit();  // Will update bond dimension if the state precision is being limited by bond dimension
+        update_expansion_factor_alpha();  // Will update the subspace expansion factor
         try_projection();
         reduce_mpo_energy();
         move_center_point();
@@ -158,9 +157,7 @@ void fdmrg::single_fdmrg_step() {
                       enum2sv(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
 
-    if(tensors.active_sites.empty())
-        tensors.activate_sites({0}); // Activate a site so that edge checks can happen
-    else {
+    if(not tensors.active_sites.empty()){
         if(status.sub_expansion_alpha > 0) {
             // If we are doing 1-site dmrg, then we better use subspace expansion
             if(tensors.active_sites.size() == 1) alpha_expansion = status.sub_expansion_alpha;
@@ -174,7 +171,8 @@ void fdmrg::single_fdmrg_step() {
         if constexpr(settings::debug)
             tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", multisite_mps.get_variance(), multisite_mps.get_norm());
 
-        tensors.merge_multisite_tensor(multisite_mps.get_tensor(), status.chi_lim);
+        tensors.merge_multisite_mps(multisite_mps.get_tensor(), status.chi_lim);
+        tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if constexpr(settings::debug)
             tools::log->debug("Variance after svd: {:8.2e} | trunc: {}", tools::finite::measure::energy_variance(tensors),
                               tools::finite::measure::truncation_errors_active(*tensors.state));
@@ -184,6 +182,7 @@ void fdmrg::single_fdmrg_step() {
             tools::log->trace("Updating variance record holder: var {:8.2e} | record {:8.2e}", var, status.energy_variance_lowest);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
+        if constexpr (settings::debug) tensors.assert_validity();
     }
 }
 

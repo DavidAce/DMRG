@@ -2,6 +2,8 @@
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvPair.h"
 #include "tensors/site/env/EnvVar.h"
+#include <config/settings.h>
+#include <debug/exceptions.h>
 #include <general/iter.h>
 #include <math/num.h>
 #include <tools/common/log.h>
@@ -82,10 +84,10 @@ bool EdgesFinite::is_real() const {
 }
 
 bool EdgesFinite::has_nan() const {
-    for(const auto &env : eneL) if(not env->has_nan()) return true;
-    for(const auto &env : eneR) if(not env->has_nan()) return true;
-    for(const auto &env : varL) if(not env->has_nan()) return true;
-    for(const auto &env : varR) if(not env->has_nan()) return true;
+    for(const auto &env : eneL) if(env->has_nan()) return true;
+    for(const auto &env : eneR) if(env->has_nan()) return true;
+    for(const auto &env : varL) if(env->has_nan()) return true;
+    for(const auto &env : varR) if(env->has_nan()) return true;
     return false;
 }
 
@@ -94,6 +96,13 @@ void EdgesFinite::assert_validity() const {
     for(const auto &env : eneR) env->assert_validity();
     for(const auto &env : varL) env->assert_validity();
     for(const auto &env : varR) env->assert_validity();
+
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        for(const auto &env : eneL) if(not env->is_real()) throw except::runtime_error("eneL has imaginary part at position {}", env->get_position());
+        for(const auto &env : eneR) if(not env->is_real()) throw except::runtime_error("eneR has imaginary part at position {}", env->get_position());
+        for(const auto &env : varL) if(not env->is_real()) throw except::runtime_error("varL has imaginary part at position {}", env->get_position());
+        for(const auto &env : varR) if(not env->is_real()) throw except::runtime_error("varR has imaginary part at position {}", env->get_position());
+    }
 }
 /* clang-format on */
 

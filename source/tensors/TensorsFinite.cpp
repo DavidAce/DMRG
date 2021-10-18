@@ -53,7 +53,8 @@ TensorsFinite::TensorsFinite(AlgorithmType algo_type, ModelType model_type, size
 }
 
 void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
-    tools::log->debug("Initializing tensors: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size, position);
+    tools::log->debug("Initializing tensors: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
+                      position);
     state->initialize(algo_type, model_type, model_size, position);
     model->initialize(model_type, model_size);
     edges->initialize(model_size);
@@ -62,7 +63,6 @@ void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, si
 void TensorsFinite::randomize_model() {
     model->randomize();
     model->reset_mpo_squared();
-    rebuild_edges();
 }
 
 void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
@@ -73,9 +73,11 @@ void TensorsFinite::randomize_state(StateInit state_init, std::string_view secto
                      fmt::join(tools::finite::measure::spin_components(*state), ", "));
     tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, chi_lim, use_eigenspinors, bitfield);
     if(settings::strategy::project_initial_state) {
-        tools::log->info("Projecting state  | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state),
+        tools::log->info("Projecting state  | norm {:.16f} | spin components: {:+.16f}", tools::finite::measure::norm(*state),
                          fmt::join(tools::finite::measure::spin_components(*state), ", "));
-        project_to_nearest_sector(sector, chi_lim, svd_settings); // Normalization happens after projection
+        tools::finite::ops::project_to_nearest_sector(*state, sector, chi_lim, svd_settings); // Normalization happens after projection
+
+        // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so don't here.
     }
 }
 
@@ -86,7 +88,6 @@ void TensorsFinite::normalize_state(long chi_lim, std::optional<svd::settings> s
         state->clear_cache();
         clear_measurements();
         rebuild_edges();
-        assert_validity();
     }
 }
 
@@ -104,29 +105,22 @@ env_pair<const Eigen::Tensor<TensorsFinite::Scalar, 3>> TensorsFinite::get_multi
 }
 
 StateFinite TensorsFinite::get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim,
-                                                                 std::optional<svd::settings> svd_settings) {
+                                                                 std::optional<svd::settings> svd_settings) const {
     auto state_projected = *state;
-    state_projected.clear_measurements();
-    state_projected.clear_cache();
-    if(not chi_lim) chi_lim = state_projected.find_largest_chi();
-    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
-    tools::finite::ops::project_to_nearest_sector(state_projected, sector);
-    tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::ALWAYS);
+    tools::finite::ops::project_to_nearest_sector(state_projected, sector, chi_lim, svd_settings);
     return state_projected;
 }
 
 void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
-    clear_measurements();
-    if(not chi_lim) chi_lim = state->find_largest_chi();
-    tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
-    tools::finite::ops::project_to_nearest_sector(*state, sector);
-    normalize_state(chi_lim.value(), svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
+    tools::finite::ops::project_to_nearest_sector(*state, sector, chi_lim, svd_settings);
+    rebuild_edges();
+    if constexpr (settings::debug) assert_validity();
 }
 
-StateFinite TensorsFinite::get_state_with_hamiltonian_applied(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
+StateFinite TensorsFinite::get_state_with_hamiltonian_applied(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) const{
     auto state_projected = *state;
-    state_projected.clear_measurements();
-    state_projected.clear_cache();
+    state_projected.clear_measurements(LogPolicy::QUIET);
+    state_projected.clear_cache(LogPolicy::QUIET);
     if(not chi_lim) chi_lim = state_projected.find_largest_chi();
     tools::finite::mps::normalize_state(state_projected, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
     std::vector<Eigen::Tensor<Scalar, 4>> mpos;
@@ -160,7 +154,6 @@ void TensorsFinite::perturb_model_params(double coupling_ptb, double field_ptb, 
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
     model->reset_mpo_squared();
     model->assert_validity();
-    rebuild_edges();
 }
 
 struct DebugStatus {
@@ -189,6 +182,7 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     if constexpr(not settings::debug) return std::nullopt;
     tensors.model->clear_cache();
     tensors.measurements = MeasurementsTensorsFinite();
+    tensors.rebuild_edges();
     DebugStatus deb;
     deb.ene     = tools::finite::measure::energy(tensors);
     deb.red     = tools::finite::measure::energy_reduced(tensors);
@@ -209,9 +203,8 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
 
     tools::log->trace("Reducing MPO energy (all edges should be rebuilt after this)");
     model->set_reduced_energy_per_site(energy_reduce_per_site.value());
-    model->reset_mpo_squared();
+    model->clear_mpo_squared();
     model->assert_validity();
-    rebuild_edges();
 
     debs.emplace_back(get_status(*this, "After reduce"));
 
@@ -267,64 +260,63 @@ void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optio
     else
         model->reset_mpo_squared();
     model->assert_validity();
-    rebuild_edges_var();
+
 }
 
 // Active sites
-void TensorsFinite::sync_active_sites() {
-    active_sites        = state->active_sites;
-    model->active_sites = state->active_sites;
-    edges->active_sites = state->active_sites;
-    rebuild_edges();
-}
+void TensorsFinite::sync_active_sites() { activate_sites(state->active_sites); }
 
-void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
-    active_sites        = tools::finite::multisite::generate_site_list(*state, threshold, max_sites, min_sites);
-    state->active_sites = active_sites;
-    model->active_sites = active_sites;
-    edges->active_sites = active_sites;
-    rebuild_edges();
-    clear_cache();
-    clear_measurements();
+void TensorsFinite::clear_active_sites() {
+    tools::log->trace("Clearing active sites {}", active_sites);
+    active_sites.clear();
+    state->active_sites.clear();
+    model->active_sites.clear();
+    edges->active_sites.clear();
 }
 
 void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
-    if(active_sites == sites) {
-        state->active_sites = active_sites;
-        model->active_sites = active_sites;
-        edges->active_sites = active_sites;
-        return;
-    }
-
+    if(num::all_equal(sites, active_sites, state->active_sites, model->active_sites, edges->active_sites)) return;
     active_sites        = sites;
     state->active_sites = active_sites;
     model->active_sites = active_sites;
     edges->active_sites = active_sites;
+    clear_cache(LogPolicy::QUIET);
+    clear_measurements(LogPolicy::QUIET);
     rebuild_edges();
-    clear_cache();
-    clear_measurements();
+    if constexpr (settings::debug) assert_validity();
 }
 
-void TensorsFinite::activate_truncated_sites(long threshold, long chi_lim, size_t max_sites, size_t min_sites) {
-    active_sites        = tools::finite::multisite::generate_truncated_site_list(*state, threshold, chi_lim, max_sites, min_sites);
-    state->active_sites = active_sites;
-    model->active_sites = active_sites;
-    edges->active_sites = active_sites;
-    rebuild_edges(); // will only produce missing edges
-    clear_cache();   // clear multisite tensors and mpos which become invalid
-    clear_measurements();
-    // TODO: Should measurements be cleared here? Probably not
-    //    clear_measurements();
+void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
+    activate_sites(tools::finite::multisite::generate_site_list(*state, threshold, max_sites, min_sites));
 }
 
 std::array<long, 3> TensorsFinite::active_problem_dims() const { return tools::finite::multisite::get_dimensions(*state, active_sites); }
 long                TensorsFinite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
-bool                TensorsFinite::is_real() const { return state->is_real() and model->is_real() and edges->is_real(); }
-bool                TensorsFinite::has_nan() const { return state->has_nan() or model->has_nan() or edges->has_nan(); }
-void                TensorsFinite::assert_validity() const {
+bool                TensorsFinite::is_real() const {
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        if(not state->is_real()) tools::log->critical("state has imaginary part");
+        if(not model->is_real()) tools::log->critical("model has imaginary part");
+        if(not edges->is_real()) tools::log->critical("edges has imaginary part");
+    }
+    return state->is_real() and model->is_real() and edges->is_real();
+}
+bool TensorsFinite::has_nan() const {
+    if(state->has_nan()) tools::log->critical("state has nan");
+    if(model->has_nan()) tools::log->critical("model has nan");
+    if(edges->has_nan()) tools::log->critical("edges has nan");
+    return state->has_nan() or model->has_nan() or edges->has_nan();
+}
+void TensorsFinite::assert_validity() const {
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        if(not state->is_real()) throw std::runtime_error("state has imaginary part");
+        if(not model->is_real()) throw std::runtime_error("model has imaginary part");
+        if(not edges->is_real()) throw std::runtime_error("edges has imaginary part");
+    }
+
     state->assert_validity();
     model->assert_validity();
     edges->assert_validity();
+    assert_edges();
 }
 
 bool TensorsFinite::has_center_point() const { return state->has_center_point(); }
@@ -370,22 +362,22 @@ size_t TensorsFinite::move_center_point_to_middle(long chi_lim, std::optional<sv
     return tools::finite::mps::move_center_point_to_middle(*state, chi_lim, svd_settings);
 }
 
-void TensorsFinite::merge_multisite_tensor(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings,
+void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings,
                                            LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
-    clear_measurements();
+    clear_measurements(LogPolicy::QUIET);
     tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), chi_lim, svd_settings, log_policy);
     normalize_state(chi_lim, svd_settings, NormPolicy::IFNEEDED);
-    rebuild_edges();
 }
 
 std::vector<size_t> TensorsFinite::expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings) {
     if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     auto pos_expanded = tools::finite::env::expand_subspace(*state, *model, *edges, alpha, chi_lim, svd_settings);
-    if(alpha) clear_measurements(); // No change if alpha == std::nullopt
+    if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
+    if constexpr(settings::debug) assert_validity();
     return pos_expanded;
 }
 
@@ -396,12 +388,12 @@ void TensorsFinite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, 
 void TensorsFinite::rebuild_edges_ene() { tools::finite::env::rebuild_edges_ene(*state, *model, *edges); }
 void TensorsFinite::rebuild_edges_var() { tools::finite::env::rebuild_edges_var(*state, *model, *edges); }
 void TensorsFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
-void TensorsFinite::clear_measurements() const {
+void TensorsFinite::clear_measurements(LogPolicy logPolicy) const {
     measurements = MeasurementsTensorsFinite();
-    state->clear_measurements();
+    state->clear_measurements(logPolicy);
 }
 
-void TensorsFinite::clear_cache() const {
-    model->clear_cache();
-    state->clear_cache();
+void TensorsFinite::clear_cache(LogPolicy logPolicy) const {
+    model->clear_cache(logPolicy);
+    state->clear_cache(logPolicy);
 }

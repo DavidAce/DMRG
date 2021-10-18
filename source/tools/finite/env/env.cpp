@@ -1,6 +1,7 @@
 #include "../env.h"
 #include <config/debug.h>
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <math/num.h>
 #include <math/svd.h>
 #include <math/tenx.h>
@@ -64,7 +65,6 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
         //      * We call the inactive site which belongs in envL "mpsL"
         //      * Then, mpsL.chiR and mpsR.chiL get updated
         //      * The truncation error can be found in
-
 
         auto posL = state.active_sites.front();
         // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
@@ -130,11 +130,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     }
                 }
 
-                const auto & mpsL_new = state.get_mps_site(posL - 1); // The site to the left
-                const auto & mpsR_new = state.get_mps_site(posL);     // The site to the right
-                const auto & chiL_new = mpsL_new.get_chiR();
-                const auto & dimL_new = mpsL_new.dimensions();
-                const auto & dimR_new = mpsR_new.dimensions();
+                const auto &mpsL_new = state.get_mps_site(posL - 1); // The site to the left
+                const auto &mpsR_new = state.get_mps_site(posL);     // The site to the right
+                const auto &chiL_new = mpsL_new.get_chiR();
+                const auto &dimL_new = mpsL_new.dimensions();
+                const auto &dimR_new = mpsR_new.dimensions();
                 tools::log->debug("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
                                   ML_PL.dimension(2), chiL_new, chi_lim);
                 if(dimL_old[1] != dimL_new[1])
@@ -211,11 +211,11 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     }
                 }
 
-                const auto & mpsR_new = state.get_mps_site(posR + 1);
-                const auto & mpsL_new = state.get_mps_site(posR);
-                const auto & chiR_new = mpsR_new.get_chiL();
-                const auto & dimR_new = mpsR_new.dimensions();
-                const auto & dimL_new = mpsL_new.dimensions();
+                const auto &mpsR_new = state.get_mps_site(posR + 1);
+                const auto &mpsL_new = state.get_mps_site(posR);
+                const auto &chiR_new = mpsR_new.get_chiL();
+                const auto &dimR_new = mpsR_new.dimensions();
+                const auto &dimL_new = mpsL_new.dimensions();
 
                 tools::log->debug("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
                                   MR_PR.dimension(1), chiR_new, chi_lim);
@@ -236,17 +236,35 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
-    // If there are no active sites then we can build up until current position
-    // Otherwise it's enough to check up until the bracket defined by active_sites
-    long   current_position = state.get_position<long>();
-    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    if(not edges.active_sites.empty()) {
-        posL_active = edges.active_sites.front();
-        posR_active = edges.active_sites.back();
-    }
+    // If there are no active sites we shouldn't be asserting edges.
+    // For instance, the active sites are cleared after a move of center site.
+    // We could always keep all edges refreshed but that would be wasteful, since the next iteration
+    // may activate other sites and not end up needing those edges.
+    // Instead, we force the hand of the algorithm, to only allow edge assertions with active sites defined.
+    // Ideally, then, this should be done directly after activating new sites in a new iteration.
+    if(edges.active_sites.empty())
+        throw except::runtime_error("assert_edges_ene: no active sites.\n"
+                                    "Hint:\n"
+                                    " One could in principle keep edges refreshed always, but\n"
+                                    " that would imply rebuilding many edges that end up not\n"
+                                    " being used. Make sure to only run this assertion after\n"
+                                    " activating sites.");
 
-    tools::log->trace("Asserting edges eneL from [{} to {}]", min_pos, posL_active);
+    long   current_position = state.get_position<long>();
+    size_t posL_active      = edges.active_sites.front();
+    size_t posR_active      = edges.active_sites.back();
+
+    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    if(not edges.active_sites.empty()) {
+    //        posL_active = edges.active_sites.front();
+    //        posR_active = edges.active_sites.back();
+    //    }
+
+    tools::log->trace("assert_edges_ene: pos {} | dir {} | "
+                      "asserting edges eneL from [{} to {}]",
+                      current_position, state.get_direction(), min_pos, posL_active);
+
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene = edges.get_env_eneL(pos);
         if(pos == 0 and not ene.has_block()) throw std::runtime_error(fmt::format("ene L at pos {} does not have a block", pos));
@@ -256,7 +274,10 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
         auto &ene_next = edges.get_env_eneL(pos + 1);
         ene_next.assert_unique_id(ene, mps, mpo);
     }
-    tools::log->trace("Asserting edges eneR from [{} to {}]", posR_active, max_pos);
+    tools::log->trace("assert_edges_ene: pos {} | dir {} | "
+                      "asserting edges eneR from [{} to {}]",
+                      current_position, state.get_direction(), posR_active, max_pos);
+
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene = edges.get_env_eneR(pos);
         if(pos == state.get_length() - 1 and not ene.has_block()) throw std::runtime_error(fmt::format("ene R at pos {} does not have a block", pos));
@@ -274,16 +295,34 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
-    // If there are no active sites then we can build up until current position
-    // Otherwise it's enough to check up until the bracket defined by active_sites
+    // If there are no active sites we shouldn't be asserting edges.
+    // For instance, the active sites are cleared after a move of center site.
+    // We could always keep all edges refreshed but that would be wasteful, since the next iteration
+    // may activate other sites and not end up needing those edges.
+    // Instead, we force the hand of the algorithm, to only allow edge assertions with active sites defined.
+    // Ideally, then, this should be done directly after activating new sites in a new iteration.
+    if(edges.active_sites.empty())
+        throw except::runtime_error("assert_edges_var: no active sites.\n"
+                                    "Hint:\n"
+                                    " One could in principle keep edges refreshed always, but\n"
+                                    " that would imply rebuilding many edges that end up not\n"
+                                    " being used. Make sure to only run this assertion after\n"
+                                    " activating sites.");
+
     long   current_position = state.get_position<long>();
-    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    if(not edges.active_sites.empty()) {
-        posL_active = edges.active_sites.front();
-        posR_active = edges.active_sites.back();
-    }
-    tools::log->trace("Asserting edges varL from [{} to {}]", min_pos, posL_active);
+    size_t posL_active      = edges.active_sites.front();
+    size_t posR_active      = edges.active_sites.back();
+
+    //    long   current_position = state.get_position<long>();
+    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    if(not edges.active_sites.empty()) {
+    //        posL_active = edges.active_sites.front();
+    //        posR_active = edges.active_sites.back();
+    //    }
+    tools::log->trace("assert_edges_var: pos {} | dir {} | "
+                      "asserting edges varL from [{} to {}]",
+                      current_position, state.get_direction(), min_pos, posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var = edges.get_env_varL(pos);
         if(pos == 0 and not var.has_block()) throw std::runtime_error(fmt::format("var L at pos {} does not have a block", pos));
@@ -293,7 +332,9 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
         auto &var_next = edges.get_env_varL(pos + 1);
         var_next.assert_unique_id(var, mps, mpo);
     }
-    tools::log->trace("Asserting edges varR from [{} to {}]", posR_active, max_pos);
+    tools::log->trace("assert_edges_var: pos {} | dir {} | "
+                      "asserting edges varR from [{} to {}]",
+                      current_position, state.get_direction(), posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var = edges.get_env_varR(pos);
         if(pos == state.get_length() - 1 and not var.has_block()) throw std::runtime_error(fmt::format("var R at pos {} does not have a block", pos));
@@ -325,15 +366,53 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     size_t max_pos = state.get_length() - 1;
 
     // If there are no active sites then we can build up until current position
-    long   current_position = state.get_position<long>();
-    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    if(not edges.active_sites.empty()) {
-        posL_active = edges.active_sites.front();
-        posR_active = edges.active_sites.back();
-    }
+    /*
+     * LOG:
+     * - 2021-10-14:
+     *      Just had a terribly annoying bug:
+     *      Moving the center position clears active_sites, which caused problems when turning back from the right edge.
+     *          1)  active_sites [A(L-1), AC(L)] are updated, left edge exist for A(L-1), right edge exists for AC(L)
+     *          2)  move dir -1, clear active sites
+     *          3)  assert_edges checks up to AC(L-1), but this site has a stale right edge.
+     *      Therefore one would have to rebuild edges between steps 2) and 3) to solve this issue
+     *
+     *      One solution would be to always rebuild edges up to the current position from both sides, but that would be
+     *      wasteful. Instead, we could just accept that some edges are stale after moving the center-point,
+     *      as long as we rebuild those when sites get activated again.
+     *
+     */
 
-    tools::log->trace("Inspecting edges eneL from [{} to {}]", min_pos, posL_active);
+    // If there are no active sites we shouldn't be rebuilding edges.
+    // For instance, the active sites are cleared after a move of center site.
+    // We could always keep all edges refreshed but that would be wasteful, since the next iteration
+    // may activate other sites and not end up needing those edges.
+    // Instead, we force the hand of the algorithm, to only allow edge rebuilds with active sites defined.
+    // Ideally, then, this should be done directly after activating new sites in a new iteration.
+    if(edges.active_sites.empty())
+        throw except::runtime_error("rebuild_edges_ene: no active sites.\n"
+                                    "Hint:\n"
+                                    " One could in principle keep edges refreshed always, but\n"
+                                    " that would imply rebuilding many edges that end up not\n"
+                                    " being used. Make sure to only run this rebuild after\n"
+                                    " activating sites.");
+
+    long   current_position = state.get_position<long>();
+    size_t posL_active      = edges.active_sites.front();
+    size_t posR_active      = edges.active_sites.back();
+
+//
+//
+//    long   current_position = state.get_position<long>();
+//    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+//    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+//    if(not edges.active_sites.empty()) {
+//        posL_active = edges.active_sites.front();
+//        posR_active = edges.active_sites.back();
+//    }
+
+    tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
+                      "inspecting edges eneL from [{} to {}]",
+                      current_position, state.get_direction(), min_pos, posL_active);
     std::vector<size_t> ene_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene_curr = edges.get_env_eneL(pos);
@@ -348,9 +427,12 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
         ene_next.refresh(ene_curr, state.get_mps_site(pos), model.get_mpo(pos));
         if(id != ene_next.get_unique_id()) ene_pos_log.emplace_back(ene_next.get_position());
     }
-    if(not ene_pos_log.empty()) tools::log->trace("Rebuilt L ene edges: {}", ene_pos_log);
+    if(not ene_pos_log.empty()) tools::log->trace("rebuild_edges_ene: rebuilt eneL edges: {}", ene_pos_log);
+
     ene_pos_log.clear();
-    tools::log->trace("Inspecting edges eneR from [{} to {}]", posR_active, max_pos);
+    tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
+                      "inspecting edges eneR from [{} to {}]",
+                      current_position, state.get_direction(), posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene_curr = edges.get_env_eneR(pos);
         if(pos == state.get_length() - 1 and not ene_curr.has_block()) {
@@ -365,7 +447,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
         if(id != ene_prev.get_unique_id()) ene_pos_log.emplace_back(ene_prev.get_position());
     }
     std::reverse(ene_pos_log.begin(), ene_pos_log.end());
-    if(not ene_pos_log.empty()) tools::log->trace("Rebuilt R ene edges: {}", ene_pos_log);
+    if(not ene_pos_log.empty()) tools::log->trace("rebuild_edges_ene: rebuilt eneR edges: {}", ene_pos_log);
     if(not edges.get_env_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
     if(not edges.get_env_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
 }
@@ -374,26 +456,49 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     if(state.get_algorithm() == AlgorithmType::fLBIT)
         throw std::logic_error(fmt::format("rebuild_edges_var: fLBIT algorithm should never rebuild variance edges!"));
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw std::runtime_error(
-            fmt::format("rebuild_edges_var: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
+        throw std::runtime_error(fmt::format("rebuild_edges_var: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
+                                             edges.get_length()));
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw std::runtime_error(
-            fmt::format("rebuild_edges_var: All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
+        throw std::runtime_error(fmt::format("rebuild_edges_var: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                             model.active_sites, edges.active_sites));
     auto t_reb = tid::tic_scope("rebuild_edges");
 
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
-    // If there are no active sites then we can build up until current position
-    // Otherwise it's enough to build up until the bracket defined by active_sites
+
+
+    // If there are no active sites we shouldn't be rebuilding edges.
+    // For instance, the active sites are cleared after a move of center site.
+    // We could always keep all edges refreshed but that would be wasteful, since the next iteration
+    // may activate other sites and not end up needing those edges.
+    // Instead, we force the hand of the algorithm, to only allow edge rebuilds with active sites defined.
+    // Ideally, then, this should be done directly after activating new sites in a new iteration.
+    if(edges.active_sites.empty())
+        throw except::runtime_error("rebuild_edges_var: no active sites.\n"
+                                    "Hint:\n"
+                                    " One could in principle keep edges refreshed always, but\n"
+                                    " that would imply rebuilding many edges that end up not\n"
+                                    " being used. Make sure to only run this assertion after\n"
+                                    " activating sites.");
+
     long   current_position = state.get_position<long>();
-    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    if(not edges.active_sites.empty()) {
-        posL_active = edges.active_sites.front();
-        posR_active = edges.active_sites.back();
-    }
-    tools::log->trace("Inspecting edges varL from [{} to {}]", min_pos, posL_active);
+    size_t posL_active      = edges.active_sites.front();
+    size_t posR_active      = edges.active_sites.back();
+
+
+//    long   current_position = state.get_position<long>();
+//    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+//    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+//    if(not edges.active_sites.empty()) {
+//        posL_active = edges.active_sites.front();
+//        posR_active = edges.active_sites.back();
+//    }
+
+    tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
+                      "inspecting edges varL from [{} to {}]",
+                      current_position, state.get_direction(), min_pos, posL_active);
+
     std::vector<size_t> var_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var_curr = edges.get_env_varL(pos);
@@ -409,9 +514,12 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
         if(id != var_next.get_unique_id()) var_pos_log.emplace_back(var_next.get_position());
     }
 
-    if(not var_pos_log.empty()) tools::log->trace("Rebuilt L var edges: {}", var_pos_log);
+    if(not var_pos_log.empty()) tools::log->trace("rebuild_edges_var: rebuilt varL edges: {}", var_pos_log);
     var_pos_log.clear();
-    tools::log->trace("Inspecting edges varR from [{} to {}]", posR_active, max_pos);
+    tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
+                      "inspecting edges varR from [{} to {}]",
+                      current_position, state.get_direction(), posR_active, max_pos);
+
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var_curr = edges.get_env_varR(pos);
         if(pos == state.get_length() - 1 and not var_curr.has_block()) {
@@ -426,7 +534,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
         if(id != var_prev.get_unique_id()) var_pos_log.emplace_back(var_prev.get_position());
     }
     std::reverse(var_pos_log.begin(), var_pos_log.end());
-    if(not var_pos_log.empty()) tools::log->trace("Rebuilt R var edges: {}", var_pos_log);
+    if(not var_pos_log.empty()) tools::log->trace("rebuild_edges_var: rebuilt varR edges: {}", var_pos_log);
     if(not edges.get_env_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
     if(not edges.get_env_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
 }

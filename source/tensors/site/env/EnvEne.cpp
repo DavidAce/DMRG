@@ -12,7 +12,7 @@ EnvEne EnvEne::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
-            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
+            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}): All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
 
     EnvEne env = *this;
@@ -38,6 +38,11 @@ EnvEne EnvEne::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
     env.unique_id_env = get_unique_id();
     env.unique_id_mps = mps.get_unique_id();
     env.unique_id_mpo = mpo.get_unique_id();
+    if constexpr (settings::debug){
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_env: {}", tag, side, get_position(), env.unique_id_env.value());
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_mps: {}", tag, side, get_position(), env.unique_id_mps.value());
+        tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({}): unique_id_mpo: {}", tag, side, get_position(), env.unique_id_mpo.value());
+    }
     return env;
 }
 
@@ -48,6 +53,7 @@ void EnvEne::refresh(const EnvEne &env, const MpsSite &mps, const MpoSite &mpo) 
         if(not num::all_equal(env.get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
+
 
     if(side == "L" and get_position() != mps.get_position() + 1)
         throw std::logic_error(
