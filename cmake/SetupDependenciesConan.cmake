@@ -42,6 +42,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     find_file(CONANFILE
             conanfile.txt
             HINTS ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR}
+            REQUIRED
             NO_DEFAULT_PATH)
 
     if(CONAN_BUILD_INFO AND CONANFILE AND ${CONAN_BUILD_INFO} IS_NEWER_THAN ${CONANFILE})
@@ -93,13 +94,16 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         else()
             list(APPEND DMRG_CONAN_OPTIONS OPTIONS "*:shared=False")
         endif()
+        if(CMAKE_BUILD_TYPE MATCHES "Debug")
+            list(APPEND DMRG_CONAN_OPTIONS OPTIONS "ceres-solver:use_glog=False")
+        endif()
 
 
         include(${CMAKE_BINARY_DIR}/conan.cmake)
         conan_add_remote(NAME conan-dmrg URL http://thinkstation.duckdns.org:8081/artifactory/api/conan/conan-dmrg)
 
         conan_cmake_run(
-                CONANFILE ${CONANFILE}
+                CONANFILE conanfile.txt
                 CONAN_COMMAND ${CONAN_COMMAND}
                 BUILD_TYPE ${CMAKE_BUILD_TYPE}
                 BASIC_SETUP CMAKE_TARGETS
