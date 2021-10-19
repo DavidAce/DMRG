@@ -86,7 +86,9 @@ namespace tid {
         void                      reset();
         void                      set_label(std::string_view label) noexcept;
         void                      set_time(double other_time_in_seconds) noexcept;
+        void                      add_time(double other_time_in_seconds) noexcept;
         void                      set_count(size_t count) noexcept;
+        void                      add_count(size_t count) noexcept;
         void                      set_level(level l) noexcept;
         void                      start_lap() noexcept;
 

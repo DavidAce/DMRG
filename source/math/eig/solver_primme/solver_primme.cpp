@@ -456,10 +456,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.time_total     = t_tot.get_time();
 
     tid::get("primme") += t_tot.get_time();
+    tid::get("primme").add_count(1ul);
     tid::get("primme.prep") += t_pre.get_time();
+    tid::get("primme.prep").add_count(1ul);
     tid::get("primme.elapsed") += primme.stats.elapsedTime;
+    tid::get("primme.elapsed").add_count(1ul);
     tid::get("primme.matvec") += primme.stats.timeMatvec;
-
+    tid::get("primme.matvec").add_count(static_cast<size_t>(primme.stats.numMatvecs));
     primme_free(&primme);
     return info;
 }

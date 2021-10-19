@@ -34,11 +34,15 @@ namespace tid {
     void ur::set_time(double new_time) noexcept {
         if constexpr(tid::enable) { measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(new_time)); }
     }
-
+    void ur::add_time(double new_time) noexcept {
+        if constexpr(tid::enable) { measured_time += std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(new_time)); }
+    }
     void ur::set_count(size_t count_) noexcept {
         if constexpr(tid::enable) count = count_;
     }
-
+    void ur::add_count(size_t count_) noexcept {
+        if constexpr(tid::enable) count += count_;
+    }
     void ur::start_lap() noexcept {
         if constexpr(tid::enable) {
             lap_time      = hresclock::duration::zero();
