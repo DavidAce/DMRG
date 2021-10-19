@@ -33,14 +33,13 @@ namespace svd {
                                                                                                   std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
-        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd(const Scalar *mat_ptr, long rows, long cols,
+        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                             std::optional<long> rank_max = std::nullopt);
 
-        template<typename Derived>
-        std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>, long>
-            do_svd(const Eigen::DenseBase<Derived> &mat) {
-            return do_svd(mat.derived().data(), mat.rows(), mat.cols());
-        }
+        template<typename Scalar>
+        void print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec = 8);
+        template<typename Scalar>
+        void print_vector(const Scalar *vec_ptr, long size, long dec = 8);
 
         public:
         solver();
@@ -50,6 +49,7 @@ namespace svd {
         size_t switchsize = 16;
         SVDLib svd_lib    = SVDLib::lapacke;
         bool   use_bdc    = true;
+        bool   save_fail  = false;
 
         static std::optional<long long> count;
         double                          truncation_error = 0;
@@ -59,24 +59,29 @@ namespace svd {
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
 
+        template<typename Derived>
+        auto do_svd(const Eigen::DenseBase<Derived> &mat,std::optional<long> rank_max = std::nullopt) {
+            return do_svd_ptr(mat.derived().data(), mat.rows(), mat.cols(), rank_max);
+        }
+
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor,
                                                                                                            std::optional<long> rank_max = std::nullopt) {
-            auto [U, S, V, rank] = do_svd(tensor.data(), tensor.dimension(0), tensor.dimension(1), rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1), rank_max);
             return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>>
             decompose(const Eigen::Tensor<Scalar, 3> &tensor, const long rows, const long cols, std::optional<long> rank_max = std::nullopt) {
-            auto [U, S, V, rank] = do_svd(tensor.data(), rows, cols, rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(tensor.data(), rows, cols, rank_max);
             return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Derived>
         std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>>
             decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max = std::nullopt) {
-            auto [U, S, V, rank] = do_svd(matrix.derived().data(), matrix.rows(), matrix.cols(), rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols(), rank_max);
             return std::make_tuple(U, S.normalized().template cast<typename Derived::Scalar>(), V);
         }
 
@@ -96,7 +101,7 @@ namespace svd {
              * The function call argument order dL, chiL, dR,chiR is meant as a hint for how to use this function.
              */
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
-            auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, rank_max);
             return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
                                    tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
@@ -109,7 +114,7 @@ namespace svd {
             long dR   = tensor.dimension(2);
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
-            auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, rank_max);
             return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
                                    tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
@@ -122,7 +127,7 @@ namespace svd {
             long dR   = tensor.dimension(2);
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");
-            auto [U, S, V, rank] = do_svd(tensor.data(), dL * chiL, dR * chiR, rank_max);
+            auto [U, S, V, rank] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, rank_max);
             return std::make_tuple(tenx::TensorMap(U, dL, chiL, rank), tenx::TensorMap(S.normalized().template cast<Scalar>(), rank),
                                    tenx::TensorMap(V, rank, dR, chiR).shuffle(tenx::array3{1, 0, 2}), S.norm());
         }
@@ -281,7 +286,7 @@ namespace svd {
             auto                     dim3      = mpo.dimension(1);
             auto                     dim_ddm   = dim0 * dim1 * dim2;
             Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}).real();
-            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
+            auto [U, S, V, rank]               = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             U *= avgS;
             S /= avgS;
@@ -337,7 +342,7 @@ namespace svd {
             auto dim_ddm = dim1 * dim2 * dim3;
 
             Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}).real();
-            auto [U, S, V, rank]               = do_svd(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
+            auto [U, S, V, rank]               = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             V *= avgS;                                            // Rescaled singular values
             S /= avgS;                                            // Rescaled singular values

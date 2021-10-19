@@ -411,12 +411,25 @@ namespace tenx {
     //******************************************************//
 
     template<typename Derived>
+    bool isPositive(const Eigen::EigenBase<Derived> &obj) {
+        return (obj.derived().array().real() >= 0).all();
+    }
+
+    template<typename Scalar, auto rank>
+    bool isPositive(const Eigen::Tensor<Scalar, rank> &tensor) {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
+        return isPositive(vector);
+    }
+
+    template<typename Derived>
     bool isReal(const Eigen::EigenBase<Derived> &obj, double threshold = std::numeric_limits<double>::epsilon()) {
         using Scalar = typename Derived::Scalar;
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
             threshold *= std::max<double>(1.0, static_cast<double>(obj.derived().size()));
-            if(imag_sum >= threshold) { std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold); }
+            if(imag_sum >= threshold) {
+                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
+            }
             return imag_sum < threshold;
 
         } else {

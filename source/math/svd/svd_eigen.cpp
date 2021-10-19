@@ -6,6 +6,11 @@
 #include <math/svd.h>
 #include <tid/tid.h>
 
+//#if !defined(NDEBUG)
+#include <h5pp/h5pp.h>
+//#endif
+//
+
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
  *  Performs rigorous checks to ensure stability of DMRG.
@@ -64,20 +69,75 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
     }
 
-    if(SVD.rank() <= 0 or rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or
-       not SVD.matrixV().leftCols(rank).allFinite()) {
+    bool U_finite   = SVD.matrixU().leftCols(rank).allFinite();
+    bool S_finite   = SVD.singularValues().head(rank).allFinite();
+    bool V_finite   = SVD.matrixV().leftCols(rank).allFinite();
+    bool S_positive = (SVD.singularValues().head(rank).array() >= 0).all();
+
+    if(SVD.rank() <= 0 or rank == 0 or not U_finite or not S_finite or not S_positive or not V_finite) {
+        if(not mat.allFinite()) {
+            print_matrix(mat.data(), mat.rows(), mat.cols());
+            svd::log->critical("Eigen SVD error: matrix has inf's or nan's");
+        }
+        if(mat.isZero(1e-12)) {
+            print_matrix(mat.data(), mat.rows(), mat.cols(), 16);
+            svd::log->critical("Eigen SVD error: matrix is all zeros");
+        }
+        if(not S_positive) {
+            print_vector(SVD.singularValues().head(rank).data(), rank, 16);
+            svd::log->critical("Eigen SVD error: S is not positive");
+        }
+        //#if !defined(NDEBUG)
+        if(save_fail) {
+            auto file       = h5pp::File("svd-failed.h5", h5pp::FilePermission::READWRITE);
+            auto group_num  = 0;
+            auto group_name = fmt::format("svd_eigen_{}", group_num);
+            while(file.linkExists(group_name)) group_name = fmt::format("svd_eigen_{}", ++group_num);
+            file.writeDataset(mat, fmt::format("{}/A", group_name));
+            file.writeDataset(SVD.matrixU().leftCols(rank), fmt::format("{}/U", group_name));
+            file.writeDataset(SVD.singularValues().head(rank), fmt::format("{}/S", group_name));
+            file.writeDataset(SVD.matrixV().leftCols(rank), fmt::format("{}/V", group_name));
+            file.writeAttribute(rows, "rows", group_name);
+            file.writeAttribute(cols, "cols", group_name);
+            file.writeAttribute(rank, "rank", group_name);
+            file.writeAttribute(rank_max.value(), "rank_max", group_name);
+            file.writeAttribute(use_bdc, "use_bdc", group_name);
+            file.writeAttribute(threshold, "threshold", group_name);
+#if defined(OPENBLAS_AVAILABLE)
+            file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
+            file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
+            file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
+            file.writeAttribute(openblas_get_corename(), "openblas_get_corename", group_name);
+            file.writeAttribute(openblas_get_config(), "openblas_get_config()", group_name);
+            file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
+#endif
+
+#if defined(MKL_AVAILABLE)
+            MKLVersion Version;
+            mkl_get_version(&Version);
+            file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);
+            file.writeAttribute(Version.MinorVersion, "Intel-MKL-MinorVersion", group_name);
+            file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
+#endif
+        }
+
+        //#endif
+
         throw std::runtime_error(fmt::format(FMT_STRING("Eigen SVD error \n"
-                                                         "  svd_threshold    = {:.4e}\n"
-                                                         "  Truncation Error = {:.4e}\n"
-                                                         "  Rank             = {}\n"
-                                                         "  Dims             = ({}, {})\n"
-                                                         "  A all finite     : {}\n"
-                                                         "  U all finite     : {}\n"
-                                                         "  S all finite     : {}\n"
-                                                         "  V all finite     : {}\n"),
-                                             threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
-                                             SVD.singularValues().head(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite()));
+                                                        "  svd_threshold    = {:.4e}\n"
+                                                        "  Truncation Error = {:.4e}\n"
+                                                        "  Rank             = {}\n"
+                                                        "  Rank max         = {}\n"
+                                                        "  Dims             = ({}, {})\n"
+                                                        "  A all finite     : {}\n"
+                                                        "  U all finite     : {}\n"
+                                                        "  S all finite     : {}\n"
+                                                        "  S all positive   : {}\n"
+                                                        "  V all finite     : {}\n"),
+                                             threshold, truncation_error, rank, rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive,
+                                             V_finite));
     }
+
     svd::log->trace("SVD with Eigen finished successfully");
 
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);

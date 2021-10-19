@@ -1,6 +1,7 @@
 #include "split.h"
 #include "log.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <deque>
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
@@ -11,7 +12,7 @@
 #include <tid/tid.h>
 
 namespace settings {
-    inline constexpr bool debug_split = false;
+    inline constexpr bool debug_split = true;
 }
 
 template<typename Scalar>
@@ -105,8 +106,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      *
      */
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        auto chiL = multisite_mps.dimension(1);
-        auto chiR = multisite_mps.dimension(2);
+        auto chiL   = multisite_mps.dimension(1);
+        auto chiR   = multisite_mps.dimension(2);
+        auto t_real = tid::tic_scope("isReal");
         if(chiL * chiR > 128 * 128 and tenx::isReal(multisite_mps)) {
             tools::log->debug("Converting to real!");
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, chi_limit, svd_settings);
@@ -201,22 +203,28 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, chi_limit, svd_settings);
         // Take care of stash
         auto &mps     = mps_sites_Bs.front();
+        auto &U_stash = mps.get_U_stash();
         auto &S_stash = mps.get_S_stash();
         auto  pos     = mps.get_position<long>();
+        if constexpr(settings::debug_split) {
+            if(S_stash){
+                if(not tenx::isReal(S_stash->data)) throw except::runtime_error("S_stash is not real:\n{}", linalg::tensor::to_string(S_stash->data, 16, 18));
+                if(not tenx::isPositive(S_stash->data))
+                    throw except::runtime_error("S_stash is not positive:\n{}", linalg::tensor::to_string(S_stash->data, 16, 18));
+            }
+        }
+
         if(pos == center_position + 1 and S_stash) { // The stash in S becomes the LC for the site on the left
             mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
             S_stash.reset();
-        } else {
-            auto &U_stash = mps.get_U_stash();
-            if(U_stash) {
-                auto udim = U_stash->data.dimensions();
-                if(udim[1] != udim[0] * udim[2]) {
-                    auto U2 = U_stash->data.reshape(std::array<long, 2>{udim[1], udim[0] * udim[2]});
-                    tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
-                                                 "\nU_stash:\n{}"
-                                                 "\nS_stash:\n{}"),
-                                      udim, U_stash->pos_dst, linalg::tensor::to_string(U2, 6, 8), linalg::tensor::to_string(S_stash->data, 6, 8));
-                }
+        } else if (U_stash) {
+            auto udim = U_stash->data.dimensions();
+            if(udim[1] != udim[0] * udim[2]) {
+                auto U2 = std::array<long, 2>{udim[1], udim[0] * udim[2]};
+                std::string U_stash_str =  U_stash ? linalg::tensor::to_string(U_stash->data.reshape(U2), 6, 8) : "nullopt";
+                tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
+                                             "\nU_stash:\n{}"),
+                                  udim, U_stash->pos_dst, U_stash_str);
             }
         }
 
@@ -404,6 +412,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
          *                       |
          * Here U is an "M" matrix of type A = Lambda * Gamma
          * See the notes on svd.schmidt at its definition
+         *
          */
 
         if(S_prev) {
@@ -534,8 +543,11 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
             auto t_sv = tid::tic_token("contract_us");
             // Let V absorb S from the previous SVD (see note below)
             US_temp.resize(U.dimensions());
-            US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
-            U                                      = US_temp;
+            if constexpr(std::is_same_v<Scalar, real>)
+                US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S_prev.value().real()), tenx::idx({2}, {0}));
+            else
+                US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S_prev.value()), tenx::idx({2}, {0}));
+            U = US_temp;
         }
 
         if(&spin_dim == &spin_dims.front()) {

@@ -14,6 +14,7 @@ void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
     if(svd_settings.svd_lib) svd_lib = svd_settings.svd_lib.value();
+    if(svd_settings.save_fail) save_fail = svd_settings.save_fail.value();
 }
 
 svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
@@ -43,7 +44,7 @@ void svd::solver::setLogLevel(size_t logLevel) {
  */
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
     auto t_svd = tid::tic_scope("svd");
     switch(svd_lib){
         case SVDLib::lapacke:{
@@ -77,16 +78,51 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     throw std::logic_error("Unrecognized svd library");
 }
 
+
+template<typename Scalar>
+void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) {
+    auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
+    svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
+    for(long r = 0; r < A.rows(); r++) {
+        if constexpr(std::is_same_v<Scalar, std::complex<double>>)
+            for(long c = 0; c < A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ", dec, std::real(A(r, c)), std::imag(A(r, c)));
+        else
+            for(long c = 0; c < A.cols(); c++) fmt::print("{1:.{0}f} ", dec, A(r, c));
+        fmt::print("\n");
+    }
+}
+template<typename Scalar>
+void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) {
+    auto V = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(vec_ptr, size);
+    svd::log->warn("Print matrix of size {}\n", size);
+    if constexpr(std::is_same_v<Scalar, std::complex<double>>)
+        for(long i = 0; i < V.size(); i++) fmt::print("({1:.{0}f},{2:+.{0}f})\n", dec, std::real(V[i]), std::imag(V[i]));
+    else
+        for(long i = 0; i < V.size(); i++) fmt::print("{1:.{0}f}\n", dec, V[i]);
+}
+
+
+using cplx = std::complex<double>;
+using real = double;
+
+
+template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec);
+template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, long dec);
+template void svd::solver::print_vector<real>(const real *vec_ptr, long size, long dec);
+template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, long dec);
+
+
+
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
 template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-    svd::solver::do_svd(const double *, long, long, std::optional<long>);
+    svd::solver::do_svd_ptr(const double *, long, long, std::optional<long>);
 
-using cplx = std::complex<double>;
+
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
 template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-    svd::solver::do_svd(const cplx *, long, long, std::optional<long>);
+    svd::solver::do_svd_ptr(const cplx *, long, long, std::optional<long>);
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {

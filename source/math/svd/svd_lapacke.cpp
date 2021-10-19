@@ -21,20 +21,12 @@
 #include <math/svd.h>
 #include <tid/tid.h>
 
-namespace svd {
-    template<typename Scalar>
-    void print_matrix_lapacke(const Scalar *mat_ptr, long rows, long cols, long dec = 8) {
-        auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
-        svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
-        for(long r = 0; r < A.rows(); r++) {
-            if constexpr(std::is_same_v<Scalar, std::complex<double>>)
-                for(long c = 0; c < A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ", dec, std::real(A(r, c)), std::imag(A(r, c)));
-            else
-                for(long c = 0; c < A.cols(); c++) fmt::print("{1:.{0}f} ", dec, A(r, c));
-            fmt::print("\n");
-        }
-    }
-}
+//#if !defined(NDEBUG)
+#include <h5pp/h5pp.h>
+#include <math/linalg/matrix.h>
+#include <math/linalg/tensor.h>
+//#endif
+//
 
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
@@ -44,13 +36,13 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
-
+    if(rank_max.value() == 0) throw std::logic_error("rank_max == 0");
     // Setup the SVD solver
     bool use_jacobi = static_cast<size_t>(sizeS) < switchsize;
     if(use_jacobi and rows < cols) {
         // The jacobi routine needs a tall matrix
         auto t_adj = tid::tic_token("adjoint");
-        svd::log->trace("Transposing {}x{} into tall matrix {}x{}", rows, cols, cols, rows);
+        svd::log->trace("Transposing {}x{} into a tall matrix {}x{}", rows, cols, cols, rows);
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
         A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
         // Sanity checks
@@ -68,8 +60,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     auto t_lpk = tid::tic_scope("lapacke");
 
     // Sanity checks
-    if(rows <= 0) throw std::runtime_error("SVD error: rows() == 0");
-    if(cols <= 0) throw std::runtime_error("SVD error: cols() == 0");
+    if(rows <= 0) throw std::runtime_error("SVD error: rows() <= 0");
+    if(cols <= 0) throw std::runtime_error("SVD error: cols() <= 0");
 
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
 
@@ -84,10 +76,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             print_matrix_lapacke(mat_ptr, rows, cols, 16);
             throw std::runtime_error("SVD error: matrix is all zeros");
         }
-   }
+    }
 #endif
 
-    svd::log->trace("Starting SVD with lapacke");
+    svd::log->trace("Starting SVD with lapacke | rows {} | cols {}", rows, cols);
 
     int info   = 0;
     int rowsU  = rowsA;
@@ -121,13 +113,15 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             auto t_dgesvj = tid::tic_token("dgesvj");
             info          = LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, work.data(), lwork);
             t_dgesvj.toc();
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
             long max_size = std::min(S.size(), rank_max.value());
             long rank     = (S.head(max_size).array() >= threshold).count();
             U             = A.leftCols(rank);
             VT            = V.adjoint().topRows(rank);
         } else if(use_bdc) {
             svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+            if(threshold < 1e-10) throw std::runtime_error(fmt::format("threshold: {:.4e} < 1e-10", threshold));
             int                 liwork = std::max(1, 8 * std::min(rowsA, colsA));
             std::vector<Scalar> work(1);
             std::vector<int>    iwork(static_cast<size_t>(liwork));
@@ -139,7 +133,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->trace("Querying dgesdd");
             info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), -1,
                                        iwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
 
             int lwork = static_cast<int>(work[0]);
             work.resize(static_cast<size_t>(lwork));
@@ -148,7 +143,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             auto t_sdd = tid::tic_token("dgesdd");
             info       = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), lwork,
                                              iwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
+
         } else {
             svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             std::vector<Scalar> work(1);
@@ -159,7 +156,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
             svd::log->trace("Querying dgesvd");
             info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), -1);
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
 
             int lwork = static_cast<int>(work[0]);
             work.resize(static_cast<size_t>(lwork));
@@ -167,7 +165,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->trace("Running dgesvd");
             auto t_dgesvd = tid::tic_token("dgesvd");
             info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), lwork);
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
         }
     }
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
@@ -188,7 +187,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->trace("Querying zgesvj");
             info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, pcwork, -1, rwork.data(), -1);
 
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD error: could not converge: info {}", info));
 
             int lcwork = static_cast<int>(std::real(cwork[0]));
             int lrwork = static_cast<int>(rwork[0]);
@@ -199,7 +199,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->trace("Running zgesvj | cwork {} | rwork {}", lcwork, lrwork);
             auto t_zgesvj = tid::tic_token("zgesvj");
             info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, Ap, lda, S.data(), ldv, Vp, ldv, pcwork, lcwork, rwork.data(), lrwork);
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvj error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvj error: could not converge: info {}", info));
+
             long max_size = std::min(S.size(), rank_max.value());
             long rank     = (S.head(max_size).array() >= threshold).count();
             U             = A.leftCols(rank);
@@ -227,15 +229,16 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
             svd::log->trace("Querying zgesdd");
             info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, -1, rwork.data(), iwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
-
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
             int lwork = static_cast<int>(std::real(work[0]));
             work.resize(static_cast<size_t>(lwork));
             Wp = reinterpret_cast<lapack_complex_double *>(work.data()); // Update the pointer if reallocated
             svd::log->trace("Running zgesdd");
             auto t_zgesdd = tid::tic_token("zgesdd");
             info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork, rwork.data(), iwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
         } else {
             svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
             int                 lrwork = 5 * std::min(rowsA, colsA);
@@ -253,8 +256,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
             svd::log->trace("Querying zgesvd");
             info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, -1, rwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
-
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
             int lwork = static_cast<int>(std::real(work[0]));
             work.resize(static_cast<size_t>(lwork));
             Wp = reinterpret_cast<lapack_complex_double *>(work.data()); // Update the pointer if reallocated
@@ -262,7 +265,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->trace("Running zgesvd");
             auto t_zgesvd = tid::tic_token("zgesvd");
             info          = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork, rwork.data());
-            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD error: parameter {} is invalid", -info));
+            if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
+            if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
         }
     }
     svd::log->trace("Truncating singular values");
@@ -275,28 +279,74 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         truncation_error = S.tail(S.size() - rank).norm();
     }
 
-    if(rank <= 0 or not U.leftCols(rank).allFinite() or not S.head(rank).allFinite() or not VT.topRows(rank).allFinite()) {
+    bool U_finite   = U.leftCols(rank).allFinite();
+    bool S_finite   = S.head(rank).allFinite();
+    bool V_finite   = VT.topRows(rank).allFinite();
+    bool S_positive = (S.head(rank).array() >= 0).all();
+
+    if(rank <= 0 or rank > rows or info != 0 or not U_finite or not S_finite or not S_positive or not V_finite) {
         if(not A.allFinite()) {
-            print_matrix_lapacke(A.data(), A.rows(), A.cols());
-            svd::log->critical("SVD error: matrix has inf's or nan's");
+            print_matrix(A.data(), A.rows(), A.cols());
+            svd::log->critical("Lapacke SVD error: matrix has inf's or nan's");
         }
         if(A.isZero(1e-12)) {
-            print_matrix_lapacke(A.data(), A.rows(), A.cols(), 16);
-            svd::log->critical("SVD error: matrix is all zeros");
+            print_matrix(A.data(), A.rows(), A.cols(), 16);
+            svd::log->critical("Lapacke SVD error: matrix is all zeros");
+        }
+        if(not S_positive) {
+            print_vector(S.data(), rank, 16);
+            svd::log->critical("Lapacke SVD error: S is not positive");
+        }
+        //#if !defined(NDEBUG)
+        if(save_fail) {
+            auto file       = h5pp::File("svd-failed.h5", h5pp::FilePermission::READWRITE);
+            auto group_num  = 0;
+            auto group_name = fmt::format("svd_lapacke_{}", group_num);
+            while(file.linkExists(group_name)) group_name = fmt::format("svd_lapacke_{}", ++group_num);
+            file.writeDataset(A, fmt::format("{}/A", group_name));
+            file.writeDataset(U.leftCols(rank), fmt::format("{}/U", group_name));
+            file.writeDataset(S.head(rank), fmt::format("{}/S", group_name));
+            file.writeDataset(VT.topRows(rank), fmt::format("{}/V", group_name));
+            file.writeAttribute(rows, "rows", group_name);
+            file.writeAttribute(cols, "cols", group_name);
+            file.writeAttribute(rank, "rank", group_name);
+            file.writeAttribute(rank_max.value(), "rank_max", group_name);
+            file.writeAttribute(info, "info", group_name);
+            file.writeAttribute(use_bdc, "use_bdc", group_name);
+            file.writeAttribute(threshold, "threshold", group_name);
+#if defined(OPENBLAS_AVAILABLE)
+            file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
+            file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
+            file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
+            file.writeAttribute(openblas_get_corename(), "openblas_get_corename", group_name);
+            file.writeAttribute(openblas_get_config(), "openblas_get_config()", group_name);
+            file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
+#endif
+
+#if defined(MKL_AVAILABLE)
+            MKLVersion Version;
+            mkl_get_version(&Version);
+            file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);
+            file.writeAttribute(Version.MinorVersion, "Intel-MKL-MinorVersion", group_name);
+            file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
+#endif
         }
 
-        throw std::runtime_error(fmt::format("Lapacke SVD error \n"
-                                             "  svd_threshold    = {:.4e}\n"
-                                             "  Truncation Error = {:.4e}\n"
-                                             "  Rank             = {}\n"
-                                             "  Dims             = ({}, {})\n"
-                                             "  A all finite     : {}\n"
-                                             "  U all finite     : {}\n"
-                                             "  S all finite     : {}\n"
-                                             "  V all finite     : {}\n",
-                                             "  Lapacke info     : {}\n", threshold, truncation_error, rank, rows, cols, A.allFinite(),
-                                             U.leftCols(rank).allFinite(), S.head(rank).allFinite(), VT.topRows(rank).allFinite(), info));
+        //#endif
+        throw std::runtime_error(fmt::format(FMT_STRING("Lapacke SVD error \n"
+                                                        "  svd_threshold    = {:.4e}\n"
+                                                        "  Truncation Error = {:.4e}\n"
+                                                        "  Rank             = {}\n"
+                                                        "  Dims             = ({}, {})\n"
+                                                        "  A all finite     : {}\n"
+                                                        "  U all finite     : {}\n"
+                                                        "  S all finite     : {}\n"
+                                                        "  S all positive   : {}\n"
+                                                        "  V all finite     : {}\n"
+                                                        "  Lapacke info     : {}\n"),
+                                             threshold, truncation_error, rank, rows, cols, A.allFinite(), U_finite, S_finite, S_positive, V_finite, info));
     }
+
     svd::log->trace("SVD with lapacke finished successfully. info = {}", info);
     return std::make_tuple(U.leftCols(rank), S.head(rank), VT.topRows(rank), rank);
 }

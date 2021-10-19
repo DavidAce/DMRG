@@ -13,6 +13,7 @@ using cplx = std::complex<double>;
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
 Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
+    tools::log->debug("LBIT MPO ({}): Building MPO² non-compressed", get_position());
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
@@ -22,6 +23,7 @@ Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
 }
 
 void MpoSite::build_mpo_squared() {
+    tools::log->debug("LBIT MPO ({}): Building MPO²", get_position());
     mpo_squared  = get_non_compressed_mpo_squared();
     unique_id_sq = std::nullopt;
     if(tenx::hasNaN(mpo_squared.value())) {

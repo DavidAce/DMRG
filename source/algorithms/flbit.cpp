@@ -459,7 +459,12 @@ void flbit::create_hamiltonian_swap_gates() {
             auto nbody = std::vector<size_t>{2};
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_swap_gates_2body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+            auto ham_swap_gate = qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins);
+            if(tenx::isZero(ham_swap_gate.op)){
+                tools::log->error("hamiltonian 2-body swap gate for sites {} is a zero-matrix. skipping...", ham_swap_gate.pos);
+                continue;
+            }else
+                ham_swap_gates_2body.emplace_back(ham_swap_gate);
         }
     }
     for(auto pos : list_3site) {
@@ -478,15 +483,12 @@ void flbit::create_hamiltonian_swap_gates() {
             tools::log->error("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
             tools::log->error("     This can happen if r = settings::model::lbit::J2_span = {} is too large.", settings::model::lbit::J2_span);
             tools::log->error("     With the current settings:");
-            tools::log->error("        b = settings::model::lbit::J2_base = {}", settings::model::lbit::J2_base);
+            tools::log->error("        x = settings::model::lbit::J2_xcls = {}", settings::model::lbit::J2_xcls);
             tools::log->error("        m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
             tools::log->error("        w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
-            tools::log->error("     Values of this matrix are expected to be smaller than b^(-r) * (m+w/2) = {:8.2e}",
-                              std::pow(settings::model::lbit::J2_base, -settings::model::lbit::J2_span) *
+            tools::log->error("     Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
+                              std::exp(-static_cast<double>(settings::model::lbit::J2_span)/settings::model::lbit::J2_xcls) *
                                   (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
-            tools::log->error("     For these settings it is recommended to set r > {:.2f}",
-                              -std::log(std::numeric_limits<double>::epsilon() / (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0)) /
-                                  std::log(settings::model::lbit::J2_base));
         }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body)) {
