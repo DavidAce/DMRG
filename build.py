@@ -3,11 +3,11 @@ import errno
 import warnings
 import argparse
 import subprocess
-from multiprocessing import cpu_count
 from packaging import version
 import re
 import glob
 import shutil
+import psutil
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='CMake Project Builder for {}'.format(project_name))
@@ -20,7 +20,7 @@ def parse(project_name):
     parser.add_argument('-d', '--dry-run', action='store_true', help='Dry run makes no changes')
     parser.add_argument('-e', '--examples', action='store_true', help='Build examples')
     parser.add_argument('-i', '--install-prefix', type=str, help='Install Prefix', default='install')
-    parser.add_argument('-j', '--make-threads', type=int, help='Make Threads', default=cpu_count())
+    parser.add_argument('-j', '--make-threads', type=int, help='Make Threads', default=psutil.cpu_count(logical = False))
     parser.add_argument('-G', '--generator', type=str, help='CMake Generator', default=None,
                         choices=[None, 'Ninja', 'Unix Makefiles'])
     parser.add_argument('-p', '--package-manager', type=str, help='Package Manager', default='conan',
@@ -48,13 +48,13 @@ def parse(project_name):
 
     args = parser.parse_args()
     if args.default_kraken:
-        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, make_threads=32, generator='Ninja', package_manager='conan', arch='haswell')
+        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='haswell')
         args = parser.parse_args()
     if args.default_tetralith:
-        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, make_threads=16, generator='Ninja', package_manager='conan', arch='native')
+        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native', make_threads=16)
         args = parser.parse_args()
     if args.default_desktop:
-        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, make_threads=8, generator='Ninja', package_manager='conan', arch='native')
+        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native')
         args = parser.parse_args()
     return args
 
@@ -217,6 +217,7 @@ def main():
     args = parse(project_name=project_name)
     cmake_cfg_cmd, cmake_bld_cmd, cmake_tst_cmd, cmake_env = generate_cmake_commands(project_name=project_name,
                                                                                      args=args)
+    print("Building with {} threads".format(args.make_threads))
     run(cmd=cmake_cfg_cmd, env=cmake_env, args=args)
     run(cmd=cmake_bld_cmd, env=cmake_env, args=args)
     run(cmd=cmake_tst_cmd, env=cmake_env, args=args)
