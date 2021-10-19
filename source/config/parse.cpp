@@ -62,8 +62,7 @@ int settings::parse(int argc, char **argv) {
         pre.add_option("-v,--log,--verbosity"   , console::loglevel        , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
         pre.add_option("--timestamp"            , console::timestamp       , "Log timestamp");
         /* clang-format on */
-        CLI11_PARSE(pre, argc, argv);
-
+        pre.parse(argc, argv);
         tools::log = tools::Logger::setLogger("DMRG++ config", settings::console::loglevel, settings::console::timestamp);
         tools::log->info("Preloading {}", input::config_filename);
         //  Try loading the given config file.
@@ -88,7 +87,7 @@ int settings::parse(int argc, char **argv) {
     /* clang-format off */
     app.add_flag("--help-preload"           , "Print help related to preloading configuration");
     app.add_option("-c,--config"            , input::config_filename   , "Path to a .cfg or .h5 file from a previous simulation");
-    app.add_option("--model"                , model::model_type        , "Select the Hamiltonian")->transform(CLI::CheckedTransformer(s2e_model, CLI::ignore_case))->required();
+    app.add_option("-m,--model"             , model::model_type        , "Select the Hamiltonian")->transform(CLI::CheckedTransformer(s2e_model, CLI::ignore_case));
     app.add_option("-b,--bitfield"          , input::bitfield          , "Integer whose bitfield sets the initial product state. Negative is unused");
     app.add_option("-n,--stlthreads"        , threading::stl_threads   , "Number of C++11 threads (Used by Eigen::Tensor)");
     app.add_option("-o,--outfile"           , storage::output_filepath , "Path to the output file. The seed number gets appended by default (see -x)");
@@ -100,7 +99,8 @@ int settings::parse(int argc, char **argv) {
     app.add_option("--timestamp"            , console::timestamp       , "Log timestamp");
     app.add_option("--dummyrange"           , dummy                    , "Dummy")->check(CLI::Range(0,3));
     /* clang-format on */
-    CLI11_PARSE(app, argc, argv);
+    app.parse(argc, argv);
+
     //    for(const auto &res : app.get_options()) fmt::print("{:<32} = {}\n", res->get_name(), res->results());
 
     // Generate the correct output filename based on given seeds
