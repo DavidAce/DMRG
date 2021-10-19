@@ -12,9 +12,9 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([8,10,12,14,16])
+sites               = np.array([16,20])
 lambdas             = [0.000, 0.003]
-deltas              = [-0.02, -0.01, 0.00, 0.01, 0.02]
+deltas              = [0.00]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
@@ -73,7 +73,7 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::ising_sdual::lambda"         : str_l,
         "model::ising_sdual::J_stdv"         : "1.0",
         "model::ising_sdual::h_stdv"         : "1.0",
-        "xdmrg::chi_lim_max"                 : "768",
+        "xdmrg::chi_lim_max"                 : "1024",
         "xdmrg::max_states"                  : "1",
         "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_size_max"   : str(multi),
