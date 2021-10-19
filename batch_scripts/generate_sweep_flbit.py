@@ -12,13 +12,13 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [6,8,10,12,14]
+sites               = [20,24]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 1.000, 0.100]]
-f                   = [0.20, 0.30, 0.40]
-u                   = [2,3]
-x                   = [0.5,1,2]
-r                   = [8,16]
+f                   = [0.20, 0.30]
+u                   = [3]
+x                   = [0.5,1.0,2.0]
+r                   = [24]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
 tmp_storage = "/tmp"
