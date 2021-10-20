@@ -2,17 +2,29 @@
 #include <csignal>
 #include <cxxabi.h>
 #include <stdexcept>
+#include <cstdio>
+#include <cstdlib>
+#include <climits>
+
+
 
 void debug::signal_callback_handler(int status) {
-    debug::print_stack_trace();
     switch(status) {
         case SIGTERM: {
             std::fprintf(stderr, "Exit SIGTERM: %d\n", status);
             break;
         }
+        case SIGSTOP: {
+            std::fprintf(stderr, "Exit SIGSTOP: %d\n", status);
+            break;
+        }
+        case SIGCHLD: {
+            std::fprintf(stderr, "Exit SIGCHLD: %d\n", status);
+            break;
+        }
         case SIGKILL: {
             std::fprintf(stderr, "Exit SIGKILL: %d\n", status);
-            std::quick_exit(status); // Does not call destructors
+//            std::quick_exit(status); // Does not call destructors
             break;
         }
         case SIGINT: {
@@ -31,12 +43,26 @@ void debug::signal_callback_handler(int status) {
             std::fprintf(stderr, "Exit SIGABRT: %d\n", status);
             break;
         }
+        case SIGILL: {
+            debug::print_stack_trace();
+            std::fprintf(stderr, "Exit SIGILL: %d\n", status);
+//            std::quick_exit(status); // Does not call destructors
+            break;
+        }
+        case SIGFPE: {
+            debug::print_stack_trace();
+            std::fprintf(stderr, "Exit SIGFPE: %d\n", status);
+//            std::quick_exit(status); // Does not call destructors
+            break;
+        }
         case SIGSEGV: {
+            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGSEGV: %d\n", status);
-            std::quick_exit(status); // Does not call destructors
+//            std::quick_exit(status); // Does not call destructors
             break;
         }
         default: {
+            debug::print_stack_trace();
             std::fprintf(stderr, "Exit %d\n", status);
             break;
         }
@@ -67,7 +93,7 @@ void debug::register_callbacks() {
     signal(SIGHUP, signal_callback_handler);  //	 1	/* Hangup.  */
     signal(SIGQUIT, signal_callback_handler); //	 3	/* Quit.  */
     signal(SIGTRAP, signal_callback_handler); //	 5	/* Trace/breakpoint trap.  */
-    signal(SIGKILL, signal_callback_handler); //	 9	/* Killed.  */
+    signal(SIGKILL, signal_callback_handler); //	 9	/* Killed. This one is special and can't be caught  */
     signal(SIGBUS, signal_callback_handler);  //	 10	/* Bus error.  */
     signal(SIGSYS, signal_callback_handler);  //	 12	/* Bad system call.  */
     signal(SIGPIPE, signal_callback_handler); //	 13	/* Broken pipe.  */
@@ -75,7 +101,7 @@ void debug::register_callbacks() {
 
     /* New(er) POSIX signals (1003.1-2008, 1003.1-2013).  */
     signal(SIGURG, signal_callback_handler);    //   16 /* Urgent data is available at a socket.  */
-    signal(SIGSTOP, signal_callback_handler);   //   17 /* Stop, unblockable.  */
+    signal(SIGSTOP, signal_callback_handler);   //   17 /* Stop, unblockable.  This one is special and can't be caught  */
     signal(SIGTSTP, signal_callback_handler);   //   18 /* Keyboard stop.  */
     signal(SIGCONT, signal_callback_handler);   //   19 /* Continue.  */
     signal(SIGCHLD, signal_callback_handler);   //   20 /* Child terminated or stopped.  */
@@ -88,7 +114,7 @@ void debug::register_callbacks() {
     signal(SIGPROF, signal_callback_handler);   //   27 /* Profiling timer expired.  */
     signal(SIGUSR1, signal_callback_handler);   //   30 /* User-defined signal 1.  */
     signal(SIGUSR2, signal_callback_handler);   //   31 /* User-defined signal 2.  */
-    signal(137, signal_callback_handler);   //   137 /* LLDB?  */
+    signal(137, signal_callback_handler);       //   137 /* LLDB?  */
 }
 
 #if __has_include(<libunwind.h>) && defined(DMRG_HAS_UNWIND)
@@ -162,21 +188,21 @@ void debug::print_stack_trace() {
         if(ip == 0) { break; }
         char sym[1024];
         if(unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
-            std::fprintf(stderr, "#%-3d 0x%-10lx", count++, ip);
+            std::printf("#%-3d 0x%-10lx", count++, ip);
             auto estr = getErrorLocation(ip);
             if(not estr.empty())
-                std::fprintf(stderr, " %s\n", estr.c_str());
+                std::printf(" %s\n", estr.c_str());
             else {
                 int   status;
                 char *nameptr   = sym;
                 char *demangled = abi::__cxa_demangle(sym, nullptr, nullptr, &status);
                 if(status == 0) { nameptr = demangled; }
-                std::fprintf(stderr, " %s\n", nameptr);
+                std::printf(" %s\n", nameptr);
                 std::free(demangled);
             }
 
         } else {
-            std::fprintf(stderr, " -- error: unable to obtain symbol name for this frame\n");
+            std::printf(" -- error: unable to obtain symbol name for this frame\n");
         }
     }
 }

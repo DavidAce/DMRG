@@ -70,8 +70,8 @@ void AlgorithmLauncher::start_h5file() {
                 try {
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::READONLY);
                     if(not h5file->fileIsValid()) throw std::runtime_error(fmt::format("HDF5 file is not valid: {}", settings::storage::output_filepath));
-                    if(not h5file->linkExists("git/DMRG++"))
-                        throw std::runtime_error(fmt::format("Could not find link git/DMRG++ in file: {}", settings::storage::output_filepath));
+                    if(not h5file->linkExists(".env/DMRG++"))
+                        throw std::runtime_error(fmt::format("Could not find link .env/DMRG++ in file: {}", settings::storage::output_filepath));
                     if(not h5file->linkExists("common/finished_all"))
                         throw std::runtime_error(fmt::format("Could not find link common/finished_all in file: {}", settings::storage::output_filepath));
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
@@ -111,11 +111,19 @@ void AlgorithmLauncher::start_h5file() {
         h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::COLLISION_FAIL);
     }
     h5file->setCompressionLevel(settings::storage::compression_level);
-    if(not h5file->linkExists("git/DMRG++")) {
+    if(not h5file->linkExists(".env/DMRG++")) {
         // Put git metadata in file
-        h5file->writeDataset(git::branch, "git/DMRG++/branch");
-        h5file->writeDataset(git::commit_hash, "git/DMRG++/commit");
-        h5file->writeDataset(git::revision, "git/DMRG++/revision");
+        h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
+        h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/cpu_type");
+        h5file->writeDataset(build::hostname, ".env/DMRG++/build/hostname");
+        h5file->writeDataset(build::cpu_type, ".env/DMRG++/build/cpu_type");
+        h5file->writeDataset(build::os_name, ".env/DMRG++/build/os_name");
+        h5file->writeDataset(build::os_release, ".env/DMRG++/build/os_release");
+        h5file->writeDataset(build::os_version, ".env/DMRG++/build/os_version");
+        h5file->writeDataset(build::os_platform, ".env/DMRG++/build/os_platform");
+        h5file->writeDataset(git::branch, ".env/DMRG++/git/branch");
+        h5file->writeDataset(git::commit_hash, ".env/DMRG++/git/commit");
+        h5file->writeDataset(git::revision, ".env/DMRG++/git/revision");
     }
 
     if(not h5file->linkExists("common")) {
