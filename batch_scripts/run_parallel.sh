@@ -4,8 +4,8 @@
 #SBATCH --kill-on-invalid-dep=yes
 #SBATCH --output=logs/%x-%A.out
 #SBATCH --error=logs/%x-%A.err
-#!#SBATCH --ntasks-per-core=1 #Disables hyperthreading
-
+#SBATCH --ntasks-per-core=1             # Disables hyperthreading
+#SBATCH --hint=nomultithread            # Avoid the use of in-core multi-threading (i.e. hyperthreading)
 
 
 PROGNAME=$0
