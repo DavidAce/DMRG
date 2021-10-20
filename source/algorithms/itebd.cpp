@@ -17,6 +17,7 @@ itebd::itebd(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::mov
 
 void itebd::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
+    auto t_pre = tid::tic_scope("pre");
     init_bond_dimension_limits();
     randomize_model(); // First use of random!
     auto t_init    = tid::tic_scope("init");
@@ -46,7 +47,6 @@ void itebd::run_simulation() {
 void itebd::run_postprocessing() {
     auto t_pos = tid::tic_scope("post");
     print_status_full();
-    tools::common::profile::print_profiling(status);
 }
 
 void itebd::single_TEBD_step() {

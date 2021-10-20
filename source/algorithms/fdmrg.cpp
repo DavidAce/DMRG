@@ -81,7 +81,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
-            case fdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(status); break;
+            case fdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case fdmrg_task::PROF_RESET: tid::reset("fDMRG"); break;
         }
@@ -105,6 +105,7 @@ void fdmrg::run_default_task_list() {
 
 void fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
+    auto t_pre = tid::tic_scope("pre");
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();

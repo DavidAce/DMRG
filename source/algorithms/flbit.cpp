@@ -1,6 +1,7 @@
 #include "flbit.h"
 #include <config/settings.h>
 #include <debug/exceptions.h>
+#include <debug/info.h>
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <io/fmt.h>
@@ -130,7 +131,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
             case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
-            case flbit_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(status); break;
+            case flbit_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
             case flbit_task::POST_DEFAULT: run_postprocessing(); break;
             case flbit_task::PROF_RESET: tid::reset("fLBIT"); break;
         }
@@ -154,6 +155,7 @@ void flbit::run_default_task_list() {
 
 void flbit::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
+    auto t_pre = tid::tic_scope("pre");
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
@@ -460,10 +462,10 @@ void flbit::create_hamiltonian_swap_gates() {
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
             auto ham_swap_gate = qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins);
-            if(tenx::isZero(ham_swap_gate.op)){
+            if(tenx::isZero(ham_swap_gate.op)) {
                 tools::log->error("hamiltonian 2-body swap gate for sites {} is a zero-matrix. skipping...", ham_swap_gate.pos);
                 continue;
-            }else
+            } else
                 ham_swap_gates_2body.emplace_back(ham_swap_gate);
         }
     }
@@ -487,7 +489,7 @@ void flbit::create_hamiltonian_swap_gates() {
             tools::log->error("        m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
             tools::log->error("        w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
             tools::log->error("     Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
-                              std::exp(-static_cast<double>(settings::model::lbit::J2_span)/settings::model::lbit::J2_xcls) *
+                              std::exp(-static_cast<double>(settings::model::lbit::J2_span) / settings::model::lbit::J2_xcls) *
                                   (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
         }
     }
@@ -501,7 +503,7 @@ void flbit::update_time_evolution_gates() {
     if(time_points.empty()) create_time_points();
     if(ham_gates_1body.empty() or ham_gates_2body.empty() or ham_gates_3body.empty()) create_hamiltonian_gates();
     update_time_step();
-    tools::log->debug("Updating time evolution gates to iter {} | Δt = {}",status.iter, status.delta_t);
+    tools::log->debug("Updating time evolution gates to iter {} | Δt = {}", status.iter, status.delta_t);
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
@@ -512,7 +514,7 @@ void flbit::update_time_evolution_swap_gates() {
     if(time_points.empty()) create_time_points();
     if(ham_swap_gates_1body.empty() or ham_swap_gates_2body.empty() or ham_swap_gates_3body.empty()) create_hamiltonian_swap_gates();
     update_time_step();
-    tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}",status.iter, status.delta_t);
+    tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}", status.iter, status.delta_t);
     time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body);
     time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body);
     time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body);
@@ -675,7 +677,6 @@ void flbit::print_status_update() {
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));
     report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
-    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
-                          tools::common::profile::mem_vm_in_mb());
+    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }

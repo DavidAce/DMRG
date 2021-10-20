@@ -2,6 +2,7 @@
 #include <algorithms/AlgorithmStatus.h>
 #include <config/enums.h>
 #include <config/settings.h>
+#include <debug/info.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <string>
@@ -86,9 +87,9 @@ namespace tools::common::h5 {
         h5pp_table_memory_usage::table mem_usage_entry{};
         mem_usage_entry.iter = status.iter;
         mem_usage_entry.step = status.step;
-        mem_usage_entry.rss  = tools::common::profile::mem_rss_in_mb();
-        mem_usage_entry.hwm  = tools::common::profile::mem_hwm_in_mb();
-        mem_usage_entry.vm   = tools::common::profile::mem_vm_in_mb();
+        mem_usage_entry.rss  = debug::mem_rss_in_mb();
+        mem_usage_entry.hwm  = debug::mem_hwm_in_mb();
+        mem_usage_entry.vm   = debug::mem_vm_in_mb();
         h5file.appendTableRecords(mem_usage_entry, table_path);
         h5file.writeAttribute(status.iter, "iteration", table_path);
         h5file.writeAttribute(status.step, "step", table_path);

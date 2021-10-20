@@ -155,7 +155,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 break;
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
-            case xdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(status); break;
+            case xdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case xdmrg_task::PROF_RESET: tid::reset("xDMRG"); break;
         }
@@ -196,6 +196,7 @@ void xdmrg::init_energy_limits(std::optional<double> energy_density_target, std:
 
 void xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
+    auto t_pre = tid::tic_scope("pre");
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
@@ -611,7 +612,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
         tools::log->info("Not allowed more resets due to saturation: num resets {} > max resets {}", status.num_resets, settings::strategy::max_resets);
         return;
     }
-    auto t_rnd             = tid::tic_scope("init.rnd_state");
+    auto t_rnd             = tid::tic_scope("rnd_state");
     int  counter           = 0;
     bool outside_of_window = true;
     tensors.activate_sites(settings::precision::max_size_full_diag, 2);

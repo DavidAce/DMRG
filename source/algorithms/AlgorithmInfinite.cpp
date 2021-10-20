@@ -1,5 +1,6 @@
 #include "AlgorithmInfinite.h"
 #include <config/settings.h>
+#include <debug/info.h>
 #include <math/num.h>
 #include <tensors/model/ModelInfinite.h>
 #include <tensors/state/StateInfinite.h>
@@ -37,12 +38,11 @@ void AlgorithmInfinite::run_postprocessing() {
     write_to_file(StorageReason::FINISHED);
     copy_from_tmp(StorageReason::FINISHED);
     print_status_full();
-    tools::common::profile::print_profiling(status);
 }
 
 void AlgorithmInfinite::randomize_model() {
     tools::log->info("Randomizing model");
-    auto t_rnd = tid::tic_scope("init.rnd_model");
+    auto t_rnd = tid::tic_scope("rnd_model");
     tensors.randomize_model();
     clear_convergence_status();
 }
@@ -398,8 +398,7 @@ void AlgorithmInfinite::print_status_update() {
     }
     report += fmt::format("con: {:<4} ", status.algorithm_converged_for);
     report += fmt::format("time:{:>8.2f}s ", tid::get_unscoped("t_tot").get_time());
-    report += fmt::format("mem: [rss {:<.1f} peak {:<.1f} vm {:<.1f}] MB ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
-                          tools::common::profile::mem_vm_in_mb());
+    report += fmt::format("mem: [rss {:<.1f} peak {:<.1f} vm {:<.1f}] MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }
 
@@ -456,5 +455,5 @@ void AlgorithmInfinite::print_status_full() {
     tools::log->info("Sₑ                       = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for, status.entanglement_saturated_for);
     tools::log->info("Time                     = {:<16.16f}", tid::get_unscoped("t_tot").get_time());
 
-    tools::log->info("Peak memory           = {:<6.1f} MB", tools::common::profile::mem_hwm_in_mb());
+    tools::log->info("Peak memory           = {:<6.1f} MB", debug::mem_hwm_in_mb());
 }

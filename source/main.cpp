@@ -21,6 +21,7 @@
 #endif
 #include <config/parse.h>
 #include <debug/stacktrace.h>
+#include <debug/info.h>
 #include <env/environment.h>
 #include <thread>
 
@@ -49,7 +50,8 @@ int main(int argc, char *argv[]) {
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::loglevel, settings::console::timestamp);
 
     // print environment and git status
-    tools::log->info("Hostname        : {}", env::hostname);
+    tools::log->info("Hostname        : {}", debug::hostname());
+    tools::log->info("Build hostname  : {}", build::hostname);
     tools::log->info("Git branch      : {}", git::branch);
     tools::log->info("    commit hash : {}", git::commit_hash);
     tools::log->info("    revision    : {}", git::revision);

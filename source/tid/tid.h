@@ -151,11 +151,11 @@ namespace tid {
         template<typename T = std::vector<std::string_view>>
         extern T split(std::string_view strv, std::string_view delims);
     }
-    [[nodiscard]] extern std::vector<internal::ur_ref_t> get_tree(const tid::ur &u, std::string_view prefix = "");
-    [[nodiscard]] extern std::vector<internal::ur_ref_t> get_tree(std::string_view prefix = "");
+    [[nodiscard]] extern std::vector<internal::ur_ref_t> get_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
+    [[nodiscard]] extern std::vector<internal::ur_ref_t> get_tree(std::string_view prefix = "", level l = level::normal);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(std::string_view match);
 
-    //    [[nodiscard]] extern std::vector<std::string>
-
+    void print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
+    void print_tree(std::string_view prefix = "", level l = level::normal);
 }

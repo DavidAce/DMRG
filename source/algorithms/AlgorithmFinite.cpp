@@ -1,6 +1,7 @@
 #include "AlgorithmFinite.h"
 #include <config/settings.h>
 #include <debug/exceptions.h>
+#include <debug/info.h>
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
@@ -84,7 +85,6 @@ void AlgorithmFinite::run_postprocessing() {
     write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);
     print_status_full();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
-    tools::common::profile::print_profiling(status);
 }
 
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
@@ -273,7 +273,7 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
 
 void AlgorithmFinite::randomize_model() {
     tools::log->info("Randomizing model");
-    auto tic = tid::tic_scope("init.rnd_model");
+    auto tic = tid::tic_scope("rnd_model");
     tensors.randomize_model();
     clear_convergence_status();
 }
@@ -282,7 +282,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
                                       std::optional<long> chi_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}]", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
-    auto t_rnd = tid::tic_scope("init.rnd_state");
+    auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -700,8 +700,8 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
     report += fmt::format(FMT_STRING("sat:[σ² {:<1} Sₑ {:<1}] "), status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), tools::common::profile::mem_rss_in_mb(),
-                          tools::common::profile::mem_hwm_in_mb(), tools::common::profile::mem_vm_in_mb());
+    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), debug::mem_rss_in_mb(),
+                          debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }
 
@@ -711,9 +711,9 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");
 
-    tools::log->info("Mem RSS                            = {:<.1f} MB", tools::common::profile::mem_rss_in_mb());
-    tools::log->info("Mem Peak                           = {:<.1f} MB", tools::common::profile::mem_hwm_in_mb());
-    tools::log->info("Mem VM                             = {:<.1f} MB", tools::common::profile::mem_vm_in_mb());
+    tools::log->info("Mem RSS                            = {:<.1f} MB", debug::mem_rss_in_mb());
+    tools::log->info("Mem Peak                           = {:<.1f} MB", debug::mem_hwm_in_mb());
+    tools::log->info("Mem VM                             = {:<.1f} MB", debug::mem_vm_in_mb());
     tools::log->info("Stop reason                        = {}", status.algo_stop_sv());
     tools::log->info("Sites                              = {}", tensors.get_length());
     tools::log->info("Position                           = {}", status.position);

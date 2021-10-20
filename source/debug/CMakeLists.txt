@@ -1,5 +1,5 @@
 add_library(dmrg-debug-o OBJECT)
-target_sources(dmrg-debug-o PRIVATE stacktrace.cpp)
+target_sources(dmrg-debug-o PRIVATE stacktrace.cpp info.cpp)
 target_link_libraries(dmrg-debug-o PUBLIC deps flags)
 target_link_precompiled_headers(dmrg-debug-o)
 
