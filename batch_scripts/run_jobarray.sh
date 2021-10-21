@@ -4,7 +4,6 @@
 #SBATCH --output=logs/%x-%A_%a.out
 #SBATCH --error=logs/%x-%A_%a.err
 
-
 PROGNAME=$0
 usage() {
   cat << EOF >&2

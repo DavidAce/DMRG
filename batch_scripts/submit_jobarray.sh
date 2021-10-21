@@ -11,9 +11,10 @@ Usage            : $PROGNAME [-option | --option ] [=]<argument>
 -b | --build-type <str>            : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --cluster <"a1,a2,a3...">     : Comma-separated string of clusters. At theophys: kraken | draken (default: )
      --cpus-per-task <int>         : Numer of cpu cores required per task (e.g. openmp threads) (default: 1)
+     --ntasks-per-core             : Number of tasks on each core (default: 1)
 -d | --dry-run                     : Do not actually submit
 -e | --exclusive                   : Use nodes in exclusive node
-     --execname <str>             : Name of the executable to run (default = DMRG++)
+     --execname <str>              : Name of the executable to run (default = DMRG++)
 -f | --config <path or file>       : File or path to files containing simulation config files (suffixed .cfg) (default: input/ )
 -j | --job-file <path or file>     : File containing config-seed pairs. Use for resuming failed runs
 -J | --job-name <str>              : Slurm job name. (default = DMRG)
@@ -44,6 +45,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:O:p:q:r:s:t:v \
                 build-type:\
                 cluster:\
                 cpus-per-task:\
+                ntasks-per-core:\
                 dry-run\
                 exclusive\
                 execname:\
@@ -85,6 +87,7 @@ simsperarray=1000
 simspertask=1
 openmode="--open-mode=append"
 cpuspertask="--cpus-per-task=1"
+ntaskspercore="--ntasks-per-core=1"
 ntasks="--ntasks=1"
 
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
@@ -94,30 +97,31 @@ while true;
 do
   case "$1" in
     -h|--help)                      usage                                                                            ; shift   ;;
-    -b|--build-type)                build_type=$2                     ; echo " * Build type               : $2"      ; shift 2 ;;
-    -c|--cluster)                   cluster="--cluster=$2"            ; echo " * Cluster                  : $2"      ; shift 2 ;;
-       --cpus-per-task)             cpuspertask="--cpus-per-task=$2"  ; echo " * Cpus per task            : $2"      ; shift 2 ;;
-    -d|--dry-run)                   dryrun="ON"                       ; echo " * Dry run                  : ON"      ; shift   ;;
-    -e|--exclusive)                 exclusive=--exclusive             ; echo " * Exclusive                : ON"      ; shift   ;;
-       --execname)                 execname=$2                        ; echo " * Executable name          : $2"      ; shift 2 ;;
-    -f|--config)                    configpath=$2                     ; echo " * Configs                  : $2"      ; shift 2 ;;
-    -j|--job-file)                  jobfile=$2                        ; echo " * Job file                 : $2"      ; shift 2 ;;
-    -J|--job-name)                  jobname="--job-name=$2"           ; echo " * Job name                 : $2"      ; shift 2 ;;
-    -m|--mem-per-cpu)               mempercpu="--mem-per-cpu=$2"      ; echo " * Mem per cpu              : $2"      ; shift 2 ;;
-    -N|--sims-per-cfg)              simspercfg=$2                     ; echo " * Sims per cfg             : $2"      ; shift 2 ;;
-    -n|--sims-per-array)            simsperarray=$2                   ; echo " * Sims per array           : $2"      ; shift 2 ;;
-       --sims-per-task)             simspertask=$2                    ; echo " * Sims per task            : $2"      ; shift 2 ;;
-       --ntasks)                    ntasks="--ntasks=$2"              ; echo " * ntasks                   : $2"      ; shift 2 ;;
-       --other)                     other=$2                          ; echo " * Other                    : $2"      ; shift 2 ;;
-    -O|--open-mode)                 openmode="--open-mode=$2"         ; echo " * Open mode                : $2"      ; shift 2 ;;
-    -p|--partition)                 partition="--partition=$2"        ; echo " * Partition                : $2"      ; shift 2 ;;
-    -q|--qos)                       qos="--qos=$2"                    ; echo " * Quality of service (QOS) : $2"      ; shift 2 ;;
-    -r|--requeue)                   requeue="--requeue"               ; echo " * Requeue                  : ON"      ; shift   ;;
-    -s|--seed)                      seedpath=$2                       ; echo " * Seed path                : $2"      ; shift 2 ;;
-       --start-seed)                startseed=$2                      ; echo " * Start seed               : $2"      ; shift 2 ;;
-       --shuffle)                   shuffle="ON"                      ; echo " * Shuffle                  : ON"      ; shift   ;;
-    -t|--time)                      time="--time=0-$2"                ; echo " * Time                     : $2"      ; shift 2 ;;
-    -v|--verbose)                   verbosity="-v"                    ; echo " * Verbosity                : ON"      ; shift   ;;
+    -b|--build-type)                build_type=$2                         ; echo " * Build type               : $2"      ; shift 2 ;;
+    -c|--cluster)                   cluster="--cluster=$2"                ; echo " * Cluster                  : $2"      ; shift 2 ;;
+       --cpus-per-task)             cpuspertask="--cpus-per-task=$2"      ; echo " * Cpus per task            : $2"      ; shift 2 ;;
+       --ntasks-per-core)           ntaskspercore="--ntasks-per-core=$2"  ; echo " * Tasks per core           : $2"      ; shift 2 ;;
+    -d|--dry-run)                   dryrun="ON"                           ; echo " * Dry run                  : ON"      ; shift   ;;
+    -e|--exclusive)                 exclusive=--exclusive                 ; echo " * Exclusive                : ON"      ; shift   ;;
+       --execname)                  execname=$2                           ; echo " * Executable name          : $2"      ; shift 2 ;;
+    -f|--config)                    configpath=$2                         ; echo " * Configs                  : $2"      ; shift 2 ;;
+    -j|--job-file)                  jobfile=$2                            ; echo " * Job file                 : $2"      ; shift 2 ;;
+    -J|--job-name)                  jobname="--job-name=$2"               ; echo " * Job name                 : $2"      ; shift 2 ;;
+    -m|--mem-per-cpu)               mempercpu="--mem-per-cpu=$2"          ; echo " * Mem per cpu              : $2"      ; shift 2 ;;
+    -N|--sims-per-cfg)              simspercfg=$2                         ; echo " * Sims per cfg             : $2"      ; shift 2 ;;
+    -n|--sims-per-array)            simsperarray=$2                       ; echo " * Sims per array           : $2"      ; shift 2 ;;
+       --sims-per-task)             simspertask=$2                        ; echo " * Sims per task            : $2"      ; shift 2 ;;
+       --ntasks)                    ntasks="--ntasks=$2"                  ; echo " * ntasks                   : $2"      ; shift 2 ;;
+       --other)                     other=$2                              ; echo " * Other                    : $2"      ; shift 2 ;;
+    -O|--open-mode)                 openmode="--open-mode=$2"             ; echo " * Open mode                : $2"      ; shift 2 ;;
+    -p|--partition)                 partition="--partition=$2"            ; echo " * Partition                : $2"      ; shift 2 ;;
+    -q|--qos)                       qos="--qos=$2"                        ; echo " * Quality of service (QOS) : $2"      ; shift 2 ;;
+    -r|--requeue)                   requeue="--requeue"                   ; echo " * Requeue                  : ON"      ; shift   ;;
+    -s|--seed)                      seedpath=$2                           ; echo " * Seed path                : $2"      ; shift 2 ;;
+       --start-seed)                startseed=$2                          ; echo " * Start seed               : $2"      ; shift 2 ;;
+       --shuffle)                   shuffle="ON"                          ; echo " * Shuffle                  : ON"      ; shift   ;;
+    -t|--time)                      time="--time=0-$2"                    ; echo " * Time                     : $2"      ; shift 2 ;;
+    -v|--verbose)                   verbosity="-v"                        ; echo " * Verbosity                : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -214,17 +218,17 @@ if [ -f "$jobfile" ]; then
 
     if [ -n "$dryrun" ]; then
 cat << EOF >&2
-sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
 --array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $file
 EOF
     bash run_jobarray.sh -e $exec -f $file -d
     else
-      echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+      echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
         --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file" >> job_report.txt
 
-      sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+      sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
         --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file
     fi
@@ -400,17 +404,17 @@ for jobfile in $jobfiles; do
 
   if [ -n "$dryrun" ]; then
 cat << EOF >&2
-sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
 --array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $jobfile
 EOF
   bash run_jobarray.sh -e $exec -f $jobfile -d
   else
-    echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+    echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
       --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile" >> job_report.txt
 
-    sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask \
+    sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
       --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile
   fi
