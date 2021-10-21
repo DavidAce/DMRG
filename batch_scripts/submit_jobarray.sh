@@ -39,7 +39,7 @@ EOF
 }
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:O:p:q:r:s:t:v \
+PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:o:O:p:q:r:s:t:v \
                 --long "\
                 help\
                 build-type:\
@@ -112,7 +112,7 @@ do
     -n|--sims-per-array)            simsperarray=$2                       ; echo " * Sims per array           : $2"      ; shift 2 ;;
        --sims-per-task)             simspertask=$2                        ; echo " * Sims per task            : $2"      ; shift 2 ;;
        --ntasks)                    ntasks="--ntasks=$2"                  ; echo " * ntasks                   : $2"      ; shift 2 ;;
-       --other)                     other=$2                              ; echo " * Other                    : $2"      ; shift 2 ;;
+     o|--other)                     other=$2                              ; echo " * Other                    : $2"      ; shift 2 ;;
     -O|--open-mode)                 openmode="--open-mode=$2"             ; echo " * Open mode                : $2"      ; shift 2 ;;
     -p|--partition)                 partition="--partition=$2"            ; echo " * Partition                : $2"      ; shift 2 ;;
     -q|--qos)                       qos="--qos=$2"                        ; echo " * Quality of service (QOS) : $2"      ; shift 2 ;;
