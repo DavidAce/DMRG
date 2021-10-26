@@ -308,13 +308,13 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
-    auto &evar = tensors.measurements.energy_variance;
-    if(status.variance_mpo_converged_for > 0 or (evar.has_value() and evar.value() < settings::precision::variance_convergence_threshold)) {
-        // No need to do expensive operations -- just finish
-        c1.optMode  = OptMode::VARIANCE;
-        c1.optSpace = OptSpace::DIRECT;
-        c1.retry    = false;
-    }
+//    auto &evar = tensors.measurements.energy_variance;
+//    if(status.variance_mpo_converged_for > 0 or (evar.has_value() and evar.value() < settings::precision::variance_convergence_threshold)) {
+//        // No need to do expensive operations -- just finish
+//        c1.optMode  = OptMode::VARIANCE;
+//        c1.optSpace = OptSpace::DIRECT;
+//        c1.retry    = false;
+//    }
 
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid SUBSPACE if the 1-site problem size is huge
