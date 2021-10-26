@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "enums.h"
 #include <string>
+#include <tid/enums.h>
 #include <vector>
 
 class Loader;
@@ -98,9 +99,9 @@ namespace settings {
 
     /*!  \namespace settings::profiling Settings for performance profiling */
     namespace profiling {
-        inline bool     on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
-        inline bool     extra     = false;                         /*!< Prints more profiling */
-        inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
+        inline bool         on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
+        inline tid::level   level     = tid::normal;                   /*!< How much detail to print on exit [normal | detail | pedant]  */
+        inline size_t       precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
     }
 
     /*! \namespace settings::console Settings for console output */

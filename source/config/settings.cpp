@@ -263,7 +263,7 @@ void settings::load(Loader &dmrg_config) {
     //Profiling
     dmrg_config.load_parameter("profiling::on"        , profiling::on        );
     dmrg_config.load_parameter("profiling::precision" , profiling::precision );
-    dmrg_config.load_parameter("profiling::extra"     , profiling::extra     );
+    dmrg_config.load_parameter("profiling::level"     , profiling::level     );
     //Console settings
     dmrg_config.load_parameter("console::loglevel"    , console::loglevel);
     dmrg_config.load_parameter("console::logh5pp"     , console::logh5pp);
